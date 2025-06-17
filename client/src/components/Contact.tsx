@@ -159,7 +159,7 @@ export default function Contact() {
           {/* Contact Information */}
           <div className="space-y-8">
             <div>
-              <h3 className="font-bold text-xl mb-6 text-white">Contact Information</h3>
+              <h3 className="font-black text-xl mb-6 text-white">Contact Information</h3>
               
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
@@ -167,9 +167,9 @@ export default function Contact() {
                     <Mail className="text-metal-orange h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Email</h4>
-                    <p className="text-gray-400">contact@spandexsalvationradio.co</p>
-                    <p className="text-gray-400">submissions@spandexsalvationradio.co</p>
+                    <h4 className="font-black mb-1">Email</h4>
+                    <p className="text-gray-400 font-semibold">contact@spandexsalvationradio.co</p>
+                    <p className="text-gray-400 font-semibold">submissions@spandexsalvationradio.co</p>
                   </div>
                 </div>
 
@@ -178,9 +178,9 @@ export default function Contact() {
                     <Clock className="text-metal-orange h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Response Time</h4>
-                    <p className="text-gray-400">We typically respond within 24-48 hours</p>
-                    <p className="text-gray-400">Priority given to technical issues</p>
+                    <h4 className="font-black mb-1">Response Time</h4>
+                    <p className="text-gray-400 font-semibold">We typically respond within 24-48 hours</p>
+                    <p className="text-gray-400 font-semibold">Priority given to technical issues</p>
                   </div>
                 </div>
 
@@ -189,9 +189,9 @@ export default function Contact() {
                     <Radio className="text-metal-orange h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="font-semibold mb-1">Stream Support</h4>
-                    <p className="text-gray-400">24/7 technical support for streaming issues</p>
-                    <p className="text-gray-400">Real-time assistance available</p>
+                    <h4 className="font-black mb-1">Stream Support</h4>
+                    <p className="text-gray-400 font-semibold">24/7 technical support for streaming issues</p>
+                    <p className="text-gray-400 font-semibold">Real-time assistance available</p>
                   </div>
                 </div>
               </div>
@@ -199,18 +199,18 @@ export default function Contact() {
 
             {/* Social Media */}
             <div>
-              <h3 className="font-bold text-xl mb-6 text-white">Connect With Us</h3>
+              <h3 className="font-black text-xl mb-6 text-white">Connect With Us</h3>
               <div className="flex space-x-4">
-                <a href="#" className="w-12 h-12 bg-dark-surface border border-dark-border rounded-lg flex items-center justify-center hover:border-metal-orange transition-colors">
+                <a href="#" className="w-12 h-12 bg-dark-surface/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
                   <Facebook className="text-metal-orange h-5 w-5" />
                 </a>
-                <a href="#" className="w-12 h-12 bg-dark-surface border border-dark-border rounded-lg flex items-center justify-center hover:border-metal-orange transition-colors">
+                <a href="#" className="w-12 h-12 bg-dark-surface/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
                   <Twitter className="text-metal-orange h-5 w-5" />
                 </a>
-                <a href="#" className="w-12 h-12 bg-dark-surface border border-dark-border rounded-lg flex items-center justify-center hover:border-metal-orange transition-colors">
+                <a href="#" className="w-12 h-12 bg-dark-surface/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
                   <Instagram className="text-metal-orange h-5 w-5" />
                 </a>
-                <a href="#" className="w-12 h-12 bg-dark-surface border border-dark-border rounded-lg flex items-center justify-center hover:border-metal-orange transition-colors">
+                <a href="#" className="w-12 h-12 bg-dark-surface/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
                   <Youtube className="text-metal-orange h-5 w-5" />
                 </a>
               </div>
