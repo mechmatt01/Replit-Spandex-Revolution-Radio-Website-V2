@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AudioProvider } from "@/contexts/AudioContext";
 import { AdminProvider } from "@/contexts/AdminContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import HomePage from "@/pages/HomePage";
 import NotFound from "@/pages/not-found";
 
@@ -20,14 +21,16 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AudioProvider>
-        <AdminProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </AdminProvider>
-      </AudioProvider>
+      <ThemeProvider>
+        <AudioProvider>
+          <AdminProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Router />
+            </TooltipProvider>
+          </AdminProvider>
+        </AudioProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

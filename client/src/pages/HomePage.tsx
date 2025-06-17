@@ -11,10 +11,12 @@ import Merch from "@/components/Merch";
 import AdminPanel from "@/components/AdminPanel";
 import Footer from "@/components/Footer";
 import StickyPlayer from "@/components/StickyPlayer";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-dark-bg text-white">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+      <ThemeToggle />
       <Navigation />
       <Hero />
       <Features />
