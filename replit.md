@@ -106,7 +106,10 @@ The application uses PostgreSQL with the following main entities:
 - Production/development mode switching
 
 ## Changelog
-- June 17, 2025. Initial setup
+- June 17, 2025: Initial setup with complete radio station website
+- June 17, 2025: Added PostgreSQL database with full schema migration
+- June 17, 2025: Implemented theme switching (dark/light mode) with smooth transitions
+- June 17, 2025: Moved "Live Now" indicator below intro text as requested
 
 ## User Preferences
 
