@@ -4,6 +4,19 @@ import { storage } from "./storage";
 import { insertSubmissionSchema, insertContactSchema, insertSubscriptionSchema, insertNowPlayingSchema } from "@shared/schema";
 import { z } from "zod";
 
+// Initialize Stripe if available
+let stripe: any = null;
+try {
+  if (process.env.STRIPE_SECRET_KEY) {
+    const Stripe = require('stripe');
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2023-10-16",
+    });
+  }
+} catch (error) {
+  console.log("Stripe not available - payment processing disabled");
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Submissions API
   app.get("/api/submissions", async (req, res) => {
