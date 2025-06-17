@@ -22,7 +22,14 @@ export default function Navigation() {
           {/* Logo & Brand */}
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-              <Radio className="text-white h-6 w-6" />
+              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 6c0-2.168-3.663-4-8-4S4 3.832 4 6v2c0 2.168 3.663 4 8 4s8-1.832 8-4V6zM4 10v8c0 2.168 3.663 4 8 4s8-1.832 8-4v-8c0 2.168-3.663 4-8 4s-8-1.832-8-4z"/>
+                <circle cx="6" cy="15" r="1"/>
+                <circle cx="12" cy="15" r="1"/>
+                <circle cx="18" cy="15" r="1"/>
+                <path d="M15 19h4v2h-4v-2zM5 19h4v2H5v-2z"/>
+                <path d="M21 3l-2 2-2-2 2-2 2 2z"/>
+              </svg>
             </div>
             <div className="flex items-center">
               <h1 className="font-orbitron font-bold text-lg text-metal-orange leading-none">
