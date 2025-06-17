@@ -9,7 +9,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-card border-t border-border py-12 transition-colors duration-300">
+    <footer className="bg-card py-12 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
@@ -27,16 +27,16 @@ export default function Footer() {
               Your home for old-school metal music. Broadcasting the rebellion since 2025.
             </p>
             <div className="flex space-x-3">
-              <a href="#" className="w-8 h-8 bg-card border border-border rounded-lg flex items-center justify-center hover:border-metal-orange transition-colors">
+              <a href="#" className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
                 <Facebook className="text-metal-orange h-4 w-4" />
               </a>
-              <a href="#" className="w-8 h-8 bg-card border border-border rounded-lg flex items-center justify-center hover:border-metal-orange transition-colors">
+              <a href="#" className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
                 <Twitter className="text-metal-orange h-4 w-4" />
               </a>
-              <a href="#" className="w-8 h-8 bg-card border border-border rounded-lg flex items-center justify-center hover:border-metal-orange transition-colors">
+              <a href="#" className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
                 <Instagram className="text-metal-orange h-4 w-4" />
               </a>
-              <a href="#" className="w-8 h-8 bg-card border border-border rounded-lg flex items-center justify-center hover:border-metal-orange transition-colors">
+              <a href="#" className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
                 <Youtube className="text-metal-orange h-4 w-4" />
               </a>
             </div>
@@ -133,14 +133,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between">
-          <p className="text-muted-foreground text-sm mb-4 md:mb-0">
+        <div className="pt-8 flex flex-col md:flex-row items-center justify-between">
+          <p className="text-muted-foreground text-sm font-semibold mb-4 md:mb-0">
             © 2025 Spandex Salvation Radio. All rights reserved.
           </p>
           <div className="flex items-center space-x-6 text-sm">
-            <a href="#" className="text-muted-foreground hover:text-metal-orange transition-colors">Terms of Service</a>
-            <a href="#" className="text-muted-foreground hover:text-metal-orange transition-colors">Privacy Policy</a>
-            <a href="#" className="text-muted-foreground hover:text-metal-orange transition-colors">Cookies</a>
+            <a href="#" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">Terms of Service</a>
+            <a href="#" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">Privacy Policy</a>
+            <a href="#" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">Cookies</a>
           </div>
         </div>
       </div>

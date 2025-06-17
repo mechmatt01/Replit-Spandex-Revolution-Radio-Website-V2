@@ -13,29 +13,29 @@ export default function About() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="font-orbitron font-bold text-3xl md:text-4xl mb-6 text-white">
+            <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-6 text-white">
               ABOUT THE REBELLION
             </h2>
-            <p className="text-gray-300 text-lg mb-6">
+            <p className="text-gray-300 text-lg font-semibold mb-6">
               Spandex Salvation Radio was born from a passion for the golden era of metal music. 
               When hair was big, guitars were loud, and the stage was set ablaze with pure rock energy.
             </p>
-            <p className="text-gray-400 mb-6">
+            <p className="text-gray-400 font-semibold mb-6">
               We're dedicated to preserving and celebrating the legendary sounds of bands like Skid Row, 
               Twisted Sister, Mötley Crüe, and countless other metal pioneers who defined a generation.
             </p>
             <div className="flex items-center space-x-6 mb-8">
               <div className="text-center">
-                <div className="text-2xl font-bold text-metal-orange">24/7</div>
-                <div className="text-sm text-gray-500">Live Streaming</div>
+                <div className="text-2xl font-black text-metal-orange">24/7</div>
+                <div className="text-sm font-semibold text-gray-500">Live Streaming</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-metal-orange">1000+</div>
-                <div className="text-sm text-gray-500">Metal Tracks</div>
+                <div className="text-2xl font-black text-metal-orange">1000+</div>
+                <div className="text-sm font-semibold text-gray-500">Metal Tracks</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-metal-orange">50+</div>
-                <div className="text-sm text-gray-500">Countries</div>
+                <div className="text-2xl font-black text-metal-orange">50+</div>
+                <div className="text-sm font-semibold text-gray-500">Countries</div>
               </div>
             </div>
             <Button 

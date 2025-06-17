@@ -20,10 +20,10 @@ export default function Features() {
     <section className="py-20 bg-dark-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="font-orbitron font-bold text-3xl md:text-4xl mb-4 text-white">
+          <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-white">
             ROCK THE AIRWAVES
           </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-gray-400 text-lg font-semibold max-w-2xl mx-auto">
             Experience the ultimate old-school metal radio experience with live streaming, 
             interactive features, and exclusive content.
           </p>
@@ -36,8 +36,8 @@ export default function Features() {
               <div className="w-12 h-12 bg-metal-orange/20 rounded-lg flex items-center justify-center mb-4">
                 <Radio className="text-metal-orange h-6 w-6" />
               </div>
-              <h3 className="font-bold text-xl mb-3">24/7 Live Streaming</h3>
-              <p className="text-gray-400 mb-4">Non-stop old-school metal streaming with high-quality audio and minimal buffering.</p>
+              <h3 className="font-black text-xl mb-3">24/7 Live Streaming</h3>
+              <p className="text-gray-400 font-semibold mb-4">Non-stop old-school metal streaming with high-quality audio and minimal buffering.</p>
               <div className="flex items-center text-metal-orange text-sm">
                 <div className="w-2 h-2 bg-metal-orange rounded-full animate-pulse mr-2"></div>
                 <span>Currently Live</span>
