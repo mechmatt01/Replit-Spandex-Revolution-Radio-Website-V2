@@ -33,10 +33,10 @@ export default function InteractiveMap() {
               </div>
               
               {/* Simulated listener dots */}
-              <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-metal-orange rounded-full animate-pulse"></div>
-              <div className="absolute top-1/3 right-1/3 w-3 h-3 bg-metal-orange rounded-full animate-pulse"></div>
-              <div className="absolute bottom-1/3 left-1/2 w-3 h-3 bg-metal-orange rounded-full animate-pulse"></div>
-              <div className="absolute top-1/2 right-1/4 w-3 h-3 bg-metal-orange rounded-full animate-pulse"></div>
+              <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-metal-orange rounded-full"></div>
+              <div className="absolute top-1/3 right-1/3 w-3 h-3 bg-metal-orange rounded-full"></div>
+              <div className="absolute bottom-1/3 left-1/2 w-3 h-3 bg-metal-orange rounded-full"></div>
+              <div className="absolute top-1/2 right-1/4 w-3 h-3 bg-metal-orange rounded-full"></div>
             </div>
           </CardContent>
         </Card>

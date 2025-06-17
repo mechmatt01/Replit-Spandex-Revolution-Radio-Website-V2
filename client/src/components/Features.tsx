@@ -39,7 +39,7 @@ export default function Features() {
               <h3 className="font-black text-xl mb-3">24/7 Live Streaming</h3>
               <p className="text-gray-400 font-semibold mb-4">Non-stop old-school metal streaming with high-quality audio and minimal buffering.</p>
               <div className="flex items-center text-metal-orange text-sm">
-                <div className="w-2 h-2 bg-metal-orange rounded-full animate-pulse mr-2"></div>
+                <div className="w-2 h-2 bg-metal-orange rounded-full mr-2"></div>
                 <span>Currently Live</span>
               </div>
             </CardContent>

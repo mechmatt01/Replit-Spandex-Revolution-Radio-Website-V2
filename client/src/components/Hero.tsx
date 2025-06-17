@@ -53,9 +53,8 @@ export default function Hero() {
         ></div>
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80 transition-colors duration-300"></div>
       </div>
-
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
-        <h1 className="font-orbitron font-black text-5xl md:text-8xl bg-gradient-to-r from-metal-orange to-metal-gold bg-clip-text text-transparent">
+        <h1 className="font-orbitron font-black text-5xl md:text-8xl bg-gradient-to-r from-metal-orange to-metal-gold bg-clip-text mb-2 text-[#f5f9fc]">
           SPANDEX SALVATION RADIO
         </h1>
         <div className="mb-6">
