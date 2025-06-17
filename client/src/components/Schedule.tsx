@@ -32,10 +32,10 @@ export default function Schedule() {
     <section id="schedule" className="py-20 bg-dark-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="font-orbitron font-bold text-3xl md:text-4xl mb-4 text-white">
+          <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-white">
             SHOW SCHEDULE
           </h2>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-400 text-lg font-semibold">
             Catch your favorite metal shows and discover new content throughout the week.
           </p>
         </div>
@@ -43,10 +43,10 @@ export default function Schedule() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Weekly Schedule */}
           <div className="lg:col-span-2">
-            <h3 className="font-bold text-xl mb-6 text-metal-orange">This Week's Lineup</h3>
+            <h3 className="font-black text-xl mb-6 text-metal-orange">This Week's Lineup</h3>
             <div className="space-y-4">
               {weeklyShows.map((show) => (
-                <Card key={show.id} className="bg-dark-bg border-dark-border hover:border-metal-orange/50 transition-all duration-300">
+                <Card key={show.id} className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-semibold text-lg">{show.title}</h4>
