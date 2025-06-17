@@ -25,8 +25,7 @@ export default function Navigation() {
               <Radio className="text-white h-5 w-5" />
             </div>
             <div className="flex items-center">
-              <h1 className="font-orbitron font-bold text-lg text-metal-orange leading-none">SPANDEX SALVATION</h1>
-              <span className="font-orbitron font-bold text-sm text-gray-400 leading-none ml-1">RADIO</span>
+              <h1 className="font-orbitron font-bold text-lg text-metal-orange leading-none">SPANDEX SALVATION <span className="text-gray-400">RADIO</span></h1>
             </div>
           </div>
 

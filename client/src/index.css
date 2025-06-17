@@ -165,22 +165,11 @@
     font-family: 'Orbitron', monospace;
   }
 
-  /* Custom animations */
-  .animate-glow {
-    animation: glow 2s ease-in-out infinite alternate;
-  }
+  /* Remove all animations as requested */
 
-  @keyframes glow {
-    0% {
-      box-shadow: 0 0 5px var(--metal-orange), 0 0 10px var(--metal-orange);
-    }
-    100% {
-      box-shadow: 0 0 10px var(--metal-orange), 0 0 20px var(--metal-orange), 0 0 30px var(--metal-orange);
-    }
-  }
-
-  .animate-pulse-slow {
-    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* Navigation spacing */
+  .nav-spacing > * + * {
+    margin-left: 2rem;
   }
 
   /* Remove all borders globally */

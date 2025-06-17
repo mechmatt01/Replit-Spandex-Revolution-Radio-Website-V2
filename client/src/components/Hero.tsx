@@ -55,11 +55,13 @@ export default function Hero() {
       </div>
 
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
-        <h1 className="font-orbitron font-black text-5xl md:text-8xl mb-2 bg-gradient-to-r from-metal-orange to-metal-gold bg-clip-text text-transparent">
+        <h1 className="font-orbitron font-black text-5xl md:text-8xl bg-gradient-to-r from-metal-orange to-metal-gold bg-clip-text text-transparent">
           SPANDEX SALVATION RADIO
         </h1>
-        <p className="text-xl md:text-2xl font-bold text-muted-foreground mb-2">Old School Metal</p>
-        <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6">24/7 Live Stream</p>
+        <div className="mb-6">
+          <p className="text-xl md:text-2xl font-bold text-metal-orange mb-1">Old School Metal</p>
+          <p className="text-base md:text-lg font-semibold text-metal-orange">24/7 Live Stream</p>
+        </div>
         <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto">
           Bringing you the best of old-school metal with legendary bands like Skid Row, Twisted Sister, and more. 
           Join the hairspray rebellion!
@@ -67,8 +69,8 @@ export default function Hero() {
 
         {/* Live Status Indicator */}
         <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center bg-metal-red/20 border border-metal-red/50 rounded-full px-4 py-2">
-            <div className="w-3 h-3 bg-metal-red rounded-full animate-pulse mr-2"></div>
+          <div className="flex items-center bg-metal-red/20 rounded-full px-4 py-2">
+            <div className="w-3 h-3 bg-metal-red rounded-full mr-2"></div>
             <span className="text-metal-red font-semibold text-sm">LIVE NOW</span>
           </div>
         </div>
