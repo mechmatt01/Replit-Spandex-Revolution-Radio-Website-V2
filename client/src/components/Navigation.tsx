@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, X, Radio } from "lucide-react";
+import { Menu, X, Radio, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
 
@@ -24,9 +24,9 @@ export default function Navigation() {
             <div className="w-10 h-10 bg-gradient-to-br from-metal-orange to-metal-red rounded-lg flex items-center justify-center">
               <Radio className="text-white h-5 w-5" />
             </div>
-            <div className="flex items-end space-x-2">
+            <div className="flex items-center">
               <h1 className="font-orbitron font-bold text-lg text-metal-orange leading-none">SPANDEX SALVATION</h1>
-              <span className="font-orbitron font-bold text-sm text-metal-orange leading-none mb-0.5">RADIO</span>
+              <span className="font-orbitron font-bold text-sm text-gray-400 leading-none ml-1">RADIO</span>
             </div>
           </div>
 
@@ -55,14 +55,16 @@ export default function Navigation() {
             </button>
           </div>
 
-          {/* Live Stream Control */}
+          {/* Right Side Controls */}
           <div className="flex items-center space-x-4">
-            <Button 
-              onClick={togglePlayback}
-              className="bg-metal-orange hover:bg-orange-600 text-white px-6 py-2 rounded-full font-semibold transition-colors"
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {}}
+              className="w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card/90 transition-all duration-300"
+              aria-label="Toggle theme"
             >
-              <Radio className="mr-2 h-4 w-4" />
-              {isPlaying ? "PAUSE" : "TUNE IN LIVE"}
+              <div className="w-5 h-5 bg-metal-orange rounded-full"></div>
             </Button>
             <Button
               variant="ghost"
