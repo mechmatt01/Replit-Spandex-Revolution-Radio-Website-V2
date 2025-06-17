@@ -31,9 +31,8 @@ export default function Navigation() {
               </svg>
             </div>
             <div className="flex items-center">
-              <h1 className="font-orbitron font-bold text-lg text-metal-orange leading-none">
-                <span className="hidden sm:inline">SPANDEX SALVATION <span className="text-gray-400">RADIO</span></span>
-                <span className="sm:hidden flex flex-col">
+              <h1 className="font-orbitron font-bold text-lg text-metal-orange leading-tight">
+                <span className="flex flex-col">
                   <span>SPANDEX SALVATION</span>
                   <span className="text-gray-400 text-sm">RADIO</span>
                 </span>
