@@ -21,8 +21,8 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-metal-orange to-metal-red rounded-lg flex items-center justify-center">
-              <Radio className="text-white h-5 w-5" />
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+              <Radio className="text-white h-6 w-6" />
             </div>
             <div className="flex items-center">
               <h1 className="font-orbitron font-bold text-lg text-metal-orange leading-none">
