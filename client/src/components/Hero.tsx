@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { Play, Calendar, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useAudio } from "@/contexts/AudioContext";
 
 export default function Hero() {
@@ -116,7 +115,7 @@ export default function Hero() {
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12">
           <Button 
             onClick={togglePlayback}
-            className="bg-metal-orange hover:bg-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-all duration-300 animate-glow"
+            className="bg-metal-orange hover:bg-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-colors"
           >
             <Play className="mr-3 h-5 w-5" />
             START STREAMING
@@ -124,7 +123,7 @@ export default function Hero() {
           <Button 
             onClick={scrollToSchedule}
             variant="outline"
-            className="border-2 border-metal-gold text-metal-gold hover:bg-metal-gold hover:text-background px-8 py-4 rounded-full font-bold text-lg transition-all duration-300"
+            className="border-2 border-metal-blue text-metal-blue hover:bg-metal-blue hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-colors"
           >
             <Calendar className="mr-3 h-5 w-5" />
             VIEW SCHEDULE
@@ -133,24 +132,24 @@ export default function Hero() {
 
         {/* Countdown Timer */}
         <div className="mt-12">
-          <p className="text-muted-foreground mb-4">OFFICIAL LAUNCH COUNTDOWN</p>
+          <p className="text-muted-foreground mb-4 font-bold">OFFICIAL LAUNCH COUNTDOWN</p>
           <div className="flex justify-center space-x-4 text-center">
-            <Card className="bg-card border-border p-4 min-w-[80px] transition-colors duration-300">
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
               <div className="text-2xl font-bold text-metal-orange">{countdown.days}</div>
-              <div className="text-xs text-muted-foreground">DAYS</div>
-            </Card>
-            <Card className="bg-card border-border p-4 min-w-[80px] transition-colors duration-300">
+              <div className="text-xs text-muted-foreground font-semibold">DAYS</div>
+            </div>
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
               <div className="text-2xl font-bold text-metal-orange">{countdown.hours}</div>
-              <div className="text-xs text-muted-foreground">HOURS</div>
-            </Card>
-            <Card className="bg-card border-border p-4 min-w-[80px] transition-colors duration-300">
+              <div className="text-xs text-muted-foreground font-semibold">HOURS</div>
+            </div>
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
               <div className="text-2xl font-bold text-metal-orange">{countdown.minutes}</div>
-              <div className="text-xs text-muted-foreground">MINS</div>
-            </Card>
-            <Card className="bg-card border-border p-4 min-w-[80px] transition-colors duration-300">
+              <div className="text-xs text-muted-foreground font-semibold">MINS</div>
+            </div>
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
               <div className="text-2xl font-bold text-metal-orange">{countdown.seconds}</div>
-              <div className="text-xs text-muted-foreground">SECS</div>
-            </Card>
+              <div className="text-xs text-muted-foreground font-semibold">SECS</div>
+            </div>
           </div>
         </div>
       </div>

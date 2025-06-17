@@ -183,14 +183,53 @@
     animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
+  /* Remove all borders globally */
+  .no-border, .no-border * {
+    border: none !important;
+  }
+
+  /* Enhanced font weights for better readability */
+  .font-semibold {
+    font-weight: 600;
+  }
+  
+  .font-bold {
+    font-weight: 700;
+  }
+  
+  .font-black {
+    font-weight: 900;
+  }
+
   /* Responsive text sizes for mobile */
   @media (max-width: 768px) {
     .text-4xl {
       font-size: 2.5rem;
     }
     
+    .text-5xl {
+      font-size: 3rem;
+    }
+    
     .text-7xl {
       font-size: 3.5rem;
+    }
+    
+    .text-8xl {
+      font-size: 4rem;
+    }
+  }
+
+  /* Improved responsive navigation */
+  @media (max-width: 768px) {
+    .nav-spacing {
+      gap: 0.5rem;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .nav-spacing {
+      gap: 2rem;
     }
   }
 }
