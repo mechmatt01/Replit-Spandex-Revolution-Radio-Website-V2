@@ -136,6 +136,7 @@ The application uses PostgreSQL with the following main entities:
 - June 17, 2025: Updated navigation - removed "TUNE IN LIVE" button, repositioned text elements, improved spacing
 - June 17, 2025: Final navigation updates - custom radio SVG logo, responsive vertical/horizontal text layout, removed theme toggle, vertically centered elements
 - June 17, 2025: Navigation refinements - precise 15px left padding, 10px spacing between brand and nav items, full capitalization of menu items, stacked "SPANDEX SALVATION RADIO" layout
+- June 17, 2025: Navigation layout optimization - centered navigation links between branding and controls, restored theme toggle with 15px spacing from SUBSCRIBE link
 
 ## User Preferences
 

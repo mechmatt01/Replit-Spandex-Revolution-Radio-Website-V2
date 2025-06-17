@@ -40,33 +40,44 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center" style={{ marginLeft: '10px', gap: '2rem' }}>
-            <button onClick={() => scrollToSection("home")} className="text-foreground font-semibold hover:text-metal-orange transition-colors">
-              HOME
-            </button>
-            <button onClick={() => scrollToSection("about")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              ABOUT
-            </button>
-            <button onClick={() => scrollToSection("schedule")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              SCHEDULE
-            </button>
-            <button onClick={() => scrollToSection("submissions")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              SUBMISSIONS
-            </button>
-            <button onClick={() => scrollToSection("contact")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              CONTACT
-            </button>
-            <button onClick={() => scrollToSection("merch")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              MERCH
-            </button>
-            <button onClick={() => scrollToSection("subscribe")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              SUBSCRIBE
-            </button>
+          {/* Desktop Navigation - Centered */}
+          <div className="hidden lg:flex items-center justify-center flex-1" style={{ marginLeft: '10px' }}>
+            <div className="flex items-center gap-8">
+              <button onClick={() => scrollToSection("home")} className="text-foreground font-semibold hover:text-metal-orange transition-colors">
+                HOME
+              </button>
+              <button onClick={() => scrollToSection("about")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
+                ABOUT
+              </button>
+              <button onClick={() => scrollToSection("schedule")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
+                SCHEDULE
+              </button>
+              <button onClick={() => scrollToSection("submissions")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
+                SUBMISSIONS
+              </button>
+              <button onClick={() => scrollToSection("contact")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
+                CONTACT
+              </button>
+              <button onClick={() => scrollToSection("merch")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
+                MERCH
+              </button>
+              <button onClick={() => scrollToSection("subscribe")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors" style={{ marginRight: '15px' }}>
+                SUBSCRIBE
+              </button>
+            </div>
           </div>
 
-          {/* Right Side Controls - Mobile Menu Only */}
+          {/* Right Side Controls - Theme Toggle and Mobile Menu */}
           <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {}}
+              className="hidden lg:block w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card/90"
+              aria-label="Toggle theme"
+            >
+              <div className="w-5 h-5 bg-metal-orange rounded-full"></div>
+            </Button>
             <Button
               variant="ghost"
               size="icon"
