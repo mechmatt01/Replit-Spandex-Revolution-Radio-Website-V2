@@ -17,8 +17,8 @@ export default function Navigation() {
 
   return (
     <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+      <div className="w-full">
+        <div className="flex items-center justify-between h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
           {/* Logo & Brand */}
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
@@ -41,27 +41,27 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center nav-spacing">
+          <div className="hidden lg:flex items-center" style={{ marginLeft: '10px', gap: '2rem' }}>
             <button onClick={() => scrollToSection("home")} className="text-foreground font-semibold hover:text-metal-orange transition-colors">
-              Home
+              HOME
             </button>
             <button onClick={() => scrollToSection("about")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              About
+              ABOUT
             </button>
             <button onClick={() => scrollToSection("schedule")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              Schedule
+              SCHEDULE
             </button>
             <button onClick={() => scrollToSection("submissions")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              Submissions
+              SUBMISSIONS
             </button>
             <button onClick={() => scrollToSection("contact")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              Contact
+              CONTACT
             </button>
             <button onClick={() => scrollToSection("merch")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              Merch
+              MERCH
             </button>
             <button onClick={() => scrollToSection("subscribe")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-              Subscribe
+              SUBSCRIBE
             </button>
           </div>
 
@@ -83,25 +83,25 @@ export default function Navigation() {
           <div className="lg:hidden bg-card/95 backdrop-blur-sm transition-colors duration-300">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <button onClick={() => scrollToSection("home")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                Home
+                HOME
               </button>
               <button onClick={() => scrollToSection("about")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                About
+                ABOUT
               </button>
               <button onClick={() => scrollToSection("schedule")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                Schedule
+                SCHEDULE
               </button>
               <button onClick={() => scrollToSection("submissions")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                Submissions
+                SUBMISSIONS
               </button>
               <button onClick={() => scrollToSection("contact")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                Contact
+                CONTACT
               </button>
               <button onClick={() => scrollToSection("merch")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                Merch
+                MERCH
               </button>
               <button onClick={() => scrollToSection("subscribe")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                Subscribe
+                SUBSCRIBE
               </button>
             </div>
           </div>
