@@ -54,13 +54,13 @@ export default function Navigation() {
             </button>
           </div>
 
-          {/* Right Side Controls */}
+          {/* Right Side Controls - Theme Toggle Only */}
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => {}}
-              className="w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card/90 transition-all duration-300"
+              className="w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card/90"
               aria-label="Toggle theme"
             >
               <div className="w-5 h-5 bg-metal-orange rounded-full"></div>
