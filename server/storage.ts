@@ -217,8 +217,13 @@ export class MemStorage implements IStorage {
   async createSubmission(insertSubmission: InsertSubmission): Promise<Submission> {
     const id = this.currentSubmissionId++;
     const submission: Submission = {
-      ...insertSubmission,
       id,
+      songTitle: insertSubmission.songTitle,
+      artistName: insertSubmission.artistName,
+      albumTitle: insertSubmission.albumTitle || null,
+      releaseYear: insertSubmission.releaseYear || null,
+      submitterName: insertSubmission.submitterName || null,
+      message: insertSubmission.message || null,
       status: "pending",
       createdAt: new Date(),
     };
@@ -265,8 +270,13 @@ export class MemStorage implements IStorage {
   async createShowSchedule(insertSchedule: InsertShowSchedule): Promise<ShowSchedule> {
     const id = this.currentScheduleId++;
     const schedule: ShowSchedule = {
-      ...insertSchedule,
       id,
+      title: insertSchedule.title,
+      description: insertSchedule.description || null,
+      host: insertSchedule.host || null,
+      dayOfWeek: insertSchedule.dayOfWeek,
+      time: insertSchedule.time,
+      duration: insertSchedule.duration || null,
       isActive: true,
     };
     this.showSchedules.set(id, schedule);
@@ -296,8 +306,12 @@ export class MemStorage implements IStorage {
 
   async updateNowPlaying(track: InsertNowPlaying): Promise<NowPlaying> {
     this.nowPlaying = {
-      ...track,
       id: 1,
+      title: track.title,
+      artist: track.artist,
+      album: track.album || null,
+      duration: track.duration || null,
+      currentTime: track.currentTime || null,
       isLive: true,
       updatedAt: new Date(),
     };
@@ -310,8 +324,17 @@ export class MemStorage implements IStorage {
   }
 
   async updateStreamStats(stats: Partial<StreamStats>): Promise<StreamStats> {
+    const currentStats = this.streamStats || {
+      id: 1,
+      currentListeners: 0,
+      totalListeners: 0,
+      countries: 0,
+      uptime: "99.9%",
+      updatedAt: new Date(),
+    };
+    
     this.streamStats = {
-      ...this.streamStats!,
+      ...currentStats,
       ...stats,
       updatedAt: new Date(),
     };
