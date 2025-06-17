@@ -16,7 +16,6 @@ import ThemeToggle from "@/components/ThemeToggle";
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-      <ThemeToggle />
       <Navigation />
       <Hero />
       <Features />
@@ -30,6 +29,7 @@ export default function HomePage() {
       <AdminPanel />
       <Footer />
       <StickyPlayer />
+      <ThemeToggle />
     </div>
   );
 }

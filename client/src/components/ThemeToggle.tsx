@@ -10,7 +10,7 @@ export default function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-dark-surface/80 dark:bg-dark-surface/80 light:bg-white/80 border border-dark-border dark:border-dark-border light:border-gray-300 backdrop-blur-sm hover:bg-dark-surface dark:hover:bg-dark-surface light:hover:bg-gray-100 transition-all duration-300"
+      className="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-card/80 border border-border backdrop-blur-sm hover:bg-card/90 transition-all duration-300"
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
     >
       <div className="relative w-5 h-5">
