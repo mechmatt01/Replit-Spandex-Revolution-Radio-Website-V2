@@ -76,7 +76,7 @@ export default function Navigation() {
               className="hidden lg:block w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card/90"
               aria-label="Toggle theme"
             >
-              <div className="w-5 h-5 bg-metal-orange rounded-full"></div>
+              <div className="w-5 h-5 bg-metal-orange rounded-full ml-[3px] mr-[3px] mt-[0px] mb-[0px] pt-[2px] pb-[2px]"></div>
             </Button>
             <Button
               variant="ghost"
