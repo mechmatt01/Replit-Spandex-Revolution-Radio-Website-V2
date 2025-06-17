@@ -155,6 +155,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stripe Payment Processing API
+  app.post("/api/create-subscription", async (req, res) => {
+    if (!stripe) {
+      return res.status(503).json({ error: "Payment processing not available - Stripe not configured" });
+    }
+
+    try {
+      const { priceId, customerEmail, customerName } = req.body;
+      
+      if (!priceId || !customerEmail || !customerName) {
+        return res.status(400).json({ error: "Missing required payment information" });
+      }
+
+      // Create customer
+      const customer = await stripe.customers.create({
+        email: customerEmail,
+        name: customerName,
+      });
+
+      // Create subscription
+      const subscription = await stripe.subscriptions.create({
+        customer: customer.id,
+        items: [{ price: priceId }],
+        payment_behavior: 'default_incomplete',
+        expand: ['latest_invoice.payment_intent'],
+      });
+
+      res.json({
+        subscriptionId: subscription.id,
+        clientSecret: subscription.latest_invoice?.payment_intent?.client_secret,
+      });
+    } catch (error: any) {
+      console.error('Stripe subscription error:', error);
+      res.status(400).json({ error: error.message || "Payment processing failed" });
+    }
+  });
+
+  app.post("/api/create-payment-intent", async (req, res) => {
+    if (!stripe) {
+      return res.status(503).json({ error: "Payment processing not available - Stripe not configured" });
+    }
+
+    try {
+      const { amount, currency = 'usd' } = req.body;
+      
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ error: "Invalid payment amount" });
+      }
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Convert to cents
+        currency,
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+
+      res.json({ 
+        clientSecret: paymentIntent.client_secret 
+      });
+    } catch (error: any) {
+      console.error('Stripe payment intent error:', error);
+      res.status(400).json({ error: error.message || "Payment processing failed" });
+    }
+  });
+
   // Authentication API
   app.post("/api/auth/login", async (req, res) => {
     try {
