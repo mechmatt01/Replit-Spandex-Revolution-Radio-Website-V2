@@ -56,11 +56,11 @@ export default function Hero() {
       </div>
 
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4">
-        <h1 className="font-orbitron font-black text-4xl md:text-7xl mb-4 bg-gradient-to-r from-metal-orange to-metal-gold bg-clip-text text-transparent">
+        <h1 className="font-orbitron font-black text-5xl md:text-8xl mb-6 bg-gradient-to-r from-metal-orange to-metal-gold bg-clip-text text-transparent">
           SPANDEX SALVATION RADIO
         </h1>
-        <p className="text-xl md:text-2xl text-muted-foreground mb-2">Old School Metal • 24/7 Live Stream</p>
-        <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+        <p className="text-2xl md:text-3xl font-bold text-muted-foreground mb-4">Old School Metal • 24/7 Live Stream</p>
+        <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto">
           Bringing you the best of old-school metal with legendary bands like Skid Row, Twisted Sister, and more. 
           Join the hairspray rebellion!
         </p>
@@ -74,45 +74,43 @@ export default function Hero() {
         </div>
 
         {/* Now Playing Card */}
-        <Card className="bg-card/80 border-border backdrop-blur-sm max-w-md mx-auto mb-8 transition-colors duration-300">
-          <CardContent className="p-6">
-            <div className="flex items-center mb-4">
-              <Music className="text-metal-orange mr-2 h-4 w-4" />
-              <span className="text-muted-foreground text-sm">NOW PLAYING</span>
+        <div className="bg-card/30 backdrop-blur-sm max-w-md mx-auto mb-8 rounded-xl p-6 transition-colors duration-300">
+          <div className="flex items-center mb-4">
+            <Music className="text-metal-orange mr-2 h-4 w-4" />
+            <span className="text-muted-foreground text-sm font-semibold">NOW PLAYING</span>
+          </div>
+          <h3 className="font-bold text-xl mb-1 text-foreground">{currentTrack?.title || "Loading..."}</h3>
+          <p className="text-foreground font-semibold">{currentTrack?.artist || "Artist"}</p>
+          <p className="text-muted-foreground text-sm font-medium">{currentTrack?.album || "Album"}</p>
+          
+          {/* Audio Progress Bar */}
+          <div className="mt-4">
+            <div className="w-full bg-muted rounded-full h-1">
+              <div 
+                className="bg-metal-orange h-1 rounded-full transition-all duration-1000"
+                style={{ 
+                  width: currentTrack && currentTrack.currentTime && currentTrack.duration ? 
+                    `${(currentTrack.currentTime / currentTrack.duration) * 100}%` : 
+                    '60%' 
+                }}
+              ></div>
             </div>
-            <h3 className="font-bold text-lg mb-1 text-foreground">{currentTrack?.title || "Loading..."}</h3>
-            <p className="text-foreground">{currentTrack?.artist || "Artist"}</p>
-            <p className="text-muted-foreground text-sm">{currentTrack?.album || "Album"}</p>
-            
-            {/* Audio Progress Bar */}
-            <div className="mt-4">
-              <div className="w-full bg-muted rounded-full h-1">
-                <div 
-                  className="bg-metal-orange h-1 rounded-full transition-all duration-1000"
-                  style={{ 
-                    width: currentTrack && currentTrack.currentTime && currentTrack.duration ? 
-                      `${(currentTrack.currentTime / currentTrack.duration) * 100}%` : 
-                      '60%' 
-                  }}
-                ></div>
-              </div>
-              <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                <span>
-                  {currentTrack && currentTrack.currentTime ? 
-                    `${Math.floor(currentTrack.currentTime / 60)}:${(currentTrack.currentTime % 60).toString().padStart(2, '0')}` : 
-                    '2:34'
-                  }
-                </span>
-                <span>
-                  {currentTrack && currentTrack.duration ? 
-                    `${Math.floor(currentTrack.duration / 60)}:${(currentTrack.duration % 60).toString().padStart(2, '0')}` : 
-                    '4:12'
-                  }
-                </span>
-              </div>
+            <div className="flex justify-between text-xs text-muted-foreground mt-1">
+              <span>
+                {currentTrack && currentTrack.currentTime ? 
+                  `${Math.floor(currentTrack.currentTime / 60)}:${(currentTrack.currentTime % 60).toString().padStart(2, '0')}` : 
+                  '2:34'
+                }
+              </span>
+              <span>
+                {currentTrack && currentTrack.duration ? 
+                  `${Math.floor(currentTrack.duration / 60)}:${(currentTrack.duration % 60).toString().padStart(2, '0')}` : 
+                  '4:12'
+                }
+              </span>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12">

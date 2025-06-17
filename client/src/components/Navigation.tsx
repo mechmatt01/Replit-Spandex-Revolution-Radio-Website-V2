@@ -20,13 +20,13 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo & Brand */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-end space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-metal-orange to-metal-red rounded-lg flex items-center justify-center">
-              <Radio className="text-white text-lg" />
+              <Radio className="text-white h-5 w-5" />
             </div>
-            <div>
-              <h1 className="font-orbitron font-bold text-lg text-metal-orange">SPANDEX SALVATION</h1>
-              <p className="text-xs text-gray-400 -mt-1">RADIO</p>
+            <div className="flex items-end space-x-2">
+              <h1 className="font-orbitron font-bold text-lg text-metal-orange leading-none">SPANDEX SALVATION</h1>
+              <span className="font-orbitron font-bold text-sm text-metal-orange leading-none mb-0.5">RADIO</span>
             </div>
           </div>
 
@@ -59,7 +59,7 @@ export default function Navigation() {
           <div className="flex items-center space-x-4">
             <Button 
               onClick={togglePlayback}
-              className="bg-metal-orange hover:bg-orange-600 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 animate-glow"
+              className="bg-metal-orange hover:bg-orange-600 text-white px-6 py-2 rounded-full font-semibold transition-colors"
             >
               <Radio className="mr-2 h-4 w-4" />
               {isPlaying ? "PAUSE" : "TUNE IN LIVE"}

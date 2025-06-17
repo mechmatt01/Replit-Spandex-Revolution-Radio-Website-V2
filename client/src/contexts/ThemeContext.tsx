@@ -27,15 +27,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const root = document.documentElement;
     
     // Add transition class for smooth animation
-    root.style.transition = "background-color 0.3s ease, color 0.3s ease";
+    root.style.transition = "all 0.3s ease";
     
-    if (theme === "dark") {
-      root.classList.add("dark");
-      root.classList.remove("light");
-    } else {
-      root.classList.remove("dark");
+    // Remove any existing theme classes
+    root.classList.remove("light", "dark");
+    
+    if (theme === "light") {
       root.classList.add("light");
     }
+    // Dark is default, no class needed for dark theme
     
     // Save theme preference
     localStorage.setItem("theme", theme);
