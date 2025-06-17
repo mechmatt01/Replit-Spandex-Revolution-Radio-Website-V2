@@ -1,27 +1,16 @@
 import { 
-  users, 
-  submissions, 
-  contacts, 
-  showSchedules, 
-  pastShows, 
-  nowPlaying, 
-  streamStats, 
-  subscriptions,
-  type User, 
-  type InsertUser,
-  type Submission,
-  type InsertSubmission,
-  type Contact,
-  type InsertContact,
-  type ShowSchedule,
-  type InsertShowSchedule,
-  type PastShow,
-  type NowPlaying,
-  type InsertNowPlaying,
-  type StreamStats,
-  type Subscription,
-  type InsertSubscription
+  User, InsertUser, 
+  Submission, InsertSubmission,
+  Contact, InsertContact,
+  ShowSchedule, InsertShowSchedule,
+  PastShow,
+  NowPlaying, InsertNowPlaying,
+  StreamStats,
+  Subscription, InsertSubscription,
+  users, submissions, contacts, showSchedules, pastShows, nowPlaying, streamStats, subscriptions
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User management
@@ -61,302 +50,167 @@ export interface IStorage {
   createSubscription(subscription: InsertSubscription): Promise<Subscription>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User> = new Map();
-  private submissions: Map<number, Submission> = new Map();
-  private contacts: Map<number, Contact> = new Map();
-  private showSchedules: Map<number, ShowSchedule> = new Map();
-  private pastShows: Map<number, PastShow> = new Map();
-  private nowPlaying: NowPlaying | undefined;
-  private streamStats: StreamStats | undefined;
-  private subscriptions: Map<number, Subscription> = new Map();
-  
-  private currentUserId = 1;
-  private currentSubmissionId = 1;
-  private currentContactId = 1;
-  private currentScheduleId = 1;
-  private currentShowId = 1;
-  private currentStatsId = 1;
-  private currentSubscriptionId = 1;
-
-  constructor() {
-    // Initialize with default admin user
-    this.users.set(1, {
-      id: 1,
-      username: "admin",
-      password: "admin123", // In production, this should be hashed
-      isAdmin: true,
-      createdAt: new Date(),
-    });
-    this.currentUserId = 2;
-
-    // Initialize current track
-    this.nowPlaying = {
-      id: 1,
-      title: "Youth Gone Wild",
-      artist: "Skid Row",
-      album: "Skid Row",
-      duration: 252,
-      currentTime: 154,
-      isLive: true,
-      updatedAt: new Date(),
-    };
-
-    // Initialize stream stats
-    this.streamStats = {
-      id: 1,
-      currentListeners: 1247,
-      totalListeners: 45200,
-      countries: 52,
-      uptime: "99.9%",
-      updatedAt: new Date(),
-    };
-
-    // Initialize sample show schedules
-    this.showSchedules.set(1, {
-      id: 1,
-      title: "Metal Monday Madness",
-      description: "Kick off the week with the heaviest hits from the 80s and 90s metal scene.",
-      host: "Metal Mike",
-      dayOfWeek: "Monday",
-      time: "8:00 PM EST",
-      duration: 120,
-      isActive: true,
-    });
-
-    this.showSchedules.set(2, {
-      id: 2,
-      title: "Throwback Thursday",
-      description: "Deep cuts and rare gems from legendary metal bands you haven't heard in years.",
-      host: "Rockin' Rachel",
-      dayOfWeek: "Thursday",
-      time: "7:00 PM EST",
-      duration: 90,
-      isActive: true,
-    });
-
-    this.showSchedules.set(3, {
-      id: 3,
-      title: "Weekend Metal Mayhem",
-      description: "Two hours of non-stop metal anthems to fuel your weekend rebellion.",
-      host: "Headbanger Harry",
-      dayOfWeek: "Saturday",
-      time: "9:00 PM EST",
-      duration: 120,
-      isActive: true,
-    });
-
-    this.currentScheduleId = 4;
-
-    // Initialize past shows
-    this.pastShows.set(1, {
-      id: 1,
-      title: "Best of Skid Row",
-      description: "A comprehensive look at Skid Row's greatest hits and deep cuts.",
-      host: "Metal Mike",
-      date: new Date("2025-06-10"),
-      duration: 135,
-      audioUrl: null,
-    });
-
-    this.pastShows.set(2, {
-      id: 2,
-      title: "80s Metal Legends",
-      description: "Celebrating the pioneers of 80s metal music.",
-      host: "Rockin' Rachel",
-      date: new Date("2025-06-08"),
-      duration: 105,
-      audioUrl: null,
-    });
-
-    this.pastShows.set(3, {
-      id: 3,
-      title: "Hair Metal Classics",
-      description: "The biggest hair metal anthems of all time.",
-      host: "Headbanger Harry",
-      date: new Date("2025-06-05"),
-      duration: 150,
-      audioUrl: null,
-    });
-
-    this.currentShowId = 4;
-  }
-
-  // User methods
+export class DatabaseStorage implements IStorage {
+  // User management
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.username === username);
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = {
-      ...insertUser,
-      id,
-      isAdmin: false,
-      createdAt: new Date(),
-    };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
-  // Submission methods
+  // Submissions
   async getSubmissions(): Promise<Submission[]> {
-    return Array.from(this.submissions.values()).sort((a, b) => 
-      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
-    );
+    return await db.select().from(submissions).orderBy(desc(submissions.createdAt));
   }
 
   async getSubmissionById(id: number): Promise<Submission | undefined> {
-    return this.submissions.get(id);
+    const [submission] = await db.select().from(submissions).where(eq(submissions.id, id));
+    return submission || undefined;
   }
 
   async createSubmission(insertSubmission: InsertSubmission): Promise<Submission> {
-    const id = this.currentSubmissionId++;
-    const submission: Submission = {
-      id,
-      songTitle: insertSubmission.songTitle,
-      artistName: insertSubmission.artistName,
-      albumTitle: insertSubmission.albumTitle || null,
-      releaseYear: insertSubmission.releaseYear || null,
-      submitterName: insertSubmission.submitterName || null,
-      message: insertSubmission.message || null,
-      status: "pending",
-      createdAt: new Date(),
-    };
-    this.submissions.set(id, submission);
+    const [submission] = await db
+      .insert(submissions)
+      .values(insertSubmission)
+      .returning();
     return submission;
   }
 
   async updateSubmissionStatus(id: number, status: string): Promise<Submission | undefined> {
-    const submission = this.submissions.get(id);
-    if (!submission) return undefined;
-    
-    const updated = { ...submission, status };
-    this.submissions.set(id, updated);
-    return updated;
+    const [submission] = await db
+      .update(submissions)
+      .set({ status })
+      .where(eq(submissions.id, id))
+      .returning();
+    return submission || undefined;
   }
 
-  // Contact methods
+  // Contacts
   async getContacts(): Promise<Contact[]> {
-    return Array.from(this.contacts.values()).sort((a, b) => 
-      new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime()
-    );
+    return await db.select().from(contacts).orderBy(desc(contacts.createdAt));
   }
 
   async createContact(insertContact: InsertContact): Promise<Contact> {
-    const id = this.currentContactId++;
-    const contact: Contact = {
-      ...insertContact,
-      id,
-      createdAt: new Date(),
-    };
-    this.contacts.set(id, contact);
+    const [contact] = await db
+      .insert(contacts)
+      .values(insertContact)
+      .returning();
     return contact;
   }
 
-  // Show schedule methods
+  // Show schedules
   async getShowSchedules(): Promise<ShowSchedule[]> {
-    return Array.from(this.showSchedules.values());
+    return await db.select().from(showSchedules);
   }
 
   async getActiveShowSchedules(): Promise<ShowSchedule[]> {
-    return Array.from(this.showSchedules.values()).filter(schedule => schedule.isActive);
+    return await db.select().from(showSchedules).where(eq(showSchedules.isActive, true));
   }
 
   async createShowSchedule(insertSchedule: InsertShowSchedule): Promise<ShowSchedule> {
-    const id = this.currentScheduleId++;
-    const schedule: ShowSchedule = {
-      id,
-      title: insertSchedule.title,
-      description: insertSchedule.description || null,
-      host: insertSchedule.host || null,
-      dayOfWeek: insertSchedule.dayOfWeek,
-      time: insertSchedule.time,
-      duration: insertSchedule.duration || null,
-      isActive: true,
-    };
-    this.showSchedules.set(id, schedule);
+    const [schedule] = await db
+      .insert(showSchedules)
+      .values(insertSchedule)
+      .returning();
     return schedule;
   }
 
   async updateShowSchedule(id: number, updateData: Partial<InsertShowSchedule>): Promise<ShowSchedule | undefined> {
-    const schedule = this.showSchedules.get(id);
-    if (!schedule) return undefined;
-    
-    const updated = { ...schedule, ...updateData };
-    this.showSchedules.set(id, updated);
-    return updated;
+    const [schedule] = await db
+      .update(showSchedules)
+      .set(updateData)
+      .where(eq(showSchedules.id, id))
+      .returning();
+    return schedule || undefined;
   }
 
-  // Past shows methods
+  // Past shows
   async getPastShows(): Promise<PastShow[]> {
-    return Array.from(this.pastShows.values()).sort((a, b) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    return await db.select().from(pastShows).orderBy(desc(pastShows.date));
   }
 
-  // Now playing methods
+  // Now playing
   async getCurrentTrack(): Promise<NowPlaying | undefined> {
-    return this.nowPlaying;
+    const [track] = await db.select().from(nowPlaying).orderBy(desc(nowPlaying.updatedAt)).limit(1);
+    return track || undefined;
   }
 
   async updateNowPlaying(track: InsertNowPlaying): Promise<NowPlaying> {
-    this.nowPlaying = {
-      id: 1,
-      title: track.title,
-      artist: track.artist,
-      album: track.album || null,
-      duration: track.duration || null,
-      currentTime: track.currentTime || null,
-      isLive: true,
-      updatedAt: new Date(),
-    };
-    return this.nowPlaying;
+    // First, try to update the existing record
+    const existing = await this.getCurrentTrack();
+    if (existing) {
+      const [updated] = await db
+        .update(nowPlaying)
+        .set({ ...track, updatedAt: new Date() })
+        .where(eq(nowPlaying.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      // If no existing record, create a new one
+      const [created] = await db
+        .insert(nowPlaying)
+        .values(track)
+        .returning();
+      return created;
+    }
   }
 
-  // Stream stats methods
+  // Stream stats
   async getStreamStats(): Promise<StreamStats | undefined> {
-    return this.streamStats;
+    const [stats] = await db.select().from(streamStats).orderBy(desc(streamStats.updatedAt)).limit(1);
+    return stats || undefined;
   }
 
   async updateStreamStats(stats: Partial<StreamStats>): Promise<StreamStats> {
-    const currentStats = this.streamStats || {
-      id: 1,
-      currentListeners: 0,
-      totalListeners: 0,
-      countries: 0,
-      uptime: "99.9%",
-      updatedAt: new Date(),
-    };
-    
-    this.streamStats = {
-      ...currentStats,
-      ...stats,
-      updatedAt: new Date(),
-    };
-    return this.streamStats;
+    // First, try to update the existing record
+    const existing = await this.getStreamStats();
+    if (existing) {
+      const [updated] = await db
+        .update(streamStats)
+        .set({ ...stats, updatedAt: new Date() })
+        .where(eq(streamStats.id, existing.id))
+        .returning();
+      return updated;
+    } else {
+      // If no existing record, create a new one
+      const [created] = await db
+        .insert(streamStats)
+        .values({
+          currentListeners: 0,
+          totalListeners: 0,
+          countries: 0,
+          uptime: "99.9%",
+          ...stats
+        })
+        .returning();
+      return created;
+    }
   }
 
-  // Subscription methods
+  // Subscriptions
   async getSubscriptions(): Promise<Subscription[]> {
-    return Array.from(this.subscriptions.values());
+    return await db.select().from(subscriptions).orderBy(desc(subscriptions.createdAt));
   }
 
   async createSubscription(insertSubscription: InsertSubscription): Promise<Subscription> {
-    const id = this.currentSubscriptionId++;
-    const subscription: Subscription = {
-      ...insertSubscription,
-      id,
-      status: "active",
-      createdAt: new Date(),
-    };
-    this.subscriptions.set(id, subscription);
+    const [subscription] = await db
+      .insert(subscriptions)
+      .values(insertSubscription)
+      .returning();
     return subscription;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
