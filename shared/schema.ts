@@ -1,0 +1,150 @@
+import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  password: text("password").notNull(),
+  isAdmin: boolean("is_admin").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const submissions = pgTable("submissions", {
+  id: serial("id").primaryKey(),
+  songTitle: text("song_title").notNull(),
+  artistName: text("artist_name").notNull(),
+  albumTitle: text("album_title"),
+  releaseYear: integer("release_year"),
+  submitterName: text("submitter_name"),
+  message: text("message"),
+  status: text("status").default("pending"), // pending, approved, rejected
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const contacts = pgTable("contacts", {
+  id: serial("id").primaryKey(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  email: text("email").notNull(),
+  subject: text("subject").notNull(),
+  message: text("message").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const showSchedules = pgTable("show_schedules", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  host: text("host"),
+  dayOfWeek: text("day_of_week").notNull(),
+  time: text("time").notNull(),
+  duration: integer("duration"), // in minutes
+  isActive: boolean("is_active").default(true),
+});
+
+export const pastShows = pgTable("past_shows", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  host: text("host"),
+  date: timestamp("date").notNull(),
+  duration: integer("duration"), // in minutes
+  audioUrl: text("audio_url"),
+});
+
+export const nowPlaying = pgTable("now_playing", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  artist: text("artist").notNull(),
+  album: text("album"),
+  duration: integer("duration"), // in seconds
+  currentTime: integer("current_time").default(0),
+  isLive: boolean("is_live").default(true),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const streamStats = pgTable("stream_stats", {
+  id: serial("id").primaryKey(),
+  currentListeners: integer("current_listeners").default(0),
+  totalListeners: integer("total_listeners").default(0),
+  countries: integer("countries").default(0),
+  uptime: text("uptime").default("99.9%"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const subscriptions = pgTable("subscriptions", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull(),
+  plan: text("plan").notNull(), // rebel, legend, icon
+  status: text("status").default("active"), // active, cancelled, expired
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Insert schemas
+export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
+  password: true,
+});
+
+export const insertSubmissionSchema = createInsertSchema(submissions).pick({
+  songTitle: true,
+  artistName: true,
+  albumTitle: true,
+  releaseYear: true,
+  submitterName: true,
+  message: true,
+});
+
+export const insertContactSchema = createInsertSchema(contacts).pick({
+  firstName: true,
+  lastName: true,
+  email: true,
+  subject: true,
+  message: true,
+});
+
+export const insertShowScheduleSchema = createInsertSchema(showSchedules).pick({
+  title: true,
+  description: true,
+  host: true,
+  dayOfWeek: true,
+  time: true,
+  duration: true,
+});
+
+export const insertNowPlayingSchema = createInsertSchema(nowPlaying).pick({
+  title: true,
+  artist: true,
+  album: true,
+  duration: true,
+  currentTime: true,
+});
+
+export const insertSubscriptionSchema = createInsertSchema(subscriptions).pick({
+  email: true,
+  plan: true,
+});
+
+// Types
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+
+export type Submission = typeof submissions.$inferSelect;
+export type InsertSubmission = z.infer<typeof insertSubmissionSchema>;
+
+export type Contact = typeof contacts.$inferSelect;
+export type InsertContact = z.infer<typeof insertContactSchema>;
+
+export type ShowSchedule = typeof showSchedules.$inferSelect;
+export type InsertShowSchedule = z.infer<typeof insertShowScheduleSchema>;
+
+export type PastShow = typeof pastShows.$inferSelect;
+
+export type NowPlaying = typeof nowPlaying.$inferSelect;
+export type InsertNowPlaying = z.infer<typeof insertNowPlayingSchema>;
+
+export type StreamStats = typeof streamStats.$inferSelect;
+
+export type Subscription = typeof subscriptions.$inferSelect;
+export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;

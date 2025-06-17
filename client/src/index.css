@@ -1,0 +1,178 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+
+  /* Metal theme colors */
+  --metal-orange: hsl(15, 100%, 60%);
+  --metal-gold: hsl(45, 100%, 62%);
+  --metal-red: hsl(0, 73%, 57%);
+  --dark-bg: hsl(0, 0%, 5%);
+  --dark-surface: hsl(0, 0%, 10%);
+  --dark-border: hsl(0, 0%, 20%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  /* Custom metal theme classes */
+  .text-metal-orange {
+    color: var(--metal-orange);
+  }
+
+  .text-metal-gold {
+    color: var(--metal-gold);
+  }
+
+  .text-metal-red {
+    color: var(--metal-red);
+  }
+
+  .bg-metal-orange {
+    background-color: var(--metal-orange);
+  }
+
+  .bg-metal-gold {
+    background-color: var(--metal-gold);
+  }
+
+  .bg-metal-red {
+    background-color: var(--metal-red);
+  }
+
+  .bg-dark-bg {
+    background-color: var(--dark-bg);
+  }
+
+  .bg-dark-surface {
+    background-color: var(--dark-surface);
+  }
+
+  .border-dark-border {
+    border-color: var(--dark-border);
+  }
+
+  .border-metal-orange {
+    border-color: var(--metal-orange);
+  }
+
+  .border-metal-gold {
+    border-color: var(--metal-gold);
+  }
+
+  .border-metal-red {
+    border-color: var(--metal-red);
+  }
+
+  /* Hover variants */
+  .hover\:bg-orange-600:hover {
+    background-color: hsl(15, 100%, 50%);
+  }
+
+  .hover\:bg-yellow-500:hover {
+    background-color: hsl(45, 100%, 50%);
+  }
+
+  .hover\:bg-red-600:hover {
+    background-color: hsl(0, 73%, 50%);
+  }
+
+  .hover\:text-orange-400:hover {
+    color: hsl(15, 100%, 70%);
+  }
+
+  .hover\:text-yellow-400:hover {
+    color: hsl(45, 100%, 70%);
+  }
+
+  .hover\:text-red-400:hover {
+    color: hsl(0, 73%, 70%);
+  }
+
+  /* Orbitron font for headings */
+  .font-orbitron {
+    font-family: 'Orbitron', monospace;
+  }
+
+  /* Custom animations */
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 5px var(--metal-orange), 0 0 10px var(--metal-orange);
+    }
+    100% {
+      box-shadow: 0 0 10px var(--metal-orange), 0 0 20px var(--metal-orange), 0 0 30px var(--metal-orange);
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Responsive text sizes for mobile */
+  @media (max-width: 768px) {
+    .text-4xl {
+      font-size: 2.5rem;
+    }
+    
+    .text-7xl {
+      font-size: 3.5rem;
+    }
+  }
+}
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
