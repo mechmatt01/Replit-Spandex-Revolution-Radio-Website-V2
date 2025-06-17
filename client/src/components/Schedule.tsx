@@ -49,12 +49,12 @@ export default function Schedule() {
                 <Card key={show.id} className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-semibold text-lg">{show.title}</h4>
-                      <span className="text-metal-orange text-sm font-semibold">{show.time}</span>
+                      <h4 className="font-black text-lg">{show.title}</h4>
+                      <span className="text-metal-orange text-sm font-bold">{show.time}</span>
                     </div>
-                    <p className="text-gray-400 text-sm mb-2">{show.description}</p>
+                    <p className="text-gray-400 text-sm font-semibold mb-2">{show.description}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500 text-xs">Hosted by: {show.host}</span>
+                      <span className="text-gray-500 text-xs font-semibold">Hosted by: {show.host}</span>
                       <div className="flex items-center space-x-2">
                         <Calendar className="text-gray-500 h-3 w-3" />
                         <span className="text-gray-500 text-xs">{show.dayOfWeek}</span>
@@ -68,15 +68,15 @@ export default function Schedule() {
 
           {/* Past Shows Archive */}
           <div>
-            <h3 className="font-bold text-xl mb-6 text-metal-gold">Past Shows</h3>
+            <h3 className="font-black text-xl mb-6 text-metal-gold">Past Shows</h3>
             <div className="space-y-4">
               {pastShows.slice(0, 5).map((show) => (
-                <Card key={show.id} className="bg-dark-bg border-dark-border">
+                <Card key={show.id} className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
                   <CardContent className="p-4">
-                    <h4 className="font-semibold mb-2">{show.title}</h4>
-                    <p className="text-gray-400 text-sm mb-2">{formatDate(show.date)}</p>
+                    <h4 className="font-black mb-2">{show.title}</h4>
+                    <p className="text-gray-400 text-sm font-semibold mb-2">{formatDate(show.date)}</p>
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500 text-xs">
+                      <span className="text-gray-500 text-xs font-semibold">
                         {show.duration ? formatDuration(show.duration) : "N/A"}
                       </span>
                       <Button 

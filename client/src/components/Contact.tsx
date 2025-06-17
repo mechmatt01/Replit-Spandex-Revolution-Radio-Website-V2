@@ -62,19 +62,19 @@ export default function Contact() {
     <section id="contact" className="py-20 bg-dark-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="font-orbitron font-bold text-3xl md:text-4xl mb-4 text-white">
+          <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-white">
             GET IN TOUCH
           </h2>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-400 text-lg font-semibold">
             Have questions, feedback, or want to collaborate? We'd love to hear from you.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Contact Form */}
-          <Card className="bg-dark-surface border-dark-border">
+          <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300">
             <CardContent className="p-8">
-              <h3 className="font-bold text-xl mb-6 text-metal-orange">Send us a Message</h3>
+              <h3 className="font-black text-xl mb-6 text-metal-orange">Send us a Message</h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -86,7 +86,7 @@ export default function Contact() {
                       onChange={(e) => handleInputChange("firstName", e.target.value)}
                       placeholder="John"
                       required
-                      className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
+                      className="bg-dark-bg/50 text-white placeholder-gray-500 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
                     />
                   </div>
                   <div>
@@ -97,7 +97,7 @@ export default function Contact() {
                       onChange={(e) => handleInputChange("lastName", e.target.value)}
                       placeholder="Doe"
                       required
-                      className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
+                      className="bg-dark-bg/50 text-white placeholder-gray-500 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
                     />
                   </div>
                 </div>
@@ -111,17 +111,17 @@ export default function Contact() {
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     placeholder="john@example.com"
                     required
-                    className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
+                    className="bg-dark-bg/50 text-white placeholder-gray-500 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
                   />
                 </div>
 
                 <div>
                   <Label htmlFor="subject" className="text-gray-300 font-semibold">Subject *</Label>
                   <Select value={formData.subject} onValueChange={(value) => handleInputChange("subject", value)}>
-                    <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange">
+                    <SelectTrigger className="bg-dark-bg/50 text-white focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50">
                       <SelectValue placeholder="Select a subject" />
                     </SelectTrigger>
-                    <SelectContent className="bg-dark-bg border-dark-border">
+                    <SelectContent className="bg-dark-bg/90">
                       <SelectItem value="general">General Inquiry</SelectItem>
                       <SelectItem value="technical">Technical Support</SelectItem>
                       <SelectItem value="partnership">Partnership/Collaboration</SelectItem>
@@ -140,7 +140,7 @@ export default function Contact() {
                     placeholder="Tell us what's on your mind..."
                     rows={5}
                     required
-                    className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange resize-none"
+                    className="bg-dark-bg/50 text-white placeholder-gray-500 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50 resize-none"
                   />
                 </div>
 
