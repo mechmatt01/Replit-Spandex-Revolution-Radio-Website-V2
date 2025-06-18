@@ -147,7 +147,7 @@ export default function Hero() {
 
         {/* Live Radio Player */}
         <div className="flex flex-col items-center justify-center space-y-6 mb-12">
-          <FinalRadioPlayer />
+          <WorkingRadioPlayer />
           <Button 
             onClick={scrollToSchedule}
             variant="outline"
