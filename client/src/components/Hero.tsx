@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Play, Calendar, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
+import IcecastPlayer from "@/components/IcecastPlayer";
 
 export default function Hero() {
   const { currentTrack, togglePlayback } = useAudio();
@@ -147,15 +148,9 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12">
-          <Button 
-            onClick={togglePlayback}
-            className="bg-metal-orange hover:bg-orange-600 text-white px-8 py-4 rounded-full font-bold text-lg transition-colors"
-          >
-            <Play className="mr-3 h-5 w-5" />
-            START STREAMING
-          </Button>
+        {/* Live Radio Player */}
+        <div className="flex flex-col items-center justify-center space-y-6 mb-12">
+          <IcecastPlayer className="justify-center" />
           <Button 
             onClick={scrollToSchedule}
             variant="outline"

@@ -149,6 +149,7 @@ The application uses PostgreSQL with the following main entities:
 - June 18, 2025: Security vulnerability CVE-2025-30208 patched by updating Vite from 5.4.14 to 5.4.15
 - June 18, 2025: Integrated live AutoDJ radio stream data displaying real-time track information from http://168.119.74.185:9858/status-json.xsl
 - June 18, 2025: Home page play button now shows authentic live radio data instead of static placeholder content
+- June 18, 2025: Implemented inline Icecast player streaming directly from http://168.119.74.185:9858/autodj with volume controls and live indicators
 
 ## User Preferences
 

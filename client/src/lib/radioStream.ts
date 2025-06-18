@@ -75,20 +75,37 @@ class RadioStreamAPI {
   initializePlayer(): HTMLAudioElement {
     if (!this.audio) {
       this.audio = new Audio();
-      this.audio.crossOrigin = "anonymous";
       this.audio.preload = 'none';
       
+      // Icecast streams work better without crossOrigin for same-domain requests
+      // this.audio.crossOrigin = "anonymous";
+      
       this.audio.addEventListener('error', (e) => {
-        console.error('Radio stream error:', e);
+        console.error('Icecast stream error:', e);
         this.isPlaying = false;
       });
 
       this.audio.addEventListener('canplay', () => {
-        console.log('Radio stream ready to play');
+        console.log('Icecast stream ready to play');
       });
 
       this.audio.addEventListener('loadstart', () => {
-        console.log('Loading radio stream...');
+        console.log('Loading Icecast stream...');
+      });
+
+      this.audio.addEventListener('playing', () => {
+        console.log('Icecast stream is playing');
+        this.isPlaying = true;
+      });
+
+      this.audio.addEventListener('pause', () => {
+        console.log('Icecast stream paused');
+        this.isPlaying = false;
+      });
+
+      this.audio.addEventListener('ended', () => {
+        console.log('Icecast stream ended');
+        this.isPlaying = false;
       });
     }
     return this.audio;
@@ -97,13 +114,36 @@ class RadioStreamAPI {
   // Start playing the live stream
   async play(): Promise<boolean> {
     try {
-      // Open radio stream in new window/tab to avoid CORS issues
-      window.open(RADIO_STREAM_URL, '_blank');
+      const audio = this.initializePlayer();
+      
+      // Set up Icecast stream with proper headers
+      audio.src = RADIO_STREAM_URL;
+      audio.load();
+      
+      // Wait for audio to be ready and then play
+      await new Promise((resolve, reject) => {
+        const onCanPlay = () => {
+          audio.removeEventListener('canplay', onCanPlay);
+          audio.removeEventListener('error', onError);
+          resolve(true);
+        };
+        
+        const onError = (e: any) => {
+          audio.removeEventListener('canplay', onCanPlay);
+          audio.removeEventListener('error', onError);
+          reject(e);
+        };
+        
+        audio.addEventListener('canplay', onCanPlay);
+        audio.addEventListener('error', onError);
+      });
+      
+      await audio.play();
       this.isPlaying = true;
-      console.log('Radio stream opened in new tab');
+      console.log('Icecast radio stream started');
       return true;
     } catch (error) {
-      console.error('Failed to open radio stream:', error);
+      console.error('Failed to start Icecast stream:', error);
       this.isPlaying = false;
       return false;
     }
