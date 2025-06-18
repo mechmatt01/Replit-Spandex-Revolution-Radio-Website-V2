@@ -142,10 +142,13 @@ The application uses PostgreSQL with the following main entities:
 - June 17, 2025: Hero text theming - updated main title to display black in light mode and white in dark mode
 - June 17, 2025: Hero text layout - moved "Join the hairspray rebellion!" to new line below main description
 - June 18, 2025: Fixed theme toggle icon display issue - sun icon now properly visible in dark mode with inline orange color styling
-- June 18, 2025: Implemented working audio playback system with accessible Google audio sources to resolve CORS restrictions
+- June 18, 2025: Implemented working audio playbook system with accessible Google audio sources to resolve CORS restrictions
 - June 18, 2025: Complete Spotify Web API integration implemented with authentication flow, Web Playback SDK, and server-side token endpoints
 - June 18, 2025: Added dedicated music page with live stream and Spotify streaming options
 - June 18, 2025: Fixed theme toggle icon centering with perfect positioning using translate transforms
+- June 18, 2025: Security vulnerability CVE-2025-30208 patched by updating Vite from 5.4.14 to 5.4.15
+- June 18, 2025: Integrated live AutoDJ radio stream data displaying real-time track information from http://168.119.74.185:9858/status-json.xsl
+- June 18, 2025: Home page play button now shows authentic live radio data instead of static placeholder content
 
 ## User Preferences
 

@@ -29,14 +29,19 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Fetch live radio stream track info
-  const { data: radioTrack } = useQuery<LiveTrackInfo>({
-    queryKey: ["/api/radio-track"],
+  useQuery({
+    queryKey: ["/api/radio-status"],
     queryFn: async () => {
-      const trackInfo = await radioStreamAPI.getCurrentTrack();
-      if (trackInfo) {
-        setLiveTrackInfo(trackInfo);
+      try {
+        const trackInfo = await radioStreamAPI.getCurrentTrack();
+        if (trackInfo) {
+          setLiveTrackInfo(trackInfo);
+        }
+        return trackInfo;
+      } catch (error) {
+        console.error('Error fetching radio track:', error);
+        return null;
       }
-      return trackInfo;
     },
     refetchInterval: 10000,
   });
@@ -48,7 +53,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   });
 
   // Use priority: Spotify track > Live radio track > fallback track
-  const currentTrack = spotifyTrack || liveTrackInfo || radioTrack || fallbackTrack || null;
+  const currentTrack = spotifyTrack || liveTrackInfo || fallbackTrack || null;
 
   useEffect(() => {
     // Initialize audio element for live streaming
@@ -153,6 +158,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     currentTrackIndex,
     setSpotifyTrack,
     spotifyTrack,
+    liveTrackInfo,
   };
 
   return (

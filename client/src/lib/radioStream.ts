@@ -97,15 +97,13 @@ class RadioStreamAPI {
   // Start playing the live stream
   async play(): Promise<boolean> {
     try {
-      const audio = this.initializePlayer();
-      audio.src = RADIO_STREAM_URL;
-      
-      await audio.play();
+      // Open radio stream in new window/tab to avoid CORS issues
+      window.open(RADIO_STREAM_URL, '_blank');
       this.isPlaying = true;
-      console.log('Radio stream started');
+      console.log('Radio stream opened in new tab');
       return true;
     } catch (error) {
-      console.error('Failed to start radio stream:', error);
+      console.error('Failed to open radio stream:', error);
       this.isPlaying = false;
       return false;
     }
