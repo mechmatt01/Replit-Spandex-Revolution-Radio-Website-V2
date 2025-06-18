@@ -32,10 +32,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // Remove any existing theme classes
     root.classList.remove("light", "dark");
     
-    if (theme === "light") {
+    if (theme === "dark") {
+      root.classList.add("dark");
+    } else {
       root.classList.add("light");
     }
-    // Dark is default, no class needed for dark theme
     
     // Save theme preference
     localStorage.setItem("theme", theme);

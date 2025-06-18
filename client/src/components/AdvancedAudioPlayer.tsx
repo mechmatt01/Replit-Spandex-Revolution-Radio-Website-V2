@@ -6,7 +6,6 @@ import {
   Music, Clock, Radio as RadioIcon, Headphones
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { useAudio } from "@/contexts/AudioContext";
@@ -233,7 +232,7 @@ export default function AdvancedAudioPlayer() {
   return (
     <div className="space-y-6">
       {/* Main Player */}
-      <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 p-6">
+      <div className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 p-6 rounded-lg border border-gray-800">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
             {/* Track Info */}
             <div className="flex items-center space-x-4">
@@ -371,8 +370,7 @@ export default function AdvancedAudioPlayer() {
       {showPlaylist && (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Playlist Selector */}
-          <Card className="bg-dark-bg/50">
-            <CardContent className="p-4">
+          <div className="bg-dark-bg/50 rounded-lg border border-gray-800 p-4"></div>
               <h3 className="font-black text-white mb-4">Playlists</h3>
               <div className="space-y-2">
                 {playlists.map((playlist) => (
@@ -400,13 +398,11 @@ export default function AdvancedAudioPlayer() {
                   </button>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+          </div>
 
           {/* Track List */}
           <div className="lg:col-span-3">
-            <Card className="bg-dark-bg/50">
-              <CardContent className="p-4">
+            <div className="bg-dark-bg/50 rounded-lg border border-gray-800 p-4"></div>
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="font-black text-white">{activePlaylist.name}</h3>
@@ -482,8 +478,7 @@ export default function AdvancedAudioPlayer() {
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+            </div>
           </div>
         </div>
       )}
