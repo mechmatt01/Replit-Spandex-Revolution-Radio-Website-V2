@@ -35,6 +35,7 @@ class SpotifyAPI {
   private refreshToken: string | null = null;
   private player: any = null;
   private deviceId: string | null = null;
+  private deviceId: string | null = null;
 
   constructor() {
     // Check for existing tokens in localStorage
@@ -204,6 +205,97 @@ class SpotifyAPI {
 
   private setupPlayer() {
     if (!this.accessToken) return;
+
+    const token = this.accessToken;
+    
+    this.player = new window.Spotify.Player({
+      name: 'Metal Radio Player',
+      getOAuthToken: (cb: (token: string) => void) => {
+        cb(token);
+      },
+      volume: 0.5
+    });
+
+    // Error handling
+    this.player.addListener('initialization_error', ({ message }: any) => {
+      console.error('Failed to initialize:', message);
+    });
+
+    this.player.addListener('authentication_error', ({ message }: any) => {
+      console.error('Failed to authenticate:', message);
+    });
+
+    this.player.addListener('account_error', ({ message }: any) => {
+      console.error('Failed to validate Spotify account:', message);
+    });
+
+    this.player.addListener('playback_error', ({ message }: any) => {
+      console.error('Failed to perform playback:', message);
+    });
+
+    // Playback status updates
+    this.player.addListener('player_state_changed', (state: any) => {
+      if (!state) return;
+      
+      console.log('Player state changed:', state);
+    });
+
+    // Ready
+    this.player.addListener('ready', ({ device_id }: any) => {
+      console.log('Ready with Device ID', device_id);
+      this.deviceId = device_id;
+    });
+
+    // Not Ready
+    this.player.addListener('not_ready', ({ device_id }: any) => {
+      console.log('Device ID has gone offline', device_id);
+    });
+
+    // Connect to the player!
+    this.player.connect().then((success: boolean) => {
+      if (success) {
+        console.log('The Web Playback SDK successfully connected to Spotify!');
+      }
+    });
+  }
+
+  // Play a track using the Web API (more reliable than SDK)
+  async playTrack(uri: string): Promise<boolean> {
+    try {
+      const body: any = {
+        uris: [uri],
+        position_ms: 0
+      };
+
+      // If we have a device ID, use it
+      if (this.deviceId) {
+        body.device_id = this.deviceId;
+      }
+
+      const response = await this.apiRequest('/me/player/play', {
+        method: 'PUT',
+        body: JSON.stringify(body)
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Error playing track:', error);
+      // Fallback: try without device ID
+      try {
+        await this.apiRequest('/me/player/play', {
+          method: 'PUT',
+          body: JSON.stringify({
+            uris: [uri],
+            position_ms: 0
+          })
+        });
+        return true;
+      } catch (fallbackError) {
+        console.error('Fallback play also failed:', fallbackError);
+        return false;
+      }
+    }
+  }
 
     this.player = new window.Spotify.Player({
       name: 'Spandex Salvation Radio',

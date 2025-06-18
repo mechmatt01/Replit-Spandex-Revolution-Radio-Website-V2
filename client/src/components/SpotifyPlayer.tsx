@@ -13,6 +13,11 @@ interface SpotifyPlayerProps {
 export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [localIsPlaying, setLocalIsPlaying] = useState(false);
+
+  // Sync local playing state with global context
+  useEffect(() => {
+    setLocalIsPlaying(isPlaying && !!spotifyTrack);
+  }, [isPlaying, spotifyTrack]);
   const [currentTrack, setCurrentTrack] = useState<SpotifyTrack | null>(null);
   const [playlists, setPlaylists] = useState<SpotifyPlaylist[]>([]);
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
@@ -144,9 +149,11 @@ export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
     if (!currentTrack) return;
 
     try {
-      if (localIsPlaying) {
-        await spotifyAPI.pause();
-        setLocalIsPlaying(false);
+      if (isPlaying) {
+        const success = await spotifyAPI.pause();
+        if (success) {
+          setLocalIsPlaying(false);
+        }
       } else {
         if (currentTrack.uri) {
           const success = await spotifyAPI.playTrack(currentTrack.uri);
@@ -159,7 +166,7 @@ export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
       console.error('Playback error:', error);
       toast({
         title: "Playback Error",
-        description: "Could not control playback.",
+        description: "Could not control playback. Make sure Spotify is open and try again.",
         variant: "destructive"
       });
     }

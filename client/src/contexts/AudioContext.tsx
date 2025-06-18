@@ -74,18 +74,23 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     if (spotifyTrack && spotifyAPI.isAuthenticated()) {
       try {
         if (isPlaying) {
-          await spotifyAPI.pause();
-          setIsPlaying(false);
+          const success = await spotifyAPI.pause();
+          if (success) {
+            setIsPlaying(false);
+          }
         } else {
           if (spotifyTrack.uri) {
             const success = await spotifyAPI.playTrack(spotifyTrack.uri);
             if (success) {
               setIsPlaying(true);
+            } else {
+              console.error('Failed to start Spotify playback');
             }
           }
         }
       } catch (error) {
         console.error('Spotify playback error:', error);
+        setIsPlaying(false);
       }
       return;
     }
