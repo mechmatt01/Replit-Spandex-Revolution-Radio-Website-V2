@@ -1,10 +1,11 @@
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { spotifyAPI, type SpotifyTrack } from "@/lib/spotify";
+import { radioStreamAPI, type LiveTrackInfo } from "@/lib/radioStream";
 import type { NowPlaying } from "@shared/schema";
 
 interface AudioContextType {
-  currentTrack: NowPlaying | SpotifyTrack | null;
+  currentTrack: NowPlaying | SpotifyTrack | LiveTrackInfo | null;
   isPlaying: boolean;
   volume: number;
   togglePlayback: () => void;
@@ -14,6 +15,7 @@ interface AudioContextType {
   currentTrackIndex: number;
   setSpotifyTrack: (track: SpotifyTrack | null) => void;
   spotifyTrack: SpotifyTrack | null;
+  liveTrackInfo: LiveTrackInfo | null;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -23,16 +25,30 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const [volume, setVolume] = useState(50);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [spotifyTrack, setSpotifyTrack] = useState<SpotifyTrack | null>(null);
+  const [liveTrackInfo, setLiveTrackInfo] = useState<LiveTrackInfo | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Fetch current track from API for display purposes
-  const { data: liveTrack } = useQuery<NowPlaying>({
+  // Fetch live radio stream track info
+  const { data: radioTrack } = useQuery<LiveTrackInfo>({
+    queryKey: ["/api/radio-track"],
+    queryFn: async () => {
+      const trackInfo = await radioStreamAPI.getCurrentTrack();
+      if (trackInfo) {
+        setLiveTrackInfo(trackInfo);
+      }
+      return trackInfo;
+    },
+    refetchInterval: 10000,
+  });
+
+  // Fetch fallback track from API for display purposes
+  const { data: fallbackTrack } = useQuery<NowPlaying>({
     queryKey: ["/api/now-playing"],
     refetchInterval: 10000,
   });
 
-  // Use Spotify track if available, otherwise use live track
-  const currentTrack = spotifyTrack || liveTrack || null;
+  // Use priority: Spotify track > Live radio track > fallback track
+  const currentTrack = spotifyTrack || liveTrackInfo || radioTrack || fallbackTrack || null;
 
   useEffect(() => {
     // Initialize audio element for live streaming
@@ -95,19 +111,18 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    // Fall back to live stream
-    if (!audioRef.current) return;
-
-    if (isPlaying) {
-      audioRef.current.pause();
+    // Use live radio stream
+    try {
+      const success = await radioStreamAPI.togglePlayback();
+      setIsPlaying(success);
+      if (success) {
+        console.log('Live radio stream started');
+      } else {
+        console.log('Live radio stream stopped');
+      }
+    } catch (error) {
+      console.error('Live radio stream error:', error);
       setIsPlaying(false);
-    } else {
-      console.log('Live stream playback would start here');
-      setIsPlaying(true);
-      
-      setTimeout(() => {
-        console.log('Simulated live stream playing...');
-      }, 1000);
     }
   };
 

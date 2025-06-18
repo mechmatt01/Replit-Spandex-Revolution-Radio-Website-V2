@@ -144,6 +144,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Live Radio Stream Status API
+  app.get("/api/radio-status", async (req, res) => {
+    try {
+      const response = await fetch("http://168.119.74.185:9858/status-json.xsl");
+      if (!response.ok) {
+        throw new Error("Failed to fetch radio status");
+      }
+      const data = await response.json();
+      res.json(data);
+    } catch (error: any) {
+      console.error("Radio status error:", error);
+      res.status(500).json({ error: "Failed to fetch radio status" });
+    }
+  });
+
   // Subscriptions API
   app.post("/api/subscriptions", async (req, res) => {
     try {
