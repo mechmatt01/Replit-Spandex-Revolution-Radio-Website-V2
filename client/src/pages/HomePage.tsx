@@ -16,7 +16,7 @@ import AdvancedAdminDashboard from "@/components/AdvancedAdminDashboard";
 import AdvancedAudioPlayer from "@/components/AdvancedAudioPlayer";
 import Footer from "@/components/Footer";
 import StickyPlayer from "@/components/StickyPlayer";
-import ThemeToggle from "@/components/ThemeToggle";
+
 
 export default function HomePage() {
   return (
@@ -51,7 +51,7 @@ export default function HomePage() {
       <AdvancedAdminDashboard />
       <Footer />
       <StickyPlayer />
-      <ThemeToggle />
+
     </div>
   );
 }

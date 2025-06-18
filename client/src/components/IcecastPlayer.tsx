@@ -3,7 +3,7 @@ import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 
-const ICECAST_STREAM_URL = "http://168.119.74.185:9858/autodj";
+const ICECAST_STREAM_URL = "/api/stream";
 
 interface IcecastPlayerProps {
   className?: string;
@@ -91,15 +91,24 @@ export default function IcecastPlayer({ className = "" }: IcecastPlayerProps) {
     try {
       if (isPlaying) {
         audio.pause();
+        setIsPlaying(false);
       } else {
-        // Reset audio source to ensure fresh connection
+        setIsLoading(true);
+        setError(null);
+        
+        // Set the stream URL and load
         audio.src = ICECAST_STREAM_URL;
         audio.load();
-        await audio.play();
+        
+        // Attempt to play with better error handling
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Playback error:', error);
-      setError('Playback failed');
+      setError('Unable to connect to live stream');
       setIsPlaying(false);
       setIsLoading(false);
     }
