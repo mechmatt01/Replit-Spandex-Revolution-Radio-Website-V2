@@ -157,7 +157,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Simplified radio stream proxy
+  // Simplified radio stream proxy using fetch
   app.get("/api/radio-stream", async (req, res) => {
     try {
       const streamUrl = "http://168.119.74.185:9858/autodj";
@@ -170,58 +170,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.setHeader("Cache-Control", "no-cache");
       res.setHeader("Connection", "keep-alive");
       
-      console.log(`Streaming from: ${streamUrl}`);
+      console.log(`Proxying stream from: ${streamUrl}`);
       
-      // Create a simple HTTP request to the radio stream
-      const https = require('https');
-      const http = require('http');
-      const url = require('url');
+      const response = await fetch(streamUrl);
       
-      const parsedUrl = url.parse(streamUrl);
-      const protocol = parsedUrl.protocol === 'https:' ? https : http;
+      if (!response.ok) {
+        throw new Error(`Stream returned status ${response.status}`);
+      }
       
-      const request = protocol.get(streamUrl, (streamResponse: any) => {
-        if (streamResponse.statusCode !== 200) {
-          throw new Error(`Stream returned status ${streamResponse.statusCode}`);
-        }
-        
-        // Set content type based on response
-        if (streamResponse.headers['content-type']) {
-          res.setHeader("Content-Type", streamResponse.headers['content-type']);
-        }
-        
-        // Handle client disconnect
-        req.on('close', () => {
-          console.log('Client disconnected from stream');
-          streamResponse.destroy();
-        });
-        
-        // Pipe the stream directly
-        streamResponse.pipe(res);
-        
-        streamResponse.on('error', (error: any) => {
-          console.error('Stream response error:', error);
-          if (!res.headersSent) {
-            res.status(503).end();
+      if (!response.body) {
+        throw new Error("No stream body available");
+      }
+      
+      // Handle client disconnect
+      req.on('close', () => {
+        console.log('Client disconnected from stream');
+      });
+      
+      // Stream the response
+      const reader = response.body.getReader();
+      
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          
+          if (done) break;
+          
+          if (!res.writableEnded) {
+            res.write(value);
+          } else {
+            break;
           }
-        });
-        
-      });
-      
-      request.on('error', (error: any) => {
-        console.error('Stream request error:', error);
-        if (!res.headersSent) {
-          res.status(503).end('Stream connection failed');
         }
-      });
-      
-      request.setTimeout(10000, () => {
-        console.error('Stream request timeout');
-        request.destroy();
-        if (!res.headersSent) {
-          res.status(503).end('Stream timeout');
+      } catch (streamError) {
+        console.error('Stream error:', streamError);
+      } finally {
+        reader.releaseLock();
+        if (!res.writableEnded) {
+          res.end();
         }
-      });
+      }
       
     } catch (error: any) {
       console.error("Radio stream proxy error:", error);

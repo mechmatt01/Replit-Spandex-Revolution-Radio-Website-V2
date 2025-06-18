@@ -1,96 +1,68 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Play, Pause, Volume2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function SimpleStreamPlayer() {
+export default function WorkingRadioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [volume, setVolume] = useState(0.7);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    audio.volume = volume;
-    audio.crossOrigin = "anonymous";
-    audio.preload = "none";
-
-    const handleLoadStart = () => {
-      setIsLoading(true);
-      setError(null);
-    };
-
-    const handleCanPlay = () => {
-      setIsLoading(false);
-      setError(null);
-    };
-
-    const handlePlay = () => {
-      setIsPlaying(true);
-      setIsLoading(false);
-      setError(null);
-    };
-
-    const handlePause = () => {
-      setIsPlaying(false);
-      setIsLoading(false);
-    };
-
-    const handleError = () => {
-      setIsPlaying(false);
-      setIsLoading(false);
-      setError('Stream connection failed');
-    };
-
-    const handleAbort = () => {
-      setIsPlaying(false);
-      setIsLoading(false);
-    };
-
-    audio.addEventListener('loadstart', handleLoadStart);
-    audio.addEventListener('canplay', handleCanPlay);
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('error', handleError);
-    audio.addEventListener('abort', handleAbort);
-
-    return () => {
-      audio.removeEventListener('loadstart', handleLoadStart);
-      audio.removeEventListener('canplay', handleCanPlay);
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('error', handleError);
-      audio.removeEventListener('abort', handleAbort);
-    };
-  }, [volume]);
-
-  const togglePlayback = async () => {
+  const togglePlayback = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
     try {
       if (isPlaying) {
         audio.pause();
+        setIsPlaying(false);
       } else {
         setIsLoading(true);
         setError(null);
         
-        // Try direct stream URL first
-        const streamUrl = `http://168.119.74.185:9858/autodj?t=${Date.now()}`;
+        // Direct stream connection
+        const streamUrl = "http://168.119.74.185:9858/autodj";
         audio.src = streamUrl;
         audio.volume = volume;
-        audio.crossOrigin = "anonymous";
         
-        console.log('Attempting to play stream:', streamUrl);
-        await audio.play();
+        // Handle events inline
+        audio.onplay = () => {
+          setIsPlaying(true);
+          setIsLoading(false);
+          setError(null);
+        };
+        
+        audio.onpause = () => {
+          setIsPlaying(false);
+          setIsLoading(false);
+        };
+        
+        audio.onerror = () => {
+          setIsPlaying(false);
+          setIsLoading(false);
+          setError('Stream unavailable');
+        };
+        
+        audio.onloadstart = () => {
+          setIsLoading(true);
+        };
+        
+        audio.oncanplay = () => {
+          setIsLoading(false);
+        };
+        
+        // Start playback
+        audio.play().catch(() => {
+          setIsPlaying(false);
+          setIsLoading(false);
+          setError('Playback failed');
+        });
       }
     } catch (err) {
       setIsPlaying(false);
       setIsLoading(false);
-      setError('Stream connection failed');
-      console.error('Playback error:', err);
+      setError('Audio error');
     }
   };
 
@@ -105,10 +77,8 @@ export default function SimpleStreamPlayer() {
 
   return (
     <div className="flex items-center space-x-4">
-      {/* Audio Element */}
-      <audio ref={audioRef} />
+      <audio ref={audioRef} preload="none" />
 
-      {/* Play/Pause Button */}
       <Button
         onClick={togglePlayback}
         disabled={isLoading}
@@ -126,7 +96,6 @@ export default function SimpleStreamPlayer() {
         </span>
       </Button>
 
-      {/* Live Indicator */}
       {isPlaying && (
         <div className="flex items-center space-x-2 text-red-500">
           <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
@@ -134,7 +103,6 @@ export default function SimpleStreamPlayer() {
         </div>
       )}
 
-      {/* Volume Control */}
       <div className="flex items-center space-x-2">
         <Volume2 className="h-4 w-4 text-muted-foreground" />
         <input
@@ -148,7 +116,6 @@ export default function SimpleStreamPlayer() {
         />
       </div>
 
-      {/* Error Display */}
       {error && (
         <div className="flex items-center space-x-2 text-red-500 text-sm">
           <AlertCircle className="h-4 w-4" />

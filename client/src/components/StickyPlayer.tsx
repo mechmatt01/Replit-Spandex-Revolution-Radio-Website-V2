@@ -23,38 +23,9 @@ export default function StickyPlayer() {
 
   // Fetch album artwork from MusicBrainz/Cover Art Archive
   useEffect(() => {
-    if (trackTitle && trackArtist) {
-      const fetchAlbumArt = async () => {
-        try {
-          // Try MusicBrainz search first
-          const searchQuery = encodeURIComponent(`${trackArtist} ${trackTitle}`);
-          const mbResponse = await fetch(`https://musicbrainz.org/ws/2/recording?query=${searchQuery}&fmt=json&limit=1`);
-          
-          if (mbResponse.ok) {
-            const mbData = await mbResponse.json();
-            const recording = mbData.recordings?.[0];
-            
-            if (recording?.releases?.[0]?.id) {
-              const releaseId = recording.releases[0].id;
-              const coverResponse = await fetch(`https://coverartarchive.org/release/${releaseId}/front`);
-              
-              if (coverResponse.ok) {
-                setAlbumArt(coverResponse.url);
-                return;
-              }
-            }
-          }
-          
-          // Fallback: use a gradient placeholder
-          setAlbumArt(null);
-        } catch (error) {
-          console.log('Album art fetch failed, using default');
-          setAlbumArt(null);
-        }
-      };
-
-      fetchAlbumArt();
-    }
+    // Use gradient placeholder instead of fetching external album art
+    // This eliminates JSON parsing errors from external APIs
+    setAlbumArt(null);
   }, [trackTitle, trackArtist]);
 
   if (!liveTrack) return null;
