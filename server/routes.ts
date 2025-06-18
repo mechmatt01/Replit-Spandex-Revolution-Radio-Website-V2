@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
 // Spotify API configuration
-const SPOTIFY_CLIENT_ID = "60a088cba7d14e8888e34e92d40f8c41";
+const SPOTIFY_CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || "60a088cba7d14e8888e34e92d40f8c41";
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
 import { insertSubmissionSchema, insertContactSchema, insertSubscriptionSchema, insertNowPlayingSchema } from "@shared/schema";
 import { z } from "zod";

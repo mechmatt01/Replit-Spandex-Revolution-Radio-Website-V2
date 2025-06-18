@@ -1,5 +1,5 @@
 // Spotify Web API integration
-const SPOTIFY_CLIENT_ID = "60a088cba7d14e8888e34e92d40f8c41";
+const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID || "60a088cba7d14e8888e34e92d40f8c41";
 // Use development URL for now since that's what we're running on
 const REDIRECT_URI = window.location.origin + "/music";
 const SCOPES = [

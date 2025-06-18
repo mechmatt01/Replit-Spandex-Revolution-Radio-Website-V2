@@ -22,7 +22,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Fetch current track from API for display purposes
-  const { data: currentTrack } = useQuery({
+  const { data: currentTrack } = useQuery<NowPlaying>({
     queryKey: ["/api/now-playing"],
     refetchInterval: 10000,
   });
