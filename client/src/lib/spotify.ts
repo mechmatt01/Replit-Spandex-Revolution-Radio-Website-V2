@@ -3,13 +3,11 @@ const SPOTIFY_CLIENT_ID = import.meta.env.VITE_SPOTIFY_CLIENT_ID || "60a088cba7d
 // Use development URL for now since that's what we're running on
 const REDIRECT_URI = window.location.origin + "/music";
 const SCOPES = [
-  "streaming",
-  "user-read-email",
   "user-read-private",
-  "user-read-playback-state",
-  "user-modify-playback-state",
+  "user-read-email",
   "playlist-read-public",
-  "playlist-read-private"
+  "playlist-read-private",
+  "streaming"
 ].join(" ");
 
 export interface SpotifyTrack {
