@@ -140,6 +140,7 @@ The application uses PostgreSQL with the following main entities:
 - June 17, 2025: Theme toggle enhancement - added moon/sun icons based on current mode (moon for dark mode, sun for light mode) with proper functionality
 - June 17, 2025: Logo update - replaced SVG radio icon with custom RadioLogo.png image, aspect-fill centered on orange gradient background with 5px padding
 - June 17, 2025: Hero text theming - updated main title to display black in light mode and white in dark mode
+- June 17, 2025: Hero text layout - moved "Join the hairspray rebellion!" to new line below main description
 
 ## User Preferences
 

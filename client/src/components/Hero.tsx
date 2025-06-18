@@ -62,7 +62,8 @@ export default function Hero() {
           <p className="text-base md:text-lg font-semibold text-metal-orange">24/7 Live Stream</p>
         </div>
         <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto">
-          Bringing you the best of old-school metal with legendary bands like Skid Row, Twisted Sister, and more. 
+          Bringing you the best of old-school metal with legendary bands like Skid Row, Twisted Sister, and more.
+          <br />
           Join the hairspray rebellion!
         </p>
 
