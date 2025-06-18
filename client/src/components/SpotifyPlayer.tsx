@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Play, Pause, SkipForward, SkipBack, Volume2 } from "lucide-react";
 import { spotifyAPI, type SpotifyTrack, type SpotifyPlaylist } from "@/lib/spotify";
 import { useToast } from "@/hooks/use-toast";
+import { useAudio } from "@/contexts/AudioContext";
 
 interface SpotifyPlayerProps {
   onTrackChange?: (track: SpotifyTrack | null) => void;
@@ -11,13 +12,14 @@ interface SpotifyPlayerProps {
 
 export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [localIsPlaying, setLocalIsPlaying] = useState(false);
   const [currentTrack, setCurrentTrack] = useState<SpotifyTrack | null>(null);
   const [playlists, setPlaylists] = useState<SpotifyPlaylist[]>([]);
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
   const [currentPlaylist, setCurrentPlaylist] = useState<SpotifyPlaylist | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { setSpotifyTrack, isPlaying } = useAudio();
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -103,6 +105,7 @@ export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
       
       if (playlistTracks.length > 0) {
         setCurrentTrack(playlistTracks[0]);
+        setSpotifyTrack(playlistTracks[0]);
         onTrackChange?.(playlistTracks[0]);
       }
     } catch (error) {
@@ -130,9 +133,10 @@ export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
     spotifyAPI.logout();
     setIsAuthenticated(false);
     setCurrentTrack(null);
+    setSpotifyTrack(null);
     setPlaylists([]);
     setTracks([]);
-    setIsPlaying(false);
+    setLocalIsPlaying(false);
     onTrackChange?.(null);
   };
 
@@ -140,14 +144,14 @@ export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
     if (!currentTrack) return;
 
     try {
-      if (isPlaying) {
+      if (localIsPlaying) {
         await spotifyAPI.pause();
-        setIsPlaying(false);
+        setLocalIsPlaying(false);
       } else {
         if (currentTrack.uri) {
           const success = await spotifyAPI.playTrack(currentTrack.uri);
           if (success) {
-            setIsPlaying(true);
+            setLocalIsPlaying(true);
           }
         }
       }
@@ -167,7 +171,8 @@ export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
         const success = await spotifyAPI.playTrack(track.uri);
         if (success) {
           setCurrentTrack(track);
-          setIsPlaying(true);
+          setSpotifyTrack(track);
+          setLocalIsPlaying(true);
           onTrackChange?.(track);
         }
       }
@@ -264,7 +269,7 @@ export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
                 onClick={togglePlayback}
                 className="w-12 h-12"
               >
-                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+                {localIsPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
               </Button>
               <Button variant="ghost" size="icon" onClick={nextTrack}>
                 <SkipForward className="h-4 w-4" />

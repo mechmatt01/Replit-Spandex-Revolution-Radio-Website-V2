@@ -1,9 +1,10 @@
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { spotifyAPI, type SpotifyTrack } from "@/lib/spotify";
 import type { NowPlaying } from "@shared/schema";
 
 interface AudioContextType {
-  currentTrack: NowPlaying | null;
+  currentTrack: NowPlaying | SpotifyTrack | null;
   isPlaying: boolean;
   volume: number;
   togglePlayback: () => void;
@@ -11,6 +12,8 @@ interface AudioContextType {
   nextTrack: () => void;
   previousTrack: () => void;
   currentTrackIndex: number;
+  setSpotifyTrack: (track: SpotifyTrack | null) => void;
+  spotifyTrack: SpotifyTrack | null;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -19,13 +22,17 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(50);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [spotifyTrack, setSpotifyTrack] = useState<SpotifyTrack | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Fetch current track from API for display purposes
-  const { data: currentTrack } = useQuery<NowPlaying>({
+  const { data: liveTrack } = useQuery<NowPlaying>({
     queryKey: ["/api/now-playing"],
     refetchInterval: 10000,
   });
+
+  // Use Spotify track if available, otherwise use live track
+  const currentTrack = spotifyTrack || liveTrack || null;
 
   useEffect(() => {
     // Initialize audio element for live streaming
@@ -62,19 +69,37 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     }
   }, [volume]);
 
-  const togglePlayback = () => {
+  const togglePlayback = async () => {
+    // If we have a Spotify track, use Spotify API
+    if (spotifyTrack && spotifyAPI.isAuthenticated()) {
+      try {
+        if (isPlaying) {
+          await spotifyAPI.pause();
+          setIsPlaying(false);
+        } else {
+          if (spotifyTrack.uri) {
+            const success = await spotifyAPI.playTrack(spotifyTrack.uri);
+            if (success) {
+              setIsPlaying(true);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Spotify playback error:', error);
+      }
+      return;
+    }
+
+    // Fall back to live stream
     if (!audioRef.current) return;
 
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      // For demonstration, we'll show the controls but note that this is a placeholder
-      // Real implementation would connect to actual streaming infrastructure
       console.log('Live stream playback would start here');
       setIsPlaying(true);
       
-      // Simulate playback for UI demonstration
       setTimeout(() => {
         console.log('Simulated live stream playing...');
       }, 1000);
@@ -82,15 +107,23 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   };
 
   const nextTrack = () => {
-    console.log('Live radio - track skipping not available');
+    if (spotifyTrack) {
+      console.log('Spotify track skipping - would need playlist context');
+    } else {
+      console.log('Live radio - track skipping not available');
+    }
   };
 
   const previousTrack = () => {
-    console.log('Live radio - track skipping not available');
+    if (spotifyTrack) {
+      console.log('Spotify track skipping - would need playlist context');
+    } else {
+      console.log('Live radio - track skipping not available');
+    }
   };
 
   const value: AudioContextType = {
-    currentTrack: currentTrack || null,
+    currentTrack,
     isPlaying,
     volume,
     togglePlayback,
@@ -98,6 +131,8 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     nextTrack,
     previousTrack,
     currentTrackIndex,
+    setSpotifyTrack,
+    spotifyTrack,
   };
 
   return (

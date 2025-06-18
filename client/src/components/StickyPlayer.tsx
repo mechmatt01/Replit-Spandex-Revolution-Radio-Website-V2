@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
 
 export default function StickyPlayer() {
-  const { currentTrack, isPlaying, volume, togglePlayback, setVolume, nextTrack, previousTrack } = useAudio();
+  const { currentTrack, isPlaying, volume, togglePlayback, setVolume, nextTrack, previousTrack, spotifyTrack } = useAudio();
 
   if (!currentTrack) return null;
 
@@ -13,12 +13,27 @@ export default function StickyPlayer() {
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
           <div className="flex items-center space-x-4 flex-1 min-w-0">
-            <div className="w-12 h-12 bg-gradient-to-br from-metal-orange to-metal-red rounded-lg flex items-center justify-center">
-              <span className="text-white text-lg">♪</span>
-            </div>
+            {spotifyTrack && spotifyTrack.album?.images?.[0] ? (
+              <img 
+                src={spotifyTrack.album.images[0].url} 
+                alt={spotifyTrack.album.name}
+                className="w-12 h-12 rounded-lg object-cover"
+              />
+            ) : (
+              <div className="w-12 h-12 bg-gradient-to-br from-metal-orange to-metal-red rounded-lg flex items-center justify-center">
+                <span className="text-white text-lg">♪</span>
+              </div>
+            )}
             <div className="min-w-0 flex-1">
-              <h4 className="font-semibold text-foreground truncate">{currentTrack.title}</h4>
-              <p className="text-muted-foreground text-sm truncate">{currentTrack.artist}</p>
+              <h4 className="font-semibold text-foreground truncate">
+                {spotifyTrack ? spotifyTrack.name : currentTrack?.title || 'No track'}
+              </h4>
+              <p className="text-muted-foreground text-sm truncate">
+                {spotifyTrack 
+                  ? spotifyTrack.artists.map(a => a.name).join(", ")
+                  : currentTrack?.artist || 'Unknown artist'
+                }
+              </p>
             </div>
           </div>
 
