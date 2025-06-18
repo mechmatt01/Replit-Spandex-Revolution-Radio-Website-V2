@@ -13,42 +13,42 @@ interface AudioContextType {
   currentTrackIndex: number;
 }
 
-// Live radio stream and metal music sources
+// Real metal radio streams from public sources
 const metalTracks = [
   {
     id: 1,
     title: "Youth Gone Wild",
     artist: "Skid Row",
     album: "Skid Row",
-    audioUrl: "https://live.hunter.fm/80s_mp3_192"
+    audioUrl: "https://stream.radio.co/s22787d7f6/listen"
   },
   {
     id: 2,
     title: "Metal Thunder",
     artist: "Thunder Squad",
     album: "Electric Storm",
-    audioUrl: "https://live.hunter.fm/classic_rock_mp3_192"
+    audioUrl: "https://audio-edge-es6pq.fra.h.radiomast.io/9c6c6360-cdbb-4a75-ac2c-8b57c81b2361"
   },
   {
     id: 3,
     title: "Steel Revolution",
     artist: "Iron Legion",
     album: "Battle Anthems",
-    audioUrl: "https://live.hunter.fm/metal_mp3_192"
+    audioUrl: "https://streams.fluxfm.de/rockfm/mp3-320/audio/"
   },
   {
     id: 4,
     title: "Electric Storm",
     artist: "SoundImage",
     album: "Power Metal",
-    audioUrl: "https://live.hunter.fm/hard_rock_mp3_192"
+    audioUrl: "https://stream.zeno.fm/17q3x8rf6wzuv"
   },
   {
     id: 5,
     title: "Metal Fury",
-    artist: "Loyalty Freak Music",
+    artist: "Loyalty Freak Music",    
     album: "Rage Collection",
-    audioUrl: "https://live.hunter.fm/classic_metal_mp3_192"
+    audioUrl: "https://stream.rockantenne.de/rockantenne/stream/mp3"
   }
 ];
 
@@ -82,10 +82,18 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         nextTrack();
       });
       
-      // Handle errors
+      // Handle errors with retry logic
       audioRef.current.addEventListener('error', (e) => {
         console.error('Audio error:', e);
+        console.log('Playback failed:', e);
+        console.log('Track URL:', audioRef.current?.src);
         setIsPlaying(false);
+        
+        // Try next track on error
+        console.log('Trying next track...');
+        setTimeout(() => {
+          nextTrack();
+        }, 1000);
       });
 
       // Handle successful load
