@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect, useRef, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { spotifyAPI, type SpotifyTrack } from "@/lib/spotify";
+import { spotify, type SpotifyTrack } from "@/lib/spotify";
 import { radioStreamAPI, type LiveTrackInfo } from "@/lib/radioStream";
 import type { NowPlaying } from "@shared/schema";
 
@@ -92,29 +92,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
 
   const togglePlayback = async () => {
     // If we have a Spotify track, use Spotify API
-    if (spotifyTrack && spotifyAPI.isAuthenticated()) {
-      try {
-        if (isPlaying) {
-          const success = await spotifyAPI.pause();
-          if (success) {
-            setIsPlaying(false);
-          }
-        } else {
-          if (spotifyTrack.uri) {
-            const success = await spotifyAPI.playTrack(spotifyTrack.uri);
-            if (success) {
-              setIsPlaying(true);
-            } else {
-              console.error('Failed to start Spotify playback');
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Spotify playback error:', error);
-        setIsPlaying(false);
-      }
-      return;
-    }
+    // Removed Spotify functionality - using Icecast streaming only
 
     // Use live radio stream
     try {
