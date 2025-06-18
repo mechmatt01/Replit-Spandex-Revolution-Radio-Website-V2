@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { Menu, X, Radio, Sun } from "lucide-react";
+import { Menu, X, Radio, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const { togglePlayback, isPlaying } = useAudio();
+  const { theme, toggleTheme } = useTheme();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -72,11 +74,11 @@ export default function Navigation() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => {}}
+              onClick={toggleTheme}
               className="hidden lg:block w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card/90"
               aria-label="Toggle theme"
             >
-              <div className="w-5 h-5 bg-metal-orange rounded-full ml-[3px] mr-[3px] mt-[0px] mb-[0px] pt-[2px] pb-[2px]"></div>
+              {theme === "dark" ? <Sun className="h-5 w-5 text-metal-orange" /> : <Moon className="h-5 w-5 text-metal-orange" />}
             </Button>
             <Button
               variant="ghost"
