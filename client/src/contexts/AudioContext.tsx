@@ -22,84 +22,169 @@ const AudioContext = createContext<AudioContextType | undefined>(undefined);
 
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolumeState] = useState(0.7);
+  const [volume, setVolumeState] = useState(0.7); // Always use 0-1 range
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
   const [spotifyTrack, setSpotifyTrack] = useState<SpotifyTrack | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Fetch current track from database
   const { data: nowPlaying } = useQuery<NowPlaying>({
     queryKey: ["/api/now-playing"],
-    refetchInterval: 30000, // Refresh every 30 seconds
+    refetchInterval: 30000,
   });
 
   // Fetch live track info from radio stream
   const { data: liveTrackInfo } = useQuery<LiveTrackInfo>({
     queryKey: ["/api/radio-status"],
-    refetchInterval: 10000, // Refresh every 10 seconds
+    refetchInterval: 10000,
   });
 
-  // Initialize audio element for radio stream
+  // Initialize and manage audio element
   useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio("http://168.119.74.185:9858/autodj");
-      audioRef.current.crossOrigin = "anonymous";
-      audioRef.current.preload = "none";
-      audioRef.current.volume = volume;
+    const initializeAudio = () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.removeEventListener('loadstart', handleLoadStart);
+        audioRef.current.removeEventListener('canplay', handleCanPlay);
+        audioRef.current.removeEventListener('play', handlePlay);
+        audioRef.current.removeEventListener('pause', handlePause);
+        audioRef.current.removeEventListener('error', handleError);
+        audioRef.current.removeEventListener('ended', handleEnded);
+      }
 
-      // Event listeners for audio state
-      audioRef.current.addEventListener('play', () => setIsPlaying(true));
-      audioRef.current.addEventListener('pause', () => setIsPlaying(false));
-      audioRef.current.addEventListener('ended', () => setIsPlaying(false));
-      audioRef.current.addEventListener('error', (e) => {
-        console.error('Audio error:', e);
-        setIsPlaying(false);
-      });
-    }
+      // Create new audio element
+      audioRef.current = new Audio();
+      audioRef.current.crossOrigin = "anonymous";
+      audioRef.current.preload = "metadata";
+      audioRef.current.volume = Math.max(0, Math.min(1, volume)); // Ensure 0-1 range
+      
+      // Add event listeners
+      audioRef.current.addEventListener('loadstart', handleLoadStart);
+      audioRef.current.addEventListener('canplay', handleCanPlay);
+      audioRef.current.addEventListener('play', handlePlay);
+      audioRef.current.addEventListener('pause', handlePause);
+      audioRef.current.addEventListener('error', handleError);
+      audioRef.current.addEventListener('ended', handleEnded);
+    };
+
+    const handleLoadStart = () => {
+      setIsLoading(true);
+      setError(null);
+      console.log('Starting to load audio stream...');
+    };
+
+    const handleCanPlay = () => {
+      setIsLoading(false);
+      setError(null);
+      console.log('Audio stream ready to play');
+    };
+
+    const handlePlay = () => {
+      setIsPlaying(true);
+      setIsLoading(false);
+      setError(null);
+      console.log('Audio stream playing');
+    };
+
+    const handlePause = () => {
+      setIsPlaying(false);
+      console.log('Audio stream paused');
+    };
+
+    const handleError = (e: Event) => {
+      setIsPlaying(false);
+      setIsLoading(false);
+      setError('Stream connection failed');
+      console.error('Audio stream error:', e);
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      console.log('Audio stream ended');
+    };
+
+    initializeAudio();
 
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
-        audioRef.current.removeEventListener('play', () => setIsPlaying(true));
-        audioRef.current.removeEventListener('pause', () => setIsPlaying(false));
-        audioRef.current.removeEventListener('ended', () => setIsPlaying(false));
-        audioRef.current.removeEventListener('error', () => setIsPlaying(false));
+        audioRef.current.removeEventListener('loadstart', handleLoadStart);
+        audioRef.current.removeEventListener('canplay', handleCanPlay);
+        audioRef.current.removeEventListener('play', handlePlay);
+        audioRef.current.removeEventListener('pause', handlePause);
+        audioRef.current.removeEventListener('error', handleError);
+        audioRef.current.removeEventListener('ended', handleEnded);
+        audioRef.current = null;
       }
     };
   }, []);
 
-  // Update audio volume when volume state changes
+  // Update volume when it changes
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = volume;
+      const safeVolume = Math.max(0, Math.min(1, volume));
+      audioRef.current.volume = safeVolume;
     }
   }, [volume]);
 
   const togglePlayback = async () => {
-    // Use live radio stream only
+    if (!audioRef.current) return;
+
     try {
-      const success = await radioStreamAPI.togglePlayback();
-      setIsPlaying(success);
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        setIsLoading(true);
+        setError(null);
+        
+        // Set the stream URL with cache busting
+        const streamUrl = `http://168.119.74.185:9858/autodj?t=${Date.now()}`;
+        audioRef.current.src = streamUrl;
+        
+        console.log('Attempting to play stream:', streamUrl);
+        
+        // Load and play
+        audioRef.current.load();
+        await audioRef.current.play();
+      }
     } catch (error) {
-      console.error('Radio stream error:', error);
       setIsPlaying(false);
+      setIsLoading(false);
+      setError('Failed to start stream');
+      console.error('Playback error:', error);
+      
+      // Try alternative approach
+      try {
+        if (audioRef.current) {
+          audioRef.current.src = '';
+          audioRef.current.load();
+          setTimeout(async () => {
+            if (audioRef.current) {
+              audioRef.current.src = `http://168.119.74.185:9858/autodj?retry=${Date.now()}`;
+              audioRef.current.load();
+              await audioRef.current.play();
+            }
+          }, 1000);
+        }
+      } catch (retryError) {
+        console.error('Retry failed:', retryError);
+      }
     }
   };
 
   const setVolume = (newVolume: number) => {
-    setVolumeState(newVolume);
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume;
-    }
+    // Ensure volume is in 0-1 range
+    const safeVolume = Math.max(0, Math.min(1, newVolume));
+    setVolumeState(safeVolume);
   };
 
   const nextTrack = () => {
-    // For radio stream, this doesn't apply - tracks change automatically
     console.log('Next track not applicable for live radio stream');
   };
 
   const previousTrack = () => {
-    // For radio stream, this doesn't apply - tracks change automatically
     console.log('Previous track not applicable for live radio stream');
   };
 

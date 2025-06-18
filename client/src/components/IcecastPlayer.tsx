@@ -11,7 +11,7 @@ interface IcecastPlayerProps {
 
 export default function IcecastPlayer({ className = "" }: IcecastPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(70);
+  const [volume, setVolume] = useState(0.7); // Use 0-1 range
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,12 +52,15 @@ export default function IcecastPlayer({ className = "" }: IcecastPlayerProps) {
 
     const handleWaiting = () => {
       setIsLoading(true);
+      console.log('Buffering stream...');
     };
 
     const handleLoadedData = () => {
       setIsLoading(false);
+      console.log('Stream data loaded');
     };
 
+    // Add event listeners
     audio.addEventListener('canplay', handleCanPlay);
     audio.addEventListener('playing', handlePlaying);
     audio.addEventListener('pause', handlePause);
@@ -77,187 +80,115 @@ export default function IcecastPlayer({ className = "" }: IcecastPlayerProps) {
     };
   }, []);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      audio.volume = isMuted ? 0 : volume / 100;
-    }
-  }, [volume, isMuted]);
-
   const togglePlayback = async () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isPlaying) {
-      audio.pause();
-      audio.src = '';
-      setIsPlaying(false);
-      return;
-    }
+    if (!audioRef.current) return;
 
     try {
-      setIsLoading(true);
-      setError(null);
-      
-      // Reset audio element completely
-      audio.pause();
-      audio.currentTime = 0;
-      
-      // Configure for Icecast streaming
-      audio.preload = 'auto';
-      audio.crossOrigin = 'anonymous';
-      audio.volume = isMuted ? 0 : volume / 100;
-      
-      // Set the stream URL with cache busting
-      const streamUrl = `${ICECAST_STREAM_URL}?t=${Date.now()}`;
-      audio.src = streamUrl;
-      
-      console.log('Connecting to Icecast stream:', streamUrl);
-      
-      // Load the stream
-      audio.load();
-      
-      // Add one-time event listener for successful playback
-      const onCanPlayThrough = () => {
-        audio.removeEventListener('canplaythrough', onCanPlayThrough);
-        setIsLoading(false);
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        setIsLoading(true);
         setError(null);
-        console.log('Stream ready to play');
-      };
-      
-      audio.addEventListener('canplaythrough', onCanPlayThrough);
-      
-      // Set timeout for connection
-      const timeoutId = setTimeout(() => {
-        audio.removeEventListener('canplaythrough', onCanPlayThrough);
-        if (isLoading) {
-          setError('Connection timeout - try again');
-          setIsLoading(false);
-          audio.src = '';
-        }
-      }, 10000);
-      
-      // Attempt to play
-      const playPromise = audio.play();
-      
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            clearTimeout(timeoutId);
-            setIsPlaying(true);
-            setIsLoading(false);
-            console.log('Icecast stream playing successfully');
-          })
-          .catch((error) => {
-            clearTimeout(timeoutId);
-            audio.removeEventListener('canplaythrough', onCanPlayThrough);
-            console.error('Play failed:', error);
-            
-            if (error.name === 'NotAllowedError') {
-              setError('Please allow audio autoplay');
-            } else if (error.name === 'NotSupportedError') {
-              setError('Stream format not supported');
-            } else {
-              setError('Unable to connect to stream');
-            }
-            
-            setIsPlaying(false);
-            setIsLoading(false);
-            audio.src = '';
-          });
+        
+        // Set stream URL with cache busting
+        const streamUrl = `${ICECAST_STREAM_URL}?t=${Date.now()}`;
+        console.log('Connecting to Icecast stream:', streamUrl);
+        
+        audioRef.current.src = streamUrl;
+        audioRef.current.load();
+        
+        await audioRef.current.play();
       }
-      
-    } catch (error: any) {
-      console.error('Stream error:', error);
-      setError('Failed to start stream');
+    } catch (err) {
       setIsPlaying(false);
       setIsLoading(false);
-      if (audio) audio.src = '';
+      setError('Failed to start stream');
+      console.error('Play failed:', err);
+    }
+  };
+
+  const handleVolumeChange = (value: number[]) => {
+    const newVolume = value[0] / 100; // Convert percentage to 0-1 range
+    setVolume(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume;
     }
   };
 
   const toggleMute = () => {
-    setIsMuted(!isMuted);
-  };
-
-  const handleVolumeChange = (newVolume: number[]) => {
-    setVolume(newVolume[0]);
-    if (newVolume[0] > 0) {
-      setIsMuted(false);
+    if (audioRef.current) {
+      if (isMuted) {
+        audioRef.current.volume = volume;
+        setIsMuted(false);
+      } else {
+        audioRef.current.volume = 0;
+        setIsMuted(true);
+      }
     }
   };
 
   return (
-    <div className={`flex items-center space-x-4 ${className}`}>
+    <div className={`flex items-center gap-4 p-4 bg-black/80 rounded-lg border border-orange-500/30 ${className}`}>
       <audio
         ref={audioRef}
-        preload="none"
         crossOrigin="anonymous"
-        controls={false}
-        style={{ display: 'none' }}
+        preload="metadata"
       />
       
-      {/* Play/Pause Button */}
       <Button
         onClick={togglePlayback}
         disabled={isLoading}
+        variant="outline"
         size="lg"
-        className="bg-metal-orange hover:bg-metal-orange/90 text-black font-bold px-8 py-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
+        className="bg-orange-500 hover:bg-orange-600 text-black border-orange-500 min-w-[120px]"
       >
         {isLoading ? (
-          <div className="w-6 h-6 animate-spin rounded-full border-2 border-black border-t-transparent" />
+          <div className="animate-spin w-4 h-4 border-2 border-black border-t-transparent rounded-full" />
         ) : isPlaying ? (
-          <Pause className="h-6 w-6 mr-2" />
+          <>
+            <Pause className="w-4 h-4 mr-2" />
+            Pause
+          </>
         ) : (
-          <Play className="h-6 w-6 mr-2" />
+          <>
+            <Play className="w-4 h-4 mr-2" />
+            Play Live
+          </>
         )}
-        {isLoading ? 'Loading...' : isPlaying ? 'Pause Live' : 'Play Live'}
       </Button>
 
-      {/* Volume Controls */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center gap-2 min-w-[200px]">
         <Button
-          variant="ghost"
-          size="icon"
           onClick={toggleMute}
-          className="text-foreground hover:text-metal-orange"
+          variant="ghost"
+          size="sm"
+          className="text-orange-500 hover:text-orange-400 p-1"
         >
-          {isMuted || volume === 0 ? (
-            <VolumeX className="h-4 w-4" />
-          ) : (
-            <Volume2 className="h-4 w-4" />
-          )}
+          {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
         </Button>
         
-        <div className="w-20">
-          <Slider
-            value={[isMuted ? 0 : volume]}
-            onValueChange={handleVolumeChange}
-            max={100}
-            step={1}
-            className="w-full"
-          />
-        </div>
+        <Slider
+          value={[isMuted ? 0 : volume * 100]}
+          onValueChange={handleVolumeChange}
+          max={100}
+          step={1}
+          className="flex-1"
+        />
         
-        <span className="text-xs text-muted-foreground w-8">
-          {isMuted ? '0' : volume}%
+        <span className="text-orange-400 text-sm min-w-[35px]">
+          {Math.round((isMuted ? 0 : volume) * 100)}%
         </span>
       </div>
 
-      {/* Status */}
       {error && (
-        <span className="text-red-500 text-xs">{error}</span>
+        <span className="text-red-400 text-sm">{error}</span>
       )}
       
       {isPlaying && !error && (
-        <div className="flex items-center space-x-1 text-green-500">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="text-xs font-medium">LIVE</span>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+          <span className="text-orange-400 text-sm font-medium">LIVE</span>
         </div>
-      )}
-      
-      {isLoading && (
-        <span className="text-metal-orange text-xs animate-pulse">Connecting...</span>
       )}
     </div>
   );

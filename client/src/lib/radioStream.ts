@@ -1,185 +1,257 @@
-// Live Radio Stream Integration
-const RADIO_STREAM_URL = "http://168.119.74.185:9858/autodj";
-const RADIO_STATUS_URL = "http://168.119.74.185:9858/status-json.xsl";
-
+// Enhanced radio streaming with multiple fallback methods
 export interface LiveTrackInfo {
   title: string;
   artist: string;
   album?: string;
   listeners: number;
   bitrate: number;
+  server_name: string;
+  server_description: string;
   genre: string;
-  serverName: string;
-  isLive: boolean;
-}
-
-export interface RadioStatus {
-  icestats: {
-    server_id: string;
-    host: string;
-    source: Array<{
-      title?: string;
-      yp_currently_playing?: string;
-      listeners: number;
-      bitrate: number;
-      genre: string;
-      server_name: string;
-      server_description: string;
-      listenurl: string;
-      stream_start: string;
-    }>;
-  };
 }
 
 class RadioStreamAPI {
-  private audio: HTMLAudioElement | null = null;
-  private isPlaying = false;
+  private audioElement: HTMLAudioElement | null = null;
+  private isInitialized = false;
+  private streamUrls = [
+    'http://168.119.74.185:9858/autodj',
+    'http://168.119.74.185:9858/stream',
+    'http://168.119.74.185:9858/live'
+  ];
+  private currentUrlIndex = 0;
 
-  // Get current track and stream info
-  async getCurrentTrack(): Promise<LiveTrackInfo | null> {
-    try {
-      const response = await fetch(`/api/radio-status`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch radio status');
-      }
-      
-      const data: RadioStatus = await response.json();
-      const mainSource = data.icestats.source.find(s => s.listenurl?.includes('/autodj'));
-      
-      if (!mainSource) {
-        return null;
-      }
-
-      // Parse title and artist from the title field
-      const fullTitle = mainSource.title || mainSource.yp_currently_playing || "Unknown Track";
-      const [artist, title] = fullTitle.includes(' - ') 
-        ? fullTitle.split(' - ', 2)
-        : ["Unknown Artist", fullTitle];
-
-      return {
-        title: title.trim(),
-        artist: artist.trim(),
-        listeners: mainSource.listeners,
-        bitrate: mainSource.bitrate,
-        genre: mainSource.genre,
-        serverName: mainSource.server_name,
-        isLive: true
-      };
-    } catch (error) {
-      console.error('Error fetching radio status:', error);
-      return null;
+  async initializeStream(): Promise<boolean> {
+    if (this.isInitialized && this.audioElement) {
+      return true;
     }
-  }
 
-  // Initialize audio player
-  initializePlayer(): HTMLAudioElement {
-    if (!this.audio) {
-      this.audio = new Audio();
-      this.audio.preload = 'none';
-      
-      // Icecast streams work better without crossOrigin for same-domain requests
-      // this.audio.crossOrigin = "anonymous";
-      
-      this.audio.addEventListener('error', (e) => {
-        console.error('Icecast stream error:', e);
-        this.isPlaying = false;
-      });
-
-      this.audio.addEventListener('canplay', () => {
-        console.log('Icecast stream ready to play');
-      });
-
-      this.audio.addEventListener('loadstart', () => {
-        console.log('Loading Icecast stream...');
-      });
-
-      this.audio.addEventListener('playing', () => {
-        console.log('Icecast stream is playing');
-        this.isPlaying = true;
-      });
-
-      this.audio.addEventListener('pause', () => {
-        console.log('Icecast stream paused');
-        this.isPlaying = false;
-      });
-
-      this.audio.addEventListener('ended', () => {
-        console.log('Icecast stream ended');
-        this.isPlaying = false;
-      });
-    }
-    return this.audio;
-  }
-
-  // Start playing the live stream
-  async play(): Promise<boolean> {
     try {
-      const audio = this.initializePlayer();
-      
-      // Set up Icecast stream with proper headers
-      audio.src = RADIO_STREAM_URL;
-      audio.load();
-      
-      // Wait for audio to be ready and then play
-      await new Promise((resolve, reject) => {
-        const onCanPlay = () => {
-          audio.removeEventListener('canplay', onCanPlay);
-          audio.removeEventListener('error', onError);
-          resolve(true);
-        };
-        
-        const onError = (e: any) => {
-          audio.removeEventListener('canplay', onCanPlay);
-          audio.removeEventListener('error', onError);
-          reject(e);
-        };
-        
-        audio.addEventListener('canplay', onCanPlay);
-        audio.addEventListener('error', onError);
-      });
-      
-      await audio.play();
-      this.isPlaying = true;
-      console.log('Icecast radio stream started');
+      this.audioElement = new Audio();
+      this.audioElement.crossOrigin = "anonymous";
+      this.audioElement.preload = "none";
+      this.audioElement.volume = 0.7;
+
+      // Set up comprehensive error handling
+      this.audioElement.addEventListener('error', this.handleStreamError.bind(this));
+      this.audioElement.addEventListener('loadstart', () => console.log('Stream loading started'));
+      this.audioElement.addEventListener('canplay', () => console.log('Stream ready to play'));
+      this.audioElement.addEventListener('playing', () => console.log('Stream is playing'));
+      this.audioElement.addEventListener('waiting', () => console.log('Stream buffering'));
+      this.audioElement.addEventListener('stalled', () => console.log('Stream stalled'));
+
+      this.isInitialized = true;
       return true;
     } catch (error) {
-      console.error('Failed to start Icecast stream:', error);
-      this.isPlaying = false;
+      console.error('Failed to initialize stream:', error);
       return false;
     }
   }
 
-  // Stop playing the stream
-  stop(): void {
-    if (this.audio) {
-      this.audio.pause();
-      this.audio.src = '';
-      this.isPlaying = false;
-      console.log('Radio stream stopped');
-    }
-  }
-
-  // Toggle playback
-  async togglePlayback(): Promise<boolean> {
-    if (this.isPlaying) {
-      this.stop();
-      return false;
+  private handleStreamError(event: Event) {
+    console.error('Stream error occurred:', event);
+    
+    // Try next URL in the list
+    if (this.currentUrlIndex < this.streamUrls.length - 1) {
+      this.currentUrlIndex++;
+      console.log(`Trying fallback stream: ${this.streamUrls[this.currentUrlIndex]}`);
+      this.tryPlayWithUrl(this.streamUrls[this.currentUrlIndex]);
     } else {
-      return await this.play();
+      console.error('All stream URLs failed');
+      this.currentUrlIndex = 0; // Reset for next attempt
     }
   }
 
-  // Get current playing state
-  getIsPlaying(): boolean {
-    return this.isPlaying;
+  private async tryPlayWithUrl(url: string): Promise<void> {
+    if (!this.audioElement) return;
+
+    try {
+      this.audioElement.src = `${url}?t=${Date.now()}`;
+      this.audioElement.load();
+      await this.audioElement.play();
+    } catch (error) {
+      console.error(`Failed to play with URL ${url}:`, error);
+      throw error;
+    }
   }
 
-  // Set volume
+  async togglePlayback(): Promise<boolean> {
+    await this.initializeStream();
+    
+    if (!this.audioElement) {
+      console.error('Audio element not available');
+      return false;
+    }
+
+    try {
+      if (this.audioElement.paused) {
+        // Start playing
+        await this.tryPlayWithUrl(this.streamUrls[this.currentUrlIndex]);
+        return true;
+      } else {
+        // Pause
+        this.audioElement.pause();
+        return false;
+      }
+    } catch (error) {
+      console.error('Playback toggle failed:', error);
+      return false;
+    }
+  }
+
+  async startStream(): Promise<boolean> {
+    await this.initializeStream();
+    
+    if (!this.audioElement) return false;
+
+    try {
+      await this.tryPlayWithUrl(this.streamUrls[this.currentUrlIndex]);
+      return true;
+    } catch (error) {
+      console.error('Failed to start stream:', error);
+      return false;
+    }
+  }
+
+  stopStream(): void {
+    if (this.audioElement) {
+      this.audioElement.pause();
+      this.audioElement.src = '';
+    }
+  }
+
   setVolume(volume: number): void {
-    if (this.audio) {
-      this.audio.volume = Math.max(0, Math.min(1, volume / 100));
+    if (this.audioElement) {
+      // Ensure volume is in valid range
+      const safeVolume = Math.max(0, Math.min(1, volume));
+      this.audioElement.volume = safeVolume;
+    }
+  }
+
+  isPlaying(): boolean {
+    return this.audioElement ? !this.audioElement.paused : false;
+  }
+
+  getCurrentVolume(): number {
+    return this.audioElement ? this.audioElement.volume : 0.7;
+  }
+
+  destroy(): void {
+    if (this.audioElement) {
+      this.audioElement.pause();
+      this.audioElement.src = '';
+      this.audioElement = null;
+    }
+    this.isInitialized = false;
+  }
+
+  // Get stream status and track info
+  async getStreamStatus(): Promise<LiveTrackInfo | null> {
+    try {
+      const response = await fetch('/api/radio-status');
+      if (!response.ok) {
+        throw new Error('Failed to fetch stream status');
+      }
+      
+      const data = await response.json();
+      const source = data.icestats?.source?.find((s: any) => s.listenurl?.includes('autodj'));
+      
+      if (source) {
+        // Parse the title format "Artist - Song"
+        const titleParts = source.title?.split(' - ') || ['Unknown', 'Unknown'];
+        const artist = titleParts[0] || 'Unknown Artist';
+        const title = titleParts.slice(1).join(' - ') || 'Unknown Title';
+        
+        return {
+          title,
+          artist,
+          listeners: source.listeners || 0,
+          bitrate: source.bitrate || 128,
+          server_name: source.server_name || 'Spandex Salvation Radio',
+          server_description: source.server_description || 'Live Metal Radio',
+          genre: source.genre || 'Metal'
+        };
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Failed to get stream status:', error);
+      return null;
     }
   }
 }
 
 export const radioStreamAPI = new RadioStreamAPI();
+
+// Helper function to check if browser supports audio streaming
+export function checkAudioSupport(): boolean {
+  const audio = document.createElement('audio');
+  return !!(audio.canPlayType && (
+    audio.canPlayType('audio/mpeg').replace(/no/, '') ||
+    audio.canPlayType('audio/mp3').replace(/no/, '')
+  ));
+}
+
+// Alternative streaming approach using MediaSource API (experimental)
+export class AdvancedRadioStream {
+  private mediaSource: MediaSource | null = null;
+  private sourceBuffer: SourceBuffer | null = null;
+  private audioElement: HTMLAudioElement | null = null;
+
+  async initializeAdvancedStream(): Promise<boolean> {
+    if (!('MediaSource' in window)) {
+      console.log('MediaSource API not supported, falling back to basic audio');
+      return false;
+    }
+
+    try {
+      this.mediaSource = new MediaSource();
+      this.audioElement = new Audio();
+      this.audioElement.src = URL.createObjectURL(this.mediaSource);
+
+      return new Promise((resolve) => {
+        this.mediaSource!.addEventListener('sourceopen', () => {
+          try {
+            this.sourceBuffer = this.mediaSource!.addSourceBuffer('audio/mpeg');
+            resolve(true);
+          } catch (error) {
+            console.error('Failed to add source buffer:', error);
+            resolve(false);
+          }
+        });
+      });
+    } catch (error) {
+      console.error('Failed to initialize advanced stream:', error);
+      return false;
+    }
+  }
+
+  async streamAudioData(url: string): Promise<void> {
+    if (!this.sourceBuffer) return;
+
+    try {
+      const response = await fetch(url);
+      const reader = response.body?.getReader();
+      
+      if (!reader) throw new Error('No readable stream');
+
+      const pump = async (): Promise<void> => {
+        const { done, value } = await reader.read();
+        
+        if (done) {
+          this.mediaSource?.endOfStream();
+          return;
+        }
+
+        if (this.sourceBuffer && !this.sourceBuffer.updating) {
+          this.sourceBuffer.appendBuffer(value);
+        }
+
+        return pump();
+      };
+
+      await pump();
+    } catch (error) {
+      console.error('Streaming error:', error);
+    }
+  }
+}

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Play, Calendar, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
+import SimpleRadioPlayer from "@/components/SimpleRadioPlayer";
 import IcecastPlayer from "@/components/IcecastPlayer";
 
 export default function Hero() {
@@ -150,7 +151,7 @@ export default function Hero() {
 
         {/* Live Radio Player */}
         <div className="flex flex-col items-center justify-center space-y-6 mb-12">
-          <IcecastPlayer className="justify-center" />
+          <SimpleRadioPlayer />
           <Button 
             onClick={scrollToSchedule}
             variant="outline"
