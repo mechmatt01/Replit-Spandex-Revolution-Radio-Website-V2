@@ -43,8 +43,8 @@ export default function Navigation() {
           </div>
 
           {/* Desktop Navigation - Centered */}
-          <div className="hidden lg:flex items-center justify-center flex-1" style={{ marginLeft: '10px' }}>
-            <div className="flex items-center gap-8">
+          <div className="hidden md:flex items-center justify-center flex-1" style={{ marginLeft: '10px' }}>
+            <div className="flex items-center gap-6 lg:gap-8">
               <button onClick={() => scrollToSection("home")} className="text-foreground font-semibold hover:text-metal-orange transition-colors">
                 HOME
               </button>
@@ -72,12 +72,23 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Right Side Controls - Mobile Menu */}
+          {/* Right Side Controls - Theme Toggle & Mobile Menu */}
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden text-foreground"
+              onClick={toggleTheme}
+              className="text-foreground hover:text-metal-orange transition-colors"
+            >
+              {theme === 'dark' ? 
+                <Sun className="h-4 w-4" style={{ color: '#f97316' }} /> : 
+                <Moon className="h-4 w-4" />
+              }
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden text-foreground"
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? <X /> : <Menu />}
@@ -87,11 +98,14 @@ export default function Navigation() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="lg:hidden bg-card/95 backdrop-blur-sm transition-colors duration-300">
+          <div className="md:hidden bg-card/95 backdrop-blur-sm transition-colors duration-300 border-t border-border/50">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              <button onClick={() => scrollToSection("home")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
+              <button onClick={() => scrollToSection("home")} className="block px-3 py-2 text-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
                 HOME
               </button>
+              <Link href="/music" className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left" onClick={() => setIsOpen(false)}>
+                MUSIC
+              </Link>
               <button onClick={() => scrollToSection("about")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
                 ABOUT
               </button>
