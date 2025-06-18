@@ -72,8 +72,16 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Right Side Controls - Theme Toggle & Mobile Menu */}
+          {/* Right Side Controls - Mobile Menu & Theme Toggle */}
           <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden text-foreground"
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <X /> : <Menu />}
+            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -84,14 +92,6 @@ export default function Navigation() {
                 <Sun className="h-4 w-4" style={{ color: '#f97316' }} /> : 
                 <Moon className="h-4 w-4" />
               }
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden text-foreground"
-              onClick={() => setIsOpen(!isOpen)}
-            >
-              {isOpen ? <X /> : <Menu />}
             </Button>
           </div>
         </div>

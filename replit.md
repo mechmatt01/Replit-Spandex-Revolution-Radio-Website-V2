@@ -151,6 +151,7 @@ The application uses PostgreSQL with the following main entities:
 - June 18, 2025: Home page play button now shows authentic live radio data instead of static placeholder content
 - June 18, 2025: Implemented inline Icecast player streaming directly from http://168.119.74.185:9858/autodj with volume controls and live indicators
 - June 18, 2025: Added responsive hamburger menu navigation for mobile accessibility with complete link coverage and smooth transitions
+- June 18, 2025: Fixed duplicate theme toggle icons and enhanced Icecast streaming with proper CORS handling, timeout management, and specific error messages
 
 ## User Preferences
 

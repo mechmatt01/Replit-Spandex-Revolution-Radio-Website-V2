@@ -96,19 +96,44 @@ export default function IcecastPlayer({ className = "" }: IcecastPlayerProps) {
         setIsLoading(true);
         setError(null);
         
-        // Set the stream URL and load
+        // Configure audio for streaming
         audio.src = ICECAST_STREAM_URL;
+        
+        // Set audio properties for live streaming
+        audio.preload = 'none';
+        audio.volume = isMuted ? 0 : volume / 100;
+        
+        // Load and play the stream
         audio.load();
         
-        // Attempt to play with better error handling
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          await playPromise;
+        // Use a timeout to handle slow connections
+        const timeoutId = setTimeout(() => {
+          if (isLoading) {
+            setError('Stream connection timeout');
+            setIsLoading(false);
+          }
+        }, 15000);
+        
+        try {
+          await audio.play();
+          clearTimeout(timeoutId);
+        } catch (playError) {
+          clearTimeout(timeoutId);
+          throw playError;
         }
       }
     } catch (error: any) {
       console.error('Playback error:', error);
-      setError('Unable to connect to live stream');
+      
+      // Provide more specific error messages
+      if (error.name === 'NotAllowedError') {
+        setError('Click to enable audio playback');
+      } else if (error.name === 'AbortError') {
+        setError('Stream connection aborted');
+      } else {
+        setError('Stream temporarily unavailable');
+      }
+      
       setIsPlaying(false);
       setIsLoading(false);
     }
@@ -130,6 +155,7 @@ export default function IcecastPlayer({ className = "" }: IcecastPlayerProps) {
       <audio
         ref={audioRef}
         preload="none"
+        crossOrigin="anonymous"
         style={{ display: 'none' }}
       />
       
