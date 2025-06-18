@@ -3,7 +3,7 @@ import { Play, Calendar, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
 import { useQuery } from "@tanstack/react-query";
-import FinalRadioPlayer from "@/components/FinalRadioPlayer";
+import StreamLinkPlayer from "@/components/StreamLinkPlayer";
 import IcecastPlayer from "@/components/IcecastPlayer";
 
 export default function Hero() {
@@ -147,7 +147,7 @@ export default function Hero() {
 
         {/* Live Radio Player */}
         <div className="flex flex-col items-center justify-center space-y-6 mb-12">
-          <FinalRadioPlayer />
+          <StreamLinkPlayer />
           <Button 
             onClick={scrollToSchedule}
             variant="outline"

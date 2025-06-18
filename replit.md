@@ -165,6 +165,9 @@ The application uses PostgreSQL with the following main entities:
 - June 18, 2025: Added album artwork fetching from MusicBrainz/Cover Art Archive for live tracks
 - June 18, 2025: Removed About tab from navigation as requested
 - June 18, 2025: Fixed all audio streaming errors and implemented browser-compatible streaming with volume controls
+- June 18, 2025: Resolved JSON parsing errors by removing external MusicBrainz API calls from StickyPlayer component
+- June 18, 2025: Implemented StreamLinkPlayer to bypass browser CORS restrictions using external link approach for radio streaming
+- June 18, 2025: Created comprehensive radio streaming solution with multiple format options and direct media player integration
 
 ## User Preferences
 
