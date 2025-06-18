@@ -88,54 +88,91 @@ export default function IcecastPlayer({ className = "" }: IcecastPlayerProps) {
     const audio = audioRef.current;
     if (!audio) return;
 
+    if (isPlaying) {
+      audio.pause();
+      audio.src = '';
+      setIsPlaying(false);
+      return;
+    }
+
     try {
-      if (isPlaying) {
-        audio.pause();
-        setIsPlaying(false);
-      } else {
-        setIsLoading(true);
+      setIsLoading(true);
+      setError(null);
+      
+      // Reset audio element completely
+      audio.pause();
+      audio.currentTime = 0;
+      
+      // Configure for Icecast streaming
+      audio.preload = 'auto';
+      audio.crossOrigin = 'anonymous';
+      audio.volume = isMuted ? 0 : volume / 100;
+      
+      // Set the stream URL with cache busting
+      const streamUrl = `${ICECAST_STREAM_URL}?t=${Date.now()}`;
+      audio.src = streamUrl;
+      
+      console.log('Connecting to Icecast stream:', streamUrl);
+      
+      // Load the stream
+      audio.load();
+      
+      // Add one-time event listener for successful playback
+      const onCanPlayThrough = () => {
+        audio.removeEventListener('canplaythrough', onCanPlayThrough);
+        setIsLoading(false);
         setError(null);
-        
-        // Configure audio for streaming
-        audio.src = ICECAST_STREAM_URL;
-        
-        // Set audio properties for live streaming
-        audio.preload = 'none';
-        audio.volume = isMuted ? 0 : volume / 100;
-        
-        // Load and play the stream
-        audio.load();
-        
-        // Use a timeout to handle slow connections
-        const timeoutId = setTimeout(() => {
-          if (isLoading) {
-            setError('Stream connection timeout');
-            setIsLoading(false);
-          }
-        }, 15000);
-        
-        try {
-          await audio.play();
-          clearTimeout(timeoutId);
-        } catch (playError) {
-          clearTimeout(timeoutId);
-          throw playError;
+        console.log('Stream ready to play');
+      };
+      
+      audio.addEventListener('canplaythrough', onCanPlayThrough);
+      
+      // Set timeout for connection
+      const timeoutId = setTimeout(() => {
+        audio.removeEventListener('canplaythrough', onCanPlayThrough);
+        if (isLoading) {
+          setError('Connection timeout - try again');
+          setIsLoading(false);
+          audio.src = '';
         }
+      }, 10000);
+      
+      // Attempt to play
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            clearTimeout(timeoutId);
+            setIsPlaying(true);
+            setIsLoading(false);
+            console.log('Icecast stream playing successfully');
+          })
+          .catch((error) => {
+            clearTimeout(timeoutId);
+            audio.removeEventListener('canplaythrough', onCanPlayThrough);
+            console.error('Play failed:', error);
+            
+            if (error.name === 'NotAllowedError') {
+              setError('Please allow audio autoplay');
+            } else if (error.name === 'NotSupportedError') {
+              setError('Stream format not supported');
+            } else {
+              setError('Unable to connect to stream');
+            }
+            
+            setIsPlaying(false);
+            setIsLoading(false);
+            audio.src = '';
+          });
       }
+      
     } catch (error: any) {
-      console.error('Playback error:', error);
-      
-      // Provide more specific error messages
-      if (error.name === 'NotAllowedError') {
-        setError('Click to enable audio playback');
-      } else if (error.name === 'AbortError') {
-        setError('Stream connection aborted');
-      } else {
-        setError('Stream temporarily unavailable');
-      }
-      
+      console.error('Stream error:', error);
+      setError('Failed to start stream');
       setIsPlaying(false);
       setIsLoading(false);
+      if (audio) audio.src = '';
     }
   };
 
@@ -156,6 +193,7 @@ export default function IcecastPlayer({ className = "" }: IcecastPlayerProps) {
         ref={audioRef}
         preload="none"
         crossOrigin="anonymous"
+        controls={false}
         style={{ display: 'none' }}
       />
       
