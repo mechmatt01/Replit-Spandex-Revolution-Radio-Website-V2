@@ -1,13 +1,26 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { 
-  Play, Pause, SkipForward, SkipBack, Volume2, VolumeX, 
-  Repeat, Shuffle, Heart, Share2, Download, List,
-  Music, Clock, Radio as RadioIcon, Headphones
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { 
+  Play, 
+  Pause, 
+  SkipBack, 
+  SkipForward, 
+  Shuffle, 
+  Repeat, 
+  Volume2, 
+  VolumeX, 
+  Heart, 
+  Share2, 
+  List, 
+  Music, 
+  Clock, 
+  Headphones,
+  Radio as RadioIcon 
+} from "lucide-react";
 import { useAudio } from "@/contexts/AudioContext";
 import type { NowPlaying } from "@shared/schema";
 
@@ -33,29 +46,29 @@ interface Playlist {
   isActive?: boolean;
 }
 
-// Sample playlist data
+// Sample playlists with metal tracks
 const samplePlaylists: Playlist[] = [
   {
     id: "current-stream",
     name: "Live Stream",
-    description: "Currently broadcasting on Spandex Salvation Radio",
+    description: "Currently broadcasting live",
     isActive: true,
     tracks: [
-      { id: "1", title: "Youth Gone Wild", artist: "Skid Row", album: "Skid Row", duration: 211, year: 1989, genre: "Hard Rock" },
-      { id: "2", title: "I Remember You", artist: "Skid Row", album: "Skid Row", duration: 321, year: 1989, genre: "Hard Rock" },
-      { id: "3", title: "18 and Life", artist: "Skid Row", album: "Skid Row", duration: 243, year: 1989, genre: "Hard Rock" },
-      { id: "4", title: "We're Not Gonna Take It", artist: "Twisted Sister", album: "Stay Hungry", duration: 203, year: 1984, genre: "Heavy Metal" },
-      { id: "5", title: "I Wanna Rock", artist: "Twisted Sister", album: "Stay Hungry", duration: 184, year: 1984, genre: "Heavy Metal" },
+      { id: "1", title: "Youth Gone Wild", artist: "Skid Row", album: "Skid Row", duration: 245, year: 1989, genre: "Hard Rock" },
+      { id: "2", title: "18 and Life", artist: "Skid Row", album: "Skid Row", duration: 223, year: 1989, genre: "Hard Rock" },
+      { id: "3", title: "I Remember You", artist: "Skid Row", album: "Skid Row", duration: 321, year: 1989, genre: "Hard Rock" },
     ]
   },
   {
-    id: "hair-metal-classics",
-    name: "Hair Metal Classics",
-    description: "The biggest hits from the golden age of hair metal",
+    id: "classic-metal",
+    name: "Classic Metal Hits",
+    description: "The greatest metal anthems of all time",
     tracks: [
-      { id: "6", title: "Pour Some Sugar on Me", artist: "Def Leppard", album: "Hysteria", duration: 263, year: 1988, genre: "Hard Rock" },
-      { id: "7", title: "Sweet Child O' Mine", artist: "Guns N' Roses", album: "Appetite for Destruction", duration: 356, year: 1987, genre: "Hard Rock" },
-      { id: "8", title: "Home Sweet Home", artist: "Mötley Crüe", album: "Theatre of Pain", duration: 236, year: 1985, genre: "Hard Rock" },
+      { id: "4", title: "We're Not Gonna Take It", artist: "Twisted Sister", album: "Stay Hungry", duration: 203, year: 1984, genre: "Heavy Metal" },
+      { id: "5", title: "I Wanna Rock", artist: "Twisted Sister", album: "Stay Hungry", duration: 286, year: 1984, genre: "Heavy Metal" },
+      { id: "6", title: "Cum On Feel the Noize", artist: "Quiet Riot", album: "Metal Health", duration: 285, year: 1983, genre: "Heavy Metal" },
+      { id: "7", title: "Metal Health", artist: "Quiet Riot", album: "Metal Health", duration: 317, year: 1983, genre: "Heavy Metal" },
+      { id: "8", title: "Don't Stop Believin'", artist: "Journey", album: "Escape", duration: 251, year: 1981, genre: "Rock" },
       { id: "9", title: "Every Rose Has Its Thorn", artist: "Poison", album: "Open Up and Say... Ahh!", duration: 317, year: 1988, genre: "Hard Rock" },
       { id: "10", title: "Round and Round", artist: "Ratt", album: "Out of the Cellar", duration: 264, year: 1984, genre: "Hard Rock" },
     ]
@@ -74,10 +87,10 @@ const samplePlaylists: Playlist[] = [
 ];
 
 export default function AdvancedAudioPlayer() {
-  const { currentTrack, isPlaying, volume, togglePlayback, setVolume } = useAudio();
+  const { currentTrack, isPlaying, volume, togglePlayback, setVolume, nextTrack, previousTrack, currentTrackIndex } = useAudio();
   const [playlists, setPlaylists] = useState<Playlist[]>(samplePlaylists);
   const [activePlaylist, setActivePlaylist] = useState<Playlist>(samplePlaylists[0]);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [currentPlaylistTrackIndex, setCurrentPlaylistTrackIndex] = useState(0);
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [repeat, setRepeat] = useState<'none' | 'all' | 'one'>('none');
   const [shuffle, setShuffle] = useState(false);
@@ -122,41 +135,39 @@ export default function AdvancedAudioPlayer() {
   };
 
   const handleNext = () => {
-    if (shuffle) {
-      const randomIndex = Math.floor(Math.random() * activePlaylist.tracks.length);
-      setCurrentTrackIndex(randomIndex);
-    } else {
-      const nextIndex = (currentTrackIndex + 1) % activePlaylist.tracks.length;
-      setCurrentTrackIndex(nextIndex);
-    }
+    nextTrack();
+    const nextIndex = (currentPlaylistTrackIndex + 1) % activePlaylist.tracks.length;
+    setCurrentPlaylistTrackIndex(nextIndex);
   };
 
   const handlePrevious = () => {
-    if (currentTime > 3) {
-      setCurrentTime(0);
-    } else {
-      const prevIndex = currentTrackIndex === 0 
-        ? activePlaylist.tracks.length - 1 
-        : currentTrackIndex - 1;
-      setCurrentTrackIndex(prevIndex);
-    }
-  };
-
-  const handleSeek = (value: number[]) => {
-    const newTime = (value[0] / 100) * duration;
-    setCurrentTime(newTime);
-    if (audioRef.current) {
-      audioRef.current.currentTime = newTime;
-    }
+    previousTrack();
+    const prevIndex = currentPlaylistTrackIndex === 0 ? activePlaylist.tracks.length - 1 : currentPlaylistTrackIndex - 1;
+    setCurrentPlaylistTrackIndex(prevIndex);
   };
 
   const handleVolumeChange = (value: number[]) => {
-    const newVolume = value[0];
-    setVolume(newVolume);
-    setIsMuted(newVolume === 0);
-    if (newVolume > 0) {
-      setPreviousVolume(newVolume);
+    setVolume(value[0]);
+  };
+
+  const handleSeek = (value: number[]) => {
+    if (audioRef.current) {
+      const seekTime = (value[0] / 100) * duration;
+      audioRef.current.currentTime = seekTime;
+      setCurrentTime(seekTime);
     }
+  };
+
+  const toggleShuffle = () => {
+    setShuffle(!shuffle);
+  };
+
+  const toggleRepeat = () => {
+    setRepeat(prev => {
+      if (prev === 'none') return 'all';
+      if (prev === 'all') return 'one';
+      return 'none';
+    });
   };
 
   const toggleMute = () => {
@@ -170,207 +181,186 @@ export default function AdvancedAudioPlayer() {
     }
   };
 
-  const toggleRepeat = () => {
-    setRepeat(current => {
-      switch (current) {
-        case 'none': return 'all';
-        case 'all': return 'one';
-        case 'one': return 'none';
-        default: return 'none';
-      }
-    });
-  };
-
-  const toggleShuffle = () => {
-    setShuffle(!shuffle);
-  };
-
-  const selectTrack = (trackIndex: number) => {
-    setCurrentTrackIndex(trackIndex);
-  };
-
-  const selectPlaylist = (playlist: Playlist) => {
-    setActivePlaylist(playlist);
-    setCurrentTrackIndex(0);
-    setShowPlaylist(false);
-  };
-
   const toggleFavorite = (trackId: string) => {
-    const updatedPlaylists = playlists.map(playlist => ({
-      ...playlist,
-      tracks: playlist.tracks.map(track => 
-        track.id === trackId 
+    setActivePlaylist(prev => ({
+      ...prev,
+      tracks: prev.tracks.map(track =>
+        track.id === trackId
           ? { ...track, isFavorited: !track.isFavorited }
           : track
       )
     }));
-    setPlaylists(updatedPlaylists);
-    
-    if (activePlaylist) {
-      const updatedActivePlaylist = updatedPlaylists.find(p => p.id === activePlaylist.id);
-      if (updatedActivePlaylist) {
-        setActivePlaylist(updatedActivePlaylist);
-      }
+  };
+
+  const selectPlaylist = (playlist: Playlist) => {
+    setActivePlaylist(playlist);
+    setCurrentPlaylistTrackIndex(0);
+  };
+
+  const selectTrack = (index: number) => {
+    setCurrentPlaylistTrackIndex(index);
+    if (!isPlaying) {
+      togglePlayback();
     }
   };
 
   const shareTrack = (track: PlaylistTrack) => {
-    const shareText = `🎵 Now listening to "${track.title}" by ${track.artist} on Spandex Salvation Radio! 🤘`;
     if (navigator.share) {
       navigator.share({
-        title: `${track.title} - ${track.artist}`,
-        text: shareText,
+        title: `${track.title} by ${track.artist}`,
+        text: `Check out this track: ${track.title} by ${track.artist}`,
         url: window.location.href,
       });
     } else {
-      navigator.clipboard.writeText(`${shareText} ${window.location.href}`);
+      navigator.clipboard.writeText(`${track.title} by ${track.artist} - ${window.location.href}`);
     }
   };
 
-  const currentTrackData = activePlaylist.tracks[currentTrackIndex];
+  const currentTrackData = activePlaylist.tracks[currentPlaylistTrackIndex];
 
   return (
     <div className="space-y-6">
       {/* Main Player */}
-      <div className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 p-6 rounded-lg border border-gray-800">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-            {/* Track Info */}
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-metal-orange to-metal-red rounded-lg flex items-center justify-center">
-                <Music className="text-white h-8 w-8" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 className="font-black text-white truncate">
-                  {currentTrackData?.title || nowPlaying?.title || "No track selected"}
-                </h3>
-                <p className="text-gray-400 font-semibold truncate">
-                  {currentTrackData?.artist || nowPlaying?.artist || "Unknown Artist"}
-                </p>
-                <p className="text-gray-500 text-sm truncate">
-                  {currentTrackData?.album || nowPlaying?.album || "Unknown Album"}
-                </p>
-              </div>
+      <div className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 p-6 rounded-lg">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+          {/* Track Info */}
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-metal-orange to-metal-red rounded-lg flex items-center justify-center">
+              <Music className="text-white h-8 w-8" />
             </div>
-
-            {/* Player Controls */}
-            <div className="flex flex-col items-center space-y-4">
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={toggleShuffle}
-                  className={`text-white hover:text-metal-orange ${shuffle ? 'text-metal-orange' : ''}`}
-                >
-                  <Shuffle className="h-4 w-4" />
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handlePrevious}
-                  className="text-white hover:text-metal-orange"
-                >
-                  <SkipBack className="h-5 w-5" />
-                </Button>
-                
-                <Button
-                  onClick={handlePlayPause}
-                  className="bg-metal-orange hover:bg-orange-600 text-white w-12 h-12 rounded-full"
-                >
-                  {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={handleNext}
-                  className="text-white hover:text-metal-orange"
-                >
-                  <SkipForward className="h-5 w-5" />
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={toggleRepeat}
-                  className={`text-white hover:text-metal-orange ${repeat !== 'none' ? 'text-metal-orange' : ''}`}
-                >
-                  <Repeat className="h-4 w-4" />
-                  {repeat === 'one' && <span className="absolute -top-1 -right-1 text-xs">1</span>}
-                </Button>
-              </div>
-
-              {/* Progress Bar */}
-              <div className="w-full max-w-md">
-                <Slider
-                  value={[duration ? (currentTime / duration) * 100 : 0]}
-                  onValueChange={handleSeek}
-                  className="w-full"
-                  max={100}
-                  step={1}
-                />
-                <div className="flex justify-between text-xs text-gray-400 mt-1">
-                  <span>{formatTime(currentTime)}</span>
-                  <span>{formatTime(duration)}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Volume & Actions */}
-            <div className="flex items-center justify-end space-x-4">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => toggleFavorite(currentTrackData?.id || '')}
-                className={`text-white hover:text-metal-orange ${currentTrackData?.isFavorited ? 'text-metal-orange' : ''}`}
-              >
-                <Heart className={`h-4 w-4 ${currentTrackData?.isFavorited ? 'fill-current' : ''}`} />
-              </Button>
-              
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => currentTrackData && shareTrack(currentTrackData)}
-                className="text-white hover:text-metal-orange"
-              >
-                <Share2 className="h-4 w-4" />
-              </Button>
-              
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={toggleMute}
-                  className="text-white hover:text-metal-orange"
-                >
-                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
-                </Button>
-                <Slider
-                  value={[volume]}
-                  onValueChange={handleVolumeChange}
-                  className="w-20"
-                  max={100}
-                  step={1}
-                />
-              </div>
-              
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowPlaylist(!showPlaylist)}
-                className="text-white hover:text-metal-orange"
-              >
-                <List className="h-4 w-4" />
-              </Button>
+            <div className="min-w-0 flex-1">
+              <h3 className="font-black text-white truncate">
+                {currentTrackData?.title || nowPlaying?.title || "No track selected"}
+              </h3>
+              <p className="text-gray-400 font-semibold truncate">
+                {currentTrackData?.artist || nowPlaying?.artist || "Unknown Artist"}
+              </p>
+              <p className="text-gray-500 text-sm truncate">
+                {currentTrackData?.album || nowPlaying?.album || "Unknown Album"}
+              </p>
             </div>
           </div>
-      </Card>
+
+          {/* Player Controls */}
+          <div className="flex flex-col items-center space-y-4">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleShuffle}
+                className={`text-white hover:text-metal-orange ${shuffle ? 'text-metal-orange' : ''}`}
+              >
+                <Shuffle className="h-4 w-4" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handlePrevious}
+                className="text-white hover:text-metal-orange"
+              >
+                <SkipBack className="h-5 w-5" />
+              </Button>
+              
+              <Button
+                onClick={handlePlayPause}
+                className="bg-metal-orange hover:bg-orange-600 text-white w-12 h-12 rounded-full"
+              >
+                {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleNext}
+                className="text-white hover:text-metal-orange"
+              >
+                <SkipForward className="h-5 w-5" />
+              </Button>
+              
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleRepeat}
+                className={`text-white hover:text-metal-orange ${repeat !== 'none' ? 'text-metal-orange' : ''}`}
+              >
+                <Repeat className="h-4 w-4" />
+                {repeat === 'one' && <span className="absolute -top-1 -right-1 text-xs">1</span>}
+              </Button>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="w-full max-w-md">
+              <Slider
+                value={[duration ? (currentTime / duration) * 100 : 0]}
+                onValueChange={handleSeek}
+                className="w-full"
+                max={100}
+                step={1}
+              />
+              <div className="flex justify-between text-xs text-gray-400 mt-1">
+                <span>{formatTime(currentTime)}</span>
+                <span>{formatTime(duration)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Volume & Actions */}
+          <div className="flex items-center justify-end space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => toggleFavorite(currentTrackData?.id || '')}
+              className={`text-white hover:text-metal-orange ${currentTrackData?.isFavorited ? 'text-metal-orange' : ''}`}
+            >
+              <Heart className={`h-4 w-4 ${currentTrackData?.isFavorited ? 'fill-current' : ''}`} />
+            </Button>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => currentTrackData && shareTrack(currentTrackData)}
+              className="text-white hover:text-metal-orange"
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+            
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleMute}
+                className="text-white hover:text-metal-orange"
+              >
+                {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+              </Button>
+              <Slider
+                value={[volume]}
+                onValueChange={handleVolumeChange}
+                className="w-20"
+                max={100}
+                step={1}
+              />
+            </div>
+            
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowPlaylist(!showPlaylist)}
+              className="text-white hover:text-metal-orange"
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
 
       {/* Playlist Section */}
       {showPlaylist && (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Playlist Selector */}
-          <div className="bg-dark-bg/50 rounded-lg border border-gray-800 p-4"></div>
+          <Card className="bg-dark-bg/50">
+            <CardContent className="p-4">
               <h3 className="font-black text-white mb-4">Playlists</h3>
               <div className="space-y-2">
                 {playlists.map((playlist) => (
@@ -398,11 +388,13 @@ export default function AdvancedAudioPlayer() {
                   </button>
                 ))}
               </div>
-          </div>
+            </CardContent>
+          </Card>
 
           {/* Track List */}
           <div className="lg:col-span-3">
-            <div className="bg-dark-bg/50 rounded-lg border border-gray-800 p-4"></div>
+            <Card className="bg-dark-bg/50">
+              <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="font-black text-white">{activePlaylist.name}</h3>
@@ -422,13 +414,13 @@ export default function AdvancedAudioPlayer() {
                       key={track.id}
                       onClick={() => selectTrack(index)}
                       className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
-                        currentTrackIndex === index
+                        currentPlaylistTrackIndex === index
                           ? 'bg-metal-orange/20 text-metal-orange'
                           : 'bg-dark-surface/30 text-gray-300 hover:bg-dark-surface/50'
                       }`}
                     >
                       <div className="w-8 h-8 rounded flex items-center justify-center mr-3">
-                        {currentTrackIndex === index && isPlaying ? (
+                        {currentPlaylistTrackIndex === index && isPlaying ? (
                           <div className="flex space-x-1">
                             <div className="w-1 h-4 bg-metal-orange animate-pulse"></div>
                             <div className="w-1 h-4 bg-metal-orange animate-pulse" style={{ animationDelay: '0.2s' }}></div>
@@ -478,7 +470,8 @@ export default function AdvancedAudioPlayer() {
                     </div>
                   ))}
                 </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       )}

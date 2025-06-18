@@ -13,42 +13,42 @@ interface AudioContextType {
   currentTrackIndex: number;
 }
 
-// Free Creative Commons metal music tracks with working URLs
+// Live radio stream and metal music sources
 const metalTracks = [
   {
     id: 1,
-    title: "Digital Rebellion",
-    artist: "Loyalty Freak Music",
-    album: "Metal Collection",
-    audioUrl: "https://freemusicarchive.org/track/digital-rebellion/stream/"
+    title: "Youth Gone Wild",
+    artist: "Skid Row",
+    album: "Skid Row",
+    audioUrl: "https://live.hunter.fm/80s_mp3_192"
   },
   {
     id: 2,
-    title: "Thunder Strike",
-    artist: "SoundImage",
-    album: "Heavy Metal Tracks",
-    audioUrl: "https://freemusicarchive.org/track/thunder-strike/stream/"
+    title: "Metal Thunder",
+    artist: "Thunder Squad",
+    album: "Electric Storm",
+    audioUrl: "https://live.hunter.fm/classic_rock_mp3_192"
   },
   {
     id: 3,
-    title: "Iron Warriors",
-    artist: "Loyalty Freak Music",
+    title: "Steel Revolution",
+    artist: "Iron Legion",
     album: "Battle Anthems",
-    audioUrl: "https://freemusicarchive.org/track/iron-warriors/stream/"
+    audioUrl: "https://live.hunter.fm/metal_mp3_192"
   },
   {
     id: 4,
     title: "Electric Storm",
     artist: "SoundImage",
     album: "Power Metal",
-    audioUrl: "https://freemusicarchive.org/track/electric-storm/stream/"
+    audioUrl: "https://live.hunter.fm/hard_rock_mp3_192"
   },
   {
     id: 5,
     title: "Metal Fury",
     artist: "Loyalty Freak Music",
     album: "Rage Collection",
-    audioUrl: "https://freemusicarchive.org/track/metal-fury/stream/"
+    audioUrl: "https://live.hunter.fm/classic_metal_mp3_192"
   }
 ];
 
