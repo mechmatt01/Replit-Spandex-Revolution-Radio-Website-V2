@@ -3,6 +3,7 @@ import { Menu, X, Radio, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import RadioLogoPath from "@assets/RadioLogo_1750204824630.png";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -25,7 +26,7 @@ export default function Navigation() {
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
               <img 
-                src="/attached_assets/RadioLogo_1750204824630.png" 
+                src={RadioLogoPath} 
                 alt="Radio Logo" 
                 className="w-full h-full object-cover"
               />
