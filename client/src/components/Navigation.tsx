@@ -74,13 +74,15 @@ export default function Navigation() {
               variant="ghost"
               size="icon"
               onClick={toggleTheme}
-              className="hidden lg:block w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card/90 border border-metal-orange/20"
+              className="hidden lg:block w-12 h-12 rounded-full bg-orange-500/20 hover:bg-orange-500/30 border-2 border-orange-500"
               aria-label="Toggle theme"
+              title={`Current theme: ${theme}`}
             >
-              {theme === "dark" ? 
-                <Sun className="h-5 w-5" style={{ color: '#ff6633' }} /> : 
-                <Moon className="h-5 w-5" style={{ color: '#ff6633' }} />
-              }
+              {theme === "dark" ? (
+                <Sun size={24} color="#ff6633" fill="#ff6633" strokeWidth={2} />
+              ) : (
+                <Moon size={24} color="#ff6633" fill="#ff6633" strokeWidth={2} />
+              )}
             </Button>
             <Button
               variant="ghost"
