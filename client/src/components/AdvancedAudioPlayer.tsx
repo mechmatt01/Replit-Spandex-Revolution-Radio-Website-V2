@@ -96,24 +96,21 @@ export default function AdvancedAudioPlayer() {
   // Update current track when nowPlaying changes
   useEffect(() => {
     if (nowPlaying && activePlaylist.id === 'current-stream') {
-      const updatedTracks = activePlaylist.tracks.map((track, index) => ({
-        ...track,
-        isPlaying: index === 0 && isPlaying,
-      }));
-      
-      // Update the first track with live data
-      if (updatedTracks[0]) {
-        updatedTracks[0] = {
-          ...updatedTracks[0],
-          title: nowPlaying.title,
-          artist: nowPlaying.artist,
-          album: nowPlaying.album || updatedTracks[0].album,
-        };
-      }
-
-      setActivePlaylist({ ...activePlaylist, tracks: updatedTracks });
+      setActivePlaylist(prev => {
+        const updatedTracks = prev.tracks.map((track, index) => ({
+          ...track,
+          isPlaying: index === 0 && isPlaying,
+          ...(index === 0 && {
+            title: nowPlaying.title,
+            artist: nowPlaying.artist,
+            album: nowPlaying.album || track.album,
+          })
+        }));
+        
+        return { ...prev, tracks: updatedTracks };
+      });
     }
-  }, [nowPlaying, isPlaying, activePlaylist]);
+  }, [nowPlaying, isPlaying]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -236,8 +233,7 @@ export default function AdvancedAudioPlayer() {
   return (
     <div className="space-y-6">
       {/* Main Player */}
-      <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
-        <CardContent className="p-6">
+      <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 p-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
             {/* Track Info */}
             <div className="flex items-center space-x-4">
@@ -369,7 +365,6 @@ export default function AdvancedAudioPlayer() {
               </Button>
             </div>
           </div>
-        </CardContent>
       </Card>
 
       {/* Playlist Section */}
