@@ -3,7 +3,7 @@ import { Play, Calendar, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
 import { useQuery } from "@tanstack/react-query";
-import WorkingRadioPlayer from "@/components/WorkingRadioPlayer";
+import FinalRadioPlayer from "@/components/FinalRadioPlayer";
 import IcecastPlayer from "@/components/IcecastPlayer";
 
 export default function Hero() {
