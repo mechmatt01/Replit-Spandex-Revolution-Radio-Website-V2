@@ -5,7 +5,6 @@ import { storage } from "./storage";
 // Spotify API configuration
 const SPOTIFY_CLIENT_ID = "60a088cba7d14e8888e34e92d40f8c41";
 const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
-const REDIRECT_URI = "https://spandex-salvation-radio.replit.app/music";
 import { insertSubmissionSchema, insertContactSchema, insertSubscriptionSchema, insertNowPlayingSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -229,7 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Spotify authentication endpoints
   app.post("/api/spotify/token", async (req, res) => {
     try {
-      const { code } = req.body;
+      const { code, redirect_uri } = req.body;
       
       const tokenResponse = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
@@ -240,7 +239,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         body: new URLSearchParams({
           grant_type: "authorization_code",
           code: code,
-          redirect_uri: REDIRECT_URI
+          redirect_uri: redirect_uri
         })
       });
 
@@ -248,7 +247,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const tokenData = await tokenResponse.json();
         res.json(tokenData);
       } else {
-        res.status(400).json({ error: "Failed to get access token" });
+        const errorData = await tokenResponse.text();
+        console.error("Spotify token error:", errorData);
+        res.status(400).json({ error: "Failed to get access token", details: errorData });
       }
     } catch (error) {
       console.error("Spotify token error:", error);

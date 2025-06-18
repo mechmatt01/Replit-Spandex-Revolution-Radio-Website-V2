@@ -1,6 +1,7 @@
 // Spotify Web API integration
 const SPOTIFY_CLIENT_ID = "60a088cba7d14e8888e34e92d40f8c41";
-const REDIRECT_URI = "https://spandex-salvation-radio.replit.app/music";
+// Use development URL for now since that's what we're running on
+const REDIRECT_URI = window.location.origin + "/music";
 const SCOPES = [
   "streaming",
   "user-read-email",
@@ -60,7 +61,10 @@ class SpotifyAPI {
       const response = await fetch('/api/spotify/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
+        body: JSON.stringify({ 
+          code,
+          redirect_uri: REDIRECT_URI
+        })
       });
 
       if (response.ok) {

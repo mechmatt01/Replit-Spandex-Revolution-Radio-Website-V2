@@ -203,6 +203,11 @@ export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
           <p className="text-muted-foreground">
             Connect your Spotify account to stream real metal music
           </p>
+          <div className="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg mb-4">
+            <p className="text-sm text-yellow-800 dark:text-yellow-200">
+              <strong>Setup Required:</strong> Add <code>{window.location.origin}/music</code> to your Spotify app's redirect URIs in the Spotify Dashboard.
+            </p>
+          </div>
           <Button 
             onClick={handleLogin} 
             disabled={isLoading}
