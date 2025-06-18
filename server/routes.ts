@@ -240,7 +240,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Removed Spotify endpoints - using Icecast streaming only
+  // Proxy endpoint for Icecast streaming with format conversion
+  app.get("/api/radio-stream", (req, res) => {
+    const streamUrl = "http://168.119.74.185:9858/autodj";
+    
+    // Set headers for browser-compatible audio streaming
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET');
+    res.setHeader('Access-Control-Allow-Headers', 'Range');
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Cache-Control', 'no-cache');
+    
+    const http = require('http');
+    
+    // Make request to Icecast server
+    const streamReq = http.get(streamUrl, (streamRes: any) => {
+      console.log('Connected to Icecast server');
+      console.log('Content-Type:', streamRes.headers['content-type']);
+      
+      // Set the correct content type for browser compatibility
+      res.setHeader('Content-Type', 'audio/mpeg');
+      
+      // Pipe the audio stream directly
+      streamRes.pipe(res);
+      
+      streamRes.on('error', (error: any) => {
+        console.error('Icecast stream error:', error);
+        if (!res.headersSent) {
+          res.status(500).end();
+        }
+      });
+      
+      streamRes.on('end', () => {
+        console.log('Icecast stream ended');
+        res.end();
+      });
+    });
+    
+    streamReq.on('error', (error: any) => {
+      console.error('Failed to connect to Icecast:', error);
+      if (!res.headersSent) {
+        res.status(503).json({ error: 'Radio stream temporarily unavailable' });
+      }
+    });
+    
+    streamReq.setTimeout(30000, () => {
+      console.log('Stream request timeout');
+      streamReq.destroy();
+      if (!res.headersSent) {
+        res.status(504).json({ error: 'Stream connection timeout' });
+      }
+    });
+    
+    // Handle client disconnect
+    req.on('close', () => {
+      console.log('Client disconnected from stream');
+      streamReq.destroy();
+    });
+    
+    req.on('error', () => {
+      streamReq.destroy();
+    });
+  });
 
   // Authentication API
   app.post("/api/auth/login", async (req, res) => {

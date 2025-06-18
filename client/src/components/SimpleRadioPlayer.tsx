@@ -70,11 +70,11 @@ export default function SimpleRadioPlayer() {
         setIsLoading(true);
         setError(null);
         
-        // Use the working stream URL directly
-        audio.src = `http://168.119.74.185:9858/autodj?cachebust=${Date.now()}`;
+        // Use the server-side proxy for better compatibility
+        audio.src = `/api/radio-stream?cachebust=${Date.now()}`;
         audio.volume = volume;
         
-        console.log('Attempting to start radio stream...');
+        console.log('Connecting to radio stream via proxy...');
         await audio.play();
       }
     } catch (err: any) {

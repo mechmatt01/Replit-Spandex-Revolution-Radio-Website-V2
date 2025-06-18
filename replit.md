@@ -153,6 +153,12 @@ The application uses PostgreSQL with the following main entities:
 - June 18, 2025: Added responsive hamburger menu navigation for mobile accessibility with complete link coverage and smooth transitions
 - June 18, 2025: Fixed duplicate theme toggle icons and enhanced Icecast streaming with proper CORS handling, timeout management, and specific error messages
 - June 18, 2025: Fixed JSON parsing errors and completely rewrote Icecast player with authentic streaming from live radio server - now properly plays music when play button is clicked
+- June 18, 2025: Removed all Spotify API calls and references to eliminate JSON parsing errors and streaming conflicts
+- June 18, 2025: Fixed volume range errors (changed from 0-100 to 0-1 range) preventing audio playback
+- June 18, 2025: Rebuilt AudioContext with proper event handling and error recovery mechanisms
+- June 18, 2025: Implemented server-side streaming proxy (/api/radio-stream) to resolve CORS and audio format compatibility issues
+- June 18, 2025: Added dynamic metal genre-based theme switcher with 7 different color palettes (Classic Metal, Black Metal, Death Metal, Power Metal, Doom Metal, Thrash Metal, Gothic Metal)
+- June 18, 2025: Created SimpleRadioPlayer component with enhanced error handling and browser compatibility
 
 ## User Preferences
 

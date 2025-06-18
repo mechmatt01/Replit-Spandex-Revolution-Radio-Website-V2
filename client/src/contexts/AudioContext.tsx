@@ -139,11 +139,11 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         setError(null);
         
-        // Set the stream URL with cache busting
-        const streamUrl = `http://168.119.74.185:9858/autodj?t=${Date.now()}`;
+        // Use server-side proxy for better compatibility
+        const streamUrl = `/api/radio-stream?t=${Date.now()}`;
         audioRef.current.src = streamUrl;
         
-        console.log('Attempting to play stream:', streamUrl);
+        console.log('Connecting to radio stream via proxy:', streamUrl);
         
         // Load and play
         audioRef.current.load();
