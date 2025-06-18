@@ -88,17 +88,17 @@ export default function StickyPlayer() {
           </div>
 
           {/* Player Controls */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-6">
             <Button
               onClick={togglePlayback}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-10 h-10 rounded-full"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full"
             >
-              {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
             </Button>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-xs text-red-500 font-bold">LIVE</span>
+              <span className="text-sm text-red-500 font-bold">LIVE</span>
             </div>
           </div>
 
