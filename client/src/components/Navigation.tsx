@@ -23,14 +23,12 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
           {/* Logo & Brand */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-              <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C7.589 2 4 5.589 4 10v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-4.411-3.589-8-8-8zm6 16H6v-8c0-3.309 2.691-6 6-6s6 2.691 6 6v8z"/>
-                <rect x="6" y="12" width="12" height="3" rx="0.5"/>
-                <circle cx="9" cy="16" r="2"/>
-                <circle cx="20" cy="6" r="1.5"/>
-                <path d="M16 6l3-3" stroke="currentColor" strokeWidth="1.5" fill="none"/>
-              </svg>
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+              <img 
+                src="/attached_assets/RadioLogo_1750204824630.png" 
+                alt="Radio Logo" 
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="flex items-center">
               <h1 className="font-orbitron font-bold text-lg text-metal-orange leading-tight">
