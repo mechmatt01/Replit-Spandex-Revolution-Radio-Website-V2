@@ -159,40 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Proxy endpoint for Icecast stream to handle CORS
-  app.get("/api/stream", (req, res) => {
-    const streamUrl = "http://168.119.74.185:9858/autodj";
-    
-    // Set appropriate headers for audio streaming
-    res.setHeader('Content-Type', 'audio/mpeg');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    
-    // Create a request to the Icecast server
-    const http = require('http');
-    const streamRequest = http.get(streamUrl, (streamResponse: any) => {
-      // Pipe the Icecast stream to the client
-      streamResponse.pipe(res);
-      
-      streamResponse.on('error', (error: any) => {
-        console.error('Stream error:', error);
-        res.status(500).end();
-      });
-    });
-    
-    streamRequest.on('error', (error: any) => {
-      console.error('Stream request error:', error);
-      res.status(500).json({ error: 'Failed to connect to stream' });
-    });
-    
-    // Handle client disconnect
-    req.on('close', () => {
-      streamRequest.destroy();
-    });
-  });
+
 
   // Subscriptions API
   app.post("/api/subscriptions", async (req, res) => {

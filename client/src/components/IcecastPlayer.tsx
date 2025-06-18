@@ -3,7 +3,7 @@ import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 
-const ICECAST_STREAM_URL = "/api/stream";
+const ICECAST_STREAM_URL = "http://168.119.74.185:9858/autodj";
 
 interface IcecastPlayerProps {
   className?: string;
@@ -41,7 +41,7 @@ export default function IcecastPlayer({ className = "" }: IcecastPlayerProps) {
     const handleError = (e: any) => {
       setIsPlaying(false);
       setIsLoading(false);
-      setError('Failed to load radio stream');
+      setError('Stream temporarily unavailable');
       console.error('Icecast stream error:', e);
     };
 
@@ -190,6 +190,10 @@ export default function IcecastPlayer({ className = "" }: IcecastPlayerProps) {
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
           <span className="text-xs font-medium">LIVE</span>
         </div>
+      )}
+      
+      {isLoading && (
+        <span className="text-metal-orange text-xs animate-pulse">Connecting...</span>
       )}
     </div>
   );
