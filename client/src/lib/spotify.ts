@@ -35,7 +35,6 @@ class SpotifyAPI {
   private refreshToken: string | null = null;
   private player: any = null;
   private deviceId: string | null = null;
-  private deviceId: string | null = null;
 
   constructor() {
     // Check for existing tokens in localStorage
@@ -294,57 +293,6 @@ class SpotifyAPI {
         console.error('Fallback play also failed:', fallbackError);
         return false;
       }
-    }
-  }
-
-    this.player = new window.Spotify.Player({
-      name: 'Spandex Salvation Radio',
-      getOAuthToken: (cb: (token: string) => void) => {
-        cb(this.accessToken!);
-      },
-      volume: 0.5
-    });
-
-    // Ready
-    this.player.addListener('ready', ({ device_id }: { device_id: string }) => {
-      console.log('Spotify player ready with device ID:', device_id);
-      this.deviceId = device_id;
-    });
-
-    // Not Ready
-    this.player.addListener('not_ready', ({ device_id }: { device_id: string }) => {
-      console.log('Device ID has gone offline', device_id);
-    });
-
-    // Player state changed
-    this.player.addListener('player_state_changed', (state: any) => {
-      if (!state) return;
-      console.log('Player state changed:', state);
-    });
-
-    // Connect to the player
-    this.player.connect();
-  }
-
-  // Play a track
-  async playTrack(trackUri: string): Promise<boolean> {
-    if (!this.deviceId) {
-      await this.initializePlayer();
-      // Wait a moment for device to be ready
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-
-    try {
-      await this.apiRequest(`/me/player/play?device_id=${this.deviceId}`, {
-        method: 'PUT',
-        body: JSON.stringify({
-          uris: [trackUri]
-        })
-      });
-      return true;
-    } catch (error) {
-      console.error('Error playing track:', error);
-      return false;
     }
   }
 
