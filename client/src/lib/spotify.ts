@@ -161,8 +161,14 @@ class SpotifyAPI {
 
   // Get metal/rock playlists
   async getMetalPlaylists(): Promise<SpotifyPlaylist[]> {
-    const data = await this.apiRequest('/browse/categories/metal/playlists?limit=20');
-    return data.playlists?.items || [];
+    try {
+      // Search for metal playlists instead of browsing categories
+      const data = await this.apiRequest('/search?q=metal%20rock%20heavy&type=playlist&limit=20');
+      return data.playlists?.items || [];
+    } catch (error) {
+      console.error('Error fetching metal playlists:', error);
+      return [];
+    }
   }
 
   // Initialize Spotify Web Playback SDK
