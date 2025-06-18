@@ -73,16 +73,13 @@ export default function Navigation() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => {
-                console.log('Current theme:', theme);
-                toggleTheme();
-              }}
-              className="hidden lg:block w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card/90"
+              onClick={toggleTheme}
+              className="hidden lg:block w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card/90 border border-metal-orange/20"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? 
-                <Sun className="h-5 w-5 text-metal-orange" /> : 
-                <Moon className="h-5 w-5 text-metal-orange" />
+                <Sun className="h-5 w-5" style={{ color: '#ff6633' }} /> : 
+                <Moon className="h-5 w-5" style={{ color: '#ff6633' }} />
               }
             </Button>
             <Button

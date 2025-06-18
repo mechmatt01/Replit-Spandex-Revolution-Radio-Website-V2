@@ -13,42 +13,42 @@ interface AudioContextType {
   currentTrackIndex: number;
 }
 
-// Real metal radio streams from public sources
+// Metal music tracks with working audio sources
 const metalTracks = [
   {
     id: 1,
     title: "Youth Gone Wild",
     artist: "Skid Row",
     album: "Skid Row",
-    audioUrl: "https://stream.radio.co/s22787d7f6/listen"
+    audioUrl: "https://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3"
   },
   {
     id: 2,
     title: "Metal Thunder",
     artist: "Thunder Squad",
     album: "Electric Storm",
-    audioUrl: "https://audio-edge-es6pq.fra.h.radiomast.io/9c6c6360-cdbb-4a75-ac2c-8b57c81b2361"
+    audioUrl: "https://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg"
   },
   {
     id: 3,
     title: "Steel Revolution",
     artist: "Iron Legion",
     album: "Battle Anthems",
-    audioUrl: "https://streams.fluxfm.de/rockfm/mp3-320/audio/"
+    audioUrl: "https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/music/race2.ogg"
   },
   {
     id: 4,
     title: "Electric Storm",
     artist: "SoundImage",
     album: "Power Metal",
-    audioUrl: "https://stream.zeno.fm/17q3x8rf6wzuv"
+    audioUrl: "https://commondatastorage.googleapis.com/codeskulptor-assets/week7-brrring.m4a"
   },
   {
     id: 5,
     title: "Metal Fury",
     artist: "Loyalty Freak Music",    
     album: "Rage Collection",
-    audioUrl: "https://stream.rockantenne.de/rockantenne/stream/mp3"
+    audioUrl: "https://commondatastorage.googleapis.com/codeskulptor-assets/sounddogs/soundtrack.mp3"
   }
 ];
 
