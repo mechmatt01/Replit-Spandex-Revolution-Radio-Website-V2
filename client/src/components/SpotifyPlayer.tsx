@@ -118,7 +118,11 @@ export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
   };
 
   const handleLogin = () => {
+    console.log('Starting Spotify login...');
+    console.log('Current origin:', window.location.origin);
+    console.log('Redirect URI:', window.location.origin + '/music');
     const authUrl = spotifyAPI.getAuthUrl();
+    console.log('Auth URL:', authUrl);
     window.location.href = authUrl;
   };
 

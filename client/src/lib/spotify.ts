@@ -58,6 +58,7 @@ class SpotifyAPI {
   // Exchange authorization code for access token
   async getAccessToken(code: string): Promise<boolean> {
     try {
+      console.log('Exchanging code for token:', code);
       const response = await fetch('/api/spotify/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -69,6 +70,7 @@ class SpotifyAPI {
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Token exchange successful');
         this.accessToken = data.access_token;
         this.refreshToken = data.refresh_token;
         
@@ -76,6 +78,9 @@ class SpotifyAPI {
         localStorage.setItem('spotify_refresh_token', this.refreshToken!);
         
         return true;
+      } else {
+        const errorData = await response.text();
+        console.error('Token exchange failed:', response.status, errorData);
       }
     } catch (error) {
       console.error('Error getting access token:', error);
