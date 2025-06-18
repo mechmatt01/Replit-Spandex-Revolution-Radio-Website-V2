@@ -67,15 +67,26 @@ class SpotifyAPI {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log('Token exchange successful');
-        this.accessToken = data.access_token;
-        this.refreshToken = data.refresh_token;
+        const text = await response.text();
+        if (!text || text.trim() === '') {
+          console.error('Empty response from Spotify token endpoint');
+          return false;
+        }
         
-        localStorage.setItem('spotify_access_token', this.accessToken!);
-        localStorage.setItem('spotify_refresh_token', this.refreshToken!);
+        try {
+          const data = JSON.parse(text);
+          console.log('Token exchange successful');
+          this.accessToken = data.access_token;
+          this.refreshToken = data.refresh_token;
         
-        return true;
+          localStorage.setItem('spotify_access_token', this.accessToken!);
+          localStorage.setItem('spotify_refresh_token', this.refreshToken!);
+          
+          return true;
+        } catch (parseError) {
+          console.error('Failed to parse Spotify response:', parseError, 'Response:', text);
+          return false;
+        }
       } else {
         const errorData = await response.text();
         console.error('Token exchange failed:', response.status, errorData);
