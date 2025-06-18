@@ -12,19 +12,19 @@ interface SpotifyPlayerProps {
 
 export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [localIsPlaying, setLocalIsPlaying] = useState(false);
-
-  // Sync local playing state with global context
-  useEffect(() => {
-    setLocalIsPlaying(isPlaying && !!spotifyTrack);
-  }, [isPlaying, spotifyTrack]);
   const [currentTrack, setCurrentTrack] = useState<SpotifyTrack | null>(null);
   const [playlists, setPlaylists] = useState<SpotifyPlaylist[]>([]);
   const [tracks, setTracks] = useState<SpotifyTrack[]>([]);
   const [currentPlaylist, setCurrentPlaylist] = useState<SpotifyPlaylist | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { setSpotifyTrack, isPlaying } = useAudio();
+  const { setSpotifyTrack, isPlaying, spotifyTrack } = useAudio();
+  const [localIsPlaying, setLocalIsPlaying] = useState(false);
+
+  // Sync local playing state with global context
+  useEffect(() => {
+    setLocalIsPlaying(isPlaying && !!spotifyTrack);
+  }, [isPlaying, spotifyTrack]);
 
   useEffect(() => {
     // Check if user is already authenticated

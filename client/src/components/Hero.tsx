@@ -81,9 +81,29 @@ export default function Hero() {
             <Music className="text-metal-orange mr-2 h-4 w-4" />
             <span className="text-muted-foreground text-sm font-semibold">NOW PLAYING</span>
           </div>
-          <h3 className="font-bold text-xl mb-1 text-foreground">{currentTrack?.title || "Loading..."}</h3>
-          <p className="text-foreground font-semibold">{currentTrack?.artist || "Artist"}</p>
-          <p className="text-muted-foreground text-sm font-medium">{currentTrack?.album || "Album"}</p>
+          <h3 className="font-bold text-xl mb-1 text-foreground">
+            {(() => {
+              if (!currentTrack) return "Loading...";
+              if ('name' in currentTrack) return currentTrack.name;
+              return (currentTrack as any).title || "Loading...";
+            })()}
+          </h3>
+          <p className="text-foreground font-semibold">
+            {(() => {
+              if (!currentTrack) return "Artist";
+              if ('artists' in currentTrack) return currentTrack.artists[0]?.name || "Artist";
+              return (currentTrack as any).artist || "Artist";
+            })()}
+          </p>
+          <p className="text-muted-foreground text-sm font-medium">
+            {(() => {
+              if (!currentTrack) return "Album";
+              if ('album' in currentTrack && typeof currentTrack.album === 'object' && currentTrack.album) {
+                return currentTrack.album.name;
+              }
+              return (currentTrack as any).album || "Album";
+            })()}
+          </p>
           
           {/* Audio Progress Bar */}
           <div className="mt-4">
@@ -91,24 +111,37 @@ export default function Hero() {
               <div 
                 className="bg-metal-orange h-1 rounded-full transition-all duration-1000"
                 style={{ 
-                  width: currentTrack && currentTrack.currentTime && currentTrack.duration ? 
-                    `${(currentTrack.currentTime / currentTrack.duration) * 100}%` : 
-                    '60%' 
+                  width: (() => {
+                    if (!currentTrack) return '60%';
+                    const track = currentTrack as any;
+                    if (track.currentTime && track.duration) {
+                      return `${(track.currentTime / track.duration) * 100}%`;
+                    }
+                    return '60%';
+                  })()
                 }}
               ></div>
             </div>
             <div className="flex justify-between text-xs text-muted-foreground mt-1">
               <span>
-                {currentTrack && currentTrack.currentTime ? 
-                  `${Math.floor(currentTrack.currentTime / 60)}:${(currentTrack.currentTime % 60).toString().padStart(2, '0')}` : 
-                  '2:34'
-                }
+                {(() => {
+                  if (!currentTrack) return '2:34';
+                  const track = currentTrack as any;
+                  if (track.currentTime) {
+                    return `${Math.floor(track.currentTime / 60)}:${(track.currentTime % 60).toString().padStart(2, '0')}`;
+                  }
+                  return '2:34';
+                })()}
               </span>
               <span>
-                {currentTrack && currentTrack.duration ? 
-                  `${Math.floor(currentTrack.duration / 60)}:${(currentTrack.duration % 60).toString().padStart(2, '0')}` : 
-                  '4:12'
-                }
+                {(() => {
+                  if (!currentTrack) return '4:12';
+                  const track = currentTrack as any;
+                  if (track.duration) {
+                    return `${Math.floor(track.duration / 60)}:${(track.duration % 60).toString().padStart(2, '0')}`;
+                  }
+                  return '4:12';
+                })()}
               </span>
             </div>
           </div>

@@ -90,13 +90,24 @@ export default function MusicPage() {
                   <div className="space-y-4">
                     <div className="text-center">
                       <h3 className="text-2xl font-bold text-foreground">
-                        {currentTrack.title}
+                        {(() => {
+                          if ('name' in currentTrack) return currentTrack.name;
+                          return (currentTrack as any).title;
+                        })()}
                       </h3>
                       <p className="text-lg text-muted-foreground">
-                        by {currentTrack.artist}
+                        by {(() => {
+                          if ('artists' in currentTrack) return currentTrack.artists[0]?.name;
+                          return (currentTrack as any).artist;
+                        })()}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        Album: {currentTrack.album}
+                        Album: {(() => {
+                          if ('album' in currentTrack && typeof currentTrack.album === 'object' && currentTrack.album) {
+                            return currentTrack.album.name;
+                          }
+                          return (currentTrack as any).album;
+                        })()}
                       </p>
                     </div>
                     
