@@ -3,13 +3,14 @@ import { Menu, X, Radio, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import MetalThemeSwitcher from "@/components/MetalThemeSwitcher";
 import { Link } from "wouter";
 import RadioLogoPath from "@assets/RadioLogo_1750204824630.png";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const { togglePlayback, isPlaying } = useAudio();
-  const { theme, toggleTheme } = useTheme();
+  const { getColors } = useTheme();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -72,7 +73,7 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Right Side Controls - Mobile Menu & Theme Toggle */}
+          {/* Right Side Controls - Mobile Menu & Metal Theme Switcher */}
           <div className="flex items-center space-x-4">
             <Button
               variant="ghost"
@@ -82,17 +83,7 @@ export default function Navigation() {
             >
               {isOpen ? <X /> : <Menu />}
             </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              className="text-foreground hover:text-metal-orange transition-colors"
-            >
-              {theme === 'dark' ? 
-                <Sun className="h-4 w-4" style={{ color: '#f97316' }} /> : 
-                <Moon className="h-4 w-4" />
-              }
-            </Button>
+            <MetalThemeSwitcher />
           </div>
         </div>
 
