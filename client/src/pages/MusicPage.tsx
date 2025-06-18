@@ -103,7 +103,7 @@ export default function MusicPage() {
                       </p>
                       <p className="text-sm text-muted-foreground">
                         Album: {(() => {
-                          if ('album' in currentTrack && typeof currentTrack.album === 'object' && currentTrack.album) {
+                          if ('album' in currentTrack && typeof currentTrack.album === 'object' && currentTrack.album && 'name' in currentTrack.album) {
                             return currentTrack.album.name;
                           }
                           return (currentTrack as any).album;

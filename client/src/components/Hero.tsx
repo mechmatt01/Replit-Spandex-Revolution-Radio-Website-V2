@@ -98,7 +98,7 @@ export default function Hero() {
           <p className="text-muted-foreground text-sm font-medium">
             {(() => {
               if (!currentTrack) return "Album";
-              if ('album' in currentTrack && typeof currentTrack.album === 'object' && currentTrack.album) {
+              if ('album' in currentTrack && typeof currentTrack.album === 'object' && currentTrack.album && 'name' in currentTrack.album) {
                 return currentTrack.album.name;
               }
               return (currentTrack as any).album || "Album";
