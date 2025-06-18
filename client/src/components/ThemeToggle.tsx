@@ -13,20 +13,22 @@ export default function ThemeToggle() {
       className="fixed top-4 right-4 z-50 w-10 h-10 rounded-full bg-card/80 border border-border backdrop-blur-sm hover:bg-card/90 transition-all duration-300 flex items-center justify-center"
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
     >
-      <div className="relative w-5 h-5 flex items-center justify-center">
+      <div className="relative w-6 h-6 flex items-center justify-center">
         <Sun 
-          className={`absolute inset-0 w-5 h-5 text-metal-orange transition-all duration-300 transform ${
+          className={`absolute w-4 h-4 text-metal-orange transition-all duration-300 transform ${
             theme === "dark" 
               ? "rotate-0 scale-100 opacity-100" 
               : "rotate-90 scale-0 opacity-0"
           }`} 
+          style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
         />
         <Moon 
-          className={`absolute inset-0 w-5 h-5 text-metal-orange transition-all duration-300 transform ${
+          className={`absolute w-4 h-4 text-metal-orange transition-all duration-300 transform ${
             theme === "dark" 
               ? "rotate-90 scale-0 opacity-0" 
               : "rotate-0 scale-100 opacity-100"
           }`} 
+          style={{ left: '50%', top: '50%', transform: 'translate(-50%, -50%)' }}
         />
       </div>
     </Button>

@@ -3,6 +3,7 @@ import { Menu, X, Radio, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { Link } from "wouter";
 import RadioLogoPath from "@assets/RadioLogo_1750204824630.png";
 
 export default function Navigation() {
@@ -47,6 +48,9 @@ export default function Navigation() {
               <button onClick={() => scrollToSection("home")} className="text-foreground font-semibold hover:text-metal-orange transition-colors">
                 HOME
               </button>
+              <Link href="/music" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
+                MUSIC
+              </Link>
               <button onClick={() => scrollToSection("about")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
                 ABOUT
               </button>

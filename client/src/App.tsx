@@ -7,12 +7,14 @@ import { AudioProvider } from "@/contexts/AudioContext";
 import { AdminProvider } from "@/contexts/AdminContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import HomePage from "@/pages/HomePage";
+import MusicPage from "@/pages/MusicPage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={HomePage} />
+      <Route path="/music" component={MusicPage} />
       <Route component={NotFound} />
     </Switch>
   );
