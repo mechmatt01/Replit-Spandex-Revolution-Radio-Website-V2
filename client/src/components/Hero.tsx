@@ -74,44 +74,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Now Playing Card */}
-        <div className="bg-card/30 backdrop-blur-sm max-w-md mx-auto mb-8 rounded-xl p-6 transition-colors duration-300">
-          <div className="flex items-center mb-4">
-            <Music className="text-metal-orange mr-2 h-4 w-4" />
-            <span className="text-muted-foreground text-sm font-semibold">NOW PLAYING</span>
-          </div>
-          <h3 className="font-bold text-xl mb-1 text-foreground">{currentTrack?.title || "Loading..."}</h3>
-          <p className="text-foreground font-semibold">{currentTrack?.artist || "Artist"}</p>
-          <p className="text-muted-foreground text-sm font-medium">{currentTrack?.album || "Album"}</p>
-          
-          {/* Audio Progress Bar */}
-          <div className="mt-4">
-            <div className="w-full bg-muted rounded-full h-1">
-              <div 
-                className="bg-metal-orange h-1 rounded-full transition-all duration-1000"
-                style={{ 
-                  width: currentTrack && currentTrack.currentTime && currentTrack.duration ? 
-                    `${(currentTrack.currentTime / currentTrack.duration) * 100}%` : 
-                    '60%' 
-                }}
-              ></div>
-            </div>
-            <div className="flex justify-between text-xs text-muted-foreground mt-1">
-              <span>
-                {currentTrack && currentTrack.currentTime ? 
-                  `${Math.floor(currentTrack.currentTime / 60)}:${(currentTrack.currentTime % 60).toString().padStart(2, '0')}` : 
-                  '2:34'
-                }
-              </span>
-              <span>
-                {currentTrack && currentTrack.duration ? 
-                  `${Math.floor(currentTrack.duration / 60)}:${(currentTrack.duration % 60).toString().padStart(2, '0')}` : 
-                  '4:12'
-                }
-              </span>
-            </div>
-          </div>
-        </div>
+
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12">

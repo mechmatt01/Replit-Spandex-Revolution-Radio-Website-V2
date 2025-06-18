@@ -139,6 +139,7 @@ The application uses PostgreSQL with the following main entities:
 - June 17, 2025: Navigation layout optimization - centered navigation links between branding and controls, restored theme toggle with 15px spacing from SUBSCRIBE link
 - June 17, 2025: Theme toggle enhancement - added sun/moon icons based on current mode (sun for dark mode, moon for light mode) with proper functionality
 - June 17, 2025: Logo update - replaced SVG radio icon with custom RadioLogo.png image, aspect-fill centered on orange gradient background with 5px padding
+- June 17, 2025: Hero section cleanup - removed redundant media player from hero area, keeping only the sticky bottom player
 
 ## User Preferences
 
