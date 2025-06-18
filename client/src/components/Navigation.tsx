@@ -52,9 +52,6 @@ export default function Navigation() {
               <Link href="/music" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
                 MUSIC
               </Link>
-              <button onClick={() => scrollToSection("about")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-                ABOUT
-              </button>
               <button onClick={() => scrollToSection("schedule")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
                 SCHEDULE
               </button>
@@ -97,9 +94,6 @@ export default function Navigation() {
               <Link href="/music" className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left" onClick={() => setIsOpen(false)}>
                 MUSIC
               </Link>
-              <button onClick={() => scrollToSection("about")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                ABOUT
-              </button>
               <button onClick={() => scrollToSection("schedule")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
                 SCHEDULE
               </button>
