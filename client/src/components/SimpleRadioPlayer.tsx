@@ -70,55 +70,12 @@ export default function SimpleRadioPlayer() {
         setIsLoading(true);
         setError(null);
         
-        // Try different stream formats for better browser compatibility
-        const streamUrls = [
-          'http://168.119.74.185:9858/autodj.mp3',
-          'http://168.119.74.185:9858/autodj',
-          'http://168.119.74.185:9858/stream.mp3'
-        ];
+        // Use the working direct stream URL
+        audio.src = `http://168.119.74.185:9858/autodj?t=${Date.now()}`;
+        audio.volume = volume;
         
-        let streamWorking = false;
-        
-        for (const streamUrl of streamUrls) {
-          try {
-            audio.src = `${streamUrl}?t=${Date.now()}`;
-            audio.volume = volume;
-            
-            console.log(`Testing stream: ${streamUrl}`);
-            
-            // Load the stream first to check format
-            audio.load();
-            
-            // Wait for canplay event before attempting to play
-            await new Promise((resolve, reject) => {
-              const timeout = setTimeout(() => {
-                reject(new Error('Stream load timeout'));
-              }, 5000);
-              
-              audio.addEventListener('canplay', () => {
-                clearTimeout(timeout);
-                resolve(true);
-              }, { once: true });
-              
-              audio.addEventListener('error', () => {
-                clearTimeout(timeout);
-                reject(new Error('Stream load error'));
-              }, { once: true });
-            });
-            
-            await audio.play();
-            streamWorking = true;
-            console.log(`✓ Stream working: ${streamUrl}`);
-            break;
-          } catch (err) {
-            console.log(`✗ Stream ${streamUrl} failed:`, err);
-            continue;
-          }
-        }
-        
-        if (!streamWorking) {
-          throw new Error('No compatible stream format found');
-        }
+        console.log('Connecting to radio stream...');
+        await audio.play();
       }
     } catch (err: any) {
       console.error('Playback failed:', err);
