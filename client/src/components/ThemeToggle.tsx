@@ -17,15 +17,15 @@ export default function ThemeToggle() {
         <Sun 
           className={`absolute inset-0 w-5 h-5 text-metal-orange transition-all duration-300 transform ${
             theme === "dark" 
-              ? "rotate-90 scale-0 opacity-0" 
-              : "rotate-0 scale-100 opacity-100"
+              ? "rotate-0 scale-100 opacity-100" 
+              : "rotate-90 scale-0 opacity-0"
           }`} 
         />
         <Moon 
           className={`absolute inset-0 w-5 h-5 text-metal-orange transition-all duration-300 transform ${
             theme === "dark" 
-              ? "rotate-0 scale-100 opacity-100" 
-              : "rotate-90 scale-0 opacity-0"
+              ? "rotate-90 scale-0 opacity-0" 
+              : "rotate-0 scale-100 opacity-100"
           }`} 
         />
       </div>

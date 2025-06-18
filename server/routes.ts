@@ -1,6 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+
+// Spotify API configuration
+const SPOTIFY_CLIENT_ID = "60a088cba7d14e8888e34e92d40f8c41";
+const SPOTIFY_CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
+const REDIRECT_URI = "https://spandex-salvation-radio.replit.app/music";
 import { insertSubmissionSchema, insertContactSchema, insertSubscriptionSchema, insertNowPlayingSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -218,6 +223,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Stripe payment intent error:', error);
       res.status(400).json({ error: error.message || "Payment processing failed" });
+    }
+  });
+
+  // Spotify authentication endpoints
+  app.post("/api/spotify/token", async (req, res) => {
+    try {
+      const { code } = req.body;
+      
+      const tokenResponse = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString("base64")}`
+        },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          code: code,
+          redirect_uri: REDIRECT_URI
+        })
+      });
+
+      if (tokenResponse.ok) {
+        const tokenData = await tokenResponse.json();
+        res.json(tokenData);
+      } else {
+        res.status(400).json({ error: "Failed to get access token" });
+      }
+    } catch (error) {
+      console.error("Spotify token error:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/spotify/refresh", async (req, res) => {
+    try {
+      const { refresh_token } = req.body;
+      
+      const tokenResponse = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": `Basic ${Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString("base64")}`
+        },
+        body: new URLSearchParams({
+          grant_type: "refresh_token",
+          refresh_token: refresh_token
+        })
+      });
+
+      if (tokenResponse.ok) {
+        const tokenData = await tokenResponse.json();
+        res.json(tokenData);
+      } else {
+        res.status(400).json({ error: "Failed to refresh token" });
+      }
+    } catch (error) {
+      console.error("Spotify refresh error:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
   });
 

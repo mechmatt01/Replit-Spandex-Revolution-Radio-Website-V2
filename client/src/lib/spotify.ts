@@ -1,0 +1,303 @@
+// Spotify Web API integration
+const SPOTIFY_CLIENT_ID = "60a088cba7d14e8888e34e92d40f8c41";
+const REDIRECT_URI = "https://spandex-salvation-radio.replit.app/music";
+const SCOPES = [
+  "streaming",
+  "user-read-email",
+  "user-read-private",
+  "user-read-playback-state",
+  "user-modify-playback-state",
+  "playlist-read-public",
+  "playlist-read-private"
+].join(" ");
+
+export interface SpotifyTrack {
+  id: string;
+  name: string;
+  artists: { name: string }[];
+  album: { name: string; images: { url: string }[] };
+  duration_ms: number;
+  preview_url: string | null;
+  uri: string;
+}
+
+export interface SpotifyPlaylist {
+  id: string;
+  name: string;
+  description: string;
+  tracks: { total: number };
+  images: { url: string }[];
+}
+
+class SpotifyAPI {
+  private accessToken: string | null = null;
+  private refreshToken: string | null = null;
+  private player: any = null;
+  private deviceId: string | null = null;
+
+  constructor() {
+    // Check for existing tokens in localStorage
+    this.accessToken = localStorage.getItem('spotify_access_token');
+    this.refreshToken = localStorage.getItem('spotify_refresh_token');
+  }
+
+  // Generate Spotify authorization URL
+  getAuthUrl(): string {
+    const params = new URLSearchParams({
+      client_id: SPOTIFY_CLIENT_ID,
+      response_type: 'code',
+      redirect_uri: REDIRECT_URI,
+      scope: SCOPES,
+      show_dialog: 'true'
+    });
+    
+    return `https://accounts.spotify.com/authorize?${params.toString()}`;
+  }
+
+  // Exchange authorization code for access token
+  async getAccessToken(code: string): Promise<boolean> {
+    try {
+      const response = await fetch('/api/spotify/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        this.accessToken = data.access_token;
+        this.refreshToken = data.refresh_token;
+        
+        localStorage.setItem('spotify_access_token', this.accessToken!);
+        localStorage.setItem('spotify_refresh_token', this.refreshToken!);
+        
+        return true;
+      }
+    } catch (error) {
+      console.error('Error getting access token:', error);
+    }
+    return false;
+  }
+
+  // Refresh access token
+  async refreshAccessToken(): Promise<boolean> {
+    if (!this.refreshToken) return false;
+
+    try {
+      const response = await fetch('/api/spotify/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: this.refreshToken })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        this.accessToken = data.access_token;
+        localStorage.setItem('spotify_access_token', this.accessToken!);
+        return true;
+      }
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+    }
+    return false;
+  }
+
+  // Make authenticated Spotify API request
+  private async apiRequest(endpoint: string, options: RequestInit = {}): Promise<any> {
+    if (!this.accessToken) {
+      throw new Error('No access token available');
+    }
+
+    const response = await fetch(`https://api.spotify.com/v1${endpoint}`, {
+      ...options,
+      headers: {
+        'Authorization': `Bearer ${this.accessToken}`,
+        'Content-Type': 'application/json',
+        ...options.headers
+      }
+    });
+
+    if (response.status === 401) {
+      // Token expired, try to refresh
+      const refreshed = await this.refreshAccessToken();
+      if (refreshed) {
+        // Retry the request with new token
+        return this.apiRequest(endpoint, options);
+      } else {
+        throw new Error('Authentication failed');
+      }
+    }
+
+    if (!response.ok) {
+      throw new Error(`Spotify API error: ${response.status}`);
+    }
+
+    return response.json();
+  }
+
+  // Get user's playlists
+  async getUserPlaylists(): Promise<SpotifyPlaylist[]> {
+    const data = await this.apiRequest('/me/playlists?limit=20');
+    return data.items;
+  }
+
+  // Get playlist tracks
+  async getPlaylistTracks(playlistId: string): Promise<SpotifyTrack[]> {
+    const data = await this.apiRequest(`/playlists/${playlistId}/tracks?limit=50`);
+    return data.items.map((item: any) => item.track);
+  }
+
+  // Search for tracks
+  async searchTracks(query: string, type: string = 'track', limit: number = 20): Promise<SpotifyTrack[]> {
+    const params = new URLSearchParams({
+      q: query,
+      type,
+      limit: limit.toString()
+    });
+    
+    const data = await this.apiRequest(`/search?${params.toString()}`);
+    return data.tracks?.items || [];
+  }
+
+  // Get metal/rock playlists
+  async getMetalPlaylists(): Promise<SpotifyPlaylist[]> {
+    const data = await this.apiRequest('/browse/categories/metal/playlists?limit=20');
+    return data.playlists?.items || [];
+  }
+
+  // Initialize Spotify Web Playback SDK
+  async initializePlayer(): Promise<boolean> {
+    return new Promise((resolve) => {
+      if (window.Spotify) {
+        this.setupPlayer();
+        resolve(true);
+        return;
+      }
+
+      // Load Spotify Web Playback SDK
+      const script = document.createElement('script');
+      script.src = 'https://sdk.scdn.co/spotify-player.js';
+      script.async = true;
+      document.body.appendChild(script);
+
+      window.onSpotifyWebPlaybackSDKReady = () => {
+        this.setupPlayer();
+        resolve(true);
+      };
+    });
+  }
+
+  private setupPlayer() {
+    if (!this.accessToken) return;
+
+    this.player = new window.Spotify.Player({
+      name: 'Spandex Salvation Radio',
+      getOAuthToken: (cb: (token: string) => void) => {
+        cb(this.accessToken!);
+      },
+      volume: 0.5
+    });
+
+    // Ready
+    this.player.addListener('ready', ({ device_id }: { device_id: string }) => {
+      console.log('Spotify player ready with device ID:', device_id);
+      this.deviceId = device_id;
+    });
+
+    // Not Ready
+    this.player.addListener('not_ready', ({ device_id }: { device_id: string }) => {
+      console.log('Device ID has gone offline', device_id);
+    });
+
+    // Player state changed
+    this.player.addListener('player_state_changed', (state: any) => {
+      if (!state) return;
+      console.log('Player state changed:', state);
+    });
+
+    // Connect to the player
+    this.player.connect();
+  }
+
+  // Play a track
+  async playTrack(trackUri: string): Promise<boolean> {
+    if (!this.deviceId) {
+      await this.initializePlayer();
+      // Wait a moment for device to be ready
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    try {
+      await this.apiRequest(`/me/player/play?device_id=${this.deviceId}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          uris: [trackUri]
+        })
+      });
+      return true;
+    } catch (error) {
+      console.error('Error playing track:', error);
+      return false;
+    }
+  }
+
+  // Pause playback
+  async pause(): Promise<boolean> {
+    try {
+      await this.apiRequest('/me/player/pause', { method: 'PUT' });
+      return true;
+    } catch (error) {
+      console.error('Error pausing:', error);
+      return false;
+    }
+  }
+
+  // Resume playback
+  async resume(): Promise<boolean> {
+    try {
+      await this.apiRequest('/me/player/play', { method: 'PUT' });
+      return true;
+    } catch (error) {
+      console.error('Error resuming:', error);
+      return false;
+    }
+  }
+
+  // Get current playback state
+  async getCurrentPlayback(): Promise<any> {
+    try {
+      return await this.apiRequest('/me/player');
+    } catch (error) {
+      console.error('Error getting playback state:', error);
+      return null;
+    }
+  }
+
+  // Check if user is authenticated
+  isAuthenticated(): boolean {
+    return !!this.accessToken;
+  }
+
+  // Logout
+  logout() {
+    this.accessToken = null;
+    this.refreshToken = null;
+    localStorage.removeItem('spotify_access_token');
+    localStorage.removeItem('spotify_refresh_token');
+    
+    if (this.player) {
+      this.player.disconnect();
+      this.player = null;
+    }
+  }
+}
+
+// Extend Window interface for Spotify SDK
+declare global {
+  interface Window {
+    Spotify: any;
+    onSpotifyWebPlaybackSDKReady: () => void;
+  }
+}
+
+export const spotifyAPI = new SpotifyAPI();
