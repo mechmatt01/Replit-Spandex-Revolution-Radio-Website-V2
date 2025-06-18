@@ -211,7 +211,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       request.on('error', (error: any) => {
         console.error('Stream request error:', error);
         if (!res.headersSent) {
-          res.status(503).json({ error: "Stream connection failed" });
+          res.status(503).end('Stream connection failed');
         }
       });
       
@@ -219,14 +219,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Stream request timeout');
         request.destroy();
         if (!res.headersSent) {
-          res.status(503).json({ error: "Stream timeout" });
+          res.status(503).end('Stream timeout');
         }
       });
       
     } catch (error: any) {
       console.error("Radio stream proxy error:", error);
       if (!res.headersSent) {
-        res.status(503).json({ error: "Radio stream unavailable" });
+        res.status(503).end('Radio stream unavailable');
       }
     }
   });
