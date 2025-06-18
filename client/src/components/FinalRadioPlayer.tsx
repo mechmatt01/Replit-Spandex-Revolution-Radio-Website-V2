@@ -5,157 +5,152 @@ import { Button } from "@/components/ui/button";
 export default function FinalRadioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.7);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Use effect to handle audio setup
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Set initial properties
-    audio.crossOrigin = "anonymous";
-    audio.preload = "none";
     audio.volume = volume;
 
-    // Event handlers
     const handlePlay = () => {
       setIsPlaying(true);
-      setError(null);
-      console.log('Radio playing');
+      setIsLoading(false);
     };
 
     const handlePause = () => {
       setIsPlaying(false);
-      console.log('Radio paused');
+      setIsLoading(false);
     };
 
-    const handleError = (e: any) => {
-      setIsPlaying(false);
-      setError('Stream connection failed');
-      console.error('Radio error:', e);
+    const handleLoadStart = () => {
+      setIsLoading(true);
     };
 
     const handleCanPlay = () => {
-      setError(null);
-      console.log('Radio ready');
+      setIsLoading(false);
     };
 
-    // Add listeners
+    const handleError = () => {
+      setIsPlaying(false);
+      setIsLoading(false);
+    };
+
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
-    audio.addEventListener('error', handleError);
+    audio.addEventListener('loadstart', handleLoadStart);
     audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('error', handleError);
 
     return () => {
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('error', handleError);
+      audio.removeEventListener('loadstart', handleLoadStart);
       audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('error', handleError);
     };
   }, [volume]);
 
-  const handlePlay = async () => {
+  const togglePlayback = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    try {
-      if (isPlaying) {
-        audio.pause();
-        audio.src = '';
-      } else {
-        setError(null);
-        // Set stream URL with cache busting
-        audio.src = `http://168.119.74.185:9858/autodj?cb=${Date.now()}`;
-        audio.load();
-        await audio.play();
-      }
-    } catch (err) {
-      setIsPlaying(false);
-      setError('Unable to play stream');
-      console.error('Play error:', err);
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      setIsLoading(true);
+      audio.play().catch(() => {
+        setIsLoading(false);
+      });
     }
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseFloat(e.target.value);
     setVolume(newVolume);
+    
     if (audioRef.current) {
       audioRef.current.volume = newVolume;
     }
   };
 
+  const openInNewWindow = () => {
+    window.open('http://168.119.74.185:9858/autodj', '_blank', 'width=400,height=300,toolbar=no,menubar=no');
+  };
+
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      {/* Hidden audio element */}
-      <audio ref={audioRef} />
-      
-      {/* Player Interface */}
-      <div className="bg-card/40 backdrop-blur-sm rounded-xl p-6 space-y-6">
-        {/* Main Play Button */}
-        <div className="flex flex-col items-center space-y-4">
-          <Button
-            onClick={handlePlay}
-            size="lg"
-            className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] hover:from-[var(--color-secondary)] hover:to-[var(--color-accent)] text-white font-bold py-4 px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            {isPlaying ? (
-              <Pause className="h-6 w-6 mr-3" />
-            ) : (
-              <Play className="h-6 w-6 mr-3" />
-            )}
-            <span className="text-lg font-semibold">
-              {isPlaying ? 'STOP RADIO' : 'PLAY LIVE RADIO'}
-            </span>
-          </Button>
-          
-          {/* Live Indicator */}
-          {isPlaying && (
-            <div className="flex items-center space-x-3 text-red-500">
-              <Radio className="h-5 w-5 animate-pulse" />
-              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-sm font-bold uppercase tracking-wider">Broadcasting Live</span>
-            </div>
+    <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-border/20">
+      <div className="flex items-center justify-center space-x-6">
+        {/* HTML5 Audio Element */}
+        <audio 
+          ref={audioRef} 
+          src="http://168.119.74.185:9858/autodj"
+          preload="none"
+          crossOrigin="anonymous"
+        />
+
+        {/* Play/Pause Button */}
+        <Button
+          onClick={togglePlayback}
+          disabled={isLoading}
+          className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] hover:from-[var(--color-secondary)] hover:to-[var(--color-accent)] text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+        >
+          {isLoading ? (
+            <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+          ) : isPlaying ? (
+            <Pause className="h-5 w-5" />
+          ) : (
+            <Play className="h-5 w-5" />
           )}
-        </div>
+          <span className="ml-2 font-semibold">
+            {isLoading ? 'CONNECTING...' : isPlaying ? 'STOP' : 'PLAY LIVE'}
+          </span>
+        </Button>
+
+        {/* Alternative Stream Button */}
+        <Button
+          onClick={openInNewWindow}
+          variant="outline"
+          className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:text-white py-3 px-4 rounded-xl transition-all duration-300"
+        >
+          <Radio className="h-5 w-5 mr-2" />
+          <span className="font-semibold">STREAM</span>
+        </Button>
+
+        {/* Live Indicator */}
+        {isPlaying && (
+          <div className="flex items-center space-x-2 text-red-500">
+            <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+            <span className="text-sm font-bold">LIVE</span>
+          </div>
+        )}
 
         {/* Volume Control */}
-        <div className="flex items-center justify-center space-x-4">
+        <div className="flex items-center space-x-3">
           <Volume2 className="h-5 w-5 text-muted-foreground" />
-          <div className="flex-1 max-w-xs">
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.05"
-              value={volume}
-              onChange={handleVolumeChange}
-              className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer slider"
-              style={{
-                background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${volume * 100}%, var(--muted) ${volume * 100}%, var(--muted) 100%)`
-              }}
-            />
-          </div>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={volume}
+            onChange={handleVolumeChange}
+            className="w-24 h-2 bg-muted rounded-lg appearance-none cursor-pointer"
+            style={{
+              background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${volume * 100}%, var(--muted) ${volume * 100}%, var(--muted) 100%)`
+            }}
+          />
           <span className="text-sm text-muted-foreground min-w-[3rem]">
             {Math.round(volume * 100)}%
           </span>
         </div>
+      </div>
 
-        {/* Error Display */}
-        {error && (
-          <div className="text-center">
-            <div className="inline-flex items-center space-x-2 text-red-500 bg-red-500/10 px-4 py-2 rounded-lg">
-              <Radio className="h-4 w-4" />
-              <span className="text-sm">{error}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Stream Info */}
-        <div className="text-center text-sm text-muted-foreground">
-          <p>Spandex Salvation Radio • 24/7 Old School Metal</p>
-          <p className="text-xs mt-1">Direct stream from http://168.119.74.185:9858</p>
-        </div>
+      {/* Stream Info */}
+      <div className="mt-4 text-center text-sm text-muted-foreground">
+        <p>Live Metal Radio • 24/7 Old School Classics</p>
+        <p className="text-xs mt-1">If audio doesn't play automatically, use the STREAM button</p>
       </div>
     </div>
   );

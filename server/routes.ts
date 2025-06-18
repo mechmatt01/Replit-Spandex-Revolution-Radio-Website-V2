@@ -157,20 +157,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Working radio stream proxy
+  // Direct stream proxy with proper Icecast handling
   app.get("/api/radio-stream", (req, res) => {
     const streamUrl = "http://168.119.74.185:9858/autodj";
     
-    // Set headers
+    console.log(`Direct streaming from: ${streamUrl}`);
+    
+    // Set proper streaming headers for audio
     res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD");
+    res.setHeader("Access-Control-Allow-Headers", "Range, Accept-Encoding, Accept");
     res.setHeader("Content-Type", "audio/mpeg");
-    res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Accept-Ranges", "bytes");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
     
-    console.log(`Streaming from: ${streamUrl}`);
-    
-    // Simple redirect to the stream
-    res.redirect(302, streamUrl);
+    // Use fetch with proper streaming
+    fetch(streamUrl, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; RadioPlayer/1.0)',
+        'Accept': 'audio/mpeg, audio/*',
+        'Connection': 'keep-alive'
+      }
+    }).then(response => {
+      if (!response.ok) {
+        console.error(`Stream responded with status: ${response.status}`);
+        res.status(503).end('Stream unavailable');
+        return;
+      }
+      
+      console.log('Stream connected successfully, piping to client');
+      
+      // Handle client disconnect
+      req.on('close', () => {
+        console.log('Client disconnected');
+      });
+      
+      // Pipe the stream body to response
+      if (response.body) {
+        const reader = response.body.getReader();
+        
+        const pump = () => {
+          return reader.read().then(({ done, value }) => {
+            if (done) {
+              res.end();
+              return;
+            }
+            
+            if (!res.destroyed) {
+              res.write(value);
+              return pump();
+            }
+          }).catch(err => {
+            console.error('Stream pipe error:', err);
+            res.end();
+          });
+        };
+        
+        pump();
+      }
+    }).catch(error => {
+      console.error('Stream fetch error:', error);
+      if (!res.headersSent) {
+        res.status(503).end('Stream connection failed');
+      }
+    });
   });
 
 
