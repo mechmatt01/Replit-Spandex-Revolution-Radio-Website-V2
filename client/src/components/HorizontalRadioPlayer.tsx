@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Play, Pause, Volume2 } from "lucide-react";
+import { Play, Pause, Volume2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function SimpleRadioPlayer() {
+export default function HorizontalRadioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(0.7);
   const [isLoading, setIsLoading] = useState(false);
+  const [volume, setVolume] = useState(0.7);
+  const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -13,10 +14,23 @@ export default function SimpleRadioPlayer() {
     if (!audio) return;
 
     audio.volume = volume;
+    audio.crossOrigin = "anonymous";
+    audio.preload = "none";
+
+    const handleLoadStart = () => {
+      setIsLoading(true);
+      setError(null);
+    };
+
+    const handleCanPlay = () => {
+      setIsLoading(false);
+      setError(null);
+    };
 
     const handlePlay = () => {
       setIsPlaying(true);
       setIsLoading(false);
+      setError(null);
     };
 
     const handlePause = () => {
@@ -24,38 +38,70 @@ export default function SimpleRadioPlayer() {
       setIsLoading(false);
     };
 
-    const handleLoadStart = () => {
-      setIsLoading(true);
-    };
-
-    const handleCanPlay = () => {
+    const handleError = () => {
+      setIsPlaying(false);
       setIsLoading(false);
+      setError('Connection failed');
     };
 
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
     audio.addEventListener('loadstart', handleLoadStart);
     audio.addEventListener('canplay', handleCanPlay);
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('error', handleError);
 
     return () => {
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('loadstart', handleLoadStart);
       audio.removeEventListener('canplay', handleCanPlay);
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('error', handleError);
     };
   }, [volume]);
 
-  const togglePlayback = () => {
+  const togglePlayback = async () => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      setIsLoading(true);
-      audio.play().catch(() => {
-        setIsLoading(false);
-      });
+    try {
+      if (isPlaying) {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = '';
+        audio.load();
+      } else {
+        setIsLoading(true);
+        setError(null);
+        
+        // Multiple stream format attempts
+        const streamUrls = [
+          'http://168.119.74.185:9858/autodj.m3u',
+          'http://168.119.74.185:9858/autodj',
+          'http://168.119.74.185:9858/stream'
+        ];
+        
+        for (const url of streamUrls) {
+          try {
+            audio.src = url;
+            audio.volume = volume;
+            audio.load();
+            
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+              await playPromise;
+              break; // Success, exit loop
+            }
+          } catch (urlError) {
+            console.log(`Failed to connect to ${url}:`, urlError);
+            continue;
+          }
+        }
+      }
+    } catch (err) {
+      setIsPlaying(false);
+      setIsLoading(false);
+      setError('Stream unavailable');
+      console.error('All stream attempts failed:', err);
     }
   };
 
@@ -70,14 +116,10 @@ export default function SimpleRadioPlayer() {
 
   return (
     <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-border/20">
-      <div className="flex items-center justify-center space-x-6">
-        {/* Audio Element */}
-        <audio 
-          ref={audioRef} 
-          src="http://168.119.74.185:9858/autodj"
-          preload="none"
-        />
+      {/* Hidden Audio Element */}
+      <audio ref={audioRef} />
 
+      <div className="flex items-center justify-center space-x-6">
         {/* Play/Pause Button */}
         <Button
           onClick={togglePlayback}
@@ -123,6 +165,14 @@ export default function SimpleRadioPlayer() {
             {Math.round(volume * 100)}%
           </span>
         </div>
+
+        {/* Error Display */}
+        {error && (
+          <div className="flex items-center space-x-2 text-red-500 text-sm">
+            <AlertCircle className="h-4 w-4" />
+            <span>{error}</span>
+          </div>
+        )}
       </div>
     </div>
   );

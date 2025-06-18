@@ -157,66 +157,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Simplified radio stream proxy using fetch
-  app.get("/api/radio-stream", async (req, res) => {
-    try {
-      const streamUrl = "http://168.119.74.185:9858/autodj";
-      
-      // Set CORS and streaming headers
-      res.setHeader("Access-Control-Allow-Origin", "*");
-      res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-      res.setHeader("Content-Type", "audio/mpeg");
-      res.setHeader("Cache-Control", "no-cache");
-      res.setHeader("Connection", "keep-alive");
-      
-      console.log(`Proxying stream from: ${streamUrl}`);
-      
-      const response = await fetch(streamUrl);
-      
-      if (!response.ok) {
-        throw new Error(`Stream returned status ${response.status}`);
-      }
-      
-      if (!response.body) {
-        throw new Error("No stream body available");
-      }
-      
-      // Handle client disconnect
-      req.on('close', () => {
-        console.log('Client disconnected from stream');
-      });
-      
-      // Stream the response
-      const reader = response.body.getReader();
-      
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          
-          if (done) break;
-          
-          if (!res.writableEnded) {
-            res.write(value);
-          } else {
-            break;
-          }
-        }
-      } catch (streamError) {
-        console.error('Stream error:', streamError);
-      } finally {
-        reader.releaseLock();
-        if (!res.writableEnded) {
-          res.end();
-        }
-      }
-      
-    } catch (error: any) {
-      console.error("Radio stream proxy error:", error);
-      if (!res.headersSent) {
-        res.status(503).end('Radio stream unavailable');
-      }
-    }
+  // Working radio stream proxy
+  app.get("/api/radio-stream", (req, res) => {
+    const streamUrl = "http://168.119.74.185:9858/autodj";
+    
+    // Set headers
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Accept-Ranges", "bytes");
+    
+    console.log(`Streaming from: ${streamUrl}`);
+    
+    // Simple redirect to the stream
+    res.redirect(302, streamUrl);
   });
 
 
