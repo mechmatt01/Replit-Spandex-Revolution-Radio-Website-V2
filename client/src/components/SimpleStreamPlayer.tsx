@@ -2,118 +2,69 @@ import { useState, useRef, useEffect } from "react";
 import { Play, Pause, Volume2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export default function BrowserCompatibleRadioPlayer() {
+export default function SimpleStreamPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [volume, setVolume] = useState(0.7);
   const [error, setError] = useState<string | null>(null);
-  const [currentStreamIndex, setCurrentStreamIndex] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-
-  // Multiple stream formats for maximum browser compatibility
-  const streamUrls = [
-    // Server proxy first for CORS handling
-    '/api/radio-stream',
-    // Direct streams as fallback (may have CORS issues)
-    'http://168.119.74.185:9858/autodj.mp3',
-    'http://168.119.74.185:9858/autodj'
-  ];
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
-    // Set initial volume
     audio.volume = volume;
-    audio.preload = 'none';
+    audio.crossOrigin = "anonymous";
+    audio.preload = "none";
+
+    const handleLoadStart = () => {
+      setIsLoading(true);
+      setError(null);
+    };
 
     const handleCanPlay = () => {
       setIsLoading(false);
       setError(null);
-      console.log('Stream ready to play');
     };
 
     const handlePlay = () => {
       setIsPlaying(true);
       setIsLoading(false);
       setError(null);
-      console.log('Stream playing');
     };
 
     const handlePause = () => {
       setIsPlaying(false);
-      console.log('Stream paused');
-    };
-
-    const handleError = (e: Event) => {
-      console.error('Stream error:', e);
-      handleStreamError();
-    };
-
-    const handleLoadStart = () => {
-      setIsLoading(true);
-      console.log('Loading stream...');
-    };
-
-    const handleWaiting = () => {
-      setIsLoading(true);
-      console.log('Buffering...');
-    };
-
-    const handlePlaying = () => {
       setIsLoading(false);
-      setError(null);
-      console.log('Stream playing smoothly');
     };
 
-    // Add event listeners
+    const handleError = () => {
+      setIsPlaying(false);
+      setIsLoading(false);
+      setError('Stream connection failed');
+    };
+
+    const handleAbort = () => {
+      setIsPlaying(false);
+      setIsLoading(false);
+    };
+
+    audio.addEventListener('loadstart', handleLoadStart);
     audio.addEventListener('canplay', handleCanPlay);
     audio.addEventListener('play', handlePlay);
     audio.addEventListener('pause', handlePause);
     audio.addEventListener('error', handleError);
-    audio.addEventListener('loadstart', handleLoadStart);
-    audio.addEventListener('waiting', handleWaiting);
-    audio.addEventListener('playing', handlePlaying);
+    audio.addEventListener('abort', handleAbort);
 
     return () => {
+      audio.removeEventListener('loadstart', handleLoadStart);
       audio.removeEventListener('canplay', handleCanPlay);
       audio.removeEventListener('play', handlePlay);
       audio.removeEventListener('pause', handlePause);
       audio.removeEventListener('error', handleError);
-      audio.removeEventListener('loadstart', handleLoadStart);
-      audio.removeEventListener('waiting', handleWaiting);
-      audio.removeEventListener('playing', handlePlaying);
+      audio.removeEventListener('abort', handleAbort);
     };
   }, [volume]);
-
-  const handleStreamError = () => {
-    const nextIndex = currentStreamIndex + 1;
-    
-    if (nextIndex < streamUrls.length) {
-      console.log(`Trying stream format ${nextIndex + 1}...`);
-      setCurrentStreamIndex(nextIndex);
-      setIsLoading(true);
-      setError(null);
-      
-      // Try next stream format
-      const audio = audioRef.current;
-      if (audio) {
-        audio.src = streamUrls[nextIndex];
-        audio.load();
-        if (isPlaying) {
-          audio.play().catch(() => {
-            handleStreamError();
-          });
-        }
-      }
-    } else {
-      // All formats failed
-      setIsPlaying(false);
-      setIsLoading(false);
-      setError('Unable to connect to radio stream');
-      console.error('All stream formats failed');
-    }
-  };
 
   const togglePlayback = async () => {
     const audio = audioRef.current;
@@ -126,19 +77,17 @@ export default function BrowserCompatibleRadioPlayer() {
         setIsLoading(true);
         setError(null);
         
-        // Ensure we have the current stream URL
-        audio.src = streamUrls[currentStreamIndex];
+        // Use server proxy to avoid CORS issues
+        audio.src = '/api/radio-stream';
         audio.volume = volume;
         
-        // Reset and load
-        audio.load();
-        
-        // Attempt to play
         await audio.play();
       }
     } catch (err) {
-      console.error('Playback failed:', err);
-      handleStreamError();
+      setIsPlaying(false);
+      setIsLoading(false);
+      setError('Unable to start stream');
+      console.error('Playback error:', err);
     }
   };
 
@@ -154,12 +103,7 @@ export default function BrowserCompatibleRadioPlayer() {
   return (
     <div className="flex items-center space-x-4">
       {/* Audio Element */}
-      <audio
-        ref={audioRef}
-        src={streamUrls[currentStreamIndex]}
-        crossOrigin="anonymous"
-        preload="none"
-      />
+      <audio ref={audioRef} />
 
       {/* Play/Pause Button */}
       <Button
@@ -198,9 +142,6 @@ export default function BrowserCompatibleRadioPlayer() {
           value={volume}
           onChange={handleVolumeChange}
           className="w-20 h-2 bg-muted rounded-lg appearance-none cursor-pointer"
-          style={{
-            background: `linear-gradient(to right, var(--color-primary) 0%, var(--color-primary) ${volume * 100}%, var(--muted) ${volume * 100}%, var(--muted) 100%)`
-          }}
         />
       </div>
 
