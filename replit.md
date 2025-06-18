@@ -159,6 +159,12 @@ The application uses PostgreSQL with the following main entities:
 - June 18, 2025: Implemented server-side streaming proxy (/api/radio-stream) to resolve CORS and audio format compatibility issues
 - June 18, 2025: Added dynamic metal genre-based theme switcher with 7 different color palettes (Classic Metal, Black Metal, Death Metal, Power Metal, Doom Metal, Thrash Metal, Gothic Metal)
 - June 18, 2025: Created SimpleRadioPlayer component with enhanced error handling and browser compatibility
+- June 18, 2025: Successfully implemented working live radio streaming with multiple format fallbacks and proper error handling
+- June 18, 2025: Updated StickyPlayer to sync with live radio stream, displaying real-time track information and listener counts
+- June 18, 2025: Implemented full theme system integration across entire site using CSS custom properties for dynamic color switching
+- June 18, 2025: Added album artwork fetching from MusicBrainz/Cover Art Archive for live tracks
+- June 18, 2025: Removed About tab from navigation as requested
+- June 18, 2025: Fixed all audio streaming errors and implemented browser-compatible streaming with volume controls
 
 ## User Preferences
 

@@ -1,11 +1,63 @@
-import { SkipBack, SkipForward, Pause, Play, Volume2 } from "lucide-react";
+import { Pause, Play, Volume2, VolumeX, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { useAudio } from "@/contexts/AudioContext";
+import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 
 export default function StickyPlayer() {
-  const { currentTrack, isPlaying, volume, togglePlayback, setVolume, nextTrack, previousTrack, spotifyTrack } = useAudio();
+  const { isPlaying, volume, togglePlayback, setVolume } = useAudio();
+  const [albumArt, setAlbumArt] = useState<string | null>(null);
 
-  if (!currentTrack) return null;
+  // Fetch live radio status
+  const { data: radioStatus } = useQuery({
+    queryKey: ['/api/radio-status'],
+    refetchInterval: 10000,
+  });
+
+  // Extract track info from live radio
+  const liveTrack = radioStatus?.icestats?.source?.[0];
+  const trackTitle = liveTrack?.yp_currently_playing?.split(' - ')[1] || liveTrack?.title || 'Unknown Track';
+  const trackArtist = liveTrack?.yp_currently_playing?.split(' - ')[0] || 'Unknown Artist';
+  const listeners = liveTrack?.listeners || 0;
+
+  // Fetch album artwork from MusicBrainz/Cover Art Archive
+  useEffect(() => {
+    if (trackTitle && trackArtist) {
+      const fetchAlbumArt = async () => {
+        try {
+          // Try MusicBrainz search first
+          const searchQuery = encodeURIComponent(`${trackArtist} ${trackTitle}`);
+          const mbResponse = await fetch(`https://musicbrainz.org/ws/2/recording?query=${searchQuery}&fmt=json&limit=1`);
+          
+          if (mbResponse.ok) {
+            const mbData = await mbResponse.json();
+            const recording = mbData.recordings?.[0];
+            
+            if (recording?.releases?.[0]?.id) {
+              const releaseId = recording.releases[0].id;
+              const coverResponse = await fetch(`https://coverartarchive.org/release/${releaseId}/front`);
+              
+              if (coverResponse.ok) {
+                setAlbumArt(coverResponse.url);
+                return;
+              }
+            }
+          }
+          
+          // Fallback: use a gradient placeholder
+          setAlbumArt(null);
+        } catch (error) {
+          console.log('Album art fetch failed, using default');
+          setAlbumArt(null);
+        }
+      };
+
+      fetchAlbumArt();
+    }
+  }, [trackTitle, trackArtist]);
+
+  if (!liveTrack) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-40 transition-colors duration-300">
@@ -13,55 +65,41 @@ export default function StickyPlayer() {
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
           <div className="flex items-center space-x-4 flex-1 min-w-0">
-            {spotifyTrack && spotifyTrack.album?.images?.[0] ? (
+            {albumArt ? (
               <img 
-                src={spotifyTrack.album.images[0].url} 
-                alt={spotifyTrack.album.name}
+                src={albumArt} 
+                alt={`${trackTitle} by ${trackArtist}`}
                 className="w-12 h-12 rounded-lg object-cover"
+                onError={() => setAlbumArt(null)}
               />
             ) : (
-              <div className="w-12 h-12 bg-gradient-to-br from-metal-orange to-metal-red rounded-lg flex items-center justify-center">
-                <span className="text-white text-lg">♪</span>
+              <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-lg flex items-center justify-center">
+                <Music className="text-white h-6 w-6" />
               </div>
             )}
             <div className="min-w-0 flex-1">
               <h4 className="font-semibold text-foreground truncate">
-                {spotifyTrack ? spotifyTrack.name : currentTrack?.title || 'No track'}
+                {trackTitle}
               </h4>
               <p className="text-muted-foreground text-sm truncate">
-                {spotifyTrack 
-                  ? spotifyTrack.artists.map(a => a.name).join(", ")
-                  : currentTrack?.artist || 'Unknown artist'
-                }
+                {trackArtist} • {listeners} listeners
               </p>
             </div>
           </div>
 
           {/* Player Controls */}
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={previousTrack}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <SkipBack className="h-4 w-4" />
-            </Button>
+          <div className="flex items-center space-x-2">
             <Button
-              size="icon"
               onClick={togglePlayback}
-              className="w-10 h-10 bg-metal-orange hover:bg-orange-600 rounded-full flex items-center justify-center text-white transition-colors"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-10 h-10 rounded-full"
             >
               {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             </Button>
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={nextTrack}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <SkipForward className="h-4 w-4" />
-            </Button>
+            
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-xs text-red-500 font-bold">LIVE</span>
+            </div>
           </div>
 
           {/* Volume Control */}

@@ -3,32 +3,43 @@
 @tailwind utilities;
 
 :root {
-  /* Default Dark Theme (Black backgrounds) */
-  --background: hsl(0, 0%, 0%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(0, 0%, 5%);
-  --muted-foreground: hsl(0, 0%, 65%);
-  --popover: hsl(0, 0%, 2%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(0, 0%, 3%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(0, 0%, 12%);
-  --input: hsl(0, 0%, 12%);
-  --primary: hsl(15, 100%, 60%);
-  --primary-foreground: hsl(0, 0%, 98%);
-  --secondary: hsl(0, 0%, 8%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(0, 0%, 8%);
-  --accent-foreground: hsl(0, 0%, 98%);
+  /* Dynamic theme colors - will be updated by ThemeContext */
+  --color-primary: #ff6b35;
+  --color-secondary: #d32f2f;
+  --color-accent: #ff9800;
+  --color-background: #000000;
+  --color-surface: #0a0a0a;
+  --color-text: #ffffff;
+  --color-text-secondary: #cccccc;
+  --color-border: #333333;
+  --gradient-primary: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%);
+
+  /* Shadcn variables using theme colors */
+  --background: var(--color-background);
+  --foreground: var(--color-text);
+  --muted: var(--color-surface);
+  --muted-foreground: var(--color-text-secondary);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --border: var(--color-border);
+  --input: var(--color-surface);
+  --primary: var(--color-primary);
+  --primary-foreground: var(--color-text);
+  --secondary: var(--color-secondary);
+  --secondary-foreground: var(--color-text);
+  --accent: var(--color-accent);
+  --accent-foreground: var(--color-text);
   --destructive: hsl(0, 73%, 57%);
   --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(15, 100%, 60%);
+  --ring: var(--color-accent);
   --radius: 0.75rem;
 
-  /* Metal theme colors */
-  --metal-orange: hsl(15, 100%, 60%);
-  --metal-gold: hsl(45, 100%, 62%);
-  --metal-red: hsl(0, 73%, 57%);
+  /* Legacy metal theme colors for compatibility */
+  --metal-orange: var(--color-primary);
+  --metal-gold: var(--color-accent);
+  --metal-red: var(--color-secondary);
   --metal-blue: hsl(210, 100%, 65%);
 }
 
