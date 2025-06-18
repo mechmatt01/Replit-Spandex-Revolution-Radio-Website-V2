@@ -137,7 +137,7 @@ The application uses PostgreSQL with the following main entities:
 - June 17, 2025: Final navigation updates - custom radio SVG logo, responsive vertical/horizontal text layout, removed theme toggle, vertically centered elements
 - June 17, 2025: Navigation refinements - precise 15px left padding, 10px spacing between brand and nav items, full capitalization of menu items, stacked "SPANDEX SALVATION RADIO" layout
 - June 17, 2025: Navigation layout optimization - centered navigation links between branding and controls, restored theme toggle with 15px spacing from SUBSCRIBE link
-- June 17, 2025: Theme toggle enhancement - added sun/moon icons based on current mode (sun for dark mode, moon for light mode) with proper functionality
+- June 17, 2025: Theme toggle enhancement - added moon/sun icons based on current mode (moon for dark mode, sun for light mode) with proper functionality
 - June 17, 2025: Logo update - replaced SVG radio icon with custom RadioLogo.png image, aspect-fill centered on orange gradient background with 5px padding
 
 ## User Preferences
