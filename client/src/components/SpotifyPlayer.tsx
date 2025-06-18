@@ -219,17 +219,6 @@ export default function SpotifyPlayer({ onTrackChange }: SpotifyPlayerProps) {
           <p className="text-muted-foreground">
             Connect your Spotify account to stream real metal music
           </p>
-          <div className="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg mb-4">
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              <strong>Setup Required:</strong> Add this exact URL to your Spotify app's redirect URIs:
-            </p>
-            <code className="block mt-2 p-2 bg-gray-800 text-green-400 rounded text-xs break-all">
-              {window.location.origin}/music
-            </code>
-            <p className="text-xs mt-2 text-yellow-700 dark:text-yellow-300">
-              Go to: Spotify Dashboard → Your App → Edit Settings → Redirect URIs → Add URI
-            </p>
-          </div>
           <Button 
             onClick={handleLogin} 
             disabled={isLoading}
