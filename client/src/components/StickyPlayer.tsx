@@ -18,9 +18,6 @@ export default function StickyPlayer() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-40 transition-colors duration-300">
-      {/* Hidden Audio Element */}
-      <audio ref={audioRef} preload="none" crossOrigin="anonymous" />
-      
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
@@ -59,16 +56,8 @@ export default function StickyPlayer() {
             <div className="w-20 h-1 bg-gray-700 rounded-full relative">
               <div 
                 className="h-1 bg-[var(--color-primary)] rounded-full transition-all duration-150"
-                style={{ width: `${volume}%` }}
+                style={{ width: `${volume * 100}%` }}
               ></div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume}
-                onChange={handleVolumeChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
             </div>
           </div>
         </div>
