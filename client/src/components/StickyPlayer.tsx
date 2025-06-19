@@ -53,10 +53,19 @@ export default function StickyPlayer() {
             
             <Button
               onClick={togglePlayback}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 flex items-center justify-center"
               aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
             >
-              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
+              {isPlaying ? (
+                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <rect x="6" y="4" width="3" height="16" rx="1" />
+                  <rect x="15" y="4" width="3" height="16" rx="1" />
+                </svg>
+              ) : (
+                <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                  <polygon points="8,5 19,12 8,19" />
+                </svg>
+              )}
             </Button>
 
             {/* Volume Control */}
