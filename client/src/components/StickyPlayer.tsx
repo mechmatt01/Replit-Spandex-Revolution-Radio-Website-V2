@@ -1,59 +1,77 @@
-import { Pause, Play, Volume2, VolumeX, Music } from "lucide-react";
+import { Pause, Play, Volume2, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { useAudio } from "@/contexts/AudioContext";
-import { useQuery } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function StickyPlayer() {
-  const { isPlaying, volume, togglePlayback, setVolume } = useAudio();
-  const [albumArt, setAlbumArt] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(70);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  
+  // Stream info
+  const streamUrl = "https://ice1.somafm.com/metal-128-mp3";
+  const trackTitle = "Metal Detector Radio";
+  const trackArtist = "SomaFM Metal Stream";
 
-  // Fetch live radio status
-  const { data: radioStatus } = useQuery({
-    queryKey: ['/api/radio-status'],
-    refetchInterval: 10000,
-  });
-
-  // Extract track info from live radio
-  const liveTrack = radioStatus?.icestats?.source?.[0];
-  const trackTitle = liveTrack?.yp_currently_playing?.split(' - ')[1] || liveTrack?.title || 'Unknown Track';
-  const trackArtist = liveTrack?.yp_currently_playing?.split(' - ')[0] || 'Unknown Artist';
-  const listeners = liveTrack?.listeners || 0;
-
-  // Fetch album artwork from MusicBrainz/Cover Art Archive
   useEffect(() => {
-    // Use gradient placeholder instead of fetching external album art
-    // This eliminates JSON parsing errors from external APIs
-    setAlbumArt(null);
-  }, [trackTitle, trackArtist]);
+    const audio = audioRef.current;
+    if (!audio) return;
 
-  if (!liveTrack) return null;
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+
+    return () => {
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+    };
+  }, []);
+
+  const togglePlayback = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    try {
+      if (isPlaying) {
+        audio.pause();
+      } else {
+        audio.src = streamUrl;
+        await audio.play();
+      }
+    } catch (error) {
+      console.error("Sticky player error:", error);
+    }
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseInt(e.target.value);
+    setVolume(newVolume);
+    if (audioRef.current) {
+      audioRef.current.volume = newVolume / 100;
+    }
+  };
+
+  if (!isPlaying) return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-40 transition-colors duration-300">
+      {/* Hidden Audio Element */}
+      <audio ref={audioRef} preload="none" crossOrigin="anonymous" />
+      
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
           <div className="flex items-center space-x-4 flex-1 min-w-0">
-            {albumArt ? (
-              <img 
-                src={albumArt} 
-                alt={`${trackTitle} by ${trackArtist}`}
-                className="w-12 h-12 rounded-lg object-cover"
-                onError={() => setAlbumArt(null)}
-              />
-            ) : (
-              <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-lg flex items-center justify-center">
-                <Music className="text-white h-6 w-6" />
-              </div>
-            )}
+            <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-lg flex items-center justify-center">
+              <Music className="text-white h-6 w-6" />
+            </div>
             <div className="min-w-0 flex-1">
               <h4 className="font-semibold text-foreground truncate">
                 {trackTitle}
               </h4>
               <p className="text-muted-foreground text-sm truncate">
-                {trackArtist} • {listeners} listeners
+                {trackArtist}
               </p>
             </div>
           </div>
@@ -78,7 +96,7 @@ export default function StickyPlayer() {
             <Volume2 className="text-gray-400 h-4 w-4" />
             <div className="w-20 h-1 bg-gray-700 rounded-full relative">
               <div 
-                className="h-1 bg-metal-orange rounded-full transition-all duration-150"
+                className="h-1 bg-[var(--color-primary)] rounded-full transition-all duration-150"
                 style={{ width: `${volume}%` }}
               ></div>
               <input
@@ -86,7 +104,7 @@ export default function StickyPlayer() {
                 min="0"
                 max="100"
                 value={volume}
-                onChange={(e) => setVolume(parseInt(e.target.value))}
+                onChange={handleVolumeChange}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
             </div>

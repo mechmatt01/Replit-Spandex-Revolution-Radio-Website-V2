@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 
@@ -55,7 +55,10 @@ export default function RadioCoPlayer() {
       console.error("Audio error:", e);
       setIsLoading(false);
       setIsPlaying(false);
-      setError("Unable to connect to radio stream");
+      // Only show error if we're not intentionally stopping/pausing
+      if (audio.src && !audio.paused) {
+        setError("Unable to connect to radio stream");
+      }
     };
 
     const handleWaiting = () => {
@@ -111,7 +114,7 @@ export default function RadioCoPlayer() {
     try {
       if (isPlaying) {
         audio.pause();
-        audio.src = '';
+        setError(null); // Clear any errors when pausing
       } else {
         setIsLoading(true);
         setError(null);
@@ -171,6 +174,26 @@ export default function RadioCoPlayer() {
         crossOrigin="anonymous"
       />
 
+      {/* Album Art */}
+      <div className="flex justify-center mb-6">
+        <div className="w-32 h-32 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-xl flex items-center justify-center shadow-lg">
+          <Music className="text-white h-12 w-12" />
+        </div>
+      </div>
+
+      {/* Track Info */}
+      <div className="text-center mb-6">
+        <h3 className="font-bold text-xl mb-2 text-foreground">
+          Metal Detector Radio
+        </h3>
+        <p className="text-foreground font-semibold mb-1">
+          SomaFM Metal Stream
+        </p>
+        <p className="text-muted-foreground text-sm font-medium">
+          Live Radio • Metal Genre
+        </p>
+      </div>
+
       <div className="flex items-center justify-center space-x-6">
         {/* Play/Pause Button */}
         <Button
@@ -229,11 +252,6 @@ export default function RadioCoPlayer() {
           {error}
         </div>
       )}
-
-      {/* Stream Info */}
-      <div className="mt-4 text-center text-sm text-muted-foreground">
-        <p>Streaming: SomaFM Metal (Test Stream)</p>
-      </div>
     </div>
   );
 }
