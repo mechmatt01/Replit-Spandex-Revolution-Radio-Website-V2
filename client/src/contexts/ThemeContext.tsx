@@ -7,7 +7,9 @@ export type MetalTheme =
   | "power-metal" 
   | "doom-metal" 
   | "thrash-metal"
-  | "gothic-metal";
+  | "gothic-metal"
+  | "light-mode"
+  | "dark-mode";
 
 interface ThemeColors {
   primary: string;
@@ -219,14 +221,66 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
       }
     },
     gradient: "linear-gradient(135deg, #9c27b0 0%, #ad1457 100%)"
+  },
+  "light-mode": {
+    name: "Light Mode",
+    description: "Clean and bright classic light theme",
+    colors: {
+      dark: {
+        primary: "#2563eb",
+        secondary: "#3b82f6",
+        accent: "#60a5fa",
+        background: "#ffffff",
+        surface: "#f8fafc",
+        text: "#0f172a",
+        textSecondary: "#475569",
+        border: "#e2e8f0"
+      },
+      light: {
+        primary: "#2563eb",
+        secondary: "#3b82f6",
+        accent: "#60a5fa",
+        background: "#ffffff",
+        surface: "#f8fafc",
+        text: "#0f172a",
+        textSecondary: "#475569",
+        border: "#e2e8f0"
+      }
+    },
+    gradient: "linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)"
+  },
+  "dark-mode": {
+    name: "Dark Mode",
+    description: "Sleek and modern classic dark theme",
+    colors: {
+      dark: {
+        primary: "#60a5fa",
+        secondary: "#3b82f6",
+        accent: "#93c5fd",
+        background: "#0f172a",
+        surface: "#1e293b",
+        text: "#f1f5f9",
+        textSecondary: "#cbd5e1",
+        border: "#334155"
+      },
+      light: {
+        primary: "#60a5fa",
+        secondary: "#3b82f6",
+        accent: "#93c5fd",
+        background: "#0f172a",
+        surface: "#1e293b",
+        text: "#f1f5f9",
+        textSecondary: "#cbd5e1",
+        border: "#334155"
+      }
+    },
+    gradient: "linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)"
   }
 };
 
 interface ThemeContextType {
   currentTheme: MetalTheme;
-  lightMode: boolean;
   setTheme: (theme: MetalTheme) => void;
-  toggleLightMode: () => void;
   getColors: () => ThemeColors;
   getGradient: () => string;
 }
@@ -235,22 +289,26 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<MetalTheme>("classic-metal");
-  const [lightMode, setLightMode] = useState(false);
 
   useEffect(() => {
     // Load saved preferences
     const savedTheme = localStorage.getItem("metal-theme") as MetalTheme;
-    const savedLightMode = localStorage.getItem("light-mode") === "true";
     
     if (savedTheme && METAL_THEMES[savedTheme]) {
       setCurrentTheme(savedTheme);
     }
-    setLightMode(savedLightMode);
   }, []);
 
   useEffect(() => {
     // Apply theme colors to CSS variables
-    const colors = METAL_THEMES[currentTheme].colors[lightMode ? "light" : "dark"];
+    // For light-mode and dark-mode themes, always use the same color set
+    // For metal themes, use dark colors by default
+    const isLightMode = currentTheme === "light-mode";
+    const isDarkMode = currentTheme === "dark-mode";
+    const colors = METAL_THEMES[currentTheme].colors[
+      isLightMode ? "light" : "dark"
+    ];
+    
     const root = document.documentElement;
     
     // Add smooth transition
@@ -269,28 +327,24 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     
     // Apply theme class
     root.classList.remove("light", "dark");
-    root.classList.add(lightMode ? "light" : "dark");
+    root.classList.add(isLightMode ? "light" : "dark");
     
     // Save preferences
     localStorage.setItem("metal-theme", currentTheme);
-    localStorage.setItem("light-mode", lightMode.toString());
     
     // Remove transition after animation
     setTimeout(() => {
       root.style.transition = "";
     }, 300);
-  }, [currentTheme, lightMode]);
+  }, [currentTheme]);
 
   const setTheme = (theme: MetalTheme) => {
     setCurrentTheme(theme);
   };
 
-  const toggleLightMode = () => {
-    setLightMode(prev => !prev);
-  };
-
   const getColors = (): ThemeColors => {
-    return METAL_THEMES[currentTheme].colors[lightMode ? "light" : "dark"];
+    const isLightMode = currentTheme === "light-mode";
+    return METAL_THEMES[currentTheme].colors[isLightMode ? "light" : "dark"];
   };
 
   const getGradient = (): string => {
@@ -300,9 +354,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   return (
     <ThemeContext.Provider value={{
       currentTheme,
-      lightMode,
       setTheme,
-      toggleLightMode,
       getColors,
       getGradient
     }}>

@@ -27,34 +27,18 @@ const THEME_ICONS: Record<MetalTheme, React.ReactNode> = {
   "power-metal": <Crown className="w-4 h-4" />,
   "doom-metal": <TreePine className="w-4 h-4" />,
   "thrash-metal": <Zap className="w-4 h-4" />,
-  "gothic-metal": <Heart className="w-4 h-4" />
+  "gothic-metal": <Heart className="w-4 h-4" />,
+  "light-mode": <Sun className="w-4 h-4" />,
+  "dark-mode": <Moon className="w-4 h-4" />
 };
 
 export default function MetalThemeSwitcher() {
-  const { currentTheme, lightMode, setTheme, toggleLightMode, getColors } = useTheme();
+  const { currentTheme, setTheme, getColors } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const colors = getColors();
 
   return (
     <div className="flex items-center gap-2">
-      {/* Light/Dark Mode Toggle */}
-      <Button
-        onClick={toggleLightMode}
-        variant="ghost"
-        size="sm"
-        className="w-9 h-9 p-0 hover:bg-opacity-20"
-        style={{ 
-          color: colors.text,
-          backgroundColor: 'transparent'
-        }}
-      >
-        {lightMode ? (
-          <Moon className="w-4 h-4" style={{ color: colors.primary }} />
-        ) : (
-          <Sun className="w-4 h-4" style={{ color: colors.primary }} />
-        )}
-      </Button>
-
       {/* Theme Selector */}
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>
@@ -91,20 +75,21 @@ export default function MetalThemeSwitcher() {
                 style={{ color: colors.text }}
               >
                 <Palette className="w-5 h-5" style={{ color: colors.primary }} />
-                Metal Themes
+                Theme Selector
               </CardTitle>
               <p 
                 className="text-sm"
                 style={{ color: colors.textSecondary }}
               >
-                Choose your metal aesthetic
+                Choose your visual theme
               </p>
             </CardHeader>
             
             <CardContent className="space-y-2">
               {Object.entries(METAL_THEMES).map(([themeKey, themeConfig]) => {
                 const isActive = currentTheme === themeKey;
-                const themeColors = themeConfig.colors[lightMode ? "light" : "dark"];
+                const isLightTheme = themeKey === "light-mode";
+                const themeColors = themeConfig.colors[isLightTheme ? "light" : "dark"];
                 
                 return (
                   <Button
