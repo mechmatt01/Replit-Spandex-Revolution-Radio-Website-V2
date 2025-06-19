@@ -12,8 +12,8 @@ export default function RadioCoPlayer() {
   
   const audioRef = useRef<HTMLAudioElement>(null);
   
-  // Shady Pines Radio stream URL for testing
-  const streamUrl = "https://streaming.radio.co/s2c4cc0b96/listen";
+  // Using a known working internet radio stream for testing
+  const streamUrl = "https://ice1.somafm.com/metal-128-mp3";
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -111,20 +111,34 @@ export default function RadioCoPlayer() {
     try {
       if (isPlaying) {
         audio.pause();
+        audio.src = '';
       } else {
         setIsLoading(true);
         setError(null);
         
-        // Set the stream URL
+        // Set the stream URL directly
         audio.src = streamUrl;
         
-        // Load and play
-        await audio.load();
-        await audio.play();
+        // Try to play without explicit load() call
+        const playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+          await playPromise;
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Playback error:", error);
-      setError("Failed to start playback");
+      let errorMessage = "Failed to start playback";
+      
+      if (error.name === 'NotAllowedError') {
+        errorMessage = "Please click play to start the stream";
+      } else if (error.name === 'NotSupportedError') {
+        errorMessage = "Stream format not supported";
+      } else if (error.name === 'AbortError') {
+        errorMessage = "Stream loading was interrupted";
+      }
+      
+      setError(errorMessage);
       setIsLoading(false);
       setIsPlaying(false);
     }
@@ -218,7 +232,7 @@ export default function RadioCoPlayer() {
 
       {/* Stream Info */}
       <div className="mt-4 text-center text-sm text-muted-foreground">
-        <p>Streaming: Shady Pines Radio (Test Station)</p>
+        <p>Streaming: SomaFM Metal (Test Stream)</p>
       </div>
     </div>
   );
