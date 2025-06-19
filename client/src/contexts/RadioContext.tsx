@@ -38,7 +38,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const streamUrl = "https://streamer.radio.co/s3bc65afb4/listen";
+  const streamUrls = [
+    "https://streamer.radio.co/s3bc65afb4/listen",
+    "https://streamer.radio.co/s3bc65afb4/listen.aac",
+    "https://streamer.radio.co/s3bc65afb4/listen.mp3",
+    "https://streamer.radio.co/s3bc65afb4/listen?type=http&nocache=" + Date.now()
+  ];
 
   const togglePlayback = async () => {
     const audio = audioRef.current;
@@ -52,11 +57,35 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         setError(null);
         
-        audio.src = streamUrl;
-        const playPromise = audio.play();
+        // Try multiple stream formats
+        let streamWorked = false;
         
-        if (playPromise !== undefined) {
-          await playPromise;
+        for (let i = 0; i < streamUrls.length; i++) {
+          try {
+            const url = streamUrls[i];
+            console.log(`Attempting to play stream ${i + 1}/${streamUrls.length}: ${url}`);
+            
+            audio.src = url;
+            audio.load();
+            
+            const playPromise = audio.play();
+            if (playPromise !== undefined) {
+              await playPromise;
+              streamWorked = true;
+              break;
+            }
+          } catch (urlError: any) {
+            console.warn(`Stream ${i + 1} failed:`, urlError);
+            
+            if (i === streamUrls.length - 1) {
+              // Last URL failed, throw error
+              throw urlError;
+            }
+          }
+        }
+        
+        if (!streamWorked) {
+          throw new Error("All stream formats failed");
         }
       }
     } catch (error: any) {
@@ -66,9 +95,11 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       if (error.name === 'NotAllowedError') {
         errorMessage = "Please click play to start the stream";
       } else if (error.name === 'NotSupportedError') {
-        errorMessage = "Stream format not supported";
+        errorMessage = "Stream format not supported - trying alternative formats";
       } else if (error.name === 'AbortError') {
         errorMessage = "Stream loading was interrupted";
+      } else {
+        errorMessage = "Unable to connect to radio stream";
       }
       
       setError(errorMessage);
