@@ -38,7 +38,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const streamUrl = "https://streaming.radio.co/s2c4cc0b96/listen";
+  const streamUrl = "https://streamer.radio.co/s3bc65afb4_low";
 
   const togglePlayback = async () => {
     const audio = audioRef.current;
@@ -153,7 +153,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     const fetchTrackInfo = async () => {
       try {
         // Try to get track info from Radio.co API for Shady Pines Radio
-        const response = await fetch('https://public.radio.co/stations/s2c4cc0b96/status');
+        const response = await fetch('https://public.radio.co/stations/s3bc65afb4/status');
         if (response.ok) {
           const data = await response.json();
           const currentSong = data.current_track;

@@ -145,12 +145,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Radio.co stream status API with live data
   app.get("/api/radio-status", async (req, res) => {
     try {
-      const response = await fetch("https://public.radio.co/stations/s2c4cc0b96/status");
+      const response = await fetch("https://public.radio.co/stations/s3bc65afb4/status");
       if (response.ok) {
         const data = await response.json();
         res.json({
           station: "Shady Pines Radio",
-          streamUrl: "https://streaming.radio.co/s2c4cc0b96/listen",
+          streamUrl: "https://streaming.radio.co/s3bc65afb4/listen",
           status: "live",
           format: "audio/mpeg",
           currentTrack: data.current_track || null,
@@ -159,7 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         res.json({
           station: "Shady Pines Radio",
-          streamUrl: "https://streaming.radio.co/s2c4cc0b96/listen",
+          streamUrl: "https://streaming.radio.co/s3bc65afb4/listen",
           status: "live",
           format: "audio/mpeg"
         });
@@ -167,7 +167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.json({
         station: "Shady Pines Radio",
-        streamUrl: "https://streaming.radio.co/s2c4cc0b96/listen",
+        streamUrl: "https://streaming.radio.co/s3bc65afb4/listen",
         status: "live",
         format: "audio/mpeg"
       });
