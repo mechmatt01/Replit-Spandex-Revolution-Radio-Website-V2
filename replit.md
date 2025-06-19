@@ -200,6 +200,8 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Added persistent LIVE indicator above album art in main player (always visible)
 - June 19, 2025: Implemented responsive dropdown navigation with outline icons, auto-sizing width, fully right-aligned text and icons, and matching blur background identical to floating music player for both desktop and mobile menus
 - June 19, 2025: Enhanced dropdown navigation with darkened blur background (bg-black/80 backdrop-blur-md) for improved text visibility while maintaining elegant visual effect
+- June 19, 2025: Fixed section headers and main title text colors to display black in light mode and white in dark mode for proper visibility on all backgrounds
+- June 19, 2025: Added proper spacing in theme selector to prevent selection border from being cut off by header background
 - June 19, 2025: Enhanced Open Graph link previews with dynamic theme-aware colors and styling that updates based on current theme selection
 - June 19, 2025: Added dynamic favicon generation that changes colors based on selected theme for consistent branding
 - June 19, 2025: Implemented comprehensive tooltips with theme-aware styling throughout the interface for improved accessibility

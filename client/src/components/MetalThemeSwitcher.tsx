@@ -85,7 +85,7 @@ export default function MetalThemeSwitcher() {
               </p>
             </CardHeader>
             
-            <CardContent className="space-y-2 max-h-[60vh] overflow-y-auto">
+            <CardContent className="space-y-2 max-h-[60vh] overflow-y-auto pt-4">
               {Object.entries(METAL_THEMES).map(([themeKey, themeConfig]) => {
                 const isActive = currentTheme === themeKey;
                 const isLightTheme = themeKey === "light-mode";
