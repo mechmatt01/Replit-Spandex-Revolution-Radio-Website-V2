@@ -70,7 +70,7 @@ export default function StickyPlayer() {
           </div>
 
           {/* Volume Control */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-6">
             <Volume2 className="text-gray-400 h-4 w-4" />
             <div className="w-20 h-1 bg-gray-700 rounded-full relative">
               <div 
