@@ -192,6 +192,10 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Enhanced scrolling text behavior - static centered display when paused, smart scrolling only for track content during playback
 - June 19, 2025: Increased floating player icon size to 28px for better visibility and interaction
 - June 19, 2025: Improved text display logic to show single instance when static, duplicated only during scrolling animations
+- June 19, 2025: Enhanced text alignment - floating player left-aligned, main player centered when not playing
+- June 19, 2025: Adjusted main player width to prevent text cutoff when displaying station name
+- June 19, 2025: Increased floating player icon size to 32px for improved visibility and interaction
+- June 19, 2025: Addressed security vulnerabilities by updating npm packages (Vite 6.3.5, drizzle-kit 0.31.1)
 
 ## User Preferences
 
