@@ -67,16 +67,8 @@ export default function Hero() {
           Join the hairspray rebellion!
         </p>
 
-        {/* Live Status Indicator */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center bg-metal-red/20 rounded-full px-4 py-2">
-            <div className="w-3 h-3 bg-metal-red rounded-full mr-2"></div>
-            <span className="text-metal-red font-semibold text-sm">LIVE NOW</span>
-          </div>
-        </div>
-
         {/* Live Radio Player */}
-        <div className="flex flex-col items-center justify-center space-y-6 mb-12">
+        <div className="flex flex-col items-center justify-center space-y-6 mb-12 mt-8">
           <RadioCoPlayer />
           <Button 
             onClick={scrollToSchedule}

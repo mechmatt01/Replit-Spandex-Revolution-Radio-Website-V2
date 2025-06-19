@@ -55,7 +55,7 @@ export default function StickyPlayer() {
           </div>
 
           {/* Player Controls */}
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-8">
             <Button
               onClick={togglePlayback}
               className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full"
@@ -63,14 +63,14 @@ export default function StickyPlayer() {
               {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
             </Button>
             
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 px-4">
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
               <span className="text-sm text-red-500 font-bold">LIVE</span>
             </div>
           </div>
 
           {/* Volume Control */}
-          <div className="hidden md:flex items-center space-x-3">
+          <div className="hidden md:flex items-center space-x-4">
             <Volume2 className="text-gray-400 h-4 w-4" />
             <div className="w-20 h-1 bg-gray-700 rounded-full relative">
               <div 
