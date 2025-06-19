@@ -107,6 +107,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Google OAuth routes
+  app.get('/api/auth/google', 
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+  );
+
+  app.get('/api/auth/google/callback',
+    passport.authenticate('google', { 
+      successRedirect: '/',
+      failureRedirect: '/?auth=failed'
+    })
+  );
+
   // Authentication API routes
   app.post("/api/auth/register", async (req, res) => {
     try {

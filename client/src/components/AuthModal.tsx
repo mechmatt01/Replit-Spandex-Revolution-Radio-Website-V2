@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Mail, Lock, User, LogIn, UserPlus } from 'lucide-react';
+import { FaGoogle } from 'react-icons/fa';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -22,6 +23,10 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
   const [loading, setLoading] = useState(false);
   
   const { login, register } = useAuth();
+  
+  const handleGoogleAuth = () => {
+    window.location.href = '/api/auth/google';
+  };
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,7 +102,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                     id="firstName"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    className="pl-10 bg-black/50 border-gray-700 text-white focus:border-orange-500"
+                    className="pl-10 bg-black/50 border-gray-700 text-white focus:border-orange-500 focus:ring-0 focus:ring-offset-0"
                     required
                   />
                 </div>
@@ -110,7 +115,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                     id="lastName"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    className="pl-10 bg-black/50 border-gray-700 text-white focus:border-orange-500"
+                    className="pl-10 bg-black/50 border-gray-700 text-white focus:border-orange-500 focus:ring-0 focus:ring-offset-0"
                     required
                   />
                 </div>
@@ -127,7 +132,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 bg-black/50 border-gray-700 text-white focus:border-orange-500"
+                className="pl-10 bg-black/50 border-gray-700 text-white focus:border-orange-500 focus:ring-0 focus:ring-offset-0"
                 required
               />
             </div>
@@ -142,7 +147,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 bg-black/50 border-gray-700 text-white focus:border-orange-500"
+                className="pl-10 bg-black/50 border-gray-700 text-white focus:border-orange-500 focus:ring-0 focus:ring-offset-0"
                 required
               />
             </div>
@@ -161,6 +166,26 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
             ) : (
               mode === 'login' ? 'Sign In' : 'Create Account'
             )}
+          </Button>
+          
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-gray-600" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-black px-2 text-gray-400">Or continue with</span>
+            </div>
+          </div>
+          
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleGoogleAuth}
+            className="w-full border-gray-700 bg-transparent text-white hover:bg-gray-800"
+            disabled={loading}
+          >
+            <FaGoogle className="mr-2 h-4 w-4 text-red-500" />
+            {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
           </Button>
           
           <div className="text-center">
