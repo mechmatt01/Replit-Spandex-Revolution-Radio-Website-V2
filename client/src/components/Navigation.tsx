@@ -86,7 +86,7 @@ export default function Navigation() {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="md:hidden bg-card/95 backdrop-blur-sm transition-colors duration-300 border-t border-border/50">
+          <div className="xl:hidden bg-card/95 backdrop-blur-sm transition-colors duration-300 border-t border-border/50">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <button onClick={() => scrollToSection("home")} className="block px-3 py-2 text-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
                 HOME
