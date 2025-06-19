@@ -208,6 +208,11 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Complete authentication system implementation with email/password registration, bcrypt encryption, session management, and Google OAuth integration
 - June 19, 2025: Added authentication modal with proper form styling (single outline colors), sign in/sign out functionality in navigation for both desktop and mobile
 - June 19, 2025: Integrated Google OAuth with "Sign in with Google" button and server-side authentication routes for seamless social login
+- June 19, 2025: Successfully integrated Hot 97 TuneIn embed player directly into streaming system replacing previous radio configurations
+- June 19, 2025: Updated radio streaming infrastructure to use authentic Hot 97 TuneIn iframe player (https://tunein.com/embed/player/s22162/)
+- June 19, 2025: Rebranded station from previous configurations to Hot 97 FM with "New York's Hip Hop & R&B" messaging throughout application
+- June 19, 2025: Created dedicated Hot97Player component with TuneIn iframe integration, volume controls, and synchronized playback state
+- June 19, 2025: Simplified MusicPage to focus exclusively on Hot 97 streaming, removing all Spotify-related code and dependencies
 
 ## User Preferences
 
