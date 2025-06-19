@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Menu, X, Radio, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
@@ -12,6 +12,21 @@ export default function Navigation() {
   const { togglePlayback, isPlaying } = useAudio();
   const { getColors, getGradient } = useTheme();
   const colors = getColors();
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isOpen]);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -152,7 +167,7 @@ export default function Navigation() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="xl:hidden absolute top-1/2 right-4 p-2 rounded-md transform -translate-y-1/2 transition-colors hover:bg-opacity-20"
+          className="xl:hidden absolute top-1/2 right-4 p-2 rounded-md transform -translate-y-1/2 transition-colors hover:bg-opacity-20 focus:outline-none focus:ring-2 focus:ring-orange-500"
           style={{ 
             color: colors.text,
             backgroundColor: 'transparent'
@@ -163,6 +178,9 @@ export default function Navigation() {
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'transparent';
           }}
+          aria-expanded={isOpen}
+          aria-controls="mobile-menu"
+          aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -172,52 +190,61 @@ export default function Navigation() {
           <>
             {/* Background Blur Overlay */}
             <div 
-              className="xl:hidden fixed inset-0 z-30 backdrop-blur-md transition-opacity duration-300"
+              className="xl:hidden fixed inset-0 z-30 backdrop-blur-xl transition-opacity duration-300"
               style={{ 
-                backgroundColor: `${colors.background}40`,
-                backdropFilter: 'blur(8px)'
+                backgroundColor: `rgba(0, 0, 0, 0.6)`,
+                backdropFilter: 'blur(16px) saturate(180%)'
               }}
               onClick={() => setIsOpen(false)}
+              aria-hidden="true"
             />
             
             {/* Menu Content - Attached to nav bar */}
             <div 
-              className="xl:hidden absolute top-full right-0 z-40 w-64 bg-card/80 backdrop-blur-sm transition-colors duration-300 rounded-b-2xl shadow-xl border-t-0"
+              ref={menuRef}
+              id="mobile-menu"
+              className="xl:hidden absolute top-full right-0 z-40 w-64 bg-black/85 backdrop-blur-xl transition-colors duration-300 rounded-b-2xl shadow-xl border-t-0"
               style={{ 
                 borderLeft: `1px solid ${colors.border}30`,
                 borderRight: `1px solid ${colors.border}30`,
                 borderBottom: `1px solid ${colors.border}30`
               }}
+              role="menu"
+              aria-label="Mobile navigation menu"
             >
               <div className="p-4 space-y-3">
                 <button 
                   onClick={() => scrollToSection("home")}
-                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   style={{ color: colors.text }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = colors.primary;
+                    e.currentTarget.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
                     e.currentTarget.style.color = colors.text;
                   }}
+                  role="menuitem"
+                  aria-label="Navigate to home section"
                 >
                   HOME
                 </button>
                 <Link href="/music">
                   <button 
                     onClick={() => setIsOpen(false)}
-                    className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                    className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     style={{ color: colors.text }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.backgroundColor = colors.primary + '20';
-                      e.currentTarget.style.color = colors.primary;
+                      e.currentTarget.style.color = 'white';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.backgroundColor = 'transparent';
                       e.currentTarget.style.color = colors.text;
                     }}
+                    role="menuitem"
+                    aria-label="Navigate to music page"
                   >
                     MUSIC
                   </button>
