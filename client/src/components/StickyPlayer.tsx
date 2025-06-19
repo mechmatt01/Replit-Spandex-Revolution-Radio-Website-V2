@@ -4,6 +4,7 @@ import { useRadio } from "@/contexts/RadioContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
+import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 
 export default function StickyPlayer() {
   const { isPlaying, volume, currentTrack, togglePlayback, setVolume } = useRadio();
@@ -22,32 +23,12 @@ export default function StickyPlayer() {
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
           <div className="flex items-center space-x-4 flex-1 min-w-0">
-            <div className="relative w-12 h-12 rounded-lg overflow-hidden shadow-lg">
-              {/* Themed Placeholder Background */}
-              <div 
-                className="absolute inset-0 flex items-center justify-center transition-opacity duration-500"
-                style={{ 
-                  background: getGradient(),
-                  opacity: currentTrack.artwork ? 0 : 1
-                }}
-              >
-                <ThemedMusicLogo size="sm" className="text-white" />
-              </div>
-              
-              {/* Album Artwork */}
-              {currentTrack.artwork && (
-                <div className="absolute inset-0 transition-opacity duration-500">
-                  <img 
-                    src={currentTrack.artwork} 
-                    alt={`${currentTrack.title} by ${currentTrack.artist}`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.style.opacity = '0';
-                    }}
-                  />
-                </div>
-              )}
-            </div>
+            <InteractiveAlbumArt 
+              artwork={currentTrack.artwork}
+              title={currentTrack.title}
+              artist={currentTrack.artist}
+              size="sm"
+            />
             <div className="min-w-0 flex-1 transition-opacity duration-300">
               <ScrollingText 
                 text={currentTrack.title}

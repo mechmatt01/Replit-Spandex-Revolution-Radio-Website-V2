@@ -5,6 +5,7 @@ import { useRadio } from "@/contexts/RadioContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
+import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 
 export default function RadioCoPlayer() {
   const { 
@@ -38,32 +39,12 @@ export default function RadioCoPlayer() {
 
       {/* Album Art */}
       <div className="flex justify-center mb-6">
-        <div className="relative w-32 h-32 rounded-xl overflow-hidden shadow-lg">
-          {/* Themed Placeholder Background */}
-          <div 
-            className="absolute inset-0 flex items-center justify-center transition-opacity duration-500"
-            style={{ 
-              background: getGradient(),
-              opacity: currentTrack.artwork ? 0 : 1
-            }}
-          >
-            <ThemedMusicLogo size="md" className="text-white" />
-          </div>
-          
-          {/* Album Artwork */}
-          {currentTrack.artwork && (
-            <div className="absolute inset-0 transition-opacity duration-500">
-              <img 
-                src={currentTrack.artwork} 
-                alt={`${currentTrack.title} by ${currentTrack.artist}`}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.opacity = '0';
-                }}
-              />
-            </div>
-          )}
-        </div>
+        <InteractiveAlbumArt 
+          artwork={currentTrack.artwork}
+          title={currentTrack.title}
+          artist={currentTrack.artist}
+          size="md"
+        />
       </div>
 
       {/* Track Info with Fade Animation */}
