@@ -44,8 +44,8 @@
 }
 
 @keyframes scroll {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
 }
 
 .animate-scroll {
@@ -91,12 +91,21 @@
 /* Theme-aware button styling */
 .btn-theme-hover:hover {
   background-color: var(--color-primary);
-  color: white;
+  color: white !important;
   transition: all 0.2s ease;
 }
 
 .btn-theme-hover {
   transition: all 0.2s ease;
+}
+
+/* Ensure proper text contrast on theme hover */
+.dark .btn-theme-hover:hover {
+  color: white !important;
+}
+
+.light .btn-theme-hover:hover {
+  color: white !important;
 }
 
 /* Text color fixes for light mode */

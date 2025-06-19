@@ -69,9 +69,11 @@ export default function Navigation() {
               className="text-sm font-semibold transition-colors px-2 py-1 rounded"
               style={{ color: colors.text }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = getGradient().split(',')[0].split('(')[1].trim();
+                e.currentTarget.style.backgroundColor = getGradient().split(',')[0].split('(')[1].trim() + '20';
+                e.currentTarget.style.color = 'white';
               }}
               onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
                 e.currentTarget.style.color = colors.text;
               }}
             >
@@ -82,9 +84,11 @@ export default function Navigation() {
               className="text-sm font-semibold transition-colors px-2 py-1 rounded"
               style={{ color: colors.text }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = getGradient().split(',')[0].split('(')[1].trim();
+                e.currentTarget.style.backgroundColor = getGradient().split(',')[0].split('(')[1].trim() + '20';
+                e.currentTarget.style.color = 'white';
               }}
               onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
                 e.currentTarget.style.color = colors.text;
               }}
             >
@@ -95,9 +99,11 @@ export default function Navigation() {
               className="text-sm font-semibold transition-colors px-2 py-1 rounded"
               style={{ color: colors.text }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = getGradient().split(',')[0].split('(')[1].trim();
+                e.currentTarget.style.backgroundColor = getGradient().split(',')[0].split('(')[1].trim() + '20';
+                e.currentTarget.style.color = 'white';
               }}
               onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
                 e.currentTarget.style.color = colors.text;
               }}
             >
@@ -108,9 +114,11 @@ export default function Navigation() {
               className="text-sm font-semibold transition-colors px-2 py-1 rounded"
               style={{ color: colors.text }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = getGradient().split(',')[0].split('(')[1].trim();
+                e.currentTarget.style.backgroundColor = getGradient().split(',')[0].split('(')[1].trim() + '20';
+                e.currentTarget.style.color = 'white';
               }}
               onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
                 e.currentTarget.style.color = colors.text;
               }}
             >
@@ -121,9 +129,11 @@ export default function Navigation() {
               className="text-sm font-semibold transition-colors px-2 py-1 rounded"
               style={{ color: colors.text }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = getGradient().split(',')[0].split('(')[1].trim();
+                e.currentTarget.style.backgroundColor = getGradient().split(',')[0].split('(')[1].trim() + '20';
+                e.currentTarget.style.color = 'white';
               }}
               onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
                 e.currentTarget.style.color = colors.text;
               }}
             >
