@@ -53,7 +53,7 @@ export default function StickyPlayer() {
             
             <Button
               onClick={togglePlayback}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 flex items-center justify-center"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] flex items-center justify-center"
               aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
             >
               {isPlaying ? (

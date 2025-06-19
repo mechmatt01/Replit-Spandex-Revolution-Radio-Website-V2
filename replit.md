@@ -186,6 +186,9 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Updated floating player to always be visible and synchronized with main player controls
 - June 19, 2025: Fixed album name display in main player - shows album when available, removes "Live Stream" text accordingly
 - June 19, 2025: Improved scroll timing in floating player for faster text reappearance (4s vs 8s animation)
+- June 19, 2025: Enhanced floating player pause/play icons with thicker design, better spacing, and increased size while maintaining perfect centering
+- June 19, 2025: Implemented continuous scrolling text animation by duplicating text content and adjusting keyframe to prevent gaps between scroll cycles
+- June 19, 2025: Fixed focus ring color on floating player play/pause button to dynamically match current theme primary color
 
 ## User Preferences
 
