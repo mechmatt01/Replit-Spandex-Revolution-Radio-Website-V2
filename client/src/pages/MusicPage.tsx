@@ -1,32 +1,10 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import SpotifyPlayer from "@/components/SpotifyPlayer";
-import { Radio, Music, Headphones } from "lucide-react";
-import { useAudio } from "@/contexts/AudioContext";
-import type { SpotifyTrack } from "@/lib/spotify";
+import Hot97Player from "@/components/Hot97Player";
+import Navigation from "@/components/Navigation";
+import StickyPlayer from "@/components/StickyPlayer";
 
 export default function MusicPage() {
-  const [activeMode, setActiveMode] = useState<"live" | "spotify">("live");
-  const [spotifyTrack, setSpotifyTrack] = useState<SpotifyTrack | null>(null);
-  const { currentTrack, isPlaying, togglePlayback } = useAudio();
 
-  useEffect(() => {
-    // Check URL for Spotify auth callback
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('code')) {
-      setActiveMode("spotify");
-    }
-  }, []);
 
-  const handleSpotifyTrackChange = (track: SpotifyTrack | null) => {
-    setSpotifyTrack(track);
-    if (track) {
-      setActiveMode("spotify");
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background pt-20 pb-8">
