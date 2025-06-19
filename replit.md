@@ -198,7 +198,8 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Addressed security vulnerabilities by updating npm packages (Vite 6.3.5, drizzle-kit 0.31.1)
 - June 19, 2025: Enhanced floating player icons to 40px with bolder design for maximum visibility
 - June 19, 2025: Added persistent LIVE indicator above album art in main player (always visible)
-- June 19, 2025: Implemented responsive dropdown navigation with outline icons, auto-sizing width, right-aligned layout with icons on the right side, and matching blur background identical to floating music player for both desktop and mobile menus
+- June 19, 2025: Implemented responsive dropdown navigation with outline icons, auto-sizing width, fully right-aligned text and icons, and matching blur background identical to floating music player for both desktop and mobile menus
+- June 19, 2025: Enhanced dropdown navigation with darkened blur background (bg-black/80 backdrop-blur-md) for improved text visibility while maintaining elegant visual effect
 - June 19, 2025: Enhanced Open Graph link previews with dynamic theme-aware colors and styling that updates based on current theme selection
 - June 19, 2025: Added dynamic favicon generation that changes colors based on selected theme for consistent branding
 - June 19, 2025: Implemented comprehensive tooltips with theme-aware styling throughout the interface for improved accessibility
