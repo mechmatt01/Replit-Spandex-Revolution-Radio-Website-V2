@@ -5,22 +5,23 @@ export function setupRadioProxy(app: Express) {
   // Radio stream proxy to handle CORS and format issues
   app.get("/api/radio-stream", (req: Request, res: Response) => {
     const streamUrls = [
-      // Try different KPRS stream patterns
-      "https://streamer.radio.co/kprs/listen",
-      "https://streamer.radio.co/kprs/listen.mp3",
-      "https://stream.radio.co/kprs/listen",
-      "https://kprs.out.airtime.pro/kprs_a",
-      "https://kprs.out.airtime.pro/kprs_b",
+      // Correct KPRS stream from ListenLive.co
+      "https://listenlive.co/31481.m3u8",
+      "https://listenlive.co/31481.mp3",
+      "https://player.listenlive.co/31481/stream",
+      "https://stream.listenlive.co/31481/stream",
+      "https://listenlive.co/31481",
       // Fallback to working metal stream
-      "https://ice1.somafm.com/metal-128-mp3",
-      "https://ice2.somafm.com/metal-128-mp3"
+      "https://ice1.somafm.com/metal-128-mp3"
     ];
 
     let currentStreamIndex = 0;
 
     const tryNextStream = () => {
       if (currentStreamIndex >= streamUrls.length) {
-        res.status(503).json({ error: "All stream sources unavailable" });
+        if (!res.headersSent) {
+          res.status(503).json({ error: "All stream sources unavailable" });
+        }
         return;
       }
 
@@ -28,7 +29,7 @@ export function setupRadioProxy(app: Express) {
       console.log(`Trying KPRS stream ${currentStreamIndex + 1}: ${streamUrl}`);
 
       const request = https.get(streamUrl, (response) => {
-        if (response.statusCode === 200) {
+        if (response.statusCode === 200 && !res.headersSent) {
           // Set headers for audio streaming
           res.setHeader('Content-Type', 'audio/mpeg');
           res.setHeader('Access-Control-Allow-Origin', '*');
@@ -41,8 +42,10 @@ export function setupRadioProxy(app: Express) {
 
           response.on('error', (error) => {
             console.error(`Stream ${currentStreamIndex + 1} error:`, error);
-            currentStreamIndex++;
-            tryNextStream();
+            if (!res.headersSent) {
+              currentStreamIndex++;
+              tryNextStream();
+            }
           });
         } else {
           console.log(`Stream ${currentStreamIndex + 1} failed with status ${response.statusCode}`);
@@ -57,7 +60,7 @@ export function setupRadioProxy(app: Express) {
         tryNextStream();
       });
 
-      request.setTimeout(10000, () => {
+      request.setTimeout(5000, () => {
         console.log(`Stream ${currentStreamIndex + 1} timeout`);
         request.destroy();
         currentStreamIndex++;
