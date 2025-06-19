@@ -23,14 +23,15 @@ export default function Navigation() {
 
   return (
     <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300">
-      <div className="w-full">
+      <div className="w-full relative">
         <div className="flex items-center justify-between h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
           {/* Logo & Brand */}
           <div className="flex items-center space-x-4">
             <div 
-              className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg overflow-hidden p-1.5"
+              className="flex items-center justify-center w-8 h-8 rounded-full"
               style={{ 
-                background: getGradient()
+                background: getGradient(),
+                padding: '5px'
               }}
             >
               <img 
@@ -39,97 +40,114 @@ export default function Navigation() {
                 className="w-full h-full object-contain"
               />
             </div>
-            <div className="flex items-center">
-              <h1 className="font-orbitron font-bold text-lg text-metal-orange leading-tight">
-                <span className="flex flex-col">
-                  <span>SPANDEX SALVATION</span>
-                  <span className="text-gray-400 text-sm">RADIO</span>
-                </span>
-              </h1>
+            <div className="flex flex-col">
+              <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
+                SPANDEX
+              </div>
+              <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
+                SALVATION
+              </div>
+              <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
+                RADIO
+              </div>
             </div>
           </div>
 
-          {/* Desktop Navigation - Responsive breakpoints */}
-          <div className="hidden xl:flex items-center justify-center flex-1" style={{ marginLeft: '10px' }}>
-            <div className="flex items-center gap-6 lg:gap-8">
-              <button onClick={() => scrollToSection("home")} className="text-foreground font-semibold hover:text-metal-orange transition-colors">
-                HOME
-              </button>
-              <Link href="/music" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-                MUSIC
-              </Link>
-              <button onClick={() => scrollToSection("schedule")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-                SCHEDULE
-              </button>
-              <button onClick={() => scrollToSection("submissions")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-                SUBMISSIONS
-              </button>
-              <button onClick={() => scrollToSection("contact")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-                CONTACT
-              </button>
-              <button onClick={() => scrollToSection("merch")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">
-                MERCH
-              </button>
-              <button onClick={() => scrollToSection("subscribe")} className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors" style={{ marginRight: '15px' }}>
-                SUBSCRIBE
-              </button>
-            </div>
-          </div>
-
-          {/* Right Side Controls - Mobile Menu & Metal Theme Switcher */}
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="xl:hidden hover:bg-opacity-20"
-              style={{
-                color: colors.text,
-                backgroundColor: isOpen ? `${colors.primary}20` : 'transparent'
-              }}
-              onClick={() => setIsOpen(!isOpen)}
+          {/* Desktop Navigation */}
+          <div className="hidden xl:flex items-center space-x-8">
+            <button 
+              onClick={() => scrollToSection("home")}
+              className="text-sm font-semibold transition-colors"
+              style={{ color: colors.text }}
             >
-              {isOpen ? <X style={{ color: colors.primary }} /> : <Menu style={{ color: colors.primary }} />}
-            </Button>
+              HOME
+            </button>
+            <Link href="/music">
+              <button className="text-sm font-semibold transition-colors" style={{ color: colors.text }}>
+                MUSIC
+              </button>
+            </Link>
+            <button 
+              onClick={() => scrollToSection("schedule")}
+              className="text-sm font-semibold transition-colors"
+              style={{ color: colors.text }}
+            >
+              SCHEDULE
+            </button>
+            <button 
+              onClick={() => scrollToSection("submissions")}
+              className="text-sm font-semibold transition-colors"
+              style={{ color: colors.text }}
+            >
+              SUBMISSIONS
+            </button>
+            <button 
+              onClick={() => scrollToSection("contact")}
+              className="text-sm font-semibold transition-colors"
+              style={{ color: colors.text }}
+            >
+              CONTACT
+            </button>
+            <button 
+              onClick={() => scrollToSection("merch")}
+              className="text-sm font-semibold transition-colors"
+              style={{ color: colors.text }}
+            >
+              MERCH
+            </button>
+            <button 
+              onClick={() => scrollToSection("subscription")}
+              className="text-sm font-semibold transition-colors"
+              style={{ color: colors.text }}
+            >
+              SUBSCRIBE
+            </button>
+          </div>
+
+          {/* Right side controls */}
+          <div className="flex items-center space-x-4">
             <MetalThemeSwitcher />
           </div>
         </div>
 
-      {/* Mobile Navigation Dropdown */}
-      {isOpen && (
-        <>
-          {/* Background Blur Overlay */}
-          <div 
-            className="xl:hidden fixed inset-0 z-30 backdrop-blur-md transition-opacity duration-300"
-            style={{ 
-              backgroundColor: `${colors.background}40`,
-              backdropFilter: 'blur(8px)'
-            }}
-            onClick={() => setIsOpen(false)}
-          />
-          
-          {/* Menu Content - Attached to nav bar */}
-          <div 
-            className="xl:hidden absolute top-full right-0 z-40 w-64 bg-card/80 backdrop-blur-sm transition-colors duration-300 rounded-b-2xl shadow-xl border-t-0"
-            style={{ 
-              borderLeft: `1px solid ${colors.border}30`,
-              borderRight: `1px solid ${colors.border}30`,
-              borderBottom: `1px solid ${colors.border}30`
-            }}
-          >
-            <div className="p-4 space-y-3">
-              <div className="space-y-3">
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="xl:hidden absolute top-4 right-4 p-2 rounded-md"
+          style={{ color: colors.text }}
+        >
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        {/* Mobile Navigation Dropdown */}
+        {isOpen && (
+          <>
+            {/* Background Blur Overlay */}
+            <div 
+              className="xl:hidden fixed inset-0 z-30 backdrop-blur-md transition-opacity duration-300"
+              style={{ 
+                backgroundColor: `${colors.background}40`,
+                backdropFilter: 'blur(8px)'
+              }}
+              onClick={() => setIsOpen(false)}
+            />
+            
+            {/* Menu Content - Attached to nav bar */}
+            <div 
+              className="xl:hidden absolute top-full right-0 z-40 w-64 bg-card/80 backdrop-blur-sm transition-colors duration-300 rounded-b-2xl shadow-xl border-t-0"
+              style={{ 
+                borderLeft: `1px solid ${colors.border}30`,
+                borderRight: `1px solid ${colors.border}30`,
+                borderBottom: `1px solid ${colors.border}30`
+              }}
+            >
+              <div className="p-4 space-y-3">
                 <button 
-                  onClick={() => {
-                    scrollToSection("home");
-                    setIsOpen(false);
-                  }} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent'
-                  }}
+                  onClick={() => scrollToSection("home")}
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  style={{ color: colors.text }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
                     e.currentTarget.style.color = colors.primary;
                   }}
                   onMouseLeave={(e) => {
@@ -139,37 +157,29 @@ export default function Navigation() {
                 >
                   HOME
                 </button>
-                <Link 
-                  href="/music" 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg" 
-                  onClick={() => setIsOpen(false)}
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
-                    e.currentTarget.style.color = colors.primary;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
-                  }}
-                >
-                  MUSIC
+                <Link href="/music">
+                  <button 
+                    onClick={() => setIsOpen(false)}
+                    className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                    style={{ color: colors.text }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = colors.primary + '20';
+                      e.currentTarget.style.color = colors.primary;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = colors.text;
+                    }}
+                  >
+                    MUSIC
+                  </button>
                 </Link>
                 <button 
-                  onClick={() => {
-                    scrollToSection("schedule");
-                    setIsOpen(false);
-                  }} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent'
-                  }}
+                  onClick={() => scrollToSection("schedule")}
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  style={{ color: colors.text }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
                     e.currentTarget.style.color = colors.primary;
                   }}
                   onMouseLeave={(e) => {
@@ -180,17 +190,11 @@ export default function Navigation() {
                   SCHEDULE
                 </button>
                 <button 
-                  onClick={() => {
-                    scrollToSection("submissions");
-                    setIsOpen(false);
-                  }} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent'
-                  }}
+                  onClick={() => scrollToSection("submissions")}
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  style={{ color: colors.text }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
                     e.currentTarget.style.color = colors.primary;
                   }}
                   onMouseLeave={(e) => {
@@ -201,17 +205,11 @@ export default function Navigation() {
                   SUBMISSIONS
                 </button>
                 <button 
-                  onClick={() => {
-                    scrollToSection("contact");
-                    setIsOpen(false);
-                  }} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent'
-                  }}
+                  onClick={() => scrollToSection("contact")}
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  style={{ color: colors.text }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
                     e.currentTarget.style.color = colors.primary;
                   }}
                   onMouseLeave={(e) => {
@@ -222,17 +220,11 @@ export default function Navigation() {
                   CONTACT
                 </button>
                 <button 
-                  onClick={() => {
-                    scrollToSection("merch");
-                    setIsOpen(false);
-                  }} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent'
-                  }}
+                  onClick={() => scrollToSection("merch")}
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  style={{ color: colors.text }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
                     e.currentTarget.style.color = colors.primary;
                   }}
                   onMouseLeave={(e) => {
@@ -243,17 +235,11 @@ export default function Navigation() {
                   MERCH
                 </button>
                 <button 
-                  onClick={() => {
-                    scrollToSection("subscribe");
-                    setIsOpen(false);
-                  }} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent'
-                  }}
+                  onClick={() => scrollToSection("subscription")}
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  style={{ color: colors.text }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
                     e.currentTarget.style.color = colors.primary;
                   }}
                   onMouseLeave={(e) => {
@@ -268,7 +254,6 @@ export default function Navigation() {
           </>
         )}
       </div>
-    </nav>
     </nav>
   );
 }
