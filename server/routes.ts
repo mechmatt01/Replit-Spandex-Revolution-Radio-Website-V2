@@ -391,7 +391,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       light: { accent: '#333333', glow: '#666666' }
     };
     
-    const currentTheme = themeStyles[theme as string] || themeStyles.classic_metal;
+    const currentTheme = themeStyles[theme as keyof typeof themeStyles] || themeStyles.classic_metal;
     
     // Generate theme-aware SVG-based Open Graph image
     const svg = `

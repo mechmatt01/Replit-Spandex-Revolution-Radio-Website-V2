@@ -176,7 +176,7 @@ export default function Navigation() {
                         <button
                           key={item.id}
                           onClick={item.action}
-                          className="flex items-center space-x-3 w-full text-left px-4 py-3 text-sm font-semibold transition-all duration-200"
+                          className="flex items-center justify-start space-x-3 w-full text-right px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap"
                           style={{ color: colors.text }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.backgroundColor = colors.primary;
@@ -189,7 +189,7 @@ export default function Navigation() {
                           aria-label={`Navigate to ${item.label.toLowerCase()}`}
                         >
                           <IconComponent size={16} style={{ color: colors.primary }} />
-                          <span>{item.label}</span>
+                          <span className="text-right">{item.label}</span>
                         </button>
                       );
                     })}
@@ -267,7 +267,7 @@ export default function Navigation() {
                       role="menuitem"
                       aria-label={`Navigate to ${item.label.toLowerCase()} section`}
                     >
-                      <IconComponent size={20} style={{ color: colors.primary }} fill="currentColor" />
+                      <IconComponent size={20} style={{ color: colors.primary }} />
                       <span>{item.label}</span>
                     </button>
                   );
