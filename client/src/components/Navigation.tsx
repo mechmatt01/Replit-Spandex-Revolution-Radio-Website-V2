@@ -96,26 +96,33 @@ export default function Navigation() {
 
         {/* Mobile Navigation Overlay */}
         {isOpen && (
-          <div className="xl:hidden fixed inset-0 z-40 top-16">
+          <div className="xl:hidden fixed inset-0 z-40 top-16" onClick={() => setIsOpen(false)}>
             {/* Background Blur Overlay */}
             <div 
-              className="absolute inset-0 backdrop-blur-md transition-opacity duration-300"
-              style={{ backgroundColor: `${colors.background}80` }}
-              onClick={() => setIsOpen(false)}
+              className="absolute inset-0 backdrop-blur-lg transition-all duration-300"
+              style={{ 
+                backgroundColor: `${colors.background}60`,
+                backdropFilter: 'blur(12px)'
+              }}
             />
             
             {/* Menu Content */}
             <div 
-              className="relative z-50 rounded-2xl m-4 p-6 shadow-2xl"
+              className="relative z-50 rounded-2xl m-4 p-6 shadow-2xl backdrop-blur-sm"
               style={{ 
-                backgroundColor: colors.surface,
-                border: `1px solid ${colors.border}`
+                backgroundColor: `${colors.surface}95`,
+                border: `1px solid ${colors.border}50`,
+                boxShadow: `0 25px 50px -12px ${colors.primary}20`
               }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <button 
-                  onClick={() => scrollToSection("home")} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  onClick={() => {
+                    scrollToSection("home");
+                    setIsOpen(false);
+                  }} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent'
@@ -133,7 +140,7 @@ export default function Navigation() {
                 </button>
                 <Link 
                   href="/music" 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105" 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg" 
                   onClick={() => setIsOpen(false)}
                   style={{ 
                     color: colors.text,
@@ -151,8 +158,11 @@ export default function Navigation() {
                   MUSIC
                 </Link>
                 <button 
-                  onClick={() => scrollToSection("schedule")} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  onClick={() => {
+                    scrollToSection("schedule");
+                    setIsOpen(false);
+                  }} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent'
@@ -169,8 +179,11 @@ export default function Navigation() {
                   SCHEDULE
                 </button>
                 <button 
-                  onClick={() => scrollToSection("submissions")} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  onClick={() => {
+                    scrollToSection("submissions");
+                    setIsOpen(false);
+                  }} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent'
@@ -187,8 +200,11 @@ export default function Navigation() {
                   SUBMISSIONS
                 </button>
                 <button 
-                  onClick={() => scrollToSection("contact")} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  onClick={() => {
+                    scrollToSection("contact");
+                    setIsOpen(false);
+                  }} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent'
@@ -205,8 +221,11 @@ export default function Navigation() {
                   CONTACT
                 </button>
                 <button 
-                  onClick={() => scrollToSection("merch")} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  onClick={() => {
+                    scrollToSection("merch");
+                    setIsOpen(false);
+                  }} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent'
@@ -223,8 +242,11 @@ export default function Navigation() {
                   MERCH
                 </button>
                 <button 
-                  onClick={() => scrollToSection("subscribe")} 
-                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  onClick={() => {
+                    scrollToSection("subscribe");
+                    setIsOpen(false);
+                  }} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 text-lg"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent'
