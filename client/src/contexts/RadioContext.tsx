@@ -38,7 +38,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const streamUrl = "https://streamer.radio.co/s3bc65afb4_low";
+  const streamUrl = "https://streamer.radio.co/s3bc65afb4/listen";
 
   const togglePlayback = async () => {
     const audio = audioRef.current;

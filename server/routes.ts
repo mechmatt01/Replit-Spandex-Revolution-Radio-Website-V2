@@ -150,7 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const data = await response.json();
         res.json({
           station: "Shady Pines Radio",
-          streamUrl: "https://streaming.radio.co/s3bc65afb4/listen",
+          streamUrl: "https://streamer.radio.co/s3bc65afb4/listen",
           status: "live",
           format: "audio/mpeg",
           currentTrack: data.current_track || null,
@@ -159,7 +159,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         res.json({
           station: "Shady Pines Radio",
-          streamUrl: "https://streaming.radio.co/s3bc65afb4/listen",
+          streamUrl: "https://streamer.radio.co/s3bc65afb4/listen",
           status: "live",
           format: "audio/mpeg"
         });
@@ -167,7 +167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.json({
         station: "Shady Pines Radio",
-        streamUrl: "https://streaming.radio.co/s3bc65afb4/listen",
+        streamUrl: "https://streamer.radio.co/s3bc65afb4/listen",
         status: "live",
         format: "audio/mpeg"
       });
