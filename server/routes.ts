@@ -7,6 +7,7 @@ import Stripe from "stripe";
 import bcrypt from "bcryptjs";
 import { registerUserSchema, loginUserSchema } from "@shared/schema";
 import https from "https";
+import { setupRadioProxy } from "./radioProxy";
 import type { User } from "@shared/schema";
 
 // Removed Spotify API - using Icecast streaming only
@@ -21,6 +22,9 @@ const stripe = process.env.STRIPE_SECRET_KEY
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication
   setupPassport(app);
+  
+  // Setup radio stream proxy
+  setupRadioProxy(app);
 
   // Authentication endpoints
   app.post('/api/auth/register', async (req, res) => {
