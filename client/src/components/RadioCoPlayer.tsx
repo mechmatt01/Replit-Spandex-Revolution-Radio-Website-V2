@@ -29,7 +29,7 @@ export default function RadioCoPlayer() {
   };
 
   return (
-    <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-border/20">
+    <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
       {/* Hidden Audio Element */}
       <audio 
         ref={audioRef}
