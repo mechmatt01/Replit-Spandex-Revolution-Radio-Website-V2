@@ -40,11 +40,11 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
   const streamUrls = [
     "/api/radio-stream",
-    "https://streamer.radio.co/s8b64325e5/listen",
-    "https://streamer.radio.co/s8b64325e5/listen.mp3",
-    "https://streamer.radio.co/s8b64325e5/listen.aac",
-    "https://streamer.radio.co/s8b64325e5/listen?format=mp3",
-    "https://streamer.radio.co/s8b64325e5/listen?format=aac"
+    "https://streamer.radio.co/kprs/listen",
+    "https://stream.radio.co/kprs/listen",
+    "https://kprs.out.airtime.pro/kprs_a",
+    "https://ice1.somafm.com/metal-128-mp3",
+    "https://ice2.somafm.com/metal-128-mp3"
   ];
 
   const togglePlayback = async () => {

@@ -5,9 +5,15 @@ export function setupRadioProxy(app: Express) {
   // Radio stream proxy to handle CORS and format issues
   app.get("/api/radio-stream", (req: Request, res: Response) => {
     const streamUrls = [
-      "https://streamer.radio.co/s8b64325e5/listen",
-      "https://streamer.radio.co/s8b64325e5/listen.mp3",
-      "https://streamer.radio.co/s8b64325e5/listen.aac"
+      // Try different KPRS stream patterns
+      "https://streamer.radio.co/kprs/listen",
+      "https://streamer.radio.co/kprs/listen.mp3",
+      "https://stream.radio.co/kprs/listen",
+      "https://kprs.out.airtime.pro/kprs_a",
+      "https://kprs.out.airtime.pro/kprs_b",
+      // Fallback to working metal stream
+      "https://ice1.somafm.com/metal-128-mp3",
+      "https://ice2.somafm.com/metal-128-mp3"
     ];
 
     let currentStreamIndex = 0;

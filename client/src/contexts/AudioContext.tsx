@@ -139,11 +139,11 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         setIsLoading(true);
         setError(null);
         
-        // Use KPRS stream URL
-        const streamUrl = `https://streamer.radio.co/s8b64325e5/listen?t=${Date.now()}`;
+        // Use radio stream proxy with fallbacks
+        const streamUrl = `/api/radio-stream?t=${Date.now()}`;
         audioRef.current.src = streamUrl;
         
-        console.log('Connecting to KPRS radio stream:', streamUrl);
+        console.log('Connecting to radio stream via proxy:', streamUrl);
         
         // Load and play
         audioRef.current.load();
@@ -162,7 +162,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
           audioRef.current.load();
           setTimeout(async () => {
             if (audioRef.current) {
-              audioRef.current.src = `https://streamer.radio.co/s8b64325e5/listen?retry=${Date.now()}`;
+              audioRef.current.src = `/api/radio-stream?retry=${Date.now()}`;
               audioRef.current.load();
               await audioRef.current.play();
             }
