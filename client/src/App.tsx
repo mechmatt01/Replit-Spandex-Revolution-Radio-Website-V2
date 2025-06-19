@@ -34,6 +34,7 @@ function App() {
               <TooltipProvider>
                 <SkipToContent />
                 <DynamicMetaTags />
+                <LoadingManager />
                 <Toaster />
                 <Router />
               </TooltipProvider>
