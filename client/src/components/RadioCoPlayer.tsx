@@ -68,6 +68,7 @@ export default function RadioCoPlayer() {
               text={currentTrack.title}
               className="font-bold text-xl text-foreground"
               maxWidth="75%"
+              backgroundColor="hsl(var(--background))"
             />
           </div>
           {currentTrack.album && (

@@ -6,9 +6,10 @@ interface ScrollingTextProps {
   maxWidth?: string;
   style?: React.CSSProperties;
   isFloating?: boolean;
+  backgroundColor?: string;
 }
 
-export default function ScrollingText({ text, className = '', maxWidth = '60%', style = {}, isFloating = false }: ScrollingTextProps) {
+export default function ScrollingText({ text, className = '', maxWidth = '60%', style = {}, isFloating = false, backgroundColor }: ScrollingTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const [shouldScroll, setShouldScroll] = useState(false);
@@ -63,15 +64,15 @@ export default function ScrollingText({ text, className = '', maxWidth = '60%', 
       {shouldScroll && (
         <>
           <div 
-            className="absolute left-0 top-0 h-full w-8 pointer-events-none"
+            className="absolute left-0 top-0 h-full w-12 pointer-events-none z-10"
             style={{
-              background: `linear-gradient(to right, ${style.color || 'currentColor'}00, transparent)`
+              background: `linear-gradient(to right, ${backgroundColor || 'var(--color-background)'}, transparent)`
             }}
           />
           <div 
-            className="absolute right-0 top-0 h-full w-8 pointer-events-none"
+            className="absolute right-0 top-0 h-full w-20 pointer-events-none z-10"
             style={{
-              background: `linear-gradient(to left, ${style.color || 'currentColor'}00, transparent)`
+              background: `linear-gradient(to left, ${backgroundColor || 'var(--color-background)'}, transparent)`
             }}
           />
         </>

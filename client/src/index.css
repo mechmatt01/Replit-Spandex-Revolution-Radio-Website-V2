@@ -48,13 +48,18 @@
   100% { transform: translateX(-50%); }
 }
 
+@keyframes scroll-smooth {
+  from { transform: translateX(0%); }
+  to { transform: translateX(-50%); }
+}
+
 .animate-scroll {
-  animation: scroll 8s linear infinite;
+  animation: scroll-smooth 8s linear infinite;
   animation-delay: 1s;
 }
 
 .animate-scroll-floating {
-  animation: scroll 4s linear infinite;
+  animation: scroll-smooth 4s linear infinite;
   animation-delay: 1s;
 }
 

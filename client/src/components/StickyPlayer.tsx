@@ -36,6 +36,7 @@ export default function StickyPlayer() {
                   className="font-semibold text-foreground"
                   maxWidth="100%"
                   isFloating={true}
+                  backgroundColor="hsl(var(--background))"
                 />
               </div>
               <p className="text-muted-foreground text-sm truncate">
