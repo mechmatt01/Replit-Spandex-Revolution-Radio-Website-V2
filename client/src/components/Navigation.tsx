@@ -206,6 +206,69 @@ export default function Navigation() {
 
             {/* Right side controls */}
             <div className="flex items-center space-x-3">
+              {/* Authentication */}
+              {isAuthenticated && user ? (
+                <div className="hidden xl:flex items-center space-x-3">
+                  <span className="text-sm font-medium" style={{ color: colors.text }}>
+                    {user.firstName}
+                  </span>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={logout}
+                        className="flex items-center space-x-1 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-md"
+                        style={{ color: colors.text }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary + '20';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = colors.text;
+                        }}
+                        aria-label="Sign out"
+                      >
+                        <LogOut size={16} style={{ color: colors.primary }} />
+                        <span>SIGN OUT</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      Sign out of your account
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              ) : (
+                <div className="hidden xl:flex items-center space-x-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => {
+                          setAuthMode('login');
+                          setIsAuthModalOpen(true);
+                        }}
+                        className="flex items-center space-x-1 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-md"
+                        style={{ color: colors.text }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary + '20';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = colors.text;
+                        }}
+                        aria-label="Sign in"
+                      >
+                        <User size={16} style={{ color: colors.primary }} />
+                        <span>SIGN IN</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      Sign in to your account
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              )}
+              
               <MetalThemeSwitcher />
               
               {/* Mobile menu button */}
@@ -279,6 +342,64 @@ export default function Navigation() {
                     </button>
                   );
                 })}
+                
+                {/* Mobile Authentication */}
+                <div className="border-t" style={{ borderColor: colors.primary + '20' }}>
+                  {isAuthenticated && user ? (
+                    <>
+                      <div className="px-4 py-2 text-xs font-medium text-center" style={{ color: colors.text }}>
+                        Welcome, {user.firstName}
+                      </div>
+                      <button
+                        onClick={logout}
+                        className="flex items-center justify-end space-x-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 whitespace-nowrap text-right"
+                        style={{ 
+                          color: colors.text,
+                          minWidth: 'max-content'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary;
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = colors.text;
+                        }}
+                        role="menuitem"
+                        aria-label="Sign out"
+                      >
+                        <span className="text-right">SIGN OUT</span>
+                        <LogOut size={16} style={{ color: colors.primary }} />
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setAuthMode('login');
+                        setIsAuthModalOpen(true);
+                        setIsOpen(false);
+                      }}
+                      className="flex items-center justify-end space-x-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 whitespace-nowrap text-right"
+                      style={{ 
+                        color: colors.text,
+                        minWidth: 'max-content'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.primary;
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = colors.text;
+                      }}
+                      role="menuitem"
+                      aria-label="Sign in"
+                    >
+                      <span className="text-right">SIGN IN</span>
+                      <User size={16} style={{ color: colors.primary }} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}

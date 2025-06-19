@@ -1,83 +1,95 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import type { User, RegisterUser, LoginUser } from "@shared/schema";
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { User } from '@shared/schema';
+import { apiRequest } from '@/lib/queryClient';
 
 interface AuthContextType {
   user: User | null;
-  isLoading: boolean;
+  loading: boolean;
   isAuthenticated: boolean;
-  login: (data: LoginUser) => Promise<void>;
-  register: (data: RegisterUser) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
   logout: () => Promise<void>;
-  googleLogin: () => void;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const queryClient = useQueryClient();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const { data: user, isLoading } = useQuery<User>({
-    queryKey: ["/api/auth/user"],
-    retry: false,
-  });
-
-  const loginMutation = useMutation({
-    mutationFn: async (data: LoginUser) => {
-      const response = await apiRequest("POST", "/api/auth/login", data);
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
-    },
-  });
-
-  const registerMutation = useMutation({
-    mutationFn: async (data: RegisterUser) => {
-      const response = await apiRequest("POST", "/api/auth/register", data);
-      return response.json();
-    },
-  });
-
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/auth/logout");
-      return response.json();
-    },
-    onSuccess: () => {
-      queryClient.setQueryData(["/api/auth/user"], null);
-    },
-  });
-
-  const login = async (data: LoginUser) => {
-    await loginMutation.mutateAsync(data);
+  const refreshUser = async () => {
+    try {
+      const response = await fetch('/api/auth/user', { credentials: 'include' });
+      if (response.ok) {
+        const userData = await response.json();
+        setUser(userData);
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const register = async (data: RegisterUser) => {
-    await registerMutation.mutateAsync(data);
+  const login = async (email: string, password: string) => {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password })
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Login failed');
+    }
+    
+    const userData = await response.json();
+    setUser(userData);
+  };
+
+  const register = async (email: string, password: string, firstName: string, lastName: string) => {
+    const response = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password, firstName, lastName })
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Registration failed');
+    }
+    
+    const userData = await response.json();
+    setUser(userData);
   };
 
   const logout = async () => {
-    await logoutMutation.mutateAsync();
+    const response = await fetch('/api/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+    setUser(null);
   };
 
-  const googleLogin = () => {
-    window.location.href = "/api/auth/google";
-  };
+  useEffect(() => {
+    refreshUser();
+  }, []);
 
   return (
-    <AuthContext.Provider
-      value={{
-        user: user || null,
-        isLoading,
-        isAuthenticated: !!user,
-        login,
-        register,
-        logout,
-        googleLogin,
-      }}
-    >
+    <AuthContext.Provider value={{
+      user,
+      loading,
+      isAuthenticated: !!user,
+      login,
+      register,
+      logout,
+      refreshUser
+    }}>
       {children}
     </AuthContext.Provider>
   );
@@ -86,7 +98,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
+    throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
 }
