@@ -62,7 +62,7 @@ export default function Contact() {
     <section id="contact" className="py-20 bg-dark-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-white">
+          <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-black dark:text-white">
             GET IN TOUCH
           </h2>
           <p className="text-gray-400 text-lg font-semibold">
