@@ -196,6 +196,8 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Adjusted main player width to prevent text cutoff when displaying station name
 - June 19, 2025: Increased floating player icon size to 32px for improved visibility and interaction
 - June 19, 2025: Addressed security vulnerabilities by updating npm packages (Vite 6.3.5, drizzle-kit 0.31.1)
+- June 19, 2025: Enhanced floating player icons to 40px with bolder design for maximum visibility
+- June 19, 2025: Added persistent LIVE indicator above album art in main player (always visible)
 
 ## User Preferences
 

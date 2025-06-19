@@ -43,12 +43,10 @@ export default function RadioCoPlayer() {
       />
 
       {/* Live Indicator */}
-      {isPlaying && (
-        <div className="flex items-center justify-center space-x-2 text-red-500 mb-4">
-          <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-          <span className="text-sm font-bold animate-pulse">LIVE</span>
-        </div>
-      )}
+      <div className="flex items-center justify-center space-x-2 text-red-500 mb-4">
+        <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+        <span className="text-sm font-bold animate-pulse">LIVE</span>
+      </div>
 
       {/* Album Art */}
       <div className="flex justify-center mb-6">
