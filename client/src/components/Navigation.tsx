@@ -94,29 +94,29 @@ export default function Navigation() {
           </div>
         </div>
 
-        {/* Mobile Navigation Overlay */}
-        {isOpen && (
-          <div className="xl:hidden fixed inset-0 z-40 top-16">
-            {/* Background Blur Overlay */}
-            <div 
-              className="absolute inset-0 backdrop-blur-lg transition-all duration-300"
-              style={{ 
-                backgroundColor: `${colors.background}60`,
-                backdropFilter: 'blur(12px)'
-              }}
-              onClick={() => setIsOpen(false)}
-            />
-            
-            {/* Menu Content */}
-            <div 
-              className="absolute top-4 right-4 z-50 rounded-2xl p-6 shadow-2xl backdrop-blur-sm min-w-[200px] w-auto"
-              style={{ 
-                backgroundColor: `${colors.surface}95`,
-                border: `1px solid ${colors.border}50`,
-                boxShadow: `0 25px 50px -12px ${colors.primary}20`
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
+      {/* Mobile Navigation Dropdown */}
+      {isOpen && (
+        <>
+          {/* Background Blur Overlay */}
+          <div 
+            className="xl:hidden fixed inset-0 z-30 backdrop-blur-md transition-opacity duration-300"
+            style={{ 
+              backgroundColor: `${colors.background}40`,
+              backdropFilter: 'blur(8px)'
+            }}
+            onClick={() => setIsOpen(false)}
+          />
+          
+          {/* Menu Content - Attached to nav bar */}
+          <div 
+            className="xl:hidden absolute top-full right-0 z-40 w-64 bg-card/80 backdrop-blur-sm transition-colors duration-300 rounded-b-2xl shadow-xl border-t-0"
+            style={{ 
+              borderLeft: `1px solid ${colors.border}30`,
+              borderRight: `1px solid ${colors.border}30`,
+              borderBottom: `1px solid ${colors.border}30`
+            }}
+          >
+            <div className="p-4 space-y-3">
               <div className="space-y-3">
                 <button 
                   onClick={() => {
@@ -265,9 +265,10 @@ export default function Navigation() {
                 </button>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
+    </nav>
     </nav>
   );
 }
