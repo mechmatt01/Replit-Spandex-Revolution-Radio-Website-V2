@@ -43,8 +43,8 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Desktop Navigation - Centered */}
-          <div className="hidden md:flex items-center justify-center flex-1" style={{ marginLeft: '10px' }}>
+          {/* Desktop Navigation - Responsive breakpoints */}
+          <div className="hidden xl:flex items-center justify-center flex-1" style={{ marginLeft: '10px' }}>
             <div className="flex items-center gap-6 lg:gap-8">
               <button onClick={() => scrollToSection("home")} className="text-foreground font-semibold hover:text-metal-orange transition-colors">
                 HOME
@@ -75,7 +75,7 @@ export default function Navigation() {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden text-foreground"
+              className="xl:hidden text-foreground"
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? <X /> : <Menu />}

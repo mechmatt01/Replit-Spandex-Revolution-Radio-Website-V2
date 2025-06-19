@@ -190,33 +190,20 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           const currentSong = data.current_track;
           
           if (currentSong && currentSong.title && currentSong.title !== currentTrack.title) {
-            // Fetch album artwork from Last.fm API for authentic artwork
+            // Use Radio.co provided artwork if available
             let artworkUrl = '';
-            try {
-              const artistName = currentSong.artist || "Various Artists";
-              const albumName = currentSong.album || currentSong.title;
-              
-              // Try Last.fm for real artwork
-              const lastFmResponse = await fetch(
-                `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=b25b959554ed76058ac220b7b2e0a026&artist=${encodeURIComponent(artistName)}&album=${encodeURIComponent(albumName)}&format=json`
-              );
-              
-              if (lastFmResponse.ok) {
-                const lastFmData = await lastFmResponse.json();
-                const images = lastFmData.album?.image;
-                if (images && images.length > 0) {
-                  artworkUrl = images[images.length - 1]['#text'];
-                }
-              }
-            } catch (artworkError) {
-              console.log("Using default artwork");
+            
+            if (currentSong.artwork_url_large) {
+              artworkUrl = currentSong.artwork_url_large;
+            } else if (currentSong.artwork_url) {
+              artworkUrl = currentSong.artwork_url;
             }
 
             const newTrack: TrackInfo = {
               title: currentSong.title,
-              artist: currentSong.artist || "Shady Pines Radio",
-              album: currentSong.album || "Live Stream",
-              artwork: artworkUrl || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
+              artist: "Shady Pines Radio",
+              album: "Live Stream",
+              artwork: artworkUrl
             };
             
             // Trigger fade transition

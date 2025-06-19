@@ -1,7 +1,8 @@
-import { Play, Pause, Volume2, VolumeX, Music } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useRadio } from "@/contexts/RadioContext";
+import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 
 export default function RadioCoPlayer() {
   const { 
@@ -35,17 +36,26 @@ export default function RadioCoPlayer() {
       <div className="flex justify-center mb-6">
         <div className="relative w-32 h-32 rounded-xl overflow-hidden shadow-lg">
           {currentTrack.artwork ? (
-            <img 
-              src={currentTrack.artwork} 
-              alt={`${currentTrack.title} by ${currentTrack.artist}`}
-              className="w-full h-full object-cover transition-opacity duration-500"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
+            <div className="w-full h-full">
+              <img 
+                src={currentTrack.artwork} 
+                alt={`${currentTrack.title} by ${currentTrack.artist}`}
+                className="w-full h-full object-cover transition-opacity duration-500"
+                onError={(e) => {
+                  const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                  if (fallback) {
+                    e.currentTarget.style.display = 'none';
+                    fallback.style.display = 'flex';
+                  }
+                }}
+              />
+              <div className="w-full h-full hidden items-center justify-center">
+                <ThemedMusicLogo size="lg" />
+              </div>
+            </div>
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center">
-              <Music className="text-white h-12 w-12" />
+            <div className="w-full h-full flex items-center justify-center">
+              <ThemedMusicLogo size="lg" />
             </div>
           )}
         </div>

@@ -1,6 +1,7 @@
-import { Pause, Play, Volume2, Music } from "lucide-react";
+import { Pause, Play, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRadio } from "@/contexts/RadioContext";
+import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 
 export default function StickyPlayer() {
   const { isPlaying, volume, currentTrack, togglePlayback, setVolume } = useRadio();
@@ -20,17 +21,26 @@ export default function StickyPlayer() {
           <div className="flex items-center space-x-4 flex-1 min-w-0">
             <div className="relative w-12 h-12 rounded-lg overflow-hidden shadow-lg">
               {currentTrack.artwork ? (
-                <img 
-                  src={currentTrack.artwork} 
-                  alt={`${currentTrack.title} by ${currentTrack.artist}`}
-                  className="w-full h-full object-cover transition-opacity duration-500"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
+                <div className="w-full h-full">
+                  <img 
+                    src={currentTrack.artwork} 
+                    alt={`${currentTrack.title} by ${currentTrack.artist}`}
+                    className="w-full h-full object-cover transition-opacity duration-500"
+                    onError={(e) => {
+                      const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+                      if (fallback) {
+                        e.currentTarget.style.display = 'none';
+                        fallback.style.display = 'flex';
+                      }
+                    }}
+                  />
+                  <div className="w-full h-full hidden items-center justify-center">
+                    <ThemedMusicLogo size="sm" />
+                  </div>
+                </div>
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center">
-                  <Music className="text-white h-6 w-6" />
+                <div className="w-full h-full flex items-center justify-center">
+                  <ThemedMusicLogo size="sm" />
                 </div>
               )}
             </div>
