@@ -5,11 +5,11 @@ export function setupRadioProxy(app: Express) {
   // Radio stream proxy to handle CORS and format issues
   app.get("/api/radio-stream", (req: Request, res: Response) => {
     const streamUrls = [
-      // Hot 97 TuneIn stream URLs
+      // Direct Hot 97 streaming URLs
+      "https://15123.live.streamtheworld.com:443/WQHTFMAAC_SC",
+      "https://15123.live.streamtheworld.com/WQHTFMAAC_SC",
       "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC_SC",
       "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM_SC",
-      "https://ice24.securenetsystems.net/WQHT",
-      "https://stream.revma.ihrhls.com/zc181",
       // Fallback to working stream
       "https://ice1.somafm.com/metal-128-mp3"
     ];

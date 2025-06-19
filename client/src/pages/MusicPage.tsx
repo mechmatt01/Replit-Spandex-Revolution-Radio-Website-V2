@@ -1,4 +1,4 @@
-import Hot97Player from "@/components/Hot97Player";
+import RadioCoPlayer from "@/components/RadioCoPlayer";
 import Navigation from "@/components/Navigation";
 import StickyPlayer from "@/components/StickyPlayer";
 
@@ -20,7 +20,7 @@ export default function MusicPage() {
 
           {/* Hot 97 Player */}
           <div className="max-w-4xl mx-auto">
-            <Hot97Player />
+            <RadioCoPlayer />
           </div>
 
           {/* Station Info */}
