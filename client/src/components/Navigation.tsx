@@ -11,6 +11,7 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const { togglePlayback, isPlaying } = useAudio();
   const { getColors, getGradient } = useTheme();
+  const colors = getColors();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -80,40 +81,166 @@ export default function Navigation() {
             <Button
               variant="ghost"
               size="icon"
-              className="xl:hidden text-foreground"
+              className="xl:hidden hover:bg-opacity-20"
+              style={{
+                color: colors.text,
+                backgroundColor: isOpen ? `${colors.primary}20` : 'transparent'
+              }}
               onClick={() => setIsOpen(!isOpen)}
             >
-              {isOpen ? <X /> : <Menu />}
+              {isOpen ? <X style={{ color: colors.primary }} /> : <Menu style={{ color: colors.primary }} />}
             </Button>
             <MetalThemeSwitcher />
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation Overlay */}
         {isOpen && (
-          <div className="xl:hidden bg-card/95 backdrop-blur-sm transition-colors duration-300 border-t border-border/50">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <button onClick={() => scrollToSection("home")} className="block px-3 py-2 text-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                HOME
-              </button>
-              <Link href="/music" className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left" onClick={() => setIsOpen(false)}>
-                MUSIC
-              </Link>
-              <button onClick={() => scrollToSection("schedule")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                SCHEDULE
-              </button>
-              <button onClick={() => scrollToSection("submissions")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                SUBMISSIONS
-              </button>
-              <button onClick={() => scrollToSection("contact")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                CONTACT
-              </button>
-              <button onClick={() => scrollToSection("merch")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                MERCH
-              </button>
-              <button onClick={() => scrollToSection("subscribe")} className="block px-3 py-2 text-muted-foreground font-semibold hover:text-metal-orange transition-colors w-full text-left">
-                SUBSCRIBE
-              </button>
+          <div className="xl:hidden fixed inset-0 z-40 top-16">
+            {/* Background Blur Overlay */}
+            <div 
+              className="absolute inset-0 backdrop-blur-md transition-opacity duration-300"
+              style={{ backgroundColor: `${colors.background}80` }}
+              onClick={() => setIsOpen(false)}
+            />
+            
+            {/* Menu Content */}
+            <div 
+              className="relative z-50 rounded-2xl m-4 p-6 shadow-2xl"
+              style={{ 
+                backgroundColor: colors.surface,
+                border: `1px solid ${colors.border}`
+              }}
+            >
+              <div className="space-y-4">
+                <button 
+                  onClick={() => scrollToSection("home")} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.color = colors.primary;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  HOME
+                </button>
+                <Link 
+                  href="/music" 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105" 
+                  onClick={() => setIsOpen(false)}
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.color = colors.primary;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  MUSIC
+                </Link>
+                <button 
+                  onClick={() => scrollToSection("schedule")} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.color = colors.primary;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  SCHEDULE
+                </button>
+                <button 
+                  onClick={() => scrollToSection("submissions")} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.color = colors.primary;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  SUBMISSIONS
+                </button>
+                <button 
+                  onClick={() => scrollToSection("contact")} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.color = colors.primary;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  CONTACT
+                </button>
+                <button 
+                  onClick={() => scrollToSection("merch")} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.color = colors.primary;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  MERCH
+                </button>
+                <button 
+                  onClick={() => scrollToSection("subscribe")} 
+                  className="block w-full text-left px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                    e.currentTarget.style.color = colors.primary;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  SUBSCRIBE
+                </button>
+              </div>
             </div>
           </div>
         )}
