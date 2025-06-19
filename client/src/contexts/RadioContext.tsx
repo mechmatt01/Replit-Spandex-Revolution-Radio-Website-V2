@@ -39,10 +39,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const streamUrls = [
+    "/api/radio-stream",
     "https://streamer.radio.co/s8b64325e5/listen",
-    "https://streamer.radio.co/s8b64325e5/listen.aac", 
     "https://streamer.radio.co/s8b64325e5/listen.mp3",
-    "https://streamer.radio.co/s8b64325e5/listen?type=http&nocache=" + Date.now()
+    "https://streamer.radio.co/s8b64325e5/listen.aac",
+    "https://streamer.radio.co/s8b64325e5/listen?format=mp3",
+    "https://streamer.radio.co/s8b64325e5/listen?format=aac"
   ];
 
   const togglePlayback = async () => {
