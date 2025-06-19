@@ -181,6 +181,11 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Implemented theme-aware button hover effects using selected theme colors throughout navigation
 - June 19, 2025: Improved responsive design and removed borderless main music player styling
 - June 19, 2025: Added proper light/dark mode text color handling for all interface elements
+- June 19, 2025: Enhanced mobile menu with full-screen layout and stronger blur effects without darkened overlay
+- June 19, 2025: Implemented comprehensive accessibility features including skip-to-content, ARIA labels, and keyboard navigation
+- June 19, 2025: Updated floating player to always be visible and synchronized with main player controls
+- June 19, 2025: Fixed album name display in main player - shows album when available, removes "Live Stream" text accordingly
+- June 19, 2025: Improved scroll timing in floating player for faster text reappearance (4s vs 8s animation)
 
 ## User Preferences
 

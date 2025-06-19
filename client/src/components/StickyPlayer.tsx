@@ -15,7 +15,7 @@ export default function StickyPlayer() {
     setVolume(newVolume);
   };
 
-  if (!isPlaying) return null;
+  // Always show the floating player
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-40 transition-colors duration-300">
@@ -53,7 +53,8 @@ export default function StickyPlayer() {
             
             <Button
               onClick={togglePlayback}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500"
+              aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
             >
               {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
             </Button>
