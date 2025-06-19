@@ -432,7 +432,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                   <select
                     value={selectedVariant.id}
                     onChange={(e) => setSelectedVariant(product.variants.find(v => v.id === e.target.value)!)}
-                    className="w-full p-2 bg-dark-bg/50 text-white rounded"
+                    className="w-full p-2 bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange rounded"
                   >
                     {product.variants.map((variant) => (
                       <option key={variant.id} value={variant.id} disabled={!variant.available}>

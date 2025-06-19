@@ -111,7 +111,7 @@ export default function Contact() {
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     placeholder="john@example.com"
                     required
-                    className="bg-dark-bg/50 text-white placeholder-gray-500 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
+                    className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
                   />
                 </div>
 
@@ -140,7 +140,7 @@ export default function Contact() {
                     placeholder="Tell us what's on your mind..."
                     rows={5}
                     required
-                    className="bg-dark-bg/50 text-white placeholder-gray-500 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50 resize-none"
+                    className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange resize-none"
                   />
                 </div>
 
