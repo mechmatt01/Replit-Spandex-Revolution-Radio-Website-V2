@@ -2,56 +2,32 @@ import { Pause, Play, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRadio } from "@/contexts/RadioContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
 
 export default function StickyPlayer() {
   const { isPlaying, volume, currentTrack, togglePlayback, setVolume } = useRadio();
-  const { getGradient } = useTheme();
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseInt(e.target.value) / 100;
     setVolume(newVolume);
   };
 
-  // Remove debug logging for production
-  // console.log('StickyPlayer - isPlaying:', isPlaying, 'currentTrack:', currentTrack);
-
-  // Manage body class for content spacing
-  useEffect(() => {
-    if (isPlaying) {
-      document.body.classList.add('player-active');
-    } else {
-      document.body.classList.remove('player-active');
-    }
-    
-    // Cleanup on unmount
-    return () => {
-      document.body.classList.remove('player-active');
-    };
-  }, [isPlaying]);
-
   // Only show when radio is playing
   if (!isPlaying) {
     return null;
   }
 
-  const playerContent = (
+  return (
     <div 
+      className="bg-black/90 backdrop-blur-sm border-t border-gray-700"
       style={{
         position: 'fixed',
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 99999,
-        width: '100vw',
-        backgroundColor: 'rgba(0, 0, 0, 0.95)',
-        backdropFilter: 'blur(12px)',
-        borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-        pointerEvents: 'auto'
+        zIndex: 999999,
+        width: '100%'
       }}>
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
@@ -127,7 +103,4 @@ export default function StickyPlayer() {
       </div>
     </div>
   );
-
-  // Use portal to render outside normal document flow
-  return createPortal(playerContent, document.body);
 }
