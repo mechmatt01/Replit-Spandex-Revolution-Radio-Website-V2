@@ -44,7 +44,7 @@ export default function Navigation() {
               <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
                 SPANDEX SALVATION
               </div>
-              <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
+              <div className="text-sm font-black leading-tight" style={{ color: colors.primary }}>
                 RADIO
               </div>
             </div>

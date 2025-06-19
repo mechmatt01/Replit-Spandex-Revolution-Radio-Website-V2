@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useRadio } from "@/contexts/RadioContext";
 import ThemedMusicLogo from "@/components/ThemedMusicLogo";
+import ScrollingText from "@/components/ScrollingText";
 
 export default function RadioCoPlayer() {
   const { 
@@ -64,9 +65,13 @@ export default function RadioCoPlayer() {
       {/* Track Info with Fade Animation */}
       <div className="text-center mb-6">
         <div className="transition-opacity duration-300">
-          <h3 className="font-bold text-xl mb-2 text-foreground">
-            {currentTrack.title}
-          </h3>
+          <div className="flex justify-center mb-2">
+            <ScrollingText 
+              text={currentTrack.title}
+              className="font-bold text-xl text-foreground"
+              maxWidth="60%"
+            />
+          </div>
           <p className="text-foreground font-semibold mb-1">
             {currentTrack.artist}
           </p>

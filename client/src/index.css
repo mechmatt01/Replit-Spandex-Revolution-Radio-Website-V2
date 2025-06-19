@@ -43,6 +43,16 @@
   --metal-blue: hsl(210, 100%, 65%);
 }
 
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-scroll {
+  animation: scroll 8s linear infinite alternate;
+  animation-delay: 2s;
+}
+
 .light {
   /* Light theme colors */
   --background: hsl(0, 0%, 98%);
