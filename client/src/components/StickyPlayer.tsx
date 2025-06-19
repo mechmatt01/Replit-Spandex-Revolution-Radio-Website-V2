@@ -3,15 +3,11 @@ import { Button } from "@/components/ui/button";
 import { useRadio } from "@/contexts/RadioContext";
 
 export default function StickyPlayer() {
-  const { isPlaying, volume, togglePlayback } = useRadio();
-  
-  // Stream info
-  const trackTitle = "Metal Detector Radio";
-  const trackArtist = "SomaFM Metal Stream";
+  const { isPlaying, volume, currentTrack, togglePlayback, setVolume } = useRadio();
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseInt(e.target.value);
-    // Volume control handled by RadioContext
+    const newVolume = parseInt(e.target.value) / 100;
+    setVolume(newVolume);
   };
 
   if (!isPlaying) return null;
@@ -22,15 +18,28 @@ export default function StickyPlayer() {
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
           <div className="flex items-center space-x-4 flex-1 min-w-0">
-            <div className="w-12 h-12 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-lg flex items-center justify-center">
-              <Music className="text-white h-6 w-6" />
+            <div className="relative w-12 h-12 rounded-lg overflow-hidden shadow-lg">
+              {currentTrack.artwork ? (
+                <img 
+                  src={currentTrack.artwork} 
+                  alt={`${currentTrack.title} by ${currentTrack.artist}`}
+                  className="w-full h-full object-cover transition-opacity duration-500"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center">
+                  <Music className="text-white h-6 w-6" />
+                </div>
+              )}
             </div>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 transition-opacity duration-300">
               <h4 className="font-semibold text-foreground truncate">
-                {trackTitle}
+                {currentTrack.title}
               </h4>
               <p className="text-muted-foreground text-sm truncate">
-                {trackArtist}
+                {currentTrack.artist} • {currentTrack.album}
               </p>
             </div>
           </div>
@@ -58,6 +67,14 @@ export default function StickyPlayer() {
                 className="h-1 bg-[var(--color-primary)] rounded-full transition-all duration-150"
                 style={{ width: `${volume * 100}%` }}
               ></div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={volume * 100}
+                onChange={handleVolumeChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
             </div>
           </div>
         </div>

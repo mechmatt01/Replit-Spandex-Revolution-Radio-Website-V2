@@ -1,11 +1,19 @@
 import { createContext, useContext, useState, useRef, useEffect, ReactNode } from "react";
 
+interface TrackInfo {
+  title: string;
+  artist: string;
+  album?: string;
+  artwork?: string;
+}
+
 interface RadioContextType {
   isPlaying: boolean;
   volume: number;
   isMuted: boolean;
   isLoading: boolean;
   error: string | null;
+  currentTrack: TrackInfo;
   togglePlayback: () => Promise<void>;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
@@ -20,6 +28,13 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
+    title: "Metal Detector Radio",
+    artist: "SomaFM Metal Stream",
+    album: "Live Stream"
+  });
+  const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const streamUrl = "https://ice1.somafm.com/metal-128-mp3";
@@ -130,12 +145,59 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     };
   }, [volume, isMuted]);
 
+  // Fetch live track information
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    const fetchTrackInfo = async () => {
+      try {
+        // Simulate getting track info from SomaFM metadata
+        const response = await fetch('https://somafm.com/metal/songhistory.json');
+        if (response.ok) {
+          const data = await response.json();
+          const latestTrack = data.songs?.[0];
+          
+          if (latestTrack && latestTrack.title !== currentTrack.title) {
+            const newTrack: TrackInfo = {
+              title: latestTrack.title || "Metal Detector Radio",
+              artist: latestTrack.artist || "SomaFM Metal Stream",
+              album: latestTrack.album || "Live Stream",
+              artwork: latestTrack.artwork
+            };
+            
+            // Trigger fade transition
+            setIsTransitioning(true);
+            setPrevTrack(currentTrack);
+            
+            setTimeout(() => {
+              setCurrentTrack(newTrack);
+              setTimeout(() => {
+                setIsTransitioning(false);
+                setPrevTrack(null);
+              }, 500);
+            }, 300);
+          }
+        }
+      } catch (error) {
+        // Keep current track info if fetch fails
+        console.log("Using fallback track info");
+      }
+    };
+
+    // Fetch immediately and then every 30 seconds
+    fetchTrackInfo();
+    const interval = setInterval(fetchTrackInfo, 30000);
+
+    return () => clearInterval(interval);
+  }, [isPlaying, currentTrack.title]);
+
   const value: RadioContextType = {
     isPlaying,
     volume,
     isMuted,
     isLoading,
     error,
+    currentTrack,
     togglePlayback,
     setVolume,
     toggleMute,

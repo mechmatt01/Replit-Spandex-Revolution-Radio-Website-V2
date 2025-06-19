@@ -10,6 +10,7 @@ export default function RadioCoPlayer() {
     volume, 
     isMuted, 
     error, 
+    currentTrack,
     togglePlayback, 
     setVolume, 
     toggleMute,
@@ -32,22 +33,37 @@ export default function RadioCoPlayer() {
 
       {/* Album Art */}
       <div className="flex justify-center mb-6">
-        <div className="w-32 h-32 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-xl flex items-center justify-center shadow-lg">
-          <Music className="text-white h-12 w-12" />
+        <div className="relative w-32 h-32 rounded-xl overflow-hidden shadow-lg">
+          {currentTrack.artwork ? (
+            <img 
+              src={currentTrack.artwork} 
+              alt={`${currentTrack.title} by ${currentTrack.artist}`}
+              className="w-full h-full object-cover transition-opacity duration-500"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] flex items-center justify-center">
+              <Music className="text-white h-12 w-12" />
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Track Info */}
+      {/* Track Info with Fade Animation */}
       <div className="text-center mb-6">
-        <h3 className="font-bold text-xl mb-2 text-foreground">
-          Metal Detector Radio
-        </h3>
-        <p className="text-foreground font-semibold mb-1">
-          SomaFM Metal Stream
-        </p>
-        <p className="text-muted-foreground text-sm font-medium">
-          Live Radio • Metal Genre
-        </p>
+        <div className="transition-opacity duration-300">
+          <h3 className="font-bold text-xl mb-2 text-foreground">
+            {currentTrack.title}
+          </h3>
+          <p className="text-foreground font-semibold mb-1">
+            {currentTrack.artist}
+          </p>
+          <p className="text-muted-foreground text-sm font-medium">
+            {currentTrack.album} • Live Radio
+          </p>
+        </div>
       </div>
 
       <div className="flex items-center justify-center space-x-6">

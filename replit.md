@@ -168,6 +168,12 @@ The application uses PostgreSQL with the following main entities:
 - June 18, 2025: Resolved JSON parsing errors by removing external MusicBrainz API calls from StickyPlayer component
 - June 18, 2025: Implemented StreamLinkPlayer to bypass browser CORS restrictions using external link approach for radio streaming
 - June 18, 2025: Created comprehensive radio streaming solution with multiple format options and direct media player integration
+- June 19, 2025: Complete Radio.co-compatible streaming system overhaul - removed complex Icecast code, implemented clean RadioCoPlayer with SomaFM test stream
+- June 19, 2025: Added shared RadioContext for synchronized playback state between main player and floating sticky player
+- June 19, 2025: Implemented live track information fetching with fade animations for smooth track transitions
+- June 19, 2025: Added album artwork support in both main and floating players with fallback gradient backgrounds
+- June 19, 2025: Created synchronized volume controls that update both players when changed on either one
+- June 19, 2025: Enhanced floating sticky player with proper album art, track info, and volume synchronization
 
 ## User Preferences
 
