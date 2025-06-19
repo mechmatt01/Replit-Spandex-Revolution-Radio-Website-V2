@@ -38,7 +38,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const streamUrl = "https://ice1.somafm.com/metal-128-mp3";
+  const streamUrl = "https://streaming.radio.co/s2c4cc0b96/listen";
 
   const togglePlayback = async () => {
     const audio = audioRef.current;
@@ -152,61 +152,53 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
     const fetchTrackInfo = async () => {
       try {
-        // Try to get track info from SomaFM API
-        const response = await fetch('https://api.somafm.com/channels.json');
+        // Try to get track info from Radio.co API for Shady Pines Radio
+        const response = await fetch('https://public.radio.co/stations/s2c4cc0b96/status');
         if (response.ok) {
           const data = await response.json();
-          const metalChannel = data.channels.find((ch: any) => ch.id === 'metal');
+          const currentSong = data.current_track;
           
-          if (metalChannel && metalChannel.lastPlaying) {
-            const track = metalChannel.lastPlaying;
-            const newTrackTitle = track.title || "Metal Detector Radio";
-            
-            if (newTrackTitle !== currentTrack.title) {
-              // Fetch album artwork from Last.fm API
-              let artworkUrl = '';
-              try {
-                const artistName = track.artist || "Various Artists";
-                const albumName = track.album || artistName;
-                
-                // Create a representative artwork URL based on the track
-                artworkUrl = `https://via.placeholder.com/300x300/ff6600/ffffff?text=${encodeURIComponent(artistName.split(' ')[0] || 'Metal')}`;
-                
-                // Try Last.fm for real artwork
-                const lastFmResponse = await fetch(
-                  `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=b25b959554ed76058ac220b7b2e0a026&artist=${encodeURIComponent(artistName)}&album=${encodeURIComponent(albumName)}&format=json`
-                );
-                
-                if (lastFmResponse.ok) {
-                  const lastFmData = await lastFmResponse.json();
-                  const images = lastFmData.album?.image;
-                  if (images && images.length > 0) {
-                    artworkUrl = images[images.length - 1]['#text'] || artworkUrl;
-                  }
+          if (currentSong && currentSong.title && currentSong.title !== currentTrack.title) {
+            // Fetch album artwork from Last.fm API for authentic artwork
+            let artworkUrl = '';
+            try {
+              const artistName = currentSong.artist || "Various Artists";
+              const albumName = currentSong.album || currentSong.title;
+              
+              // Try Last.fm for real artwork
+              const lastFmResponse = await fetch(
+                `https://ws.audioscrobbler.com/2.0/?method=album.getinfo&api_key=b25b959554ed76058ac220b7b2e0a026&artist=${encodeURIComponent(artistName)}&album=${encodeURIComponent(albumName)}&format=json`
+              );
+              
+              if (lastFmResponse.ok) {
+                const lastFmData = await lastFmResponse.json();
+                const images = lastFmData.album?.image;
+                if (images && images.length > 0) {
+                  artworkUrl = images[images.length - 1]['#text'];
                 }
-              } catch (artworkError) {
-                console.log("Using placeholder artwork");
               }
-
-              const newTrack: TrackInfo = {
-                title: newTrackTitle,
-                artist: track.artist || "SomaFM Metal Stream",
-                album: track.album || "Live Stream",
-                artwork: artworkUrl
-              };
-              
-              // Trigger fade transition
-              setIsTransitioning(true);
-              setPrevTrack(currentTrack);
-              
-              setTimeout(() => {
-                setCurrentTrack(newTrack);
-                setTimeout(() => {
-                  setIsTransitioning(false);
-                  setPrevTrack(null);
-                }, 500);
-              }, 300);
+            } catch (artworkError) {
+              console.log("Using default artwork");
             }
+
+            const newTrack: TrackInfo = {
+              title: currentSong.title,
+              artist: currentSong.artist || "Shady Pines Radio",
+              album: currentSong.album || "Live Stream",
+              artwork: artworkUrl || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
+            };
+            
+            // Trigger fade transition
+            setIsTransitioning(true);
+            setPrevTrack(currentTrack);
+            
+            setTimeout(() => {
+              setCurrentTrack(newTrack);
+              setTimeout(() => {
+                setIsTransitioning(false);
+                setPrevTrack(null);
+              }, 500);
+            }, 300);
           }
         }
       } catch (error) {

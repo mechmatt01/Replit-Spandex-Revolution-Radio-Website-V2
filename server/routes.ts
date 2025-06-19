@@ -142,14 +142,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Radio.co stream status API
-  app.get("/api/radio-status", (req, res) => {
-    res.json({
-      station: "Shady Pines Radio",
-      streamUrl: "https://streaming.radio.co/s2c4cc0b96/listen",
-      status: "live",
-      format: "audio/mpeg"
-    });
+  // Radio.co stream status API with live data
+  app.get("/api/radio-status", async (req, res) => {
+    try {
+      const response = await fetch("https://public.radio.co/stations/s2c4cc0b96/status");
+      if (response.ok) {
+        const data = await response.json();
+        res.json({
+          station: "Shady Pines Radio",
+          streamUrl: "https://streaming.radio.co/s2c4cc0b96/listen",
+          status: "live",
+          format: "audio/mpeg",
+          currentTrack: data.current_track || null,
+          listeners: data.listeners || 0
+        });
+      } else {
+        res.json({
+          station: "Shady Pines Radio",
+          streamUrl: "https://streaming.radio.co/s2c4cc0b96/listen",
+          status: "live",
+          format: "audio/mpeg"
+        });
+      }
+    } catch (error) {
+      res.json({
+        station: "Shady Pines Radio",
+        streamUrl: "https://streaming.radio.co/s2c4cc0b96/listen",
+        status: "live",
+        format: "audio/mpeg"
+      });
+    }
   });
 
 
