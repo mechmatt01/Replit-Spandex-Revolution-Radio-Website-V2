@@ -54,7 +54,7 @@ export default function Hero() {
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80 transition-colors duration-300"></div>
       </div>
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 pt-16">
-        <h1 className="font-orbitron font-black text-5xl md:text-8xl mb-2 text-white light:text-black">
+        <h1 className="font-orbitron font-black text-5xl md:text-8xl mb-2 text-white dark:text-white">
           SPANDEX SALVATION RADIO
         </h1>
         <div className="mb-6">

@@ -45,35 +45,35 @@ export default function StickyPlayer() {
 
           {/* Player Controls */}
           <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-red-500 font-bold animate-pulse">LIVE</span>
+            </div>
+            
             <Button
               onClick={togglePlayback}
               className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full"
             >
               {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
             </Button>
-            
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-sm text-red-500 font-bold animate-pulse">LIVE</span>
-            </div>
-          </div>
 
-          {/* Volume Control */}
-          <div className="hidden md:flex items-center space-x-4 ml-8">
-            <Volume2 className="text-gray-400 h-4 w-4" />
-            <div className="w-20 h-1 bg-gray-700 rounded-full relative">
-              <div 
-                className="h-1 bg-[var(--color-primary)] rounded-full transition-all duration-150"
-                style={{ width: `${volume * 100}%` }}
-              ></div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume * 100}
-                onChange={handleVolumeChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
+            {/* Volume Control */}
+            <div className="hidden md:flex items-center space-x-4">
+              <Volume2 className="text-gray-400 h-4 w-4" />
+              <div className="w-20 h-1 bg-gray-700 rounded-full relative">
+                <div 
+                  className="h-1 bg-[var(--color-primary)] rounded-full transition-all duration-150"
+                  style={{ width: `${volume * 100}%` }}
+                ></div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={volume * 100}
+                  onChange={handleVolumeChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+              </div>
             </div>
           </div>
         </div>
