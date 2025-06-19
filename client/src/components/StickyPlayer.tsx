@@ -2,6 +2,7 @@ import { Pause, Play, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRadio } from "@/contexts/RadioContext";
 import ThemedMusicLogo from "@/components/ThemedMusicLogo";
+import ScrollingText from "@/components/ScrollingText";
 
 export default function StickyPlayer() {
   const { isPlaying, volume, currentTrack, togglePlayback, setVolume } = useRadio();
@@ -45,9 +46,11 @@ export default function StickyPlayer() {
               )}
             </div>
             <div className="min-w-0 flex-1 transition-opacity duration-300">
-              <h4 className="font-semibold text-foreground truncate">
-                {currentTrack.title}
-              </h4>
+              <ScrollingText 
+                text={currentTrack.title}
+                className="font-semibold text-foreground"
+                maxWidth="100%"
+              />
               <p className="text-muted-foreground text-sm truncate">
                 {currentTrack.artist} • {currentTrack.album}
               </p>

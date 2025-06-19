@@ -108,12 +108,14 @@ export default function MetalThemeSwitcher() {
                       color: colors.text
                     }}
                   >
-                    <div className="flex items-center gap-3 w-full">
+                    <div className="flex items-start gap-3 w-full">
                       {/* Theme Icon */}
                       <div 
-                        className="w-8 h-8 rounded-full flex items-center justify-center"
+                        className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
                         style={{ 
-                          background: themeConfig.gradient,
+                          background: themeKey === 'dark-mode' 
+                            ? 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)'
+                            : themeConfig.gradient,
                           color: '#ffffff'
                         }}
                       >
@@ -121,9 +123,12 @@ export default function MetalThemeSwitcher() {
                       </div>
                       
                       {/* Theme Info */}
-                      <div className="flex-1 text-left">
+                      <div className="flex-1 text-left min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm">
+                          <span 
+                            className="font-semibold text-sm"
+                            style={{ color: themeColors.primary }}
+                          >
                             {themeConfig.name}
                           </span>
                           {isActive && (
@@ -140,36 +145,36 @@ export default function MetalThemeSwitcher() {
                           )}
                         </div>
                         <p 
-                          className="text-xs mt-1"
-                          style={{ color: colors.textSecondary }}
+                          className="text-xs mt-1 break-words leading-relaxed"
+                          style={{ color: themeColors.secondary }}
                         >
                           {themeConfig.description}
                         </p>
-                      </div>
-                      
-                      {/* Color Preview */}
-                      <div className="flex gap-1">
-                        <div 
-                          className="w-3 h-3 rounded-full border"
-                          style={{ 
-                            backgroundColor: themeColors.primary,
-                            borderColor: colors.border
-                          }}
-                        />
-                        <div 
-                          className="w-3 h-3 rounded-full border"
-                          style={{ 
-                            backgroundColor: themeColors.secondary,
-                            borderColor: colors.border
-                          }}
-                        />
-                        <div 
-                          className="w-3 h-3 rounded-full border"
-                          style={{ 
-                            backgroundColor: themeColors.accent,
-                            borderColor: colors.border
-                          }}
-                        />
+                        
+                        {/* Color Preview - Moved Below */}
+                        <div className="flex gap-1 mt-2">
+                          <div 
+                            className="w-3 h-3 rounded-full border"
+                            style={{ 
+                              backgroundColor: themeColors.primary,
+                              borderColor: colors.border
+                            }}
+                          />
+                          <div 
+                            className="w-3 h-3 rounded-full border"
+                            style={{ 
+                              backgroundColor: themeColors.secondary,
+                              borderColor: colors.border
+                            }}
+                          />
+                          <div 
+                            className="w-3 h-3 rounded-full border"
+                            style={{ 
+                              backgroundColor: themeColors.accent,
+                              borderColor: colors.border
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </Button>
