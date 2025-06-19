@@ -42,10 +42,7 @@ export default function Navigation() {
             </div>
             <div className="flex flex-col">
               <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
-                SPANDEX
-              </div>
-              <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
-                SALVATION
+                SPANDEX SALVATION
               </div>
               <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
                 RADIO
@@ -105,8 +102,10 @@ export default function Navigation() {
           </div>
 
           {/* Right side controls */}
-          <div className="flex items-center space-x-4">
-            <MetalThemeSwitcher />
+          <div className="flex items-center space-x-4 xl:space-x-4 mr-0 xl:mr-0">
+            <div className="mr-12 xl:mr-0">
+              <MetalThemeSwitcher />
+            </div>
           </div>
         </div>
 
