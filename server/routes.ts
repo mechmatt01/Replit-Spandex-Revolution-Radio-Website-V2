@@ -13,9 +13,7 @@ import { z } from "zod";
 
 // Initialize Stripe
 const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2024-06-20",
-    })
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)
   : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -39,8 +37,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create user
       const user = await storage.createUser({
-        ...validatedData,
+        email: validatedData.email,
+        firstName: validatedData.firstName,
+        lastName: validatedData.lastName,
         password: hashedPassword,
+      });
+
+      // Update with verification token
+      await storage.updateUser(user.id, {
         emailVerificationToken,
       });
 
@@ -184,9 +188,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         subscriptionTier: tier,
       });
 
+      const invoice = subscription.latest_invoice as any;
       res.json({
         subscriptionId: subscription.id,
-        clientSecret: (subscription.latest_invoice as any)?.payment_intent?.client_secret,
+        clientSecret: invoice?.payment_intent?.client_secret,
       });
     } catch (error: any) {
       console.error("Subscription creation error:", error);
@@ -422,7 +427,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({
         subscriptionId: subscription.id,
-        clientSecret: subscription.latest_invoice?.payment_intent?.client_secret,
+        status: subscription.status,
       });
     } catch (error: any) {
       console.error('Stripe subscription error:', error);
@@ -468,30 +473,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Authentication API
-  app.post("/api/auth/login", async (req, res) => {
-    try {
-      const { username, password } = req.body;
-      
-      if (!username || !password) {
-        return res.status(400).json({ error: "Username and password required" });
-      }
 
-      const user = await storage.getUserByUsername(username);
-      if (!user || user.password !== password) {
-        return res.status(401).json({ error: "Invalid credentials" });
-      }
-
-      // In a real app, you'd use proper session management or JWT
-      res.json({ 
-        id: user.id, 
-        username: user.username, 
-        isAdmin: user.isAdmin 
-      });
-    } catch (error) {
-      res.status(500).json({ error: "Login failed" });
-    }
-  });
 
   // Dynamic Open Graph image generation
   app.get("/api/og-image", (req, res) => {

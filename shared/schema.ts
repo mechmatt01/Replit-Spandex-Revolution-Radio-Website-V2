@@ -110,6 +110,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   firstName: true,
   lastName: true,
   password: true,
+  emailVerificationToken: true,
 });
 
 export const registerUserSchema = insertUserSchema.extend({
