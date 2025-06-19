@@ -62,7 +62,7 @@ export default function RadioCoPlayer() {
             <ScrollingText 
               text={currentTrack.title}
               className="font-bold text-xl text-foreground"
-              maxWidth="60%"
+              maxWidth="75%"
             />
           </div>
           <p className="text-foreground font-semibold mb-1">

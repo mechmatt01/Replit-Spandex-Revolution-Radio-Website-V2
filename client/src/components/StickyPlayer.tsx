@@ -22,7 +22,7 @@ export default function StickyPlayer() {
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
-          <div className="flex items-center space-x-4 flex-1 min-w-0">
+          <div className="flex items-center space-x-4 flex-1 min-w-0 max-w-md">
             <InteractiveAlbumArt 
               artwork={currentTrack.artwork}
               title={currentTrack.title}
@@ -30,11 +30,13 @@ export default function StickyPlayer() {
               size="sm"
             />
             <div className="min-w-0 flex-1 transition-opacity duration-300">
-              <ScrollingText 
-                text={currentTrack.title}
-                className="font-semibold text-foreground"
-                maxWidth="100%"
-              />
+              <div className="w-full max-w-xs">
+                <ScrollingText 
+                  text={currentTrack.title}
+                  className="font-semibold text-foreground"
+                  maxWidth="100%"
+                />
+              </div>
               <p className="text-muted-foreground text-sm truncate">
                 {currentTrack.artist} • {currentTrack.album}
               </p>

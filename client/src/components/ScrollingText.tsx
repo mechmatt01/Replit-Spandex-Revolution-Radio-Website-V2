@@ -28,16 +28,13 @@ export default function ScrollingText({ text, className = '', maxWidth = '60%', 
   }, [text]);
 
   useEffect(() => {
-    if (shouldScroll) {
-      const timer = setTimeout(() => {
-        setIsScrolling(true);
-      }, 2000); // Wait 2 seconds before starting to scroll
+    // Always start scrolling after a short delay
+    const timer = setTimeout(() => {
+      setIsScrolling(true);
+    }, 1000); // Start scrolling after 1 second
 
-      return () => clearTimeout(timer);
-    } else {
-      setIsScrolling(false);
-    }
-  }, [shouldScroll]);
+    return () => clearTimeout(timer);
+  }, [text]); // Reset scrolling when text changes
 
   return (
     <div 
@@ -54,10 +51,7 @@ export default function ScrollingText({ text, className = '', maxWidth = '60%', 
           isScrolling ? 'animate-scroll' : ''
         }`}
         style={{
-          transform: isScrolling ? 'translateX(-100%)' : 'translateX(0)',
-          animationIterationCount: 'infinite',
-          animationDirection: 'alternate',
-          animationDelay: '2s'
+          ...(isScrolling ? {} : { transform: 'translateX(0)' })
         }}
       >
         {text}
