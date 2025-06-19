@@ -174,6 +174,13 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Added album artwork support in both main and floating players with fallback gradient backgrounds
 - June 19, 2025: Created synchronized volume controls that update both players when changed on either one
 - June 19, 2025: Enhanced floating sticky player with proper album art, track info, and volume synchronization
+- June 19, 2025: Added favicon and Open Graph meta tags for link previews and social media sharing
+- June 19, 2025: Fixed scrolling text direction to properly scroll left-to-right continuously in both players
+- June 19, 2025: Reorganized floating player layout with LIVE indicator and play button positioned next to volume controls
+- June 19, 2025: Enhanced track information hierarchy with album name between title and artist, proper font sizing
+- June 19, 2025: Implemented theme-aware button hover effects using selected theme colors throughout navigation
+- June 19, 2025: Improved responsive design and removed borderless main music player styling
+- June 19, 2025: Added proper light/dark mode text color handling for all interface elements
 
 ## User Preferences
 

@@ -73,7 +73,11 @@ export default function Hero() {
           <Button 
             onClick={scrollToSchedule}
             variant="outline"
-            className="border-2 border-metal-blue text-metal-blue hover:bg-metal-blue hover:text-white px-8 py-4 rounded-full font-bold text-lg transition-colors"
+            className="border-2 px-8 py-4 rounded-full font-bold text-lg transition-colors btn-theme-hover"
+            style={{
+              borderColor: 'var(--color-primary)',
+              color: 'var(--color-primary)'
+            }}
           >
             <Calendar className="mr-3 h-5 w-5" />
             VIEW SCHEDULE
