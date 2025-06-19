@@ -81,7 +81,7 @@ export default function Hero() {
         </div>
 
         {/* Countdown Timer */}
-        <div className="mt-12">
+        <div className="mt-12 mb-16">
           <p className="text-muted-foreground mb-4 font-bold">OFFICIAL LAUNCH COUNTDOWN</p>
           <div className="flex justify-center space-x-4 text-center">
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
@@ -103,6 +103,9 @@ export default function Hero() {
           </div>
         </div>
       </div>
+      
+      {/* Fade to Background Color */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/50 to-transparent transition-colors duration-300"></div>
     </section>
   );
 }

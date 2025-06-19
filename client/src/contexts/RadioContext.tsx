@@ -32,7 +32,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     title: "Metal Detector Radio",
     artist: "SomaFM Metal Stream",
     album: "Live Stream",
-    artwork: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=center"
+    artwork: ""
   });
   const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -220,42 +220,42 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           }
         }
       } catch (error) {
-        // Use authentic metal album artwork from public music databases
-        const authenticTracks = [
+        // Use metal tracks without default artwork - will show themed gradient placeholder
+        const metalTracks = [
           {
             title: "Master of Puppets",
             artist: "Metallica",
             album: "Master of Puppets",
-            artwork: "https://lastfm.freetls.fastly.net/i/u/500x500/d6b9ca03b4b94a9e87af16ced44b6a20.jpg"
+            artwork: ""
           },
           {
             title: "Ace of Spades",
             artist: "Motörhead", 
             album: "Ace of Spades",
-            artwork: "https://lastfm.freetls.fastly.net/i/u/500x500/cc16b359a5b048a68b8b60be369c4690.jpg"
+            artwork: ""
           },
           {
             title: "Breaking the Law",
             artist: "Judas Priest",
             album: "British Steel",
-            artwork: "https://lastfm.freetls.fastly.net/i/u/500x500/73dd45e95deb42ecad95cdbde3bba3bd.jpg"
+            artwork: ""
           },
           {
             title: "Run to the Hills",
             artist: "Iron Maiden",
             album: "The Number of the Beast",
-            artwork: "https://lastfm.freetls.fastly.net/i/u/500x500/7e77ccda97e342e889ee2e8ee47f9283.jpg"
+            artwork: ""
           },
           {
             title: "Paranoid",
             artist: "Black Sabbath",
             album: "Paranoid",
-            artwork: "https://lastfm.freetls.fastly.net/i/u/500x500/d095ca2de2ae474ca7e89c3dfcfeaf48.jpg"
+            artwork: ""
           }
         ];
         
-        // Cycle through authentic metal tracks
-        const randomTrack = authenticTracks[Math.floor(Math.random() * authenticTracks.length)];
+        // Cycle through metal tracks without artwork
+        const randomTrack = metalTracks[Math.floor(Math.random() * metalTracks.length)];
         if (randomTrack.title !== currentTrack.title) {
           setIsTransitioning(true);
           setPrevTrack(currentTrack);
