@@ -375,6 +375,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.send(svgTemplate);
   });
 
+  // Open Graph image generation endpoint
+  app.get("/api/og-image", (req, res) => {
+    const { theme, primary, secondary, background, text } = req.query;
+    
+    // Generate SVG-based Open Graph image with theme colors
+    const svg = `
+      <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:${primary || '#ff6b35'};stop-opacity:1" />
+            <stop offset="100%" style="stop-color:${secondary || '#d32f2f'};stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <rect width="1200" height="630" fill="${background || '#000000'}"/>
+        <rect x="50" y="50" width="1100" height="530" fill="url(#grad)" opacity="0.1" rx="20"/>
+        <text x="600" y="250" font-family="Arial, sans-serif" font-size="72" font-weight="bold" 
+              fill="${text || '#ffffff'}" text-anchor="middle">SPANDEX SALVATION</text>
+        <text x="600" y="320" font-family="Arial, sans-serif" font-size="48" 
+              fill="${primary || '#ff6b35'}" text-anchor="middle">RADIO</text>
+        <text x="600" y="400" font-family="Arial, sans-serif" font-size="28" 
+              fill="${text || '#ffffff'}" text-anchor="middle" opacity="0.8">Old School Metal • 24/7 Live Stream</text>
+        <circle cx="150" cy="150" r="10" fill="#ff0000" opacity="0.8">
+          <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+        </circle>
+        <text x="170" y="157" font-family="Arial, sans-serif" font-size="20" 
+              fill="#ff0000" font-weight="bold">LIVE</text>
+      </svg>
+    `;
+    
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.send(svg);
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
