@@ -16,6 +16,7 @@ import AdvancedAdminDashboard from "@/components/AdvancedAdminDashboard";
 import AdvancedAudioPlayer from "@/components/AdvancedAudioPlayer";
 import Footer from "@/components/Footer";
 import StickyPlayer from "@/components/StickyPlayer";
+import DebugStickyPlayer from "@/components/DebugStickyPlayer";
 
 
 export default function HomePage() {
@@ -51,6 +52,7 @@ export default function HomePage() {
       <AdvancedAdminDashboard />
       <Footer />
       <StickyPlayer />
+      <DebugStickyPlayer />
 
     </div>
   );
