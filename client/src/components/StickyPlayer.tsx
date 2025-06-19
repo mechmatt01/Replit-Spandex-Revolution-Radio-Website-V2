@@ -15,10 +15,19 @@ export default function StickyPlayer() {
     setVolume(newVolume);
   };
 
-  // Always show the floating player - ensure it's visible
+  // Force visibility for debugging
+  console.log('StickyPlayer rendering with track:', currentTrack);
+  
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-50 transition-colors duration-300 border-t border-border"
-         style={{ display: 'block' }}>
+    <div 
+      className="fixed bottom-0 left-0 right-0 z-[9999]"
+      style={{ 
+        backgroundColor: '#ff0000', // Red background for debugging
+        display: 'block !important',
+        minHeight: '80px',
+        width: '100%',
+        position: 'fixed'
+      }}>
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
