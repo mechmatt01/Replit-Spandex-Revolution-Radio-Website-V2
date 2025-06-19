@@ -160,10 +160,8 @@ export default function Navigation() {
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
                   <div 
-                    className="absolute right-0 mt-2 py-2 rounded-lg shadow-xl border animate-in fade-in-0 slide-in-from-top-2 duration-200"
+                    className="absolute right-0 mt-2 py-2 rounded-lg shadow-xl border animate-in fade-in-0 slide-in-from-top-2 duration-200 bg-card/95 backdrop-blur-sm"
                     style={{
-                      backgroundColor: 'rgba(0, 0, 0, 0.95)',
-                      backdropFilter: 'blur(16px)',
                       borderColor: colors.primary + '40',
                       width: 'fit-content',
                       maxWidth: 'none',
