@@ -6,6 +6,7 @@ import passport from "passport";
 import Stripe from "stripe";
 import bcrypt from "bcryptjs";
 import { registerUserSchema, loginUserSchema } from "@shared/schema";
+import https from "https";
 import type { User } from "@shared/schema";
 
 // Removed Spotify API - using Icecast streaming only
