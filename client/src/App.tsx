@@ -7,6 +7,7 @@ import { AudioProvider } from "@/contexts/AudioContext";
 import { AdminProvider } from "@/contexts/AdminContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { RadioProvider } from "@/contexts/RadioContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 import SkipToContent from "@/components/SkipToContent";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
 import HomePage from "@/pages/HomePage";
@@ -26,20 +27,22 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <RadioProvider>
-          <AudioProvider>
-            <AdminProvider>
-              <TooltipProvider>
-                <SkipToContent />
-                <DynamicMetaTags />
-                <Toaster />
-                <Router />
-              </TooltipProvider>
-            </AdminProvider>
-          </AudioProvider>
-        </RadioProvider>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider>
+          <RadioProvider>
+            <AudioProvider>
+              <AdminProvider>
+                <TooltipProvider>
+                  <SkipToContent />
+                  <DynamicMetaTags />
+                  <Toaster />
+                  <Router />
+                </TooltipProvider>
+              </AdminProvider>
+            </AudioProvider>
+          </RadioProvider>
+        </ThemeProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

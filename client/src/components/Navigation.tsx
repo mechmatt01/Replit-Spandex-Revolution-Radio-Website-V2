@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Radio, Sun, Moon, Music, Calendar, Send, Mail, ShoppingBag, CreditCard, ChevronDown } from "lucide-react";
+import { Menu, X, Radio, Sun, Moon, Music, Calendar, Send, Mail, ShoppingBag, CreditCard, ChevronDown, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAudio } from "@/contexts/AudioContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAuth } from "@/contexts/AuthContext";
 import MetalThemeSwitcher from "@/components/MetalThemeSwitcher";
+import AuthModal from "@/components/AuthModal";
 import { Link } from "wouter";
 import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -11,8 +13,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const { togglePlayback, isPlaying } = useAudio();
   const { getColors, getGradient } = useTheme();
+  const { user, isAuthenticated, logout } = useAuth();
   const colors = getColors();
   const menuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);

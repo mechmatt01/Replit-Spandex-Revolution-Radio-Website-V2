@@ -11,20 +11,215 @@ import type { User } from "@shared/schema";
 import { insertSubmissionSchema, insertContactSchema, insertSubscriptionSchema, insertNowPlayingSchema } from "@shared/schema";
 import { z } from "zod";
 
-// Initialize Stripe if available
-let stripe: any = null;
-try {
-  if (process.env.STRIPE_SECRET_KEY) {
-    const Stripe = require('stripe');
-    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2023-10-16",
-    });
-  }
-} catch (error) {
-  console.log("Stripe not available - payment processing disabled");
-}
+// Initialize Stripe
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2024-06-20",
+    })
+  : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup authentication
+  setupPassport(app);
+
+  // Authentication API routes
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const validatedData = registerUserSchema.parse(req.body);
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(validatedData.email);
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists with this email" });
+      }
+
+      // Hash password and generate verification token
+      const hashedPassword = await hashPassword(validatedData.password);
+      const emailVerificationToken = generateToken();
+
+      // Create user
+      const user = await storage.createUser({
+        ...validatedData,
+        password: hashedPassword,
+        emailVerificationToken,
+      });
+
+      // Send verification email
+      await sendVerificationEmail(user.email, emailVerificationToken, user.firstName);
+
+      res.status(201).json({ 
+        message: "Registration successful! Please check your email to verify your account.",
+        userId: user.id 
+      });
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      res.status(400).json({ message: error.message || "Registration failed" });
+    }
+  });
+
+  app.post("/api/auth/login", passport.authenticate("local"), (req, res) => {
+    const user = req.user as User;
+    res.json({ 
+      message: "Login successful",
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        isAdmin: user.isAdmin,
+        subscriptionStatus: user.subscriptionStatus,
+        subscriptionTier: user.subscriptionTier,
+      }
+    });
+  });
+
+  app.post("/api/auth/logout", (req, res) => {
+    req.logout(() => {
+      res.json({ message: "Logout successful" });
+    });
+  });
+
+  app.get("/api/auth/user", isAuthenticated, (req, res) => {
+    const user = req.user as User;
+    res.json({
+      id: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      isAdmin: user.isAdmin,
+      subscriptionStatus: user.subscriptionStatus,
+      subscriptionTier: user.subscriptionTier,
+      isEmailVerified: user.isEmailVerified,
+    });
+  });
+
+  // Google OAuth routes
+  app.get("/api/auth/google", 
+    passport.authenticate("google", { scope: ["profile", "email"] })
+  );
+
+  app.get("/api/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/login" }),
+    (req, res) => {
+      res.redirect("/");
+    }
+  );
+
+  // Email verification
+  app.get("/api/auth/verify-email", async (req, res) => {
+    try {
+      const { token } = req.query;
+      if (!token) {
+        return res.status(400).json({ message: "Verification token required" });
+      }
+
+      const user = await storage.verifyEmail(token as string);
+      if (!user) {
+        return res.status(400).json({ message: "Invalid or expired verification token" });
+      }
+
+      res.json({ message: "Email verified successfully!" });
+    } catch (error) {
+      console.error("Email verification error:", error);
+      res.status(500).json({ message: "Email verification failed" });
+    }
+  });
+
+  // Stripe subscription routes
+  app.post("/api/stripe/create-subscription", isAuthenticated, async (req, res) => {
+    if (!stripe) {
+      return res.status(500).json({ message: "Stripe not configured" });
+    }
+
+    try {
+      const user = req.user as User;
+      const { tier, paymentMethodId } = req.body;
+
+      if (!["rebel", "legend", "icon"].includes(tier)) {
+        return res.status(400).json({ message: "Invalid subscription tier" });
+      }
+
+      // Create or get Stripe customer
+      let customerId = user.stripeCustomerId;
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: user.email,
+          name: `${user.firstName} ${user.lastName}`,
+          metadata: { userId: user.id.toString() },
+        });
+        customerId = customer.id;
+        await storage.updateStripeInfo(user.id, customerId);
+      }
+
+      // Attach payment method to customer
+      await stripe.paymentMethods.attach(paymentMethodId, {
+        customer: customerId,
+      });
+
+      // Set as default payment method
+      await stripe.customers.update(customerId, {
+        invoice_settings: {
+          default_payment_method: paymentMethodId,
+        },
+      });
+
+      // Price IDs for each tier (you'll need to create these in Stripe Dashboard)
+      const priceIds = {
+        rebel: process.env.STRIPE_REBEL_PRICE_ID || "price_rebel",
+        legend: process.env.STRIPE_LEGEND_PRICE_ID || "price_legend", 
+        icon: process.env.STRIPE_ICON_PRICE_ID || "price_icon",
+      };
+
+      // Create subscription
+      const subscription = await stripe.subscriptions.create({
+        customer: customerId,
+        items: [{ price: priceIds[tier as keyof typeof priceIds] }],
+        expand: ["latest_invoice.payment_intent"],
+      });
+
+      // Update user subscription info
+      await storage.updateUser(user.id, {
+        stripeSubscriptionId: subscription.id,
+        subscriptionStatus: subscription.status,
+        subscriptionTier: tier,
+      });
+
+      res.json({
+        subscriptionId: subscription.id,
+        clientSecret: (subscription.latest_invoice as any)?.payment_intent?.client_secret,
+      });
+    } catch (error: any) {
+      console.error("Subscription creation error:", error);
+      res.status(500).json({ message: error.message || "Subscription creation failed" });
+    }
+  });
+
+  app.post("/api/stripe/cancel-subscription", isAuthenticated, async (req, res) => {
+    if (!stripe) {
+      return res.status(500).json({ message: "Stripe not configured" });
+    }
+
+    try {
+      const user = req.user as User;
+      if (!user.stripeSubscriptionId) {
+        return res.status(400).json({ message: "No active subscription found" });
+      }
+
+      await stripe.subscriptions.update(user.stripeSubscriptionId, {
+        cancel_at_period_end: true,
+      });
+
+      await storage.updateUser(user.id, {
+        subscriptionStatus: "canceled",
+      });
+
+      res.json({ message: "Subscription will be canceled at the end of the billing period" });
+    } catch (error: any) {
+      console.error("Subscription cancellation error:", error);
+      res.status(500).json({ message: error.message || "Subscription cancellation failed" });
+    }
+  });
+
   // Submissions API
   app.get("/api/submissions", async (req, res) => {
     try {
