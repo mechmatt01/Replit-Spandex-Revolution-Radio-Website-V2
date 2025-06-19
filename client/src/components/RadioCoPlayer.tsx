@@ -123,7 +123,7 @@ export default function RadioCoPlayer() {
         {isPlaying && (
           <div className="flex items-center space-x-2 text-red-500">
             <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-bold">LIVE</span>
+            <span className="text-sm font-bold animate-pulse">LIVE</span>
           </div>
         )}
       </div>
