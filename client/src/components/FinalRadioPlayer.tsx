@@ -52,44 +52,17 @@ export default function FinalRadioPlayer() {
     };
   }, [volume]);
 
-  const togglePlayback = async () => {
+  const togglePlayback = () => {
     const audio = audioRef.current;
     if (!audio) return;
 
     if (isPlaying) {
       audio.pause();
-      audio.src = '';
-      audio.load();
     } else {
       setIsLoading(true);
-      
-      try {
-        // Use our server proxy endpoint with cache busting
-        const streamUrl = `/api/radio-stream?t=${Date.now()}`;
-        audio.src = streamUrl;
-        audio.volume = volume;
-        audio.load();
-        
-        // Wait a moment for the stream to buffer
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          await playPromise;
-        }
-      } catch (error) {
-        console.error('Playback failed:', error);
+      audio.play().catch(() => {
         setIsLoading(false);
-        // If proxy fails, try direct stream
-        try {
-          audio.src = 'http://168.119.74.185:9858/autodj';
-          audio.load();
-          await audio.play();
-        } catch (directError) {
-          console.error('Direct stream also failed:', directError);
-          setIsLoading(false);
-        }
-      }
+      });
     }
   };
 
