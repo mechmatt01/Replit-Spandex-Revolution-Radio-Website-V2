@@ -15,6 +15,9 @@ export default function StickyPlayer() {
     setVolume(newVolume);
   };
 
+  // Debug logging
+  console.log('StickyPlayer - isPlaying:', isPlaying, 'currentTrack:', currentTrack);
+
   // Only show when radio is playing
   if (!isPlaying) {
     return null;
