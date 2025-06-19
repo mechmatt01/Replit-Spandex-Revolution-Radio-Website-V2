@@ -293,6 +293,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Dynamic Open Graph image generation
+  app.get("/api/og-image", (req, res) => {
+    const { 
+      theme = 'dark', 
+      primary = '#f97316', 
+      secondary = '#fb923c', 
+      background = '#000000',
+      text = '#ffffff'
+    } = req.query;
+
+    // SVG template for Open Graph image
+    const svgTemplate = `
+      <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background -->
+        <rect width="1200" height="630" fill="${background}"/>
+        
+        <!-- Gradient overlay -->
+        <defs>
+          <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:${primary};stop-opacity:0.1"/>
+            <stop offset="100%" style="stop-color:${secondary};stop-opacity:0.2"/>
+          </linearGradient>
+          <linearGradient id="iconGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:${theme === 'light' ? '#000000' : primary}"/>
+            <stop offset="100%" style="stop-color:${theme === 'light' ? '#4a4a4a' : secondary}"/>
+          </linearGradient>
+        </defs>
+        
+        <!-- Background gradient -->
+        <rect width="1200" height="630" fill="url(#bgGradient)"/>
+        
+        <!-- Music disc icon -->
+        <g transform="translate(80, 180)">
+          <!-- Outer circle -->
+          <circle cx="135" cy="135" r="135" fill="url(#iconGradient)" opacity="0.8"/>
+          <!-- Inner circle -->
+          <circle cx="135" cy="135" r="55" fill="${background}" opacity="0.9"/>
+          <!-- Center hole -->
+          <circle cx="135" cy="135" r="25" fill="url(#iconGradient)"/>
+          <!-- Reflection lines -->
+          <path d="M 70 135 A 65 65 0 0 1 200 135" stroke="${text}" stroke-width="2" fill="none" opacity="0.3"/>
+          <path d="M 85 135 A 50 50 0 0 1 185 135" stroke="${text}" stroke-width="1" fill="none" opacity="0.2"/>
+        </g>
+        
+        <!-- Main title -->
+        <text x="400" y="200" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="${text}">
+          SPANDEX SALVATION
+        </text>
+        
+        <!-- Subtitle -->
+        <text x="400" y="280" font-family="Arial, sans-serif" font-size="48" font-weight="600" fill="${primary}">
+          RADIO
+        </text>
+        
+        <!-- Description -->
+        <text x="400" y="350" font-family="Arial, sans-serif" font-size="32" fill="${text}" opacity="0.8">
+          Join the hairspray rebellion!
+        </text>
+        
+        <!-- Features -->
+        <text x="400" y="420" font-family="Arial, sans-serif" font-size="24" fill="${text}" opacity="0.7">
+          Classic 80s Metal • Glam Rock • Hard Rock • 24/7 Streaming
+        </text>
+        
+        <!-- Live indicator -->
+        <g transform="translate(400, 480)">
+          <rect x="0" y="0" width="80" height="35" rx="17" fill="${primary}"/>
+          <text x="40" y="23" font-family="Arial, sans-serif" font-size="16" font-weight="bold" 
+                fill="${theme === 'light' ? '#ffffff' : '#000000'}" text-anchor="middle">LIVE</text>
+        </g>
+        
+        <!-- Accent elements -->
+        <circle cx="1000" cy="100" r="80" fill="${primary}" opacity="0.1"/>
+        <circle cx="1100" cy="500" r="120" fill="${secondary}" opacity="0.08"/>
+      </svg>
+    `;
+
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.send(svgTemplate);
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
