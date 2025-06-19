@@ -5,12 +5,12 @@ export function setupRadioProxy(app: Express) {
   // Radio stream proxy to handle CORS and format issues
   app.get("/api/radio-stream", (req: Request, res: Response) => {
     const streamUrls = [
-      // Actual KPRS stream from StreamTheWorld
-      "https://pwav4.media.streamtheworld.com/convertedfiles/KPRSFM_MEDIA_3051.mp3",
-      "https://pwav4.media.streamtheworld.com/KPRSFMAAC_SC",
-      "https://pwav4.media.streamtheworld.com/KPRSFM",
-      "https://pwav4.media.streamtheworld.com/KPRSFM_128",
-      // Fallback to working metal stream
+      // Hot 97 TuneIn stream URLs
+      "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC_SC",
+      "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM_SC",
+      "https://ice24.securenetsystems.net/WQHT",
+      "https://stream.revma.ihrhls.com/zc181",
+      // Fallback to working stream
       "https://ice1.somafm.com/metal-128-mp3"
     ];
 

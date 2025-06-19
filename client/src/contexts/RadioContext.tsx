@@ -29,9 +29,9 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
-    title: "KPRS Radio",
+    title: "Hot 97",
     artist: "Live Stream",
-    album: "24/7 Music",
+    album: "New York's Hip Hop & R&B",
     artwork: ""
   });
   const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
@@ -40,9 +40,9 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
   const streamUrls = [
     "/api/radio-stream",
-    "https://pwav4.media.streamtheworld.com/convertedfiles/KPRSFM_MEDIA_3051.mp3",
-    "https://pwav4.media.streamtheworld.com/KPRSFMAAC_SC",
-    "https://pwav4.media.streamtheworld.com/KPRSFM",
+    "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC_SC",
+    "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM_SC",
+    "https://ice24.securenetsystems.net/WQHT",
     "https://ice1.somafm.com/metal-128-mp3"
   ];
 
