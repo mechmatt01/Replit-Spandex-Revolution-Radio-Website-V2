@@ -59,7 +59,7 @@ export default function MetalThemeSwitcher() {
         </PopoverTrigger>
         
         <PopoverContent 
-          className="w-80 p-0 border-0"
+          className="w-80 p-0 border-0 max-h-[80vh] overflow-hidden"
           style={{ 
             backgroundColor: colors.surface,
             border: `1px solid ${colors.border}`
@@ -85,7 +85,7 @@ export default function MetalThemeSwitcher() {
               </p>
             </CardHeader>
             
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-2 max-h-[60vh] overflow-y-auto">
               {Object.entries(METAL_THEMES).map(([themeKey, themeConfig]) => {
                 const isActive = currentTheme === themeKey;
                 const isLightTheme = themeKey === "light-mode";
@@ -145,8 +145,12 @@ export default function MetalThemeSwitcher() {
                           )}
                         </div>
                         <p 
-                          className="text-xs mt-1 break-words leading-relaxed"
-                          style={{ color: themeColors.secondary }}
+                          className="text-xs mt-1 break-words leading-relaxed whitespace-pre-wrap overflow-hidden"
+                          style={{ 
+                            color: themeColors.primary,
+                            wordBreak: 'break-word',
+                            overflowWrap: 'break-word'
+                          }}
                         >
                           {themeConfig.description}
                         </p>
