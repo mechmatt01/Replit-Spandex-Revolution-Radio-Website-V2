@@ -66,36 +66,66 @@ export default function Navigation() {
             </Link>
             <button 
               onClick={() => scrollToSection("schedule")}
-              className="text-sm font-semibold transition-colors"
+              className="text-sm font-semibold transition-colors px-2 py-1 rounded"
               style={{ color: colors.text }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = getGradient().split(',')[0].split('(')[1].trim();
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = colors.text;
+              }}
             >
               SCHEDULE
             </button>
             <button 
               onClick={() => scrollToSection("submissions")}
-              className="text-sm font-semibold transition-colors"
+              className="text-sm font-semibold transition-colors px-2 py-1 rounded"
               style={{ color: colors.text }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = getGradient().split(',')[0].split('(')[1].trim();
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = colors.text;
+              }}
             >
               SUBMISSIONS
             </button>
             <button 
               onClick={() => scrollToSection("contact")}
-              className="text-sm font-semibold transition-colors"
+              className="text-sm font-semibold transition-colors px-2 py-1 rounded"
               style={{ color: colors.text }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = getGradient().split(',')[0].split('(')[1].trim();
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = colors.text;
+              }}
             >
               CONTACT
             </button>
             <button 
               onClick={() => scrollToSection("merch")}
-              className="text-sm font-semibold transition-colors"
+              className="text-sm font-semibold transition-colors px-2 py-1 rounded"
               style={{ color: colors.text }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = getGradient().split(',')[0].split('(')[1].trim();
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = colors.text;
+              }}
             >
               MERCH
             </button>
             <button 
               onClick={() => scrollToSection("subscription")}
-              className="text-sm font-semibold transition-colors"
+              className="text-sm font-semibold transition-colors px-2 py-1 rounded"
               style={{ color: colors.text }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = getGradient().split(',')[0].split('(')[1].trim();
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = colors.text;
+              }}
             >
               SUBSCRIBE
             </button>
@@ -112,8 +142,17 @@ export default function Navigation() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="xl:hidden absolute top-1/2 right-4 p-2 rounded-md transform -translate-y-1/2"
-          style={{ color: colors.text }}
+          className="xl:hidden absolute top-1/2 right-4 p-2 rounded-md transform -translate-y-1/2 transition-colors hover:bg-opacity-20"
+          style={{ 
+            color: colors.text,
+            backgroundColor: 'transparent'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = `${getGradient().split(',')[0].split('(')[1]}20`;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+          }}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>

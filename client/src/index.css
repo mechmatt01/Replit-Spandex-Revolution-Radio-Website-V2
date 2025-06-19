@@ -44,8 +44,8 @@
 }
 
 @keyframes scroll {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }
 
 .animate-scroll {
@@ -86,6 +86,26 @@
 
 .album-glow {
   animation: glow 2s ease-in-out infinite;
+}
+
+/* Theme-aware button styling */
+.btn-theme-hover:hover {
+  background-color: var(--color-primary);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.btn-theme-hover {
+  transition: all 0.2s ease;
+}
+
+/* Text color fixes for light mode */
+.text-adaptive {
+  color: hsl(var(--foreground));
+}
+
+.dark .text-adaptive {
+  color: hsl(var(--foreground));
 }
 
 .light {

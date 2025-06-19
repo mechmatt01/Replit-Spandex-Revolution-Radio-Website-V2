@@ -65,11 +65,14 @@ export default function RadioCoPlayer() {
               maxWidth="75%"
             />
           </div>
-          <p className="text-foreground font-semibold mb-1">
+          <p className="text-foreground font-semibold text-lg mb-1">
+            {currentTrack.album}
+          </p>
+          <p className="text-foreground font-medium text-base mb-2">
             {currentTrack.artist}
           </p>
           <p className="text-muted-foreground text-sm font-medium">
-            {currentTrack.album} • Live Radio
+            Shady Pines Radio • Live Stream
           </p>
         </div>
       </div>
