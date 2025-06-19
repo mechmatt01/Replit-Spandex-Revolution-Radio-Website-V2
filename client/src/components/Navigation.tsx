@@ -103,7 +103,7 @@ export default function Navigation() {
                         }}
                         aria-label={`Navigate to ${item.label.toLowerCase()}`}
                       >
-                        <IconComponent size={16} style={{ color: colors.primary }} fill="currentColor" />
+                        <IconComponent size={16} style={{ color: colors.primary }} />
                         <span>{item.label}</span>
                       </button>
                     </TooltipTrigger>
@@ -140,7 +140,7 @@ export default function Navigation() {
                       aria-label="More navigation options"
                       aria-expanded={isDropdownOpen}
                     >
-                      <Menu size={16} style={{ color: isDropdownOpen ? 'white' : colors.primary }} fill="currentColor" />
+                      <Menu size={16} style={{ color: isDropdownOpen ? 'white' : colors.primary }} />
                       <span>MORE</span>
                       <ChevronDown 
                         size={14} 
@@ -165,7 +165,8 @@ export default function Navigation() {
                       backgroundColor: 'rgba(0, 0, 0, 0.95)',
                       backdropFilter: 'blur(16px)',
                       borderColor: colors.primary + '40',
-                      minWidth: '160px',
+                      width: 'max-content',
+                      minWidth: '140px',
                       zIndex: 50
                     }}
                   >
@@ -187,7 +188,7 @@ export default function Navigation() {
                           }}
                           aria-label={`Navigate to ${item.label.toLowerCase()}`}
                         >
-                          <IconComponent size={16} style={{ color: colors.primary }} fill="currentColor" />
+                          <IconComponent size={16} style={{ color: colors.primary }} />
                           <span>{item.label}</span>
                         </button>
                       );
@@ -253,8 +254,7 @@ export default function Navigation() {
                       onClick={item.action}
                       className="flex items-center space-x-3 w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2"
                       style={{ 
-                        color: colors.text,
-                        focusRingColor: colors.primary
+                        color: colors.text
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = colors.primary + '20';

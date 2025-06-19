@@ -375,37 +375,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.send(svgTemplate);
   });
 
-  // Open Graph image generation endpoint
+  // Open Graph image generation endpoint with theme support
   app.get("/api/og-image", (req, res) => {
     const { theme, primary, secondary, background, text } = req.query;
     
-    // Generate SVG-based Open Graph image with theme colors
+    // Theme-specific styling
+    const themeStyles = {
+      classic_metal: { accent: '#ff6b35', glow: '#ff6b35' },
+      black_metal: { accent: '#8b0000', glow: '#8b0000' },
+      death_metal: { accent: '#654321', glow: '#654321' },
+      power_metal: { accent: '#ffd700', glow: '#ffd700' },
+      doom_metal: { accent: '#800080', glow: '#800080' },
+      thrash_metal: { accent: '#32cd32', glow: '#32cd32' },
+      gothic_metal: { accent: '#8b008b', glow: '#8b008b' },
+      light: { accent: '#333333', glow: '#666666' }
+    };
+    
+    const currentTheme = themeStyles[theme as string] || themeStyles.classic_metal;
+    
+    // Generate theme-aware SVG-based Open Graph image
     const svg = `
       <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:${primary || '#ff6b35'};stop-opacity:1" />
+            <stop offset="0%" style="stop-color:${primary || currentTheme.accent};stop-opacity:1" />
             <stop offset="100%" style="stop-color:${secondary || '#d32f2f'};stop-opacity:1" />
           </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge> 
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
         </defs>
         <rect width="1200" height="630" fill="${background || '#000000'}"/>
-        <rect x="50" y="50" width="1100" height="530" fill="url(#grad)" opacity="0.1" rx="20"/>
-        <text x="600" y="250" font-family="Arial, sans-serif" font-size="72" font-weight="bold" 
-              fill="${text || '#ffffff'}" text-anchor="middle">SPANDEX SALVATION</text>
-        <text x="600" y="320" font-family="Arial, sans-serif" font-size="48" 
-              fill="${primary || '#ff6b35'}" text-anchor="middle">RADIO</text>
-        <text x="600" y="400" font-family="Arial, sans-serif" font-size="28" 
-              fill="${text || '#ffffff'}" text-anchor="middle" opacity="0.8">Old School Metal • 24/7 Live Stream</text>
-        <circle cx="150" cy="150" r="10" fill="#ff0000" opacity="0.8">
-          <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+        <rect x="40" y="40" width="1120" height="550" fill="url(#grad)" opacity="0.15" rx="25"/>
+        <text x="600" y="220" font-family="Arial, Helvetica, sans-serif" font-size="84" font-weight="900" 
+              fill="${text || '#ffffff'}" text-anchor="middle" filter="url(#glow)">SPANDEX SALVATION</text>
+        <text x="600" y="300" font-family="Arial, Helvetica, sans-serif" font-size="56" font-weight="bold"
+              fill="${primary || currentTheme.accent}" text-anchor="middle" filter="url(#glow)">RADIO</text>
+        <text x="600" y="380" font-family="Arial, Helvetica, sans-serif" font-size="32" 
+              fill="${text || '#ffffff'}" text-anchor="middle" opacity="0.9">Old School Metal • 24/7 Live Stream</text>
+        <text x="600" y="420" font-family="Arial, Helvetica, sans-serif" font-size="24" 
+              fill="${primary || currentTheme.accent}" text-anchor="middle" opacity="0.8">Theme: ${(theme as string || 'Classic Metal').replace('_', ' ').toUpperCase()}</text>
+        <circle cx="120" cy="120" r="12" fill="#ff0000" opacity="0.9">
+          <animate attributeName="opacity" values="0.9;0.4;0.9" dur="2s" repeatCount="indefinite"/>
         </circle>
-        <text x="170" y="157" font-family="Arial, sans-serif" font-size="20" 
+        <text x="145" y="128" font-family="Arial, Helvetica, sans-serif" font-size="22" 
               fill="#ff0000" font-weight="bold">LIVE</text>
+        <rect x="80" y="500" width="1040" height="4" fill="url(#grad)" opacity="0.8" rx="2"/>
       </svg>
     `;
     
     res.setHeader('Content-Type', 'image/svg+xml');
-    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.setHeader('Cache-Control', 'public, max-age=300'); // Shorter cache for theme changes
+    res.setHeader('Vary', 'theme, primary, secondary');
     res.send(svg);
   });
 
