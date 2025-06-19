@@ -187,32 +187,20 @@ export default function Navigation() {
 
         {/* Mobile Navigation Dropdown */}
         {isOpen && (
-          <>
-            {/* Background Blur Overlay */}
-            <div 
-              className="xl:hidden fixed inset-0 z-30 backdrop-blur-xl transition-opacity duration-300"
-              style={{ 
-                backgroundColor: `rgba(0, 0, 0, 0.6)`,
-                backdropFilter: 'blur(16px) saturate(180%)'
-              }}
-              onClick={() => setIsOpen(false)}
-              aria-hidden="true"
-            />
-            
-            {/* Menu Content - Attached to nav bar */}
-            <div 
-              ref={menuRef}
-              id="mobile-menu"
-              className="xl:hidden absolute top-full right-0 z-40 w-64 bg-black/85 backdrop-blur-xl transition-colors duration-300 rounded-b-2xl shadow-xl border-t-0"
-              style={{ 
-                borderLeft: `1px solid ${colors.border}30`,
-                borderRight: `1px solid ${colors.border}30`,
-                borderBottom: `1px solid ${colors.border}30`
-              }}
-              role="menu"
-              aria-label="Mobile navigation menu"
-            >
-              <div className="p-4 space-y-3">
+          <div 
+            ref={menuRef}
+            id="mobile-menu"
+            className="xl:hidden fixed top-16 left-0 right-0 bottom-0 z-40 bg-black/95 backdrop-blur-xl transition-colors duration-300"
+            role="menu"
+            aria-label="Mobile navigation menu"
+            onClick={(e) => {
+              // Close menu if clicking the background, not the menu items
+              if (e.target === e.currentTarget) {
+                setIsOpen(false);
+              }
+            }}
+          >
+            <div className="p-4 space-y-3">
                 <button 
                   onClick={() => scrollToSection("home")}
                   className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -334,9 +322,8 @@ export default function Navigation() {
                 >
                   SUBSCRIBE
                 </button>
-              </div>
             </div>
-          </>
+          </div>
         )}
       </div>
     </nav>
