@@ -8,7 +8,7 @@ interface ScrollingTextProps {
   isFloating?: boolean;
 }
 
-export default function ScrollingText({ text, className = '', maxWidth = '60%', style = {} }: ScrollingTextProps) {
+export default function ScrollingText({ text, className = '', maxWidth = '60%', style = {}, isFloating = false }: ScrollingTextProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const [shouldScroll, setShouldScroll] = useState(false);
@@ -49,7 +49,7 @@ export default function ScrollingText({ text, className = '', maxWidth = '60%', 
       <div
         ref={textRef}
         className={`whitespace-nowrap transition-transform duration-[8s] ease-linear ${
-          isScrolling ? 'animate-scroll' : ''
+          isScrolling ? (isFloating ? 'animate-scroll-floating' : 'animate-scroll') : ''
         }`}
         style={{
           ...(isScrolling ? {} : { transform: 'translateX(0)' })

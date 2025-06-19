@@ -29,12 +29,17 @@ export default function RadioCoPlayer() {
   };
 
   return (
-    <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg">
+    <section 
+      className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg"
+      role="region"
+      aria-label="Radio player controls"
+    >
       {/* Hidden Audio Element */}
       <audio 
         ref={audioRef}
         preload="none"
         crossOrigin="anonymous"
+        aria-label="Live radio stream"
       />
 
       {/* Live Indicator */}
@@ -130,6 +135,6 @@ export default function RadioCoPlayer() {
           {error}
         </div>
       )}
-    </div>
+    </section>
   );
 }

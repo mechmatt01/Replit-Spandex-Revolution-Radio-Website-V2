@@ -35,6 +35,7 @@ export default function StickyPlayer() {
                   text={currentTrack.title}
                   className="font-semibold text-foreground"
                   maxWidth="100%"
+                  isFloating={true}
                 />
               </div>
               <p className="text-muted-foreground text-sm truncate">
