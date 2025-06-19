@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Mail, Lock, User, LogIn, UserPlus } from 'lucide-react';
 import { FaGoogle } from 'react-icons/fa';
@@ -23,11 +24,13 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
   const [loading, setLoading] = useState(false);
   
   const { login, register } = useAuth();
+  const { getColors } = useTheme();
+  const { toast } = useToast();
+  const colors = getColors();
   
   const handleGoogleAuth = () => {
     window.location.href = '/api/auth/google';
   };
-  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,17 +77,23 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md bg-black/95 border-orange-500/20 backdrop-blur-md">
+      <DialogContent 
+        className="sm:max-w-md backdrop-blur-md"
+        style={{
+          backgroundColor: 'rgba(0, 0, 0, 0.95)',
+          borderColor: colors.primary + '40'
+        }}
+      >
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-white">
+          <DialogTitle className="flex items-center gap-2" style={{ color: colors.text }}>
             {mode === 'login' ? (
               <>
-                <LogIn className="h-5 w-5 text-orange-500" />
+                <LogIn className="h-5 w-5" style={{ color: colors.primary }} />
                 Sign In
               </>
             ) : (
               <>
-                <UserPlus className="h-5 w-5 text-orange-500" />
+                <UserPlus className="h-5 w-5" style={{ color: colors.primary }} />
                 Create Account
               </>
             )}
@@ -95,7 +104,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
           {mode === 'register' && (
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="firstName" className="text-white">First Name</Label>
+                <Label htmlFor="firstName" style={{ color: colors.text }}>First Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
@@ -108,7 +117,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName" className="text-white">Last Name</Label>
+                <Label htmlFor="lastName" style={{ color: colors.text }}>Last Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
@@ -124,7 +133,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
           )}
           
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-white">Email</Label>
+            <Label htmlFor="email" style={{ color: colors.text }}>Email</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -139,7 +148,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-white">Password</Label>
+            <Label htmlFor="password" style={{ color: colors.text }}>Password</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -155,7 +164,13 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
           
           <Button 
             type="submit" 
-            className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+            className="w-full text-white"
+            style={{
+              backgroundColor: colors.primary,
+              '--hover-bg': colors.secondary
+            } as any}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.secondary}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.primary}
             disabled={loading}
           >
             {loading ? (
