@@ -189,6 +189,9 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Enhanced floating player pause/play icons with thicker design, better spacing, and increased size while maintaining perfect centering
 - June 19, 2025: Implemented continuous scrolling text animation by duplicating text content and adjusting keyframe to prevent gaps between scroll cycles
 - June 19, 2025: Fixed focus ring color on floating player play/pause button to dynamically match current theme primary color
+- June 19, 2025: Enhanced scrolling text behavior - static centered display when paused, smart scrolling only for track content during playback
+- June 19, 2025: Increased floating player icon size to 28px for better visibility and interaction
+- June 19, 2025: Improved text display logic to show single instance when static, duplicated only during scrolling animations
 
 ## User Preferences
 

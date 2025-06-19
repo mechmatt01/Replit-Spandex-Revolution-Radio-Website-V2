@@ -53,15 +53,21 @@ export default function ScrollingText({ text, className = '', maxWidth = '60%', 
     >
       <div
         ref={textRef}
-        className={`whitespace-nowrap flex ${
+        className={`whitespace-nowrap ${isScrolling ? 'flex' : 'text-center'} ${
           isScrolling ? (isFloating ? 'animate-scroll-floating' : 'animate-scroll') : ''
         }`}
         style={{
           ...(isScrolling ? {} : { transform: 'translateX(0)' })
         }}
       >
-        <span className="mr-8">{text}</span>
-        <span className="mr-8">{text}</span>
+        {isScrolling ? (
+          <>
+            <span className="mr-8">{text}</span>
+            <span className="mr-8">{text}</span>
+          </>
+        ) : (
+          <span>{text}</span>
+        )}
       </div>
       
       {/* Fade edges */}
