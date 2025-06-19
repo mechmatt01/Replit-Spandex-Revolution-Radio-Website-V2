@@ -1,6 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { setupPassport, isAuthenticated, isAdmin, hashPassword, generateToken, sendVerificationEmail } from "./auth";
+import passport from "passport";
+import Stripe from "stripe";
+import { registerUserSchema, loginUserSchema } from "@shared/schema";
+import type { User } from "@shared/schema";
 
 // Removed Spotify API - using Icecast streaming only
 import { insertSubmissionSchema, insertContactSchema, insertSubscriptionSchema, insertNowPlayingSchema } from "@shared/schema";
