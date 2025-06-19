@@ -124,159 +124,158 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
             </DialogTitle>
           </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {mode === 'register' && (
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label htmlFor="firstName" style={{ color: colors.text }}>First Name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="firstName"
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
-                    style={{ 
-                      color: colors.text,
-                      borderColor: '#374151'
-                    }}
-                    onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
-                    onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
-                    required
-                  />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {mode === 'register' && (
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName" style={{ color: colors.text }}>First Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="firstName"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                      style={{ 
+                        color: colors.text,
+                        borderColor: '#374151'
+                      }}
+                      onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
+                      onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName" style={{ color: colors.text }}>Last Name</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="lastName"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                      style={{ 
+                        color: colors.text,
+                        borderColor: '#374151'
+                      }}
+                      onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
+                      onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName" style={{ color: colors.text }}>Last Name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="lastName"
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
-                    style={{ 
-                      color: colors.text,
-                      borderColor: '#374151'
-                    }}
-                    onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
-                    onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-          
-          <div className="space-y-2">
-            <Label htmlFor="email" style={{ color: colors.text }}>Email</Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
-                style={{ 
-                  color: colors.text,
-                  borderColor: '#374151'
-                }}
-                onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
-                onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
-                required
-              />
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="password" style={{ color: colors.text }}>Password</Label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
-                style={{ 
-                  color: colors.text,
-                  borderColor: '#374151'
-                }}
-                onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
-                onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
-                required
-              />
-            </div>
-          </div>
-          
-          <Button 
-            type="submit" 
-            className="w-full text-white"
-            style={{
-              backgroundColor: colors.primary,
-              '--hover-bg': colors.secondary
-            } as any}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.secondary}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.primary}
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {mode === 'login' ? 'Signing In...' : 'Creating Account...'}
-              </>
-            ) : (
-              mode === 'login' ? 'Sign In' : 'Create Account'
             )}
-          </Button>
-          
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-gray-600" />
+            
+            <div className="space-y-2">
+              <Label htmlFor="email" style={{ color: colors.text }}>Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                  style={{ 
+                    color: colors.text,
+                    borderColor: '#374151'
+                  }}
+                  onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
+                  onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
+                  required
+                />
+              </div>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-black px-2 text-gray-400">Or continue with</span>
+            
+            <div className="space-y-2">
+              <Label htmlFor="password" style={{ color: colors.text }}>Password</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                  style={{ 
+                    color: colors.text,
+                    borderColor: '#374151'
+                  }}
+                  onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
+                  onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
+                  required
+                />
+              </div>
             </div>
-          </div>
-          
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleGoogleAuth}
-            className="w-full bg-transparent hover:bg-gray-800"
-            style={{
-              borderColor: colors.primary + '40',
-              color: colors.text
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.primary + '20'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            disabled={loading}
-          >
-            <img 
-              src={GoogleLogoPath} 
-              alt="Google" 
-              className="mr-2 h-4 w-4"
-            />
-            {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
-          </Button>
-          
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={switchMode}
-              className="text-sm transition-colors duration-200"
-              style={{ color: colors.primary }}
-              onMouseEnter={(e) => e.currentTarget.style.color = colors.secondary}
-              onMouseLeave={(e) => e.currentTarget.style.color = colors.primary}
+            
+            <Button 
+              type="submit" 
+              className="w-full text-white"
+              style={{
+                backgroundColor: colors.primary
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.secondary}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.primary}
+              disabled={loading}
             >
-              {mode === 'login' 
-                ? "Don't have an account? Sign up" 
-                : "Already have an account? Sign in"
-              }
-            </button>
-          </div>
-        </form>
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {mode === 'login' ? 'Signing In...' : 'Creating Account...'}
+                </>
+              ) : (
+                mode === 'login' ? 'Sign In' : 'Create Account'
+              )}
+            </Button>
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-gray-600" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-black px-2 text-gray-400">Or continue with</span>
+              </div>
+            </div>
+            
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleGoogleAuth}
+              className="w-full bg-transparent hover:bg-gray-800"
+              style={{
+                borderColor: colors.primary + '40',
+                color: colors.text
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.primary + '20'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              disabled={loading}
+            >
+              <img 
+                src={GoogleLogoPath} 
+                alt="Google" 
+                className="mr-2 h-4 w-4"
+              />
+              {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
+            </Button>
+            
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={switchMode}
+                className="text-sm transition-colors duration-200"
+                style={{ color: colors.primary }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.secondary}
+                onMouseLeave={(e) => e.currentTarget.style.color = colors.primary}
+              >
+                {mode === 'login' 
+                  ? "Don't have an account? Sign up" 
+                  : "Already have an account? Sign in"
+                }
+              </button>
+            </div>
+          </form>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </Dialog>
