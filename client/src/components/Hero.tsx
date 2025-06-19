@@ -1,27 +1,9 @@
 import { useState, useEffect } from "react";
 import { Play, Calendar, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAudio } from "@/contexts/AudioContext";
-import { useQuery } from "@tanstack/react-query";
-import FinalRadioPlayer from "@/components/FinalRadioPlayer";
-import IcecastPlayer from "@/components/IcecastPlayer";
+import RadioCoPlayer from "@/components/RadioCoPlayer";
 
 export default function Hero() {
-  const { currentTrack, togglePlayback } = useAudio();
-  
-  // Fetch live radio status for track info
-  const { data: radioStatus } = useQuery({
-    queryKey: ['/api/radio-status'],
-    refetchInterval: 10000,
-  });
-
-  // Extract live track info
-  const liveTrack = (radioStatus as any)?.icestats?.source?.[0];
-  const liveTrackInfo = liveTrack ? {
-    title: liveTrack.yp_currently_playing?.split(' - ')[1] || liveTrack.title || 'Unknown Track',
-    artist: liveTrack.yp_currently_playing?.split(' - ')[0] || 'Unknown Artist',
-    listeners: liveTrack.listeners || 0
-  } : null;
   
   const [countdown, setCountdown] = useState({
     days: 0,
@@ -93,61 +75,9 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Live Now Playing Card */}
-        <div className="bg-card/40 backdrop-blur-sm w-full max-w-lg mx-auto mb-8 rounded-xl p-4 sm:p-6 lg:p-8 transition-colors duration-300">
-          <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <div className="flex items-center">
-              <Music className="text-metal-orange mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-              <span className="text-muted-foreground text-xs sm:text-sm font-semibold">NOW PLAYING</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 sm:w-3 sm:h-3 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-xs text-red-500 font-bold">LIVE</span>
-            </div>
-          </div>
-          
-          {/* Album Art */}
-          <div className="flex justify-center mb-4 sm:mb-6">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-secondary)] rounded-lg flex items-center justify-center shadow-lg">
-              <Music className="text-white h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12" />
-            </div>
-          </div>
-          
-          {/* Track Info */}
-          <div className="text-center mb-4 sm:mb-6">
-            <h3 className="font-bold text-lg sm:text-xl lg:text-2xl mb-2 text-foreground">
-              {liveTrackInfo?.title || 'Loading track...'}
-            </h3>
-            <p className="text-foreground font-semibold mb-1 text-sm sm:text-base">
-              {liveTrackInfo?.artist || 'Loading artist...'}
-            </p>
-            <p className="text-muted-foreground text-xs sm:text-sm font-medium">
-              Live Radio • {liveTrackInfo?.listeners || 0} listeners
-            </p>
-          </div>
-          
-          {/* Live Stream Progress */}
-          <div className="mt-4 sm:mt-6">
-            <div className="w-full bg-muted rounded-full h-1.5 sm:h-2">
-              <div 
-                className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)] h-1.5 sm:h-2 rounded-full animate-pulse"
-                style={{ width: '100%' }}
-              ></div>
-            </div>
-            <div className="flex justify-between text-xs text-muted-foreground mt-2">
-              <span className="flex items-center">
-                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                STREAMING LIVE
-              </span>
-              <span className="hidden sm:inline">24/7 • Old School Metal</span>
-              <span className="sm:hidden">24/7</span>
-            </div>
-          </div>
-        </div>
-
         {/* Live Radio Player */}
         <div className="flex flex-col items-center justify-center space-y-6 mb-12">
-          <FinalRadioPlayer />
+          <RadioCoPlayer />
           <Button 
             onClick={scrollToSchedule}
             variant="outline"

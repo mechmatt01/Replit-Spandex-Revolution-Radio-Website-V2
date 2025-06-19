@@ -142,88 +142,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Live Radio Stream Status API
-  app.get("/api/radio-status", async (req, res) => {
-    try {
-      const response = await fetch("http://168.119.74.185:9858/status-json.xsl");
-      if (!response.ok) {
-        throw new Error("Failed to fetch radio status");
-      }
-      const data = await response.json();
-      res.json(data);
-    } catch (error: any) {
-      console.error("Radio status error:", error);
-      res.status(500).json({ error: "Failed to fetch radio status" });
-    }
-  });
-
-  // Direct stream proxy with proper Icecast handling
-  app.get("/api/radio-stream", (req, res) => {
-    const streamUrl = "http://168.119.74.185:9858/autodj";
-    
-    console.log(`Direct streaming from: ${streamUrl}`);
-    
-    // Set proper streaming headers for audio
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD");
-    res.setHeader("Access-Control-Allow-Headers", "Range, Accept-Encoding, Accept");
-    res.setHeader("Content-Type", "audio/mpeg");
-    res.setHeader("Accept-Ranges", "bytes");
-    res.setHeader("Cache-Control", "no-cache");
-    res.setHeader("Connection", "keep-alive");
-    
-    // Use fetch with proper streaming
-    fetch(streamUrl, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; RadioPlayer/1.0)',
-        'Accept': 'audio/mpeg, audio/*',
-        'Connection': 'keep-alive'
-      }
-    }).then(response => {
-      if (!response.ok) {
-        console.error(`Stream responded with status: ${response.status}`);
-        res.status(503).end('Stream unavailable');
-        return;
-      }
-      
-      console.log('Stream connected successfully, piping to client');
-      
-      // Handle client disconnect
-      req.on('close', () => {
-        console.log('Client disconnected');
-      });
-      
-      // Pipe the stream body to response
-      if (response.body) {
-        const reader = response.body.getReader();
-        
-        const pump = () => {
-          return reader.read().then(({ done, value }) => {
-            if (done) {
-              res.end();
-              return;
-            }
-            
-            if (!res.destroyed) {
-              res.write(value);
-              return pump();
-            }
-          }).catch(err => {
-            console.error('Stream pipe error:', err);
-            res.end();
-          });
-        };
-        
-        pump();
-      }
-    }).catch(error => {
-      console.error('Stream fetch error:', error);
-      if (!res.headersSent) {
-        res.status(503).end('Stream connection failed');
-      }
+  // Radio.co stream status API
+  app.get("/api/radio-status", (req, res) => {
+    res.json({
+      station: "Shady Pines Radio",
+      streamUrl: "https://streaming.radio.co/s2c4cc0b96/listen",
+      status: "live",
+      format: "audio/mpeg"
     });
   });
+
+
 
 
 
