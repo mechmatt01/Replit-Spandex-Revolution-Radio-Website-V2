@@ -5,12 +5,12 @@ import { useAudio } from "@/contexts/AudioContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import MetalThemeSwitcher from "@/components/MetalThemeSwitcher";
 import { Link } from "wouter";
-import RadioLogoPath from "@assets/RadioLogo_1750204824630.png";
+import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const { togglePlayback, isPlaying } = useAudio();
-  const { getColors } = useTheme();
+  const { getColors, getGradient } = useTheme();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -26,10 +26,15 @@ export default function Navigation() {
         <div className="flex items-center justify-between h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
           {/* Logo & Brand */}
           <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg overflow-hidden p-2">
+            <div 
+              className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg overflow-hidden p-1.5"
+              style={{ 
+                background: getGradient()
+              }}
+            >
               <img 
-                src={RadioLogoPath} 
-                alt="Radio Logo" 
+                src={MusicLogoPath} 
+                alt="Music Logo" 
                 className="w-full h-full object-contain"
               />
             </div>

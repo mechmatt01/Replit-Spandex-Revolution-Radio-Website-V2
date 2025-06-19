@@ -42,9 +42,9 @@ export default function Hero() {
   };
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden -mt-16 pt-16">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-card to-background transition-colors duration-300">
+      <div className="absolute inset-0 -top-16 bg-gradient-to-b from-background via-card to-background transition-colors duration-300">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-20 dark:opacity-20 light:opacity-30"
           style={{
