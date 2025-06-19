@@ -132,7 +132,7 @@ export default function InteractiveAlbumArt({
         className="absolute inset-0 flex items-center justify-center transition-all duration-500"
         style={{ 
           background: getGradient(),
-          opacity: artwork && imageLoaded ? 0 : 1,
+          opacity: (!artwork || !imageLoaded) ? 1 : 0,
           transform: isHovered ? 'scale(1.1)' : 'scale(1)'
         }}
       >
@@ -160,7 +160,7 @@ export default function InteractiveAlbumArt({
       </div>
       
       {/* Album Artwork */}
-      {artwork && (
+      {artwork && artwork.trim() && (
         <div 
           className="absolute inset-0 transition-all duration-500"
           style={{ 

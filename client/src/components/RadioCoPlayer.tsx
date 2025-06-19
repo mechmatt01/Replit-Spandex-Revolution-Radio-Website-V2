@@ -66,7 +66,7 @@ export default function RadioCoPlayer() {
         </div>
       </div>
 
-      <div className="flex items-center justify-center space-x-6">
+      <div className="flex flex-col items-center space-y-4">
         {/* Play/Pause Button */}
         <Button
           onClick={togglePlayback}
@@ -86,7 +86,7 @@ export default function RadioCoPlayer() {
         </Button>
 
         {/* Volume Controls */}
-        <div className="flex items-center gap-3 min-w-[200px]">
+        <div className="flex items-center justify-center gap-3 w-full max-w-[250px]">
           <Button
             onClick={toggleMute}
             variant="ghost"
