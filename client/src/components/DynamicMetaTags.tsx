@@ -66,7 +66,10 @@ export default function DynamicMetaTags() {
     const textColor = isLightMode ? '#000000' : '#ffffff';
     const bgColor = isLightMode ? '#ffffff' : '#000000';
     const baseUrl = window.location.origin;
-    const ogImageUrl = `${baseUrl}/api/og-image?theme=${isLightMode ? 'light' : 'dark'}&primary=${encodeURIComponent(colors.primary)}&secondary=${encodeURIComponent(colors.secondary)}&background=${encodeURIComponent(bgColor)}&text=${encodeURIComponent(textColor)}&t=${Date.now()}`;
+    
+    // Include theme name in URL for better cache control
+    const themeName = currentTheme.replace('-mode', '').replace('-', '_');
+    const ogImageUrl = `${baseUrl}/api/og-image?theme=${themeName}&primary=${encodeURIComponent(colors.primary)}&secondary=${encodeURIComponent(colors.secondary)}&background=${encodeURIComponent(bgColor)}&text=${encodeURIComponent(textColor)}&v=${Date.now()}`;
     
     if (ogImageMeta) {
       ogImageMeta.setAttribute('content', ogImageUrl);
@@ -85,6 +88,18 @@ export default function DynamicMetaTags() {
       const meta = document.createElement('meta');
       meta.name = 'twitter:image';
       meta.content = ogImageUrl;
+      document.head.appendChild(meta);
+    }
+
+    // Force refresh of social media previews by updating URL
+    const ogUrlMeta = document.querySelector('meta[property="og:url"]');
+    const currentUrl = window.location.href.split('?')[0] + `?theme=${themeName}&v=${Date.now()}`;
+    if (ogUrlMeta) {
+      ogUrlMeta.setAttribute('content', currentUrl);
+    } else {
+      const meta = document.createElement('meta');
+      meta.setAttribute('property', 'og:url');
+      meta.content = currentUrl;
       document.head.appendChild(meta);
     }
 
