@@ -6,6 +6,7 @@ import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 
 export default function StickyPlayer() {
   const { isPlaying, volume, currentTrack, togglePlayback, setVolume } = useRadio();
@@ -38,16 +39,19 @@ export default function StickyPlayer() {
     return null;
   }
 
-  return (
+  const playerContent = (
     <div 
-      className="bg-card/95 backdrop-blur-sm border-t border-border transition-colors duration-300"
       style={{
         position: 'fixed',
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 9999,
-        width: '100%'
+        zIndex: 99999,
+        width: '100vw',
+        backgroundColor: 'rgba(0, 0, 0, 0.95)',
+        backdropFilter: 'blur(12px)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+        pointerEvents: 'auto'
       }}>
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
@@ -123,4 +127,7 @@ export default function StickyPlayer() {
       </div>
     </div>
   );
+
+  // Use portal to render outside normal document flow
+  return createPortal(playerContent, document.body);
 }
