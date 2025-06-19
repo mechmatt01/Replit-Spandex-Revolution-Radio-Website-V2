@@ -102,8 +102,8 @@ export default function Navigation() {
           </div>
 
           {/* Right side controls */}
-          <div className="flex items-center space-x-4 xl:space-x-4 mr-0 xl:mr-0">
-            <div className="mr-12 xl:mr-0">
+          <div className="flex items-center space-x-4 xl:space-x-4 mr-0 xl:mr-0 h-full">
+            <div className="mr-12 xl:mr-0 flex items-center h-full">
               <MetalThemeSwitcher />
             </div>
           </div>
@@ -112,7 +112,7 @@ export default function Navigation() {
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="xl:hidden absolute top-4 right-4 p-2 rounded-md"
+          className="xl:hidden absolute top-1/2 right-4 p-2 rounded-md transform -translate-y-1/2"
           style={{ color: colors.text }}
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
