@@ -65,7 +65,7 @@ export default function RadioCoPlayer() {
         <div className="transition-opacity duration-300">
           <div className="flex justify-center mb-2">
             <ScrollingText 
-              text={currentTrack.title}
+              text={isPlaying && currentTrack.title !== "Shady Pines Radio" ? currentTrack.title : "Shady Pines Radio"}
               className="font-bold text-xl text-foreground"
               maxWidth="75%"
               backgroundColor="hsl(var(--background))"

@@ -30,13 +30,17 @@ export default function ScrollingText({ text, className = '', maxWidth = '60%', 
   }, [text]);
 
   useEffect(() => {
-    // Always start scrolling after a short delay
-    const timer = setTimeout(() => {
-      setIsScrolling(true);
-    }, 1000); // Start scrolling after 1 second
-
-    return () => clearTimeout(timer);
-  }, [text]); // Reset scrolling when text changes
+    // Only start scrolling if text overflows and it's not just the radio station name
+    if (shouldScroll && text !== "Shady Pines Radio") {
+      const timer = setTimeout(() => {
+        setIsScrolling(true);
+      }, 1000); // Start scrolling after 1 second
+      
+      return () => clearTimeout(timer);
+    } else {
+      setIsScrolling(false);
+    }
+  }, [text, shouldScroll]); // Reset scrolling when text changes
 
   return (
     <div 

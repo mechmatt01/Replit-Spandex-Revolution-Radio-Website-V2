@@ -32,7 +32,7 @@ export default function StickyPlayer() {
             <div className="min-w-0 flex-1 transition-opacity duration-300">
               <div className="w-full max-w-xs">
                 <ScrollingText 
-                  text={currentTrack.title}
+                  text={isPlaying && currentTrack.title !== "Shady Pines Radio" ? currentTrack.title : "Shady Pines Radio"}
                   className="font-semibold text-foreground"
                   maxWidth="100%"
                   isFloating={true}
