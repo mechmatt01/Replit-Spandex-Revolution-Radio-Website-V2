@@ -50,6 +50,7 @@ export default function HomePage() {
       <AdminPanel />
       <AdvancedAdminDashboard />
       <Footer />
+      <StickyPlayer />
 
     </div>
   );

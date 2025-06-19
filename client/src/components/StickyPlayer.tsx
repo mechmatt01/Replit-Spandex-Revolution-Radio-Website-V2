@@ -2,33 +2,23 @@ import { Pause, Play, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRadio } from "@/contexts/RadioContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 
 export default function StickyPlayer() {
   const { isPlaying, volume, currentTrack, togglePlayback, setVolume } = useRadio();
+  const { getGradient } = useTheme();
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseInt(e.target.value) / 100;
     setVolume(newVolume);
   };
 
-  // Only show when radio is playing
-  if (!isPlaying) {
-    return null;
-  }
+  // Always show the floating player
 
   return (
-    <div 
-      className="bg-black/90 backdrop-blur-sm border-t border-gray-700"
-      style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 999999,
-        width: '100%'
-      }}>
+    <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-40 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
@@ -63,21 +53,10 @@ export default function StickyPlayer() {
             
             <Button
               onClick={togglePlayback}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500 flex items-center justify-center relative"
+              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
             >
-              {isPlaying ? (
-                <div className="flex items-center justify-center">
-                  <div className="flex space-x-1">
-                    <div className="w-1.5 h-6 bg-white rounded-sm"></div>
-                    <div className="w-1.5 h-6 bg-white rounded-sm"></div>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center ml-0.5">
-                  <div className="w-0 h-0 border-l-[8px] border-l-white border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent"></div>
-                </div>
-              )}
+              {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5" />}
             </Button>
 
             {/* Volume Control */}

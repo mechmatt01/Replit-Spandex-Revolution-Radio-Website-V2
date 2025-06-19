@@ -186,10 +186,6 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Updated floating player to always be visible and synchronized with main player controls
 - June 19, 2025: Fixed album name display in main player - shows album when available, removes "Live Stream" text accordingly
 - June 19, 2025: Improved scroll timing in floating player for faster text reappearance (4s vs 8s animation)
-- June 19, 2025: Enhanced floating player pause/play button icons - thicker bars with better spacing, larger icons, perfect centering
-- June 19, 2025: Implemented continuous scrolling text without gaps - seamless looping with duplicated text approach
-- June 19, 2025: Fixed loading bar completion issues across all browsers, especially Safari mobile, with comprehensive resource detection
-- June 19, 2025: Standardized form input styling consistency across Contact, Merch, and Submissions sections
 
 ## User Preferences
 

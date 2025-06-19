@@ -48,16 +48,14 @@ export default function ScrollingText({ text, className = '', maxWidth = '60%', 
     >
       <div
         ref={textRef}
-        className={`whitespace-nowrap ${
-          isScrolling ? (isFloating ? 'animate-scroll-floating-continuous' : 'animate-scroll-continuous') : ''
+        className={`whitespace-nowrap transition-transform duration-[8s] ease-linear ${
+          isScrolling ? (isFloating ? 'animate-scroll-floating' : 'animate-scroll') : ''
         }`}
         style={{
           ...(isScrolling ? {} : { transform: 'translateX(0)' })
         }}
       >
-        {/* Duplicate text for seamless loop */}
-        <span className="inline-block pr-12">{text}</span>
-        {shouldScroll && <span className="inline-block pr-12">{text}</span>}
+        {text}
       </div>
       
       {/* Fade edges */}
