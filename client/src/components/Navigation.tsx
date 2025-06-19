@@ -405,6 +405,13 @@ export default function Navigation() {
           )}
         </div>
       </nav>
+      
+      {/* Authentication Modal */}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode={authMode}
+      />
     </TooltipProvider>
   );
 }
