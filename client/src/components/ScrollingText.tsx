@@ -5,6 +5,7 @@ interface ScrollingTextProps {
   className?: string;
   maxWidth?: string;
   style?: React.CSSProperties;
+  isFloating?: boolean;
 }
 
 export default function ScrollingText({ text, className = '', maxWidth = '60%', style = {} }: ScrollingTextProps) {

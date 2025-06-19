@@ -251,76 +251,86 @@ export default function Navigation() {
                 </Link>
                 <button 
                   onClick={() => scrollToSection("schedule")}
-                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   style={{ color: colors.text }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = colors.primary;
+                    e.currentTarget.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
                     e.currentTarget.style.color = colors.text;
                   }}
+                  role="menuitem"
+                  aria-label="Navigate to schedule section"
                 >
                   SCHEDULE
                 </button>
                 <button 
                   onClick={() => scrollToSection("submissions")}
-                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   style={{ color: colors.text }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = colors.primary;
+                    e.currentTarget.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
                     e.currentTarget.style.color = colors.text;
                   }}
+                  role="menuitem"
+                  aria-label="Navigate to submissions section"
                 >
                   SUBMISSIONS
                 </button>
                 <button 
                   onClick={() => scrollToSection("contact")}
-                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   style={{ color: colors.text }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = colors.primary;
+                    e.currentTarget.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
                     e.currentTarget.style.color = colors.text;
                   }}
+                  role="menuitem"
+                  aria-label="Navigate to contact section"
                 >
                   CONTACT
                 </button>
                 <button 
                   onClick={() => scrollToSection("merch")}
-                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   style={{ color: colors.text }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = colors.primary;
+                    e.currentTarget.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
                     e.currentTarget.style.color = colors.text;
                   }}
+                  role="menuitem"
+                  aria-label="Navigate to merchandise section"
                 >
                   MERCH
                 </button>
                 <button 
                   onClick={() => scrollToSection("subscription")}
-                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200"
+                  className="block w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   style={{ color: colors.text }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = colors.primary;
+                    e.currentTarget.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
                     e.currentTarget.style.color = colors.text;
                   }}
+                  role="menuitem"
+                  aria-label="Navigate to subscription section"
                 >
                   SUBSCRIBE
                 </button>

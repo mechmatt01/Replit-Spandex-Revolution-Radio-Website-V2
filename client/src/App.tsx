@@ -30,6 +30,7 @@ function App() {
           <AudioProvider>
             <AdminProvider>
               <TooltipProvider>
+                <SkipToContent />
                 <Toaster />
                 <Router />
               </TooltipProvider>

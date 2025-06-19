@@ -49,7 +49,12 @@
 }
 
 .animate-scroll {
-  animation: scroll 12s linear infinite;
+  animation: scroll 8s linear infinite;
+  animation-delay: 1s;
+}
+
+.animate-scroll-floating {
+  animation: scroll 4s linear infinite;
   animation-delay: 1s;
 }
 
