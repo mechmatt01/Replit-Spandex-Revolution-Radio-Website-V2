@@ -22,7 +22,6 @@ export default function InteractiveAlbumArt({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [previousGradient, setPreviousGradient] = useState(getGradient());
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const sizeClasses = {
     sm: 'w-12 h-12',
@@ -52,50 +51,15 @@ export default function InteractiveAlbumArt({
     }
   }, [currentTheme, getGradient, previousGradient, artwork]);
 
-  // Canvas-based gradient morphing animation
+  // Simplified gradient transition without canvas
   useEffect(() => {
-    if (!canvasRef.current || !isTransitioning) return;
-
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    let animationId: number;
-    let progress = 0;
-
-    const animate = () => {
-      progress += 0.05;
-      
-      if (progress >= 1) {
-        progress = 1;
+    if (isTransitioning) {
+      const timer = setTimeout(() => {
         setIsTransitioning(false);
-      }
-
-      // Create morphing gradient effect
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-      
-      // Interpolate between old and new gradients
-      const easeProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
-      
-      gradient.addColorStop(0, previousGradient);
-      gradient.addColorStop(easeProgress, getGradient());
-      
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      if (progress < 1) {
-        animationId = requestAnimationFrame(animate);
-      }
-    };
-
-    animate();
-
-    return () => {
-      if (animationId) {
-        cancelAnimationFrame(animationId);
-      }
-    };
-  }, [isTransitioning, previousGradient, getGradient]);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isTransitioning]);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
