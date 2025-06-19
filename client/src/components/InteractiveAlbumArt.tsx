@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import ThemedMusicLogo from '@/components/ThemedMusicLogo';
 
@@ -81,15 +81,7 @@ export default function InteractiveAlbumArt({
           : '0 4px 8px rgba(0,0,0,0.2)'
       }}
     >
-      {/* Canvas for gradient morphing */}
-      {isTransitioning && (
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 w-full h-full"
-          width={200}
-          height={200}
-        />
-      )}
+
 
       {/* Themed Placeholder Background */}
       <div 
