@@ -38,9 +38,10 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300">
-      <div className="w-full relative">
-        <div className="flex items-center justify-between h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
+    <TooltipProvider>
+      <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300">
+        <div className="w-full relative">
+          <div className="flex items-center justify-between h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
           {/* Logo & Brand */}
           <div className="flex items-center space-x-4">
             <div 
@@ -326,7 +327,8 @@ export default function Navigation() {
             </div>
           </div>
         )}
-      </div>
-    </nav>
+        </div>
+      </nav>
+    </TooltipProvider>
   );
 }
