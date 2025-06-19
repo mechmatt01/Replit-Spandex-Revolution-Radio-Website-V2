@@ -40,11 +40,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
   const streamUrls = [
     "/api/radio-stream",
-    "https://streamer.radio.co/kprs/listen",
-    "https://stream.radio.co/kprs/listen",
-    "https://kprs.out.airtime.pro/kprs_a",
-    "https://ice1.somafm.com/metal-128-mp3",
-    "https://ice2.somafm.com/metal-128-mp3"
+    "https://pwav4.media.streamtheworld.com/convertedfiles/KPRSFM_MEDIA_3051.mp3",
+    "https://pwav4.media.streamtheworld.com/KPRSFMAAC_SC",
+    "https://pwav4.media.streamtheworld.com/KPRSFM",
+    "https://ice1.somafm.com/metal-128-mp3"
   ];
 
   const togglePlayback = async () => {
