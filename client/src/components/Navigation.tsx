@@ -96,7 +96,7 @@ export default function Navigation() {
 
         {/* Mobile Navigation Overlay */}
         {isOpen && (
-          <div className="xl:hidden fixed inset-0 z-40 top-16" onClick={() => setIsOpen(false)}>
+          <div className="xl:hidden fixed inset-0 z-40 top-16">
             {/* Background Blur Overlay */}
             <div 
               className="absolute inset-0 backdrop-blur-lg transition-all duration-300"
@@ -104,11 +104,12 @@ export default function Navigation() {
                 backgroundColor: `${colors.background}60`,
                 backdropFilter: 'blur(12px)'
               }}
+              onClick={() => setIsOpen(false)}
             />
             
             {/* Menu Content */}
             <div 
-              className="relative z-50 rounded-2xl m-4 p-6 shadow-2xl backdrop-blur-sm"
+              className="absolute top-4 right-4 z-50 rounded-2xl p-6 shadow-2xl backdrop-blur-sm min-w-[200px] w-auto"
               style={{ 
                 backgroundColor: `${colors.surface}95`,
                 border: `1px solid ${colors.border}50`,
