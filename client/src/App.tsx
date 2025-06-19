@@ -10,6 +10,7 @@ import { RadioProvider } from "@/contexts/RadioContext";
 import SkipToContent from "@/components/SkipToContent";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
 import LoadingManager from "@/components/LoadingManager";
+import StickyPlayer from "@/components/StickyPlayer";
 import HomePage from "@/pages/HomePage";
 import MusicPage from "@/pages/MusicPage";
 import NotFound from "@/pages/not-found";
@@ -37,6 +38,7 @@ function App() {
                 <LoadingManager />
                 <Toaster />
                 <Router />
+                <StickyPlayer />
               </TooltipProvider>
             </AdminProvider>
           </AudioProvider>

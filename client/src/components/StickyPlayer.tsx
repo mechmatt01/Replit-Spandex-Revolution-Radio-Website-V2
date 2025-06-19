@@ -15,19 +15,13 @@ export default function StickyPlayer() {
     setVolume(newVolume);
   };
 
-  // Force visibility for debugging
-  console.log('StickyPlayer rendering with track:', currentTrack);
-  
+  // Only show when radio is playing
+  if (!isPlaying) {
+    return null;
+  }
+
   return (
-    <div 
-      className="fixed bottom-0 left-0 right-0 z-[9999]"
-      style={{ 
-        backgroundColor: '#ff0000', // Red background for debugging
-        display: 'block !important',
-        minHeight: '80px',
-        width: '100%',
-        position: 'fixed'
-      }}>
+    <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-50 transition-colors duration-300 border-t border-border">
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
