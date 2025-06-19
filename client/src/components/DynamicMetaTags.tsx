@@ -18,30 +18,39 @@ export default function DynamicMetaTags() {
       document.head.appendChild(meta);
     }
 
-    // Update Open Graph color meta tag (custom)
-    const ogColorMeta = document.querySelector('meta[property="og:theme-color"]');
-    if (ogColorMeta) {
-      ogColorMeta.setAttribute('content', colors.primary);
+    // Generate dynamic favicon based on current theme
+    const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
+    const faviconSvg = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:${colors.primary}" />
+            <stop offset="100%" style="stop-color:${colors.secondary}" />
+          </linearGradient>
+        </defs>
+        <rect width="32" height="32" fill="${isLightMode ? '#ffffff' : '#000000'}" rx="4"/>
+        <rect x="2" y="2" width="28" height="28" fill="url(#grad)" rx="3"/>
+        <path d="M8 12h16v2H8zm0 4h12v2H8zm0 4h16v2H8z" fill="${isLightMode ? '#000000' : '#ffffff'}" opacity="0.8"/>
+        <circle cx="22" cy="8" r="3" fill="#ff0000">
+          <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    `;
+    
+    const faviconBlob = new Blob([faviconSvg], { type: 'image/svg+xml' });
+    const faviconUrl = URL.createObjectURL(faviconBlob);
+    
+    if (favicon) {
+      favicon.href = faviconUrl;
     } else {
-      const meta = document.createElement('meta');
-      meta.setAttribute('property', 'og:theme-color');
-      meta.content = colors.primary;
-      document.head.appendChild(meta);
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/svg+xml';
+      link.href = faviconUrl;
+      document.head.appendChild(link);
     }
 
-    // Update background color based on theme
-    const backgroundColor = isLightMode ? '#ffffff' : '#000000';
-    const backgroundColorMeta = document.querySelector('meta[name="background-color"]');
-    if (backgroundColorMeta) {
-      backgroundColorMeta.setAttribute('content', backgroundColor);
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'background-color';
-      meta.content = backgroundColor;
-      document.head.appendChild(meta);
-    }
-
-    // Update color scheme
+    // Update color scheme meta tag
     const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
     if (colorSchemeMeta) {
       colorSchemeMeta.setAttribute('content', isLightMode ? 'light' : 'dark');
@@ -55,7 +64,9 @@ export default function DynamicMetaTags() {
     // Update Open Graph image URL with theme parameters
     const ogImageMeta = document.querySelector('meta[property="og:image"]');
     const textColor = isLightMode ? '#000000' : '#ffffff';
-    const ogImageUrl = `/api/og-image?theme=${isLightMode ? 'light' : 'dark'}&primary=${encodeURIComponent(colors.primary)}&secondary=${encodeURIComponent(colors.secondary)}&background=${encodeURIComponent(backgroundColor)}&text=${encodeURIComponent(textColor)}`;
+    const bgColor = isLightMode ? '#ffffff' : '#000000';
+    const baseUrl = window.location.origin;
+    const ogImageUrl = `${baseUrl}/api/og-image?theme=${isLightMode ? 'light' : 'dark'}&primary=${encodeURIComponent(colors.primary)}&secondary=${encodeURIComponent(colors.secondary)}&background=${encodeURIComponent(bgColor)}&text=${encodeURIComponent(textColor)}&t=${Date.now()}`;
     
     if (ogImageMeta) {
       ogImageMeta.setAttribute('content', ogImageUrl);
@@ -66,10 +77,21 @@ export default function DynamicMetaTags() {
       document.head.appendChild(meta);
     }
 
+    // Update Twitter card image
+    const twitterImageMeta = document.querySelector('meta[name="twitter:image"]');
+    if (twitterImageMeta) {
+      twitterImageMeta.setAttribute('content', ogImageUrl);
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'twitter:image';
+      meta.content = ogImageUrl;
+      document.head.appendChild(meta);
+    }
+
     // Update CSS custom properties for preview generation
     document.documentElement.style.setProperty('--preview-primary', colors.primary);
     document.documentElement.style.setProperty('--preview-secondary', colors.secondary);
-    document.documentElement.style.setProperty('--preview-background', backgroundColor);
+    document.documentElement.style.setProperty('--preview-background', bgColor);
     document.documentElement.style.setProperty('--preview-text', textColor);
 
   }, [currentTheme, colors, isLightMode]);

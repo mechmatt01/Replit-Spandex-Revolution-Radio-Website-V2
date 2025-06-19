@@ -6,6 +6,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import MetalThemeSwitcher from "@/components/MetalThemeSwitcher";
 import { Link } from "wouter";
 import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
