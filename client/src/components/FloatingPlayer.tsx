@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useRadio } from "@/contexts/RadioContext";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
+import { useEffect } from "react";
 
 export default function FloatingPlayer() {
   const { isPlaying, volume, currentTrack, togglePlayback, setVolume } = useRadio();
@@ -11,6 +12,20 @@ export default function FloatingPlayer() {
     const newVolume = parseInt(e.target.value) / 100;
     setVolume(newVolume);
   };
+
+  // Manage body class for content spacing when player is active
+  useEffect(() => {
+    if (isPlaying) {
+      document.body.classList.add('player-active');
+    } else {
+      document.body.classList.remove('player-active');
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      document.body.classList.remove('player-active');
+    };
+  }, [isPlaying]);
 
   // Only show when radio is playing
   if (!isPlaying) {
