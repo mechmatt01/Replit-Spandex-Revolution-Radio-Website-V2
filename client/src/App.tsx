@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AudioProvider } from "@/contexts/AudioContext";
 import { AdminProvider } from "@/contexts/AdminContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { RadioProvider } from "@/contexts/RadioContext";
 import HomePage from "@/pages/HomePage";
 import MusicPage from "@/pages/MusicPage";
 import NotFound from "@/pages/not-found";
@@ -24,14 +25,16 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <AudioProvider>
-          <AdminProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Router />
-            </TooltipProvider>
-          </AdminProvider>
-        </AudioProvider>
+        <RadioProvider>
+          <AudioProvider>
+            <AdminProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Router />
+              </TooltipProvider>
+            </AdminProvider>
+          </AudioProvider>
+        </RadioProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

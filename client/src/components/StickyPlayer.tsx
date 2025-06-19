@@ -1,55 +1,17 @@
 import { Pause, Play, Volume2, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useRef, useEffect } from "react";
+import { useRadio } from "@/contexts/RadioContext";
 
 export default function StickyPlayer() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolume] = useState(70);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const { isPlaying, volume, togglePlayback } = useRadio();
   
   // Stream info
-  const streamUrl = "https://ice1.somafm.com/metal-128-mp3";
   const trackTitle = "Metal Detector Radio";
   const trackArtist = "SomaFM Metal Stream";
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const handlePlay = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-
-    return () => {
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-    };
-  }, []);
-
-  const togglePlayback = async () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    try {
-      if (isPlaying) {
-        audio.pause();
-      } else {
-        audio.src = streamUrl;
-        await audio.play();
-      }
-    } catch (error) {
-      console.error("Sticky player error:", error);
-    }
-  };
-
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseInt(e.target.value);
-    setVolume(newVolume);
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume / 100;
-    }
+    // Volume control handled by RadioContext
   };
 
   if (!isPlaying) return null;

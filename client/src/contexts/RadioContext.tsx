@@ -109,7 +109,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   };
 
   // Set up audio event listeners
-  React.useEffect(() => {
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
