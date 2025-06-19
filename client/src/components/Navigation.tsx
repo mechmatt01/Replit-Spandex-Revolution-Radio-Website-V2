@@ -239,26 +239,27 @@ export default function Navigation() {
           {isOpen && (
             <div 
               ref={menuRef}
-              className="xl:hidden absolute top-full left-0 right-0 shadow-xl border-t animate-in slide-in-from-top-2 duration-300"
+              className="xl:hidden absolute top-full right-0 shadow-xl border animate-in slide-in-from-top-2 duration-300 bg-card/95 backdrop-blur-sm rounded-lg"
               style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.98)',
-                backdropFilter: 'blur(20px)',
-                borderColor: colors.primary + '30'
+                borderColor: colors.primary + '40',
+                width: 'fit-content',
+                minWidth: '200px'
               }}
             >
-              <div className="px-4 py-6 space-y-2">
+              <div className="px-2 py-2 space-y-1">
                 {menuItems.map((item) => {
                   const IconComponent = item.icon;
                   return (
                     <button
                       key={item.id}
                       onClick={item.action}
-                      className="flex items-center space-x-3 w-full text-left px-4 py-3 text-lg font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2"
+                      className="flex items-center justify-between px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 whitespace-nowrap"
                       style={{ 
-                        color: colors.text
+                        color: colors.text,
+                        minWidth: 'max-content'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
+                        e.currentTarget.style.backgroundColor = colors.primary;
                         e.currentTarget.style.color = 'white';
                       }}
                       onMouseLeave={(e) => {
@@ -268,8 +269,8 @@ export default function Navigation() {
                       role="menuitem"
                       aria-label={`Navigate to ${item.label.toLowerCase()} section`}
                     >
-                      <IconComponent size={20} style={{ color: colors.primary }} />
-                      <span>{item.label}</span>
+                      <span className="text-right">{item.label}</span>
+                      <IconComponent size={16} style={{ color: colors.primary }} />
                     </button>
                   );
                 })}
