@@ -449,29 +449,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Radio.co stream status API with live data
   app.get("/api/radio-status", async (req, res) => {
     try {
-      const response = await fetch("https://public.radio.co/stations/kprs/status");
+      // Try to get KPRS stream info from radio.co API
+      const response = await fetch("https://public.radio.co/stations/s8b64325e5/status");
       if (response.ok) {
         const data = await response.json();
         res.json({
           station: "KPRS Radio",
-          streamUrl: "https://www.kprs.com/",
+          streamUrl: "https://streamer.radio.co/s8b64325e5/listen",
           status: "live",
           format: "audio/mpeg",
           currentTrack: data.current_track || null,
           listeners: data.listeners || 0
         });
       } else {
+        // Fallback with direct KPRS stream URL
         res.json({
           station: "KPRS Radio",
-          streamUrl: "https://www.kprs.com/",
+          streamUrl: "https://streamer.radio.co/s8b64325e5/listen",
           status: "live",
           format: "audio/mpeg"
         });
       }
     } catch (error) {
+      // Ultimate fallback
       res.json({
         station: "KPRS Radio",
-        streamUrl: "https://www.kprs.com/",
+        streamUrl: "https://streamer.radio.co/s8b64325e5/listen",
         status: "live",
         format: "audio/mpeg"
       });

@@ -29,9 +29,9 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
-    title: "Metal Detector Radio",
-    artist: "SomaFM Metal Stream",
-    album: "Live Stream",
+    title: "KPRS Radio",
+    artist: "Live Stream",
+    album: "24/7 Music",
     artwork: ""
   });
   const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
@@ -39,10 +39,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const streamUrls = [
-    "https://streamer.radio.co/s3bc65afb4/listen",
-    "https://streamer.radio.co/s3bc65afb4/listen.aac",
-    "https://streamer.radio.co/s3bc65afb4/listen.mp3",
-    "https://streamer.radio.co/s3bc65afb4/listen?type=http&nocache=" + Date.now()
+    "https://streamer.radio.co/s8b64325e5/listen",
+    "https://streamer.radio.co/s8b64325e5/listen.aac", 
+    "https://streamer.radio.co/s8b64325e5/listen.mp3",
+    "https://streamer.radio.co/s8b64325e5/listen?type=http&nocache=" + Date.now()
   ];
 
   const togglePlayback = async () => {
