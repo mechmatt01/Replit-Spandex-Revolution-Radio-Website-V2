@@ -54,7 +54,8 @@ export default function DynamicMetaTags() {
 
     // Update Open Graph image URL with theme parameters
     const ogImageMeta = document.querySelector('meta[property="og:image"]');
-    const ogImageUrl = `/api/og-image?theme=${isLightMode ? 'light' : 'dark'}&primary=${encodeURIComponent(colors.primary)}&secondary=${encodeURIComponent(colors.secondary)}&background=${encodeURIComponent(backgroundColor)}&text=${encodeURIComponent(isLightMode ? '#000000' : '#ffffff')}`;
+    const textColor = isLightMode ? '#000000' : '#ffffff';
+    const ogImageUrl = `/api/og-image?theme=${isLightMode ? 'light' : 'dark'}&primary=${encodeURIComponent(colors.primary)}&secondary=${encodeURIComponent(colors.secondary)}&background=${encodeURIComponent(backgroundColor)}&text=${encodeURIComponent(textColor)}`;
     
     if (ogImageMeta) {
       ogImageMeta.setAttribute('content', ogImageUrl);
@@ -69,7 +70,7 @@ export default function DynamicMetaTags() {
     document.documentElement.style.setProperty('--preview-primary', colors.primary);
     document.documentElement.style.setProperty('--preview-secondary', colors.secondary);
     document.documentElement.style.setProperty('--preview-background', backgroundColor);
-    document.documentElement.style.setProperty('--preview-text', isLightMode ? '#000000' : '#ffffff');
+    document.documentElement.style.setProperty('--preview-text', textColor);
 
   }, [currentTheme, colors, isLightMode]);
 

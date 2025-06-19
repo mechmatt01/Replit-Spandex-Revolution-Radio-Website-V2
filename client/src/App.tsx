@@ -8,6 +8,7 @@ import { AdminProvider } from "@/contexts/AdminContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { RadioProvider } from "@/contexts/RadioContext";
 import SkipToContent from "@/components/SkipToContent";
+import DynamicMetaTags from "@/components/DynamicMetaTags";
 import HomePage from "@/pages/HomePage";
 import MusicPage from "@/pages/MusicPage";
 import NotFound from "@/pages/not-found";
@@ -31,6 +32,7 @@ function App() {
             <AdminProvider>
               <TooltipProvider>
                 <SkipToContent />
+                <DynamicMetaTags />
                 <Toaster />
                 <Router />
               </TooltipProvider>

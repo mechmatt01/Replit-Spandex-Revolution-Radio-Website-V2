@@ -86,7 +86,7 @@ export default function Contact() {
                       onChange={(e) => handleInputChange("firstName", e.target.value)}
                       placeholder="John"
                       required
-                      className="bg-dark-bg/50 text-white placeholder-gray-500 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
+                      className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
                     />
                   </div>
                   <div>
@@ -97,7 +97,7 @@ export default function Contact() {
                       onChange={(e) => handleInputChange("lastName", e.target.value)}
                       placeholder="Doe"
                       required
-                      className="bg-dark-bg/50 text-white placeholder-gray-500 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
+                      className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
                     />
                   </div>
                 </div>
