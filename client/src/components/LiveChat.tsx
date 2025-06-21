@@ -63,29 +63,42 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false }: LiveCh
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  // Don't show anything if user is not authenticated
+  // If user is not authenticated, don't show the chat at all
   if (!isAuthenticated) {
     return null;
   }
 
-  // Show subscription prompt if user doesn't have paid subscription
-  if (!hasPaidSubscription) {
+  // Check if this is first time access for new users
+  const isFirstTimeUser = user?.isFirstLogin && !hasPaidSubscription;
+
+  // Only show subscription prompt when user explicitly tries to access chat or is first-time user
+  if (!hasPaidSubscription && isEnabled) {
     return (
-      <div className="fixed bottom-36 right-4 z-50">
-        <Card className="bg-orange-500/10 border-orange-500/20 max-w-xs">
-          <CardContent className="p-4 text-center">
-            <MessageCircle className="h-8 w-8 text-orange-400 mx-auto mb-2" />
-            <p className="text-orange-400 text-sm font-semibold mb-2">Premium Feature</p>
-            <p className="text-gray-300 text-xs mb-3">
-              Live chat is available with paid subscriptions. Upgrade to join the conversation!
-            </p>
-            <Button 
-              onClick={() => document.getElementById('subscribe')?.scrollIntoView({ behavior: 'smooth' })}
-              size="sm"
-              className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1"
-            >
-              Upgrade Now
-            </Button>
+      <div className="fixed bottom-20 right-4 z-40">
+        <Card className="w-80 shadow-lg border-2" style={{ borderColor: colors.primary }}>
+          <CardContent className="p-4">
+            <div className="text-center space-y-3">
+              <MessageCircle className="w-8 h-8 mx-auto" style={{ color: colors.primary }} />
+              <h3 className="font-bold text-lg">Join the Conversation!</h3>
+              <p className="text-sm text-muted-foreground">
+                {isFirstTimeUser 
+                  ? "Welcome! Get exclusive access to live chat, song submissions, and premium content with your Spandex Salvation subscription."
+                  : "Live chat and premium features are available with your subscription."}
+              </p>
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground">
+                  ✓ Live Chat Access ✓ Song Submissions ✓ Exclusive Content
+                </p>
+                <div className="flex gap-2">
+                  <Button size="sm" className="flex-1" onClick={() => window.location.href = "/subscribe"}>
+                    Subscribe Now
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={onToggle}>
+                    Close
+                  </Button>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

@@ -14,6 +14,7 @@ import HomePage from "@/pages/HomePage";
 import MusicPage from "@/pages/MusicPage";
 import ProfilePage from "@/pages/ProfilePage";
 import LoginPage from "@/pages/LoginPage";
+import SubscribePage from "@/pages/SubscribePage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/music" component={MusicPage} />
       <Route path="/profile" component={ProfilePage} />
       <Route path="/login" component={LoginPage} />
+      <Route path="/subscribe" component={SubscribePage} />
       <Route component={NotFound} />
     </Switch>
   );

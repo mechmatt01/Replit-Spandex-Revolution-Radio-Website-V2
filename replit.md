@@ -143,7 +143,7 @@ The application uses PostgreSQL with the following main entities:
 - June 17, 2025: Hero text layout - moved "Join the hairspray rebellion!" to new line below main description
 - June 18, 2025: Fixed theme toggle icon display issue - sun icon now properly visible in dark mode with inline orange color styling
 - June 18, 2025: Implemented working audio playbook system with accessible Google audio sources to resolve CORS restrictions
-- June 18, 2025: Complete Spotify Web API integration implemented with authentication flow, Web Playback SDK, and server-side token endpoints
+- June 18, 2025: Complete Spotify Web API integration implemented with authentication flow, Web Playbook SDK, and server-side token endpoints
 - June 18, 2025: Added dedicated music page with live stream and Spotify streaming options
 - June 18, 2025: Fixed theme toggle icon centering with perfect positioning using translate transforms
 - June 18, 2025: Security vulnerability CVE-2025-30208 patched by updating Vite from 5.4.14 to 5.4.15
@@ -191,6 +191,12 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Fixed focus ring color on floating player play/pause button to dynamically match current theme primary color
 - June 19, 2025: Enhanced scrolling text behavior - static centered display when paused, smart scrolling only for track content during playback
 - June 19, 2025: Increased floating player icon size to 28px for better visibility and interaction
+- June 21, 2025: Complete authentication system implementation - email/password + Google OAuth, persistent login sessions, profile avatars in navigation
+- June 21, 2025: Comprehensive profile management system - sidebar navigation, profile image upload, premium avatar selection, phone number/email management
+- June 21, 2025: Advanced subscription management - billing information display, payment method details, subscription cancellation with confirmation modals
+- June 21, 2025: Enhanced live chat with friendly subscription prompts - only shows for first-time users or when clicking premium features, subscription upgrade flow
+- June 21, 2025: Database schema updates - added profile images, phone numbers, login tracking, subscription management fields
+- June 21, 2025: Created dedicated login page with proper routing, subscription page with tier selection, and profile page with complete feature set
 - June 19, 2025: Improved text display logic to show single instance when static, duplicated only during scrolling animations
 - June 19, 2025: Enhanced text alignment - floating player left-aligned, main player centered when not playing
 - June 19, 2025: Adjusted main player width to prevent text cutoff when displaying station name
