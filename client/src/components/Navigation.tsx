@@ -334,6 +334,39 @@ export default function Navigation() {
                 )}
               </div>
               
+              {/* Mobile theme toggle */}
+              <div className="xl:hidden">
+                <Button
+                  onClick={toggleTheme}
+                  size="sm"
+                  variant="ghost"
+                  className="p-2 rounded-full hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-primary transition-all duration-200"
+                  style={{
+                    color: colors.text,
+                    transform: 'translate(0, 0)',
+                  }}
+                  aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+                >
+                  {isDarkMode ? (
+                    <Sun 
+                      size={20} 
+                      style={{ 
+                        color: colors.primary,
+                        transform: 'translate(0, 0)'
+                      }} 
+                    />
+                  ) : (
+                    <Moon 
+                      size={20} 
+                      style={{ 
+                        color: colors.primary,
+                        transform: 'translate(0, 0)'
+                      }} 
+                    />
+                  )}
+                </Button>
+              </div>
+              
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
