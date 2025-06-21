@@ -32,8 +32,6 @@ export default function Navigation() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const brandTextRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
-  const [navLeftPosition, setNavLeftPosition] = useState<number>(320);
-
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -50,38 +48,6 @@ export default function Navigation() {
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen, isDropdownOpen]);
-
-  // Calculate precise navigation positioning based on brand text
-  useEffect(() => {
-    const calculateNavPosition = () => {
-      if (brandTextRef.current && navRef.current) {
-        const brandRect = brandTextRef.current.getBoundingClientRect();
-        const navRect = navRef.current.getBoundingClientRect();
-        
-        // Get brand text center X coordinate
-        const brandCenterX = brandRect.left + (brandRect.width / 2);
-        
-        // Calculate nav width
-        const navWidth = navRect.width || 400; // fallback width
-        
-        // Position nav so its center aligns with brand text center
-        const navLeftPos = brandCenterX - (navWidth / 2);
-        
-        setNavLeftPosition(navLeftPos);
-      }
-    };
-
-    // Calculate on mount and when window resizes
-    calculateNavPosition();
-    const timer = setTimeout(calculateNavPosition, 100);
-    
-    window.addEventListener('resize', calculateNavPosition);
-    
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', calculateNavPosition);
-    };
-  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -105,9 +71,9 @@ export default function Navigation() {
     <TooltipProvider>
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300">
         <div className="w-full relative">
-          <div className="flex items-center h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
-            {/* Logo & Brand */}
-            <div className="flex items-center space-x-4">
+          <div className="grid grid-cols-3 items-center h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
+            {/* Logo & Brand - Left column */}
+            <div className="flex items-center space-x-4 justify-self-start">
               <div 
                 className="flex items-center justify-center w-8 h-8 rounded-full"
                 style={{ 
@@ -131,13 +97,12 @@ export default function Navigation() {
               </div>
             </div>
 
-            {/* Desktop Navigation - Centered relative to brand text */}
+            {/* Desktop Navigation - Center column, aligned with brand text center */}
             <div 
               ref={navRef}
-              className="hidden xl:flex items-center space-x-4 absolute" 
+              className="hidden xl:flex items-center space-x-4 justify-self-center"
               style={{ 
-                left: `${navLeftPosition}px`,
-                transition: 'left 0.2s ease-in-out'
+                transform: 'translateX(-60px)' // Offset to align with brand text center
               }}
             >
               {menuItems.slice(0, 3).map((item) => {
@@ -257,8 +222,8 @@ export default function Navigation() {
               </div>
             </div>
 
-            {/* Right side controls */}
-            <div className="flex items-center space-x-3 ml-auto">
+            {/* Right side controls - Right column */}
+            <div className="flex items-center space-x-3 justify-self-end">
               {/* Theme toggle for desktop only */}
               <div className="hidden xl:flex items-center">
                 <MetalThemeSwitcher />
