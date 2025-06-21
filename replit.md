@@ -126,7 +126,14 @@ The application uses PostgreSQL with the following main entities:
 - **Deep Black Default Theme**: Dark theme as default for first-time visitors
 - **Responsive Navigation**: Optimized spacing and mobile behavior
 
+## Google OAuth Setup Notes
+Current development domain: `https://9c4b622d-92a4-4193-9bf1-e70aa305f5b5-00-nv1cf8s5dwtq.spock.replit.dev`
+Required redirect URIs in Google Cloud Console:
+- Development: `https://9c4b622d-92a4-4193-9bf1-e70aa305f5b5-00-nv1cf8s5dwtq.spock.replit.dev/api/auth/google/callback`
+- Production: `https://workspace.replit.app/api/auth/google/callback`
+
 ## Changelog
+- June 21, 2025: Fixed Google OAuth redirect URI configuration for current development domain
 - June 17, 2025: Initial setup with complete radio station website
 - June 17, 2025: Added PostgreSQL database with full schema migration
 - June 17, 2025: Implemented theme switching (dark/light mode) with smooth transitions
