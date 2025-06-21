@@ -7,7 +7,7 @@ interface AuthContextType {
   loading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, username: string, firstName: string, lastName: string, phoneNumber: string) => Promise<void>;
+  register: (email: string, password: string, username: string, firstName: string, lastName: string, phoneNumber: string, recaptchaToken?: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -51,12 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(userData);
   };
 
-  const register = async (email: string, password: string, username: string, firstName: string, lastName: string, phoneNumber: string) => {
+  const register = async (email: string, password: string, username: string, firstName: string, lastName: string, phoneNumber: string, recaptchaToken?: string) => {
     const response = await fetch('/api/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ email, password, username, firstName, lastName, phoneNumber })
+      body: JSON.stringify({ email, password, username, firstName, lastName, phoneNumber, recaptchaToken })
     });
     
     if (!response.ok) {
@@ -78,6 +78,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     refreshUser();
+    
+    // Set up auth state persistence
+    const interval = setInterval(() => {
+      // Refresh auth state every 5 minutes to ensure persistent login
+      if (!loading) {
+        refreshUser();
+      }
+    }, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   return (
