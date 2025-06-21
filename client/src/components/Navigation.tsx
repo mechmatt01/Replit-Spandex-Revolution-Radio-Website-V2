@@ -17,6 +17,17 @@ export default function Navigation() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
+
+  // Listen for custom auth modal events from other components
+  useEffect(() => {
+    const handleOpenAuthModal = (event: CustomEvent) => {
+      setAuthMode(event.detail.mode || 'login');
+      setIsAuthModalOpen(true);
+    };
+
+    window.addEventListener('openAuthModal', handleOpenAuthModal as EventListener);
+    return () => window.removeEventListener('openAuthModal', handleOpenAuthModal as EventListener);
+  }, []);
   const { togglePlayback, isPlaying } = useAudio();
   const { colors, gradient } = useTheme();
   const { user, isAuthenticated } = useAuth();
