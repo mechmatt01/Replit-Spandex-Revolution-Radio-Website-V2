@@ -28,10 +28,8 @@ interface PlaylistTrack {
   id: string;
   title: string;
   artist: string;
-  album: string;
   duration: number;
   artwork?: string;
-  year?: number;
   genre?: string;
   isPlaying?: boolean;
   isFavorited?: boolean;
@@ -54,9 +52,9 @@ const samplePlaylists: Playlist[] = [
     description: "Currently broadcasting live",
     isActive: true,
     tracks: [
-      { id: "1", title: "Youth Gone Wild", artist: "Skid Row", album: "Skid Row", duration: 245, year: 1989, genre: "Hard Rock" },
-      { id: "2", title: "18 and Life", artist: "Skid Row", album: "Skid Row", duration: 223, year: 1989, genre: "Hard Rock" },
-      { id: "3", title: "I Remember You", artist: "Skid Row", album: "Skid Row", duration: 321, year: 1989, genre: "Hard Rock" },
+      { id: "1", title: "Youth Gone Wild", artist: "Skid Row", duration: 245, genre: "Hard Rock" },
+      { id: "2", title: "18 and Life", artist: "Skid Row", duration: 223, genre: "Hard Rock" },
+      { id: "3", title: "I Remember You", artist: "Skid Row", duration: 321, genre: "Hard Rock" },
     ]
   },
   {
@@ -64,13 +62,13 @@ const samplePlaylists: Playlist[] = [
     name: "Classic Metal Hits",
     description: "The greatest metal anthems of all time",
     tracks: [
-      { id: "4", title: "We're Not Gonna Take It", artist: "Twisted Sister", album: "Stay Hungry", duration: 203, year: 1984, genre: "Heavy Metal" },
-      { id: "5", title: "I Wanna Rock", artist: "Twisted Sister", album: "Stay Hungry", duration: 286, year: 1984, genre: "Heavy Metal" },
-      { id: "6", title: "Cum On Feel the Noize", artist: "Quiet Riot", album: "Metal Health", duration: 285, year: 1983, genre: "Heavy Metal" },
-      { id: "7", title: "Metal Health", artist: "Quiet Riot", album: "Metal Health", duration: 317, year: 1983, genre: "Heavy Metal" },
-      { id: "8", title: "Don't Stop Believin'", artist: "Journey", album: "Escape", duration: 251, year: 1981, genre: "Rock" },
-      { id: "9", title: "Every Rose Has Its Thorn", artist: "Poison", album: "Open Up and Say... Ahh!", duration: 317, year: 1988, genre: "Hard Rock" },
-      { id: "10", title: "Round and Round", artist: "Ratt", album: "Out of the Cellar", duration: 264, year: 1984, genre: "Hard Rock" },
+      { id: "4", title: "We're Not Gonna Take It", artist: "Twisted Sister", duration: 203, genre: "Heavy Metal" },
+      { id: "5", title: "I Wanna Rock", artist: "Twisted Sister", duration: 286, genre: "Heavy Metal" },
+      { id: "6", title: "Cum On Feel the Noize", artist: "Quiet Riot", duration: 285, genre: "Heavy Metal" },
+      { id: "7", title: "Metal Health", artist: "Quiet Riot", duration: 317, genre: "Heavy Metal" },
+      { id: "8", title: "Don't Stop Believin'", artist: "Journey", duration: 251, genre: "Rock" },
+      { id: "9", title: "Every Rose Has Its Thorn", artist: "Poison", duration: 317, genre: "Hard Rock" },
+      { id: "10", title: "Round and Round", artist: "Ratt", duration: 264, genre: "Hard Rock" },
     ]
   },
   {
@@ -78,10 +76,10 @@ const samplePlaylists: Playlist[] = [
     name: "Power Ballads",
     description: "Epic ballads that defined a generation",
     tracks: [
-      { id: "11", title: "Heaven", artist: "Warrant", album: "Dirty Rotten Filthy Stinking Rich", duration: 239, year: 1989, genre: "Hard Rock" },
-      { id: "12", title: "More Than Words", artist: "Extreme", album: "Pornograffitti", duration: 317, year: 1990, genre: "Hard Rock" },
-      { id: "13", title: "Love Song", artist: "Tesla", album: "The Great Radio Controversy", duration: 285, year: 1989, genre: "Hard Rock" },
-      { id: "14", title: "High Enough", artist: "Damn Yankees", album: "Damn Yankees", duration: 302, year: 1990, genre: "Hard Rock" },
+      { id: "11", title: "Heaven", artist: "Warrant", duration: 239, genre: "Hard Rock" },
+      { id: "12", title: "More Than Words", artist: "Extreme", duration: 317, genre: "Hard Rock" },
+      { id: "13", title: "Love Song", artist: "Tesla", duration: 285, genre: "Hard Rock" },
+      { id: "14", title: "High Enough", artist: "Damn Yankees", duration: 302, genre: "Hard Rock" },
     ]
   }
 ];
@@ -300,7 +298,7 @@ export default function AdvancedAudioPlayer() {
 
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold truncate">{track.title}</p>
-                        <p className="text-sm opacity-75 truncate">{track.artist} • {track.album}</p>
+                        <p className="text-sm opacity-75 truncate">{track.artist}</p>
                       </div>
 
                       <div className="flex items-center space-x-3">

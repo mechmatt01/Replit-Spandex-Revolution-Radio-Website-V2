@@ -76,7 +76,7 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false }: LiveCh
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-4 z-40 bg-orange-500 hover:bg-orange-600 text-white rounded-full p-4 shadow-lg"
+          className="fixed bottom-32 right-4 z-50 bg-orange-500 hover:bg-orange-600 text-white rounded-full p-4 shadow-lg"
         >
           <MessageCircle className="h-6 w-6" />
           <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5">
@@ -87,7 +87,7 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false }: LiveCh
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-4 w-80 h-96 z-40">
+        <div className="fixed bottom-32 right-4 w-80 h-96 z-50">
           <Card className="h-full bg-dark-surface border-dark-border shadow-2xl">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
