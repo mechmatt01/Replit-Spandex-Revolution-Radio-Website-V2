@@ -33,6 +33,9 @@ export default function Navigation() {
   const { user, isAuthenticated } = useAuth();
   const menuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const brandTextRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
+  const [navPosition, setNavPosition] = useState(0);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -50,6 +53,27 @@ export default function Navigation() {
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen, isDropdownOpen]);
+
+  // Calculate navigation position based on brand text
+  useEffect(() => {
+    const calculateNavPosition = () => {
+      if (brandTextRef.current) {
+        const brandRect = brandTextRef.current.getBoundingClientRect();
+        // Get the center point of the brand text relative to the viewport
+        const brandCenter = brandRect.left + (brandRect.width / 2);
+        // Account for the 15px left padding to get position relative to container
+        setNavPosition(brandCenter - 15);
+      }
+    };
+
+    // Use setTimeout to ensure DOM is fully rendered before calculating
+    const timer = setTimeout(calculateNavPosition, 100);
+    window.addEventListener('resize', calculateNavPosition);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', calculateNavPosition);
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -89,7 +113,7 @@ export default function Navigation() {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="flex flex-col" id="brand-text">
+              <div className="flex flex-col" id="brand-text" ref={brandTextRef}>
                 <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
                   SPANDEX SALVATION
                 </div>
@@ -100,10 +124,15 @@ export default function Navigation() {
             </div>
 
             {/* Desktop Navigation - Centered relative to brand text */}
-            <div className="hidden xl:flex items-center space-x-4 absolute" style={{
-              left: 'calc(15px + 32px + 16px + 140px)', // Logo + spacing + actual brand text width
-              transform: 'translateX(-50%)'
-            }}>
+            <div 
+              ref={navRef}
+              className="hidden xl:flex items-center space-x-4 absolute" 
+              style={{
+                left: `${navPosition || 300}px`, // Fallback position while calculating
+                transform: 'translateX(-50%)',
+                transition: 'left 0.2s ease-in-out'
+              }}
+            >
               {menuItems.slice(0, 3).map((item) => {
                 const IconComponent = item.icon;
                 return (
