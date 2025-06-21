@@ -289,6 +289,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     isLoading,
     error,
     currentTrack,
+    stationName,
     togglePlayback,
     setVolume,
     toggleMute,
