@@ -213,6 +213,10 @@ The application uses PostgreSQL with the following main entities:
 - June 19, 2025: Rebranded station from previous configurations to Hot 97 FM with "New York's Hip Hop & R&B" messaging throughout application
 - June 19, 2025: Created dedicated Hot97Player component with TuneIn iframe integration, volume controls, and synchronized playback state
 - June 19, 2025: Simplified MusicPage to focus exclusively on Hot 97 streaming, removing all Spotify-related code and dependencies
+- June 19, 2025: Replaced TuneIn iframe with direct Hot 97 StreamTheWorld URLs for full integration into existing radio player infrastructure
+- June 19, 2025: Updated radio players to dynamically fetch station names and handle album information properly with conditional display logic
+- June 19, 2025: Implemented advertisement detection and custom "Ad" logo display with smooth 500ms fade transitions between track changes
+- June 19, 2025: Added duplicate text prevention in both main and floating players to eliminate redundant station name and content repetition
 
 ## User Preferences
 

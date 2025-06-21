@@ -34,7 +34,7 @@ export default function StickyPlayer() {
             <div className={`min-w-0 flex-1 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
               <div className="w-full max-w-xs">
                 <ScrollingText 
-                  text={currentTrack.title}
+                  text={currentTrack.title !== stationName ? currentTrack.title : stationName}
                   className="font-semibold text-foreground"
                   maxWidth="100%"
                   isFloating={true}
@@ -42,7 +42,7 @@ export default function StickyPlayer() {
                 />
               </div>
               <p className="text-muted-foreground text-sm truncate">
-                {stationName} • Live Stream
+                Live Stream
               </p>
             </div>
           </div>
