@@ -99,7 +99,13 @@ export default function RadioCoPlayer() {
         <Button
           onClick={togglePlayback}
           disabled={isLoading}
-          className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] hover:from-[var(--color-secondary)] hover:to-[var(--color-accent)] text-white font-bold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+          className="font-bold py-6 px-10 rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2"
+          style={{
+            background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+            color: 'white',
+            borderColor: colors.primary,
+            boxShadow: `0 10px 40px ${colors.primary}60`
+          }}
         >
           {isLoading ? (
             <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent" />

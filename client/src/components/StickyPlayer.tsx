@@ -8,7 +8,8 @@ import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 
 export default function StickyPlayer() {
   const { isPlaying, volume, currentTrack, stationName, isTransitioning, togglePlayback, setVolume } = useRadio();
-  const { getGradient } = useTheme();
+  const { getGradient, getColors } = useTheme();
+  const colors = getColors();
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseInt(e.target.value) / 100;
@@ -61,7 +62,12 @@ export default function StickyPlayer() {
             
             <Button
               onClick={togglePlayback}
-              className="bg-[var(--color-primary)] hover:bg-[var(--color-primary)]/80 text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] flex items-center justify-center"
+              className="text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl"
+              style={{
+                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+                focusRingColor: colors.primary,
+                boxShadow: `0 4px 20px ${colors.primary}60`
+              }}
               aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
             >
               {isPlaying ? (
@@ -81,8 +87,11 @@ export default function StickyPlayer() {
               <Volume2 className="text-gray-400 h-4 w-4" />
               <div className="w-20 h-1 bg-gray-700 rounded-full relative">
                 <div 
-                  className="h-1 bg-[var(--color-primary)] rounded-full transition-all duration-150"
-                  style={{ width: `${volume * 100}%` }}
+                  className="h-1 rounded-full transition-all duration-150"
+                  style={{ 
+                    width: `${volume * 100}%`,
+                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                  }}
                 ></div>
                 <input
                   type="range"

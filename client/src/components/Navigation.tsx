@@ -216,14 +216,32 @@ export default function Navigation() {
                       variant="outline"
                       size="sm"
                       onClick={() => window.location.href = "/#/login"}
-                      className="text-sm"
+                      className="text-sm font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:scale-105"
+                      style={{
+                        borderColor: colors.primary,
+                        color: colors.primary,
+                        backgroundColor: 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.primary;
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = colors.primary;
+                      }}
                     >
                       SIGN IN
                     </Button>
                     <Button
                       size="sm"
                       onClick={() => window.location.href = "/#/login"}
-                      className="text-sm"
+                      className="text-sm font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:scale-105"
+                      style={{
+                        background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+                        color: 'white',
+                        border: 'none'
+                      }}
                     >
                       SIGN UP
                     </Button>
