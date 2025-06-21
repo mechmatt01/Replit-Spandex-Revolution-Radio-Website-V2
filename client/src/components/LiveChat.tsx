@@ -31,6 +31,9 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false }: LiveCh
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
 
+  // Check if user has paid subscription (assuming stripeSubscriptionId indicates paid status)
+  const hasPaidSubscription = user?.stripeSubscriptionId || false;
+
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
@@ -39,7 +42,7 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false }: LiveCh
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!message.trim() || !isAuthenticated) return;
+    if (!message.trim() || !isAuthenticated || !hasPaidSubscription) return;
 
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -156,37 +159,23 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false }: LiveCh
 
               {/* Message Input */}
               <div className="p-4 border-t border-gray-700">
-                {isAuthenticated ? (
-                  <form onSubmit={handleSendMessage} className="flex gap-2">
-                    <Input
-                      value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Type your message..."
-                      className="flex-1 bg-gray-800 border-gray-600 text-white placeholder-gray-400 text-sm"
-                      maxLength={200}
-                    />
-                    <Button
-                      type="submit"
-                      size="sm"
-                      className="bg-orange-500 hover:bg-orange-600 px-3"
-                      disabled={!message.trim()}
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                  </form>
-                ) : (
-                  <div className="text-center text-gray-400 text-sm">
-                    <p>Sign in to join the conversation</p>
-                    <Button
-                      onClick={() => window.location.href = '/api/login'}
-                      variant="outline"
-                      size="sm"
-                      className="mt-2 border-orange-500 text-orange-400 hover:bg-orange-500/10"
-                    >
-                      Sign In
-                    </Button>
-                  </div>
-                )}
+                <form onSubmit={handleSendMessage} className="flex gap-2">
+                  <Input
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Type your message..."
+                    className="flex-1 bg-gray-800 border-gray-600 text-white placeholder-gray-400 text-sm"
+                    maxLength={200}
+                  />
+                  <Button
+                    type="submit"
+                    size="sm"
+                    className="bg-orange-500 hover:bg-orange-600 px-3"
+                    disabled={!message.trim()}
+                  >
+                    <Send className="h-4 w-4" />
+                  </Button>
+                </form>
               </div>
             </CardContent>
           </Card>

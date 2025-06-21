@@ -221,6 +221,7 @@ The application uses PostgreSQL with the following main entities:
 - June 20, 2025: Added comprehensive live chat feature with host control toggle, authentication integration, real-time messaging, and responsive design
 - June 20, 2025: Enhanced submissions form with premium feature protection, requiring paid subscription and authentication for access
 - June 20, 2025: Fixed text scrolling to always move when content overflows container, restored album artwork display with default images for all tracks
+- June 20, 2025: Enhanced live chat as premium feature - only shows for authenticated users with paid subscriptions, displays upgrade prompt for non-subscribers
 
 ## User Preferences
 
