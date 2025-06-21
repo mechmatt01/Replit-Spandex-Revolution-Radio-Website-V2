@@ -72,17 +72,25 @@ export default function RadioCoPlayer() {
               backgroundColor="hsl(var(--background))"
             />
           </div>
-          {currentTrack.album && currentTrack.album !== "New York's Hip Hop & R&B" && currentTrack.album !== "Live Stream" && (
+          {currentTrack.album && 
+           currentTrack.album !== "New York's Hip Hop & R&B" && 
+           currentTrack.album !== "Live Stream" && 
+           currentTrack.album !== currentTrack.title && 
+           currentTrack.album !== currentTrack.artist && (
             <p className="text-foreground font-semibold text-lg mb-1 transition-opacity duration-500">
               {currentTrack.album}
             </p>
           )}
-          <p className="text-foreground font-medium text-base mb-2 transition-opacity duration-500">
-            {currentTrack.artist}
-          </p>
-          <p className="text-muted-foreground text-sm font-medium">
-            Live Stream
-          </p>
+          {currentTrack.artist && currentTrack.artist !== currentTrack.title && currentTrack.artist !== "Live Stream" && (
+            <p className="text-foreground font-medium text-base mb-2 transition-opacity duration-500">
+              {currentTrack.artist}
+            </p>
+          )}
+          {currentTrack.title !== "Live Stream" && currentTrack.artist !== "Live Stream" && (
+            <p className="text-muted-foreground text-sm font-medium">
+              Live Stream
+            </p>
+          )}
         </div>
       </div>
 
