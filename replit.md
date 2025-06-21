@@ -223,6 +223,7 @@ The application uses PostgreSQL with the following main entities:
 - June 20, 2025: Fixed text scrolling to always move when content overflows container, restored album artwork display with default images for all tracks
 - June 20, 2025: Enhanced live chat as premium feature - only shows for authenticated users with paid subscriptions, displays upgrade prompt for non-subscribers
 - June 20, 2025: Streamlined submissions form UI - moved sign in/subscription buttons to single premium feature box, positioned live chat higher above floating player
+- June 20, 2025: Repositioned countdown timer between "Join the hairspray rebellion!" text and main live player for improved visibility per client request
 
 ## User Preferences
 

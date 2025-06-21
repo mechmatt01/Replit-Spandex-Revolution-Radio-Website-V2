@@ -67,25 +67,8 @@ export default function Hero() {
           Join the hairspray rebellion!
         </p>
 
-        {/* Live Radio Player */}
-        <div className="flex flex-col items-center justify-center space-y-6 mb-12 mt-8">
-          <RadioCoPlayer />
-          <Button 
-            onClick={scrollToSchedule}
-            variant="outline"
-            className="border-2 px-8 py-4 rounded-full font-bold text-lg transition-colors btn-theme-hover"
-            style={{
-              borderColor: 'var(--color-primary)',
-              color: 'var(--color-primary)'
-            }}
-          >
-            <Calendar className="mr-3 h-5 w-5" />
-            VIEW SCHEDULE
-          </Button>
-        </div>
-
         {/* Countdown Timer */}
-        <div className="mt-12 mb-16">
+        <div className="mt-8 mb-8">
           <p className="text-muted-foreground mb-4 font-bold">OFFICIAL LAUNCH COUNTDOWN</p>
           <div className="flex justify-center space-x-4 text-center">
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
@@ -106,6 +89,25 @@ export default function Hero() {
             </div>
           </div>
         </div>
+
+        {/* Live Radio Player */}
+        <div className="flex flex-col items-center justify-center space-y-6 mb-12 mt-8">
+          <RadioCoPlayer />
+          <Button 
+            onClick={scrollToSchedule}
+            variant="outline"
+            className="border-2 px-8 py-4 rounded-full font-bold text-lg transition-colors btn-theme-hover"
+            style={{
+              borderColor: 'var(--color-primary)',
+              color: 'var(--color-primary)'
+            }}
+          >
+            <Calendar className="mr-3 h-5 w-5" />
+            VIEW SCHEDULE
+          </Button>
+        </div>
+
+
       </div>
       
       {/* Fade to Background Color */}
