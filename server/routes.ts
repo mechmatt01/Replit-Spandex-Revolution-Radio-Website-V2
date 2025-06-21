@@ -593,6 +593,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Schedule account deletion
+  app.delete('/api/user/account', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const user = await storage.scheduleUserDeletion(userId);
+      
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // If user has active Stripe subscription, cancel auto-renewal
+      if (user.stripeSubscriptionId && stripe) {
+        try {
+          await stripe.subscriptions.update(user.stripeSubscriptionId, {
+            cancel_at_period_end: true,
+          });
+        } catch (stripeError) {
+          console.error('Failed to cancel Stripe subscription:', stripeError);
+        }
+      }
+
+      res.json({ 
+        message: 'Account scheduled for deletion',
+        deletionDate: user.accountDeletionDate 
+      });
+    } catch (error) {
+      console.error('Error scheduling account deletion:', error);
+      res.status(500).json({ message: 'Failed to schedule account deletion' });
+    }
+  });
+
 
 
   // Dynamic Open Graph image generation

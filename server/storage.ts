@@ -325,7 +325,8 @@ export class DatabaseStorage implements IStorage {
     // Schedule deletion in Firebase
     if (updatedUser) {
       try {
-        await scheduleAccountDeletion(updatedUser.id.toString(), deletionDate);
+        const { scheduleFirebaseDeletion } = await import("./firebase-admin.js");
+        await scheduleFirebaseDeletion(updatedUser.id.toString(), deletionDate);
       } catch (error) {
         console.error('Failed to schedule deletion in Firebase:', error);
       }
@@ -340,6 +341,7 @@ export class DatabaseStorage implements IStorage {
       await db.delete(users).where(eq(users.id, id));
       
       // Delete from Firebase
+      const { deleteFirebaseUser } = await import("./firebase-admin.js");
       await deleteFirebaseUser(id.toString());
     } catch (error) {
       console.error('Failed to delete user account:', error);

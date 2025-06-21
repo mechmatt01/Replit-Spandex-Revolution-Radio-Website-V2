@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Upload, Crown, LogOut, User, CreditCard, FileText, Camera, CheckCircle } from "lucide-react";
+import { Upload, Crown, LogOut, User, CreditCard, FileText, Camera, CheckCircle, Trash2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -513,6 +513,52 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
           </div>
         </div>
       </div>
+
+      {/* Account Deletion Confirmation Modal */}
+      <Dialog open={showDeleteConfirmation} onOpenChange={setShowDeleteConfirmation}>
+        <DialogContent className="animate-in fade-in-0 zoom-in-95 duration-300">
+          <DialogHeader>
+            <DialogTitle className="text-red-600 flex items-center">
+              <Trash2 className="h-5 w-5 mr-2" />
+              Delete Account
+            </DialogTitle>
+            <DialogDescription className="space-y-3 pt-2">
+              <p className="text-base">
+                Are you sure you want to delete your account? This action cannot be undone.
+              </p>
+              {user?.subscriptionStatus === "active" && (
+                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-3">
+                  <p className="text-sm text-orange-800 dark:text-orange-200">
+                    <strong>Subscription Notice:</strong> Your subscription auto-renewal will be cancelled immediately, 
+                    but your account will remain active until your next billing date. 
+                    Your account will be permanently deleted on that date.
+                  </p>
+                </div>
+              )}
+              <p className="text-sm text-muted-foreground">
+                All your data, including profile information, submissions, and chat history will be permanently removed.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteConfirmation(false)}
+              className="flex-1 transition-all duration-200 hover:scale-105"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteAccount}
+              disabled={deleteAccountMutation.isPending}
+              className="flex-1 bg-red-600 hover:bg-red-700 transition-all duration-200 hover:scale-105"
+            >
+              {deleteAccountMutation.isPending ? "Processing..." : "Confirm and Delete Account"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Avatar Selection Modal */}
       <Dialog open={isAvatarModalOpen} onOpenChange={setIsAvatarModalOpen}>
