@@ -29,7 +29,7 @@ export default function Navigation() {
     return () => window.removeEventListener('openAuthModal', handleOpenAuthModal as EventListener);
   }, []);
   const { togglePlayback, isPlaying } = useAudio();
-  const { colors, gradient } = useTheme();
+  const { colors, gradient, toggleTheme, isDarkMode } = useTheme();
   const { user, isAuthenticated } = useAuth();
   const menuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -218,6 +218,39 @@ export default function Navigation() {
 
             {/* Right side controls */}
             <div className="flex items-center space-x-3">
+              {/* Theme toggle */}
+              <div className="hidden xl:flex items-center">
+                <Button
+                  onClick={toggleTheme}
+                  size="sm"
+                  variant="ghost"
+                  className="p-2 rounded-full hover:bg-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background focus:ring-primary transition-all duration-200"
+                  style={{
+                    color: colors.text,
+                    transform: 'translate(0, 0)',
+                  }}
+                  aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+                >
+                  {isDarkMode ? (
+                    <Sun 
+                      size={20} 
+                      style={{ 
+                        color: colors.primary,
+                        transform: 'translate(0, 0)'
+                      }} 
+                    />
+                  ) : (
+                    <Moon 
+                      size={20} 
+                      style={{ 
+                        color: colors.primary,
+                        transform: 'translate(0, 0)'
+                      }} 
+                    />
+                  )}
+                </Button>
+              </div>
+
               {/* Auth buttons / User profile */}
               <div className="hidden xl:flex items-center space-x-3">
                 {!isAuthenticated ? (
@@ -300,8 +333,6 @@ export default function Navigation() {
                   </div>
                 )}
               </div>
-              
-              <MetalThemeSwitcher />
               
               {/* Mobile menu button */}
               <button
