@@ -221,8 +221,9 @@ export default function Submissions() {
         )}
 
         {/* Recent Submissions */}
-        <div>
-          <h3 className="font-bold text-xl mb-6 text-metal-gold">Recent Submissions</h3>
+        {(recentSubmissions.length > 0 && isAuthenticated && hasPaidSubscription) && (
+        <div className="mt-16">
+          <h3 className="font-bold text-xl mb-6" style={{ color: 'var(--color-primary)' }}>Recent Submissions</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {recentSubmissions.slice(0, 4).map((submission) => (
               <Card key={submission.id} className="bg-dark-surface border-dark-border">
@@ -253,6 +254,7 @@ export default function Submissions() {
             ))}
           </div>
         </div>
+        )}
       </div>
     </section>
   );

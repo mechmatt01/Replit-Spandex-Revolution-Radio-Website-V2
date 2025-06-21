@@ -43,7 +43,7 @@ export default function Schedule() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Weekly Schedule */}
           <div className="lg:col-span-2">
-            <h3 className="font-black text-xl mb-6 text-metal-orange">This Week's Lineup</h3>
+            <h3 className="font-black text-xl mb-6" style={{ color: 'var(--color-primary)' }}>This Week's Lineup</h3>
             <div className="space-y-4">
               {weeklyShows.map((show) => (
                 <Card key={show.id} className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
@@ -67,8 +67,9 @@ export default function Schedule() {
           </div>
 
           {/* Past Shows Archive */}
-          <div>
-            <h3 className="font-black text-xl mb-6 text-metal-gold">Past Shows</h3>
+          {pastShows.length > 0 && (
+          <div className="mt-16">
+            <h3 className="font-black text-xl mb-6" style={{ color: 'var(--color-primary)' }}>Past Shows</h3>
             <div className="space-y-4">
               {pastShows.slice(0, 5).map((show) => (
                 <Card key={show.id} className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
@@ -82,7 +83,14 @@ export default function Schedule() {
                       <Button 
                         size="sm" 
                         variant="ghost" 
-                        className="text-metal-orange hover:text-orange-400 p-0 h-auto"
+                        className="p-0 h-auto transition-colors duration-300"
+                        style={{ color: 'var(--color-primary)' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = 'var(--color-secondary)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = 'var(--color-primary)';
+                        }}
                       >
                         <Play className="mr-1 h-3 w-3" />
                         Play
@@ -95,11 +103,16 @@ export default function Schedule() {
             
             <Button 
               variant="outline"
-              className="w-full mt-6 border-metal-gold text-metal-gold hover:bg-metal-gold hover:text-dark-bg font-semibold transition-all duration-300"
+              className="w-full mt-6 font-semibold transition-all duration-300 btn-theme-hover"
+              style={{
+                borderColor: 'var(--color-primary)',
+                color: 'var(--color-primary)'
+              }}
             >
               View All Archives
             </Button>
           </div>
+          )}
         </div>
       </div>
     </section>
