@@ -101,23 +101,7 @@ export default function InteractiveAlbumArt({
           )}
         </div>
         
-        {/* Animated overlay particles */}
-        {isHovered && (
-          <div className="absolute inset-0 overflow-hidden">
-            {[...Array(8)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 bg-white/30 rounded-full animate-pulse"
-                style={{
-                  left: `${20 + (i * 10)}%`,
-                  top: `${15 + (i * 8)}%`,
-                  animationDelay: `${i * 0.2}s`,
-                  animationDuration: '2s'
-                }}
-              />
-            ))}
-          </div>
-        )}
+
       </div>
       
       {/* Album Artwork */}
