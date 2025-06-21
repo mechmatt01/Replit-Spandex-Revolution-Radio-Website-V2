@@ -20,6 +20,7 @@ export const users = pgTable("users", {
   lastName: text("last_name").notNull(),
   phoneNumber: text("phone_number"),
   profileImageUrl: text("profile_image_url"),
+  showVerifiedBadge: boolean("show_verified_badge").default(false),
   password: text("password"), // encrypted password, null for OAuth users
   googleId: text("google_id"), // for Google OAuth
   isEmailVerified: boolean("is_email_verified").default(false),
