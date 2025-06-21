@@ -20,7 +20,7 @@ export default function StickyPlayer() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-40 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 py-3">
+      <div className="w-full px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
           <div className="flex items-center space-x-4 flex-1 min-w-0 max-w-md">

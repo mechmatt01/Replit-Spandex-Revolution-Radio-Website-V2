@@ -306,7 +306,10 @@ export default function Navigation() {
                 )}
               </div>
               
-              <MetalThemeSwitcher />
+              {/* Mobile theme toggle only */}
+              <div className="xl:hidden">
+                <MetalThemeSwitcher />
+              </div>
               
               {/* Mobile menu button */}
               <button
