@@ -69,7 +69,7 @@ export default function Hero() {
 
         {/* Countdown Timer */}
         <div className="mt-8 mb-8">
-          <p className="text-muted-foreground mb-2 font-bold text-lg">OFFICIAL LAUNCH COUNTDOWN</p>
+          <p className="text-white mb-2 font-bold text-lg">OFFICIAL LAUNCH COUNTDOWN</p>
           <div className="flex justify-center space-x-4 text-center">
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
               <div className="text-2xl font-bold text-metal-orange">{countdown.days}</div>
