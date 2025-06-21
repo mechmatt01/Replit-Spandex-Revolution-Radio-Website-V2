@@ -27,7 +27,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import type { User } from "@shared/schema";
+import type { User as UserType } from "@shared/schema";
 
 interface ProfileProps {
   onNavigateToSubscribe?: () => void;
@@ -51,7 +51,7 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isCancelSubModalOpen, setIsCancelSubModalOpen] = useState(false);
-  const [profileData, setProfileData] = useState<Partial<User>>({});
+  const [profileData, setProfileData] = useState<Partial<UserType>>({});
   
   const { user, isAuthenticated } = useAuth();
   const { getColors, getGradient, theme } = useTheme();
@@ -76,7 +76,7 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
 
   // Update profile mutation
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: Partial<User>) => {
+    mutationFn: async (data: Partial<UserType>) => {
       const response = await apiRequest("PATCH", "/api/user/profile", data);
       return response.json();
     },

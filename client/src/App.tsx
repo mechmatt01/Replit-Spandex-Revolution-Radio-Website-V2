@@ -12,6 +12,7 @@ import SkipToContent from "@/components/SkipToContent";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
 import HomePage from "@/pages/HomePage";
 import MusicPage from "@/pages/MusicPage";
+import ProfilePage from "@/pages/ProfilePage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -19,6 +20,7 @@ function Router() {
     <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/music" component={MusicPage} />
+      <Route path="/profile" component={ProfilePage} />
       <Route component={NotFound} />
     </Switch>
   );
