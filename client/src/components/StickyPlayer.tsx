@@ -47,8 +47,8 @@ export default function StickyPlayer() {
                 <p className="text-muted-foreground text-sm truncate">
                   {currentTrack.isAd ? "🔊 Commercial Break" : "Live Stream"}
                 </p>
-                {/* LIVE indicator moved after Live Stream text */}
-                <div className="flex items-center space-x-1">
+                {/* LIVE indicator moved after Live Stream text with vertical centering */}
+                <div className="flex items-center space-x-1" style={{ marginTop: '2px' }}>
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                   <span className="text-xs text-red-500 font-bold animate-pulse">LIVE</span>
                 </div>
