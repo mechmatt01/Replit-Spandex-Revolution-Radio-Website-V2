@@ -138,7 +138,11 @@ export default function Submissions() {
               </p>
               <div className="flex gap-4 justify-center">
                 <Button 
-                  onClick={() => window.location.href = '/api/login'}
+                  onClick={() => {
+                    // Trigger auth modal instead of redirect
+                    const event = new CustomEvent('openAuthModal', { detail: { mode: 'login' } });
+                    window.dispatchEvent(event);
+                  }}
                   className="text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
                   style={{ backgroundColor: colors.primary }}
                   onMouseEnter={(e) => {

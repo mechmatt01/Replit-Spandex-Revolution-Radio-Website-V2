@@ -18,9 +18,8 @@ export default function Navigation() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const { togglePlayback, isPlaying } = useAudio();
-  const { getColors, getGradient } = useTheme();
+  const { colors, gradient } = useTheme();
   const { user, isAuthenticated } = useAuth();
-  const colors = getColors();
   const menuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +68,7 @@ export default function Navigation() {
               <div 
                 className="flex items-center justify-center w-8 h-8 rounded-full"
                 style={{ 
-                  background: getGradient(),
+                  background: gradient,
                   padding: '5px'
                 }}
               >
@@ -215,7 +214,10 @@ export default function Navigation() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.location.href = "/#/login"}
+                      onClick={() => {
+                        setAuthMode("login");
+                        setIsAuthModalOpen(true);
+                      }}
                       className="text-sm font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:scale-105"
                       style={{
                         borderColor: colors.primary,
@@ -224,7 +226,7 @@ export default function Navigation() {
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = colors.primary;
-                        e.currentTarget.style.color = 'white';
+                        e.currentTarget.style.color = colors.primaryText || 'white';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'transparent';
@@ -235,7 +237,10 @@ export default function Navigation() {
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => window.location.href = "/#/login"}
+                      onClick={() => {
+                        setAuthMode("register");
+                        setIsAuthModalOpen(true);
+                      }}
                       className="text-sm font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:scale-105"
                       style={{
                         background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
@@ -412,7 +417,8 @@ export default function Navigation() {
                   ) : (
                     <button
                       onClick={() => {
-                        window.location.href = "/#/login";
+                        setAuthMode("login");
+                        setIsAuthModalOpen(true);
                         setIsOpen(false);
                       }}
                       className="flex items-center justify-end space-x-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 whitespace-nowrap text-right"

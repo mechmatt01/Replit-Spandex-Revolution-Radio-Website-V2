@@ -290,7 +290,11 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
 
 interface ThemeContextType {
   currentTheme: MetalTheme;
+  isDarkMode: boolean;
+  colors: ThemeColors;
   setTheme: (theme: MetalTheme) => void;
+  toggleDarkMode: () => void;
+  gradient: string;
   getColors: () => ThemeColors;
   getGradient: () => string;
 }
@@ -298,26 +302,39 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [currentTheme, setCurrentTheme] = useState<MetalTheme>("classic-metal");
-
-  useEffect(() => {
-    // Load saved preferences
-    const savedTheme = localStorage.getItem("metal-theme") as MetalTheme;
-    
-    if (savedTheme && METAL_THEMES[savedTheme]) {
-      setCurrentTheme(savedTheme);
+  const [currentTheme, setCurrentTheme] = useState<MetalTheme>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("metal-theme") as MetalTheme;
+      return saved && saved in METAL_THEMES ? saved : "classic-metal";
     }
-  }, []);
+    return "classic-metal";
+  });
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("theme-mode");
+      return saved !== "light";
+    }
+    return true;
+  });
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(prev => {
+      const newMode = !prev;
+      localStorage.setItem("theme-mode", newMode ? "dark" : "light");
+      return newMode;
+    });
+  };
+
+  const getThemeColors = (themeName: MetalTheme, isDark: boolean): ThemeColors => {
+    const theme = METAL_THEMES[themeName];
+    return isDark ? theme.colors.dark : theme.colors.light;
+  };
+
+  const colors = getThemeColors(currentTheme, isDarkMode);
 
   useEffect(() => {
-    // Apply theme colors to CSS variables
-    // For light-mode and dark-mode themes, always use the same color set
-    // For metal themes, use dark colors by default
     const isLightMode = currentTheme === "light-mode";
-    const isDarkMode = currentTheme === "dark-mode";
-    const colors = METAL_THEMES[currentTheme].colors[
-      isLightMode ? "light" : "dark"
-    ];
     
     const root = document.documentElement;
     
@@ -346,28 +363,36 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setTimeout(() => {
       root.style.transition = "";
     }, 300);
-  }, [currentTheme]);
+  }, [currentTheme, isDarkMode, colors]);
 
   const setTheme = (theme: MetalTheme) => {
     setCurrentTheme(theme);
   };
 
   const getColors = (): ThemeColors => {
-    const isLightMode = currentTheme === "light-mode";
-    return METAL_THEMES[currentTheme].colors[isLightMode ? "light" : "dark"];
+    return colors;
   };
 
   const getGradient = (): string => {
     return METAL_THEMES[currentTheme].gradient;
   };
 
+  const value: ThemeContextType = {
+    currentTheme,
+    isDarkMode,
+    colors: {
+      ...colors,
+      primaryText: colors.primaryText || (colors.primary === "#c0c0c0" ? "#000000" : "#ffffff")
+    },
+    setTheme,
+    toggleDarkMode,
+    gradient: METAL_THEMES[currentTheme].gradient,
+    getColors,
+    getGradient
+  };
+
   return (
-    <ThemeContext.Provider value={{
-      currentTheme,
-      setTheme,
-      getColors,
-      getGradient
-    }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
