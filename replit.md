@@ -201,6 +201,7 @@ The application uses PostgreSQL with the following main entities:
 - June 21, 2025: Integrated Firebase database for user data storage/editing/removal with automatic sync between PostgreSQL and Firebase
 - June 21, 2025: Implemented account deletion feature with red "Delete" button, animated confirmation popup, and business logic - cancels subscription auto-renewal but preserves account until next billing date
 - June 21, 2025: Added fade-in/fade-out animations to all popups, warnings, notifications, and dialog elements throughout the site
+- June 21, 2025: Implemented real-time live radio data fetching - now playing information updates every 5 seconds from actual Icecast stream, displays current Black Sabbath track instead of static placeholder data
 - June 19, 2025: Improved text display logic to show single instance when static, duplicated only during scrolling animations
 - June 19, 2025: Enhanced text alignment - floating player left-aligned, main player centered when not playing
 - June 19, 2025: Adjusted main player width to prevent text cutoff when displaying station name

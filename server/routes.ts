@@ -448,10 +448,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Now Playing API
   app.get("/api/now-playing", async (req, res) => {
     try {
-      const track = await storage.getCurrentTrack();
-      res.json(track);
+      // Fetch live data from radio stream
+      const response = await fetch('http://168.119.74.185:9858/status-json.xsl');
+      const data = await response.json();
+      
+      let currentTrack;
+      
+      if (data?.icestats?.source?.[0]?.title) {
+        const titleString = data.icestats.source[0].title;
+        const [artist, title] = titleString.includes(' - ') 
+          ? titleString.split(' - ', 2)
+          : ['Unknown Artist', titleString];
+        
+        currentTrack = {
+          id: 1,
+          title: title || "Live Radio",
+          artist: artist || "Spandex Salvation Radio",
+          album: data.icestats.source[0].server_description || "Live Stream",
+          duration: null,
+          artwork: null,
+          isAd: false,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        // Update database with live track info
+        await storage.updateNowPlaying({
+          title: currentTrack.title,
+          artist: currentTrack.artist,
+          album: currentTrack.album,
+          duration: currentTrack.duration,
+          artwork: currentTrack.artwork
+        });
+      } else {
+        // Fallback to database if live data unavailable
+        currentTrack = await storage.getCurrentTrack();
+      }
+      
+      res.json(currentTrack);
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch current track" });
+      console.error('Error fetching live radio data:', error);
+      // Fallback to database
+      try {
+        const track = await storage.getCurrentTrack();
+        res.json(track);
+      } catch (dbError) {
+        res.status(500).json({ error: "Failed to fetch current track" });
+      }
     }
   });
 

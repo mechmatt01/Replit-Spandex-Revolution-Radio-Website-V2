@@ -42,8 +42,13 @@ export default function StickyPlayer() {
                 />
               </div>
               <p className="text-muted-foreground text-sm truncate">
-                Live Stream
+                {currentTrack.isAd ? "🔊 Commercial Break" : "Live Stream"}
               </p>
+              {currentTrack.isAd && (
+                <p className="text-xs text-orange-400 animate-pulse">
+                  Advertisement
+                </p>
+              )}
             </div>
           </div>
 
