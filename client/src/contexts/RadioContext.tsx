@@ -196,8 +196,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     };
   }, [volume, isMuted]);
 
-  // Fetch live track information with artwork
+  // Only fetch live track information when playing
   useEffect(() => {
+    if (!isPlaying) return;
+    
     const fetchTrackInfo = async () => {
       try {
         // Get station info and track info from our APIs
@@ -227,7 +229,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
               title: isAd ? "Advertisement" : nowPlayingData.title,
               artist: isAd ? currentStationName : nowPlayingData.artist,
               album: isAd ? "" : (nowPlayingData.album || ""),
-              artwork: isAd ? "advertisement" : getDefaultArtwork(nowPlayingData.title, nowPlayingData.artist)
+              artwork: isAd ? "advertisement" : ""
             };
             
             // Always update track with smooth transition
