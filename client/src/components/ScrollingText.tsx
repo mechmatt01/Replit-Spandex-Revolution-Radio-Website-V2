@@ -58,7 +58,7 @@ export default function ScrollingText({ text, className = '', maxWidth = '60%', 
     >
       <div
         ref={textRef}
-        className={`whitespace-nowrap ${isScrolling ? 'flex' : (isFloating ? 'text-left' : 'text-center')} ${
+        className={`whitespace-nowrap ${isScrolling ? 'flex' : 'flex justify-center items-center w-full'} ${
           isScrolling ? (isFloating ? 'animate-scroll-floating' : 'animate-scroll') : ''
         }`}
         style={{

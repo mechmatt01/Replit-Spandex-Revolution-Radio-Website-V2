@@ -36,7 +36,19 @@ export default function ChatButton() {
       <Button
         onClick={handleChatClick}
         size="lg"
-        className="fixed bottom-20 right-4 z-30 w-14 h-14 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        className="fixed bottom-20 right-4 z-30 w-14 h-14 rounded-full text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        style={{
+          background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+          boxShadow: `0 8px 32px ${colors.primary}40`
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'scale(1.1)';
+          e.currentTarget.style.boxShadow = `0 12px 40px ${colors.primary}60`;
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}40`;
+        }}
         aria-label="Open live chat"
       >
         <MessageCircle className="h-6 w-6" />
