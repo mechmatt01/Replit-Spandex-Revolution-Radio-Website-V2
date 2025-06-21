@@ -14,6 +14,7 @@ interface RadioContextType {
   isLoading: boolean;
   error: string | null;
   currentTrack: TrackInfo;
+  stationName: string;
   togglePlayback: () => Promise<void>;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
@@ -34,6 +35,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     album: "New York's Hip Hop & R&B",
     artwork: ""
   });
+  const [stationName, setStationName] = useState("Hot 97");
   const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -184,27 +186,28 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
     const fetchTrackInfo = async () => {
       try {
-        // Try to get track info from Radio.co API for Shady Pines Radio
-        const response = await fetch('https://public.radio.co/stations/s3bc65afb4/status');
-        if (response.ok) {
-          const data = await response.json();
-          const currentSong = data.current_track;
+        // Get station info and track info from our APIs
+        const [statusResponse, nowPlayingResponse] = await Promise.all([
+          fetch('/api/radio-status'),
+          fetch('/api/now-playing')
+        ]);
+        
+        let currentStationName = "Hot 97";
+        if (statusResponse.ok) {
+          const statusData = await statusResponse.json();
+          currentStationName = statusData.station || "Hot 97";
+          setStationName(currentStationName);
+        }
+        
+        if (nowPlayingResponse.ok) {
+          const nowPlayingData = await nowPlayingResponse.json();
           
-          if (currentSong && currentSong.title && currentSong.title !== currentTrack.title) {
-            // Use Radio.co provided artwork if available
-            let artworkUrl = '';
-            
-            if (currentSong.artwork_url_large) {
-              artworkUrl = currentSong.artwork_url_large;
-            } else if (currentSong.artwork_url) {
-              artworkUrl = currentSong.artwork_url;
-            }
-
+          if (nowPlayingData.title && nowPlayingData.artist && nowPlayingData.title !== currentTrack.title) {
             const newTrack: TrackInfo = {
-              title: currentSong.title,
-              artist: "Shady Pines Radio",
-              album: "Live Stream",
-              artwork: artworkUrl
+              title: nowPlayingData.title,
+              artist: nowPlayingData.artist,
+              album: nowPlayingData.album || "",
+              artwork: nowPlayingData.artwork || ""
             };
             
             // Trigger fade transition

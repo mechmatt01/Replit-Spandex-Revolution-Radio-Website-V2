@@ -63,13 +63,13 @@ export default function RadioCoPlayer() {
         <div className="transition-opacity duration-300">
           <div className="flex justify-center mb-2">
             <ScrollingText 
-              text={isPlaying && currentTrack.title !== "Shady Pines Radio" ? currentTrack.title : "Shady Pines Radio"}
+              text={currentTrack.title}
               className="font-bold text-xl text-foreground"
-              maxWidth={isPlaying && currentTrack.title !== "Shady Pines Radio" ? "75%" : "100%"}
+              maxWidth="75%"
               backgroundColor="hsl(var(--background))"
             />
           </div>
-          {currentTrack.album && (
+          {currentTrack.album && currentTrack.album !== "New York's Hip Hop & R&B" && currentTrack.album !== "Live Stream" && (
             <p className="text-foreground font-semibold text-lg mb-1">
               {currentTrack.album}
             </p>
@@ -78,7 +78,7 @@ export default function RadioCoPlayer() {
             {currentTrack.artist}
           </p>
           <p className="text-muted-foreground text-sm font-medium">
-            Shady Pines Radio{currentTrack.album ? ` • ${currentTrack.album}` : ' • Live Stream'}
+            Live Stream
           </p>
         </div>
       </div>
