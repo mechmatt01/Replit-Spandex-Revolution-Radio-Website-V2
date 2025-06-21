@@ -225,6 +225,7 @@ The application uses PostgreSQL with the following main entities:
 - June 20, 2025: Streamlined submissions form UI - moved sign in/subscription buttons to single premium feature box, positioned live chat higher above floating player
 - June 20, 2025: Repositioned countdown timer between "Join the hairspray rebellion!" text and main live player for improved visibility per client request
 - June 20, 2025: Enhanced UI elements - improved countdown text size, added proper spacing, hid empty sections for unauthenticated users, implemented theme-aware styling for all buttons and text colors
+- June 20, 2025: Fixed live chat visibility logic - completely hidden for unauthenticated users, only shows subscription prompt for authenticated non-subscribers
 
 ## User Preferences
 

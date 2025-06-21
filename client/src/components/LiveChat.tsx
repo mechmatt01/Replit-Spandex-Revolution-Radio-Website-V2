@@ -60,17 +60,38 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false }: LiveCh
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  if (!isEnabled) {
+  // Don't show anything if user is not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // Show subscription prompt if user doesn't have paid subscription
+  if (!hasPaidSubscription) {
     return (
-      <div className="fixed bottom-24 right-4 z-40">
-        <Card className="bg-gray-800/50 border-gray-600">
+      <div className="fixed bottom-36 right-4 z-50">
+        <Card className="bg-orange-500/10 border-orange-500/20 max-w-xs">
           <CardContent className="p-4 text-center">
-            <MessageCircle className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-            <p className="text-gray-400 text-sm">Live chat is currently offline</p>
+            <MessageCircle className="h-8 w-8 text-orange-400 mx-auto mb-2" />
+            <p className="text-orange-400 text-sm font-semibold mb-2">Premium Feature</p>
+            <p className="text-gray-300 text-xs mb-3">
+              Live chat is available with paid subscriptions. Upgrade to join the conversation!
+            </p>
+            <Button 
+              onClick={() => document.getElementById('subscribe')?.scrollIntoView({ behavior: 'smooth' })}
+              size="sm"
+              className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-3 py-1"
+            >
+              Upgrade Now
+            </Button>
           </CardContent>
         </Card>
       </div>
     );
+  }
+
+  // Don't show chat if not enabled by host
+  if (!isEnabled) {
+    return null;
   }
 
   return (

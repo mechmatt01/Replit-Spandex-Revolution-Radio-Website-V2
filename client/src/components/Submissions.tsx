@@ -110,7 +110,6 @@ export default function Submissions() {
           <p className="text-gray-400 text-lg">
             Got a metal track that needs to be heard? Submit your requests and help shape our playlist.
           </p>
-
         </div>
 
         {!isAuthenticated || !hasPaidSubscription ? (
