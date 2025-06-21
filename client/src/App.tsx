@@ -13,6 +13,7 @@ import DynamicMetaTags from "@/components/DynamicMetaTags";
 import HomePage from "@/pages/HomePage";
 import MusicPage from "@/pages/MusicPage";
 import ProfilePage from "@/pages/ProfilePage";
+import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/" component={HomePage} />
       <Route path="/music" component={MusicPage} />
       <Route path="/profile" component={ProfilePage} />
+      <Route path="/login" component={LoginPage} />
       <Route component={NotFound} />
     </Switch>
   );

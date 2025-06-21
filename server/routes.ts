@@ -187,6 +187,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Login page route
+  app.get("/api/login", (req, res) => {
+    res.redirect("/#/login");
+  });
+
+  // Google OAuth routes
+  app.get("/api/auth/google",
+    passport.authenticate("google", { scope: ["profile", "email"] })
+  );
+
+  app.get("/api/auth/google/callback",
+    passport.authenticate("google", { failureRedirect: "/#/login" }),
+    (req, res) => {
+      // Successful authentication, redirect home
+      res.redirect("/");
+    }
+  );
+
+  // Logout route
+  app.get("/api/logout", (req, res) => {
+    req.logout(() => {
+      res.redirect("/");
+    });
+  });
+
   app.get("/api/auth/user", isAuthenticated, (req, res) => {
     const user = req.user as User;
     res.json({

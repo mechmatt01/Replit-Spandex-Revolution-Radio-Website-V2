@@ -215,14 +215,14 @@ export default function Navigation() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.location.href = "/api/login"}
+                      onClick={() => window.location.href = "/#/login"}
                       className="text-sm"
                     >
                       SIGN IN
                     </Button>
                     <Button
                       size="sm"
-                      onClick={() => window.location.href = "/api/login"}
+                      onClick={() => window.location.href = "/#/login"}
                       className="text-sm"
                     >
                       SIGN UP
@@ -382,7 +382,7 @@ export default function Navigation() {
                   ) : (
                     <button
                       onClick={() => {
-                        window.location.href = "/api/login";
+                        window.location.href = "/#/login";
                         setIsOpen(false);
                       }}
                       className="flex items-center justify-end space-x-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 whitespace-nowrap text-right"
