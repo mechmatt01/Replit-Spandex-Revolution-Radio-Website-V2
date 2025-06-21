@@ -73,7 +73,7 @@ export default function Navigation() {
     <TooltipProvider>
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300">
         <div className="w-full relative">
-          <div className="flex items-center justify-between h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
+          <div className="flex items-center h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
             {/* Logo & Brand */}
             <div className="flex items-center space-x-4">
               <div 
@@ -89,7 +89,7 @@ export default function Navigation() {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="flex flex-col">
+              <div className="flex flex-col" id="brand-text">
                 <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
                   SPANDEX SALVATION
                 </div>
@@ -99,8 +99,11 @@ export default function Navigation() {
               </div>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden xl:flex items-center space-x-4">
+            {/* Desktop Navigation - Centered relative to brand text */}
+            <div className="hidden xl:flex items-center space-x-4 absolute" style={{
+              left: 'calc(15px + 32px + 16px + 9ch)', // Logo + spacing + brand text width approximation
+              transform: 'translateX(-50%)'
+            }}>
               {menuItems.slice(0, 3).map((item) => {
                 const IconComponent = item.icon;
                 return (
@@ -217,7 +220,7 @@ export default function Navigation() {
             </div>
 
             {/* Right side controls */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 ml-auto">
               {/* Theme toggle for desktop only */}
               <div className="hidden xl:flex items-center">
                 <MetalThemeSwitcher />
