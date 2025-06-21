@@ -123,31 +123,7 @@ export default function Submissions() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="albumTitle" className="text-gray-300 font-semibold">Album</Label>
-                  <Input
-                    id="albumTitle"
-                    value={formData.albumTitle || ""}
-                    onChange={(e) => handleInputChange("albumTitle", e.target.value)}
-                    placeholder="Enter album name"
-                    className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="releaseYear" className="text-gray-300 font-semibold">Release Year</Label>
-                  <Input
-                    id="releaseYear"
-                    type="number"
-                    min="1960"
-                    max="2025"
-                    value={formData.releaseYear || ""}
-                    onChange={(e) => handleInputChange("releaseYear", e.target.value ? parseInt(e.target.value) : undefined)}
-                    placeholder="1985"
-                    className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
-                  />
-                </div>
-              </div>
+
 
               <div>
                 <Label htmlFor="submitterName" className="text-gray-300 font-semibold">Your Name</Label>

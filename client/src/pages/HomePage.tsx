@@ -4,12 +4,9 @@ import Features from "@/components/Features";
 import About from "@/components/About";
 import Schedule from "@/components/Schedule";
 import Submissions from "@/components/Submissions";
-import InteractiveMap from "@/components/InteractiveMap";
 import InteractiveListenerMap from "@/components/InteractiveListenerMap";
 import Contact from "@/components/Contact";
-import Subscription from "@/components/Subscription";
 import StripePaymentProcessor from "@/components/StripePaymentProcessor";
-import Merch from "@/components/Merch";
 import ShopifyEcommerce from "@/components/ShopifyEcommerce";
 import AdminPanel from "@/components/AdminPanel";
 import AdvancedAdminDashboard from "@/components/AdvancedAdminDashboard";
@@ -28,10 +25,8 @@ export default function HomePage() {
       <About />
       <Schedule />
       <Submissions />
-      <InteractiveMap />
       <InteractiveListenerMap />
       <Contact />
-      <Subscription />
       <section id="subscribe" className="py-20 bg-dark-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -45,7 +40,6 @@ export default function HomePage() {
           <StripePaymentProcessor />
         </div>
       </section>
-      <Merch />
       <ShopifyEcommerce />
       <AdminPanel />
       <AdvancedAdminDashboard />
