@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupPassport, isAuthenticated, isAdmin, hashPassword, generateToken, sendVerificationEmail } from "./auth";
+import { recaptchaService } from "./recaptcha";
+import { formatPhoneNumber } from "./userUtils";
 import passport from "passport";
 import Stripe from "stripe";
 import bcrypt from "bcryptjs";
@@ -713,6 +715,227 @@ export async function registerRoutes(app: Express): Promise<Server> {
       format: "audio/mpeg",
       status: "live"
     });
+  });
+
+  // reCAPTCHA Enterprise SMS fraud detection endpoints
+  app.post('/api/user/send-phone-verification', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user as User;
+      const { recaptchaToken, phoneNumber } = req.body;
+
+      if (!phoneNumber) {
+        return res.status(400).json({ message: 'Phone number is required' });
+      }
+
+      // Format phone number to E.164 format
+      const formattedPhone = formatPhoneNumber(phoneNumber);
+
+      // Step 1: Create assessment for SMS fraud detection
+      if (recaptchaToken && process.env.RECAPTCHA_SITE_KEY) {
+        const assessment = await recaptchaService.assessSMSDefense({
+          token: recaptchaToken,
+          siteKey: process.env.RECAPTCHA_SITE_KEY,
+          accountId: user.userId,
+          phoneNumber: formattedPhone,
+          action: 'phone_verification'
+        });
+
+        // Block if high risk or invalid token
+        if (!assessment.valid || (assessment.phoneRisk && assessment.phoneRisk.level === 'HIGH')) {
+          return res.status(403).json({ 
+            message: 'Request blocked for security reasons',
+            riskLevel: assessment.phoneRisk?.level,
+            reasons: assessment.reasons
+          });
+        }
+
+        // Log assessment for monitoring
+        console.log('SMS fraud assessment:', {
+          userId: user.userId,
+          phoneNumber: formattedPhone,
+          score: assessment.score,
+          riskLevel: assessment.phoneRisk?.level || 'LOW',
+          valid: assessment.valid
+        });
+      }
+
+      // Update user's phone number
+      await storage.updateUser(user.id, { phoneNumber: formattedPhone });
+
+      // In production, you would send actual SMS here
+      // For demo purposes, we'll simulate SMS sending
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Store verification code (in production, use Redis or database with expiration)
+      // For now, we'll use a simple in-memory storage approach
+      req.session.phoneVerificationCode = verificationCode;
+      req.session.phoneToVerify = formattedPhone;
+
+      console.log(`SMS Verification Code for ${formattedPhone}: ${verificationCode}`);
+
+      res.json({ 
+        message: 'Verification code sent successfully',
+        phoneNumber: formattedPhone
+      });
+
+    } catch (error) {
+      console.error('Phone verification send error:', error);
+      res.status(500).json({ message: 'Failed to send verification code' });
+    }
+  });
+
+  app.post('/api/user/verify-phone', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user as User;
+      const { code } = req.body;
+
+      if (!code) {
+        return res.status(400).json({ message: 'Verification code is required' });
+      }
+
+      // Check verification code
+      const storedCode = req.session.phoneVerificationCode;
+      const phoneToVerify = req.session.phoneToVerify;
+
+      if (!storedCode || !phoneToVerify) {
+        return res.status(400).json({ message: 'No pending phone verification' });
+      }
+
+      if (code !== storedCode) {
+        return res.status(400).json({ message: 'Invalid verification code' });
+      }
+
+      // Step 2: Annotate the SMS as successful (legitimate)
+      // This helps improve the ML model for future assessments
+      if (process.env.RECAPTCHA_SITE_KEY) {
+        // In a real implementation, you'd call the annotation API here
+        console.log('SMS verification successful - annotating as legitimate:', {
+          userId: user.userId,
+          phoneNumber: phoneToVerify,
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // Mark phone as verified
+      const updatedUser = await storage.updateUser(user.id, { 
+        phoneNumber: phoneToVerify,
+        isPhoneVerified: true 
+      });
+
+      // Clear session data
+      delete req.session.phoneVerificationCode;
+      delete req.session.phoneToVerify;
+
+      res.json({ 
+        message: 'Phone number verified successfully',
+        user: {
+          ...updatedUser,
+          password: undefined // Don't send password
+        }
+      });
+
+    } catch (error) {
+      console.error('Phone verification error:', error);
+      res.status(500).json({ message: 'Phone verification failed' });
+    }
+  });
+
+  app.post('/api/user/send-email-verification', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user as User;
+      
+      // Generate verification token
+      const token = generateToken();
+      
+      // Update user with verification token
+      await storage.updateUser(user.id, { 
+        emailVerificationToken: token,
+        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+      });
+
+      // Send verification email
+      await sendVerificationEmail(user.email, token, user.firstName);
+
+      res.json({ message: 'Verification email sent successfully' });
+
+    } catch (error) {
+      console.error('Email verification send error:', error);
+      res.status(500).json({ message: 'Failed to send verification email' });
+    }
+  });
+
+  app.post('/api/user/verify-email', isAuthenticated, async (req: any, res) => {
+    try {
+      const { code: token } = req.body;
+
+      if (!token) {
+        return res.status(400).json({ message: 'Verification token is required' });
+      }
+
+      const user = await storage.verifyEmail(token);
+      if (!user) {
+        return res.status(400).json({ message: 'Invalid or expired verification token' });
+      }
+
+      res.json({ 
+        message: 'Email verified successfully',
+        user: {
+          ...user,
+          password: undefined
+        }
+      });
+
+    } catch (error) {
+      console.error('Email verification error:', error);
+      res.status(500).json({ message: 'Email verification failed' });
+    }
+  });
+
+  app.post('/api/user/update-profile', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user as User;
+      const { firstName, lastName, phoneNumber, showVerifiedBadge } = req.body;
+
+      const updates: any = {};
+      if (firstName !== undefined) updates.firstName = firstName;
+      if (lastName !== undefined) updates.lastName = lastName;
+      if (showVerifiedBadge !== undefined) updates.showVerifiedBadge = showVerifiedBadge;
+      
+      // If phone number is being updated, mark as unverified
+      if (phoneNumber !== undefined && phoneNumber !== user.phoneNumber) {
+        updates.phoneNumber = formatPhoneNumber(phoneNumber);
+        updates.isPhoneVerified = false;
+      }
+
+      const updatedUser = await storage.updateUser(user.id, updates);
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.json({
+        message: 'Profile updated successfully',
+        user: {
+          ...updatedUser,
+          password: undefined
+        }
+      });
+
+    } catch (error) {
+      console.error('Profile update error:', error);
+      res.status(500).json({ message: 'Failed to update profile' });
+    }
+  });
+
+  app.get('/api/user/submissions', isAuthenticated, async (req: any, res) => {
+    try {
+      const user = req.user as User;
+      const submissions = await storage.getUserSubmissions(user.id);
+      res.json(submissions);
+    } catch (error) {
+      console.error('Get submissions error:', error);
+      res.status(500).json({ message: 'Failed to fetch submissions' });
+    }
   });
 
   // Schedule account deletion

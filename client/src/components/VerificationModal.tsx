@@ -19,8 +19,23 @@ export default function VerificationModal({ isOpen, onClose, type, contactInfo }
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [sendingCode, setSendingCode] = useState(false);
   const { colors } = useTheme();
   const { toast } = useToast();
+  
+  // reCAPTCHA Enterprise integration for SMS fraud detection
+  const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || '';
+  const { executeRecaptcha } = useRecaptcha(siteKey);
+
+  // Reset state when modal opens/closes
+  useEffect(() => {
+    if (!isOpen) {
+      setCode('');
+      setVerified(false);
+      setLoading(false);
+      setSendingCode(false);
+    }
+  }, [isOpen]);
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,9 +74,27 @@ export default function VerificationModal({ isOpen, onClose, type, contactInfo }
   };
 
   const handleResend = async () => {
+    if (sendingCode) return;
+    
+    setSendingCode(true);
     try {
       if (type === 'phone') {
-        await apiRequest('POST', '/api/user/send-phone-verification', {});
+        let recaptchaToken = '';
+        
+        // Execute reCAPTCHA for SMS fraud detection
+        if (siteKey) {
+          try {
+            recaptchaToken = await executeRecaptcha('phone_verification');
+          } catch (recaptchaError) {
+            console.warn('reCAPTCHA failed:', recaptchaError);
+            // Continue without reCAPTCHA if it fails
+          }
+        }
+        
+        await apiRequest('POST', '/api/user/send-phone-verification', {
+          phoneNumber: contactInfo,
+          recaptchaToken
+        });
       } else {
         await apiRequest('POST', '/api/user/send-email-verification', {});
       }
@@ -76,6 +109,8 @@ export default function VerificationModal({ isOpen, onClose, type, contactInfo }
         description: error.message || "Failed to send verification code.",
         variant: "destructive",
       });
+    } finally {
+      setSendingCode(false);
     }
   };
 
