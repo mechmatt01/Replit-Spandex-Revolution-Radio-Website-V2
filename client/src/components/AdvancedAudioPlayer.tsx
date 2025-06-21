@@ -302,9 +302,7 @@ export default function AdvancedAudioPlayer() {
                       </div>
 
                       <div className="flex items-center space-x-3">
-                        {track.year && (
-                          <span className="text-xs opacity-50">{track.year}</span>
-                        )}
+
                         <div className="flex items-center space-x-1">
                           <Clock className="h-3 w-3 opacity-50" />
                           <span className="text-sm opacity-75">{formatTime(track.duration)}</span>
