@@ -15,6 +15,7 @@ interface RadioContextType {
   error: string | null;
   currentTrack: TrackInfo;
   stationName: string;
+  isTransitioning: boolean;
   togglePlayback: () => Promise<void>;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
@@ -203,11 +204,17 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           const nowPlayingData = await nowPlayingResponse.json();
           
           if (nowPlayingData.title && nowPlayingData.artist && nowPlayingData.title !== currentTrack.title) {
+            // Check if this is an advertisement
+            const isAd = nowPlayingData.title.toLowerCase().includes('advertisement') || 
+                        nowPlayingData.title.toLowerCase().includes('commercial') ||
+                        nowPlayingData.artist.toLowerCase().includes('advertisement') ||
+                        nowPlayingData.artist.toLowerCase().includes('commercial');
+            
             const newTrack: TrackInfo = {
-              title: nowPlayingData.title,
-              artist: nowPlayingData.artist,
-              album: nowPlayingData.album || "",
-              artwork: nowPlayingData.artwork || ""
+              title: isAd ? "Advertisement" : nowPlayingData.title,
+              artist: isAd ? currentStationName : nowPlayingData.artist,
+              album: isAd ? "" : (nowPlayingData.album || ""),
+              artwork: isAd ? "advertisement" : (nowPlayingData.artwork || "")
             };
             
             // Trigger fade transition
@@ -290,6 +297,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     error,
     currentTrack,
     stationName,
+    isTransitioning,
     togglePlayback,
     setVolume,
     toggleMute,

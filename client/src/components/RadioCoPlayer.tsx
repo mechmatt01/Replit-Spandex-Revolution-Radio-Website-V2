@@ -15,6 +15,7 @@ export default function RadioCoPlayer() {
     isMuted, 
     error, 
     currentTrack,
+    isTransitioning,
     togglePlayback, 
     setVolume, 
     toggleMute,
@@ -60,7 +61,7 @@ export default function RadioCoPlayer() {
 
       {/* Track Info with Fade Animation */}
       <div className="text-center mb-6">
-        <div className="transition-opacity duration-300">
+        <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
           <div className="flex justify-center mb-2">
             <ScrollingText 
               text={currentTrack.title}
@@ -70,11 +71,11 @@ export default function RadioCoPlayer() {
             />
           </div>
           {currentTrack.album && currentTrack.album !== "New York's Hip Hop & R&B" && currentTrack.album !== "Live Stream" && (
-            <p className="text-foreground font-semibold text-lg mb-1">
+            <p className="text-foreground font-semibold text-lg mb-1 transition-opacity duration-500">
               {currentTrack.album}
             </p>
           )}
-          <p className="text-foreground font-medium text-base mb-2">
+          <p className="text-foreground font-medium text-base mb-2 transition-opacity duration-500">
             {currentTrack.artist}
           </p>
           <p className="text-muted-foreground text-sm font-medium">

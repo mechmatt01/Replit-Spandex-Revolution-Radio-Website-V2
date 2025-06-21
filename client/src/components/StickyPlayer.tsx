@@ -7,7 +7,7 @@ import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 
 export default function StickyPlayer() {
-  const { isPlaying, volume, currentTrack, stationName, togglePlayback, setVolume } = useRadio();
+  const { isPlaying, volume, currentTrack, stationName, isTransitioning, togglePlayback, setVolume } = useRadio();
   const { getGradient } = useTheme();
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,7 +29,7 @@ export default function StickyPlayer() {
               artist={currentTrack.artist}
               size="sm"
             />
-            <div className="min-w-0 flex-1 transition-opacity duration-300">
+            <div className={`min-w-0 flex-1 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
               <div className="w-full max-w-xs">
                 <ScrollingText 
                   text={currentTrack.title}
