@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Upload, Crown, LogOut, User, CreditCard, FileText, Camera } from "lucide-react";
+import { Upload, Crown, LogOut, User, CreditCard, FileText, Camera, CheckCircle } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -126,6 +127,7 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
       lastName: profileData.lastName || user?.lastName,
       phoneNumber: profileData.phoneNumber || user?.phoneNumber,
       profileImageUrl: profileData.profileImageUrl || user?.profileImageUrl,
+      showVerifiedBadge: profileData.showVerifiedBadge ?? user?.showVerifiedBadge ?? false,
     };
     updateProfileMutation.mutate(updatedData);
   };
@@ -300,6 +302,42 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
+                  </div>
+
+                  {/* Verified Badge Toggle */}
+                  <div className="flex items-center justify-between p-4 rounded-lg border">
+                    <div className="flex items-center space-x-3">
+                      <CheckCircle className="h-5 w-5" style={{ color: colors.primary }} />
+                      <div>
+                        <span className="font-semibold">Verified Badge</span>
+                        <p className="text-sm text-muted-foreground">
+                          Show checkmark on your profile
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {!hasActiveSubscription && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setShowPremiumNotification({ show: true, type: 'profile_badge' })}
+                          className="text-xs"
+                        >
+                          Premium
+                        </Button>
+                      )}
+                      <Switch
+                        checked={hasActiveSubscription ? (profileData.showVerifiedBadge ?? user?.showVerifiedBadge ?? false) : false}
+                        onCheckedChange={(checked) => {
+                          if (hasActiveSubscription) {
+                            setProfileData(prev => ({ ...prev, showVerifiedBadge: checked }));
+                          } else {
+                            setShowPremiumNotification({ show: true, type: 'profile_badge' });
+                          }
+                        }}
+                        disabled={!hasActiveSubscription}
+                      />
+                    </div>
                   </div>
 
                   {/* Form Fields */}
