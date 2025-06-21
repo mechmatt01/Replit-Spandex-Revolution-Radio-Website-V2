@@ -133,7 +133,7 @@ Required redirect URIs in Google Cloud Console:
 - Production: `https://workspace.replit.app/api/auth/google/callback`
 
 ## Changelog
-- June 21, 2025: Fixed countdown text color to display black in light mode and white in dark mode, implemented precise navigation centering using dynamic X coordinate calculation to align navigation center with brand text center
+- June 21, 2025: Fixed countdown text color to display black in light mode and white in dark mode, implemented CSS Grid navigation centering for desktop and responsive flex layout for mobile to ensure proper positioning across all screen sizes
 - June 21, 2025: Final floating player layout - swapped play button to far right position, swapped LIVE indicator and "Live Stream" text positions, volume controls positioned before play button
 - June 21, 2025: Fixed navigation layout to center main menu items relative to "SPANDEX SALVATION RADIO" text width in full screen mode instead of entire screen width
 - June 21, 2025: Updated favicon to display dynamic disc logo design with theme-aware gradient colors matching current theme selection

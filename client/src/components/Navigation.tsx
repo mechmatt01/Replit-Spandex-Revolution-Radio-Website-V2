@@ -71,9 +71,9 @@ export default function Navigation() {
     <TooltipProvider>
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300">
         <div className="w-full relative">
-          <div className="grid grid-cols-3 items-center h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
-            {/* Logo & Brand - Left column */}
-            <div className="flex items-center space-x-4 justify-self-start">
+          <div className="xl:grid xl:grid-cols-3 flex justify-between items-center h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
+            {/* Logo & Brand - Left column on desktop, left side on mobile */}
+            <div className="flex items-center space-x-4 xl:justify-self-start">
               <div 
                 className="flex items-center justify-center w-8 h-8 rounded-full"
                 style={{ 
@@ -222,8 +222,8 @@ export default function Navigation() {
               </div>
             </div>
 
-            {/* Right side controls - Right column */}
-            <div className="flex items-center space-x-3 justify-self-end">
+            {/* Right side controls - Right column on desktop, right side on mobile */}
+            <div className="flex items-center space-x-3 xl:justify-self-end">
               {/* Theme toggle for desktop only */}
               <div className="hidden xl:flex items-center">
                 <MetalThemeSwitcher />
@@ -343,19 +343,21 @@ export default function Navigation() {
               </div>
 
               {/* Mobile menu button */}
-              <button
-                ref={menuRef}
-                onClick={() => setIsOpen(!isOpen)}
-                className="xl:hidden p-2 rounded-lg transition-colors duration-200"
-                style={{ 
-                  backgroundColor: isOpen ? colors.primary : 'transparent',
-                  color: isOpen ? 'white' : colors.primary 
-                }}
-                aria-label="Toggle mobile menu"
-                aria-expanded={isOpen}
-              >
-                <Menu size={24} />
-              </button>
+              <div className="xl:hidden">
+                <button
+                  ref={menuRef}
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="p-2 rounded-lg transition-colors duration-200"
+                  style={{ 
+                    backgroundColor: isOpen ? colors.primary : 'transparent',
+                    color: isOpen ? 'white' : colors.primary 
+                  }}
+                  aria-label="Toggle mobile menu"
+                  aria-expanded={isOpen}
+                >
+                  <Menu size={24} />
+                </button>
+              </div>
             </div>
           </div>
 
