@@ -132,6 +132,39 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
     updateProfileMutation.mutate(updatedData);
   };
 
+  // Account deletion mutation
+  const deleteAccountMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("DELETE", "/api/user/account");
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Account Scheduled for Deletion",
+        description: "Your account will be deleted on your next renewal date. Subscription auto-renewal has been disabled.",
+      });
+      setShowDeleteConfirmation(false);
+      // Redirect to home after brief delay
+      setTimeout(() => {
+        window.location.href = "/api/logout";
+      }, 2000);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: `Failed to schedule account deletion: ${error.message}`,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteAccount = () => {
+    deleteAccountMutation.mutate();
+  };
+
   const handleAvatarSelect = (avatarUrl: string) => {
     setProfileData(prev => ({ ...prev, profileImageUrl: avatarUrl }));
     setIsAvatarModalOpen(false);
