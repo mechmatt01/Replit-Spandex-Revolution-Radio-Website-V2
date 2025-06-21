@@ -78,8 +78,8 @@ export default function Navigation() {
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300">
         <div className="w-full relative">
           <div className="flex items-center h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
-            {/* Logo & Brand - Fixed position */}
-            <div className="flex items-center space-x-4 flex-shrink-0">
+            {/* Logo & Brand */}
+            <div className="flex items-center space-x-4">
               <div 
                 className="flex items-center justify-center w-8 h-8 rounded-full"
                 style={{ 
@@ -103,9 +103,41 @@ export default function Navigation() {
               </div>
             </div>
 
-            {/* Desktop Navigation - Centered in remaining space */}
-            <div className="hidden xl:flex items-center justify-center flex-1 px-8">
-              <div className="flex items-center space-x-4" ref={navRef}>
+            {/* Desktop Navigation - Centered relative to brand text */}
+            <div className="hidden xl:flex items-center space-x-4 absolute left-1/2 transform -translate-x-1/2" style={{ marginLeft: '-100px' }}>
+              {menuItems.slice(0, 3).map((item) => {
+                const IconComponent = item.icon;
+                return (
+                  <Tooltip key={item.id}>
+                    <TooltipTrigger asChild>
+                      <button 
+                        onClick={item.action}
+                        className="flex items-center space-x-2 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-md"
+                        style={{ color: colors.text }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary + '20';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = colors.text;
+                        }}
+                        aria-label={`Navigate to ${item.label.toLowerCase()}`}
+                      >
+                        <IconComponent size={16} style={{ color: colors.primary }} />
+                        <span>{item.label}</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      Navigate to {item.label.toLowerCase()} section
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })}
+              
+              {/* More Menu Dropdown */}
+              <div className="relative" ref={dropdownRef}>
+
               {menuItems.slice(0, 3).map((item) => {
                 const IconComponent = item.icon;
                 return (
