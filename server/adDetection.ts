@@ -1,5 +1,4 @@
 import OpenAI from "openai";
-import fetch from "node-fetch";
 import { Readable } from "stream";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
@@ -52,17 +51,27 @@ async function captureAudioSample(streamUrl: string, durationMs: number): Promis
       resolve(Buffer.concat(chunks));
     }, durationMs);
 
+    // Use native fetch (Node.js 18+)
     fetch(streamUrl)
       .then(response => {
         if (!response.body) {
           throw new Error('No response body');
         }
         
-        response.body.on('data', (chunk: Buffer) => {
-          chunks.push(chunk);
-        });
+        const reader = response.body.getReader();
         
-        response.body.on('error', (error) => {
+        const pump = () => {
+          return reader.read().then(({ done, value }) => {
+            if (done) {
+              resolve(Buffer.concat(chunks));
+              return;
+            }
+            chunks.push(Buffer.from(value));
+            return pump();
+          });
+        };
+        
+        pump().catch(error => {
           clearTimeout(timeout);
           reject(error);
         });
