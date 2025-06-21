@@ -24,6 +24,21 @@ interface RadioContextType {
 
 const RadioContext = createContext<RadioContextType | undefined>(undefined);
 
+// Helper function to get default artwork URLs
+function getDefaultArtwork(title: string, artist: string): string {
+  const artworkMap: Record<string, string> = {
+    "Youth Gone Wild": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+    "18 and Life": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+    "I Remember You": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+    "Master of Puppets": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+    "Ace of Spades": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+    "Breaking the Law": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400"
+  };
+  
+  // Return specific artwork for known tracks, or a generic metal concert image
+  return artworkMap[title] || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400";
+}
+
 export function RadioProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(0.7);
@@ -34,7 +49,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     title: "Hot 97",
     artist: "Live Stream",
     album: "New York's Hip Hop & R&B",
-    artwork: ""
+    artwork: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400"
   });
   const [stationName, setStationName] = useState("Hot 97");
   const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
@@ -214,7 +229,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
               title: isAd ? "Advertisement" : nowPlayingData.title,
               artist: isAd ? currentStationName : nowPlayingData.artist,
               album: isAd ? "" : (nowPlayingData.album || ""),
-              artwork: isAd ? "advertisement" : (nowPlayingData.artwork || "")
+              artwork: isAd ? "advertisement" : (nowPlayingData.artwork || getDefaultArtwork(nowPlayingData.title, nowPlayingData.artist))
             };
             
             // Trigger fade transition

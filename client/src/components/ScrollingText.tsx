@@ -30,8 +30,8 @@ export default function ScrollingText({ text, className = '', maxWidth = '60%', 
   }, [text]);
 
   useEffect(() => {
-    // Only start scrolling if text overflows and it's not just the radio station name
-    if (shouldScroll && text !== "Shady Pines Radio") {
+    // Start scrolling if text overflows the container
+    if (shouldScroll) {
       const timer = setTimeout(() => {
         setIsScrolling(true);
       }, 1000); // Start scrolling after 1 second

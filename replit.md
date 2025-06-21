@@ -220,6 +220,7 @@ The application uses PostgreSQL with the following main entities:
 - June 20, 2025: Implemented client feedback - removed album/release year fields from submissions form, eliminated duplicate components (kept InteractiveListenerMap, StripePaymentProcessor, ShopifyEcommerce), restricted submissions to paid subscribers only
 - June 20, 2025: Added comprehensive live chat feature with host control toggle, authentication integration, real-time messaging, and responsive design
 - June 20, 2025: Enhanced submissions form with premium feature protection, requiring paid subscription and authentication for access
+- June 20, 2025: Fixed text scrolling to always move when content overflows container, restored album artwork display with default images for all tracks
 
 ## User Preferences
 

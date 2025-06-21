@@ -105,7 +105,7 @@ export default function InteractiveAlbumArt({
       </div>
       
       {/* Album Artwork */}
-      {artwork && artwork.trim() && (
+      {artwork && artwork.trim() && artwork !== "advertisement" && (
         <div 
           className="absolute inset-0 transition-all duration-500"
           style={{ 
