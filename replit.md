@@ -197,6 +197,7 @@ The application uses PostgreSQL with the following main entities:
 - June 21, 2025: Enhanced live chat with friendly subscription prompts - only shows for first-time users or when clicking premium features, subscription upgrade flow
 - June 21, 2025: Database schema updates - added profile images, phone numbers, login tracking, subscription management fields
 - June 21, 2025: Created dedicated login page with proper routing, subscription page with tier selection, and profile page with complete feature set
+- June 21, 2025: Added verified badge toggle in Profile section - premium users can enable/disable checkmark display on their profile avatar, with contextual premium notifications for all features
 - June 19, 2025: Improved text display logic to show single instance when static, duplicated only during scrolling animations
 - June 19, 2025: Enhanced text alignment - floating player left-aligned, main player centered when not playing
 - June 19, 2025: Adjusted main player width to prevent text cutoff when displaying station name
