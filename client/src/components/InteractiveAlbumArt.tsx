@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import ThemedMusicLogo from '@/components/ThemedMusicLogo';
+import AdLogo from '@/components/AdLogo';
 
 interface InteractiveAlbumArtProps {
   artwork?: string;
@@ -88,12 +89,16 @@ export default function InteractiveAlbumArt({
         className="absolute inset-0 flex items-center justify-center transition-all duration-500"
         style={{ 
           background: getGradient(),
-          opacity: (!artwork || !imageLoaded) ? 1 : 0,
+          opacity: (!artwork || !imageLoaded || artwork === "advertisement") ? 1 : 0,
           transform: isHovered ? 'scale(1.1)' : 'scale(1)'
         }}
       >
         <div className="transition-transform duration-300" style={{ transform: isHovered ? 'rotate(5deg)' : 'rotate(0deg)' }}>
-          <ThemedMusicLogo size={logoSizes[size]} />
+          {artwork === "advertisement" ? (
+            <div className="text-white font-black text-2xl">Ad</div>
+          ) : (
+            <ThemedMusicLogo size={logoSizes[size]} />
+          )}
         </div>
         
         {/* Animated overlay particles */}

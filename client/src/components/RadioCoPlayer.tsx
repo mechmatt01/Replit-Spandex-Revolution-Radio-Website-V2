@@ -49,14 +49,16 @@ export default function RadioCoPlayer() {
         <span className="text-sm font-bold animate-pulse">LIVE</span>
       </div>
 
-      {/* Album Art */}
+      {/* Album Art with Fade Transition */}
       <div className="flex justify-center mb-6">
-        <InteractiveAlbumArt 
-          artwork={currentTrack.artwork}
-          title={currentTrack.title}
-          artist={currentTrack.artist}
-          size="md"
-        />
+        <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+          <InteractiveAlbumArt 
+            artwork={currentTrack.artwork}
+            title={currentTrack.title}
+            artist={currentTrack.artist}
+            size="md"
+          />
+        </div>
       </div>
 
       {/* Track Info with Fade Animation */}

@@ -23,12 +23,14 @@ export default function StickyPlayer() {
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}
           <div className="flex items-center space-x-4 flex-1 min-w-0 max-w-md">
-            <InteractiveAlbumArt 
-              artwork={currentTrack.artwork}
-              title={currentTrack.title}
-              artist={currentTrack.artist}
-              size="sm"
-            />
+            <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+              <InteractiveAlbumArt 
+                artwork={currentTrack.artwork}
+                title={currentTrack.title}
+                artist={currentTrack.artist}
+                size="sm"
+              />
+            </div>
             <div className={`min-w-0 flex-1 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
               <div className="w-full max-w-xs">
                 <ScrollingText 
