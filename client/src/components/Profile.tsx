@@ -165,7 +165,7 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
           <CardContent className="p-6 text-center">
             <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
             <p className="text-muted-foreground mb-4">Please sign in to view your profile.</p>
-            <Button onClick={() => window.location.href = "/api/login"}>
+            <Button onClick={() => window.location.href = "/#/login"}>
               Sign In
             </Button>
           </CardContent>
@@ -248,12 +248,12 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                         </AvatarFallback>
                       </Avatar>
                       {hasActiveSubscription && (
-                        <Badge 
-                          className="absolute -bottom-1 -right-1 p-1 rounded-full"
+                        <div 
+                          className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center border-2 border-background"
                           style={{ backgroundColor: colors.primary }}
                         >
                           <Crown className="h-3 w-3 text-white" />
-                        </Badge>
+                        </div>
                       )}
                     </div>
                     
@@ -287,12 +287,14 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                           }}
                         >
                           <Crown className="mr-2 h-4 w-4" />
-                          Spandex Salvation Avatars
-                          {!hasActiveSubscription && (
-                            <span className="ml-2 text-xs text-muted-foreground">
-                              Subscription Required
-                            </span>
-                          )}
+                          <div className="flex flex-col">
+                            <span>Spandex Salvation Avatars</span>
+                            {!hasActiveSubscription && (
+                              <span className="text-xs text-muted-foreground">
+                                Subscription Required
+                              </span>
+                            )}
+                          </div>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -372,9 +374,14 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                     </div>
                     <div>
                       <Label>Payment Method</Label>
-                      <p className="text-lg font-semibold">
-                        **** **** **** {subscriptionDetails?.lastFourDigits || "****"}
-                      </p>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-lg font-semibold">
+                          **** **** **** {subscriptionDetails?.lastFourDigits || "4242"}
+                        </span>
+                        <div className="text-sm text-muted-foreground">
+                          {subscriptionDetails?.cardType || "Visa"}
+                        </div>
+                      </div>
                     </div>
                   </div>
                   

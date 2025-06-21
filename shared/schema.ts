@@ -18,6 +18,8 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
+  phoneNumber: text("phone_number"),
+  profileImageUrl: text("profile_image_url"),
   password: text("password"), // encrypted password, null for OAuth users
   googleId: text("google_id"), // for Google OAuth
   isEmailVerified: boolean("is_email_verified").default(false),
@@ -29,6 +31,8 @@ export const users = pgTable("users", {
   stripeSubscriptionId: text("stripe_subscription_id"),
   subscriptionStatus: text("subscription_status"), // active, canceled, past_due, etc.
   subscriptionTier: text("subscription_tier"), // rebel, legend, icon
+  lastLoginAt: timestamp("last_login_at"),
+  isFirstLogin: boolean("is_first_login").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
