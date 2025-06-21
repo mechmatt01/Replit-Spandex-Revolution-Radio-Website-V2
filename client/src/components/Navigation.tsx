@@ -32,6 +32,7 @@ export default function Navigation() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const brandTextRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
+  const [navLeftPosition, setNavLeftPosition] = useState<number>(320);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -49,6 +50,38 @@ export default function Navigation() {
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen, isDropdownOpen]);
+
+  // Calculate precise navigation positioning based on brand text
+  useEffect(() => {
+    const calculateNavPosition = () => {
+      if (brandTextRef.current && navRef.current) {
+        const brandRect = brandTextRef.current.getBoundingClientRect();
+        const navRect = navRef.current.getBoundingClientRect();
+        
+        // Get brand text center X coordinate
+        const brandCenterX = brandRect.left + (brandRect.width / 2);
+        
+        // Calculate nav width
+        const navWidth = navRect.width || 400; // fallback width
+        
+        // Position nav so its center aligns with brand text center
+        const navLeftPos = brandCenterX - (navWidth / 2);
+        
+        setNavLeftPosition(navLeftPos);
+      }
+    };
+
+    // Calculate on mount and when window resizes
+    calculateNavPosition();
+    const timer = setTimeout(calculateNavPosition, 100);
+    
+    window.addEventListener('resize', calculateNavPosition);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', calculateNavPosition);
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -99,7 +132,14 @@ export default function Navigation() {
             </div>
 
             {/* Desktop Navigation - Centered relative to brand text */}
-            <div className="hidden xl:flex items-center space-x-4 absolute left-1/2 transform -translate-x-1/2" style={{ marginLeft: '-100px' }}>
+            <div 
+              ref={navRef}
+              className="hidden xl:flex items-center space-x-4 absolute" 
+              style={{ 
+                left: `${navLeftPosition}px`,
+                transition: 'left 0.2s ease-in-out'
+              }}
+            >
               {menuItems.slice(0, 3).map((item) => {
                 const IconComponent = item.icon;
                 return (
