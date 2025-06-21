@@ -43,14 +43,14 @@ export default function StickyPlayer() {
                 />
               </div>
               <div className="flex items-center space-x-2">
-                {/* Live Stream text moved here */}
-                <p className="text-muted-foreground text-sm truncate">
-                  {currentTrack.isAd ? "🔊 Commercial Break" : "Live Stream"}
-                </p>
-                {/* LIVE indicator moved after Live Stream text with vertical centering */}
+                {/* LIVE indicator moved before Live Stream text with vertical centering */}
                 <div className="flex items-center space-x-1" style={{ marginTop: '2px' }}>
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                 </div>
+                {/* Live Stream text moved after red dot */}
+                <p className="text-muted-foreground text-sm truncate">
+                  {currentTrack.isAd ? "🔊 Commercial Break" : "Live Stream"}
+                </p>
               </div>
               {currentTrack.isAd && (
                 <p className="text-xs text-orange-400 animate-pulse">
