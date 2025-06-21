@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
 import type { Submission, InsertSubmission } from "@shared/schema";
+import LiveChat from "@/components/LiveChat";
 
 export default function Submissions() {
   const [formData, setFormData] = useState<InsertSubmission>({
@@ -34,6 +35,17 @@ export default function Submissions() {
 
   const submitMutation = useMutation({
     mutationFn: async (data: InsertSubmission) => {
+      // Check for premium subscription before submission
+      if (!isAuthenticated) {
+        window.location.href = "/#/login";
+        return;
+      }
+      
+      if (!hasPaidSubscription) {
+        setShowPremiumNotification(true);
+        return;
+      }
+      
       const response = await apiRequest("POST", "/api/submissions", data);
       return response.json();
     },
@@ -86,16 +98,8 @@ export default function Submissions() {
     });
   };
 
-  // Handle unauthorized errors
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Authentication Required",
-        description: "Please sign in with a paid subscription to submit song requests.",
-        variant: "destructive",
-      });
-    }
-  }, [isAuthenticated, isLoading, toast]);
+  // State for premium notification
+  const [showPremiumNotification, setShowPremiumNotification] = useState(false);
 
   // Check if user has paid subscription (assuming stripeSubscriptionId indicates paid status)
   const hasPaidSubscription = user?.stripeSubscriptionId || false;
@@ -253,6 +257,15 @@ export default function Submissions() {
             ))}
           </div>
         </div>
+        )}
+
+        {/* Premium Feature Notification */}
+        {showPremiumNotification && (
+          <LiveChat
+            isEnabled={true}
+            onToggle={() => setShowPremiumNotification(false)}
+            premiumFeatureType="submission"
+          />
         )}
       </div>
     </section>

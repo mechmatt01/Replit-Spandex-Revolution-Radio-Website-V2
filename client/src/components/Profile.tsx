@@ -51,6 +51,7 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isCancelSubModalOpen, setIsCancelSubModalOpen] = useState(false);
+  const [showPremiumNotification, setShowPremiumNotification] = useState<{show: boolean, type: string}>({ show: false, type: '' });
   const [profileData, setProfileData] = useState<Partial<UserType>>({});
   
   const { user, isAuthenticated } = useAuth();

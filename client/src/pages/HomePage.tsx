@@ -12,17 +12,13 @@ import AdminPanel from "@/components/AdminPanel";
 import AdvancedAdminDashboard from "@/components/AdvancedAdminDashboard";
 import { useState } from "react";
 import AdvancedAudioPlayer from "@/components/AdvancedAudioPlayer";
-import LiveChat from "@/components/LiveChat";
+
 import Footer from "@/components/Footer";
 import StickyPlayer from "@/components/StickyPlayer";
+import ChatButton from "@/components/ChatButton";
 
 
 export default function HomePage() {
-  const [isChatEnabled, setIsChatEnabled] = useState(false);
-
-  const handleToggleChat = () => {
-    setIsChatEnabled(!isChatEnabled);
-  };
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
@@ -53,12 +49,7 @@ export default function HomePage() {
       <AdvancedAdminDashboard />
       <Footer />
       <StickyPlayer />
-      <LiveChat 
-        isEnabled={isChatEnabled} 
-        onToggle={handleToggleChat} 
-        isHost={false} // Set to true for admin/host users
-      />
-
+      <ChatButton />
     </div>
   );
 }

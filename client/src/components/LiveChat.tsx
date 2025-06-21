@@ -92,10 +92,10 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false, premiumF
     return (
       <div className="fixed bottom-20 right-4 z-40">
         <Card 
-          className="w-80 shadow-lg border-0 backdrop-blur-sm"
+          className="w-80 shadow-lg border-2 backdrop-blur-sm"
           style={{ 
-            background: `linear-gradient(135deg, ${colors.primary}20, ${colors.secondary || colors.primary}10)`,
-            borderImage: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary || colors.primary}) 1`
+            background: `linear-gradient(135deg, ${colors.primary}15, ${colors.primary}05)`,
+            borderColor: colors.primary
           }}
         >
           <CardContent className="p-4">
