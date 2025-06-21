@@ -110,40 +110,37 @@ export default function Submissions() {
           <p className="text-gray-400 text-lg">
             Got a metal track that needs to be heard? Submit your requests and help shape our playlist.
           </p>
-          {!isAuthenticated && (
-            <div className="mt-6 p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
-              <div className="flex items-center justify-center gap-2 text-orange-400">
-                <Crown className="h-5 w-5" />
-                <span className="font-semibold">Premium Feature - Paid Subscription Required</span>
-              </div>
-            </div>
-          )}
+
         </div>
 
         {!isAuthenticated || !hasPaidSubscription ? (
-          <Card className="bg-dark-surface border-dark-border mb-12">
-            <CardContent className="p-8 text-center">
-              <Lock className="h-16 w-16 text-orange-400 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-2">Premium Feature</h3>
+          <div className="mt-6">
+            <div className="p-6 bg-orange-500/10 border border-orange-500/20 rounded-lg text-center">
+              <div className="flex items-center justify-center gap-2 text-orange-400 mb-4">
+                <Crown className="h-5 w-5" />
+                <span className="font-semibold">Premium Feature - Paid Subscription Required</span>
+              </div>
               <p className="text-gray-400 mb-6">
                 Song submissions are available exclusively to paid subscribers. 
                 Sign in and upgrade to submit your favorite tracks.
               </p>
-              <Button 
-                onClick={() => window.location.href = '/api/login'}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full font-semibold mr-4"
-              >
-                Sign In
-              </Button>
-              <Button 
-                onClick={() => document.getElementById('subscribe')?.scrollIntoView({ behavior: 'smooth' })}
-                variant="outline"
-                className="border-orange-500 text-orange-400 hover:bg-orange-500/10 px-6 py-3 rounded-full font-semibold"
-              >
-                View Subscriptions
-              </Button>
-            </CardContent>
-          </Card>
+              <div className="flex gap-4 justify-center">
+                <Button 
+                  onClick={() => window.location.href = '/api/login'}
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full font-semibold"
+                >
+                  Sign In
+                </Button>
+                <Button 
+                  onClick={() => document.getElementById('subscribe')?.scrollIntoView({ behavior: 'smooth' })}
+                  variant="outline"
+                  className="border-orange-500 text-orange-400 hover:bg-orange-500/10 px-6 py-3 rounded-full font-semibold"
+                >
+                  View Subscriptions
+                </Button>
+              </div>
+            </div>
+          </div>
         ) : (
           <Card className="bg-dark-surface border-dark-border mb-12">
             <CardContent className="p-8">
