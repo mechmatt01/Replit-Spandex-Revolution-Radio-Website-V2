@@ -226,6 +226,7 @@ The application uses PostgreSQL with the following main entities:
 - June 20, 2025: Repositioned countdown timer between "Join the hairspray rebellion!" text and main live player for improved visibility per client request
 - June 20, 2025: Enhanced UI elements - improved countdown text size, added proper spacing, hid empty sections for unauthenticated users, implemented theme-aware styling for all buttons and text colors
 - June 20, 2025: Fixed live chat visibility logic - completely hidden for unauthenticated users, only shows subscription prompt for authenticated non-subscribers
+- June 20, 2025: Enhanced countdown styling - increased title text size to text-2xl and reduced spacing to mb-1 for better visual hierarchy
 
 ## User Preferences
 
