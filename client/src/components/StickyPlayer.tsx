@@ -43,14 +43,15 @@ export default function StickyPlayer() {
                 />
               </div>
               <div className="flex items-center space-x-2">
-                {/* LIVE indicator moved here next to Live Stream text */}
+                {/* Live Stream text moved here */}
+                <p className="text-muted-foreground text-sm truncate">
+                  {currentTrack.isAd ? "🔊 Commercial Break" : "Live Stream"}
+                </p>
+                {/* LIVE indicator moved after Live Stream text */}
                 <div className="flex items-center space-x-1">
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                   <span className="text-xs text-red-500 font-bold animate-pulse">LIVE</span>
                 </div>
-                <p className="text-muted-foreground text-sm truncate">
-                  {currentTrack.isAd ? "🔊 Commercial Break" : "Live Stream"}
-                </p>
               </div>
               {currentTrack.isAd && (
                 <p className="text-xs text-orange-400 animate-pulse">
@@ -62,30 +63,7 @@ export default function StickyPlayer() {
 
           {/* Player Controls */}
           <div className="flex items-center space-x-4">
-            {/* Play Button */}
-            <Button
-              onClick={togglePlayback}
-              className="text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl"
-              style={{
-                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-                focusRingColor: colors.primary,
-                boxShadow: `0 4px 20px ${colors.primary}60`
-              }}
-              aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
-            >
-              {isPlaying ? (
-                <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
-                  <rect x="5" y="3" width="4" height="18" rx="1" />
-                  <rect x="15" y="3" width="4" height="18" rx="1" />
-                </svg>
-              ) : (
-                <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
-                  <polygon points="7,4 20,12 7,20" />
-                </svg>
-              )}
-            </Button>
-
-            {/* Volume Control - moved next to play button */}
+            {/* Volume Control - moved to left side */}
             <div className="hidden md:flex items-center space-x-2">
               <Volume2 className="text-gray-400 h-4 w-4" />
               <div className="w-20 h-1 bg-gray-700 rounded-full relative">
@@ -106,6 +84,29 @@ export default function StickyPlayer() {
                 />
               </div>
             </div>
+
+            {/* Play Button - moved to far right */}
+            <Button
+              onClick={togglePlayback}
+              className="text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl ml-auto"
+              style={{
+                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+                focusRingColor: colors.primary,
+                boxShadow: `0 4px 20px ${colors.primary}60`
+              }}
+              aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
+            >
+              {isPlaying ? (
+                <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
+                  <rect x="5" y="3" width="4" height="18" rx="1" />
+                  <rect x="15" y="3" width="4" height="18" rx="1" />
+                </svg>
+              ) : (
+                <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
+                  <polygon points="7,4 20,12 7,20" />
+                </svg>
+              )}
+            </Button>
           </div>
         </div>
       </div>
