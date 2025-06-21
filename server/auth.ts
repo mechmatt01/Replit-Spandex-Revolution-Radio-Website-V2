@@ -112,10 +112,24 @@ export function setupPassport(app: Express) {
             });
           } else {
             // Create new user
+            const email = profile.emails?.[0]?.value || "";
+            const firstName = profile.name?.givenName || "";
+            const lastName = profile.name?.familyName || "";
+            
+            // Generate username from email or name
+            let username = email.split('@')[0];
+            if (!username && firstName) {
+              username = firstName.toLowerCase();
+            }
+            if (!username) {
+              username = `user_${profile.id}`;
+            }
+            
             user = await storage.upsertUser({
-              email: profile.emails?.[0]?.value || "",
-              firstName: profile.name?.givenName || "",
-              lastName: profile.name?.familyName || "",
+              username,
+              email,
+              firstName,
+              lastName,
               googleId: profile.id,
             });
             
