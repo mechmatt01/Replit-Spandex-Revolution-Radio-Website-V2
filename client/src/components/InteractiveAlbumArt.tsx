@@ -89,7 +89,7 @@ export default function InteractiveAlbumArt({
         className="absolute inset-0 flex items-center justify-center transition-all duration-500"
         style={{ 
           background: getGradient(),
-          opacity: (!artwork || !imageLoaded || artwork === "advertisement") ? 1 : 0,
+          opacity: (!artwork || !imageLoaded || artwork === "advertisement" || title === "Hot 97") ? 1 : 0,
           transform: isHovered ? 'scale(1.1)' : 'scale(1)'
         }}
       >
@@ -105,7 +105,7 @@ export default function InteractiveAlbumArt({
       </div>
       
       {/* Album Artwork */}
-      {artwork && artwork.trim() && artwork !== "advertisement" && (
+      {artwork && artwork.trim() && artwork !== "advertisement" && title !== "Hot 97" && (
         <div 
           className="absolute inset-0 transition-all duration-500"
           style={{ 

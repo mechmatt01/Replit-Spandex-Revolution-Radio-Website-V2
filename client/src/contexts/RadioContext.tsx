@@ -49,7 +49,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     title: "Hot 97",
     artist: "Live Stream",
     album: "New York's Hip Hop & R&B",
-    artwork: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400"
+    artwork: ""
   });
   const [stationName, setStationName] = useState("Hot 97");
   const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
