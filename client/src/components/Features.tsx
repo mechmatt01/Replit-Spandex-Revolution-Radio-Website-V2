@@ -66,6 +66,120 @@ export default function Features() {
             </CardContent>
           </Card>
 
+          {/* Feature 2: Global Listener Map */}
+          <Card 
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            style={{
+              backgroundColor: colors.card,
+              borderColor: `${colors.primary}40`,
+              boxShadow: `0 8px 32px ${colors.primary}20`
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = `${colors.primary}40`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
+            }}
+          >
+            <CardContent className="p-0">
+              <div 
+                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
+                style={{ backgroundColor: colors.primary }}
+              >
+                <Globe className="text-white h-8 w-8" />
+              </div>
+              <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>Global Listener Map</h3>
+              <p className="font-semibold mb-6 text-lg leading-relaxed" style={{ color: colors.textMuted }}>See where metalheads around the world are tuning in from in real-time.</p>
+              <div className="flex items-center text-sm font-bold" style={{ color: colors.primary }}>
+                <div className="w-3 h-3 rounded-full mr-3 animate-pulse" style={{ backgroundColor: colors.primary }}></div>
+                <span>{stats?.currentListeners || 1247} listeners online</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Feature 3: Show Archives */}
+          <Card 
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            style={{
+              backgroundColor: colors.card,
+              borderColor: `${colors.primary}40`,
+              boxShadow: `0 8px 32px ${colors.primary}20`
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = `${colors.primary}40`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
+            }}
+          >
+            <CardContent className="p-0">
+              <div 
+                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
+                style={{ backgroundColor: colors.primary }}
+              >
+                <Archive className="text-white h-8 w-8" />
+              </div>
+              <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>Show Archives</h3>
+              <p className="font-semibold mb-6 text-lg leading-relaxed" style={{ color: colors.textMuted }}>Access past shows, special episodes, and exclusive metal content on-demand.</p>
+              <div className="flex items-center text-sm font-bold" style={{ color: colors.primary }}>
+                <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: colors.primary }}></div>
+                <span>200+ hours of content</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Feature 4: Song Requests */}
+          <Card 
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            style={{
+              backgroundColor: colors.card,
+              borderColor: `${colors.primary}40`,
+              boxShadow: `0 8px 32px ${colors.primary}20`
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = `${colors.primary}40`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
+            }}
+          >
+            <CardContent className="p-0">
+              <div 
+                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
+                style={{ backgroundColor: colors.primary }}
+              >
+                <Music className="text-white h-8 w-8" />
+              </div>
+              <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>Song Requests</h3>
+              <p className="font-semibold mb-6 text-lg leading-relaxed" style={{ color: colors.textMuted }}>Submit your favorite metal tracks and artist suggestions to be featured on air.</p>
+              <Button 
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0"
+                style={{ 
+                  color: colors.primary,
+                  backgroundColor: 'transparent',
+                  border: 'none'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.primary;
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = colors.primary;
+                }}
+                onClick={() => scrollToSection("submissions")}
+              >
+                Submit Request →
+              </Button>
+            </CardContent>
+          </Card>
+
           {/* Feature 2: Interactive Map */}
           <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
             <CardContent className="p-6">
@@ -117,41 +231,41 @@ export default function Features() {
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
             style={{
               backgroundColor: colors.card,
-              borderColor: `${colors.secondary}40`,
-              boxShadow: `0 8px 32px ${colors.secondary}20`
+              borderColor: `${colors.primary}40`,
+              boxShadow: `0 8px 32px ${colors.primary}20`
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = colors.secondary;
-              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.secondary}60`;
+              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = `${colors.secondary}40`;
-              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.secondary}20`;
+              e.currentTarget.style.borderColor = `${colors.primary}40`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
           >
             <CardContent className="p-0">
               <div 
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-                style={{ backgroundColor: colors.secondary }}
+                style={{ backgroundColor: colors.primary }}
               >
                 <Crown className="text-white h-8 w-8" />
               </div>
               <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>Hairspray Rebellion</h3>
               <p className="font-semibold mb-6 text-lg leading-relaxed" style={{ color: colors.textMuted }}>Join our premium membership for exclusive content, early access, and special perks.</p>
               <Button 
-                variant="ghost" 
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105"
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0"
                 style={{ 
-                  color: colors.secondary,
-                  backgroundColor: 'transparent'
+                  color: colors.primary,
+                  backgroundColor: 'transparent',
+                  border: 'none'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.secondary;
+                  e.currentTarget.style.backgroundColor = colors.primary;
                   e.currentTarget.style.color = 'white';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = colors.secondary;
+                  e.currentTarget.style.color = colors.primary;
                 }}
                 onClick={() => scrollToSection("subscribe")}
               >
@@ -165,41 +279,41 @@ export default function Features() {
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
             style={{
               backgroundColor: colors.card,
-              borderColor: `${colors.accent}40`,
-              boxShadow: `0 8px 32px ${colors.accent}20`
+              borderColor: `${colors.primary}40`,
+              boxShadow: `0 8px 32px ${colors.primary}20`
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = colors.accent;
-              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.accent}60`;
+              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = `${colors.accent}40`;
-              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.accent}20`;
+              e.currentTarget.style.borderColor = `${colors.primary}40`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
           >
             <CardContent className="p-0">
               <div 
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-                style={{ backgroundColor: colors.accent }}
+                style={{ backgroundColor: colors.primary }}
               >
                 <Shirt className="text-white h-8 w-8" />
               </div>
               <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>Official Merch</h3>
               <p className="font-semibold mb-6 text-lg leading-relaxed" style={{ color: colors.textMuted }}>Show your metal pride with official Spandex Salvation Radio merchandise and apparel.</p>
               <Button 
-                variant="ghost" 
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105"
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0"
                 style={{ 
-                  color: colors.accent,
-                  backgroundColor: 'transparent'
+                  color: colors.primary,
+                  backgroundColor: 'transparent',
+                  border: 'none'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.accent;
+                  e.currentTarget.style.backgroundColor = colors.primary;
                   e.currentTarget.style.color = 'white';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = colors.accent;
+                  e.currentTarget.style.color = colors.primary;
                 }}
                 onClick={() => scrollToSection("merch")}
               >

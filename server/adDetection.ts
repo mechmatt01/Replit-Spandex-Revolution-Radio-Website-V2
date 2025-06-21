@@ -2,7 +2,12 @@ import OpenAI from "openai";
 import { Readable } from "stream";
 
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+let openai: OpenAI | null = null;
+
+// Initialize OpenAI only if API key is available
+if (process.env.OPENAI_API_KEY) {
+  openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+}
 
 interface AdDetectionResult {
   isAd: boolean;
@@ -85,6 +90,11 @@ async function captureAudioSample(streamUrl: string, durationMs: number): Promis
 
 // Transcribe audio using OpenAI Whisper
 async function transcribeAudio(audioBuffer: Buffer): Promise<string> {
+  if (!openai) {
+    console.warn('OpenAI API key not available, skipping transcription');
+    return '';
+  }
+  
   try {
     // Convert buffer to a readable stream for OpenAI API
     const audioStream = Readable.from(audioBuffer);
@@ -112,6 +122,11 @@ async function analyzeForAdvertisement(transcription: string): Promise<{
 }> {
   if (!transcription || transcription.trim().length === 0) {
     return { isAd: false, confidence: 0 };
+  }
+
+  if (!openai) {
+    console.warn('OpenAI API key not available, using keyword detection only');
+    return { isAd: quickAdDetection(transcription), confidence: 0.5 };
   }
 
   try {
