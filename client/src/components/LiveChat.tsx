@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Send, MessageCircle, X, Users, Mic, MicOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
 
 interface ChatMessage {
@@ -29,7 +30,9 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false }: LiveCh
   const [onlineCount, setOnlineCount] = useState(1);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { user, isAuthenticated } = useAuth();
+  const { getColors } = useTheme();
   const { toast } = useToast();
+  const colors = getColors();
 
   // Check if user has paid subscription (assuming stripeSubscriptionId indicates paid status)
   const hasPaidSubscription = user?.stripeSubscriptionId || false;

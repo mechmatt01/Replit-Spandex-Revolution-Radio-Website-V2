@@ -23,6 +23,7 @@ export interface IStorage {
   verifyEmail(token: string): Promise<User | undefined>;
   updatePassword(id: number, hashedPassword: string): Promise<User | undefined>;
   updateStripeInfo(id: number, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined>;
+  getUserSubmissions(userId: number): Promise<Submission[]>;
   
   // Submissions
   getSubmissions(): Promise<Submission[]>;
@@ -161,6 +162,10 @@ export class DatabaseStorage implements IStorage {
       .values(insertSubmission)
       .returning();
     return submission;
+  }
+
+  async getUserSubmissions(userId: number): Promise<Submission[]> {
+    return await db.select().from(submissions).where(eq(submissions.userId, userId));
   }
 
   async updateSubmissionStatus(id: number, status: string): Promise<Submission | undefined> {

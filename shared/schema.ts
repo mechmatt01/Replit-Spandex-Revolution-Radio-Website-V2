@@ -35,6 +35,7 @@ export const users = pgTable("users", {
 
 export const submissions = pgTable("submissions", {
   id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
   songTitle: text("song_title").notNull(),
   artistName: text("artist_name").notNull(),
   albumTitle: text("album_title"),

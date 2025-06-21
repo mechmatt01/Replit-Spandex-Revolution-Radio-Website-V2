@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X, Radio, Sun, Moon, Music, Calendar, Send, Mail, ShoppingBag, CreditCard, ChevronDown, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { useAudio } from "@/contexts/AudioContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import MetalThemeSwitcher from "@/components/MetalThemeSwitcher";
 import AuthModal from "@/components/AuthModal";
 import { Link } from "wouter";
@@ -17,7 +19,7 @@ export default function Navigation() {
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const { togglePlayback, isPlaying } = useAudio();
   const { getColors, getGradient } = useTheme();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const colors = getColors();
   const menuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
