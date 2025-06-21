@@ -21,6 +21,8 @@ export const users = pgTable("users", {
   phoneNumber: text("phone_number"),
   profileImageUrl: text("profile_image_url"),
   showVerifiedBadge: boolean("show_verified_badge").default(false),
+  accountDeletionScheduled: boolean("account_deletion_scheduled").default(false),
+  accountDeletionDate: timestamp("account_deletion_date"),
   password: text("password"), // encrypted password, null for OAuth users
   googleId: text("google_id"), // for Google OAuth
   isEmailVerified: boolean("is_email_verified").default(false),

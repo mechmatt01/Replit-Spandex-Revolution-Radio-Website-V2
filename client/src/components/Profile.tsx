@@ -378,13 +378,24 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                     </div>
                   </div>
 
-                  <Button 
-                    onClick={handleProfileUpdate}
-                    disabled={updateProfileMutation.isPending}
-                    className="w-full"
-                  >
-                    {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
-                  </Button>
+                  <div className="flex gap-4">
+                    <Button 
+                      onClick={handleProfileUpdate}
+                      disabled={updateProfileMutation.isPending}
+                      className="flex-1"
+                    >
+                      {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+                    </Button>
+                    
+                    <Button 
+                      variant="destructive"
+                      onClick={() => setShowDeleteConfirmation(true)}
+                      className="px-8 bg-red-600 hover:bg-red-700 text-white font-semibold transition-all duration-300"
+                    >
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             )}

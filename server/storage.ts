@@ -55,6 +55,10 @@ export interface IStorage {
   // Subscriptions
   getSubscriptions(): Promise<Subscription[]>;
   createSubscription(subscription: InsertSubscription): Promise<Subscription>;
+  
+  // Account deletion
+  scheduleUserDeletion(id: number): Promise<User | undefined>;
+  deleteUserAccount(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -290,6 +294,57 @@ export class DatabaseStorage implements IStorage {
       .values(insertSubscription)
       .returning();
     return subscription;
+  }
+
+  async scheduleUserDeletion(id: number): Promise<User | undefined> {
+    const user = await this.getUser(id);
+    if (!user) return undefined;
+
+    // Calculate deletion date based on subscription renewal
+    let deletionDate = new Date();
+    if (user.subscriptionStatus === 'active' && user.stripeSubscriptionId) {
+      // In real implementation, you'd get the next billing date from Stripe
+      // For now, we'll add 30 days as an example
+      deletionDate.setDate(deletionDate.getDate() + 30);
+    } else {
+      // If no active subscription, delete immediately (or after 7 days grace period)
+      deletionDate.setDate(deletionDate.getDate() + 7);
+    }
+
+    const [updatedUser] = await db
+      .update(users)
+      .set({ 
+        accountDeletionScheduled: true,
+        accountDeletionDate: deletionDate,
+        subscriptionStatus: 'cancelled', // Cancel subscription
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, id))
+      .returning();
+
+    // Schedule deletion in Firebase
+    if (updatedUser) {
+      try {
+        await scheduleAccountDeletion(updatedUser.id.toString(), deletionDate);
+      } catch (error) {
+        console.error('Failed to schedule deletion in Firebase:', error);
+      }
+    }
+
+    return updatedUser || undefined;
+  }
+
+  async deleteUserAccount(id: number): Promise<void> {
+    try {
+      // Delete from PostgreSQL
+      await db.delete(users).where(eq(users.id, id));
+      
+      // Delete from Firebase
+      await deleteFirebaseUser(id.toString());
+    } catch (error) {
+      console.error('Failed to delete user account:', error);
+      throw error;
+    }
   }
 }
 
