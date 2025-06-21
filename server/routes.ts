@@ -476,10 +476,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Determine if this is likely an ad
         const isAd = metadataAnalysis.isAd || keywordDetection;
         
+        // If we detect it's an ad, update the title and artist accordingly
+        let adTitle = title || "Live Radio";
+        let adArtist = artist || "Spandex Salvation Radio";
+        
+        if (isAd) {
+          // Check if it's a Capital One ad specifically
+          if (titleString.toLowerCase().includes('capital one') || 
+              artist.toLowerCase().includes('capital one')) {
+            adTitle = "Capital One Commercial";
+            adArtist = "Advertisement";
+          } else if (metadataAnalysis.reason?.includes('capital one')) {
+            adTitle = "Capital One Commercial";
+            adArtist = "Advertisement";
+          } else {
+            adTitle = title.includes('Commercial') ? title : `Commercial Break`;
+            adArtist = "Advertisement";
+          }
+        }
+        
         currentTrack = {
           id: 1,
-          title: isAd ? (title.includes('Commercial') ? title : `${title} (Commercial)`) : title || "Live Radio",
-          artist: isAd ? "Advertisement" : (artist || "Spandex Salvation Radio"),
+          title: adTitle,
+          artist: adArtist,
           album: data.icestats.source[0].server_description || "Live Stream",
           duration: null,
           artwork: null,
@@ -531,6 +550,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error in advanced ad detection:', error);
       res.status(500).json({ error: "Failed to detect ad content" });
+    }
+  });
+
+  // Manual ad detection override endpoint
+  app.post("/api/force-ad-detection", async (req, res) => {
+    try {
+      const { createAdTrackInfo } = await import('./adForceDetect');
+      const brand = req.body.brand || "Capital One";
+      
+      const adTrack = createAdTrackInfo(brand);
+      
+      // Update the database with the ad info
+      await storage.updateNowPlaying({
+        title: adTrack.title,
+        artist: adTrack.artist,
+        album: adTrack.album,
+        duration: adTrack.duration,
+        artwork: adTrack.artwork
+      });
+      
+      res.json(adTrack);
+    } catch (error) {
+      console.error('Error in manual ad detection:', error);
+      res.status(500).json({ error: "Failed to manually detect ad" });
     }
   });
 

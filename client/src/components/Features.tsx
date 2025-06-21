@@ -180,51 +180,7 @@ export default function Features() {
             </CardContent>
           </Card>
 
-          {/* Feature 2: Interactive Map */}
-          <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="w-12 h-12 bg-metal-orange/20 rounded-lg flex items-center justify-center mb-4">
-                <Globe className="text-metal-orange h-6 w-6" />
-              </div>
-              <h3 className="font-black text-xl mb-3">Global Listener Map</h3>
-              <p className="text-gray-400 font-semibold mb-4">See where metalheads around the world are tuning in from in real-time.</p>
-              <div className="flex items-center text-gray-500 text-sm">
-                <span>{stats?.currentListeners || 0} listeners online</span>
-              </div>
-            </CardContent>
-          </Card>
 
-          {/* Feature 3: Show Archive */}
-          <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="w-12 h-12 bg-metal-orange/20 rounded-lg flex items-center justify-center mb-4">
-                <Archive className="text-metal-orange h-6 w-6" />
-              </div>
-              <h3 className="font-black text-xl mb-3">Show Archives</h3>
-              <p className="text-gray-400 font-semibold mb-4">Access past shows, special episodes, and exclusive metal content on-demand.</p>
-              <div className="flex items-center text-gray-500 text-sm">
-                <span>200+ hours of content</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Feature 4: Song Submissions */}
-          <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="w-12 h-12 bg-metal-orange/20 rounded-lg flex items-center justify-center mb-4">
-                <Music className="text-metal-orange h-6 w-6" />
-              </div>
-              <h3 className="font-black text-xl mb-3">Song Requests</h3>
-              <p className="text-gray-400 font-semibold mb-4">Submit your favorite metal tracks and artist suggestions to be featured on air.</p>
-              <Button 
-                variant="ghost" 
-                className="text-metal-orange hover:text-orange-400 p-0 h-auto"
-                onClick={() => scrollToSection("submissions")}
-              >
-                Submit Request →
-              </Button>
-            </CardContent>
-          </Card>
 
           {/* Feature 5: Subscription */}
           <Card 

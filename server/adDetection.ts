@@ -182,7 +182,9 @@ const adKeywords = [
   'call now', 'limited time', 'special offer', 'visit today', 'don\'t miss',
   'sale', 'discount', 'percent off', 'financing available', 'free delivery',
   'sponsored by', 'brought to you by', 'commercial', 'advertisement',
-  'phone number', 'website', 'location', 'store', 'dealership'
+  'phone number', 'website', 'location', 'store', 'dealership',
+  'capital one', 'bank', 'credit card', 'interest rate', 'apply today',
+  'terms apply', 'see website', 'member fdic', 'credit approval'
 ];
 
 // Quick keyword-based ad detection (fallback method)
@@ -205,6 +207,7 @@ export function analyzeStreamMetadata(metadata: any): { isAd: boolean; reason?: 
   const title = (metadata.title || '').toLowerCase();
   const artist = (metadata.artist || '').toLowerCase();
   const description = (metadata.description || '').toLowerCase();
+  const fullText = `${title} ${artist} ${description}`.toLowerCase();
   
   // Check for commercial indicators in metadata
   const commercialIndicators = [
@@ -212,11 +215,44 @@ export function analyzeStreamMetadata(metadata: any): { isAd: boolean; reason?: 
     'promo', 'jingle', 'spot', 'PSA', 'public service'
   ];
   
+  // Check for specific brand indicators
+  const brandIndicators = [
+    'capital one', 'discover card', 'chase bank', 'wells fargo',
+    'geico', 'progressive', 'state farm', 'allstate',
+    'mcdonalds', 'burger king', 'taco bell', 'subway',
+    'coca cola', 'pepsi', 'dr pepper', 'mountain dew'
+  ];
+  
+  // Check for financial service indicators
+  const financialIndicators = [
+    'apr', 'interest rate', 'credit score', 'loan', 'mortgage',
+    'refinance', 'debt consolidation', 'personal loan', 'auto loan',
+    'member fdic', 'credit approval', 'terms and conditions apply'
+  ];
+  
   for (const indicator of commercialIndicators) {
-    if (title.includes(indicator) || artist.includes(indicator) || description.includes(indicator)) {
+    if (fullText.includes(indicator)) {
       return { 
         isAd: true, 
         reason: `Commercial indicator found: ${indicator}` 
+      };
+    }
+  }
+  
+  for (const brand of brandIndicators) {
+    if (fullText.includes(brand)) {
+      return { 
+        isAd: true, 
+        reason: `Brand detected: ${brand}` 
+      };
+    }
+  }
+  
+  for (const financial of financialIndicators) {
+    if (fullText.includes(financial)) {
+      return { 
+        isAd: true, 
+        reason: `Financial service indicator: ${financial}` 
       };
     }
   }
@@ -228,6 +264,13 @@ export function analyzeStreamMetadata(metadata: any): { isAd: boolean; reason?: 
   
   if (artist.includes('corp') || artist.includes('inc') || artist.includes('llc')) {
     return { isAd: true, reason: 'Corporate entity detected as artist' };
+  }
+  
+  // Check for ad-like timing patterns (ads often have specific durations)
+  if (title.includes('30') || title.includes('60') || title.includes('15')) {
+    if (fullText.includes('second') || fullText.includes('sec')) {
+      return { isAd: true, reason: 'Ad duration pattern detected' };
+    }
   }
   
   return { isAd: false };
