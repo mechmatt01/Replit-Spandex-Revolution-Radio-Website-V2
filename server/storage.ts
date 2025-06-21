@@ -15,13 +15,18 @@ import { eq, desc } from "drizzle-orm";
 export interface IStorage {
   // User management
   getUser(id: number): Promise<User | undefined>;
+  getUserByUserId(userId: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByGoogleId(googleId: string): Promise<User | undefined>;
   createUser(user: RegisterUser): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<User>): Promise<User | undefined>;
+  updateUserLocation(id: number, location: any): Promise<User | undefined>;
+  updateListeningStatus(id: number, isActiveListening: boolean): Promise<User | undefined>;
+  getActiveListeners(): Promise<User[]>;
   verifyEmail(token: string): Promise<User | undefined>;
+  verifyPhone(userId: string, code: string): Promise<User | undefined>;
   updatePassword(id: number, hashedPassword: string): Promise<User | undefined>;
   updateStripeInfo(id: number, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined>;
   getUserSubmissions(userId: number): Promise<Submission[]>;
@@ -84,19 +89,35 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
+  async getUserByUserId(userId: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.userId, userId));
+    return user || undefined;
+  }
+
   async createUser(userData: RegisterUser): Promise<User> {
+    // Generate unique userId and format phone number
+    const userId = generateUserId();
+    const formattedPhone = userData.phoneNumber ? formatPhoneNumber(userData.phoneNumber) : null;
+    
     const [user] = await db
       .insert(users)
-      .values(userData)
+      .values({
+        ...userData,
+        userId,
+        phoneNumber: formattedPhone,
+      })
       .returning();
     return user;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    // First try to find existing user by email or Google ID
+    // First try to find existing user by email, username, or Google ID
     let existingUser;
     if (userData.email) {
       existingUser = await this.getUserByEmail(userData.email);
+    }
+    if (!existingUser && userData.username) {
+      existingUser = await this.getUserByUsername(userData.username);
     }
     if (!existingUser && userData.googleId) {
       existingUser = await this.getUserByGoogleId(userData.googleId);
@@ -114,13 +135,67 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return user;
     } else {
-      // Create new user
+      // Create new user with generated userId and username
+      const userId = generateUserId();
+      const username = userData.username || generateUsername(userData.email, userData.firstName, userData.googleId);
+      const formattedPhone = userData.phoneNumber ? formatPhoneNumber(userData.phoneNumber) : null;
+      
       const [user] = await db
         .insert(users)
-        .values(userData)
+        .values({
+          ...userData,
+          userId,
+          username,
+          phoneNumber: formattedPhone,
+        })
         .returning();
       return user;
     }
+  }
+
+  async updateUserLocation(id: number, location: any): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        location,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  async updateListeningStatus(id: number, isActiveListening: boolean): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        isActiveListening,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  async getActiveListeners(): Promise<User[]> {
+    return await db
+      .select()
+      .from(users)
+      .where(eq(users.isActiveListening, true));
+  }
+
+  async verifyPhone(userId: string, code: string): Promise<User | undefined> {
+    // In a real implementation, you'd verify the code against stored verification data
+    // For now, we'll just mark the phone as verified
+    const [user] = await db
+      .update(users)
+      .set({ 
+        isPhoneVerified: true,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.userId, userId))
+      .returning();
+    return user || undefined;
   }
 
   async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {

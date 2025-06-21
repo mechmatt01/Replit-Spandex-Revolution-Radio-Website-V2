@@ -29,6 +29,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
   const [username, setUsername] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   
   const { login, register } = useAuth();
@@ -52,7 +53,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
           description: "You've successfully logged in.",
         });
       } else {
-        await register(email, password, username, firstName, lastName);
+        await register(email, password, username, firstName, lastName, phoneNumber);
         toast({
           title: "Account created!",
           description: "Welcome to Spandex Salvation Radio.",
@@ -190,6 +191,27 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                         required
                       />
                     </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber" style={{ color: colors.text }}>Phone Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                      id="phoneNumber"
+                      type="tel"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                      style={{ 
+                        color: colors.text,
+                        borderColor: '#374151'
+                      }}
+                      onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
+                      onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
+                      placeholder="+1 (555) 123-4567"
+                      required
+                    />
                   </div>
                 </div>
               </>

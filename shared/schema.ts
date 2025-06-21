@@ -15,12 +15,18 @@ export const sessions = pgTable(
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
+  userId: text("user_id").notNull().unique(), // 10-character alphanumeric key
   username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   phoneNumber: text("phone_number"),
   profileImageUrl: text("profile_image_url"),
+  location: jsonb("location"), // { lat: number, lng: number, address?: string }
+  isActiveListening: boolean("is_active_listening").default(false),
+  activeSubscription: boolean("active_subscription").default(false),
+  renewalDate: timestamp("renewal_date"),
+  isPhoneVerified: boolean("is_phone_verified").default(false),
   showVerifiedBadge: boolean("show_verified_badge").default(false),
   accountDeletionScheduled: boolean("account_deletion_scheduled").default(false),
   accountDeletionDate: timestamp("account_deletion_date"),
@@ -115,10 +121,12 @@ export const subscriptions = pgTable("subscriptions", {
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
+  userId: true,
   username: true,
   email: true,
   firstName: true,
   lastName: true,
+  phoneNumber: true,
   password: true,
   emailVerificationToken: true,
 });
@@ -127,6 +135,9 @@ export const registerUserSchema = insertUserSchema.extend({
   username: z.string().min(3, "Username must be at least 3 characters"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   email: z.string().email("Please enter a valid email address"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
 });
 
 export const loginUserSchema = z.object({
@@ -135,11 +146,26 @@ export const loginUserSchema = z.object({
 });
 
 export const upsertUserSchema = createInsertSchema(users).pick({
+  userId: true,
   username: true,
   email: true,
   firstName: true,
   lastName: true,
+  phoneNumber: true,
+  location: true,
   googleId: true,
+});
+
+export const updateLocationSchema = z.object({
+  location: z.object({
+    lat: z.number(),
+    lng: z.number(),
+    address: z.string().optional(),
+  }),
+});
+
+export const updateListeningStatusSchema = z.object({
+  isActiveListening: z.boolean(),
 });
 
 export const insertSubmissionSchema = createInsertSchema(submissions).pick({
