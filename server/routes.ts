@@ -449,7 +449,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/now-playing", async (req, res) => {
     try {
       // Fetch live data from radio stream
-      const response = await fetch('http://168.119.74.185:9858/status-json.xsl');
+      const response = await fetch('https://168.119.74.185:9858/status-json.xsl');
       const data = await response.json();
       
       let currentTrack;
