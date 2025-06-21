@@ -1,16 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, Radio, Sun, Moon, Music, Calendar, Send, Mail, ShoppingBag, CreditCard, ChevronDown, User, LogOut, Settings } from "lucide-react";
+import { Menu, ChevronDown, User, Calendar, Music, Send, Phone, MapPin, Heart, UserPlus, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { useAudio } from "@/contexts/AudioContext";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useAuth } from "@/hooks/useAuth";
-import MetalThemeSwitcher from "@/components/MetalThemeSwitcher";
-import AuthModal from "@/components/AuthModal";
-import { Link } from "wouter";
-import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import MetalThemeSwitcher from "./MetalThemeSwitcher";
+import AuthModal from "./AuthModal";
+import VerificationModal from "./VerificationModal";
+import { useTheme } from "../contexts/ThemeContext";
+import { useAuth } from "../contexts/AuthContext";
+import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,19 +15,19 @@ export default function Navigation() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
 
-  // Listen for custom auth modal events from other components
   useEffect(() => {
     const handleOpenAuthModal = (event: CustomEvent) => {
-      setAuthMode(event.detail.mode || 'login');
+      setAuthMode(event.detail?.mode || "login");
       setIsAuthModalOpen(true);
     };
 
     window.addEventListener('openAuthModal', handleOpenAuthModal as EventListener);
     return () => window.removeEventListener('openAuthModal', handleOpenAuthModal as EventListener);
   }, []);
-  const { togglePlayback, isPlaying } = useAudio();
+
+
   const { colors, gradient, toggleTheme, isDarkMode } = useTheme();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const menuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const brandTextRef = useRef<HTMLDivElement>(null);
@@ -53,8 +50,6 @@ export default function Navigation() {
     }
   }, [isOpen, isDropdownOpen]);
 
-  // Remove complex positioning logic - using flexbox centering instead
-
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -65,12 +60,12 @@ export default function Navigation() {
   };
 
   const menuItems = [
-    { id: 'music', label: 'MUSIC', icon: Music, action: () => window.location.href = '/music' },
-    { id: 'schedule', label: 'SCHEDULE', icon: Calendar, action: () => scrollToSection('schedule') },
-    { id: 'submissions', label: 'SUBMISSIONS', icon: Send, action: () => scrollToSection('submissions') },
-    { id: 'contact', label: 'CONTACT', icon: Mail, action: () => scrollToSection('contact') },
-    { id: 'merch', label: 'MERCH', icon: ShoppingBag, action: () => scrollToSection('merch') },
-    { id: 'subscribe', label: 'SUBSCRIBE', icon: CreditCard, action: () => scrollToSection('subscription') }
+    { id: 1, label: "MUSIC", icon: Music, action: () => scrollToSection("music") },
+    { id: 2, label: "SCHEDULE", icon: Calendar, action: () => scrollToSection("schedule") },
+    { id: 3, label: "SUBMISSIONS", icon: Send, action: () => scrollToSection("submissions") },
+    { id: 4, label: "CONTACT", icon: Phone, action: () => scrollToSection("contact") },
+    { id: 5, label: "LISTEN MAP", icon: MapPin, action: () => scrollToSection("map") },
+    { id: 6, label: "FEATURES", icon: Heart, action: () => scrollToSection("features") },
   ];
 
   return (
@@ -105,39 +100,6 @@ export default function Navigation() {
 
             {/* Desktop Navigation - Centered relative to brand text */}
             <div className="hidden xl:flex items-center space-x-4 absolute left-1/2 transform -translate-x-1/2" style={{ marginLeft: '-100px' }}>
-              {menuItems.slice(0, 3).map((item) => {
-                const IconComponent = item.icon;
-                return (
-                  <Tooltip key={item.id}>
-                    <TooltipTrigger asChild>
-                      <button 
-                        onClick={item.action}
-                        className="flex items-center space-x-2 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-md"
-                        style={{ color: colors.text }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary + '20';
-                          e.currentTarget.style.color = 'white';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = colors.text;
-                        }}
-                        aria-label={`Navigate to ${item.label.toLowerCase()}`}
-                      >
-                        <IconComponent size={16} style={{ color: colors.primary }} />
-                        <span>{item.label}</span>
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      Navigate to {item.label.toLowerCase()} section
-                    </TooltipContent>
-                  </Tooltip>
-                );
-              })}
-              
-              {/* More Menu Dropdown */}
-              <div className="relative" ref={dropdownRef}>
-
               {menuItems.slice(0, 3).map((item) => {
                 const IconComponent = item.icon;
                 return (
@@ -231,16 +193,18 @@ export default function Navigation() {
                           className="flex items-center justify-end space-x-3 w-full px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap text-right"
                           style={{ 
                             color: colors.text,
-                            minWidth: 'max-content'
+                            minWidth: 'max-content',
+                            direction: 'rtl'
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = colors.primary;
+                            e.currentTarget.style.backgroundColor = colors.primary + '20';
                             e.currentTarget.style.color = 'white';
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.backgroundColor = 'transparent';
                             e.currentTarget.style.color = colors.text;
                           }}
+                          role="menuitem"
                           aria-label={`Navigate to ${item.label.toLowerCase()}`}
                         >
                           <span className="text-right">{item.label}</span>
@@ -296,115 +260,114 @@ export default function Navigation() {
                       }}
                       className="text-sm font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:scale-105"
                       style={{
-                        background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-                        color: 'white',
-                        border: 'none'
+                        backgroundColor: colors.primary,
+                        color: colors.primaryText || 'white'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                        e.currentTarget.style.boxShadow = `0 4px 12px ${colors.primary}40`;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.boxShadow = 'none';
                       }}
                     >
-                      SIGN UP
+                      SUBSCRIBE
                     </Button>
                   </>
                 ) : (
                   <div className="flex items-center space-x-3">
-                    <Link href="/profile" className="relative">
-                      <Avatar className="w-8 h-8 cursor-pointer hover:ring-2 hover:ring-primary transition-all">
-                        <AvatarImage src={user?.profileImageUrl || ""} />
-                        <AvatarFallback className="text-xs">
-                          {user?.firstName?.charAt(0)?.toUpperCase() || "U"}
-                        </AvatarFallback>
-                      </Avatar>
-                      {user?.subscriptionStatus === "active" && (
-                        <div 
-                          className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center border-2 border-background"
-                          style={{ backgroundColor: colors.primary }}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button 
+                          onClick={() => window.location.href = '/profile'}
+                          className="flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 hover:scale-105"
+                          style={{
+                            backgroundColor: colors.primary + '20',
+                            border: `1px solid ${colors.primary}`
+                          }}
                         >
-                          <Crown className="h-3 w-3 text-white" />
-                        </div>
-                      )}
-                      {user?.showVerifiedBadge && user?.subscriptionStatus === "active" && (
-                        <div 
-                          className="absolute -top-1 -left-1 w-5 h-5 rounded-full flex items-center justify-center border-2 border-background bg-blue-500"
+                          {user?.profileImage ? (
+                            <div className="relative">
+                              <img 
+                                src={user.profileImage} 
+                                alt="Profile" 
+                                className="w-6 h-6 rounded-full object-cover"
+                              />
+                              {user?.isVerified && (
+                                <div 
+                                  className="absolute -top-1 -right-1 w-3 h-3 rounded-full flex items-center justify-center text-xs"
+                                  style={{ backgroundColor: colors.primary }}
+                                >
+                                  ✓
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <User size={16} style={{ color: colors.primary }} />
+                          )}
+                          <span className="text-sm font-semibold" style={{ color: colors.text }}>
+                            {user?.firstName || 'Profile'}
+                          </span>
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        View profile and settings
+                      </TooltipContent>
+                    </Tooltip>
+                    
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={logout}
+                          className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
+                          style={{
+                            backgroundColor: 'transparent',
+                            border: `1px solid ${colors.primary}`
+                          }}
                         >
-                          <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                      )}
-                    </Link>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => window.location.href = "/api/logout"}
-                      className="text-sm"
-                    >
-                      LOGOUT
-                    </Button>
+                          <LogOut size={16} style={{ color: colors.primary }} />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        Sign out
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
                 )}
               </div>
-              
-              {/* Mobile theme toggle only */}
-              <div className="xl:hidden">
-                <MetalThemeSwitcher />
-              </div>
-              
+
               {/* Mobile menu button */}
               <button
+                ref={menuRef}
                 onClick={() => setIsOpen(!isOpen)}
-                className="xl:hidden p-2 rounded-md transition-colors duration-200"
+                className="xl:hidden p-2 rounded-lg transition-colors duration-200"
                 style={{ 
-                  color: colors.text,
-                  backgroundColor: isOpen ? colors.primary : 'transparent'
+                  backgroundColor: isOpen ? colors.primary : 'transparent',
+                  color: isOpen ? 'white' : colors.primary 
                 }}
-                onMouseEnter={(e) => {
-                  if (!isOpen) {
-                    e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isOpen) {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
-                  }
-                }}
-                aria-label={isOpen ? "Close menu" : "Open menu"}
+                aria-label="Toggle mobile menu"
                 aria-expanded={isOpen}
               >
-                {isOpen ? (
-                  <X size={24} style={{ color: isOpen ? 'white' : colors.primary }} />
-                ) : (
-                  <Menu size={24} style={{ color: colors.primary }} />
-                )}
+                <Menu size={24} />
               </button>
             </div>
           </div>
 
-          {/* Mobile Navigation Menu */}
+          {/* Mobile Navigation */}
           {isOpen && (
-            <div 
-              ref={menuRef}
-              className="xl:hidden absolute top-full right-0 shadow-xl border animate-in slide-in-from-top-2 duration-300 bg-black/80 backdrop-blur-md rounded-lg"
-              style={{
-                borderColor: colors.primary + '40',
-                width: 'fit-content',
-                minWidth: '200px'
-              }}
-            >
-              <div className="px-2 py-2 space-y-1">
+            <div className="xl:hidden absolute top-full left-0 right-0 bg-black/90 backdrop-blur-md border-t animate-in slide-in-from-top-2 duration-300" style={{ borderColor: colors.primary + '40' }}>
+              <div className="px-4 py-6 space-y-3">
                 {menuItems.map((item) => {
                   const IconComponent = item.icon;
                   return (
                     <button
                       key={item.id}
                       onClick={item.action}
-                      className="flex items-center justify-end space-x-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 whitespace-nowrap text-right"
-                      style={{ 
-                        color: colors.text,
-                        minWidth: 'max-content'
-                      }}
+                      className="flex items-center justify-between w-full px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200"
+                      style={{ color: colors.text }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary;
+                        e.currentTarget.style.backgroundColor = colors.primary + '20';
                         e.currentTarget.style.color = 'white';
                       }}
                       onMouseLeave={(e) => {
@@ -412,75 +375,31 @@ export default function Navigation() {
                         e.currentTarget.style.color = colors.text;
                       }}
                       role="menuitem"
-                      aria-label={`Navigate to ${item.label.toLowerCase()} section`}
+                      aria-label={`Navigate to ${item.label.toLowerCase()}`}
                     >
-                      <span className="text-right">{item.label}</span>
-                      <IconComponent size={16} style={{ color: colors.primary }} />
+                      <span>{item.label}</span>
+                      <IconComponent size={20} style={{ color: colors.primary }} />
                     </button>
                   );
                 })}
                 
-                {/* Mobile Authentication */}
-                <div className="border-t" style={{ borderColor: colors.primary + '20' }}>
-                  {isAuthenticated && user ? (
-                    <>
-                      <div className="px-4 py-2 text-xs font-medium text-center" style={{ color: colors.text }}>
-                        Welcome, {user.firstName}
-                      </div>
-                      <button
-                        onClick={() => window.location.href = "/profile"}
-                        className="flex items-center justify-end space-x-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 whitespace-nowrap text-right"
-                        style={{ 
-                          color: colors.text,
-                          minWidth: 'max-content'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary;
-                          e.currentTarget.style.color = 'white';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = colors.text;
-                        }}
-                        role="menuitem"
-                        aria-label="View profile"
-                      >
-                        <span className="text-right">PROFILE</span>
-                        <User size={16} style={{ color: colors.primary }} />
-                      </button>
-                      <button
-                        onClick={() => window.location.href = "/api/logout"}
-                        className="flex items-center justify-end space-x-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 whitespace-nowrap text-right"
-                        style={{ 
-                          color: colors.text,
-                          minWidth: 'max-content'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary;
-                          e.currentTarget.style.color = 'white';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = colors.text;
-                        }}
-                        role="menuitem"
-                        aria-label="Sign out"
-                      >
-                        <span className="text-right">LOGOUT</span>
-                        <LogOut size={16} style={{ color: colors.primary }} />
-                      </button>
-                    </>
-                  ) : (
+                <div className="pt-4 mt-4 border-t" style={{ borderColor: colors.primary + '40' }}>
+                  <div className="flex items-center justify-center mb-4">
+                    <MetalThemeSwitcher />
+                  </div>
+                  
+                  {!isAuthenticated ? (
                     <button
                       onClick={() => {
                         setAuthMode("login");
                         setIsAuthModalOpen(true);
                         setIsOpen(false);
                       }}
-                      className="flex items-center justify-end space-x-3 w-full px-4 py-3 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 whitespace-nowrap text-right"
-                      style={{ 
-                        color: colors.text,
-                        minWidth: 'max-content'
+                      className="flex items-center justify-between w-full px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200"
+                      style={{
+                        color: colors.primary,
+                        backgroundColor: 'transparent',
+                        border: `1px solid ${colors.primary}`
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = colors.primary;
@@ -488,7 +407,7 @@ export default function Navigation() {
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
+                        e.currentTarget.style.color = colors.primary;
                       }}
                       role="menuitem"
                       aria-label="Sign in"
@@ -496,6 +415,38 @@ export default function Navigation() {
                       <span className="text-right">SIGN IN</span>
                       <User size={16} style={{ color: colors.primary }} />
                     </button>
+                  ) : (
+                    <div className="space-y-3">
+                      <button
+                        onClick={() => {
+                          window.location.href = '/profile';
+                          setIsOpen(false);
+                        }}
+                        className="flex items-center justify-between w-full px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200"
+                        style={{
+                          color: colors.text,
+                          backgroundColor: colors.primary + '20'
+                        }}
+                      >
+                        <span>Profile</span>
+                        <User size={16} style={{ color: colors.primary }} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setIsOpen(false);
+                        }}
+                        className="flex items-center justify-between w-full px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200"
+                        style={{
+                          color: colors.primary,
+                          backgroundColor: 'transparent',
+                          border: `1px solid ${colors.primary}`
+                        }}
+                      >
+                        <span>Sign Out</span>
+                        <LogOut size={16} style={{ color: colors.primary }} />
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
@@ -510,6 +461,8 @@ export default function Navigation() {
         onClose={() => setIsAuthModalOpen(false)}
         initialMode={authMode}
       />
+      
+      <VerificationModal />
     </TooltipProvider>
   );
 }
