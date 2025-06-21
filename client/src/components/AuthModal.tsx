@@ -132,15 +132,15 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
         
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === 'register' && (
-              <div className="grid grid-cols-2 gap-3">
+              <>
                 <div className="space-y-2">
-                  <Label htmlFor="firstName" style={{ color: colors.text }}>First Name</Label>
+                  <Label htmlFor="username" style={{ color: colors.text }}>Username</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      id="firstName"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
+                      id="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                       className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
                       style={{ 
                         color: colors.text,
@@ -152,26 +152,47 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                     />
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName" style={{ color: colors.text }}>Last Name</Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      id="lastName"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
-                      style={{ 
-                        color: colors.text,
-                        borderColor: '#374151'
-                      }}
-                      onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
-                      onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
-                      required
-                    />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName" style={{ color: colors.text }}>First Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="firstName"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                        style={{ 
+                          color: colors.text,
+                          borderColor: '#374151'
+                        }}
+                        onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
+                        onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName" style={{ color: colors.text }}>Last Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Input
+                        id="lastName"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                        style={{ 
+                          color: colors.text,
+                          borderColor: '#374151'
+                        }}
+                        onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
+                        onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
+                        required
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              </>
             )}
             
             <div className="space-y-2">
