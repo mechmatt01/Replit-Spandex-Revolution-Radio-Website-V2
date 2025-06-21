@@ -101,7 +101,7 @@ export default function Navigation() {
 
             {/* Desktop Navigation - Centered relative to brand text */}
             <div className="hidden xl:flex items-center space-x-4 absolute" style={{
-              left: 'calc(15px + 32px + 16px + 9ch)', // Logo + spacing + brand text width approximation
+              left: 'calc(15px + 32px + 16px + 140px)', // Logo + spacing + actual brand text width
               transform: 'translateX(-50%)'
             }}>
               {menuItems.slice(0, 3).map((item) => {
