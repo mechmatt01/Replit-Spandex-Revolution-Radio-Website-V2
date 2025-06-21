@@ -280,19 +280,21 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           }
         ];
         
-        // Cycle through metal tracks without artwork
-        const randomTrack = metalTracks[Math.floor(Math.random() * metalTracks.length)];
-        if (randomTrack.title !== currentTrack.title) {
-          setIsTransitioning(true);
-          setPrevTrack(currentTrack);
-          
-          setTimeout(() => {
-            setCurrentTrack(randomTrack);
+        // Only show fallback tracks when playing
+        if (isPlaying) {
+          const randomTrack = metalTracks[Math.floor(Math.random() * metalTracks.length)];
+          if (randomTrack.title !== currentTrack.title) {
+            setIsTransitioning(true);
+            setPrevTrack(currentTrack);
+            
             setTimeout(() => {
-              setIsTransitioning(false);
-              setPrevTrack(null);
-            }, 500);
-          }, 300);
+              setCurrentTrack(randomTrack);
+              setTimeout(() => {
+                setIsTransitioning(false);
+                setPrevTrack(null);
+              }, 500);
+            }, 300);
+          }
         }
       }
     };
