@@ -15,6 +15,7 @@ export const sessions = pgTable(
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
   email: text("email").notNull().unique(),
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
@@ -114,6 +115,7 @@ export const subscriptions = pgTable("subscriptions", {
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
+  username: true,
   email: true,
   firstName: true,
   lastName: true,
@@ -122,6 +124,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 });
 
 export const registerUserSchema = insertUserSchema.extend({
+  username: z.string().min(3, "Username must be at least 3 characters"),
   password: z.string().min(8, "Password must be at least 8 characters"),
   email: z.string().email("Please enter a valid email address"),
 });
@@ -132,6 +135,7 @@ export const loginUserSchema = z.object({
 });
 
 export const upsertUserSchema = createInsertSchema(users).pick({
+  username: true,
   email: true,
   firstName: true,
   lastName: true,

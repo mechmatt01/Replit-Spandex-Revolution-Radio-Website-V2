@@ -26,6 +26,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
   }, [initialMode]);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -51,7 +52,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
           description: "You've successfully logged in.",
         });
       } else {
-        await register(email, password, firstName, lastName);
+        await register(email, password, username, firstName, lastName);
         toast({
           title: "Account created!",
           description: "Welcome to Spandex Salvation Radio.",
