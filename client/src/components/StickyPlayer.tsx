@@ -55,11 +55,35 @@ export default function StickyPlayer() {
 
           {/* Player Controls */}
           <div className="flex items-center space-x-4">
+            {/* Volume Control - moved before LIVE text */}
+            <div className="hidden md:flex items-center space-x-2">
+              <Volume2 className="text-gray-400 h-4 w-4" />
+              <div className="w-20 h-1 bg-gray-700 rounded-full relative">
+                <div 
+                  className="h-1 rounded-full transition-all duration-150"
+                  style={{ 
+                    width: `${volume * 100}%`,
+                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                  }}
+                ></div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={volume * 100}
+                  onChange={handleVolumeChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+              </div>
+            </div>
+
+            {/* LIVE indicator */}
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
               <span className="text-sm text-red-500 font-bold animate-pulse">LIVE</span>
             </div>
             
+            {/* Play Button - now rightmost */}
             <Button
               onClick={togglePlayback}
               className="text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl"
@@ -81,28 +105,6 @@ export default function StickyPlayer() {
                 </svg>
               )}
             </Button>
-
-            {/* Volume Control */}
-            <div className="hidden md:flex items-center space-x-4">
-              <Volume2 className="text-gray-400 h-4 w-4" />
-              <div className="w-20 h-1 bg-gray-700 rounded-full relative">
-                <div 
-                  className="h-1 rounded-full transition-all duration-150"
-                  style={{ 
-                    width: `${volume * 100}%`,
-                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-                  }}
-                ></div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={volume * 100}
-                  onChange={handleVolumeChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-              </div>
-            </div>
           </div>
         </div>
       </div>
