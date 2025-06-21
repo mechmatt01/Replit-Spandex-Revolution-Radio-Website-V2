@@ -13,6 +13,8 @@ export type MetalTheme =
 
 interface ThemeColors {
   primary: string;
+  primaryDark?: string;
+  primaryText?: string; // Text color to use on primary background
   secondary: string;
   accent: string;
   background: string;
@@ -39,6 +41,8 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
     colors: {
       dark: {
         primary: "#ff6b35",
+        primaryDark: "#e55a2b",
+        primaryText: "#ffffff",
         secondary: "#ff8c42", 
         accent: "#ffd23f",
         background: "#000000",
@@ -49,6 +53,8 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
       },
       light: {
         primary: "#d4510a",
+        primaryDark: "#b8450a",
+        primaryText: "#ffffff",
         secondary: "#e8630e",
         accent: "#f4a900",
         background: "#ffffff",
@@ -66,6 +72,8 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
     colors: {
       dark: {
         primary: "#c0c0c0",
+        primaryDark: "#a0a0a0",
+        primaryText: "#000000", // Black text on silver/white background
         secondary: "#8b8b8b",
         accent: "#ffffff",
         background: "#0a0a0a", 
@@ -76,6 +84,8 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
       },
       light: {
         primary: "#666666",
+        primaryDark: "#555555",
+        primaryText: "#ffffff", // White text on dark background
         secondary: "#888888",
         accent: "#333333",
         background: "#f8f8f8",

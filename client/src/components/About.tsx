@@ -1,6 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function About() {
+  const { colors } = useTheme();
+  
   const scrollToSubscribe = () => {
     const element = document.getElementById("subscribe");
     if (element) {
@@ -26,21 +29,33 @@ export default function About() {
             </p>
             <div className="flex items-center space-x-6 mb-8">
               <div className="text-center">
-                <div className="text-2xl font-black text-metal-orange">24/7</div>
+                <div className="text-2xl font-black" style={{ color: colors.primary }}>24/7</div>
                 <div className="text-sm font-semibold text-gray-500">Live Streaming</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-black text-metal-orange">1000+</div>
+                <div className="text-2xl font-black" style={{ color: colors.primary }}>1000+</div>
                 <div className="text-sm font-semibold text-gray-500">Metal Tracks</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-black text-metal-orange">50+</div>
+                <div className="text-2xl font-black" style={{ color: colors.primary }}>50+</div>
                 <div className="text-sm font-semibold text-gray-500">Countries</div>
               </div>
             </div>
             <Button 
               onClick={scrollToSubscribe}
-              className="bg-metal-orange hover:bg-orange-600 text-white px-6 py-3 rounded-full font-semibold transition-all duration-300"
+              className="text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
+              style={{ 
+                backgroundColor: colors.primary,
+                color: 'white'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
+                e.currentTarget.style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = colors.primary;
+                e.currentTarget.style.transform = 'scale(1)';
+              }}
             >
               Join the Revolution
             </Button>

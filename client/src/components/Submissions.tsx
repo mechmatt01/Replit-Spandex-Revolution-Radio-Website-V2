@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/contexts/ThemeContext";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
 import type { Submission, InsertSubmission } from "@shared/schema";
@@ -28,6 +29,7 @@ export default function Submissions() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const { colors } = useTheme();
 
   const { data: recentSubmissions = [] } = useQuery<Submission[]>({
     queryKey: ["/api/submissions"],
@@ -118,8 +120,15 @@ export default function Submissions() {
 
         {!isAuthenticated || !hasPaidSubscription ? (
           <div className="mt-6">
-            <div className="p-6 bg-orange-500/10 border border-orange-500/20 rounded-lg text-center">
-              <div className="flex items-center justify-center gap-2 text-orange-400 mb-4">
+            <div 
+              className="p-6 rounded-lg text-center transition-all duration-300 opacity-0 animate-in fade-in slide-in-from-top-4"
+              style={{ 
+                backgroundColor: `${colors.primary}10`,
+                borderColor: `${colors.primary}20`,
+                border: `1px solid ${colors.primary}20`
+              }}
+            >
+              <div className="flex items-center justify-center gap-2 mb-4" style={{ color: colors.primary }}>
                 <Crown className="h-5 w-5" />
                 <span className="font-semibold">Premium Feature - Paid Subscription Required</span>
               </div>
@@ -130,14 +139,36 @@ export default function Submissions() {
               <div className="flex gap-4 justify-center">
                 <Button 
                   onClick={() => window.location.href = '/api/login'}
-                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full font-semibold"
+                  className="text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
+                  style={{ backgroundColor: colors.primary }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary;
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                 >
                   Sign In
                 </Button>
                 <Button 
                   onClick={() => document.getElementById('subscribe')?.scrollIntoView({ behavior: 'smooth' })}
                   variant="outline"
-                  className="border-orange-500 text-orange-400 hover:bg-orange-500/10 px-6 py-3 rounded-full font-semibold"
+                  className="px-6 py-3 rounded-full font-semibold transition-all duration-300"
+                  style={{ 
+                    borderColor: colors.primary,
+                    color: colors.primary,
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = `${colors.primary}10`;
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                 >
                   View Subscriptions
                 </Button>
