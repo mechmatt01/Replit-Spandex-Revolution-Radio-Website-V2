@@ -282,7 +282,8 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                             if (hasActiveSubscription) {
                               setIsAvatarModalOpen(true);
                             } else {
-                              onNavigateToSubscribe?.();
+                              // Show premium avatar notification
+                              setShowPremiumNotification({ show: true, type: 'premium_avatar' });
                             }
                           }}
                         >
@@ -532,6 +533,15 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Premium Feature Notification */}
+      {showPremiumNotification.show && (
+        <LiveChat
+          isEnabled={true}
+          onToggle={() => setShowPremiumNotification({ show: false, type: '' })}
+          premiumFeatureType={showPremiumNotification.type as any}
+        />
+      )}
     </div>
   );
 }

@@ -21,9 +21,10 @@ interface LiveChatProps {
   isEnabled: boolean;
   onToggle: () => void;
   isHost?: boolean;
+  premiumFeatureType?: 'chat' | 'submission' | 'avatar' | 'premium_avatar' | 'profile_badge';
 }
 
-export default function LiveChat({ isEnabled, onToggle, isHost = false }: LiveChatProps) {
+export default function LiveChat({ isEnabled, onToggle, isHost = false, premiumFeatureType = 'chat' }: LiveChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -68,30 +69,54 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false }: LiveCh
     return null;
   }
 
-  // Check if this is first time access for new users
-  const isFirstTimeUser = user?.isFirstLogin && !hasPaidSubscription;
+  // Get contextual message based on feature type
+  const getFeatureMessage = () => {
+    switch (premiumFeatureType) {
+      case 'chat':
+        return "Premium Subscription is required to access the live chat features";
+      case 'submission':
+        return "Premium Subscription is required to submit live song requests to the Spandex Salvation Radio";
+      case 'avatar':
+        return "A Premium Subscription is required to enable the checkmark for your profile";
+      case 'premium_avatar':
+        return "A Premium Subscription is required to use the rock music avatars";
+      case 'profile_badge':
+        return "A Premium Subscription is required to display the premium badge on your profile";
+      default:
+        return "Premium Subscription is required to access this feature";
+    }
+  };
 
-  // Only show subscription prompt when user explicitly tries to access chat or is first-time user
-  if (!hasPaidSubscription && isEnabled) {
+  // Only show subscription prompt when user explicitly tries to access premium features AND is authenticated
+  if (!hasPaidSubscription && isEnabled && isAuthenticated) {
     return (
       <div className="fixed bottom-20 right-4 z-40">
-        <Card className="w-80 shadow-lg border-2" style={{ borderColor: colors.primary }}>
+        <Card 
+          className="w-80 shadow-lg border-0 backdrop-blur-sm"
+          style={{ 
+            background: `linear-gradient(135deg, ${colors.primary}20, ${colors.secondary || colors.primary}10)`,
+            borderImage: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary || colors.primary}) 1`
+          }}
+        >
           <CardContent className="p-4">
             <div className="text-center space-y-3">
               <MessageCircle className="w-8 h-8 mx-auto" style={{ color: colors.primary }} />
-              <h3 className="font-bold text-lg">Join the Conversation!</h3>
-              <p className="text-sm text-muted-foreground">
-                {isFirstTimeUser 
-                  ? "Welcome! Get exclusive access to live chat, song submissions, and premium content with your Spandex Salvation subscription."
-                  : "Live chat and premium features are available with your subscription."}
+              <h3 className="font-bold text-lg" style={{ color: colors.primary }}>Premium Feature</h3>
+              <p className="text-sm text-foreground">
+                {getFeatureMessage()}
               </p>
               <div className="space-y-2">
                 <p className="text-xs text-muted-foreground">
                   ✓ Live Chat Access ✓ Song Submissions ✓ Exclusive Content
                 </p>
                 <div className="flex gap-2">
-                  <Button size="sm" className="flex-1" onClick={() => window.location.href = "/subscribe"}>
-                    Subscribe Now
+                  <Button 
+                    size="sm" 
+                    className="flex-1 text-white" 
+                    style={{ backgroundColor: colors.primary }}
+                    onClick={() => window.location.href = "/subscribe"}
+                  >
+                    Upgrade Now
                   </Button>
                   <Button size="sm" variant="outline" onClick={onToggle}>
                     Close
