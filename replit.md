@@ -133,6 +133,7 @@ Required redirect URIs in Google Cloud Console:
 - Production: `https://workspace.replit.app/api/auth/google/callback`
 
 ## Changelog
+- June 21, 2025: Implemented Google reCAPTCHA Enterprise SMS fraud detection system with comprehensive phone verification security
 - June 21, 2025: Fixed Google OAuth redirect URI configuration for current development domain
 - June 17, 2025: Initial setup with complete radio station website
 - June 17, 2025: Added PostgreSQL database with full schema migration
