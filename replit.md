@@ -203,6 +203,8 @@ The application uses PostgreSQL with the following main entities:
 - June 21, 2025: Added fade-in/fade-out animations to all popups, warnings, notifications, and dialog elements throughout the site
 - June 21, 2025: Implemented real-time live radio data fetching - now playing information updates every 5 seconds from actual Icecast stream, displays current Black Sabbath track instead of static placeholder data
 - June 21, 2025: Enhanced button styling across site - larger Rock the Airways buttons with increased padding, proper theme color matching, gradient backgrounds, hover animations, and consistent theming for all interactive elements
+- June 21, 2025: Updated Features section with proper theme integration - larger cards with enhanced padding, dynamic theme colors, improved hover effects with scale and shadow animations, and consistent color scheme throughout
+- June 21, 2025: Implemented comprehensive ad detection system using OpenAI Whisper for audio transcription, GPT-4o for content analysis, metadata parsing, and keyword detection to automatically identify advertisements vs music content
 - June 19, 2025: Improved text display logic to show single instance when static, duplicated only during scrolling animations
 - June 19, 2025: Enhanced text alignment - floating player left-aligned, main player centered when not playing
 - June 19, 2025: Adjusted main player width to prevent text cutoff when displaying station name

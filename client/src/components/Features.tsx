@@ -2,12 +2,15 @@ import { Radio, Globe, Archive, Music, Crown, Shirt } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
+import { useTheme } from "@/contexts/ThemeContext";
 import type { StreamStats } from "@shared/schema";
 
 export default function Features() {
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
   });
+  const { getColors } = useTheme();
+  const colors = getColors();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -17,13 +20,13 @@ export default function Features() {
   };
 
   return (
-    <section className="py-20 bg-dark-surface">
+    <section className="py-20 transition-colors duration-300" style={{ backgroundColor: colors.background }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-black dark:text-white">
+          <h2 className="font-orbitron font-black text-4xl md:text-5xl mb-6" style={{ color: colors.text }}>
             ROCK THE AIRWAVES
           </h2>
-          <p className="text-gray-400 text-lg font-semibold max-w-2xl mx-auto">
+          <p className="text-xl font-semibold max-w-2xl mx-auto" style={{ color: colors.textMuted }}>
             Experience the ultimate old-school metal radio experience with live streaming, 
             interactive features, and exclusive content.
           </p>
@@ -31,15 +34,33 @@ export default function Features() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Feature 1: Live Streaming */}
-          <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="w-12 h-12 bg-metal-orange/20 rounded-lg flex items-center justify-center mb-4">
-                <Radio className="text-metal-orange h-6 w-6" />
+          <Card 
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            style={{
+              backgroundColor: colors.card,
+              borderColor: `${colors.primary}40`,
+              boxShadow: `0 8px 32px ${colors.primary}20`
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = `${colors.primary}40`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
+            }}
+          >
+            <CardContent className="p-0">
+              <div 
+                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
+                style={{ backgroundColor: colors.primary }}
+              >
+                <Radio className="text-white h-8 w-8" />
               </div>
-              <h3 className="font-black text-xl mb-3">24/7 Live Streaming</h3>
-              <p className="text-gray-400 font-semibold mb-4">Non-stop old-school metal streaming with high-quality audio and minimal buffering.</p>
-              <div className="flex items-center text-metal-orange text-sm">
-                <div className="w-2 h-2 bg-metal-orange rounded-full mr-2"></div>
+              <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>24/7 Live Streaming</h3>
+              <p className="font-semibold mb-6 text-lg leading-relaxed" style={{ color: colors.textMuted }}>Non-stop old-school metal streaming with high-quality audio and minimal buffering.</p>
+              <div className="flex items-center text-sm font-bold" style={{ color: colors.primary }}>
+                <div className="w-3 h-3 rounded-full mr-3 animate-pulse" style={{ backgroundColor: colors.primary }}></div>
                 <span>Currently Live</span>
               </div>
             </CardContent>
@@ -92,16 +113,46 @@ export default function Features() {
           </Card>
 
           {/* Feature 5: Subscription */}
-          <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="w-12 h-12 bg-metal-gold/20 rounded-lg flex items-center justify-center mb-4">
-                <Crown className="text-metal-gold h-6 w-6" />
+          <Card 
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            style={{
+              backgroundColor: colors.card,
+              borderColor: `${colors.secondary}40`,
+              boxShadow: `0 8px 32px ${colors.secondary}20`
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = colors.secondary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.secondary}60`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = `${colors.secondary}40`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.secondary}20`;
+            }}
+          >
+            <CardContent className="p-0">
+              <div 
+                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
+                style={{ backgroundColor: colors.secondary }}
+              >
+                <Crown className="text-white h-8 w-8" />
               </div>
-              <h3 className="font-black text-xl mb-3">Hairspray Rebellion</h3>
-              <p className="text-gray-400 font-semibold mb-4">Join our premium membership for exclusive content, early access, and special perks.</p>
+              <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>Hairspray Rebellion</h3>
+              <p className="font-semibold mb-6 text-lg leading-relaxed" style={{ color: colors.textMuted }}>Join our premium membership for exclusive content, early access, and special perks.</p>
               <Button 
                 variant="ghost" 
-                className="text-metal-gold hover:text-yellow-400 p-0 h-auto"
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105"
+                style={{ 
+                  color: colors.secondary,
+                  backgroundColor: 'transparent'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.secondary;
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = colors.secondary;
+                }}
                 onClick={() => scrollToSection("subscribe")}
               >
                 Learn More →
@@ -110,16 +161,46 @@ export default function Features() {
           </Card>
 
           {/* Feature 6: Merch Store */}
-          <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
-            <CardContent className="p-6">
-              <div className="w-12 h-12 bg-metal-red/20 rounded-lg flex items-center justify-center mb-4">
-                <Shirt className="text-metal-red h-6 w-6" />
+          <Card 
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            style={{
+              backgroundColor: colors.card,
+              borderColor: `${colors.accent}40`,
+              boxShadow: `0 8px 32px ${colors.accent}20`
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = colors.accent;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.accent}60`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = `${colors.accent}40`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.accent}20`;
+            }}
+          >
+            <CardContent className="p-0">
+              <div 
+                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
+                style={{ backgroundColor: colors.accent }}
+              >
+                <Shirt className="text-white h-8 w-8" />
               </div>
-              <h3 className="font-black text-xl mb-3">Official Merch</h3>
-              <p className="text-gray-400 font-semibold mb-4">Show your metal pride with official Spandex Salvation Radio merchandise and apparel.</p>
+              <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>Official Merch</h3>
+              <p className="font-semibold mb-6 text-lg leading-relaxed" style={{ color: colors.textMuted }}>Show your metal pride with official Spandex Salvation Radio merchandise and apparel.</p>
               <Button 
                 variant="ghost" 
-                className="text-metal-red hover:text-red-400 p-0 h-auto"
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105"
+                style={{ 
+                  color: colors.accent,
+                  backgroundColor: 'transparent'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.accent;
+                  e.currentTarget.style.color = 'white';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = colors.accent;
+                }}
                 onClick={() => scrollToSection("merch")}
               >
                 Shop Now →

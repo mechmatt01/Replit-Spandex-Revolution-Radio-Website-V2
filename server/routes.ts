@@ -445,7 +445,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Now Playing API
+  // Now Playing API with ad detection
   app.get("/api/now-playing", async (req, res) => {
     try {
       // Fetch live data from radio stream
@@ -460,14 +460,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ? titleString.split(' - ', 2)
           : ['Unknown Artist', titleString];
         
+        // Import ad detection functions
+        const { analyzeStreamMetadata, quickAdDetection } = await import('./adDetection');
+        
+        // Check metadata for ad indicators
+        const metadataAnalysis = analyzeStreamMetadata({
+          title: titleString,
+          artist: artist,
+          description: data.icestats.source[0].server_description
+        });
+        
+        // Quick keyword-based detection
+        const keywordDetection = quickAdDetection(titleString + ' ' + artist);
+        
+        // Determine if this is likely an ad
+        const isAd = metadataAnalysis.isAd || keywordDetection;
+        
         currentTrack = {
           id: 1,
-          title: title || "Live Radio",
-          artist: artist || "Spandex Salvation Radio",
+          title: isAd ? (title.includes('Commercial') ? title : `${title} (Commercial)`) : title || "Live Radio",
+          artist: isAd ? "Advertisement" : (artist || "Spandex Salvation Radio"),
           album: data.icestats.source[0].server_description || "Live Stream",
           duration: null,
           artwork: null,
-          isAd: false,
+          isAd: isAd,
+          adConfidence: isAd ? 0.8 : 0.1,
+          adReason: metadataAnalysis.reason,
           createdAt: new Date(),
           updatedAt: new Date()
         };
@@ -495,6 +513,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } catch (dbError) {
         res.status(500).json({ error: "Failed to fetch current track" });
       }
+    }
+  });
+  
+  // Advanced ad detection endpoint (requires OpenAI API key)
+  app.post("/api/detect-ad", async (req, res) => {
+    try {
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(400).json({ error: "OpenAI API key required for advanced ad detection" });
+      }
+      
+      const { detectAdContent } = await import('./adDetection');
+      const streamUrl = req.body.streamUrl || 'http://168.119.74.185:9858/autodj';
+      
+      const adDetection = await detectAdContent(streamUrl);
+      res.json(adDetection);
+    } catch (error) {
+      console.error('Error in advanced ad detection:', error);
+      res.status(500).json({ error: "Failed to detect ad content" });
     }
   });
 
