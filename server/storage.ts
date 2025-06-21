@@ -11,6 +11,7 @@ import {
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
+import { generateUserId, generateUsername, formatPhoneNumber } from "./userUtils";
 
 export interface IStorage {
   // User management

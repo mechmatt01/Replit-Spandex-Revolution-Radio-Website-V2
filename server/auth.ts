@@ -131,6 +131,7 @@ export function setupPassport(app: Express) {
               firstName,
               lastName,
               googleId: profile.id,
+              isEmailVerified: true,
             });
             
             user = await storage.updateUser(user.id, {
