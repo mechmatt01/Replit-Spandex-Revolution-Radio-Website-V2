@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Send } from "lucide-react";
+import { Send, Lock, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
 import type { Submission, InsertSubmission } from "@shared/schema";
 
@@ -24,6 +26,7 @@ export default function Submissions() {
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user, isAuthenticated, isLoading } = useAuth();
 
   const { data: recentSubmissions = [] } = useQuery<Submission[]>({
     queryKey: ["/api/submissions"],
@@ -83,6 +86,20 @@ export default function Submissions() {
     });
   };
 
+  // Handle unauthorized errors
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in with a paid subscription to submit song requests.",
+        variant: "destructive",
+      });
+    }
+  }, [isAuthenticated, isLoading, toast]);
+
+  // Check if user has paid subscription (assuming stripeSubscriptionId indicates paid status)
+  const hasPaidSubscription = user?.stripeSubscriptionId || false;
+
   return (
     <section id="submissions" className="py-20 bg-dark-bg">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -93,11 +110,44 @@ export default function Submissions() {
           <p className="text-gray-400 text-lg">
             Got a metal track that needs to be heard? Submit your requests and help shape our playlist.
           </p>
+          {!isAuthenticated && (
+            <div className="mt-6 p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+              <div className="flex items-center justify-center gap-2 text-orange-400">
+                <Crown className="h-5 w-5" />
+                <span className="font-semibold">Premium Feature - Paid Subscription Required</span>
+              </div>
+            </div>
+          )}
         </div>
 
-        <Card className="bg-dark-surface border-dark-border mb-12">
-          <CardContent className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
+        {!isAuthenticated || !hasPaidSubscription ? (
+          <Card className="bg-dark-surface border-dark-border mb-12">
+            <CardContent className="p-8 text-center">
+              <Lock className="h-16 w-16 text-orange-400 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-white mb-2">Premium Feature</h3>
+              <p className="text-gray-400 mb-6">
+                Song submissions are available exclusively to paid subscribers. 
+                Sign in and upgrade to submit your favorite tracks.
+              </p>
+              <Button 
+                onClick={() => window.location.href = '/api/login'}
+                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full font-semibold mr-4"
+              >
+                Sign In
+              </Button>
+              <Button 
+                onClick={() => document.getElementById('subscribe')?.scrollIntoView({ behavior: 'smooth' })}
+                variant="outline"
+                className="border-orange-500 text-orange-400 hover:bg-orange-500/10 px-6 py-3 rounded-full font-semibold"
+              >
+                View Subscriptions
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="bg-dark-surface border-dark-border mb-12">
+            <CardContent className="p-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <Label htmlFor="songTitle" className="text-gray-300 font-semibold">Song Title *</Label>
@@ -171,6 +221,7 @@ export default function Submissions() {
             </form>
           </CardContent>
         </Card>
+        )}
 
         {/* Recent Submissions */}
         <div>
