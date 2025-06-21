@@ -20,13 +20,18 @@ export default function ScrollingText({ text, className = '', maxWidth = '60%', 
       if (containerRef.current && textRef.current) {
         const containerWidth = containerRef.current.offsetWidth;
         const textWidth = textRef.current.scrollWidth;
-        setShouldScroll(textWidth > containerWidth);
+        const needsScroll = textWidth > containerWidth;
+        setShouldScroll(needsScroll);
       }
     };
 
-    checkOverflow();
+    // Small delay to ensure layout is complete
+    const timer = setTimeout(checkOverflow, 100);
     window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', checkOverflow);
+    };
   }, [text]);
 
   useEffect(() => {

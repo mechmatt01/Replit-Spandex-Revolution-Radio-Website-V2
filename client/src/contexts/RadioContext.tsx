@@ -198,8 +198,6 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
   // Fetch live track information with artwork
   useEffect(() => {
-    if (!isPlaying) return;
-
     const fetchTrackInfo = async () => {
       try {
         // Get station info and track info from our APIs
@@ -218,7 +216,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         if (nowPlayingResponse.ok) {
           const nowPlayingData = await nowPlayingResponse.json();
           
-          if (nowPlayingData.title && nowPlayingData.artist && nowPlayingData.title !== currentTrack.title) {
+          if (nowPlayingData.title && nowPlayingData.artist) {
             // Check if this is an advertisement
             const isAd = nowPlayingData.title.toLowerCase().includes('advertisement') || 
                         nowPlayingData.title.toLowerCase().includes('commercial') ||
@@ -229,10 +227,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
               title: isAd ? "Advertisement" : nowPlayingData.title,
               artist: isAd ? currentStationName : nowPlayingData.artist,
               album: isAd ? "" : (nowPlayingData.album || ""),
-              artwork: isAd ? "advertisement" : (nowPlayingData.artwork || getDefaultArtwork(nowPlayingData.title, nowPlayingData.artist))
+              artwork: isAd ? "advertisement" : getDefaultArtwork(nowPlayingData.title, nowPlayingData.artist)
             };
             
-            // Trigger fade transition
+            // Always update track with smooth transition
             setIsTransitioning(true);
             setPrevTrack(currentTrack);
             
