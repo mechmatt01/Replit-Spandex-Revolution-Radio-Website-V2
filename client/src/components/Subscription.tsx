@@ -119,10 +119,11 @@ export default function Subscription() {
                 <div 
                   className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold"
                   style={{
-                    background: `linear-gradient(135deg, ${colors.primary}dd, ${colors.secondary || colors.accent}dd)`,
-                    color: colors.primaryText || 'black',
+                    background: 'linear-gradient(135deg, #ff6b35, #f7931e)',
+                    color: 'black',
                     whiteSpace: 'nowrap',
-                    minWidth: 'max-content'
+                    minWidth: 'max-content',
+                    display: 'inline-block'
                   }}
                 >
                   MOST POPULAR
