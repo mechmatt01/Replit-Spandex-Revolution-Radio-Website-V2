@@ -271,12 +271,12 @@ export default function StripePaymentProcessor() {
       {subscriptionTiers.map((tier) => (
         <div
           key={tier.id}
-          className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 relative rounded-lg flex flex-col"
+          className="bg-transparent transition-all duration-300 relative rounded-lg flex flex-col"
           style={{ 
             minHeight: tier.popular ? '600px' : '450px',
             marginTop: tier.popular ? '0' : '150px',
             border: `2px solid transparent`,
-            background: `linear-gradient(${tier.popular ? '#1a1a1a' : '#2a2a2a'}, ${tier.popular ? '#1a1a1a' : '#2a2a2a'}) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`
+            background: `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`
           }}
         >
           {tier.popular && (
