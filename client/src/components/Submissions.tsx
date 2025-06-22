@@ -121,7 +121,7 @@ export default function Submissions() {
         {!isAuthenticated || !hasPaidSubscription ? (
           <div className="mt-6">
             <div 
-              className="p-6 rounded-lg text-center transition-all duration-300 opacity-0 animate-in fade-in slide-in-from-top-4"
+              className="p-6 rounded-lg text-center transition-all duration-300 animate-in fade-in slide-in-from-top-4"
               style={{ 
                 backgroundColor: `${colors.primary}10`,
                 borderColor: `${colors.primary}20`,
