@@ -77,7 +77,7 @@ export default function Contact() {
           {/* Contact Form */}
           <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300">
             <CardContent className="p-8">
-              <h3 className="font-black text-xl mb-6 text-metal-orange">Send us a Message</h3>
+              <h3 className="font-black text-xl mb-6 text-center text-metal-orange">Send us a Message</h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
