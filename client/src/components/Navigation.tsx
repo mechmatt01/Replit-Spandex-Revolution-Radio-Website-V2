@@ -215,11 +215,11 @@ export default function Navigation() {
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
                   <div 
-                    className="absolute right-0 mt-2 py-2 rounded-lg shadow-xl border animate-in fade-in-0 slide-in-from-top-2 duration-200 bg-black/80 backdrop-blur-md"
+                    className="absolute right-0 mt-2 py-2 rounded-xl shadow-xl border animate-in fade-in-0 slide-in-from-top-2 duration-200 bg-black/80 backdrop-blur-md"
                     style={{
                       borderColor: colors.primary + '40',
-                      width: 'fit-content',
-                      maxWidth: 'none',
+                      width: 'auto',
+                      minWidth: 'max-content',
                       zIndex: 50
                     }}
                   >
@@ -229,11 +229,10 @@ export default function Navigation() {
                         <button
                           key={item.id}
                           onClick={item.action}
-                          className="flex items-center justify-end space-x-3 w-full px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap text-right"
+                          className="flex items-center justify-end space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap text-right hover:rounded-lg"
                           style={{ 
                             color: colors.text,
-                            minWidth: 'max-content',
-                            direction: 'rtl'
+                            width: 'auto'
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.backgroundColor = colors.primary + '20';
