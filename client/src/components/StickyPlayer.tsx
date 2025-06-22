@@ -91,9 +91,9 @@ export default function StickyPlayer() {
           </div>
 
           {/* Player Controls */}
-          <div className="flex flex-col items-end space-y-2">
-            {/* Volume Control - moved to align with Live Stream text */}
-            <div className="hidden md:flex items-center space-x-2 mt-6">
+          <div className="flex items-center space-x-4">
+            {/* Volume Control - moved to left side */}
+            <div className="hidden md:flex items-center space-x-2">
               <Volume2 className="text-gray-400 h-4 w-4" />
               <div className="w-20 h-1 bg-gray-700 rounded-full relative">
                 <div 
