@@ -92,6 +92,28 @@ export default function StickyPlayer() {
 
           {/* Player Controls */}
           <div className="flex flex-col items-end space-y-2">
+            {/* Volume Control - moved to align with Live Stream text */}
+            <div className="hidden md:flex items-center space-x-2 mt-6">
+              <Volume2 className="text-gray-400 h-4 w-4" />
+              <div className="w-20 h-1 bg-gray-700 rounded-full relative">
+                <div 
+                  className="h-1 rounded-full transition-all duration-150"
+                  style={{ 
+                    width: `${volume * 100}%`,
+                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                  }}
+                ></div>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={volume * 100}
+                  onChange={handleVolumeChange}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                />
+              </div>
+            </div>
+
             {/* Play Button - moved to far right */}
             <Button
               onClick={togglePlayback}
@@ -114,28 +136,6 @@ export default function StickyPlayer() {
                 </svg>
               )}
             </Button>
-
-            {/* Volume Control - moved to bottom */}
-            <div className="hidden md:flex items-center space-x-2 mt-[-8px] mb-[-15px] ml-[63px] mr-[63px] pt-[0px] pb-[0px]">
-              <Volume2 className="text-gray-400 h-4 w-4" />
-              <div className="w-20 h-1 bg-gray-700 rounded-full relative">
-                <div 
-                  className="h-1 rounded-full transition-all duration-150"
-                  style={{ 
-                    width: `${volume * 100}%`,
-                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-                  }}
-                ></div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={volume * 100}
-                  onChange={handleVolumeChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-              </div>
-            </div>
           </div>
         </div>
       </div>
