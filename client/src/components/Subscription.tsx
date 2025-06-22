@@ -107,30 +107,30 @@ export default function Subscription() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+        <div className="flex flex-col md:flex-row gap-8 max-w-6xl mx-auto mb-16 items-stretch justify-center">
           {subscriptionTiers.map((tier, index) => (
             <Card 
               key={tier.name}
-              className={`bg-dark-bg border-dark-border relative flex flex-col ${
+              className={`bg-dark-bg border-dark-border relative flex flex-col flex-1 min-h-[500px] ${
                 tier.popular ? "border-2 border-metal-gold transform scale-105" : ""
               }`}
             >
               {tier.popular && (
                 <div 
-                  className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold"
+                  className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
                   style={{
                     background: 'linear-gradient(135deg, #ff6b35, #f7931e)',
                     color: 'black',
                     whiteSpace: 'nowrap',
-                    minWidth: 'max-content',
-                    display: 'inline-block'
+                    minWidth: 'fit-content',
+                    width: 'max-content'
                   }}
                 >
-                  MOST POPULAR
+                  MOST&nbsp;POPULAR
                 </div>
               )}
               
-              <CardContent className="p-8 flex flex-col h-full">
+              <CardContent className="p-8 flex flex-col flex-1 justify-between">
                 <div className="text-center mb-6">
                   <h3 className={`font-bold text-xl mb-2 ${
                     tier.color === "metal-gold" ? "text-metal-gold" : 
@@ -163,32 +163,19 @@ export default function Subscription() {
                   onClick={() => handleSubscribe(tier.name)}
                   className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300 mt-auto"
                   style={{
-                    backgroundColor: tier.color === "metal-gold" ? colors.primary : 'transparent',
-                    borderColor: tier.color === "metal-gold" ? colors.primary : 
-                                tier.color === "metal-red" ? colors.accent : colors.secondary,
-                    color: tier.color === "metal-gold" ? (colors.primaryText || 'black') : 
-                           tier.color === "metal-red" ? colors.accent : colors.secondary
+                    backgroundColor: colors.primary,
+                    borderColor: colors.primary,
+                    color: colors.primaryText || 'black'
                   }}
-                  variant={tier.color === "metal-gold" ? "default" : "outline"}
+                  variant="default"
                   onMouseEnter={(e) => {
-                    if (tier.color === "metal-gold") {
-                      e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
-                      e.currentTarget.style.color = colors.primaryText || 'black';
-                    } else {
-                      const hoverColor = tier.color === "metal-red" ? colors.accent : colors.secondary;
-                      e.currentTarget.style.backgroundColor = hoverColor;
-                      e.currentTarget.style.color = colors.primaryText || 'black';
-                    }
+                    e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
+                    e.currentTarget.style.color = colors.primaryText || 'black';
                     e.currentTarget.style.transform = 'scale(1.02)';
                   }}
                   onMouseLeave={(e) => {
-                    if (tier.color === "metal-gold") {
-                      e.currentTarget.style.backgroundColor = colors.primary;
-                      e.currentTarget.style.color = colors.primaryText || 'black';
-                    } else {
-                      e.currentTarget.style.backgroundColor = 'transparent';
-                      e.currentTarget.style.color = tier.color === "metal-red" ? colors.accent : colors.secondary;
-                    }
+                    e.currentTarget.style.backgroundColor = colors.primary;
+                    e.currentTarget.style.color = colors.primaryText || 'black';
                     e.currentTarget.style.transform = 'scale(1)';
                   }}
                 >
