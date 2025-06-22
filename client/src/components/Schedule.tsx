@@ -3,9 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Calendar, Clock, Play } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/contexts/ThemeContext";
 import type { ShowSchedule, PastShow } from "@shared/schema";
 
 export default function Schedule() {
+  const { getColors } = useTheme();
+  const colors = getColors();
+  
   const { data: weeklyShows = [] } = useQuery<ShowSchedule[]>({
     queryKey: ["/api/schedules"],
   });

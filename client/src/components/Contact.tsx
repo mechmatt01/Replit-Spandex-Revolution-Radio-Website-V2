@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useTheme } from "@/contexts/ThemeContext";
 import type { InsertContact } from "@shared/schema";
 
 export default function Contact() {
@@ -21,6 +22,8 @@ export default function Contact() {
   });
 
   const { toast } = useToast();
+  const { getColors } = useTheme();
+  const colors = getColors();
 
   const contactMutation = useMutation({
     mutationFn: async (data: InsertContact) => {
