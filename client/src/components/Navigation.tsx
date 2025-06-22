@@ -328,54 +328,7 @@ export default function Navigation() {
               )}
               <div className="hidden xl:flex items-center space-x-3">
                 {!isAuthenticated ? (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setAuthMode("login");
-                        setIsAuthModalOpen(true);
-                      }}
-                      className="text-sm font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:scale-105"
-                      style={{
-                        borderColor: colors.primary,
-                        color: colors.primary,
-                        backgroundColor: 'transparent'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary;
-                        e.currentTarget.style.color = colors.primaryText || 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.primary;
-                      }}
-                    >
-                      SIGN IN
-                    </Button>
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        setAuthMode("register");
-                        setIsAuthModalOpen(true);
-                      }}
-                      className="text-sm font-semibold px-6 py-2 rounded-lg transition-all duration-300 hover:scale-105"
-                      style={{
-                        backgroundColor: colors.primary,
-                        color: colors.primaryText || 'white'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'scale(1.05)';
-                        e.currentTarget.style.boxShadow = `0 4px 12px ${colors.primary}40`;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'scale(1)';
-                        e.currentTarget.style.boxShadow = 'none';
-                      }}
-                    >
-                      SUBSCRIBE
-                    </Button>
-                  </>
+                  <></>
                 ) : (
                   <div className="flex items-center space-x-3">
                     <Tooltip>
