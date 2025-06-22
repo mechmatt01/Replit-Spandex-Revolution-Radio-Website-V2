@@ -43,10 +43,10 @@ export default function About() {
             </div>
             <Button 
               onClick={scrollToSubscribe}
-              className="text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
+              className="px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
               style={{ 
                 backgroundColor: colors.primary,
-                color: 'white'
+                color: colors.primaryText || 'white'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;

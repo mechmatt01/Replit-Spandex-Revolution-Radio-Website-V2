@@ -167,7 +167,7 @@ export default function Features() {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = colors.primary;
-                  e.currentTarget.style.color = 'white';
+                  e.currentTarget.style.color = colors.primaryText || 'white';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
@@ -217,7 +217,7 @@ export default function Features() {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = colors.primary;
-                  e.currentTarget.style.color = 'white';
+                  e.currentTarget.style.color = colors.primaryText || 'white';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
@@ -265,7 +265,7 @@ export default function Features() {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = colors.primary;
-                  e.currentTarget.style.color = 'white';
+                  e.currentTarget.style.color = colors.primaryText || 'white';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
