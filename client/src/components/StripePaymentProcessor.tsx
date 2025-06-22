@@ -327,10 +327,18 @@ export default function StripePaymentProcessor() {
 
             <button
               onClick={() => handleTierSelect(tier)}
-              className="w-full font-bold py-3 rounded-full transition-all duration-300 text-white"
+              className="w-full font-bold py-3 rounded-full transition-all duration-300 text-white transform hover:scale-110 hover:shadow-2xl"
               style={{
                 background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
                 boxShadow: `0 4px 15px ${tier.gradientStart}40`
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = `0 8px 25px ${tier.gradientStart}80, 0 0 20px ${tier.gradientEnd}60`;
+                e.currentTarget.style.transform = 'scale(1.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = `0 4px 15px ${tier.gradientStart}40`;
+                e.currentTarget.style.transform = 'scale(1)';
               }}
             >
               {tier.name}
