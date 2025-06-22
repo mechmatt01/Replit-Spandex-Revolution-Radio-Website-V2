@@ -130,6 +130,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
     colors: {
       dark: {
         primary: "#ffd700",
+        primaryText: "#000000", // Black text on yellow background
         secondary: "#4169e1",
         accent: "#87ceeb",
         background: "#0a0a1a",
@@ -140,6 +141,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
       },
       light: {
         primary: "#ffb300",
+        primaryText: "#000000", // Black text on yellow background
         secondary: "#1976d2",
         accent: "#2196f3",
         background: "#f8f9ff",
