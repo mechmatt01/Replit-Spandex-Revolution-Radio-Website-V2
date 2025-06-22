@@ -73,11 +73,11 @@ export default function Contact() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
-          <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300">
-            <CardContent className="p-8">
-              <h3 className="font-black text-xl mb-6 text-center text-metal-orange">Send us a Message</h3>
+        <div className="flex justify-center items-center min-h-[500px]">
+          <div className="w-full max-w-lg">
+            <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 mx-auto">
+              <CardContent className="p-8">
+                <h3 className="font-black text-xl mb-6 text-center text-metal-orange">Send us a Message</h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -167,11 +167,10 @@ export default function Contact() {
                   <Send className="mr-2 h-4 w-4" />
                   {contactMutation.isPending ? "SENDING..." : "SEND MESSAGE"}
                 </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-
+                </form>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </section>
