@@ -164,6 +164,7 @@ export default function Subscription() {
                   onMouseEnter={(e) => {
                     if (tier.color === "metal-gold") {
                       e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
+                      e.currentTarget.style.color = colors.primaryText || 'black';
                     } else {
                       const hoverColor = tier.color === "metal-red" ? colors.accent : colors.secondary;
                       e.currentTarget.style.backgroundColor = hoverColor;
@@ -174,6 +175,7 @@ export default function Subscription() {
                   onMouseLeave={(e) => {
                     if (tier.color === "metal-gold") {
                       e.currentTarget.style.backgroundColor = colors.primary;
+                      e.currentTarget.style.color = colors.primaryText || 'black';
                     } else {
                       e.currentTarget.style.backgroundColor = 'transparent';
                       e.currentTarget.style.color = tier.color === "metal-red" ? colors.accent : colors.secondary;
@@ -181,9 +183,7 @@ export default function Subscription() {
                     e.currentTarget.style.transform = 'scale(1)';
                   }}
                 >
-                  {tier.name === "REBEL" ? "Start Rebellion" :
-                   tier.name === "LEGEND" ? "Become a Legend" :
-                   "Become an Icon"}
+                  {tier.name}
                 </Button>
               </CardContent>
             </Card>
