@@ -17,8 +17,8 @@ import VerificationModal from './VerificationModal';
 
 export default function ProfilePage() {
   const { user, isAuthenticated, logout, refreshUser } = useAuth();
-  const { colors } = useTheme();
   const [, setLocation] = useLocation();
+  const { colors } = useTheme();
   const { toast } = useToast();
 
   // States
@@ -236,7 +236,7 @@ export default function ProfilePage() {
                         </div>
                       )}
                     </div>
-                    
+
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button 

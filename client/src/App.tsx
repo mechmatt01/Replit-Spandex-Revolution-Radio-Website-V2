@@ -16,6 +16,7 @@ import ProfilePage from "@/pages/ProfilePage";
 import LoginPage from "@/pages/LoginPage";
 import SubscribePage from "@/pages/SubscribePage";
 import NotFound from "@/pages/not-found";
+import { useAuth } from './hooks/useAuth';
 
 function Router() {
   return (

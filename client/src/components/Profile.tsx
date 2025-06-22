@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import type { User as UserType } from "@shared/schema";
+import LiveChat from "./LiveChat";
 
 interface ProfileProps {
   onNavigateToSubscribe?: () => void;
@@ -54,6 +55,7 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
   const [isCancelSubModalOpen, setIsCancelSubModalOpen] = useState(false);
   const [showPremiumNotification, setShowPremiumNotification] = useState<{show: boolean, type: string}>({ show: false, type: '' });
   const [profileData, setProfileData] = useState<Partial<UserType>>({});
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   
   const { user, isAuthenticated } = useAuth();
   const { getColors, getGradient, theme } = useTheme();

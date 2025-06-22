@@ -291,7 +291,7 @@ export default function Navigation() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
-                        onClick={() => location.href = "/profile"}
+                        onClick={() => window.location.href = "/#/profile"}
                         className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
                         style={{
                           backgroundColor: 'transparent',
