@@ -328,9 +328,10 @@ export default function StripePaymentProcessor() {
             <button
               onClick={() => handleTierSelect(tier)}
               className={`w-full font-bold rounded-full transition-all duration-300 text-white transform hover:scale-110 hover:shadow-2xl ${
-                tier.popular ? 'py-3' : 'py-2 text-sm'
+                tier.popular ? 'py-3 text-base' : 'py-2 text-sm'
               }`}
               style={{
+                fontSize: tier.popular ? '16px' : '12px',
                 background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
                 boxShadow: `0 4px 15px ${tier.gradientStart}40`,
                 ...(tier.popular ? {} : { transform: 'scale(0.85)' })
