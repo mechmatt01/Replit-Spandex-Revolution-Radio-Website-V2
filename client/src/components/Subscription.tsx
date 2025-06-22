@@ -55,6 +55,8 @@ export default function Subscription() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { getColors } = useTheme();
+  const colors = getColors();
 
   const { toast } = useToast();
 
@@ -107,13 +109,14 @@ export default function Subscription() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-8 max-w-6xl mx-auto mb-16 items-stretch justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
           {subscriptionTiers.map((tier, index) => (
-            <Card 
+            <div 
               key={tier.name}
-              className={`bg-dark-bg border-dark-border relative flex flex-col flex-1 min-h-[500px] ${
+              className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
                 tier.popular ? "border-2 border-metal-gold transform scale-105" : ""
               }`}
+              style={{ minHeight: '600px' }}
             >
               {tier.popular && (
                 <div 
@@ -122,15 +125,15 @@ export default function Subscription() {
                     background: 'linear-gradient(135deg, #ff6b35, #f7931e)',
                     color: 'black',
                     whiteSpace: 'nowrap',
-                    minWidth: 'fit-content',
-                    width: 'max-content'
+                    fontSize: '11px',
+                    lineHeight: '1'
                   }}
                 >
                   MOST&nbsp;POPULAR
                 </div>
               )}
               
-              <CardContent className="p-8 flex flex-col flex-1 justify-between">
+              <div className="p-8 flex flex-col h-full justify-between">
                 <div className="text-center mb-6">
                   <h3 className={`font-bold text-xl mb-2 ${
                     tier.color === "metal-gold" ? "text-metal-gold" : 
@@ -159,30 +162,28 @@ export default function Subscription() {
                   ))}
                 </ul>
 
-                <Button
+                <button
                   onClick={() => handleSubscribe(tier.name)}
-                  className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300 mt-auto"
+                  className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300"
                   style={{
                     backgroundColor: colors.primary,
-                    borderColor: colors.primary,
-                    color: colors.primaryText || 'black'
+                    color: colors.primaryText || 'black',
+                    border: 'none',
+                    cursor: 'pointer'
                   }}
-                  variant="default"
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
-                    e.currentTarget.style.color = colors.primaryText || 'black';
                     e.currentTarget.style.transform = 'scale(1.02)';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary;
-                    e.currentTarget.style.color = colors.primaryText || 'black';
                     e.currentTarget.style.transform = 'scale(1)';
                   }}
                 >
                   {tier.name}
-                </Button>
-              </CardContent>
-            </Card>
+                </button>
+              </div>
+            </div>
           ))}
         </div>
 
