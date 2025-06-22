@@ -117,10 +117,12 @@ export default function Subscription() {
             >
               {tier.popular && (
                 <div 
-                  className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-sm font-bold whitespace-nowrap"
+                  className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-full text-xs font-bold"
                   style={{
-                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary || colors.accent})`,
-                    color: colors.primaryText || 'black'
+                    background: `linear-gradient(135deg, ${colors.primary}dd, ${colors.secondary || colors.accent}dd)`,
+                    color: colors.primaryText || 'black',
+                    whiteSpace: 'nowrap',
+                    minWidth: 'max-content'
                   }}
                 >
                   MOST POPULAR
