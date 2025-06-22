@@ -44,7 +44,6 @@ export default function HomePage() {
         </div>
       </section>
       <ShopifyEcommerce />
-      <AdvancedAdminDashboard />
       <Footer />
       <StickyPlayer />
       <ChatButton />

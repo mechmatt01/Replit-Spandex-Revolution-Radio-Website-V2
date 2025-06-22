@@ -229,7 +229,7 @@ export default function Navigation() {
                         <button
                           key={item.id}
                           onClick={item.action}
-                          className="flex items-center justify-end space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap text-right hover:rounded-lg"
+                          className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg"
                           style={{ 
                             color: colors.text,
                             width: 'auto'
@@ -245,8 +245,8 @@ export default function Navigation() {
                           role="menuitem"
                           aria-label={`Navigate to ${item.label.toLowerCase()}`}
                         >
-                          <span className="text-right">{item.label}</span>
                           <IconComponent size={16} style={{ color: colors.primary }} />
+                          <span>{item.label}</span>
                         </button>
                       );
                     })}
@@ -429,7 +429,7 @@ export default function Navigation() {
                     <button
                       key={item.id}
                       onClick={item.action}
-                      className="flex items-center justify-between px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                      className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                       style={{ color: colors.text }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = colors.primary + '20';
@@ -442,8 +442,8 @@ export default function Navigation() {
                       role="menuitem"
                       aria-label={`Navigate to ${item.label.toLowerCase()}`}
                     >
-                      <span>{item.label}</span>
                       <IconComponent size={20} style={{ color: colors.primary }} />
+                      <span>{item.label}</span>
                     </button>
                   );
                 })}
@@ -456,15 +456,18 @@ export default function Navigation() {
                         setIsAuthModalOpen(true);
                         setIsOpen(false);
                       }}
-                      className="flex items-center justify-between px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                      className="flex items-center space-x-3 mx-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                       style={{
                         color: colors.primary,
                         backgroundColor: 'transparent',
-                        border: `1px solid ${colors.primary}`
+                        border: `1px solid ${colors.primary}`,
+                        paddingLeft: '1rem',
+                        paddingRight: '1rem',
+                        width: 'calc(100% - 2rem)'
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = colors.primary;
-                        e.currentTarget.style.color = 'white';
+                        e.currentTarget.style.color = colors.primaryText || 'black';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'transparent';
@@ -473,8 +476,8 @@ export default function Navigation() {
                       role="menuitem"
                       aria-label="Sign in"
                     >
-                      <span className="text-right">SIGN IN</span>
                       <User size={16} style={{ color: colors.primary }} />
+                      <span>SIGN IN</span>
                     </button>
                   ) : (
                     <div className="space-y-3">
@@ -483,29 +486,29 @@ export default function Navigation() {
                           window.location.href = '/profile';
                           setIsOpen(false);
                         }}
-                        className="flex items-center justify-between px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                         style={{
                           color: colors.text,
                           backgroundColor: colors.primary + '20'
                         }}
                       >
-                        <span>Profile</span>
                         <User size={16} style={{ color: colors.primary }} />
+                        <span>Profile</span>
                       </button>
                       <button
                         onClick={() => {
                           logout();
                           setIsOpen(false);
                         }}
-                        className="flex items-center justify-between px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                         style={{
                           color: colors.primary,
                           backgroundColor: 'transparent',
                           border: `1px solid ${colors.primary}`
                         }}
                       >
-                        <span>Sign Out</span>
                         <LogOut size={16} style={{ color: colors.primary }} />
+                        <span>Sign Out</span>
                       </button>
                     </div>
                   )}
