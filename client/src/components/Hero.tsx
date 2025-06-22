@@ -64,22 +64,22 @@ export default function Hero() {
 
         {/* Countdown Timer */}
         <div className="mt-8 mb-8">
-          <p className="text-black dark:text-white mb-1 font-bold text-2xl">OFFICIAL LAUNCH COUNTDOWN</p>
+          <p className="text-black dark:text-white mb-1 font-bold text-3xl">OFFICIAL LAUNCH COUNTDOWN</p>
           <div className="flex justify-center space-x-4 text-center">
-            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
-              <div className="text-2xl font-bold text-metal-orange">{countdown.days}</div>
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
+              <div className="text-3xl font-bold text-metal-orange mb-1">{countdown.days}</div>
               <div className="text-xs text-muted-foreground font-semibold">DAYS</div>
             </div>
-            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
-              <div className="text-2xl font-bold text-metal-orange">{countdown.hours}</div>
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
+              <div className="text-3xl font-bold text-metal-orange mb-1">{countdown.hours}</div>
               <div className="text-xs text-muted-foreground font-semibold">HOURS</div>
             </div>
-            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
-              <div className="text-2xl font-bold text-metal-orange">{countdown.minutes}</div>
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
+              <div className="text-3xl font-bold text-metal-orange mb-1">{countdown.minutes}</div>
               <div className="text-xs text-muted-foreground font-semibold">MINS</div>
             </div>
-            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[80px] rounded-xl transition-colors duration-300">
-              <div className="text-2xl font-bold text-metal-orange">{countdown.seconds}</div>
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
+              <div className="text-3xl font-bold text-metal-orange mb-1">{countdown.seconds}</div>
               <div className="text-xs text-muted-foreground font-semibold">SECS</div>
             </div>
           </div>
