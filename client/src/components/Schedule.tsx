@@ -103,10 +103,21 @@ export default function Schedule() {
             
             <Button 
               variant="outline"
-              className="w-full mt-6 font-semibold transition-all duration-300 btn-theme-hover"
+              className="w-full mt-6 font-semibold transition-all duration-300"
               style={{
-                borderColor: 'var(--color-primary)',
-                color: 'var(--color-primary)'
+                borderColor: colors.primary,
+                color: colors.primary,
+                backgroundColor: 'transparent'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = colors.primary;
+                e.currentTarget.style.color = colors.primaryText || 'black';
+                e.currentTarget.style.transform = 'scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = colors.primary;
+                e.currentTarget.style.transform = 'scale(1)';
               }}
             >
               View All Archives

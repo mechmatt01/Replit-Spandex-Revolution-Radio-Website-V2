@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface Product {
   id: string;
@@ -230,20 +231,7 @@ export default function ShopifyEcommerce() {
           </div>
         </div>
 
-        {/* All Products */}
-        <div>
-          <h3 className="font-black text-xl mb-6 text-white">All Products</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={(variant, quantity) => addToCart(product, variant, quantity)}
-                onViewDetails={() => setSelectedProduct(product)}
-              />
-            ))}
-          </div>
-        </div>
+
 
         {/* Product Modal */}
         {selectedProduct && (
@@ -266,6 +254,8 @@ interface ProductCardProps {
 
 function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(product.variants[0]);
+  const { getColors } = useTheme();
+  const colors = getColors();
 
   return (
     <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 group">
@@ -360,7 +350,19 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
         <Button
           onClick={() => onAddToCart(selectedVariant, 1)}
           disabled={!product.inStock || !selectedVariant.available}
-          className="w-full bg-metal-orange hover:bg-orange-600 text-white font-bold"
+          className="w-full font-bold transition-all duration-300"
+          style={{
+            backgroundColor: colors.primary,
+            color: colors.primaryText || 'white'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
+            e.currentTarget.style.transform = 'scale(1.02)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = colors.primary;
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
         >
           <ShoppingCart className="mr-2 h-4 w-4" />
           Add to Cart

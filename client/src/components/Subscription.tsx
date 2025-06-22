@@ -111,17 +111,17 @@ export default function Subscription() {
           {subscriptionTiers.map((tier, index) => (
             <Card 
               key={tier.name}
-              className={`bg-dark-bg border-dark-border relative ${
+              className={`bg-dark-bg border-dark-border relative flex flex-col ${
                 tier.popular ? "border-2 border-metal-gold transform scale-105" : ""
               }`}
             >
               {tier.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-metal-gold text-dark-bg px-4 py-1 rounded-full text-sm font-bold">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-metal-gold text-dark-bg px-4 py-1 rounded-full text-sm font-bold whitespace-nowrap">
                   MOST POPULAR
                 </div>
               )}
               
-              <CardContent className="p-8">
+              <CardContent className="p-8 flex flex-col h-full">
                 <div className="text-center mb-6">
                   <h3 className={`font-bold text-xl mb-2 ${
                     tier.color === "metal-gold" ? "text-metal-gold" : 
@@ -138,7 +138,7 @@ export default function Subscription() {
                   <div className="text-gray-400 text-sm">per month</div>
                 </div>
                 
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-3 mb-8 flex-grow">
                   {tier.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-center text-gray-300">
                       <Check className={`mr-3 h-4 w-4 ${
@@ -152,14 +152,34 @@ export default function Subscription() {
 
                 <Button
                   onClick={() => handleSubscribe(tier.name)}
-                  className={`w-full px-6 py-3 rounded-full font-bold transition-all duration-300 ${
-                    tier.color === "metal-gold" 
-                      ? "bg-metal-gold hover:bg-yellow-500 text-dark-bg"
-                      : tier.color === "metal-red"
-                      ? "border-2 border-metal-red text-metal-red hover:bg-metal-red hover:text-white"
-                      : "border-2 border-metal-orange text-metal-orange hover:bg-metal-orange hover:text-white"
-                  }`}
+                  className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300 mt-auto"
+                  style={{
+                    backgroundColor: tier.color === "metal-gold" ? colors.primary : 'transparent',
+                    borderColor: tier.color === "metal-gold" ? colors.primary : 
+                                tier.color === "metal-red" ? colors.accent : colors.secondary,
+                    color: tier.color === "metal-gold" ? (colors.primaryText || 'black') : 
+                           tier.color === "metal-red" ? colors.accent : colors.secondary
+                  }}
                   variant={tier.color === "metal-gold" ? "default" : "outline"}
+                  onMouseEnter={(e) => {
+                    if (tier.color === "metal-gold") {
+                      e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
+                    } else {
+                      const hoverColor = tier.color === "metal-red" ? colors.accent : colors.secondary;
+                      e.currentTarget.style.backgroundColor = hoverColor;
+                      e.currentTarget.style.color = colors.primaryText || 'black';
+                    }
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (tier.color === "metal-gold") {
+                      e.currentTarget.style.backgroundColor = colors.primary;
+                    } else {
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                      e.currentTarget.style.color = tier.color === "metal-red" ? colors.accent : colors.secondary;
+                    }
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                 >
                   {tier.name === "REBEL" ? "Start Rebellion" :
                    tier.name === "LEGEND" ? "Become a Legend" :

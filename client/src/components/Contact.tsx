@@ -147,7 +147,19 @@ export default function Contact() {
                 <Button
                   type="submit"
                   disabled={contactMutation.isPending}
-                  className="w-full bg-metal-orange hover:bg-orange-600 text-white px-6 py-3 rounded-full font-bold transition-all duration-300"
+                  className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300"
+                  style={{
+                    backgroundColor: colors.primary,
+                    color: colors.primaryText || 'white'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
+                    e.currentTarget.style.transform = 'scale(1.02)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary;
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }}
                 >
                   <Send className="mr-2 h-4 w-4" />
                   {contactMutation.isPending ? "SENDING..." : "SEND MESSAGE"}
