@@ -47,8 +47,8 @@ export default function StickyPlayer() {
     <div className={`fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-40 transition-all duration-500 ${
       isVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-full opacity-0'
     }`}>
-      <div className="w-full px-4 py-3">
-        <div className="flex items-center justify-between">
+      <div className="w-full px-4 py-3 flex flex-col">
+        <div className="flex items-center justify-between mb-2">
           {/* Now Playing Info */}
           <div className="flex items-center space-x-4 flex-1 min-w-0 max-w-md">
             <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
@@ -90,52 +90,49 @@ export default function StickyPlayer() {
             </div>
           </div>
 
-          {/* Player Controls */}
-          <div className="flex items-center space-x-4">
-            {/* Volume Control - moved to left side */}
-            <div className="hidden md:flex items-center space-x-2">
-              <Volume2 className="text-gray-400 h-4 w-4" />
-              <div className="w-20 h-1 bg-gray-700 rounded-full relative">
-                <div 
-                  className="h-1 rounded-full transition-all duration-150"
-                  style={{ 
-                    width: `${volume * 100}%`,
-                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-                  }}
-                ></div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={volume * 100}
-                  onChange={handleVolumeChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-              </div>
-            </div>
+          {/* Play Button - moved to far right */}
+          <Button
+            onClick={togglePlayback}
+            className="text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl ml-auto"
+            style={{
+              background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+              focusRingColor: colors.primary,
+              boxShadow: `0 4px 20px ${colors.primary}60`
+            }}
+            aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
+          >
+            {isPlaying ? (
+              <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="5" y="3" width="4" height="18" rx="1" />
+                <rect x="15" y="3" width="4" height="18" rx="1" />
+              </svg>
+            ) : (
+              <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
+                <polygon points="7,4 20,12 7,20" />
+              </svg>
+            )}
+          </Button>
+        </div>
 
-            {/* Play Button - moved to far right */}
-            <Button
-              onClick={togglePlayback}
-              className="text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl ml-auto"
-              style={{
-                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-                focusRingColor: colors.primary,
-                boxShadow: `0 4px 20px ${colors.primary}60`
+        {/* Volume Control - moved to bottom */}
+        <div className="hidden md:flex items-center justify-center space-x-2">
+          <Volume2 className="text-gray-400 h-4 w-4" />
+          <div className="w-20 h-1 bg-gray-700 rounded-full relative">
+            <div 
+              className="h-1 rounded-full transition-all duration-150"
+              style={{ 
+                width: `${volume * 100}%`,
+                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
               }}
-              aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
-            >
-              {isPlaying ? (
-                <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
-                  <rect x="5" y="3" width="4" height="18" rx="1" />
-                  <rect x="15" y="3" width="4" height="18" rx="1" />
-                </svg>
-              ) : (
-                <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
-                  <polygon points="7,4 20,12 7,20" />
-                </svg>
-              )}
-            </Button>
+            ></div>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={volume * 100}
+              onChange={handleVolumeChange}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
           </div>
         </div>
       </div>
