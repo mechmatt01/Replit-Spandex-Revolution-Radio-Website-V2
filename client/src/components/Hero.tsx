@@ -61,11 +61,6 @@ export default function Hero() {
           <p className="text-xl md:text-2xl font-bold text-metal-orange mb-1">Old School Metal</p>
           <p className="text-base md:text-lg font-semibold text-metal-orange">24/7 Live Stream</p>
         </div>
-        <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto">
-          Bringing you the best of old-school metal with legendary bands like Skid Row, Twisted Sister, and more.
-          <br />
-          Join the hairspray rebellion!
-        </p>
 
         {/* Countdown Timer */}
         <div className="mt-8 mb-8">
@@ -89,6 +84,12 @@ export default function Hero() {
             </div>
           </div>
         </div>
+
+        <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto">
+          Bringing you the best of old-school metal with legendary bands like Skid Row, Twisted Sister, and more.
+          <br />
+          Join the hairspray rebellion!
+        </p>
 
         {/* Live Radio Player */}
         <div className="flex flex-col items-center justify-center space-y-6 mb-12 mt-8">
