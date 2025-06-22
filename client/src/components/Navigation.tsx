@@ -394,6 +394,9 @@ export default function Navigation() {
 
             {/* Mobile controls - Right side on mobile only */}
             <div className="xl:hidden flex items-center space-x-3">
+              {/* Theme toggle - always visible in mobile */}
+              <MetalThemeSwitcher />
+              
               {/* Mobile menu button */}
               <button
                 ref={menuRef}
@@ -413,7 +416,12 @@ export default function Navigation() {
 
           {/* Mobile Navigation */}
           {isOpen && (
-            <div className="xl:hidden absolute top-full left-0 right-0 bg-black/90 backdrop-blur-md border-t animate-in slide-in-from-top-2 duration-300" style={{ borderColor: colors.primary + '40' }}>
+            <div className="xl:hidden absolute top-full right-4 bg-black/90 backdrop-blur-md border rounded-xl animate-in slide-in-from-top-2 duration-300 shadow-xl" style={{ 
+              borderColor: colors.primary + '40',
+              width: 'auto',
+              minWidth: 'max-content',
+              maxWidth: 'calc(100vw - 2rem)'
+            }}>
               <div className="px-4 py-6 space-y-3">
                 {menuItems.map((item) => {
                   const IconComponent = item.icon;
@@ -421,7 +429,7 @@ export default function Navigation() {
                     <button
                       key={item.id}
                       onClick={item.action}
-                      className="flex items-center justify-between w-full px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200"
+                      className="flex items-center justify-between px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                       style={{ color: colors.text }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = colors.primary + '20';
@@ -448,7 +456,7 @@ export default function Navigation() {
                         setIsAuthModalOpen(true);
                         setIsOpen(false);
                       }}
-                      className="flex items-center justify-between w-full px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200"
+                      className="flex items-center justify-between px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                       style={{
                         color: colors.primary,
                         backgroundColor: 'transparent',
@@ -475,7 +483,7 @@ export default function Navigation() {
                           window.location.href = '/profile';
                           setIsOpen(false);
                         }}
-                        className="flex items-center justify-between w-full px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200"
+                        className="flex items-center justify-between px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                         style={{
                           color: colors.text,
                           backgroundColor: colors.primary + '20'
@@ -489,7 +497,7 @@ export default function Navigation() {
                           logout();
                           setIsOpen(false);
                         }}
-                        className="flex items-center justify-between w-full px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200"
+                        className="flex items-center justify-between px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                         style={{
                           color: colors.primary,
                           backgroundColor: 'transparent',
