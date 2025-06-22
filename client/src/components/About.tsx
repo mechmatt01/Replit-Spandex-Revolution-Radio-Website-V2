@@ -15,7 +15,7 @@ export default function About() {
     <section id="about" className="py-20 bg-dark-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-12 items-center">
-          <div className="flex-1">
+          <div className="lg:w-3/5">
             <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-6 text-white">
               ABOUT THE REBELLION
             </h2>
@@ -60,7 +60,7 @@ export default function About() {
               Join the Revolution
             </Button>
           </div>
-          <div className="relative hidden lg:block">
+          <div className="relative hidden lg:block lg:w-2/5">
             <img 
               src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
               alt="Metal concert with band performing on stage under dramatic lighting" 
