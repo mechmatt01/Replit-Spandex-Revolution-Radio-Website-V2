@@ -8,6 +8,9 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { CreditCard, Lock, Check } from "lucide-react";
+import RebelPackageIcon from "@assets/Rebel-Package@3x_1750576492831.png";
+import LegendPackageIcon from "@assets/Legend-Package@3x_1750576492830.png";
+import IconPackageIcon from "@assets/Icon-Package@3x_1750576492829.png";
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");
@@ -19,6 +22,9 @@ interface SubscriptionTier {
   priceId: string;
   features: string[];
   popular?: boolean;
+  icon: string;
+  gradientStart: string;
+  gradientEnd: string;
 }
 
 const subscriptionTiers: SubscriptionTier[] = [
@@ -27,6 +33,9 @@ const subscriptionTiers: SubscriptionTier[] = [
     name: "REBEL",
     price: 5.99,
     priceId: "price_rebel_monthly",
+    icon: RebelPackageIcon,
+    gradientStart: "#B56BFF",
+    gradientEnd: "#FF50C3",
     features: [
       "Ad-free streaming experience",
       "High-quality audio (320kbps)",
@@ -40,6 +49,9 @@ const subscriptionTiers: SubscriptionTier[] = [
     price: 12.99,
     priceId: "price_legend_monthly",
     popular: true,
+    icon: LegendPackageIcon,
+    gradientStart: "#E520C6",
+    gradientEnd: "#F4654F",
     features: [
       "Everything in Rebel tier",
       "Exclusive live show access",
@@ -53,6 +65,9 @@ const subscriptionTiers: SubscriptionTier[] = [
     name: "ICON",
     price: 24.99,
     priceId: "price_icon_monthly",
+    icon: IconPackageIcon,
+    gradientStart: "#FF50C3",
+    gradientEnd: "#B66BFF",
     features: [
       "Everything in Legend tier",
       "Personal DJ requests",
@@ -259,7 +274,10 @@ export default function StripePaymentProcessor() {
           className={`bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 relative rounded-lg border border-gray-600 flex flex-col ${
             tier.popular ? "ring-2 ring-metal-gold" : ""
           }`}
-          style={{ minHeight: '600px' }}
+          style={{ 
+            minHeight: tier.popular ? '600px' : '450px',
+            marginTop: tier.popular ? '0' : '150px'
+          }}
         >
           {tier.popular && (
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -284,13 +302,22 @@ export default function StripePaymentProcessor() {
                   <span className="text-3xl font-black text-metal-orange">${tier.price}</span>
                   <span className="text-gray-400 font-semibold">/month</span>
                 </div>
+                
+                {/* Package Icon */}
+                <div className="flex justify-center mb-6">
+                  <img 
+                    src={tier.icon} 
+                    alt={`${tier.name} package icon`}
+                    className="w-16 h-16 object-contain"
+                  />
+                </div>
               </div>
 
-              <ul className="space-y-3 mb-8">
+              <ul className="space-y-4 mb-8 flex-grow">
                 {tier.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
-                    <Check className="text-metal-orange h-5 w-5 mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-300 font-semibold text-sm">{feature}</span>
+                    <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-300 font-semibold text-base leading-relaxed">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -298,7 +325,11 @@ export default function StripePaymentProcessor() {
 
             <button
               onClick={() => handleTierSelect(tier)}
-              className="w-full font-bold py-3 rounded-full transition-all duration-300 bg-metal-orange hover:bg-orange-600 text-black"
+              className="w-full font-bold py-3 rounded-full transition-all duration-300 text-white"
+              style={{
+                background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
+                boxShadow: `0 4px 15px ${tier.gradientStart}40`
+              }}
             >
               {tier.name}
             </button>
