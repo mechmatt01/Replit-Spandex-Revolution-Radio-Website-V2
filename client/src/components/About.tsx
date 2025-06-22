@@ -14,8 +14,8 @@ export default function About() {
   return (
     <section id="about" className="py-20 bg-dark-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
+        <div className="flex flex-col xl:flex-row gap-12 items-center">
+          <div className="flex-1">
             <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-6 text-white">
               ABOUT THE REBELLION
             </h2>
