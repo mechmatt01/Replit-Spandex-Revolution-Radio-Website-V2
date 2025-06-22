@@ -32,6 +32,7 @@ export default function Navigation() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const brandTextRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
+  const [navPosition, setNavPosition] = useState<number>(0);
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -48,6 +49,36 @@ export default function Navigation() {
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isOpen, isDropdownOpen]);
+
+  // Calculate center position based on screen width only, ignoring other elements
+  useEffect(() => {
+    const calculateCenterPosition = () => {
+      if (navRef.current) {
+        const screenWidth = window.innerWidth;
+        const navWidth = navRef.current.offsetWidth || 400; // fallback
+        
+        // Calculate true center of screen
+        const centerX = screenWidth / 2;
+        
+        // Position nav so its center is at screen center
+        const leftPosition = centerX - (navWidth / 2);
+        
+        setNavPosition(leftPosition);
+        console.log('Navigation centered at screen center:', leftPosition, 'px from left');
+      }
+    };
+
+    // Calculate on mount and resize
+    calculateCenterPosition();
+    const timer = setTimeout(calculateCenterPosition, 100);
+    
+    window.addEventListener('resize', calculateCenterPosition);
+    
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('resize', calculateCenterPosition);
+    };
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -97,12 +128,15 @@ export default function Navigation() {
               </div>
             </div>
 
-            {/* Desktop Navigation - Center column, aligned with brand text center */}
+            {/* Desktop Navigation - Absolutely positioned at true screen center */}
             <div 
               ref={navRef}
-              className="hidden xl:flex items-center space-x-4 justify-self-center"
+              className="hidden xl:flex items-center space-x-4 absolute"
               style={{ 
-                transform: 'translateX(-60px)' // Offset to align with brand text center
+                left: `${navPosition}px`,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                transition: 'left 0.3s ease'
               }}
             >
               {menuItems.slice(0, 3).map((item) => {
