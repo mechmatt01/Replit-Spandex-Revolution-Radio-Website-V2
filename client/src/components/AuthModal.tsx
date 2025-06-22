@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Mail, Lock, User, LogIn, UserPlus } from 'lucide-react';
+import { Loader2, Mail, Lock, User, LogIn, UserPlus, Phone } from 'lucide-react';
 import GoogleLogoPath from "@assets/icons8-google_1750360286324.png";
 
 interface AuthModalProps {

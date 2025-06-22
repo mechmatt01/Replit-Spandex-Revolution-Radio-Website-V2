@@ -47,8 +47,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(error.message || 'Login failed');
     }
     
-    const userData = await response.json();
-    setUser(userData);
+    const data = await response.json();
+    setUser(data.user);
   };
 
   const register = async (email: string, password: string, username: string, firstName: string, lastName: string, phoneNumber: string, recaptchaToken?: string) => {
@@ -64,8 +64,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error(error.message || 'Registration failed');
     }
     
-    const userData = await response.json();
-    setUser(userData);
+    const data = await response.json();
+    setUser(data.user);
   };
 
   const logout = async () => {

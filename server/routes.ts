@@ -129,37 +129,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication API routes
   app.post("/api/auth/register", async (req, res) => {
     try {
-      const validatedData = registerUserSchema.parse(req.body);
+      const { email, password, username, firstName, lastName, phoneNumber } = req.body;
       
+      // Basic validation
+      if (!email || !password || !firstName || !lastName) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
       // Check if user already exists
-      const existingUser = await storage.getUserByEmail(validatedData.email);
+      const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
         return res.status(400).json({ message: "User already exists with this email" });
       }
 
       // Hash password and generate verification token
-      const hashedPassword = await hashPassword(validatedData.password);
+      const hashedPassword = await hashPassword(password);
       const emailVerificationToken = generateToken();
 
-      // Create user
-      const user = await storage.createUser({
-        email: validatedData.email,
-        firstName: validatedData.firstName,
-        lastName: validatedData.lastName,
+      // Create user with all fields
+      const userData = {
+        email,
+        firstName,
+        lastName,
         password: hashedPassword,
-      });
-
-      // Update with verification token
-      await storage.updateUser(user.id, {
+        username: username || email.split('@')[0],
+        phoneNumber: phoneNumber || null,
         emailVerificationToken,
-      });
+      };
+
+      const user = await storage.upsertUser(userData);
 
       // Send verification email
       await sendVerificationEmail(user.email, emailVerificationToken, user.firstName);
 
+      // Log the user in immediately after registration
+      req.login(user, (err) => {
+        if (err) {
+          console.error("Auto-login error:", err);
+        }
+      });
+
       res.status(201).json({ 
         message: "Registration successful! Please check your email to verify your account.",
-        userId: user.id 
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          username: user.username,
+          phoneNumber: user.phoneNumber,
+          isEmailVerified: user.isEmailVerified,
+          isAdmin: user.isAdmin || false,
+          subscriptionStatus: user.subscriptionStatus,
+          subscriptionTier: user.subscriptionTier,
+        }
       });
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -176,9 +199,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        isAdmin: user.isAdmin,
+        username: user.username,
+        phoneNumber: user.phoneNumber,
+        profileImageUrl: user.profileImageUrl,
+        isEmailVerified: user.isEmailVerified,
+        isAdmin: user.isAdmin || false,
         subscriptionStatus: user.subscriptionStatus,
         subscriptionTier: user.subscriptionTier,
+        activeSubscription: user.activeSubscription,
       }
     });
   });
@@ -200,7 +228,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   );
 
   app.get("/api/auth/google/callback",
-    passport.authenticate("google", { failureRedirect: "/#/login" }),
+    passport.authenticate("google", { failureRedirect: "/login" }),
     (req, res) => {
       // Successful authentication, redirect home
       res.redirect("/");
@@ -221,13 +249,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      username: user.username,
       phoneNumber: user.phoneNumber,
       profileImageUrl: user.profileImageUrl,
       showVerifiedBadge: user.showVerifiedBadge,
-      isAdmin: user.isAdmin,
+      isAdmin: user.isAdmin || false,
       subscriptionStatus: user.subscriptionStatus,
       subscriptionTier: user.subscriptionTier,
       isEmailVerified: user.isEmailVerified,
+      isPhoneVerified: user.isPhoneVerified,
+      activeSubscription: user.activeSubscription,
+      renewalDate: user.renewalDate,
     });
   });
 

@@ -31,38 +31,38 @@ export interface IStorage {
   updatePassword(id: number, hashedPassword: string): Promise<User | undefined>;
   updateStripeInfo(id: number, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined>;
   getUserSubmissions(userId: number): Promise<Submission[]>;
-  
+
   // Submissions
   getSubmissions(): Promise<Submission[]>;
   getSubmissionById(id: number): Promise<Submission | undefined>;
   createSubmission(submission: InsertSubmission): Promise<Submission>;
   updateSubmissionStatus(id: number, status: string): Promise<Submission | undefined>;
-  
+
   // Contacts
   getContacts(): Promise<Contact[]>;
   createContact(contact: InsertContact): Promise<Contact>;
-  
+
   // Show schedules
   getShowSchedules(): Promise<ShowSchedule[]>;
   getActiveShowSchedules(): Promise<ShowSchedule[]>;
   createShowSchedule(schedule: InsertShowSchedule): Promise<ShowSchedule>;
   updateShowSchedule(id: number, schedule: Partial<InsertShowSchedule>): Promise<ShowSchedule | undefined>;
-  
+
   // Past shows
   getPastShows(): Promise<PastShow[]>;
-  
+
   // Now playing
   getCurrentTrack(): Promise<NowPlaying | undefined>;
   updateNowPlaying(track: InsertNowPlaying): Promise<NowPlaying>;
-  
+
   // Stream stats
   getStreamStats(): Promise<StreamStats | undefined>;
   updateStreamStats(stats: Partial<StreamStats>): Promise<StreamStats>;
-  
+
   // Subscriptions
   getSubscriptions(): Promise<Subscription[]>;
   createSubscription(subscription: InsertSubscription): Promise<Subscription>;
-  
+
   // Account deletion
   scheduleUserDeletion(id: number): Promise<User | undefined>;
   deleteUserAccount(id: number): Promise<void>;
@@ -99,7 +99,7 @@ export class DatabaseStorage implements IStorage {
     // Generate unique userId and format phone number
     const userId = generateUserId();
     const formattedPhone = userData.phoneNumber ? formatPhoneNumber(userData.phoneNumber) : null;
-    
+
     const [user] = await db
       .insert(users)
       .values({
@@ -140,7 +140,7 @@ export class DatabaseStorage implements IStorage {
       const userId = generateUserId();
       const username = userData.username || generateUsername(userData.email, userData.firstName, userData.googleId);
       const formattedPhone = userData.phoneNumber ? formatPhoneNumber(userData.phoneNumber) : null;
-      
+
       const [user] = await db
         .insert(users)
         .values({
@@ -239,7 +239,7 @@ export class DatabaseStorage implements IStorage {
     const updates: Partial<User> = { updatedAt: new Date() };
     if (stripeCustomerId) updates.stripeCustomerId = stripeCustomerId;
     if (stripeSubscriptionId) updates.stripeSubscriptionId = stripeSubscriptionId;
-    
+
     const [user] = await db
       .update(users)
       .set(updates)
@@ -437,7 +437,7 @@ export class DatabaseStorage implements IStorage {
     try {
       // Delete from PostgreSQL
       await db.delete(users).where(eq(users.id, id));
-      
+
       // Delete from Firebase
       const { deleteFirebaseUser } = await import("./firebase-admin.js");
       await deleteFirebaseUser(id.toString());
