@@ -72,7 +72,7 @@ export default function Schedule() {
 
           {/* Past Shows Archive */}
           {pastShows.length > 0 && (
-          <div className="mt-16">
+          <div>
             <h3 className="font-black text-xl mb-6" style={{ color: 'var(--color-primary)' }}>Past Shows</h3>
             <div className="space-y-4">
               {pastShows.slice(0, 5).map((show) => (

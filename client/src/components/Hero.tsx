@@ -66,23 +66,23 @@ export default function Hero() {
         <div className="mt-8 mb-8">
           <div className="flex items-center justify-center gap-3 mb-1">
             <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-black dark:text-white font-bold text-3xl">ON AIR IN...</span>
+            <span className="text-black dark:text-white font-bold text-3xl">ON AIR IN</span>
           </div>
           <div className="flex justify-center space-x-4 text-center">
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
-              <div className="text-3xl font-bold text-metal-orange mb-1">{countdown.days}</div>
+              <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">{countdown.days}</div>
               <div className="text-xs text-muted-foreground font-semibold">DAYS</div>
             </div>
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
-              <div className="text-3xl font-bold text-metal-orange mb-1">{countdown.hours}</div>
+              <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">{countdown.hours}</div>
               <div className="text-xs text-muted-foreground font-semibold">HOURS</div>
             </div>
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
-              <div className="text-3xl font-bold text-metal-orange mb-1">{countdown.minutes}</div>
+              <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">{countdown.minutes}</div>
               <div className="text-xs text-muted-foreground font-semibold">MINS</div>
             </div>
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
-              <div className="text-3xl font-bold text-metal-orange mb-1">{countdown.seconds}</div>
+              <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">{countdown.seconds}</div>
               <div className="text-xs text-muted-foreground font-semibold">SECS</div>
             </div>
           </div>
