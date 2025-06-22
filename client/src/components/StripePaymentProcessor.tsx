@@ -331,7 +331,7 @@ export default function StripePaymentProcessor() {
                 tier.popular ? 'py-3 text-base' : 'py-2 text-sm'
               }`}
               style={{
-                fontSize: tier.popular ? '16px' : '12px',
+                fontSize: tier.popular ? '16px' : '14px',
                 background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
                 boxShadow: `0 4px 15px ${tier.gradientStart}40`,
                 ...(tier.popular ? {} : { transform: 'scale(0.85)' })
