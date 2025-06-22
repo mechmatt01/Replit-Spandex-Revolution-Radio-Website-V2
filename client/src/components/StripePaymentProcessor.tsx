@@ -254,50 +254,56 @@ export default function StripePaymentProcessor() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {subscriptionTiers.map((tier) => (
-        <Card
+        <div
           key={tier.id}
-          className={`bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 relative ${
+          className={`bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 relative rounded-lg border border-gray-600 flex flex-col ${
             tier.popular ? "ring-2 ring-metal-gold" : ""
           }`}
+          style={{ minHeight: '600px' }}
         >
           {tier.popular && (
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-metal-gold text-black px-4 py-1 rounded-full text-xs font-bold">
-                MOST POPULAR
+              <span 
+                className="px-4 py-1 rounded-full text-xs font-bold"
+                style={{
+                  background: 'linear-gradient(135deg, #ff6b35, #f7931e)',
+                  color: 'black',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                MOST&nbsp;POPULAR
               </span>
             </div>
           )}
           
-          <CardContent className="p-6">
-            <div className="text-center mb-6">
-              <h3 className="font-black text-xl text-white mb-2">{tier.name}</h3>
-              <div className="mb-4">
-                <span className="text-3xl font-black text-metal-orange">${tier.price}</span>
-                <span className="text-gray-400 font-semibold">/month</span>
+          <div className="p-6 flex flex-col h-full justify-between">
+            <div>
+              <div className="text-center mb-6">
+                <h3 className="font-black text-xl text-white mb-2">{tier.name}</h3>
+                <div className="mb-4">
+                  <span className="text-3xl font-black text-metal-orange">${tier.price}</span>
+                  <span className="text-gray-400 font-semibold">/month</span>
+                </div>
               </div>
+
+              <ul className="space-y-3 mb-8">
+                {tier.features.map((feature, index) => (
+                  <li key={index} className="flex items-start">
+                    <Check className="text-metal-orange h-5 w-5 mr-3 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-300 font-semibold text-sm">{feature}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <ul className="space-y-3 mb-8">
-              {tier.features.map((feature, index) => (
-                <li key={index} className="flex items-start">
-                  <Check className="text-metal-orange h-5 w-5 mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-gray-300 font-semibold text-sm">{feature}</span>
-                </li>
-              ))}
-            </ul>
-
-            <Button
+            <button
               onClick={() => handleTierSelect(tier)}
-              className={`w-full font-bold py-3 rounded-full transition-all duration-300 ${
-                tier.popular
-                  ? "bg-metal-gold hover:bg-yellow-600 text-black"
-                  : "bg-metal-orange hover:bg-orange-600 text-white"
-              }`}
+              className="w-full font-bold py-3 rounded-full transition-all duration-300 bg-metal-orange hover:bg-orange-600 text-black"
             >
-              Choose {tier.name}
-            </Button>
-          </CardContent>
-        </Card>
+              {tier.name}
+            </button>
+          </div>
+        </div>
       ))}
     </div>
   );
