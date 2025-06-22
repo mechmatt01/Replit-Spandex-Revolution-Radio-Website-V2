@@ -115,6 +115,8 @@ export default function ShopifyEcommerce() {
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { getColors } = useTheme();
+  const colors = getColors();
 
   useEffect(() => {
     // Simulate API call to Shopify

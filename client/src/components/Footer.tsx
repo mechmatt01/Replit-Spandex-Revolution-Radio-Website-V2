@@ -128,6 +128,17 @@ export default function Footer() {
                 <span className="text-metal-orange mr-2">🛡️</span>
                 Secure & Reliable
               </div>
+              <div className="mt-4">
+                <button 
+                  onClick={() => {
+                    const event = new CustomEvent('openAuthModal', { detail: { mode: 'admin' } });
+                    window.dispatchEvent(event);
+                  }}
+                  className="text-sm text-muted-foreground hover:text-metal-orange transition-colors"
+                >
+                  Admin Login
+                </button>
+              </div>
             </div>
           </div>
         </div>

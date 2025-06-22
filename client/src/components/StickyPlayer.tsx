@@ -5,21 +5,48 @@ import { useTheme } from "@/contexts/ThemeContext";
 import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
+import { useState, useEffect } from "react";
 
 export default function StickyPlayer() {
   const { isPlaying, volume, currentTrack, stationName, isTransitioning, togglePlayback, setVolume } = useRadio();
   const { getGradient, getColors } = useTheme();
   const colors = getColors();
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseInt(e.target.value) / 100;
     setVolume(newVolume);
   };
 
-  // Always show the floating player
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const documentHeight = document.documentElement.scrollHeight;
+      const windowHeight = window.innerHeight;
+      const footerOffset = 200; // Approximate footer height
+      
+      // Check if near bottom of page
+      const isNearBottom = (currentScrollY + windowHeight) >= (documentHeight - footerOffset);
+      
+      if (isNearBottom) {
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY || currentScrollY < 100) {
+        // Scrolling up or near top
+        setIsVisible(true);
+      }
+      
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-40 transition-colors duration-300">
+    <div className={`fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-40 transition-all duration-500 ${
+      isVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-full opacity-0'
+    }`}>
       <div className="w-full px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Now Playing Info */}

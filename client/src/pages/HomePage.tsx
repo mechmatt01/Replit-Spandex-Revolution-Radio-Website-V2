@@ -8,7 +8,6 @@ import InteractiveListenerMap from "@/components/InteractiveListenerMap";
 import Contact from "@/components/Contact";
 import StripePaymentProcessor from "@/components/StripePaymentProcessor";
 import ShopifyEcommerce from "@/components/ShopifyEcommerce";
-import AdminPanel from "@/components/AdminPanel";
 import AdvancedAdminDashboard from "@/components/AdvancedAdminDashboard";
 import { useState } from "react";
 import AdvancedAudioPlayer from "@/components/AdvancedAudioPlayer";
@@ -45,7 +44,6 @@ export default function HomePage() {
         </div>
       </section>
       <ShopifyEcommerce />
-      <AdminPanel />
       <AdvancedAdminDashboard />
       <Footer />
       <StickyPlayer />
