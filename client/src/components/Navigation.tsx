@@ -441,10 +441,6 @@ export default function Navigation() {
                 })}
                 
                 <div className="pt-4 mt-4 border-t" style={{ borderColor: colors.primary + '40' }}>
-                  <div className="flex items-center justify-center mb-4">
-                    <MetalThemeSwitcher />
-                  </div>
-                  
                   {!isAuthenticated ? (
                     <button
                       onClick={() => {
