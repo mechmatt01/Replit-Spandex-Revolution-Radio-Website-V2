@@ -91,9 +91,9 @@ export default function StickyPlayer() {
           </div>
 
           {/* Player Controls */}
-          <div className="flex flex-col items-end space-y-2">
-            {/* Volume Control - moved to align with Live Stream text */}
-            <div className="hidden md:flex items-center space-x-2 mt-[-15px] mb-[-15px] ml-[63px] mr-[63px] pt-[0px] pb-[0px]">
+          <div className="flex items-end space-x-4">
+            {/* Volume Control - aligned with bottom of play button */}
+            <div className="hidden md:flex items-center space-x-2 mb-1">
               <Volume2 className="text-gray-400 h-4 w-4" />
               <div className="w-20 h-1 bg-gray-700 rounded-full relative">
                 <div 
@@ -117,7 +117,7 @@ export default function StickyPlayer() {
             {/* Play Button - moved to far right */}
             <Button
               onClick={togglePlayback}
-              className="text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl ml-auto"
+              className="text-white w-12 h-12 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl"
               style={{
                 background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
                 focusRingColor: colors.primary,
