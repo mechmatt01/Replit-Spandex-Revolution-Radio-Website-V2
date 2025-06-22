@@ -308,7 +308,9 @@ export default function StripePaymentProcessor() {
                   <img 
                     src={tier.icon} 
                     alt={`${tier.name} package icon`}
-                    className="w-16 h-16 object-contain"
+                    className={`object-contain ${
+                      tier.id === 'rebel' ? 'w-20 h-20' : 'w-16 h-16'
+                    }`}
                   />
                 </div>
               </div>
