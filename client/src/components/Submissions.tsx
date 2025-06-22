@@ -143,8 +143,11 @@ export default function Submissions() {
                     const event = new CustomEvent('openAuthModal', { detail: { mode: 'login' } });
                     window.dispatchEvent(event);
                   }}
-                  className="text-white px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
-                  style={{ backgroundColor: colors.primary }}
+                  className="px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
+                  style={{ 
+                    backgroundColor: colors.primary,
+                    color: colors.primaryText || 'white'
+                  }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
                     e.currentTarget.style.transform = 'scale(1.05)';

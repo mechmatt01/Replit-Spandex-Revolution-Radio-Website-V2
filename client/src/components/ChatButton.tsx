@@ -97,8 +97,11 @@ export default function ChatButton() {
                         <Button 
                           size="sm" 
                           onClick={handleSignIn}
-                          className="flex-1 text-white border-0" 
-                          style={{ backgroundColor: colors.primary }}
+                          className="flex-1 border-0" 
+                          style={{ 
+                            backgroundColor: colors.primary,
+                            color: colors.primaryText || 'white'
+                          }}
                         >
                           <LogIn className="w-4 h-4 mr-1" />
                           Sign In

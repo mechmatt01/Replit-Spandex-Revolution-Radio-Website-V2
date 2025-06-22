@@ -112,8 +112,11 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false, premiumF
                 <div className="flex gap-2">
                   <Button 
                     size="sm" 
-                    className="flex-1 text-white" 
-                    style={{ backgroundColor: colors.primary }}
+                    className="flex-1" 
+                    style={{ 
+                      backgroundColor: colors.primary,
+                      color: colors.primaryText || 'white'
+                    }}
                     onClick={() => window.location.href = "/subscribe"}
                   >
                     Upgrade Now
