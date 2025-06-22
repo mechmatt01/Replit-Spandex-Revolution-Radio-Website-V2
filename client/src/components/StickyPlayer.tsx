@@ -116,7 +116,7 @@ export default function StickyPlayer() {
             </Button>
 
             {/* Volume Control - moved to bottom */}
-            <div className="hidden md:flex items-center space-x-2 mt-[-15px] mb-[-15px] ml-[63px] mr-[63px] pt-[0px] pb-[0px]">
+            <div className="hidden md:flex items-center space-x-2 mt-[-8px] mb-[-15px] ml-[63px] mr-[63px] pt-[0px] pb-[0px]">
               <Volume2 className="text-gray-400 h-4 w-4" />
               <div className="w-20 h-1 bg-gray-700 rounded-full relative">
                 <div 
