@@ -74,9 +74,12 @@ export default function StickyPlayer() {
                 <div className="flex items-center space-x-1" style={{ marginTop: '2px' }}>
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                 </div>
-                {/* Live Stream text moved after red dot */}
+                {/* Dynamic text based on track data */}
                 <p className="text-muted-foreground text-sm truncate">
-                  {currentTrack.isAd ? "🔊 Commercial Break" : "Live Stream"}
+                  {currentTrack.isAd 
+                    ? "🔊 Commercial Break" 
+                    : (currentTrack.artist || currentTrack.album || "Live Stream")
+                  }
                 </p>
               </div>
               {currentTrack.isAd && (
