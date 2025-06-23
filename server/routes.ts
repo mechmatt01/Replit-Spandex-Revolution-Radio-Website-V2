@@ -363,38 +363,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
               
               // Only update if data has actually changed
               if (lastMetadata?.text !== nowPlayingText) {
-                console.log(`TuneIn new track: "${nowPlayingText}"`);
+                console.log(`TuneIn metadata changed: "${nowPlayingText}"`);
                 
                 let title = "Hot 97";
                 let artist = "New York's Hip Hop & R&B";
                 let artwork = null;
                 let isAd = false;
                 
-                // Check for commercials
+                // Check for commercials with enhanced detection
                 if (nowPlayingText.toLowerCase().includes('commercial') || 
                     nowPlayingText.toLowerCase().includes('advertisement') ||
+                    nowPlayingText.toLowerCase().includes('in commercial break') ||
                     nowPlayingText.toLowerCase().includes('nissan') ||
                     nowPlayingText.toLowerCase().includes('geico') ||
-                    nowPlayingText.toLowerCase().includes('mcdonald')) {
+                    nowPlayingText.toLowerCase().includes('mcdonald') ||
+                    nowPlayingText.toLowerCase().includes('coca cola') ||
+                    nowPlayingText.toLowerCase().includes('nike') ||
+                    nowPlayingText.toLowerCase().includes('verizon') ||
+                    nowPlayingText.toLowerCase().includes('at&t')) {
                   
                   isAd = true;
-                  const companyName = extractCompanyName({ title: nowPlayingText, artist: '' });
-                  title = companyName !== 'Advertisement' ? `${companyName} Commercial` : "Advertisement";
-                  artist = "Hot 97";
+                  let companyName = extractCompanyName({ title: nowPlayingText, artist: '' });
                   
-                  const logoUrl = getClearbitLogo(companyName);
-                  if (logoUrl) {
-                    artwork = logoUrl;
-                  } else {
+                  // Handle "In Commercial Break" specifically
+                  if (nowPlayingText.toLowerCase().includes('in commercial break')) {
+                    title = "Commercial Break";
+                    artist = "Hot 97";
                     artwork = "advertisement";
+                  } else {
+                    title = companyName !== 'Advertisement' ? `${companyName} Commercial` : "Advertisement";
+                    artist = "Hot 97";
+                    
+                    const logoUrl = getClearbitLogo(companyName);
+                    if (logoUrl) {
+                      artwork = logoUrl;
+                    } else {
+                      artwork = "advertisement";
+                    }
                   }
                   
-                  console.log(`Commercial detected: Company: ${companyName}`);
+                  console.log(`Commercial detected: "${nowPlayingText}" -> ${title}`);
                 } else if (nowPlayingText.includes(' - ')) {
                   const parts = nowPlayingText.split(' - ');
                   artist = parts[0].trim();
                   title = parts[1].trim();
-                } else if (nowPlayingText !== 'Hot 97' && nowPlayingText.length > 5) {
+                } else if (nowPlayingText.toLowerCase().includes('hot 97')) {
+                  // Clean up any "Hot 97" variations to standard format
+                  title = "Hot 97";
+                  artist = "New York's Hip Hop & R&B";
+                } else if (nowPlayingText.length > 5 && !nowPlayingText.toLowerCase().includes('hot 97')) {
+                  // Real song data
                   title = nowPlayingText;
                   artist = "Hot 97";
                 }

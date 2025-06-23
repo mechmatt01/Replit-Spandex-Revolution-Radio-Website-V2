@@ -32,6 +32,10 @@ export function isCommercial(metadata: any): boolean {
   return (
     title.includes("in a commercial") ||
     artist.includes("in a commercial") ||
+    title.includes("in commercial break") ||
+    artist.includes("in commercial break") ||
+    title.includes("commercial break") ||
+    artist.includes("commercial break") ||
     title.includes("advertisement") ||
     artist.includes("advertisement") ||
     title.includes("sponsor") ||
@@ -43,9 +47,7 @@ export function isCommercial(metadata: any): boolean {
     title.startsWith("[ad]") ||
     artist.startsWith("[ad]") ||
     title.includes("brought to you by") ||
-    artist.includes("brought to you by") ||
-    title.includes("commercial break") ||
-    artist.includes("commercial break")
+    artist.includes("brought to you by")
   );
 }
 

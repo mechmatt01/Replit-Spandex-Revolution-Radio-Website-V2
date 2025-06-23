@@ -94,8 +94,11 @@ export default function InteractiveAlbumArt({
         }}
       >
         <div className="transition-transform duration-300" style={{ transform: isHovered ? 'rotate(5deg)' : 'rotate(0deg)' }}>
-          {artwork === "advertisement" ? (
-            <div className="text-white font-black text-2xl">Ad</div>
+          {(artwork === "advertisement" || 
+            title.toLowerCase().includes("commercial") ||
+            title.toLowerCase().includes("advertisement") ||
+            title.toLowerCase().includes("commercial break")) ? (
+            <div className="text-white font-black text-xl bg-red-600 px-3 py-1 rounded">AD</div>
           ) : (
             <ThemedMusicLogo size={logoSizes[size]} />
           )}
