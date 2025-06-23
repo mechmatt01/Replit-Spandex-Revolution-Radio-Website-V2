@@ -286,11 +286,11 @@ export default function AdvancedAudioPlayer() {
                     >
                       <div className="w-8 h-8 rounded flex items-center justify-center mr-3">
                         {currentPlaylistTrackIndex === index && isPlaying ? (
-                          <div className="flex space-x-1">
-                            <div className="w-1 h-4 bg-metal-orange animate-pulse"></div>
-                            <div className="w-1 h-4 bg-metal-orange animate-pulse" style={{ animationDelay: '0.2s' }}></div>
-                            <div className="w-1 h-4 bg-metal-orange animate-pulse" style={{ animationDelay: '0.4s' }}></div>
-                          </div>
+                          
+                          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                            <rect x="6" y="6" width="12" height="12" rx="1" />
+                          </svg>
+                          
                         ) : (
                           <span className="text-gray-500 font-semibold text-sm">{index + 1}</span>
                         )}

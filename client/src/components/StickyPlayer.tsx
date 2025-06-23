@@ -115,8 +115,7 @@ export default function StickyPlayer() {
             >
               {isPlaying ? (
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                  <rect x="5" y="3" width="4" height="18" rx="1" />
-                  <rect x="15" y="3" width="4" height="18" rx="1" />
+                  <rect x="6" y="6" width="12" height="12" rx="1" />
                 </svg>
               ) : (
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
