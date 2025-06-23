@@ -463,14 +463,13 @@ export default function Navigation() {
                           setIsAuthModalOpen(true);
                           setIsOpen(false);
                         }}
-                        className="flex items-center space-x-3 mx-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                        className="flex items-center justify-center space-x-3 mx-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                         style={{
                           color: colors.primary,
                           backgroundColor: 'transparent',
                           border: `1px solid ${colors.primary}`,
-                          paddingLeft: '1rem',
-                          paddingRight: '1rem',
-                          width: 'calc(100% - 2rem)'
+                          width: 'calc(100% - 2rem)',
+                          minWidth: '140px'
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary;
@@ -492,14 +491,13 @@ export default function Navigation() {
                           setIsAuthModalOpen(true);
                           setIsOpen(false);
                         }}
-                        className="flex items-center space-x-3 mx-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                        className="flex items-center justify-center space-x-3 mx-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                         style={{
                           color: 'white',
                           backgroundColor: colors.primary,
                           border: `1px solid ${colors.primary}`,
-                          paddingLeft: '1rem',
-                          paddingRight: '1rem',
-                          width: 'calc(100% - 2rem)'
+                          width: 'calc(100% - 2rem)',
+                          minWidth: '140px'
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = colors.secondary;
