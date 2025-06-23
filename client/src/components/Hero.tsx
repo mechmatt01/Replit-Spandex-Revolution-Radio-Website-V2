@@ -2,8 +2,12 @@ import { useState, useEffect } from "react";
 import { Play, Calendar, Music } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RadioCoPlayer from "@/components/RadioCoPlayer";
+import CountdownTimer from "./CountdownTimer";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function Hero() {
+  const { isDarkMode, getColors } = useTheme();
+  const colors = getColors();
   
   const [countdown, setCountdown] = useState({
     days: 0,
@@ -100,10 +104,21 @@ export default function Hero() {
           <Button 
             onClick={scrollToSchedule}
             variant="outline"
-            className="border-2 px-8 py-4 rounded-full font-bold text-lg transition-colors btn-theme-hover"
+            className="border-2 px-8 py-4 rounded-full font-bold text-lg transition-all duration-200 hover:scale-105"
             style={{
-              borderColor: 'var(--color-primary)',
-              color: 'var(--color-primary)'
+              borderColor: colors.primary,
+              color: colors.primary,
+              backgroundColor: 'transparent'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = colors.primary;
+              e.currentTarget.style.color = 'white';
+              e.currentTarget.style.borderColor = colors.primary;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              e.currentTarget.style.color = colors.primary;
+              e.currentTarget.style.borderColor = colors.primary;
             }}
           >
             <Calendar className="mr-3 h-5 w-5" />

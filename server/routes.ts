@@ -5,6 +5,7 @@ import { setupPassport, isAuthenticated, isAdmin, hashPassword, generateToken, s
 import { recaptchaService } from "./recaptcha";
 import { formatPhoneNumber } from "./userUtils";
 import { getCurrentRadioTrack, fetchSpotifyArtwork } from "./radioMetadata";
+import { fetchRadioCoMetadata, isCommercial, getClearbitLogo } from "./radioCoConfig";
 import passport from "passport";
 import Stripe from "stripe";
 import bcrypt from "bcryptjs";
@@ -335,17 +336,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Now Playing API with ad detection
+  // Now Playing API with Radio.co integration and ad detection
   app.get("/api/now-playing", async (req, res) => {
     try {
-      // Try to fetch live data with shorter timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+      // Try Radio.co API first for authentic live metadata
+      const radioData = await fetchRadioCoMetadata();
       
+      if (radioData) {
+        const isAd = isCommercial(radioData);
+        let artwork = radioData.artwork_url || null;
+        
+        // If it's a commercial, try to get company logo from Clearbit
+        if (isAd) {
+          const logoUrl = getClearbitLogo(radioData.artist || radioData.title || '');
+          if (logoUrl) {
+            artwork = logoUrl;
+          }
+        }
+        
+        const currentTrack = {
+          id: 1,
+          title: radioData.title || "Hot 97",
+          artist: radioData.artist || "Live Stream",
+          album: radioData.album || "Hot 97 FM",
+          duration: radioData.duration || null,
+          artwork: artwork,
+          isAd: isAd,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        // Update database
+        await storage.updateNowPlaying({
+          title: currentTrack.title,
+          artist: currentTrack.artist,
+          album: currentTrack.album,
+          duration: currentTrack.duration,
+          artwork: currentTrack.artwork
+        });
+        
+        return res.json(currentTrack);
+      }
+    } catch (error) {
+      console.error('Radio.co API failed:', error);
+    }
+    
+    // Fallback to original Icecast stream
+    try {
       const response = await fetch('https://168.119.74.185:9858/status-json.xsl', {
-        signal: controller.signal
+        signal: AbortSignal.timeout(3000)
       });
-      clearTimeout(timeoutId);
       
       if (!response.ok) {
         throw new Error('Failed to fetch live data');
@@ -427,55 +467,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error fetching live radio data:', error);
       
-      // Use Radio Garden API as backup source for authentic radio data
+      // Secondary backup - use authentic metadata service
       try {
-        const radioGardenResponse = await fetch('https://radio.garden/api/ara/content/listen/rEgJ9XJY/channel.mp3', {
+        const metadataResponse = await fetch('https://api.radio-browser.info/json/stations/byuuid/96a6df9d-0601-11e8-ae97-52543be04c81', {
           headers: {
-            'Accept': 'application/json',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            'User-Agent': 'Hot97RadioApp/1.0'
           }
         });
         
-        if (radioGardenResponse.ok) {
-          // Since radio.garden doesn't provide track metadata, use TuneIn API
-          const tuneInResponse = await fetch('https://opml.radiotime.com/Describe.ashx?c=nowplaying&id=s22162&formats=mp3,aac&partnerId=RadioTime&serial=web&version=2.8');
-          
-          if (tuneInResponse.ok) {
-            const tuneInText = await tuneInResponse.text();
-            // Parse XML response from TuneIn for Hot 97
-            const titleMatch = tuneInText.match(/<title[^>]*>([^<]+)<\/title>/i);
-            const artistMatch = tuneInText.match(/<description[^>]*>([^<]+)<\/description>/i);
+        if (metadataResponse.ok) {
+          const stationData = await metadataResponse.json();
+          if (stationData.length > 0) {
+            const station = stationData[0];
             
-            if (titleMatch && artistMatch) {
-              const fullTitle = titleMatch[1];
-              const artist = artistMatch[1];
-              
-              const currentTrack = {
-                id: 1,
-                title: fullTitle || "Hot 97",
-                artist: artist || "Live Stream",
-                album: "Hot 97 FM",
-                duration: null,
-                artwork: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
-                isAd: false,
-                createdAt: new Date(),
-                updatedAt: new Date()
-              };
-              
-              await storage.updateNowPlaying({
-                title: currentTrack.title,
-                artist: currentTrack.artist,
-                album: currentTrack.album,
-                duration: currentTrack.duration,
-                artwork: currentTrack.artwork
-              });
-              
-              return res.json(currentTrack);
-            }
+            const currentTrack = {
+              id: 1,
+              title: station.name || "Hot 97",
+              artist: "Live Stream",
+              album: station.tags || "Hip Hop & R&B",
+              duration: null,
+              artwork: station.favicon || null,
+              isAd: false,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            };
+            
+            await storage.updateNowPlaying({
+              title: currentTrack.title,
+              artist: currentTrack.artist,
+              album: currentTrack.album,
+              duration: currentTrack.duration,
+              artwork: currentTrack.artwork
+            });
+            
+            return res.json(currentTrack);
           }
         }
       } catch (apiError) {
-        console.error('Radio metadata API failed:', apiError);
+        console.error('Radio Browser API failed:', apiError);
       }
       
       // Final fallback - use authentic rotating hip-hop tracks
