@@ -25,9 +25,9 @@ export default function InteractiveAlbumArt({
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const sizeClasses = {
-    sm: 'w-12 h-12',
-    md: 'w-32 h-32',
-    lg: 'w-48 h-48'
+    sm: 'w-10 h-10 sm:w-12 sm:h-12',
+    md: 'w-24 h-24 sm:w-32 sm:h-32',
+    lg: 'w-32 h-32 sm:w-48 sm:h-48'
   };
 
   const logoSizes = {

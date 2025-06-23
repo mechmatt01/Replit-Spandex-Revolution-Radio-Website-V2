@@ -25,17 +25,17 @@ export default function StickyPlayer() {
       const documentHeight = document.documentElement.scrollHeight;
       const windowHeight = window.innerHeight;
       const footerOffset = 200; // Approximate footer height
-      
+
       // Check if near bottom of page
       const isNearBottom = (currentScrollY + windowHeight) >= (documentHeight - footerOffset);
-      
+
       if (isNearBottom) {
         setIsVisible(false);
       } else if (currentScrollY < lastScrollY || currentScrollY < 100) {
         // Scrolling up or near top
         setIsVisible(true);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
 
@@ -47,30 +47,33 @@ export default function StickyPlayer() {
     <div className={`fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm z-40 transition-all duration-500 ${
       isVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-full opacity-0'
     }`}>
-      <div className="w-full px-4 py-3">
+      <div className="w-full px-2 sm:px-4 py-2 sm:py-3">
+        {/* Mobile-first responsive layout */}
         <div className="flex items-center justify-between">
-          {/* Now Playing Info */}
-          <div className="flex items-center space-x-4 flex-1 min-w-0 max-w-md">
+          {/* Now Playing Info - Mobile optimized */}
+          <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
             <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
               <InteractiveAlbumArt 
                 artwork={currentTrack.artwork}
                 title={currentTrack.title}
                 artist={currentTrack.artist}
                 size="sm"
+                className="w-10 h-10 sm:w-12 sm:h-12"
               />
             </div>
             <div className={`min-w-0 flex-1 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-              <div className="w-full max-w-xs">
+              <div className="w-full">
                 <ScrollingText 
                   text={currentTrack.title !== stationName ? currentTrack.title : stationName}
-                  className="font-semibold text-foreground"
+                  className="font-semibold text-foreground text-sm sm:text-base"
                   maxWidth="100%"
                   isFloating={true}
                   backgroundColor="hsl(var(--background))"
                 />
               </div>
-              <div className="flex items-center space-x-2">
-                {/* LIVE indicator moved before Live Stream text with vertical centering */}
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                {/* LIVE indicator with mobile-friendly sizing */}</div>
+              {/* LIVE indicator moved before Live Stream text with vertical centering */}
                 <div className="flex items-center space-x-1" style={{ marginTop: '2px' }}>
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                 </div>

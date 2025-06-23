@@ -116,7 +116,7 @@ export default function AdvancedAudioPlayer() {
             album: nowPlaying.album || track.album,
           })
         }));
-        
+
         return { ...prev, tracks: updatedTracks };
       });
     }
@@ -218,15 +218,15 @@ export default function AdvancedAudioPlayer() {
 
   return (
     <div className="space-y-6">
-      
 
-      {/* Playlist Section */}
+
+      {/* Playlist Section - Mobile Optimized */}
       {showPlaylist && (
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-6">
           {/* Playlist Selector */}
           <Card className="bg-dark-bg/50">
-            <CardContent className="p-4">
-              <h3 className="font-black text-white mb-4">Playlists</h3>
+            <CardContent className="p-3 sm:p-4">
+              <h3 className="font-black text-white mb-3 sm:mb-4 text-sm sm:text-base">Playlists</h3>
               <div className="space-y-2">
                 {playlists.map((playlist) => (
                   <button
@@ -278,10 +278,10 @@ export default function AdvancedAudioPlayer() {
                     <div
                       key={track.id}
                       onClick={() => selectTrack(index)}
-                      className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors ${
+                      className={`flex items-center p-2 sm:p-3 rounded-lg cursor-pointer transition-colors touch-manipulation ${
                         currentPlaylistTrackIndex === index
                           ? 'bg-metal-orange/20 text-metal-orange'
-                          : 'bg-dark-surface/30 text-gray-300 hover:bg-dark-surface/50'
+                          : 'bg-dark-surface/30 text-gray-300 hover:bg-dark-surface/50 active:bg-dark-surface/70'
                       }`}
                     >
                       <div className="w-8 h-8 rounded flex items-center justify-center mr-3">

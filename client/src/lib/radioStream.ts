@@ -144,9 +144,29 @@ class RadioStreamAPI {
     this.isInitialized = false;
   }
 
-  // Get stream status and track info
+  // Get enhanced stream status with artwork
   async getStreamStatus(): Promise<LiveTrackInfo | null> {
     try {
+      // First try the enhanced now-playing API
+      const nowPlayingResponse = await fetch('/api/now-playing');
+      if (nowPlayingResponse.ok) {
+        const nowPlayingData = await nowPlayingResponse.json();
+        if (nowPlayingData && nowPlayingData.title) {
+          return {
+            title: nowPlayingData.title,
+            artist: nowPlayingData.artist,
+            album: nowPlayingData.album,
+            listeners: 0, // Will be updated by radio-status
+            bitrate: 128,
+            server_name: 'Hot 97',
+            server_description: "New York's Hip Hop & R&B",
+            genre: 'Hip Hop',
+            artwork: nowPlayingData.artwork
+          };
+        }
+      }
+      
+      // Fallback to radio-status
       const response = await fetch('/api/radio-status');
       if (!response.ok) {
         throw new Error('Failed to fetch stream status');

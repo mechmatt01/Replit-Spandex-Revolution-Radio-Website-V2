@@ -339,12 +339,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Track last metadata to prevent unnecessary updates
   let lastMetadata: any = null;
 
-  // Now Playing API with change detection and ad detection
+  // Enhanced artwork fetching from iTunes/Apple Music
+async function fetchiTunesArtwork(artist: string, title: string): Promise<string | null> {
+  try {
+    const searchQuery = encodeURIComponent(`${artist} ${title}`);
+    const response = await fetch(`https://itunes.apple.com/search?term=${searchQuery}&entity=song&limit=1`, {
+      timeout: 2000
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      if (data.results && data.results.length > 0) {
+        // Get the highest quality artwork (replace 100x100 with 800x800)
+        const artworkUrl = data.results[0].artworkUrl100;
+        if (artworkUrl) {
+          return artworkUrl.replace('100x100bb.jpg', '800x800bb.jpg');
+        }
+      }
+    }
+  } catch (error) {
+    console.error('iTunes artwork fetch error:', error);
+  }
+  return null;
+}
+
+// StreamTheWorld metadata fetching
+async function fetchStreamTheWorldMetadata(): Promise<any> {
+  try {
+    const response = await fetch('https://yield-op-idsync.live.streamtheworld.com/idsync.js?stn=WQHTFM', {
+      timeout: 3000,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
+    
+    if (response.ok) {
+      const jsContent = await response.text();
+      // Parse the JavaScript response for metadata
+      const metadataMatch = jsContent.match(/nowplaying.*?=.*?({.*?})/);
+      if (metadataMatch) {
+        return JSON.parse(metadataMatch[1]);
+      }
+    }
+  } catch (error) {
+    console.error('StreamTheWorld metadata fetch error:', error);
+  }
+  return null;
+}
+
+// Now Playing API with enhanced metadata and artwork
   app.get("/api/now-playing", async (req, res) => {
     try {
-      // Try Hot 97's actual metadata sources
+      // Try StreamTheWorld metadata first for Hot 97
+      const streamTheWorldData = await fetchStreamTheWorldMetadata();
       
-      // Try TuneIn metadata first (this often has the most accurate data)
+      if (streamTheWorldData && streamTheWorldData.cue) {
+        const cue = streamTheWorldData.cue;
+        let title = cue.title || "Hot 97";
+        let artist = cue.artist || "New York's Hip Hop & R&B";
+        let artwork = null;
+        
+        // Fetch high-quality artwork from iTunes
+        if (title !== "Hot 97" && artist !== "New York's Hip Hop & R&B") {
+          artwork = await fetchiTunesArtwork(artist, title);
+        }
+        
+        const currentTrack = {
+          id: 1,
+          title,
+          artist,
+          album: cue.album || "Hot 97 FM",
+          duration: cue.duration || null,
+          artwork,
+          isAd: false,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        };
+        
+        lastMetadata = { text: `${artist} - ${title}`, timestamp: Date.now() };
+        await storage.updateNowPlaying(currentTrack);
+        return res.json(currentTrack);
+      }
+      
+      // Fallback to TuneIn metadata
       try {
         const tuneInResponse = await fetch('https://opml.radiotime.com/Describe.ashx?c=nowplaying&id=s22162&partnerId=RadioTime&serial=', {
           timeout: 3000,
@@ -369,6 +446,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 let artist = "New York's Hip Hop & R&B";
                 let artwork = null;
                 let isAd = false;
+                
+                // Parse artist and title from metadata
+                if (nowPlayingText.includes(' - ')) {
+                  const parts = nowPlayingText.split(' - ');
+                  artist = parts[0].trim();
+                  title = parts[1].trim();
+                  
+                  // Fetch artwork for real tracks
+                  artwork = await fetchiTunesArtwork(artist, title);
+                }
                 
                 // Check for commercials with enhanced detection
                 if (nowPlayingText.toLowerCase().includes('commercial') || 
