@@ -79,12 +79,13 @@ let lastUpdateTime = 0;
 export async function getCurrentRadioTrack(): Promise<TrackMetadata> {
   const now = Date.now();
   
-  // Update track every 3-4 minutes to simulate realistic radio rotation
-  const updateInterval = 180000 + Math.random() * 60000; // 3-4 minutes
+  // Update track every 3-5 minutes to simulate realistic Hot 97 rotation
+  const updateInterval = 180000 + Math.random() * 120000; // 3-5 minutes
   
   if (now - lastUpdateTime > updateInterval) {
     currentTrackIndex = (currentTrackIndex + 1) % authenticHipHopTracks.length;
     lastUpdateTime = now;
+    console.log(`Track rotation: Now playing "${authenticHipHopTracks[currentTrackIndex].title}" by ${authenticHipHopTracks[currentTrackIndex].artist}`);
   }
   
   return authenticHipHopTracks[currentTrackIndex];

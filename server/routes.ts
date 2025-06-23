@@ -381,10 +381,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Radio.co API failed:', error);
     }
     
-    // Fallback to original Icecast stream
+    // Try Hot 97 StreamTheWorld API (same source as the actual stream)
+    try {
+      const streamResponse = await fetch('https://playerservices.streamtheworld.com/api/livestream?version=1.9&mount=WQHTFMAAC&lang=en', {
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'Hot97RadioApp/1.0'
+        },
+        signal: AbortSignal.timeout(2000)
+      });
+      
+      if (streamResponse.ok) {
+        const streamData = await streamResponse.json();
+        const track = streamData?.results?.livestream?.[0]?.cue;
+        
+        if (track && track.title) {
+          // Check if it's a commercial
+          const isAd = isCommercial({
+            title: track.title,
+            artist: track.artist
+          });
+          
+          let artwork = track.albumArt || null;
+          
+          // If it's a commercial, try to get company logo
+          if (isAd) {
+            const logoUrl = getClearbitLogo(track.artist || track.title || '');
+            if (logoUrl) {
+              artwork = logoUrl;
+            }
+          }
+          
+          const currentTrack = {
+            id: 1,
+            title: track.title,
+            artist: track.artist || "Hot 97",
+            album: track.album || "Hot 97 FM",
+            duration: track.duration || null,
+            artwork: artwork,
+            isAd: isAd,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+          
+          await storage.updateNowPlaying({
+            title: currentTrack.title,
+            artist: currentTrack.artist,
+            album: currentTrack.album,
+            duration: currentTrack.duration,
+            artwork: currentTrack.artwork
+          });
+          
+          return res.json(currentTrack);
+        }
+      }
+    } catch (streamError) {
+      console.log('StreamTheWorld API unavailable, using fallback metadata');
+    }
+    
+    // Fallback to original Icecast stream (if available)
     try {
       const response = await fetch('https://168.119.74.185:9858/status-json.xsl', {
-        signal: AbortSignal.timeout(3000)
+        signal: AbortSignal.timeout(2000)
       });
       
       if (!response.ok) {
@@ -467,26 +525,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Error fetching live radio data:', error);
       
-      // Secondary backup - use authentic metadata service
+      // Try iHeartRadio Hot 97 API as secondary backup
       try {
-        const metadataResponse = await fetch('https://api.radio-browser.info/json/stations/byuuid/96a6df9d-0601-11e8-ae97-52543be04c81', {
+        const iHeartResponse = await fetch('https://us3.api.iheart.com/api/v1/catalog/getStations?allMarkets=true&keywords=hot%2097&queryStation=true&countryCode=US', {
           headers: {
+            'Accept': 'application/json',
             'User-Agent': 'Hot97RadioApp/1.0'
           }
         });
         
-        if (metadataResponse.ok) {
-          const stationData = await metadataResponse.json();
-          if (stationData.length > 0) {
-            const station = stationData[0];
-            
+        if (iHeartResponse.ok) {
+          const iHeartData = await iHeartResponse.json();
+          const hot97Station = iHeartData.hits?.find((station: any) => 
+            station.name?.toLowerCase().includes('hot 97') || 
+            station.description?.toLowerCase().includes('hot 97')
+          );
+          
+          if (hot97Station) {
             const currentTrack = {
               id: 1,
-              title: station.name || "Hot 97",
-              artist: "Live Stream",
-              album: station.tags || "Hip Hop & R&B",
+              title: hot97Station.description || "Hot 97",
+              artist: "New York's Hip Hop & R&B",
+              album: "Live Stream",
               duration: null,
-              artwork: station.favicon || null,
+              artwork: hot97Station.logo || null,
               isAd: false,
               createdAt: new Date(),
               updatedAt: new Date()
@@ -504,7 +566,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
       } catch (apiError) {
-        console.error('Radio Browser API failed:', apiError);
+        console.error('iHeartRadio API failed:', apiError);
       }
       
       // Final fallback - use authentic rotating hip-hop tracks

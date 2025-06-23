@@ -262,6 +262,7 @@ Required redirect URIs in Google Cloud Console:
 - June 20, 2025: Fixed initial music player state to display themed music logo instead of placeholder artwork when site first loads - track data now only fetches when playing, ensuring clean initial state with themed logo
 - June 21, 2025: Implemented comprehensive user authentication and profile management system with persistent login, profile avatar in navigation, complete profile page with subscription management, submission tracking, and premium rock avatars feature
 - June 22, 2025: Fixed Google OAuth redirect URI configuration and enhanced authentication flow - updated modal forms to properly distinguish between sign-in and sign-up modes, added mobile dropdown authentication buttons, improved form validation and field management
+- June 23, 2025: Implemented Radio.co API integration with authentic live metadata fetching from Hot 97 stream, added comprehensive commercial detection with Clearbit logo support, fixed theme-aware button hover colors across all components, centered "VIEW ALL ARCHIVES" button in Schedule section, standardized dropdown menu Sign In/Sign Up button widths for consistent UI
 
 ## User Preferences
 

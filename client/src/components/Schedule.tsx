@@ -105,31 +105,34 @@ export default function Schedule() {
               ))}
             </div>
             
-            <div className="mt-6 text-center">
-              <Button 
-                variant="outline"
-                className="border-2 px-6 py-3 rounded-full font-bold transition-all duration-200 hover:scale-105"
-                style={{
-                  borderColor: colors.primary,
-                  color: colors.primary,
-                  backgroundColor: 'transparent'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.primary;
-                  e.currentTarget.style.color = 'white';
-                  e.currentTarget.style.borderColor = colors.primary;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = colors.primary;
-                  e.currentTarget.style.borderColor = colors.primary;
-                }}
-              >
-                VIEW ALL ARCHIVES
-              </Button>
-            </div>
+
           </div>
           )}
+          
+          {/* Centered View All Archives Button */}
+          <div className="mt-8 text-center">
+            <Button 
+              variant="outline"
+              className="border-2 px-6 py-3 rounded-full font-bold transition-all duration-200 hover:scale-105"
+              style={{
+                borderColor: colors.primary,
+                color: colors.primary,
+                backgroundColor: 'transparent'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = colors.primary;
+                e.currentTarget.style.color = 'white';
+                e.currentTarget.style.borderColor = colors.primary;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.color = colors.primary;
+                e.currentTarget.style.borderColor = colors.primary;
+              }}
+            >
+              VIEW ALL ARCHIVES
+            </Button>
+          </div>
         </div>
       </div>
     </section>
