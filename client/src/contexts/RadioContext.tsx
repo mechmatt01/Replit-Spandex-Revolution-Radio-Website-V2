@@ -218,121 +218,32 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         if (nowPlayingResponse.ok) {
           const nowPlayingData = await nowPlayingResponse.json();
           
-          if (nowPlayingData.title && nowPlayingData.artist) {
-            // Check if this is an advertisement
-            const isAd = nowPlayingData.isAd || 
-                        nowPlayingData.title.toLowerCase().includes('advertisement') || 
-                        nowPlayingData.title.toLowerCase().includes('commercial') ||
-                        nowPlayingData.artist.toLowerCase().includes('advertisement') ||
-                        nowPlayingData.artist.toLowerCase().includes('commercial');
+          // Create unique keys for comparison to prevent unnecessary updates
+          const newTrackKey = `${nowPlayingData.title || ''}-${nowPlayingData.artist || ''}-${nowPlayingData.album || ''}`;
+          const currentTrackKey = `${currentTrack.title}-${currentTrack.artist}-${currentTrack.album || ''}`;
+          
+          // Only update if the track data has actually changed
+          if (newTrackKey !== currentTrackKey && nowPlayingData.title && nowPlayingData.artist) {
+            console.log('Track data changed, updating display');
             
-            // Fetch album artwork if available or use MusicBrainz API
-            let artwork = nowPlayingData.artwork || "";
-            
-            if (!artwork && !isAd && nowPlayingData.title !== currentStationName) {
-              try {
-                // Try to fetch album artwork from MusicBrainz/Cover Art Archive
-                const searchQuery = encodeURIComponent(`${nowPlayingData.artist} ${nowPlayingData.title}`);
-                const mbResponse = await fetch(`https://musicbrainz.org/ws/2/recording?query=${searchQuery}&fmt=json&limit=1`);
-                
-                if (mbResponse.ok) {
-                  const mbData = await mbResponse.json();
-                  const recording = mbData.recordings?.[0];
-                  
-                  if (recording?.releases?.[0]?.id) {
-                    const releaseId = recording.releases[0].id;
-                    const artResponse = await fetch(`https://coverartarchive.org/release/${releaseId}/front-250`);
-                    
-                    if (artResponse.ok) {
-                      artwork = artResponse.url;
-                    }
-                  }
-                }
-              } catch (artError) {
-                // Fallback to default artwork based on track
-                artwork = getDefaultArtwork(nowPlayingData.title, nowPlayingData.artist);
-              }
-            }
-            
-            const newTrack: TrackInfo = {
-              title: isAd ? "Advertisement" : nowPlayingData.title,
-              artist: isAd ? currentStationName : nowPlayingData.artist,
-              album: isAd ? "" : (nowPlayingData.album || ""),
-              artwork: isAd ? "advertisement" : artwork
-            };
-            
-            // Only update if track actually changed
-            if (newTrack.title !== currentTrack.title || newTrack.artist !== currentTrack.artist) {
-              setIsTransitioning(true);
-              setPrevTrack(currentTrack);
-              
-              setTimeout(() => {
-                setCurrentTrack(newTrack);
-                setTimeout(() => {
-                  setIsTransitioning(false);
-                  setPrevTrack(null);
-                }, 500);
-              }, 300);
-            }
+            // Direct update without external API calls to prevent delays and unnecessary transitions
+            setCurrentTrack({
+              title: nowPlayingData.title || currentStationName,
+              artist: nowPlayingData.artist || "New York's Hip Hop & R&B",
+              album: nowPlayingData.album || "Hot 97 FM",
+              artwork: nowPlayingData.artwork || ""
+            });
           }
         }
       } catch (error) {
-        // Use metal tracks without default artwork - will show themed gradient placeholder
-        const metalTracks = [
-          {
-            title: "Master of Puppets",
-            artist: "Metallica",
-            album: "Master of Puppets",
-            artwork: ""
-          },
-          {
-            title: "Ace of Spades",
-            artist: "Motörhead", 
-            album: "Ace of Spades",
-            artwork: ""
-          },
-          {
-            title: "Breaking the Law",
-            artist: "Judas Priest",
-            album: "British Steel",
-            artwork: ""
-          },
-          {
-            title: "Run to the Hills",
-            artist: "Iron Maiden",
-            album: "The Number of the Beast",
-            artwork: ""
-          },
-          {
-            title: "Paranoid",
-            artist: "Black Sabbath",
-            album: "Paranoid",
-            artwork: ""
-          }
-        ];
-        
-        // Only show fallback tracks when playing
-        if (isPlaying) {
-          const randomTrack = metalTracks[Math.floor(Math.random() * metalTracks.length)];
-          if (randomTrack.title !== currentTrack.title) {
-            setIsTransitioning(true);
-            setPrevTrack(currentTrack);
-            
-            setTimeout(() => {
-              setCurrentTrack(randomTrack);
-              setTimeout(() => {
-                setIsTransitioning(false);
-                setPrevTrack(null);
-              }, 500);
-            }, 300);
-          }
-        }
+        console.error('Failed to fetch track info:', error);
+        // Don't update on error to prevent unnecessary transitions
       }
     };
 
-    // Fetch track info every 8 seconds when playing for responsive updates
+    // Fetch track info every 10 seconds when playing to reduce server load
     fetchTrackInfo();
-    const interval = setInterval(fetchTrackInfo, 8000);
+    const interval = setInterval(fetchTrackInfo, 10000);
 
     return () => clearInterval(interval);
   }, [isPlaying]);
