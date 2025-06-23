@@ -121,12 +121,12 @@ export default function RadioCoPlayer() {
         </Button>
 
         {/* Volume Controls */}
-        <div className="flex items-center justify-center gap-3 w-full max-w-[250px]">
+        <div className="flex items-center justify-center gap-1 w-full max-w-[250px]">
           <Button
             onClick={toggleMute}
             variant="ghost"
             size="sm"
-            className="text-[var(--color-primary)] hover:text-[var(--color-secondary)] p-2"
+            className="text-[var(--color-primary)] hover:text-[var(--color-secondary)] p-1"
           >
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
           </Button>

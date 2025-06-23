@@ -76,12 +76,14 @@ export default function StickyPlayer() {
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
               <span className="text-xs text-red-500 font-medium">LIVE</span>
               {/* Dynamic text based on track data */}
-              <p className="text-muted-foreground text-xs ml-1 truncate">
-                {currentTrack.isAd 
-                  ? "Commercial Break" 
-                  : (currentTrack.artist || currentTrack.album || "Hot 97")
-                }
-              </p>
+              {(currentTrack.artist && currentTrack.artist !== stationName) && (
+                <p className="text-muted-foreground text-xs ml-1 truncate">
+                  {currentTrack.isAd 
+                    ? "Commercial Break" 
+                    : currentTrack.artist
+                  }
+                </p>
+              )}
             </div>
           </div>
 
