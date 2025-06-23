@@ -72,8 +72,7 @@ export default function StickyPlayer() {
                 />
               </div>
               <div className="flex items-center space-x-1 sm:space-x-2">
-                {/* LIVE indicator with mobile-friendly sizing */}</div>
-              {/* LIVE indicator moved before Live Stream text with vertical centering */}
+                {/* LIVE indicator moved before Live Stream text with vertical centering */}
                 <div className="flex items-center space-x-1" style={{ marginTop: '2px' }}>
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                 </div>
