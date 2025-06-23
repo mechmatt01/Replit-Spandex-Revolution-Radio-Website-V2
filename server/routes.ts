@@ -390,7 +390,82 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
 // Now Playing API with enhanced metadata and artwork
   app.get("/api/now-playing", async (req, res) => {
     try {
-      // Try StreamTheWorld metadata first for Hot 97
+      // Try Hot 97 official StreamTheWorld API first
+      try {
+        const hot97Response = await fetch('https://playerservices.streamtheworld.com/api/livestream?version=1.9&mount=WQHTFMAAC&lang=en', {
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'Hot97RadioApp/1.0',
+            'Origin': 'https://www.hot97.com'
+          },
+          signal: AbortSignal.timeout(3000)
+        });
+        
+        if (hot97Response.ok) {
+          const hot97Data = await hot97Response.json();
+          const nowPlaying = hot97Data?.results?.livestream?.[0]?.cue;
+          
+          if (nowPlaying && nowPlaying.title) {
+            let title = nowPlaying.title;
+            let artist = nowPlaying.artist || "Hot 97";
+            let artwork = null;
+            let isAd = false;
+            
+            // Enhanced commercial detection
+            if (title.toLowerCase().includes('commercial') || 
+                title.toLowerCase().includes('advertisement') ||
+                title.toLowerCase().includes('in commercial break') ||
+                artist.toLowerCase().includes('commercial') ||
+                // Brand-specific detection
+                title.toLowerCase().includes('capital one') ||
+                title.toLowerCase().includes('geico') ||
+                title.toLowerCase().includes('progressive') ||
+                title.toLowerCase().includes('mcdonald') ||
+                title.toLowerCase().includes('coca cola') ||
+                title.toLowerCase().includes('nike') ||
+                title.toLowerCase().includes('verizon')) {
+              
+              isAd = true;
+              const { extractCompanyName, getClearbitLogo } = await import('./radioCoConfig');
+              const companyName = extractCompanyName({ title, artist });
+              
+              if (title.toLowerCase().includes('in commercial break')) {
+                title = "Commercial Break";
+                artist = "Hot 97";
+                artwork = "advertisement";
+              } else {
+                title = companyName !== 'Advertisement' ? `${companyName} Commercial` : "Advertisement";
+                artist = "Hot 97";
+                const logoUrl = getClearbitLogo(companyName);
+                artwork = logoUrl || "advertisement";
+              }
+            } else if (title !== "Hot 97" && artist !== "Hot 97") {
+              // Fetch artwork for real tracks
+              artwork = await fetchiTunesArtwork(artist, title);
+            }
+            
+            const currentTrack = {
+              id: 1,
+              title,
+              artist,
+              album: isAd ? "Commercial Break" : (nowPlaying.album || "Hot 97 FM"),
+              duration: nowPlaying.duration || null,
+              artwork,
+              isAd,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            };
+            
+            lastMetadata = { text: `${artist} - ${title}`, timestamp: Date.now() };
+            await storage.updateNowPlaying(currentTrack);
+            return res.json(currentTrack);
+          }
+        }
+      } catch (apiError) {
+        console.log('Hot 97 official API unavailable, trying TuneIn');
+      }
+      
+      // Try StreamTheWorld metadata as backup
       const streamTheWorldData = await fetchStreamTheWorldMetadata();
       
       if (streamTheWorldData && streamTheWorldData.cue) {
@@ -398,9 +473,16 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
         let title = cue.title || "Hot 97";
         let artist = cue.artist || "New York's Hip Hop & R&B";
         let artwork = null;
+        let isAd = false;
         
-        // Fetch high-quality artwork from iTunes
-        if (title !== "Hot 97" && artist !== "New York's Hip Hop & R&B") {
+        // Check for commercial indicators
+        if (title.toLowerCase().includes('commercial') || 
+            title.toLowerCase().includes('in commercial break')) {
+          isAd = true;
+          title = "Commercial Break";
+          artist = "Hot 97";
+          artwork = "advertisement";
+        } else if (title !== "Hot 97" && artist !== "New York's Hip Hop & R&B") {
           artwork = await fetchiTunesArtwork(artist, title);
         }
         
@@ -408,10 +490,10 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
           id: 1,
           title,
           artist,
-          album: cue.album || "Hot 97 FM",
+          album: isAd ? "Commercial Break" : (cue.album || "Hot 97 FM"),
           duration: cue.duration || null,
           artwork,
-          isAd: false,
+          isAd,
           createdAt: new Date(),
           updatedAt: new Date()
         };
