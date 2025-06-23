@@ -9,6 +9,10 @@ export default function Hero() {
   const { isDarkMode, getColors } = useTheme();
   const colors = getColors();
   
+  const scrollToSchedule = () => {
+    document.getElementById('schedule')?.scrollIntoView({ behavior: 'smooth' });
+  };
+  
   const [countdown, setCountdown] = useState({
     days: 0,
     hours: 0,
@@ -37,13 +41,6 @@ export default function Hero() {
     const timer = setInterval(updateCountdown, 1000);
     return () => clearInterval(timer);
   }, []);
-
-  const scrollToSchedule = () => {
-    const element = document.getElementById("schedule");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden -mt-16 pt-16">

@@ -21,7 +21,7 @@ const authenticHipHopTracks: TrackMetadata[] = [
     title: "HUMBLE.",
     artist: "Kendrick Lamar", 
     album: "DAMN.",
-    artwork: "https://i.scdn.co/image/ab67616d0000b273f907de96b9a4fbc04accc0d5"
+    artwork: "https://i.scdn.co/image/ab67616d0000b273a4e63eeedf4b5b8d6b5e6a8f"
   },
   {
     title: "Sicko Mode",
@@ -58,6 +58,18 @@ const authenticHipHopTracks: TrackMetadata[] = [
     artist: "Kendrick Lamar",
     album: "To Pimp a Butterfly",
     artwork: "https://i.scdn.co/image/ab67616d0000b273cdb645498cd3d8a2db4d05e1"
+  },
+  {
+    title: "The Box",
+    artist: "Roddy Ricch",
+    album: "Please Excuse Me for Being Antisocial",
+    artwork: "https://i.scdn.co/image/ab67616d0000b273b5efd45c6bd2c6e1a2f14e88"
+  },
+  {
+    title: "Blinding Lights",
+    artist: "The Weeknd",
+    album: "After Hours", 
+    artwork: "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36"
   }
 ];
 
