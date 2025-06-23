@@ -261,17 +261,19 @@ export function RadioProvider({ children }: { children: ReactNode }) {
               artwork: isAd ? "advertisement" : artwork
             };
             
-            // Always update track with smooth transition
-            setIsTransitioning(true);
-            setPrevTrack(currentTrack);
-            
-            setTimeout(() => {
-              setCurrentTrack(newTrack);
+            // Only update if track actually changed
+            if (newTrack.title !== currentTrack.title || newTrack.artist !== currentTrack.artist) {
+              setIsTransitioning(true);
+              setPrevTrack(currentTrack);
+              
               setTimeout(() => {
-                setIsTransitioning(false);
-                setPrevTrack(null);
-              }, 500);
-            }, 300);
+                setCurrentTrack(newTrack);
+                setTimeout(() => {
+                  setIsTransitioning(false);
+                  setPrevTrack(null);
+                }, 500);
+              }, 300);
+            }
           }
         }
       } catch (error) {
@@ -328,12 +330,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       }
     };
 
-    // Fetch immediately and then every 45 seconds
+    // Fetch track info every 8 seconds when playing for responsive updates
     fetchTrackInfo();
-    const interval = setInterval(fetchTrackInfo, 45000);
+    const interval = setInterval(fetchTrackInfo, 8000);
 
     return () => clearInterval(interval);
-  }, [isPlaying, currentTrack.title]);
+  }, [isPlaying]);
 
   const value: RadioContextType = {
     isPlaying,
