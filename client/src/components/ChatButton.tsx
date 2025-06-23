@@ -36,7 +36,7 @@ export default function ChatButton() {
       <Button
         onClick={handleChatClick}
         size="lg"
-        className="fixed bottom-20 right-4 z-30 w-14 h-14 rounded-full text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
+        className="fixed bottom-4 right-4 z-30 w-14 h-14 rounded-full text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
         style={{
           background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
           boxShadow: `0 8px 32px ${colors.primary}40`
