@@ -196,7 +196,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     };
   }, [volume, isMuted]);
 
-  // Only fetch live track information when playing
+  // Fetch track information more frequently when playing
   useEffect(() => {
     if (!isPlaying) return;
     
@@ -220,16 +220,45 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           
           if (nowPlayingData.title && nowPlayingData.artist) {
             // Check if this is an advertisement
-            const isAd = nowPlayingData.title.toLowerCase().includes('advertisement') || 
+            const isAd = nowPlayingData.isAd || 
+                        nowPlayingData.title.toLowerCase().includes('advertisement') || 
                         nowPlayingData.title.toLowerCase().includes('commercial') ||
                         nowPlayingData.artist.toLowerCase().includes('advertisement') ||
                         nowPlayingData.artist.toLowerCase().includes('commercial');
+            
+            // Fetch album artwork if available or use MusicBrainz API
+            let artwork = nowPlayingData.artwork || "";
+            
+            if (!artwork && !isAd && nowPlayingData.title !== currentStationName) {
+              try {
+                // Try to fetch album artwork from MusicBrainz/Cover Art Archive
+                const searchQuery = encodeURIComponent(`${nowPlayingData.artist} ${nowPlayingData.title}`);
+                const mbResponse = await fetch(`https://musicbrainz.org/ws/2/recording?query=${searchQuery}&fmt=json&limit=1`);
+                
+                if (mbResponse.ok) {
+                  const mbData = await mbResponse.json();
+                  const recording = mbData.recordings?.[0];
+                  
+                  if (recording?.releases?.[0]?.id) {
+                    const releaseId = recording.releases[0].id;
+                    const artResponse = await fetch(`https://coverartarchive.org/release/${releaseId}/front-250`);
+                    
+                    if (artResponse.ok) {
+                      artwork = artResponse.url;
+                    }
+                  }
+                }
+              } catch (artError) {
+                // Fallback to default artwork based on track
+                artwork = getDefaultArtwork(nowPlayingData.title, nowPlayingData.artist);
+              }
+            }
             
             const newTrack: TrackInfo = {
               title: isAd ? "Advertisement" : nowPlayingData.title,
               artist: isAd ? currentStationName : nowPlayingData.artist,
               album: isAd ? "" : (nowPlayingData.album || ""),
-              artwork: isAd ? "advertisement" : ""
+              artwork: isAd ? "advertisement" : artwork
             };
             
             // Always update track with smooth transition

@@ -337,8 +337,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Now Playing API with ad detection
   app.get("/api/now-playing", async (req, res) => {
     try {
-      // Fetch live data from radio stream
-      const response = await fetch('https://168.119.74.185:9858/status-json.xsl');
+      // Try to fetch live data with shorter timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout
+      
+      const response = await fetch('https://168.119.74.185:9858/status-json.xsl', {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch live data');
+      }
+      
       const data = await response.json();
       
       let currentTrack;
@@ -414,12 +425,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(currentTrack);
     } catch (error) {
       console.error('Error fetching live radio data:', error);
-      // Fallback to database
+      
+      // Try Hot 97 StreamTheWorld API as backup
       try {
-        const track = await storage.getCurrentTrack();
-        res.json(track);
+        const hot97Response = await fetch('https://np.tritondigital.com/public/nowplaying?mountName=WQHTFMAAC&numberToFetch=1&eventType=track', {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          }
+        });
+        
+        if (hot97Response.ok) {
+          const hot97Data = await hot97Response.json();
+          const track = hot97Data?.nowPlaying?.[0];
+          
+          if (track && track.cue_title) {
+            const currentTrack = {
+              id: 1,
+              title: track.cue_title || "Hot 97",
+              artist: track.cue_artist || "Live Stream", 
+              album: track.cue_album || "Hot 97 FM",
+              duration: track.cue_time_duration || null,
+              artwork: track.cue_image_url || null,
+              isAd: false,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            };
+            
+            // Update database
+            await storage.updateNowPlaying({
+              title: currentTrack.title,
+              artist: currentTrack.artist,
+              album: currentTrack.album,
+              duration: currentTrack.duration,
+              artwork: currentTrack.artwork
+            });
+            
+            return res.json(currentTrack);
+          }
+        }
+      } catch (apiError) {
+        console.error('Hot 97 API also failed:', apiError);
+      }
+      
+      // Final fallback to database
+      try {
+        const fallbackTrack = await storage.getCurrentTrack();
+        res.json(fallbackTrack || {
+          id: 1,
+          title: "Hot 97",
+          artist: "New York's Hip Hop & R&B",
+          album: "Live Stream",
+          duration: null,
+          artwork: null,
+          isAd: false,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
       } catch (dbError) {
-        res.status(500).json({ error: "Failed to fetch current track" });
+        res.status(500).json({ error: "Failed to fetch track information" });
       }
     }
   });
