@@ -336,49 +336,123 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Now Playing API with Radio.co integration and ad detection
+  // Track last metadata to prevent unnecessary updates
+  let lastMetadata: any = null;
+
+  // Now Playing API with change detection and ad detection
   app.get("/api/now-playing", async (req, res) => {
     try {
-      // Try Radio.co API first for authentic live metadata
-      const radioData = await fetchRadioCoMetadata();
+      // Try Hot 97's actual metadata sources
       
-      if (radioData) {
-        const isAd = isCommercial(radioData);
-        let artwork = radioData.artwork_url || null;
-        
-        // If it's a commercial, try to get company logo from Clearbit
-        if (isAd) {
-          const logoUrl = getClearbitLogo(radioData.artist || radioData.title || '');
-          if (logoUrl) {
-            artwork = logoUrl;
+      // Try TuneIn metadata first (this often has the most accurate data)
+      try {
+        const tuneInResponse = await fetch('https://opml.radiotime.com/Describe.ashx?c=nowplaying&id=s22162&partnerId=RadioTime&serial=', {
+          timeout: 3000,
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
           }
-        }
-        
-        const currentTrack = {
-          id: 1,
-          title: radioData.title || "Hot 97",
-          artist: radioData.artist || "Live Stream",
-          album: radioData.album || "Hot 97 FM",
-          duration: radioData.duration || null,
-          artwork: artwork,
-          isAd: isAd,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-        
-        // Update database
-        await storage.updateNowPlaying({
-          title: currentTrack.title,
-          artist: currentTrack.artist,
-          album: currentTrack.album,
-          duration: currentTrack.duration,
-          artwork: currentTrack.artwork
         });
         
-        return res.json(currentTrack);
+        if (tuneInResponse.ok) {
+          const tuneInData = await tuneInResponse.text();
+          
+          if (tuneInData.includes('text="')) {
+            const textMatch = tuneInData.match(/text="([^"]+)"/);
+            if (textMatch) {
+              const nowPlayingText = textMatch[1];
+              
+              // Only update if data has actually changed
+              if (lastMetadata?.text !== nowPlayingText) {
+                console.log(`TuneIn new track: "${nowPlayingText}"`);
+                
+                let title = "Hot 97";
+                let artist = "New York's Hip Hop & R&B";
+                let artwork = null;
+                let isAd = false;
+                
+                // Check for commercials
+                if (nowPlayingText.toLowerCase().includes('commercial') || 
+                    nowPlayingText.toLowerCase().includes('advertisement') ||
+                    nowPlayingText.toLowerCase().includes('nissan') ||
+                    nowPlayingText.toLowerCase().includes('geico') ||
+                    nowPlayingText.toLowerCase().includes('mcdonald')) {
+                  
+                  isAd = true;
+                  const companyName = extractCompanyName({ title: nowPlayingText, artist: '' });
+                  title = companyName !== 'Advertisement' ? `${companyName} Commercial` : "Advertisement";
+                  artist = "Hot 97";
+                  
+                  const logoUrl = getClearbitLogo(companyName);
+                  if (logoUrl) {
+                    artwork = logoUrl;
+                  } else {
+                    artwork = "advertisement";
+                  }
+                  
+                  console.log(`Commercial detected: Company: ${companyName}`);
+                } else if (nowPlayingText.includes(' - ')) {
+                  const parts = nowPlayingText.split(' - ');
+                  artist = parts[0].trim();
+                  title = parts[1].trim();
+                } else if (nowPlayingText !== 'Hot 97' && nowPlayingText.length > 5) {
+                  title = nowPlayingText;
+                  artist = "Hot 97";
+                }
+                
+                const currentTrack = {
+                  id: 1,
+                  title: title,
+                  artist: artist,
+                  album: isAd ? "Commercial Break" : "Hot 97 FM",
+                  duration: null,
+                  artwork: artwork,
+                  isAd: isAd,
+                  createdAt: new Date(),
+                  updatedAt: new Date()
+                };
+                
+                lastMetadata = { text: nowPlayingText, timestamp: Date.now() };
+                await storage.updateNowPlaying(currentTrack);
+                return res.json(currentTrack);
+              } else {
+                // Return cached data if no change
+                const cachedTrack = await storage.getCurrentTrack();
+                if (cachedTrack) {
+                  return res.json(cachedTrack);
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.log("TuneIn unavailable, trying other sources");
       }
+      
+      // Always return cached data if available to prevent unnecessary updates
+      const cachedTrack = await storage.getCurrentTrack();
+      if (cachedTrack) {
+        return res.json(cachedTrack);
+      }
+      
+      // Final fallback - station info only (no track details)
+      const staticTrack = {
+        id: 1,
+        title: "Hot 97",
+        artist: "New York's Hip Hop & R&B",
+        album: null,
+        duration: null,
+        artwork: null,
+        isAd: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      await storage.updateNowPlaying(staticTrack);
+      return res.json(staticTrack);
+      
     } catch (error) {
-      console.error('Radio.co API failed:', error);
+      console.error('Failed to fetch now playing:', error);
+      res.status(500).json({ error: "Failed to fetch now playing" });
     }
     
     // Try Hot 97 StreamTheWorld API (same source as the actual stream)
