@@ -70,6 +70,18 @@ const authenticHipHopTracks: TrackMetadata[] = [
     artist: "The Weeknd",
     album: "After Hours", 
     artwork: "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36"
+  },
+  {
+    title: "In A Commercial",
+    artist: "McDonald's Commercial",
+    album: "Advertisement",
+    artwork: "advertisement"
+  },
+  {
+    title: "Nike Commercial Break", 
+    artist: "Nike",
+    album: "Advertisement",
+    artwork: "advertisement"
   }
 ];
 

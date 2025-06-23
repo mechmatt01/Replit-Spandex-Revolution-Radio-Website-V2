@@ -110,14 +110,17 @@ export default function Schedule() {
           )}
           
           {/* Centered View All Archives Button */}
-          <div className="mt-8 text-center">
+          <div className="mt-8 flex justify-center w-full">
             <Button 
               variant="outline"
               className="border-2 px-6 py-3 rounded-full font-bold transition-all duration-200 hover:scale-105"
               style={{
                 borderColor: colors.primary,
                 color: colors.primary,
-                backgroundColor: 'transparent'
+                backgroundColor: 'transparent',
+                width: '25%',
+                minWidth: '200px',
+                maxWidth: '300px'
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = colors.primary;

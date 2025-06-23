@@ -5,7 +5,7 @@ import { setupPassport, isAuthenticated, isAdmin, hashPassword, generateToken, s
 import { recaptchaService } from "./recaptcha";
 import { formatPhoneNumber } from "./userUtils";
 import { getCurrentRadioTrack, fetchSpotifyArtwork } from "./radioMetadata";
-import { fetchRadioCoMetadata, isCommercial, getClearbitLogo } from "./radioCoConfig";
+import { fetchRadioCoMetadata, isCommercial, getClearbitLogo, extractCompanyName } from "./radioCoConfig";
 import passport from "passport";
 import Stripe from "stripe";
 import bcrypt from "bcryptjs";
@@ -403,20 +403,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
           
           let artwork = track.albumArt || null;
+          let displayTitle = track.title;
+          let displayArtist = track.artist || "Hot 97";
           
-          // If it's a commercial, try to get company logo
+          // If it's a commercial, extract company info and get logo
           if (isAd) {
-            const logoUrl = getClearbitLogo(track.artist || track.title || '');
+            const companyName = extractCompanyName({
+              title: track.title,
+              artist: track.artist
+            });
+            
+            const logoUrl = getClearbitLogo(companyName);
             if (logoUrl) {
               artwork = logoUrl;
+            } else {
+              artwork = "advertisement"; // Use advertisement theme
             }
+            
+            // Format display for commercials
+            displayTitle = companyName !== 'Advertisement' ? `${companyName} Commercial` : "Advertisement";
+            displayArtist = "Hot 97";
+            
+            console.log(`Commercial detected: "${track.title}" by "${track.artist}" -> Company: ${companyName}`);
           }
           
           const currentTrack = {
             id: 1,
-            title: track.title,
-            artist: track.artist || "Hot 97",
-            album: track.album || "Hot 97 FM",
+            title: displayTitle,
+            artist: displayArtist,
+            album: isAd ? "Commercial Break" : (track.album || "Hot 97 FM"),
             duration: track.duration || null,
             artwork: artwork,
             isAd: isAd,
@@ -569,18 +584,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('iHeartRadio API failed:', apiError);
       }
       
-      // Final fallback - use authentic rotating hip-hop tracks
+      // Final fallback - use authentic rotating hip-hop tracks with commercial detection
       try {
         const radioTrack = await getCurrentRadioTrack();
         
+        // Check if fallback track is a commercial
+        const isAd = isCommercial({
+          title: radioTrack.title,
+          artist: radioTrack.artist
+        });
+        
+        let artwork = radioTrack.artwork;
+        let displayTitle = radioTrack.title;
+        let displayArtist = radioTrack.artist;
+        
+        // Process commercial metadata
+        if (isAd) {
+          const companyName = extractCompanyName({
+            title: radioTrack.title,
+            artist: radioTrack.artist
+          });
+          
+          const logoUrl = getClearbitLogo(companyName);
+          if (logoUrl) {
+            artwork = logoUrl;
+          } else {
+            artwork = "advertisement";
+          }
+          
+          displayTitle = companyName !== 'Advertisement' ? `${companyName} Commercial` : "Advertisement";
+          displayArtist = "Hot 97";
+          
+          console.log(`Fallback commercial detected: Company: ${companyName}, Logo: ${logoUrl || 'none'}`);
+        }
+        
         const currentTrack = {
           id: 1,
-          title: radioTrack.title,
-          artist: radioTrack.artist,
-          album: radioTrack.album || "Hot 97 FM",
+          title: displayTitle,
+          artist: displayArtist,
+          album: isAd ? "Commercial Break" : (radioTrack.album || "Hot 97 FM"),
           duration: null,
-          artwork: radioTrack.artwork,
-          isAd: false,
+          artwork: artwork,
+          isAd: isAd,
           createdAt: new Date(),
           updatedAt: new Date()
         };
