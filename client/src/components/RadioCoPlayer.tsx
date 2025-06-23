@@ -67,7 +67,8 @@ export default function RadioCoPlayer() {
           <div className="flex justify-center mb-2">
             <ScrollingText 
               text={currentTrack.title}
-              className="font-bold text-xl text-foreground"
+              className="font-bold text-foreground"
+              style={{ fontSize: '22px' }}
               maxWidth="75%"
               backgroundColor="hsl(var(--background))"
             />
