@@ -132,6 +132,11 @@ Required redirect URIs in Google Cloud Console:
 - Development: `https://9c4b622d-92a4-4193-9bf1-e70aa305f5b5-00-nv1cf8s5dwtq.spock.replit.dev/api/auth/google/callback`
 - Production: `https://workspace.replit.app/api/auth/google/callback`
 
+**IMPORTANT**: You must add the current development redirect URI to your Google Cloud Console OAuth 2.0 credentials:
+1. Go to Google Cloud Console > APIs & Credentials > OAuth 2.0 Client IDs
+2. Add `https://9c4b622d-92a4-4193-9bf1-e70aa305f5b5-00-nv1cf8s5dwtq.spock.replit.dev/api/auth/google/callback` to Authorized redirect URIs
+3. Save the changes
+
 ## Changelog
 - June 21, 2025: Fixed countdown text color to display black in light mode and white in dark mode, implemented CSS Grid navigation centering for desktop and responsive flex layout for mobile to ensure proper positioning across all screen sizes
 - June 21, 2025: Final floating player layout - swapped play button to far right position, swapped LIVE indicator and "Live Stream" text positions, volume controls positioned before play button
@@ -256,6 +261,7 @@ Required redirect URIs in Google Cloud Console:
 - June 20, 2025: Enhanced countdown styling - increased title text size to text-2xl and reduced spacing to mb-1 for better visual hierarchy
 - June 20, 2025: Fixed initial music player state to display themed music logo instead of placeholder artwork when site first loads - track data now only fetches when playing, ensuring clean initial state with themed logo
 - June 21, 2025: Implemented comprehensive user authentication and profile management system with persistent login, profile avatar in navigation, complete profile page with subscription management, submission tracking, and premium rock avatars feature
+- June 22, 2025: Fixed Google OAuth redirect URI configuration and enhanced authentication flow - updated modal forms to properly distinguish between sign-in and sign-up modes, added mobile dropdown authentication buttons, improved form validation and field management
 
 ## User Preferences
 

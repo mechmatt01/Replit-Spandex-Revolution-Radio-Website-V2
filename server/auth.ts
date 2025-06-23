@@ -84,11 +84,8 @@ export function setupPassport(app: Express) {
 
   // Google OAuth strategy
   if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
-    const baseUrl = process.env.REPLIT_DEV_DOMAIN 
-      ? `https://${process.env.REPLIT_DEV_DOMAIN}`
-      : (process.env.NODE_ENV === 'production' 
-        ? `https://${process.env.REPL_SLUG}.${process.env.REPLIT_CLUSTER || 'replit'}.app`
-        : 'http://localhost:5000');
+    // Use current domain from environment variable
+    const baseUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
     
     passport.use(new GoogleStrategy({
       clientID: GOOGLE_CLIENT_ID,

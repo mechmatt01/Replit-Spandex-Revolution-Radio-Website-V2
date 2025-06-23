@@ -264,7 +264,10 @@ export default function Navigation() {
               {!isAuthenticated ? (
                 <>
                   <button
-                    onClick={() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'signin' } }))}
+                    onClick={() => {
+                      setAuthMode("login");
+                      setIsAuthModalOpen(true);
+                    }}
                     className="px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105"
                     style={{
                       color: colors.text,
@@ -275,7 +278,10 @@ export default function Navigation() {
                     Sign In
                   </button>
                   <button
-                    onClick={() => window.dispatchEvent(new CustomEvent('openAuthModal', { detail: { mode: 'signup' } }))}
+                    onClick={() => {
+                      setAuthMode("register");
+                      setIsAuthModalOpen(true);
+                    }}
                     className="px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105"
                     style={{
                       backgroundColor: colors.primary,
@@ -448,37 +454,66 @@ export default function Navigation() {
                   );
                 })}
                 
-                <div className="pt-4 mt-4 border-t" style={{ borderColor: colors.primary + '40' }}>
+                <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
                   {!isAuthenticated ? (
-                    <button
-                      onClick={() => {
-                        setAuthMode("login");
-                        setIsAuthModalOpen(true);
-                        setIsOpen(false);
-                      }}
-                      className="flex items-center space-x-3 mx-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
-                      style={{
-                        color: colors.primary,
-                        backgroundColor: 'transparent',
-                        border: `1px solid ${colors.primary}`,
-                        paddingLeft: '1rem',
-                        paddingRight: '1rem',
-                        width: 'calc(100% - 2rem)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary;
-                        e.currentTarget.style.color = colors.primaryText || 'black';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.primary;
-                      }}
-                      role="menuitem"
-                      aria-label="Sign in"
-                    >
-                      <User size={16} style={{ color: colors.primary }} />
-                      <span>SIGN IN</span>
-                    </button>
+                    <>
+                      <button
+                        onClick={() => {
+                          setAuthMode("login");
+                          setIsAuthModalOpen(true);
+                          setIsOpen(false);
+                        }}
+                        className="flex items-center space-x-3 mx-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                        style={{
+                          color: colors.primary,
+                          backgroundColor: 'transparent',
+                          border: `1px solid ${colors.primary}`,
+                          paddingLeft: '1rem',
+                          paddingRight: '1rem',
+                          width: 'calc(100% - 2rem)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary;
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = colors.primary;
+                        }}
+                        role="menuitem"
+                        aria-label="Sign in"
+                      >
+                        <User size={16} />
+                        <span>SIGN IN</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setAuthMode("register");
+                          setIsAuthModalOpen(true);
+                          setIsOpen(false);
+                        }}
+                        className="flex items-center space-x-3 mx-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                        style={{
+                          color: 'white',
+                          backgroundColor: colors.primary,
+                          border: `1px solid ${colors.primary}`,
+                          paddingLeft: '1rem',
+                          paddingRight: '1rem',
+                          width: 'calc(100% - 2rem)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.secondary;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary;
+                        }}
+                        role="menuitem"
+                        aria-label="Sign up"
+                      >
+                        <UserPlus size={16} />
+                        <span>SIGN UP</span>
+                      </button>
+                    </>
                   ) : (
                     <div className="space-y-3">
                       <button

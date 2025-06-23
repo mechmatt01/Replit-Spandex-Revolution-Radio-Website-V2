@@ -76,8 +76,10 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
   const resetForm = () => {
     setEmail('');
     setPassword('');
+    setUsername('');
     setFirstName('');
     setLastName('');
+    setPhoneNumber('');
   };
 
   const switchMode = () => {
