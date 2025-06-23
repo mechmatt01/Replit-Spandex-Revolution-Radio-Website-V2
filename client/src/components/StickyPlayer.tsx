@@ -75,15 +75,6 @@ export default function StickyPlayer() {
               {/* LIVE indicator with red dot */}
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
               <span className="text-xs text-red-500 font-medium">LIVE</span>
-              {/* Dynamic text based on track data */}
-              {(currentTrack.artist && currentTrack.artist !== stationName) && (
-                <p className="text-muted-foreground text-xs ml-1 truncate">
-                  {currentTrack.isAd 
-                    ? "Commercial Break" 
-                    : currentTrack.artist
-                  }
-                </p>
-              )}
             </div>
           </div>
 
