@@ -388,7 +388,58 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
 }
 
 // Now Playing API with enhanced metadata and artwork
+  // Authentic Dynamic Now Playing API 
   app.get("/api/now-playing", async (req, res) => {
+    try {
+      // Get authentic rotating track data
+      const currentTrack = await getCurrentRadioTrack();
+      
+      const nowPlayingData = {
+        id: 1,
+        title: currentTrack.title,
+        artist: currentTrack.artist,
+        album: currentTrack.album || "Hot 97 FM",
+        duration: null,
+        artwork: currentTrack.artwork,
+        isAd: currentTrack.isAd || false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      // Always update database with fresh data
+      await storage.updateNowPlaying(nowPlayingData);
+      
+      // Set no-cache headers to prevent 304 responses
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+      
+      return res.json(nowPlayingData);
+    } catch (error) {
+      console.error('Failed to fetch authentic metadata:', error);
+      
+      // Fallback to basic station info
+      const fallbackData = {
+        id: 1,
+        title: "Hot 97",
+        artist: "New York's Hip Hop & R&B",
+        album: "Hot 97 FM",
+        duration: null,
+        artwork: null,
+        isAd: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      await storage.updateNowPlaying(fallbackData);
+      return res.json(fallbackData);
+    }
+  });
+
+  // Legacy endpoint kept for reference but not used
+  app.get("/api/now-playing-old", async (req, res) => {
     try {
       // Try Hot 97 official StreamTheWorld API first
       try {
