@@ -265,9 +265,12 @@ export default function Navigation() {
 
             {/* Right side controls - Fixed to far right */}
             <div className="flex items-center space-x-1 absolute right-4 top-1/2 transform -translate-y-1/2 hidden xl:flex">
+              {/* Theme toggle */}
+              <MetalThemeSwitcher />
+
               {/* Authentication buttons */}
               {!isAuthenticated ? (
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <button
                     onClick={() => {
                       setAuthMode("register");
@@ -278,7 +281,7 @@ export default function Navigation() {
                       backgroundColor: colors.primary,
                       color: 'white',
                       border: `1px solid ${colors.primary}`,
-                      height: '32px',
+                      height: '24px',
                       minWidth: '80px'
                     }}
                   >
@@ -294,7 +297,7 @@ export default function Navigation() {
                       color: colors.text,
                       border: `1px solid ${colors.primary}`,
                       backgroundColor: 'transparent',
-                      height: '32px',
+                      height: '24px',
                       minWidth: '80px'
                     }}
                   >
@@ -340,9 +343,6 @@ export default function Navigation() {
                   </Tooltip>
                 </div>
               )}
-
-              {/* Theme toggle */}
-              <MetalThemeSwitcher />
             </div>
 
             {/* Mobile controls - Right side on mobile only */}
