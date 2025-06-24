@@ -130,7 +130,6 @@ export class DatabaseStorage implements IStorage {
     const [user] = await db
       .insert(users)
       .values({
-        id: userData.username, // Use username as ID for now
         ...userData,
       })
       .returning();
