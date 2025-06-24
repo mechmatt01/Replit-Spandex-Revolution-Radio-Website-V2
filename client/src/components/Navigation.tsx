@@ -288,7 +288,6 @@ export default function Navigation() {
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                console.log(`Desktop dropdown clicked: ${item.label}`, item.action);
                                 item.action();
                               }}
                               className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg w-full"
@@ -443,7 +442,6 @@ export default function Navigation() {
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log(`Mobile dropdown clicked: ${item.label}`, item.action);
                             item.action();
                           }}
                           className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
