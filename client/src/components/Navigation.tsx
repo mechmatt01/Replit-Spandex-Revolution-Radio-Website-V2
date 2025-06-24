@@ -261,9 +261,6 @@ export default function Navigation() {
 
             {/* Right side controls - Fixed to far right */}
             <div className="flex items-center space-x-3 absolute right-4 top-1/2 transform -translate-y-1/2 hidden xl:flex">
-              {/* Theme toggle */}
-              <MetalThemeSwitcher />
-
               {/* Authentication buttons */}
               {!isAuthenticated ? (
                 <>
@@ -272,11 +269,12 @@ export default function Navigation() {
                       setAuthMode("login");
                       setIsAuthModalOpen(true);
                     }}
-                    className="px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105"
+                    className="px-2 py-1 text-sm font-medium rounded-md transition-all duration-200 hover:scale-105"
                     style={{
                       color: colors.text,
                       border: `1px solid ${colors.primary}`,
-                      backgroundColor: 'transparent'
+                      backgroundColor: 'transparent',
+                      height: '32px'
                     }}
                   >
                     Sign In
@@ -286,11 +284,12 @@ export default function Navigation() {
                       setAuthMode("register");
                       setIsAuthModalOpen(true);
                     }}
-                    className="px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-200 hover:scale-105"
+                    className="px-2 py-1 text-sm font-medium rounded-md transition-all duration-200 hover:scale-105"
                     style={{
                       backgroundColor: colors.primary,
                       color: 'white',
-                      border: `1px solid ${colors.primary}`
+                      border: `1px solid ${colors.primary}`,
+                      height: '32px'
                     }}
                   >
                     Sign Up

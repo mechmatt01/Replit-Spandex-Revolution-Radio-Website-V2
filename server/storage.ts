@@ -142,7 +142,7 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ 
         location,
-        lastLocationUpdate: new Date(),
+  
         updatedAt: new Date() 
       })
       .where(eq(users.id, id))
@@ -181,7 +181,7 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ 
         isPhoneVerified: true,
-        phoneVerificationCode: null,
+
         phoneVerificationExpires: null,
         updatedAt: new Date()
       })
@@ -207,7 +207,7 @@ export class DatabaseStorage implements IStorage {
       .set({ 
         isEmailVerified: true,
         emailVerificationToken: null,
-        emailVerificationExpires: null,
+  
         updatedAt: new Date()
       })
       .where(eq(users.id, user.id))
