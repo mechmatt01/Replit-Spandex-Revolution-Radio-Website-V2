@@ -92,38 +92,66 @@ export default function Navigation() {
   const [location, setLocation] = useLocation();
 
   const navigateToSection = (sectionId: string, route?: string) => {
+    // Close all menus first
     setIsOpen(false);
     setIsDropdownOpen(false);
     
+    // If we need to go to a different route
     if (route && route !== location) {
-      // Navigate to different page first
       setLocation(route);
-      // Wait for navigation then scroll to section
+      // Wait for page to load then scroll to section
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-      }, 100);
+      }, 200);
     } else {
-      // Same page, just scroll
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      } else if (route) {
-        // Section doesn't exist on current page, navigate to correct page
-        setLocation(route);
-      }
+      // Same page, just scroll to section
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 50);
+    }
+  };
+
+  // Direct navigation functions for clarity
+  const goToMusic = () => {
+    setIsOpen(false);
+    setIsDropdownOpen(false);
+    setLocation("/music");
+  };
+
+  const goToHomeSection = (sectionId: string) => {
+    setIsOpen(false);
+    setIsDropdownOpen(false);
+    if (location !== "/") {
+      setLocation("/");
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 200);
+    } else {
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 50);
     }
   };
 
   const menuItems = [
-    { id: 1, label: "MUSIC", icon: Music, action: () => navigateToSection("music", "/music"), tooltip: "Listen to live radio and music" },
-    { id: 2, label: "SCHEDULE", icon: Calendar, action: () => navigateToSection("schedule", "/"), tooltip: "View show schedule and programming" },
-    { id: 3, label: "SUBMISSIONS", icon: Send, action: () => navigateToSection("submissions", "/"), tooltip: "Submit song requests and feedback" },
-    { id: 4, label: "CONTACT", icon: Phone, action: () => navigateToSection("contact", "/"), tooltip: "Get in touch with the station" },
-    { id: 5, label: "LISTEN MAP", icon: MapPin, action: () => navigateToSection("map", "/"), tooltip: "View live listener map worldwide" },
-    { id: 6, label: "FEATURES", icon: Heart, action: () => navigateToSection("features", "/"), tooltip: "Explore premium features and subscription tiers" },
+    { id: 1, label: "MUSIC", icon: Music, action: goToMusic, tooltip: "Listen to live radio and music" },
+    { id: 2, label: "SCHEDULE", icon: Calendar, action: () => goToHomeSection("schedule"), tooltip: "View show schedule and programming" },
+    { id: 3, label: "SUBMISSIONS", icon: Send, action: () => goToHomeSection("submissions"), tooltip: "Submit song requests and feedback" },
+    { id: 4, label: "CONTACT", icon: Phone, action: () => goToHomeSection("contact"), tooltip: "Get in touch with the station" },
+    { id: 5, label: "LISTEN MAP", icon: MapPin, action: () => goToHomeSection("map"), tooltip: "View live listener map worldwide" },
+    { id: 6, label: "FEATURES", icon: Heart, action: () => goToHomeSection("features"), tooltip: "Explore premium features and subscription tiers" },
   ];
 
   return (
