@@ -81,7 +81,7 @@ export default function StickyPlayer() {
               {/* Volume Controls - inline with LIVE text, centered between LIVE and play button */}
               <div className="hidden sm:flex items-center space-x-2">
                 <Volume2 className="text-gray-400 h-3 w-3" />
-                <div className="w-12 h-1 bg-gray-700 rounded-full relative">
+                <div className="w-20 h-1 bg-gray-700 rounded-full relative">
                   <div 
                     className="h-1 rounded-full transition-all duration-150"
                     style={{ 
