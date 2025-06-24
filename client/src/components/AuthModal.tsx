@@ -236,7 +236,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                       id="phoneNumber"
                       type="tel"
                       value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      onChange={handlePhoneChange}
                       className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
                       style={{ 
                         color: colors.text,

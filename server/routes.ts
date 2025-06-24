@@ -88,6 +88,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   
 
+  // Update listening status
+  app.post('/api/update-listening-status', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { isActiveListening } = req.body;
+      
+      await storage.updateListeningStatus(userId, isActiveListening);
+      res.json({ message: 'Listening status updated' });
+    } catch (error) {
+      console.error('Error updating listening status:', error);
+      res.status(500).json({ message: 'Failed to update listening status' });
+    }
+  });
+
   // Email verification
   app.get("/api/auth/verify-email", async (req, res) => {
     try {
