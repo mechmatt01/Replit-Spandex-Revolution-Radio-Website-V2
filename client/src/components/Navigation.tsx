@@ -625,10 +625,7 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              console.log('Mobile profile clicked');
+                            onClick={() => {
                               setLocation('/profile');
                               setIsOpen(false);
                             }}
@@ -658,10 +655,7 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              console.log('Mobile logout clicked');
+                            onClick={() => {
                               logout();
                               setIsOpen(false);
                             }}
