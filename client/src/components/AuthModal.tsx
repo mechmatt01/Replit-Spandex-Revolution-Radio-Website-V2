@@ -101,19 +101,18 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
         >
           {/* Custom Close Button */}
           <DialogPrimitive.Close 
-            className="absolute right-4 top-4 rounded-full opacity-70 transition-all duration-200 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none p-2"
+            className="absolute right-4 top-4 rounded-full opacity-70 transition-all duration-200 hover:opacity-100 focus:outline-none disabled:pointer-events-none flex items-center justify-center"
             style={{
               color: colors.text,
               backgroundColor: 'transparent',
               border: 'none',
-              focusRingColor: colors.primary
+              width: '32px',
+              height: '32px'
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.primary + '20';
               e.currentTarget.style.color = colors.primary;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'transparent';
               e.currentTarget.style.color = colors.text;
             }}
           >
@@ -171,10 +170,8 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                         className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
                         style={{ 
                           color: colors.text,
-                          borderColor: '#374151'
+                          borderColor: colors.primary
                         }}
-                        onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
-                        onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
                         required
                       />
                     </div>
@@ -190,10 +187,8 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                         className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
                         style={{ 
                           color: colors.text,
-                          borderColor: '#374151'
+                          borderColor: colors.primary
                         }}
-                        onFocus={(e) => e.currentTarget.style.borderColor = colors.primary}
-                        onBlur={(e) => e.currentTarget.style.borderColor = '#374151'}
                         required
                       />
                     </div>
