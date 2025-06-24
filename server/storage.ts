@@ -317,11 +317,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateNowPlaying(track: InsertNowPlaying): Promise<NowPlaying> {
-    const [newTrack] = await db
-      .insert(nowPlaying)
-      .values(track)
-      .returning();
-    return newTrack;
+    const existingTrack = await this.getCurrentTrack();
+    if (existingTrack) {
+      const [updated] = await db
+        .update(nowPlaying)
+        .set({ ...track, updatedAt: new Date() })
+        .where(eq(nowPlaying.id, existingTrack.id))
+        .returning();
+      return updated;
+    } else {
+      const [newTrack] = await db
+        .insert(nowPlaying)
+        .values(track)
+        .returning();
+      return newTrack;
+    }
   }
 
   async getStreamStats(): Promise<StreamStats | undefined> {
