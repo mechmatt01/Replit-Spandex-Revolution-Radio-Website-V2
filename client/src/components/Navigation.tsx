@@ -443,8 +443,10 @@ export default function Navigation() {
                             e.preventDefault();
                             e.stopPropagation();
                             item.action();
+                            setIsOpen(false);
                           }}
-                          className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                          type="button"
+                          className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                           style={{ color: colors.text }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.backgroundColor = colors.primary + '20';
@@ -453,6 +455,9 @@ export default function Navigation() {
                           onMouseLeave={(e) => {
                             e.currentTarget.style.backgroundColor = 'transparent';
                             e.currentTarget.style.color = colors.text;
+                          }}
+                          onTouchStart={(e) => {
+                            e.currentTarget.style.backgroundColor = colors.primary + '20';
                           }}
                           role="menuitem"
                           aria-label={`Navigate to ${item.label.toLowerCase()}`}
@@ -474,12 +479,15 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               setAuthMode("login");
                               setIsAuthModalOpen(true);
                               setIsOpen(false);
                             }}
-                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                            type="button"
+                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer"
                             style={{
                               color: colors.text,
                               backgroundColor: 'transparent',
@@ -492,6 +500,9 @@ export default function Navigation() {
                             onMouseLeave={(e) => {
                               e.currentTarget.style.backgroundColor = 'transparent';
                               e.currentTarget.style.color = colors.text;
+                            }}
+                            onTouchStart={(e) => {
+                              e.currentTarget.style.backgroundColor = colors.primary + '20';
                             }}
                             role="menuitem"
                             aria-label="Login"
@@ -507,12 +518,15 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               setAuthMode("register");
                               setIsAuthModalOpen(true);
                               setIsOpen(false);
                             }}
-                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                            type="button"
+                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer"
                             style={{
                               color: 'white',
                               backgroundColor: colors.primary,
@@ -523,6 +537,9 @@ export default function Navigation() {
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.backgroundColor = colors.primary;
+                            }}
+                            onTouchStart={(e) => {
+                              e.currentTarget.style.backgroundColor = colors.primary + 'CC';
                             }}
                             role="menuitem"
                             aria-label="Sign up"
@@ -541,16 +558,19 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               setLocation('/profile');
                               setIsOpen(false);
                             }}
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
-                        style={{
-                          color: colors.text,
-                          backgroundColor: colors.primary + '20'
-                        }}
-                      >
+                            type="button"
+                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer"
+                            style={{
+                              color: colors.text,
+                              backgroundColor: colors.primary + '20'
+                            }}
+                          >
                             <User size={16} style={{ color: colors.primary }} />
                             <span>Profile</span>
                           </button>
@@ -562,17 +582,20 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               logout();
                               setIsOpen(false);
                             }}
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
-                        style={{
-                          color: colors.primary,
-                          backgroundColor: 'transparent',
-                          border: `1px solid ${colors.primary}`
-                        }}
-                      >
+                            type="button"
+                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer"
+                            style={{
+                              color: colors.primary,
+                              backgroundColor: 'transparent',
+                              border: `1px solid ${colors.primary}`
+                            }}
+                          >
                             <LogOut size={16} style={{ color: colors.primary }} />
                             <span>Sign Out</span>
                           </button>
