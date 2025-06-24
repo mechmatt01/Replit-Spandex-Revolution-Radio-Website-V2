@@ -120,7 +120,7 @@ export default function LoginPage() {
             </CardTitle>
             <p className="text-muted-foreground mt-2">
               {isLogin
-                ? "Sign in to your Spandex Salvation account"
+                ? "Login to your Spandex Salvation account"
                 : "Join the metal revolution"}
             </p>
           </div>
@@ -249,7 +249,7 @@ export default function LoginPage() {
               disabled={isLoading}
               style={{ backgroundColor: colors.primary }}
             >
-              {isLoading ? "Please wait..." : (isLogin ? "Sign In" : "Create Account")}
+              {isLoading ? "Please wait..." : (isLogin ? "Login" : "Create Account")}
             </Button>
           </form>
 
@@ -261,7 +261,7 @@ export default function LoginPage() {
             >
               {isLogin
                 ? "Don't have an account? Sign up"
-                : "Already have an account? Sign in"}
+                : "Already have an account? Login"}
             </button>
           </div>
         </CardContent>

@@ -273,10 +273,10 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {mode === 'login' ? 'Signing In...' : 'Creating Account...'}
+                  {mode === 'login' ? 'Logging In...' : 'Creating Account...'}
                 </>
               ) : (
-                mode === 'login' ? 'Sign In' : 'Create Account'
+                mode === 'login' ? 'Login' : 'Create Account'
               )}
             </Button>
             

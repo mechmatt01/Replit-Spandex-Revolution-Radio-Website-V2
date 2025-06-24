@@ -303,7 +303,7 @@ export default function Navigation() {
                       padding: '2px 16px'
                     }}
                   >
-                    Sign In
+                    Login
                   </button>
                 </>
               ) : (
@@ -429,10 +429,10 @@ export default function Navigation() {
                           e.currentTarget.style.color = colors.primary;
                         }}
                         role="menuitem"
-                        aria-label="Sign in"
+                        aria-label="Login"
                       >
                         <User size={16} />
-                        <span>SIGN IN</span>
+                        <span>LOGIN</span>
                       </button>
                       <button
                         onClick={() => {

@@ -79,7 +79,7 @@ export default function StickyPlayer() {
               </div>
               
               {/* Volume Controls - inline with LIVE text, centered between LIVE and play button */}
-              <div className="hidden sm:flex items-center space-x-4">
+              <div className="hidden sm:flex items-center space-x-1">
                 <Volume2 className="text-gray-400 h-3 w-3" />
                 <div className="w-16 h-1 bg-gray-700 rounded-full relative">
                   <div 
@@ -98,7 +98,7 @@ export default function StickyPlayer() {
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
                 </div>
-                <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center">
+                <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center ml-1">
                   {Math.round(volume * 100)}%
                 </span>
               </div>

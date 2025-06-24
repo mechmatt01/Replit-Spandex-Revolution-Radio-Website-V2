@@ -157,7 +157,7 @@ export default function Submissions() {
                     e.currentTarget.style.transform = 'scale(1)';
                   }}
                 >
-                  Sign In
+                  Login
                 </Button>
                 <Button 
                   onClick={() => document.getElementById('subscribe')?.scrollIntoView({ behavior: 'smooth' })}
