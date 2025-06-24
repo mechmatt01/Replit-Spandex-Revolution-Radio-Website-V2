@@ -273,22 +273,6 @@ export default function Navigation() {
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => {
-                      setAuthMode("register");
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="px-2 py-1 text-sm font-semibold rounded-md transition-all duration-200 hover:scale-105 whitespace-nowrap"
-                    style={{
-                      backgroundColor: colors.primary,
-                      color: 'white',
-                      border: `1px solid ${colors.primary}`,
-                      height: '24px',
-                      minWidth: '80px'
-                    }}
-                  >
-                    SIGN UP
-                  </button>
-                  <button
-                    onClick={() => {
                       setAuthMode("login");
                       setIsAuthModalOpen(true);
                     }}
@@ -302,6 +286,22 @@ export default function Navigation() {
                     }}
                   >
                     LOGIN
+                  </button>
+                  <button
+                    onClick={() => {
+                      setAuthMode("register");
+                      setIsAuthModalOpen(true);
+                    }}
+                    className="px-2 py-1 text-sm font-semibold rounded-md transition-all duration-200 hover:scale-105 whitespace-nowrap"
+                    style={{
+                      backgroundColor: colors.primary,
+                      color: 'white',
+                      border: `1px solid ${colors.primary}`,
+                      height: '24px',
+                      minWidth: '80px'
+                    }}
+                  >
+                    SIGN UP
                   </button>
                 </div>
               ) : (
