@@ -117,7 +117,16 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  async createUser(userData: RegisterUser): Promise<User> {
+  async updateListeningStatus(id: string, isActiveListening: boolean): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ isActiveListening, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  async createUser(userData: any): Promise<User> {
     const [user] = await db
       .insert(users)
       .values({
