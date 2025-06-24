@@ -80,7 +80,7 @@ export default function StickyPlayer() {
               
               {/* Volume Controls - Centered between LIVE and play button */}
               <div className="hidden sm:flex items-center justify-center flex-1 mx-2">
-                <div className="flex items-center" style={{ gap: '2px' }}>
+                <div className="flex items-center space-x-1">
                   <Volume2 className="text-gray-400 h-3 w-3" />
                   <div className="w-16 h-1 bg-gray-700 rounded-full relative">
                     <div 
