@@ -278,7 +278,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getShowSchedules(): Promise<ShowSchedule[]> {
-    return await db.select().from(showSchedules).orderBy(showSchedules.startTime);
+    return await db.select().from(showSchedules);
   }
 
   async getActiveShowSchedules(): Promise<ShowSchedule[]> {
@@ -303,7 +303,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPastShows(): Promise<PastShow[]> {
-    return await db.select().from(pastShows).orderBy(desc(pastShows.airDate));
+    return await db.select().from(pastShows);
   }
 
   async getCurrentTrack(): Promise<NowPlaying | undefined> {

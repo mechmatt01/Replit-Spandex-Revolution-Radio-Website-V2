@@ -95,9 +95,12 @@ export const nowPlaying = pgTable("now_playing", {
   title: text("title").notNull(),
   artist: text("artist").notNull(),
   album: text("album"),
-  duration: integer("duration"), // in seconds
-  currentTime: integer("current_time").default(0),
+  artwork: varchar("artwork", { length: 500 }),
+  isAd: boolean("is_ad").default(false),
+  duration: integer("duration"),
+  currentTime: integer("current_time"),
   isLive: boolean("is_live").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 

@@ -338,68 +338,28 @@ export default function Navigation() {
               {/* Theme toggle */}
               <MetalThemeSwitcher />
             </div>
-                  <div className="flex items-center space-x-3">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button 
-                          onClick={() => window.location.href = '/profile'}
-                          className="flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-200 hover:scale-105"
-                          style={{
-                            backgroundColor: colors.primary + '20',
-                            border: `1px solid ${colors.primary}`
-                          }}
-                        >
-                          {user?.profileImage ? (
-                            <div className="relative">
-                              <img 
-                                src={user.profileImage} 
-                                alt="Profile" 
-                                className="w-6 h-6 rounded-full object-cover"
-                              />
-                              {user?.isVerified && (
-                                <div 
-                                  className="absolute -top-1 -right-1 w-3 h-3 rounded-full flex items-center justify-center text-xs"
-                                  style={{ backgroundColor: colors.primary }}
-                                >
-                                  ✓
-                                </div>
-                              )}
-                            </div>
-                          ) : (
-                            <User size={16} style={{ color: colors.primary }} />
-                          )}
-                          <span className="text-sm font-semibold" style={{ color: colors.text }}>
-                            {user?.firstName || 'Profile'}
-                          </span>
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom">
-                        View profile and settings
-                      </TooltipContent>
-                    </Tooltip>
-                    
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={logout}
-                          className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
-                          style={{
-                            backgroundColor: 'transparent',
-                            border: `1px solid ${colors.primary}`
-                          }}
-                        >
-                          <LogOut size={16} style={{ color: colors.primary }} />
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom">
-                        Sign out
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                )}
-              </div>
 
+            {/* Mobile controls - Right side on mobile only */}
+            <div className="xl:hidden flex items-center space-x-3">
+              {/* Theme toggle - always visible in mobile */}
+              <MetalThemeSwitcher />
+              
+              {/* Mobile menu button */}
+              <button
+                ref={menuRef}
+                onClick={() => setIsOpen(!isOpen)}
+                className="p-2 rounded-lg transition-colors duration-200"
+                style={{ 
+                  backgroundColor: isOpen ? colors.primary : 'transparent',
+                  color: isOpen ? 'white' : colors.primary 
+                }}
+                aria-label="Toggle mobile menu"
+                aria-expanded={isOpen}
+              >
+                <Menu size={24} />
+              </button>
             </div>
+          </div>
 
             {/* Mobile controls - Right side on mobile only */}
             <div className="xl:hidden flex items-center space-x-3">
