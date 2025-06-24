@@ -6,7 +6,7 @@ export default function MusicPage() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-background pt-20 pb-8">
+      <div id="music" className="min-h-screen bg-background pt-20 pb-8">
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="text-center mb-8">
