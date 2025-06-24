@@ -48,7 +48,7 @@ export default function StickyPlayer() {
     }`} style={{ width: '320px', maxWidth: 'calc(100vw - 32px)' }}>
       <div className="w-full px-3 py-2 relative">
         {/* Compact floating player layout */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           {/* Album Art */}
           <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <InteractiveAlbumArt 
@@ -60,47 +60,22 @@ export default function StickyPlayer() {
             />
           </div>
 
-          {/* Track Info with increased width by 25% */}
-          <div className={`min-w-0 flex-1 ml-3 mr-16 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+          {/* Track Info with 60% width of player box */}
+          <div className={`min-w-0 ml-3 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`} style={{ width: '60%' }}>
             <div className="w-full">
               <ScrollingText 
                 text={currentTrack.title !== stationName ? currentTrack.title : stationName}
                 className="font-semibold text-foreground text-sm"
-                maxWidth="125%"
+                maxWidth="100%"
                 isFloating={true}
                 backgroundColor="hsl(var(--background))"
               />
             </div>
             <div className="flex items-center space-x-1 mt-1">
-              {/* LIVE indicator with red dot - ensure dot alignment */}
+              {/* LIVE indicator with red dot - restored */}
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
               <span className="text-xs text-red-500 font-medium">LIVE</span>
             </div>
-          </div>
-
-          {/* Volume Controls - centered between LIVE text and play button */}
-          <div className="hidden sm:flex items-center justify-center space-x-2 px-2">
-            <Volume2 className="text-gray-400 h-3 w-3" />
-            <div className="w-12 h-1 bg-gray-700 rounded-full relative">
-              <div 
-                className="h-1 rounded-full transition-all duration-150"
-                style={{ 
-                  width: `${volume * 100}%`,
-                  background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-                }}
-              ></div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume * 100}
-                onChange={handleVolumeChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
-            </div>
-            <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center">
-              {Math.round(volume * 100)}%
-            </span>
           </div>
 
           {/* Play Button */}
@@ -124,6 +99,31 @@ export default function StickyPlayer() {
               </svg>
             )}
           </Button>
+        </div>
+
+        {/* Volume Controls - moved to bottom of floating player */}
+        <div className="hidden sm:flex items-center justify-center space-x-2 px-2 pt-1">
+          <Volume2 className="text-gray-400 h-3 w-3" />
+          <div className="w-12 h-1 bg-gray-700 rounded-full relative">
+            <div 
+              className="h-1 rounded-full transition-all duration-150"
+              style={{ 
+                width: `${volume * 100}%`,
+                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+              }}
+            ></div>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={volume * 100}
+              onChange={handleVolumeChange}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            />
+          </div>
+          <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center">
+            {Math.round(volume * 100)}%
+          </span>
         </div>
       </div>
     </div>
