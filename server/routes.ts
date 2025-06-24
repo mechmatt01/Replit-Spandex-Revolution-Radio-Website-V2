@@ -42,6 +42,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Registration route
+  app.post('/api/auth/register', async (req, res) => {
+    try {
+      const validatedData = registerUserSchema.parse(req.body);
+      
+      // Generate unique user ID
+      const userId = require('crypto').randomBytes(5).toString('hex');
+      
+      // Hash password
+      const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+      
+      // Create user data
+      const userData = {
+        id: userId,
+        firstName: validatedData.firstName,
+        lastName: validatedData.lastName,
+        email: validatedData.email,
+        username: validatedData.username,
+        password: hashedPassword,
+        phoneNumber: validatedData.phoneNumber,
+        isActiveListening: false,
+        activeSubscription: false,
+        isEmailVerified: false,
+        isPhoneVerified: false,
+        showVerifiedBadge: false
+      };
+      
+      const user = await storage.createUser(userData);
+      
+      res.json({ 
+        message: 'User created successfully',
+        userId: user.id
+      });
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      if (error.code === '23505') {
+        return res.status(400).json({ message: 'Email or username already exists' });
+      }
+      res.status(400).json({ message: error.message || 'Registration failed' });
+    }
+  });
+
   
 
   

@@ -39,7 +39,24 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
   const colors = getColors();
   
   const handleGoogleAuth = () => {
-    window.location.href = '/api/auth/google';
+    window.location.href = '/api/login';
+  };
+  
+  // Phone number formatting
+  const formatPhoneNumber = (value: string) => {
+    const phoneNumber = value.replace(/[^\d]/g, '');
+    const phoneNumberLength = phoneNumber.length;
+    
+    if (phoneNumberLength < 4) return phoneNumber;
+    if (phoneNumberLength < 7) {
+      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+    }
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+  };
+  
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value);
+    setPhoneNumber(formatted);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,7 +71,24 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
           description: "You've successfully logged in.",
         });
       } else {
-        await register(email, password, username, firstName, lastName, phoneNumber);
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            phoneNumber: phoneNumber.replace(/[^\d]/g, ''),
+            username,
+            password
+          })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Registration failed');
+        }
+        
         toast({
           title: "Account created!",
           description: "Welcome to Spandex Salvation Radio.",
