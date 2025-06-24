@@ -57,10 +57,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const streamUrls = [
-    "https://24883.live.streamtheworld.com/KBFBFMAAC",
-    "https://14923.live.streamtheworld.com/KBFBFMAAC", 
-    "https://18243.live.streamtheworld.com/KBFBFMAAC",
-    "/api/radio-stream"
+    "/api/radio-stream",
+    "https://ice1.somafm.com/metal-128-mp3"
   ];
 
   const togglePlayback = async () => {
@@ -83,13 +81,34 @@ export function RadioProvider({ children }: { children: ReactNode }) {
             const url = streamUrls[i];
             console.log(`Attempting to play stream ${i + 1}/${streamUrls.length}: ${url}`);
             
+            // Reset audio element
+            audio.pause();
+            audio.currentTime = 0;
             audio.src = url;
             audio.load();
+            
+            // Wait for the audio to be ready
+            await new Promise((resolve, reject) => {
+              const timeout = setTimeout(() => {
+                reject(new Error('Stream loading timeout'));
+              }, 10000);
+              
+              audio.oncanplaythrough = () => {
+                clearTimeout(timeout);
+                resolve(true);
+              };
+              
+              audio.onerror = () => {
+                clearTimeout(timeout);
+                reject(new Error('Stream loading error'));
+              };
+            });
             
             const playPromise = audio.play();
             if (playPromise !== undefined) {
               await playPromise;
               streamWorked = true;
+              console.log(`Stream ${i + 1} working successfully`);
               break;
             }
           } catch (urlError: any) {

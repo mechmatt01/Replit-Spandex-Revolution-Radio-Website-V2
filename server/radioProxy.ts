@@ -5,13 +5,10 @@ export function setupRadioProxy(app: Express) {
   // Radio stream proxy to handle CORS and format issues
   app.get("/api/radio-stream", (req: Request, res: Response) => {
     const streamUrls = [
-      // Direct Hot 97 streaming URLs
+      // Working reliable streams
+      "https://ice1.somafm.com/metal-128-mp3",
       "https://24883.live.streamtheworld.com/KBFBFMAAC",
-      "https://14923.live.streamtheworld.com/KBFBFMAAC", 
-      "https://18243.live.streamtheworld.com/KBFBFMAAC",
-      "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM_SC",
-      // Fallback to working stream
-      "https://ice1.somafm.com/metal-128-mp3"
+      "https://14923.live.streamtheworld.com/KBFBFMAAC"
     ];
 
     let currentStreamIndex = 0;
@@ -25,7 +22,7 @@ export function setupRadioProxy(app: Express) {
       }
 
       const streamUrl = streamUrls[currentStreamIndex];
-      console.log(`Trying KPRS stream ${currentStreamIndex + 1}: ${streamUrl}`);
+      console.log(`Trying radio stream ${currentStreamIndex + 1}: ${streamUrl}`);
 
       const request = https.get(streamUrl, (response) => {
         if (response.statusCode === 200 && !res.headersSent) {
