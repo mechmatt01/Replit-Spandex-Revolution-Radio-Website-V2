@@ -48,20 +48,19 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
     title: "95.5 The Beat",
     artist: "Dallas Hip Hop & R&B",
-    album: "New York's Hip Hop & R&B",
+    album: "Dallas Hip Hop & R&B",
     artwork: ""
   });
-  const [stationName, setStationName] = useState("Hot 97");
+  const [stationName, setStationName] = useState("95.5 The Beat");
   const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const streamUrls = [
-    "/api/radio-stream",
-    "https://15123.live.streamtheworld.com/WQHTFMAAC_SC",
-    "https://15123.live.streamtheworld.com:443/WQHTFMAAC_SC",
-    "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC_SC",
-    "https://ice1.somafm.com/metal-128-mp3"
+    "https://24883.live.streamtheworld.com/KBFBFMAAC",
+    "https://14923.live.streamtheworld.com/KBFBFMAAC", 
+    "https://18243.live.streamtheworld.com/KBFBFMAAC",
+    "/api/radio-stream"
   ];
 
   const togglePlayback = async () => {

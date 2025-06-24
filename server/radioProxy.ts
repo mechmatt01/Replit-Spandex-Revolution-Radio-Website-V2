@@ -6,9 +6,9 @@ export function setupRadioProxy(app: Express) {
   app.get("/api/radio-stream", (req: Request, res: Response) => {
     const streamUrls = [
       // Direct Hot 97 streaming URLs
-      "https://15123.live.streamtheworld.com:443/WQHTFMAAC_SC",
-      "https://15123.live.streamtheworld.com/WQHTFMAAC_SC",
-      "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC_SC",
+      "https://24883.live.streamtheworld.com/KBFBFMAAC",
+      "https://14923.live.streamtheworld.com/KBFBFMAAC", 
+      "https://18243.live.streamtheworld.com/KBFBFMAAC",
       "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM_SC",
       // Fallback to working stream
       "https://ice1.somafm.com/metal-128-mp3"
