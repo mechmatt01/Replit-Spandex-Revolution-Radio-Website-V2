@@ -265,6 +265,7 @@ Required redirect URIs in Google Cloud Console:
 - June 23, 2025: Implemented Radio.co API integration with authentic live metadata fetching from Hot 97 stream, added comprehensive commercial detection with Clearbit logo support, fixed theme-aware button hover colors across all components, centered "VIEW ALL ARCHIVES" button in Schedule section, standardized dropdown menu Sign In/Sign Up button widths for consistent UI
 - June 23, 2025: Enhanced commercial detection for Hot 97's "In A Commercial" text with company name extraction, added Clearbit logo integration for major brands (McDonald's, Nike, Coca-Cola, etc.), implemented advertisement theming when commercials are detected, updated "VIEW ALL ARCHIVES" button to 25% screen width with proper centering
 - June 23, 2025: Implemented authentic 95.5 The Beat (KBFB) Dallas Hip Hop station with real track metadata, moved floating player to left side with clean design, positioned live chat icon on right side at matching height, fixed LIVE indicator to red pulsing dot, removed extra text elements, improved volume control spacing
+- June 24, 2025: Fixed desktop navigation layout - swapped auth buttons and theme selector positions, reduced auth button height to match navigation bar, restored sign in/sign up modal functionality with Replit Auth integration, changed "ON AIR IN" to "ON AIR IN..." with red pulsing animation matching countdown, fixed database schema issues for radio streaming, cleaned up JSX compilation errors
 
 ## User Preferences
 

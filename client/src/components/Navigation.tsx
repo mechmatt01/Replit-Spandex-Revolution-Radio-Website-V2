@@ -7,7 +7,7 @@ import MetalThemeSwitcher from "./MetalThemeSwitcher";
 import AuthModal from "./AuthModal";
 import VerificationModal from "./VerificationModal";
 import { useTheme } from "../contexts/ThemeContext";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "@/hooks/useAuth";
 import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
 
 export default function Navigation() {
@@ -31,7 +31,11 @@ export default function Navigation() {
   }, []);
 
   const { colors, gradient, toggleTheme, isDarkMode } = useTheme();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
+  
+  const logout = () => {
+    window.location.href = "/api/logout";
+  };
   const menuRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const brandTextRef = useRef<HTMLDivElement>(null);
