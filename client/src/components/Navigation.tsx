@@ -464,60 +464,70 @@ export default function Navigation() {
                 <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
                   {!isAuthenticated ? (
                     <>
-                      <button
-                        onClick={() => {
-                          setAuthMode("login");
-                          setIsAuthModalOpen(true);
-                          setIsOpen(false);
-                        }}
-                        className="flex items-center justify-center space-x-2 mx-4 py-2 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
-                        style={{
-                          color: colors.primary,
-                          backgroundColor: 'transparent',
-                          border: `1px solid ${colors.primary}`,
-                          width: 'calc(100% - 2rem)',
-                          minWidth: '140px'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary;
-                          e.currentTarget.style.color = 'white';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = colors.primary;
-                        }}
-                        role="menuitem"
-                        aria-label="Login"
-                      >
-                        <User size={16} />
-                        <span>LOGIN</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setAuthMode("register");
-                          setIsAuthModalOpen(true);
-                          setIsOpen(false);
-                        }}
-                        className="flex items-center justify-center space-x-2 mx-4 py-2 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
-                        style={{
-                          color: 'white',
-                          backgroundColor: colors.primary,
-                          border: `1px solid ${colors.primary}`,
-                          width: 'calc(100% - 2rem)',
-                          minWidth: '140px'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.secondary;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary;
-                        }}
-                        role="menuitem"
-                        aria-label="Sign up"
-                      >
-                        <UserPlus size={16} />
-                        <span>SIGN UP</span>
-                      </button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              setAuthMode("login");
+                              setIsAuthModalOpen(true);
+                              setIsOpen(false);
+                            }}
+                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                            style={{
+                              color: colors.text,
+                              backgroundColor: 'transparent',
+                              border: `1px solid ${colors.primary}`
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = colors.primary + '20';
+                              e.currentTarget.style.color = 'white';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.color = colors.text;
+                            }}
+                            role="menuitem"
+                            aria-label="Login"
+                          >
+                            <User size={16} style={{ color: colors.primary }} />
+                            <span>LOGIN</span>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          Sign in to your account
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              setAuthMode("register");
+                              setIsAuthModalOpen(true);
+                              setIsOpen(false);
+                            }}
+                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                            style={{
+                              color: 'white',
+                              backgroundColor: colors.primary,
+                              border: `1px solid ${colors.primary}`
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = colors.primary + 'CC';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = colors.primary;
+                            }}
+                            role="menuitem"
+                            aria-label="Sign up"
+                          >
+                            <UserPlus size={16} style={{ color: 'white' }} />
+                            <span>SIGN UP</span>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          Create a new account
+                        </TooltipContent>
+                      </Tooltip>
                     </>
                   ) : (
                     <div className="space-y-3">
