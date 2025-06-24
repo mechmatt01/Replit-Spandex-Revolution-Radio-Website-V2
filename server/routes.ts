@@ -388,49 +388,60 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
 }
 
 // Now Playing API with enhanced metadata and artwork
-  // Now Playing API - Shows actual stream info only
+  // Now Playing API - 95.5 The Beat (KBFB) Dallas Hip Hop Station
   app.get("/api/now-playing", async (req, res) => {
     try {
-      // Try to get real Hot 97 metadata first
-      try {
-        const hot97Response = await fetch('https://playerservices.streamtheworld.com/api/livestream?version=1.9&mount=WQHTFMAAC&lang=en', {
-          headers: {
-            'Accept': 'application/json',
-            'User-Agent': 'Hot97RadioApp/1.0'
-          },
-          signal: AbortSignal.timeout(3000)
-        });
+      // Get real track data from 95.5 The Beat Dallas (KBFB)
+      const beatResponse = await fetch('https://np.tritondigital.com/public/nowplaying?mountName=KBFBFMAAC&numberToFetch=1&eventType=track', {
+        headers: {
+          'Accept': 'application/xml',
+          'User-Agent': 'RadioApp/1.0'
+        },
+        signal: AbortSignal.timeout(3000)
+      });
+      
+      if (beatResponse.ok) {
+        const xmlData = await beatResponse.text();
         
-        if (hot97Response.ok) {
-          const hot97Data = await hot97Response.json();
-          const nowPlaying = hot97Data?.results?.livestream?.[0]?.cue;
+        // Parse XML to extract track info
+        const titleMatch = xmlData.match(/<property name="cue_title"><!\[CDATA\[(.*?)\]\]>/);
+        const artistMatch = xmlData.match(/<property name="track_artist_name"><!\[CDATA\[(.*?)\]\]>/);
+        
+        if (titleMatch && artistMatch) {
+          const title = titleMatch[1];
+          const artist = artistMatch[1];
           
-          if (nowPlaying && nowPlaying.title && nowPlaying.title !== "Hot 97") {
-            const nowPlayingData = {
-              id: 1,
-              title: nowPlaying.title,
-              artist: nowPlaying.artist || "Hot 97",
-              album: nowPlaying.album || "Hot 97 FM",
-              duration: nowPlaying.duration || null,
-              artwork: null, // We'll get artwork if track is valid
-              isAd: false,
-              createdAt: new Date(),
-              updatedAt: new Date()
-            };
-            
-            await storage.updateNowPlaying(nowPlayingData);
-            return res.json(nowPlayingData);
+          // Fetch artwork for the track
+          let artwork = null;
+          try {
+            artwork = await fetchiTunesArtwork(artist, title);
+          } catch (err) {
+            console.log('Artwork fetch failed:', err);
           }
+          
+          const nowPlayingData = {
+            id: 1,
+            title: title,
+            artist: artist,
+            album: "95.5 The Beat",
+            duration: null,
+            artwork: artwork,
+            isAd: false,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+          
+          await storage.updateNowPlaying(nowPlayingData);
+          console.log(`Now playing: "${title}" by ${artist}`);
+          return res.json(nowPlayingData);
         }
-      } catch (error) {
-        console.log('Hot 97 API unavailable');
       }
       
-      // If no real track data available, show station info only
+      // Fallback to station info
       const stationData = {
         id: 1,
-        title: "Hot 97",
-        artist: "New York's Hip Hop & R&B",
+        title: "95.5 The Beat",
+        artist: "Dallas Hip Hop & R&B",
         album: "Live Stream",
         duration: null,
         artwork: null,
@@ -442,7 +453,7 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
       await storage.updateNowPlaying(stationData);
       return res.json(stationData);
     } catch (error) {
-      console.error('Failed to fetch now playing:', error);
+      console.error('Failed to fetch track data:', error);
       return res.status(500).json({ error: 'Failed to fetch track data' });
     }
   });
