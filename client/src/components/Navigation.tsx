@@ -440,7 +440,11 @@ export default function Navigation() {
                     <Tooltip key={item.id}>
                       <TooltipTrigger asChild>
                         <button
-                          onClick={item.action}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            item.action();
+                          }}
                           type="button"
                           className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                           style={{ color: colors.text }}
@@ -487,10 +491,14 @@ export default function Navigation() {
                             onMouseEnter={(e) => {
                               e.currentTarget.style.backgroundColor = colors.primary + '20';
                               e.currentTarget.style.color = 'white';
+                              const icon = e.currentTarget.querySelector('svg');
+                              if (icon) icon.style.color = 'white';
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.backgroundColor = 'transparent';
                               e.currentTarget.style.color = colors.text;
+                              const icon = e.currentTarget.querySelector('svg');
+                              if (icon) icon.style.color = colors.primary;
                             }}
                             role="menuitem"
                             aria-label="Login"
@@ -521,12 +529,16 @@ export default function Navigation() {
                               border: `1px solid ${colors.primary}`
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary + '20';
+                              e.currentTarget.style.backgroundColor = colors.primary + 'CC';
                               e.currentTarget.style.color = 'white';
+                              const icon = e.currentTarget.querySelector('svg');
+                              if (icon) icon.style.color = 'white';
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.backgroundColor = colors.primary;
                               e.currentTarget.style.color = 'white';
+                              const icon = e.currentTarget.querySelector('svg');
+                              if (icon) icon.style.color = 'white';
                             }}
                             role="menuitem"
                             aria-label="Sign up"
