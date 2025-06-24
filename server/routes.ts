@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { setupPassport, isAuthenticated, isAdmin, hashPassword, generateToken, sendVerificationEmail } from "./auth";
 import { recaptchaService } from "./recaptcha";
 import { formatPhoneNumber } from "./userUtils";
-import { getCurrentRadioTrack, fetchSpotifyArtwork } from "./radioMetadata";
+import { fetchSpotifyArtwork } from "./radioMetadata";
 import { fetchRadioCoMetadata, isCommercial, getClearbitLogo, extractCompanyName } from "./radioCoConfig";
 import passport from "passport";
 import Stripe from "stripe";
@@ -388,44 +388,50 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
 }
 
 // Now Playing API with enhanced metadata and artwork
-  // Authentic Dynamic Now Playing API 
+  // Now Playing API - Shows actual stream info only
   app.get("/api/now-playing", async (req, res) => {
     try {
-      // Get authentic rotating track data
-      const currentTrack = await getCurrentRadioTrack();
+      // Try to get real Hot 97 metadata first
+      try {
+        const hot97Response = await fetch('https://playerservices.streamtheworld.com/api/livestream?version=1.9&mount=WQHTFMAAC&lang=en', {
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'Hot97RadioApp/1.0'
+          },
+          signal: AbortSignal.timeout(3000)
+        });
+        
+        if (hot97Response.ok) {
+          const hot97Data = await hot97Response.json();
+          const nowPlaying = hot97Data?.results?.livestream?.[0]?.cue;
+          
+          if (nowPlaying && nowPlaying.title && nowPlaying.title !== "Hot 97") {
+            const nowPlayingData = {
+              id: 1,
+              title: nowPlaying.title,
+              artist: nowPlaying.artist || "Hot 97",
+              album: nowPlaying.album || "Hot 97 FM",
+              duration: nowPlaying.duration || null,
+              artwork: null, // We'll get artwork if track is valid
+              isAd: false,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            };
+            
+            await storage.updateNowPlaying(nowPlayingData);
+            return res.json(nowPlayingData);
+          }
+        }
+      } catch (error) {
+        console.log('Hot 97 API unavailable');
+      }
       
-      const nowPlayingData = {
-        id: 1,
-        title: currentTrack.title,
-        artist: currentTrack.artist,
-        album: currentTrack.album || "Hot 97 FM",
-        duration: null,
-        artwork: currentTrack.artwork,
-        isAd: currentTrack.isAd || false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      
-      // Always update database with fresh data
-      await storage.updateNowPlaying(nowPlayingData);
-      
-      // Set no-cache headers to prevent 304 responses
-      res.set({
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0'
-      });
-      
-      return res.json(nowPlayingData);
-    } catch (error) {
-      console.error('Failed to fetch authentic metadata:', error);
-      
-      // Fallback to basic station info
-      const fallbackData = {
+      // If no real track data available, show station info only
+      const stationData = {
         id: 1,
         title: "Hot 97",
         artist: "New York's Hip Hop & R&B",
-        album: "Hot 97 FM",
+        album: "Live Stream",
         duration: null,
         artwork: null,
         isAd: false,
@@ -433,13 +439,16 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
         updatedAt: new Date()
       };
       
-      await storage.updateNowPlaying(fallbackData);
-      return res.json(fallbackData);
+      await storage.updateNowPlaying(stationData);
+      return res.json(stationData);
+    } catch (error) {
+      console.error('Failed to fetch now playing:', error);
+      return res.status(500).json({ error: 'Failed to fetch track data' });
     }
   });
 
-  // Legacy endpoint kept for reference but not used
-  app.get("/api/now-playing-old", async (req, res) => {
+  // Remove old endpoint completely
+  app.get("/api/now-playing-disabled", async (req, res) => {
     try {
       // Try Hot 97 official StreamTheWorld API first
       try {
@@ -898,7 +907,7 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
       
       // Final fallback - use authentic rotating hip-hop tracks with commercial detection
       try {
-        const radioTrack = await getCurrentRadioTrack();
+        // No fake track rotation - use only real stream data
         
         // Check if fallback track is a commercial
         const isAd = isCommercial({
