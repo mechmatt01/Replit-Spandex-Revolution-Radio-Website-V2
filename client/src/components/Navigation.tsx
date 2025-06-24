@@ -433,131 +433,40 @@ export default function Navigation() {
               maxWidth: 'calc(100vw - 2rem)'
             }}>
               <div className="px-4 py-6 space-y-3">
-                {/* Music Link */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        goToMusic();
-                        setIsOpen(false);
-                      }}
-                      type="button"
-                      className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                      style={{ color: colors.text }}
-                    >
-                      <Music size={20} style={{ color: colors.primary }} />
-                      <span>MUSIC</span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">Listen to live radio and music</TooltipContent>
-                </Tooltip>
-
-                {/* Schedule Link */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        goToHomeSection("schedule");
-                        setIsOpen(false);
-                      }}
-                      type="button"
-                      className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                      style={{ color: colors.text }}
-                    >
-                      <Calendar size={20} style={{ color: colors.primary }} />
-                      <span>SCHEDULE</span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">View show schedule and programming</TooltipContent>
-                </Tooltip>
-
-                {/* Submissions Link */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        goToHomeSection("submissions");
-                        setIsOpen(false);
-                      }}
-                      type="button"
-                      className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                      style={{ color: colors.text }}
-                    >
-                      <Send size={20} style={{ color: colors.primary }} />
-                      <span>SUBMISSIONS</span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">Submit song requests and feedback</TooltipContent>
-                </Tooltip>
-
-                {/* Contact Link */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        goToHomeSection("contact");
-                        setIsOpen(false);
-                      }}
-                      type="button"
-                      className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                      style={{ color: colors.text }}
-                    >
-                      <Phone size={20} style={{ color: colors.primary }} />
-                      <span>CONTACT</span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">Get in touch with the station</TooltipContent>
-                </Tooltip>
-
-                {/* Listen Map Link */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        goToHomeSection("map");
-                        setIsOpen(false);
-                      }}
-                      type="button"
-                      className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                      style={{ color: colors.text }}
-                    >
-                      <MapPin size={20} style={{ color: colors.primary }} />
-                      <span>LISTEN MAP</span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">View live listener map worldwide</TooltipContent>
-                </Tooltip>
-
-                {/* Features Link */}
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        goToHomeSection("features");
-                        setIsOpen(false);
-                      }}
-                      type="button"
-                      className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                      style={{ color: colors.text }}
-                    >
-                      <Heart size={20} style={{ color: colors.primary }} />
-                      <span>FEATURES</span>
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side="right">Explore premium features and subscription tiers</TooltipContent>
-                </Tooltip>
+                {/* Render all menu items in mobile */}
+                {menuItems.map((item) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <Tooltip key={item.id}>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            item.action();
+                          }}
+                          type="button"
+                          className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
+                          style={{ color: colors.text }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = colors.primary + '20';
+                            e.currentTarget.style.color = 'white';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = colors.text;
+                          }}
+                          role="menuitem"
+                          aria-label={`Navigate to ${item.label.toLowerCase()}`}
+                        >
+                          <IconComponent size={20} style={{ color: colors.primary }} />
+                          <span>{item.label}</span>
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">{item.tooltip}</TooltipContent>
+                    </Tooltip>
+                  );
+                })}
                 
                 <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
                   {!isAuthenticated ? (
