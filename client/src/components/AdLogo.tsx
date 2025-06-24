@@ -75,7 +75,12 @@ export default function AdLogo({ brandName, className }: AdLogoProps) {
             target.style.display = 'none';
             const parent = target.parentElement;
             if (parent) {
-              parent.innerHTML = `<span class="text-xs font-bold">${brandName.replace(' Commercial', '').substring(0, 8)}</span>`;
+              // Create span element safely to prevent XSS
+              const span = document.createElement('span');
+              span.className = 'text-xs font-bold';
+              span.textContent = brandName.replace(' Commercial', '').substring(0, 8);
+              parent.innerHTML = '';
+              parent.appendChild(span);
             }
           }}
         />

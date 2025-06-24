@@ -203,7 +203,7 @@ export default function Navigation() {
                       aria-label="More navigation options"
                       aria-expanded={isDropdownOpen}
                     >
-                      <Menu size={16} style={{ color: isDropdownOpen ? 'white' : colors.primary, marginLeft: '3px' }} />
+                      <Menu size={16} style={{ color: isDropdownOpen ? 'white' : colors.primary, marginLeft: '2px' }} />
                       <span>MORE</span>
                       <ChevronDown 
                         size={14} 
