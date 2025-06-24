@@ -217,23 +217,18 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         
         if (nowPlayingResponse.ok) {
           const nowPlayingData = await nowPlayingResponse.json();
+          console.log('Raw API response:', nowPlayingData);
           
-          // Create unique keys for comparison to prevent unnecessary updates
-          const newTrackKey = `${nowPlayingData.title || ''}-${nowPlayingData.artist || ''}-${nowPlayingData.album || ''}`;
-          const currentTrackKey = `${currentTrack.title}-${currentTrack.artist}-${currentTrack.album || ''}`;
+          // Always update the track data regardless of previous state to ensure freshness
+          const newTrack = {
+            title: nowPlayingData.title || currentStationName,
+            artist: nowPlayingData.artist || "New York's Hip Hop & R&B", 
+            album: nowPlayingData.album || "Hot 97 FM",
+            artwork: nowPlayingData.artwork || ""
+          };
           
-          // Only update if the track data has actually changed
-          if (newTrackKey !== currentTrackKey && nowPlayingData.title && nowPlayingData.artist) {
-            console.log('Track data changed, updating display');
-            
-            // Direct update without external API calls to prevent delays and unnecessary transitions
-            setCurrentTrack({
-              title: nowPlayingData.title || currentStationName,
-              artist: nowPlayingData.artist || "New York's Hip Hop & R&B",
-              album: nowPlayingData.album || "Hot 97 FM",
-              artwork: nowPlayingData.artwork || ""
-            });
-          }
+          console.log('Setting new track:', newTrack);
+          setCurrentTrack(newTrack);
         }
       } catch (error) {
         console.error('Failed to fetch track info:', error);

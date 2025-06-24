@@ -111,7 +111,9 @@ export default function RadioCoPlayer() {
           {isLoading ? (
             <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent" />
           ) : isPlaying ? (
-            <Pause className="h-6 w-6" />
+            <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+              <rect x="6" y="6" width="12" height="12" rx="1" />
+            </svg>
           ) : (
             <Play className="h-6 w-6" />
           )}
@@ -130,7 +132,7 @@ export default function RadioCoPlayer() {
           >
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
           </Button>
-          
+
           <Slider
             value={[isMuted ? 0 : volume * 100]}
             onValueChange={handleVolumeChange}
@@ -138,7 +140,7 @@ export default function RadioCoPlayer() {
             step={1}
             className="flex-1"
           />
-          
+
           <span className="text-[var(--color-primary)] text-sm font-semibold min-w-[40px]">
             {Math.round((isMuted ? 0 : volume) * 100)}%
           </span>
