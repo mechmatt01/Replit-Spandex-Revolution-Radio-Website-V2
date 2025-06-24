@@ -1049,16 +1049,16 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
   app.get("/api/radio-status", async (req, res) => {
     try {
       res.json({
-        station: "Hot 97",
-        streamUrl: "https://tunein.com/embed/player/s22162/",
+        station: "95.5 The Beat",
+        streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
         status: "live",
         format: "audio/mpeg",
         listeners: Math.floor(Math.random() * 5000) + 2000
       });
     } catch (error) {
       res.json({
-        station: "Hot 97", 
-        streamUrl: "https://tunein.com/embed/player/s22162/",
+        station: "95.5 The Beat", 
+        streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
         status: "live",
         format: "audio/mpeg"
       });

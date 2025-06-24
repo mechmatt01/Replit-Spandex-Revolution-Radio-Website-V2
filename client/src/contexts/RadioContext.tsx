@@ -46,8 +46,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
-    title: "Hot 97",
-    artist: "Live Stream",
+    title: "95.5 The Beat",
+    artist: "Dallas Hip Hop & R&B",
     album: "New York's Hip Hop & R&B",
     artwork: ""
   });
