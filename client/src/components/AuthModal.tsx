@@ -101,9 +101,12 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
         >
           {/* Custom Close Button */}
           <DialogPrimitive.Close 
-            className="absolute right-4 top-4 rounded-sm opacity-70 transition-all duration-200 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none p-1"
+            className="absolute right-4 top-4 rounded-full opacity-70 transition-all duration-200 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:pointer-events-none p-2"
             style={{
-              color: colors.text
+              color: colors.text,
+              backgroundColor: 'transparent',
+              border: 'none',
+              focusRingColor: colors.primary
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = colors.primary + '20';

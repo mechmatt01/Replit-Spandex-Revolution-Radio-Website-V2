@@ -128,7 +128,18 @@ export default function RadioCoPlayer() {
             onClick={toggleMute}
             variant="ghost"
             size="sm"
-            className="text-[var(--color-primary)] hover:text-[var(--color-secondary)] p-1"
+            className="p-1 transition-colors duration-200"
+            style={{
+              color: colors.primary
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = colors.secondary;
+              e.currentTarget.style.backgroundColor = colors.primary + '20';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = colors.primary;
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
           >
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
           </Button>

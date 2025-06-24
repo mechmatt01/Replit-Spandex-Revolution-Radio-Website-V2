@@ -80,8 +80,8 @@ export default function StickyPlayer() {
 
           {/* Player Controls */}
           <div className="flex items-center space-x-2">
-            {/* Volume Control */}
-            <div className="hidden sm:flex items-center space-x-2">
+            {/* Volume Control - positioned at LIVE text height */}
+            <div className="hidden sm:flex items-center space-x-2 absolute right-14 top-1/2 transform -translate-y-1/2 z-10">
               <Volume2 className="text-gray-400 h-3 w-3" />
               <div className="w-16 h-1 bg-gray-700 rounded-full relative">
                 <div 
