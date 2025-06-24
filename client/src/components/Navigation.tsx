@@ -33,7 +33,7 @@ export default function Navigation() {
 
   const { colors, gradient, toggleTheme, isDarkMode } = useTheme();
   const { user, isAuthenticated, isLoading } = useAuth();
-  
+
   const logout = () => {
     window.location.href = "/api/logout";
   };
@@ -65,13 +65,13 @@ export default function Navigation() {
       if (navRef.current) {
         const screenWidth = window.innerWidth;
         const navWidth = navRef.current.offsetWidth || 400; // fallback
-        
+
         // Calculate true center of screen
         const centerX = screenWidth / 2;
-        
+
         // Position nav so its center is at screen center
         const leftPosition = centerX - (navWidth / 2);
-        
+
         setNavPosition(leftPosition);
         console.log('Navigation centered at screen center:', leftPosition, 'px from left');
       }
@@ -80,9 +80,9 @@ export default function Navigation() {
     // Calculate on mount and resize
     calculateCenterPosition();
     const timer = setTimeout(calculateCenterPosition, 100);
-    
+
     window.addEventListener('resize', calculateCenterPosition);
-    
+
     return () => {
       clearTimeout(timer);
       window.removeEventListener('resize', calculateCenterPosition);
@@ -95,7 +95,7 @@ export default function Navigation() {
     // Close all menus first
     setIsOpen(false);
     setIsDropdownOpen(false);
-    
+
     // If we need to go to a different route
     if (route && route !== location) {
       setLocation(route);
@@ -224,7 +224,7 @@ export default function Navigation() {
                   </Tooltip>
                 );
               })}
-              
+
               {/* More Menu Dropdown */}
               <div className="relative" ref={dropdownRef}>
                 <Tooltip>
@@ -380,7 +380,7 @@ export default function Navigation() {
                       View profile and settings
                     </TooltipContent>
                   </Tooltip>
-                  
+
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
@@ -406,7 +406,7 @@ export default function Navigation() {
             <div className="xl:hidden flex items-center space-x-3">
               {/* Theme toggle - always visible in mobile */}
               <MetalThemeSwitcher />
-              
+
               {/* Mobile menu button */}
               <button
                 ref={menuRef}
@@ -463,20 +463,22 @@ export default function Navigation() {
                     </Tooltip>
                   );
                 })}
-                
+
                 <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
                   {!isAuthenticated ? (
                     <>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               setAuthMode("login");
                               setIsAuthModalOpen(true);
                               setIsOpen(false);
                             }}
                             type="button"
-                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
+                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer"
                             style={{
                               color: colors.text,
                               backgroundColor: 'transparent',
@@ -504,27 +506,27 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               setAuthMode("register");
                               setIsAuthModalOpen(true);
                               setIsOpen(false);
                             }}
                             type="button"
-                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
+                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer"
                             style={{
                               color: 'white',
                               backgroundColor: colors.primary,
                               border: `1px solid ${colors.primary}`
                             }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary;
+                              e.currentTarget.style.backgroundColor = colors.primary + '20';
                               e.currentTarget.style.color = 'white';
-                              e.currentTarget.style.transform = 'scale(1.02)';
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.backgroundColor = colors.primary;
                               e.currentTarget.style.color = 'white';
-                              e.currentTarget.style.transform = 'scale(1)';
                             }}
                             role="menuitem"
                             aria-label="Sign up"
@@ -609,14 +611,14 @@ export default function Navigation() {
           )}
         </div>
       </nav>
-      
+
       {/* Authentication Modal */}
       <AuthModal 
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)}
         initialMode={authMode}
       />
-      
+
       <VerificationModal />
     </TooltipProvider>
   );
