@@ -360,29 +360,6 @@ export default function Navigation() {
               </button>
             </div>
           </div>
-          </div>
-
-            {/* Mobile controls - Right side on mobile only */}
-            <div className="xl:hidden flex items-center space-x-3">
-              {/* Theme toggle - always visible in mobile */}
-              <MetalThemeSwitcher />
-              
-              {/* Mobile menu button */}
-              <button
-                ref={menuRef}
-                onClick={() => setIsOpen(!isOpen)}
-                className="p-2 rounded-lg transition-colors duration-200"
-                style={{ 
-                  backgroundColor: isOpen ? colors.primary : 'transparent',
-                  color: isOpen ? 'white' : colors.primary 
-                }}
-                aria-label="Toggle mobile menu"
-                aria-expanded={isOpen}
-              >
-                <Menu size={24} />
-              </button>
-            </div>
-          </div>
 
           {/* Mobile Navigation */}
           {isOpen && (
