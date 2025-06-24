@@ -138,6 +138,7 @@ Required redirect URIs in Google Cloud Console:
 3. Save the changes
 
 ## Changelog
+- June 24, 2025: Fixed all navigation bar links in desktop and mobile dropdown modes - added proper routing with wouter, enhanced mobile dropdown with hover tooltips matching desktop experience, fixed section navigation to work across different pages
 - June 24, 2025: Completed comprehensive authentication and streaming system testing - verified Replit Auth integration, input theme highlighting, phone number auto-formatting, user registration with proper database structure, radio streaming through proxy endpoint, and listening status tracking
 - June 21, 2025: Fixed countdown text color to display black in light mode and white in dark mode, implemented CSS Grid navigation centering for desktop and responsive flex layout for mobile to ensure proper positioning across all screen sizes
 - June 21, 2025: Final floating player layout - swapped play button to far right position, swapped LIVE indicator and "Live Stream" text positions, volume controls positioned before play button

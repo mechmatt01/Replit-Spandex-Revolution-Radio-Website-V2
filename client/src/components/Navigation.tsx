@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Menu, ChevronDown, User, Calendar, Music, Send, Phone, MapPin, Heart, UserPlus, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useLocation } from "wouter";
 import MetalThemeSwitcher from "./MetalThemeSwitcher";
 
 import AuthModal from "./AuthModal";
@@ -88,22 +89,41 @@ export default function Navigation() {
     };
   }, []);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+  const [location, setLocation] = useLocation();
+
+  const navigateToSection = (sectionId: string, route?: string) => {
     setIsOpen(false);
     setIsDropdownOpen(false);
+    
+    if (route && route !== location) {
+      // Navigate to different page first
+      setLocation(route);
+      // Wait for navigation then scroll to section
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    } else {
+      // Same page, just scroll
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      } else if (route) {
+        // Section doesn't exist on current page, navigate to correct page
+        setLocation(route);
+      }
+    }
   };
 
   const menuItems = [
-    { id: 1, label: "MUSIC", icon: Music, action: () => scrollToSection("music") },
-    { id: 2, label: "SCHEDULE", icon: Calendar, action: () => scrollToSection("schedule") },
-    { id: 3, label: "SUBMISSIONS", icon: Send, action: () => scrollToSection("submissions") },
-    { id: 4, label: "CONTACT", icon: Phone, action: () => scrollToSection("contact") },
-    { id: 5, label: "LISTEN MAP", icon: MapPin, action: () => scrollToSection("map") },
-    { id: 6, label: "FEATURES", icon: Heart, action: () => scrollToSection("features") },
+    { id: 1, label: "MUSIC", icon: Music, action: () => navigateToSection("music", "/music"), tooltip: "Listen to live radio and music" },
+    { id: 2, label: "SCHEDULE", icon: Calendar, action: () => navigateToSection("schedule", "/"), tooltip: "View show schedule and programming" },
+    { id: 3, label: "SUBMISSIONS", icon: Send, action: () => navigateToSection("submissions", "/"), tooltip: "Submit song requests and feedback" },
+    { id: 4, label: "CONTACT", icon: Phone, action: () => navigateToSection("contact", "/"), tooltip: "Get in touch with the station" },
+    { id: 5, label: "LISTEN MAP", icon: MapPin, action: () => navigateToSection("map", "/"), tooltip: "View live listener map worldwide" },
+    { id: 6, label: "FEATURES", icon: Heart, action: () => navigateToSection("features", "/"), tooltip: "Explore premium features and subscription tiers" },
   ];
 
   return (
@@ -171,7 +191,7 @@ export default function Navigation() {
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
-                      Navigate to {item.label.toLowerCase()} section
+                      {item.tooltip}
                     </TooltipContent>
                   </Tooltip>
                 );
@@ -234,28 +254,34 @@ export default function Navigation() {
                     {menuItems.slice(3).map((item) => {
                       const IconComponent = item.icon;
                       return (
-                        <button
-                          key={item.id}
-                          onClick={item.action}
-                          className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg"
-                          style={{ 
-                            color: colors.text,
-                            width: 'auto'
-                          }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = colors.primary + '20';
-                            e.currentTarget.style.color = 'white';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = colors.text;
-                          }}
-                          role="menuitem"
-                          aria-label={`Navigate to ${item.label.toLowerCase()}`}
-                        >
-                          <IconComponent size={16} style={{ color: colors.primary }} />
-                          <span>{item.label}</span>
-                        </button>
+                        <Tooltip key={item.id}>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={item.action}
+                              className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg"
+                              style={{ 
+                                color: colors.text,
+                                width: 'auto'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.backgroundColor = colors.primary + '20';
+                                e.currentTarget.style.color = 'white';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                                e.currentTarget.style.color = colors.text;
+                              }}
+                              role="menuitem"
+                              aria-label={`Navigate to ${item.label.toLowerCase()}`}
+                            >
+                              <IconComponent size={16} style={{ color: colors.primary }} />
+                              <span>{item.label}</span>
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom">
+                            {item.tooltip}
+                          </TooltipContent>
+                        </Tooltip>
                       );
                     })}
                   </div>
@@ -309,7 +335,7 @@ export default function Navigation() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
-                        onClick={() => window.location.href = "/profile"}
+                        onClick={() => setLocation("/profile")}
                         className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
                         style={{
                           backgroundColor: 'transparent',
@@ -379,25 +405,31 @@ export default function Navigation() {
                 {menuItems.map((item) => {
                   const IconComponent = item.icon;
                   return (
-                    <button
-                      key={item.id}
-                      onClick={item.action}
-                      className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
-                      style={{ color: colors.text }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
-                      }}
-                      role="menuitem"
-                      aria-label={`Navigate to ${item.label.toLowerCase()}`}
-                    >
-                      <IconComponent size={20} style={{ color: colors.primary }} />
-                      <span>{item.label}</span>
-                    </button>
+                    <Tooltip key={item.id}>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={item.action}
+                          className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
+                          style={{ color: colors.text }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = colors.primary + '20';
+                            e.currentTarget.style.color = 'white';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = colors.text;
+                          }}
+                          role="menuitem"
+                          aria-label={`Navigate to ${item.label.toLowerCase()}`}
+                        >
+                          <IconComponent size={20} style={{ color: colors.primary }} />
+                          <span>{item.label}</span>
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        {item.tooltip}
+                      </TooltipContent>
+                    </Tooltip>
                   );
                 })}
                 
@@ -461,25 +493,34 @@ export default function Navigation() {
                     </>
                   ) : (
                     <div className="space-y-3">
-                      <button
-                        onClick={() => {
-                          window.location.href = '/profile';
-                          setIsOpen(false);
-                        }}
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              setLocation('/profile');
+                              setIsOpen(false);
+                            }}
                         className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                         style={{
                           color: colors.text,
                           backgroundColor: colors.primary + '20'
                         }}
                       >
-                        <User size={16} style={{ color: colors.primary }} />
-                        <span>Profile</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          logout();
-                          setIsOpen(false);
-                        }}
+                            <User size={16} style={{ color: colors.primary }} />
+                            <span>Profile</span>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          View profile and settings
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              logout();
+                              setIsOpen(false);
+                            }}
                         className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap"
                         style={{
                           color: colors.primary,
@@ -487,9 +528,14 @@ export default function Navigation() {
                           border: `1px solid ${colors.primary}`
                         }}
                       >
-                        <LogOut size={16} style={{ color: colors.primary }} />
-                        <span>Sign Out</span>
-                      </button>
+                            <LogOut size={16} style={{ color: colors.primary }} />
+                            <span>Sign Out</span>
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                          Sign out of your account
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   )}
                 </div>
