@@ -31,6 +31,11 @@ export default function ChatButton() {
     setShowNotification(false);
   };
 
+  // Only show chat button for authenticated users with active subscriptions
+  if (!isAuthenticated || !hasPaidSubscription) {
+    return null;
+  }
+
   return (
     <>
       <Button

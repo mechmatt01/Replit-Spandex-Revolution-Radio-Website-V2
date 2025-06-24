@@ -43,7 +43,7 @@ export default function StickyPlayer() {
   }, [lastScrollY]);
 
   return (
-    <div className={`fixed bottom-4 left-4 bg-card/95 backdrop-blur-sm z-40 transition-all duration-500 rounded-2xl shadow-lg ${
+    <div className={`fixed bottom-20 left-4 bg-card/95 backdrop-blur-sm z-40 transition-all duration-500 rounded-2xl shadow-lg ${
       isVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-full opacity-0'
     }`} style={{ width: '320px', maxWidth: 'calc(100vw - 32px)' }}>
       <div className="w-full px-3 py-2 relative">
@@ -79,9 +79,9 @@ export default function StickyPlayer() {
               </div>
               
               {/* Volume Controls - inline with LIVE text, centered between LIVE and play button */}
-              <div className="hidden sm:flex items-center space-x-2">
+              <div className="hidden sm:flex items-center space-x-4">
                 <Volume2 className="text-gray-400 h-3 w-3" />
-                <div className="w-20 h-1 bg-gray-700 rounded-full relative">
+                <div className="w-16 h-1 bg-gray-700 rounded-full relative">
                   <div 
                     className="h-1 rounded-full transition-all duration-150"
                     style={{ 
