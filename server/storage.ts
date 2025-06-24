@@ -1,20 +1,34 @@
-import { 
-  User, InsertUser, RegisterUser, LoginUser, UpsertUser,
-  Submission, InsertSubmission,
-  Contact, InsertContact,
-  ShowSchedule, InsertShowSchedule,
-  PastShow,
-  NowPlaying, InsertNowPlaying,
-  StreamStats,
-  Subscription, InsertSubscription,
-  users, submissions, contacts, showSchedules, pastShows, nowPlaying, streamStats, subscriptions
+import {
+  users,
+  submissions,
+  contacts,
+  showSchedules,
+  pastShows,
+  nowPlaying,
+  streamStats,
+  subscriptions,
+  type User,
+  type UpsertUser,
+  type RegisterUser,
+  type Submission,
+  type InsertSubmission,
+  type Contact,
+  type InsertContact,
+  type ShowSchedule,
+  type InsertShowSchedule,
+  type PastShow,
+  type NowPlaying,
+  type InsertNowPlaying,
+  type StreamStats,
+  type Subscription,
+  type InsertSubscription,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
-import { generateUserId, generateUsername, formatPhoneNumber } from "./userUtils";
 
+// Interface for storage operations
 export interface IStorage {
-  // User management
+  // User operations
   // (IMPORTANT) these user operations are mandatory for Replit Auth.
   getUser(id: string): Promise<User | undefined>;
   upsertUser(user: UpsertUser): Promise<User>;
@@ -69,12 +83,30 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
-  // User management
-  async getUser(id: number): Promise<User | undefined> {
+  // User operations
+  // (IMPORTANT) these user operations are mandatory for Replit Auth.
+
+  async getUser(id: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    return user;
   }
 
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return user;
+  }
+
+  // Other operations
   async getUserByEmail(email: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.email, email));
     return user || undefined;
@@ -85,93 +117,45 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  async getUserByGoogleId(googleId: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.googleId, googleId));
-    return user || undefined;
-  }
-
-  async getUserByUserId(userId: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.userId, userId));
-    return user || undefined;
-  }
-
   async createUser(userData: RegisterUser): Promise<User> {
-    // Generate unique userId and format phone number
-    const userId = generateUserId();
-    const formattedPhone = userData.phoneNumber ? formatPhoneNumber(userData.phoneNumber) : null;
-
     const [user] = await db
       .insert(users)
       .values({
+        id: userData.username, // Use username as ID for now
         ...userData,
-        userId,
-        phoneNumber: formattedPhone,
       })
       .returning();
     return user;
   }
 
-  async upsertUser(userData: UpsertUser): Promise<User> {
-    // First try to find existing user by email, username, or Google ID
-    let existingUser;
-    if (userData.email) {
-      existingUser = await this.getUserByEmail(userData.email);
-    }
-    if (!existingUser && userData.username) {
-      existingUser = await this.getUserByUsername(userData.username);
-    }
-    if (!existingUser && userData.googleId) {
-      existingUser = await this.getUserByGoogleId(userData.googleId);
-    }
-
-    if (existingUser) {
-      // Update existing user
-      const [user] = await db
-        .update(users)
-        .set({
-          ...userData,
-          updatedAt: new Date(),
-        })
-        .where(eq(users.id, existingUser.id))
-        .returning();
-      return user;
-    } else {
-      // Create new user with generated userId and username
-      const userId = generateUserId();
-      const username = userData.username || generateUsername(userData.email, userData.firstName, userData.googleId);
-      const formattedPhone = userData.phoneNumber ? formatPhoneNumber(userData.phoneNumber) : null;
-
-      const [user] = await db
-        .insert(users)
-        .values({
-          ...userData,
-          userId,
-          username,
-          phoneNumber: formattedPhone,
-        })
-        .returning();
-      return user;
-    }
+  async updateUser(id: string, updates: Partial<User>): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
   }
 
-  async updateUserLocation(id: number, location: any): Promise<User | undefined> {
+  async updateUserLocation(id: string, location: any): Promise<User | undefined> {
     const [user] = await db
       .update(users)
       .set({ 
         location,
-        updatedAt: new Date(),
+        lastLocationUpdate: new Date(),
+        updatedAt: new Date() 
       })
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
   }
 
-  async updateListeningStatus(id: number, isActiveListening: boolean): Promise<User | undefined> {
+  async updateListeningStatus(id: string, isActiveListening: boolean): Promise<User | undefined> {
     const [user] = await db
       .update(users)
       .set({ 
         isActiveListening,
-        updatedAt: new Date(),
+        updatedAt: new Date() 
       })
       .where(eq(users.id, id))
       .returning();
@@ -179,76 +163,83 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActiveListeners(): Promise<User[]> {
-    return await db
-      .select()
-      .from(users)
-      .where(eq(users.isActiveListening, true));
+    return await db.select().from(users).where(eq(users.isActiveListening, true));
   }
 
   async verifyPhone(userId: string, code: string): Promise<User | undefined> {
-    // In a real implementation, you'd verify the code against stored verification data
-    // For now, we'll just mark the phone as verified
-    const [user] = await db
+    const [user] = await db.select().from(users).where(eq(users.id, userId));
+    
+    if (!user || user.phoneVerificationCode !== code) {
+      return undefined;
+    }
+
+    if (user.phoneVerificationExpires && user.phoneVerificationExpires < new Date()) {
+      return undefined;
+    }
+
+    const [updatedUser] = await db
       .update(users)
       .set({ 
         isPhoneVerified: true,
-        updatedAt: new Date(),
+        phoneVerificationCode: null,
+        phoneVerificationExpires: null,
+        updatedAt: new Date()
       })
-      .where(eq(users.userId, userId))
+      .where(eq(users.id, userId))
+      .returning();
+
+    return updatedUser || undefined;
+  }
+
+  async verifyEmail(token: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.emailVerificationToken, token));
+    
+    if (!user) {
+      return undefined;
+    }
+
+    if (user.emailVerificationExpires && user.emailVerificationExpires < new Date()) {
+      return undefined;
+    }
+
+    const [updatedUser] = await db
+      .update(users)
+      .set({ 
+        isEmailVerified: true,
+        emailVerificationToken: null,
+        emailVerificationExpires: null,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, user.id))
+      .returning();
+
+    return updatedUser || undefined;
+  }
+
+  async updatePassword(id: string, hashedPassword: string): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set({ 
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, id))
       .returning();
     return user || undefined;
   }
 
-  async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set({ ...updates, updatedAt: new Date() })
-      .where(eq(users.id, id))
-      .returning();
-    return user;
-  }
-
-  async verifyEmail(token: string): Promise<User | undefined> {
+  async updateStripeInfo(id: string, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined> {
     const [user] = await db
       .update(users)
       .set({ 
-        isEmailVerified: true, 
-        emailVerificationToken: null,
-        updatedAt: new Date()
-      })
-      .where(eq(users.emailVerificationToken, token))
-      .returning();
-    return user;
-  }
-
-  async updatePassword(id: number, hashedPassword: string): Promise<User | undefined> {
-    const [user] = await db
-      .update(users)
-      .set({ 
-        password: hashedPassword,
-        resetPasswordToken: null,
-        resetPasswordExpires: null,
-        updatedAt: new Date()
+        stripeCustomerId,
+        stripeSubscriptionId,
+        updatedAt: new Date() 
       })
       .where(eq(users.id, id))
       .returning();
-    return user;
+    return user || undefined;
   }
 
-  async updateStripeInfo(id: number, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined> {
-    const updates: Partial<User> = { updatedAt: new Date() };
-    if (stripeCustomerId) updates.stripeCustomerId = stripeCustomerId;
-    if (stripeSubscriptionId) updates.stripeSubscriptionId = stripeSubscriptionId;
-
-    const [user] = await db
-      .update(users)
-      .set(updates)
-      .where(eq(users.id, id))
-      .returning();
-    return user;
-  }
-
-  // Submissions
   async getSubmissions(): Promise<Submission[]> {
     return await db.select().from(submissions).orderBy(desc(submissions.createdAt));
   }
@@ -266,7 +257,7 @@ export class DatabaseStorage implements IStorage {
     return submission;
   }
 
-  async getUserSubmissions(userId: number): Promise<Submission[]> {
+  async getUserSubmissions(userId: string): Promise<Submission[]> {
     return await db.select().from(submissions).where(eq(submissions.userId, userId));
   }
 
@@ -279,7 +270,6 @@ export class DatabaseStorage implements IStorage {
     return submission || undefined;
   }
 
-  // Contacts
   async getContacts(): Promise<Contact[]> {
     return await db.select().from(contacts).orderBy(desc(contacts.createdAt));
   }
@@ -292,9 +282,8 @@ export class DatabaseStorage implements IStorage {
     return contact;
   }
 
-  // Show schedules
   async getShowSchedules(): Promise<ShowSchedule[]> {
-    return await db.select().from(showSchedules);
+    return await db.select().from(showSchedules).orderBy(showSchedules.startTime);
   }
 
   async getActiveShowSchedules(): Promise<ShowSchedule[]> {
@@ -318,70 +307,46 @@ export class DatabaseStorage implements IStorage {
     return schedule || undefined;
   }
 
-  // Past shows
   async getPastShows(): Promise<PastShow[]> {
-    return await db.select().from(pastShows).orderBy(desc(pastShows.date));
+    return await db.select().from(pastShows).orderBy(desc(pastShows.airDate));
   }
 
-  // Now playing
   async getCurrentTrack(): Promise<NowPlaying | undefined> {
-    const [track] = await db.select().from(nowPlaying).orderBy(desc(nowPlaying.updatedAt)).limit(1);
+    const [track] = await db.select().from(nowPlaying).orderBy(desc(nowPlaying.id)).limit(1);
     return track || undefined;
   }
 
   async updateNowPlaying(track: InsertNowPlaying): Promise<NowPlaying> {
-    // First, try to update the existing record
-    const existing = await this.getCurrentTrack();
-    if (existing) {
-      const [updated] = await db
-        .update(nowPlaying)
-        .set({ ...track, updatedAt: new Date() })
-        .where(eq(nowPlaying.id, existing.id))
-        .returning();
-      return updated;
-    } else {
-      // If no existing record, create a new one
-      const [created] = await db
-        .insert(nowPlaying)
-        .values(track)
-        .returning();
-      return created;
-    }
+    const [newTrack] = await db
+      .insert(nowPlaying)
+      .values(track)
+      .returning();
+    return newTrack;
   }
 
-  // Stream stats
   async getStreamStats(): Promise<StreamStats | undefined> {
-    const [stats] = await db.select().from(streamStats).orderBy(desc(streamStats.updatedAt)).limit(1);
+    const [stats] = await db.select().from(streamStats).orderBy(desc(streamStats.id)).limit(1);
     return stats || undefined;
   }
 
   async updateStreamStats(stats: Partial<StreamStats>): Promise<StreamStats> {
-    // First, try to update the existing record
-    const existing = await this.getStreamStats();
-    if (existing) {
-      const [updated] = await db
+    const existingStats = await this.getStreamStats();
+    if (existingStats) {
+      const [updatedStats] = await db
         .update(streamStats)
-        .set({ ...stats, updatedAt: new Date() })
-        .where(eq(streamStats.id, existing.id))
+        .set(stats)
+        .where(eq(streamStats.id, existingStats.id))
         .returning();
-      return updated;
+      return updatedStats;
     } else {
-      // If no existing record, create a new one
-      const [created] = await db
+      const [newStats] = await db
         .insert(streamStats)
-        .values({
-          currentListeners: 0,
-          totalListeners: 0,
-          countries: 0,
-          uptime: "99.9%",
-          ...stats
-        })
+        .values(stats as any)
         .returning();
-      return created;
+      return newStats;
     }
   }
 
-  // Subscriptions
   async getSubscriptions(): Promise<Subscription[]> {
     return await db.select().from(subscriptions).orderBy(desc(subscriptions.createdAt));
   }
@@ -394,57 +359,25 @@ export class DatabaseStorage implements IStorage {
     return subscription;
   }
 
-  async scheduleUserDeletion(id: number): Promise<User | undefined> {
-    const user = await this.getUser(id);
-    if (!user) return undefined;
+  async scheduleUserDeletion(id: string): Promise<User | undefined> {
+    const deletionDate = new Date();
+    deletionDate.setDate(deletionDate.getDate() + 30); // Schedule deletion 30 days from now
 
-    // Calculate deletion date based on subscription renewal
-    let deletionDate = new Date();
-    if (user.subscriptionStatus === 'active' && user.stripeSubscriptionId) {
-      // In real implementation, you'd get the next billing date from Stripe
-      // For now, we'll add 30 days as an example
-      deletionDate.setDate(deletionDate.getDate() + 30);
-    } else {
-      // If no active subscription, delete immediately (or after 7 days grace period)
-      deletionDate.setDate(deletionDate.getDate() + 7);
-    }
-
-    const [updatedUser] = await db
+    const [user] = await db
       .update(users)
       .set({ 
         accountDeletionScheduled: true,
         accountDeletionDate: deletionDate,
-        subscriptionStatus: 'cancelled', // Cancel subscription
-        updatedAt: new Date() 
+        updatedAt: new Date()
       })
       .where(eq(users.id, id))
       .returning();
 
-    // Schedule deletion in Firebase
-    if (updatedUser) {
-      try {
-        const { scheduleFirebaseDeletion } = await import("./firebase-admin.js");
-        await scheduleFirebaseDeletion(updatedUser.id.toString(), deletionDate);
-      } catch (error) {
-        console.error('Failed to schedule deletion in Firebase:', error);
-      }
-    }
-
-    return updatedUser || undefined;
+    return user || undefined;
   }
 
-  async deleteUserAccount(id: number): Promise<void> {
-    try {
-      // Delete from PostgreSQL
-      await db.delete(users).where(eq(users.id, id));
-
-      // Delete from Firebase
-      const { deleteFirebaseUser } = await import("./firebase-admin.js");
-      await deleteFirebaseUser(id.toString());
-    } catch (error) {
-      console.error('Failed to delete user account:', error);
-      throw error;
-    }
+  async deleteUserAccount(id: string): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
   }
 }
 

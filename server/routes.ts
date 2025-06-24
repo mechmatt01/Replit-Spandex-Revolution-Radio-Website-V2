@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupPassport, isAuthenticated, isAdmin, hashPassword, generateToken, sendVerificationEmail } from "./auth";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 import { recaptchaService } from "./recaptcha";
 import { formatPhoneNumber } from "./userUtils";
 import { fetchSpotifyArtwork } from "./radioMetadata";
@@ -24,109 +24,23 @@ const stripe = process.env.STRIPE_SECRET_KEY
   : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Setup authentication
-  setupPassport(app);
+  // Auth middleware
+  await setupAuth(app);
   
   // Setup radio stream proxy
   setupRadioProxy(app);
 
-  // Authentication endpoints
-  app.post('/api/auth/register', async (req, res) => {
+  // Auth routes
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const validatedData = registerUserSchema.parse(req.body);
-      
-      // Check if user already exists
-      const existingUser = await storage.getUserByEmail(validatedData.email);
-      if (existingUser) {
-        return res.status(400).json({ message: 'User already exists with this email' });
-      }
-
-      // Hash password
-      const hashedPassword = await hashPassword(validatedData.password);
-      
-      // Create user
-      const user = await storage.createUser({
-        ...validatedData,
-        password: hashedPassword,
-      });
-
-      // Set up session
-      req.login(user, (err) => {
-        if (err) {
-          return res.status(500).json({ message: 'Login failed after registration' });
-        }
-        
-        // Remove password from response
-        const { password: _, ...userWithoutPassword } = user;
-        res.status(201).json(userWithoutPassword);
-      });
-    } catch (error: any) {
-      console.error('Registration error:', error);
-      res.status(400).json({ message: error.message || 'Registration failed' });
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
     }
   });
-
-  app.post('/api/auth/login', async (req, res) => {
-    try {
-      const validatedData = loginUserSchema.parse(req.body);
-      
-      const user = await storage.getUserByEmail(validatedData.email);
-      if (!user) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-      // Verify password
-      const bcryptjs = require('bcryptjs');
-      const isValidPassword = await bcryptjs.compare(validatedData.password, user.password || '');
-      if (!isValidPassword) {
-        return res.status(401).json({ message: 'Invalid credentials' });
-      }
-
-      // Set up session
-      req.login(user, (err) => {
-        if (err) {
-          return res.status(500).json({ message: 'Login failed' });
-        }
-        
-        // Remove password from response
-        const { password: _, ...userWithoutPassword } = user;
-        res.json(userWithoutPassword);
-      });
-    } catch (error: any) {
-      console.error('Login error:', error);
-      res.status(400).json({ message: error.message || 'Login failed' });
-    }
-  });
-
-  app.post('/api/auth/logout', (req, res) => {
-    req.logout((err) => {
-      if (err) {
-        return res.status(500).json({ message: 'Logout failed' });
-      }
-      res.json({ message: 'Logged out successfully' });
-    });
-  });
-
-  app.get('/api/auth/user', isAuthenticated, (req, res) => {
-    if (req.user) {
-      const { password: _, ...userWithoutPassword } = req.user as User;
-      res.json(userWithoutPassword);
-    } else {
-      res.status(401).json({ message: 'Unauthorized' });
-    }
-  });
-
-  // Google OAuth routes
-  app.get('/api/auth/google', 
-    passport.authenticate('google', { scope: ['profile', 'email'] })
-  );
-
-  app.get('/api/auth/google/callback',
-    passport.authenticate('google', { 
-      successRedirect: '/',
-      failureRedirect: '/?auth=failed'
-    })
-  );
 
   
 
