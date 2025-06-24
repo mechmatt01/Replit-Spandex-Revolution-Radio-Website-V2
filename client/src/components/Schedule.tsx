@@ -108,8 +108,6 @@ export default function Schedule() {
 
           </div>
           )}
-          
-          </div>
         </div>
         
         {/* Centered View All Archives Button - Outside grid for full page centering */}
