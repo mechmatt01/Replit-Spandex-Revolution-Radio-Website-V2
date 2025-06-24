@@ -13,15 +13,16 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
+// User storage table.
+// (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
 export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  userId: text("user_id").notNull().unique(), // 10-character alphanumeric key
-  username: text("username").notNull().unique(),
-  email: text("email").notNull().unique(),
-  firstName: text("first_name").notNull(),
-  lastName: text("last_name").notNull(),
-  phoneNumber: text("phone_number"),
-  profileImageUrl: text("profile_image_url"),
+  id: varchar("id").primaryKey().notNull(),
+  email: varchar("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  username: varchar("username").unique(),
+  phoneNumber: varchar("phone_number"),
   location: jsonb("location"), // { lat: number, lng: number, address?: string }
   isActiveListening: boolean("is_active_listening").default(false),
   activeSubscription: boolean("active_subscription").default(false),
@@ -30,17 +31,15 @@ export const users = pgTable("users", {
   showVerifiedBadge: boolean("show_verified_badge").default(false),
   accountDeletionScheduled: boolean("account_deletion_scheduled").default(false),
   accountDeletionDate: timestamp("account_deletion_date"),
-  password: text("password"), // encrypted password, null for OAuth users
-  googleId: text("google_id"), // for Google OAuth
   isEmailVerified: boolean("is_email_verified").default(false),
-  emailVerificationToken: text("email_verification_token"),
-  resetPasswordToken: text("reset_password_token"),
+  emailVerificationToken: varchar("email_verification_token"),
+  resetPasswordToken: varchar("reset_password_token"),
   resetPasswordExpires: timestamp("reset_password_expires"),
   isAdmin: boolean("is_admin").default(false),
-  stripeCustomerId: text("stripe_customer_id"),
-  stripeSubscriptionId: text("stripe_subscription_id"),
-  subscriptionStatus: text("subscription_status"), // active, canceled, past_due, etc.
-  subscriptionTier: text("subscription_tier"), // rebel, legend, icon
+  stripeCustomerId: varchar("stripe_customer_id"),
+  stripeSubscriptionId: varchar("stripe_subscription_id"),
+  subscriptionStatus: varchar("subscription_status"), // active, canceled, past_due, etc.
+  subscriptionTier: varchar("subscription_tier"), // rebel, legend, icon
   lastLoginAt: timestamp("last_login_at"),
   isFirstLogin: boolean("is_first_login").default(true),
   createdAt: timestamp("created_at").defaultNow(),
@@ -49,7 +48,7 @@ export const users = pgTable("users", {
 
 export const submissions = pgTable("submissions", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
+  userId: varchar("user_id").references(() => users.id),
   songTitle: text("song_title").notNull(),
   artistName: text("artist_name").notNull(),
   albumTitle: text("album_title"),
@@ -121,19 +120,16 @@ export const subscriptions = pgTable("subscriptions", {
 
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
-  userId: true,
   username: true,
   email: true,
   firstName: true,
   lastName: true,
   phoneNumber: true,
-  password: true,
   emailVerificationToken: true,
 });
 
 export const registerUserSchema = insertUserSchema.extend({
   username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
   email: z.string().email("Please enter a valid email address"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -146,14 +142,11 @@ export const loginUserSchema = z.object({
 });
 
 export const upsertUserSchema = createInsertSchema(users).pick({
-  userId: true,
-  username: true,
+  id: true,
   email: true,
   firstName: true,
   lastName: true,
-  phoneNumber: true,
-  location: true,
-  googleId: true,
+  profileImageUrl: true,
 });
 
 export const updateLocationSchema = z.object({

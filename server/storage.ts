@@ -15,22 +15,22 @@ import { generateUserId, generateUsername, formatPhoneNumber } from "./userUtils
 
 export interface IStorage {
   // User management
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUserId(userId: string): Promise<User | undefined>;
+  // (IMPORTANT) these user operations are mandatory for Replit Auth.
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
+  // Other operations
   getUserByEmail(email: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
-  getUserByGoogleId(googleId: string): Promise<User | undefined>;
   createUser(user: RegisterUser): Promise<User>;
-  upsertUser(user: UpsertUser): Promise<User>;
-  updateUser(id: number, updates: Partial<User>): Promise<User | undefined>;
-  updateUserLocation(id: number, location: any): Promise<User | undefined>;
-  updateListeningStatus(id: number, isActiveListening: boolean): Promise<User | undefined>;
+  updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
+  updateUserLocation(id: string, location: any): Promise<User | undefined>;
+  updateListeningStatus(id: string, isActiveListening: boolean): Promise<User | undefined>;
   getActiveListeners(): Promise<User[]>;
   verifyEmail(token: string): Promise<User | undefined>;
   verifyPhone(userId: string, code: string): Promise<User | undefined>;
-  updatePassword(id: number, hashedPassword: string): Promise<User | undefined>;
-  updateStripeInfo(id: number, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined>;
-  getUserSubmissions(userId: number): Promise<Submission[]>;
+  updatePassword(id: string, hashedPassword: string): Promise<User | undefined>;
+  updateStripeInfo(id: string, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined>;
+  getUserSubmissions(userId: string): Promise<Submission[]>;
 
   // Submissions
   getSubmissions(): Promise<Submission[]>;
@@ -64,8 +64,8 @@ export interface IStorage {
   createSubscription(subscription: InsertSubscription): Promise<Subscription>;
 
   // Account deletion
-  scheduleUserDeletion(id: number): Promise<User | undefined>;
-  deleteUserAccount(id: number): Promise<void>;
+  scheduleUserDeletion(id: string): Promise<User | undefined>;
+  deleteUserAccount(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
