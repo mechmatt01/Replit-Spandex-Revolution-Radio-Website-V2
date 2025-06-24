@@ -11,6 +11,7 @@ import Stripe from "stripe";
 import bcrypt from "bcryptjs";
 import { registerUserSchema, loginUserSchema } from "@shared/schema";
 import https from "https";
+import crypto from "crypto";
 import { setupRadioProxy } from "./radioProxy";
 import type { User } from "@shared/schema";
 
@@ -48,7 +49,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = registerUserSchema.parse(req.body);
       
       // Generate unique user ID
-      const userId = require('crypto').randomBytes(5).toString('hex');
+      const userId = crypto.randomBytes(5).toString('hex');
       
       // Hash password
       const hashedPassword = await bcrypt.hash(validatedData.password, 10);
