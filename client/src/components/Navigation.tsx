@@ -265,40 +265,45 @@ export default function Navigation() {
 
             {/* Right side controls - Fixed to far right */}
             <div className="flex items-center space-x-3 absolute right-4 top-1/2 transform -translate-y-1/2 hidden xl:flex">
+              {/* Theme toggle */}
+              <MetalThemeSwitcher />
+
               {/* Authentication buttons */}
               {!isAuthenticated ? (
                 <>
                   <button
                     onClick={() => {
-                      setAuthMode("login");
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105"
-                    style={{
-                      color: colors.text,
-                      border: `1px solid ${colors.primary}`,
-                      backgroundColor: 'transparent',
-                      height: '40px',
-                      width: '80px'
-                    }}
-                  >
-                    Sign In
-                  </button>
-                  <button
-                    onClick={() => {
                       setAuthMode("register");
                       setIsAuthModalOpen(true);
                     }}
-                    className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105"
+                    className="px-4 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105"
                     style={{
                       backgroundColor: colors.primary,
                       color: 'white',
                       border: `1px solid ${colors.primary}`,
-                      height: '40px',
-                      width: '80px'
+                      height: 'auto',
+                      width: '80px',
+                      padding: '2px 16px'
                     }}
                   >
                     Sign Up
+                  </button>
+                  <button
+                    onClick={() => {
+                      setAuthMode("login");
+                      setIsAuthModalOpen(true);
+                    }}
+                    className="px-4 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105"
+                    style={{
+                      color: colors.text,
+                      border: `1px solid ${colors.primary}`,
+                      backgroundColor: 'transparent',
+                      height: 'auto',
+                      width: '80px',
+                      padding: '2px 16px'
+                    }}
+                  >
+                    Sign In
                   </button>
                 </>
               ) : (
@@ -340,9 +345,6 @@ export default function Navigation() {
                   </Tooltip>
                 </div>
               )}
-
-              {/* Theme toggle */}
-              <MetalThemeSwitcher />
             </div>
 
             {/* Mobile controls - Right side on mobile only */}

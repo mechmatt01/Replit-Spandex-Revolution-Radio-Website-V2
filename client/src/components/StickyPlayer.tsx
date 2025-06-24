@@ -43,7 +43,7 @@ export default function StickyPlayer() {
   }, [lastScrollY]);
 
   return (
-    <div className={`fixed bottom-20 left-4 bg-card/95 backdrop-blur-sm z-40 transition-all duration-500 rounded-2xl shadow-lg ${
+    <div className={`fixed bottom-2 left-4 bg-card/95 backdrop-blur-sm z-40 transition-all duration-500 rounded-2xl shadow-lg ${
       isVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-full opacity-0'
     }`} style={{ width: '320px', maxWidth: 'calc(100vw - 32px)' }}>
       <div className="w-full px-3 py-2 relative">
