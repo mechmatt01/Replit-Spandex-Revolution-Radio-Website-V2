@@ -123,7 +123,7 @@ export default function RadioCoPlayer() {
         </Button>
 
         {/* Volume Controls */}
-        <div className="flex items-center justify-center gap-1 w-full max-w-[250px]">
+        <div className="flex items-center justify-center gap-3 w-full max-w-[250px]">
           <Button
             onClick={toggleMute}
             variant="ghost"

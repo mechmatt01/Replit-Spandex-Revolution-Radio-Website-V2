@@ -89,9 +89,9 @@ export default function Hero() {
           </div>
         </div>
 
-        <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto">
-          Bringing you the best of old-school metal with legendary bands like Skid Row, Twisted Sister, and more.
-          <br />
+        <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto text-center">
+          Bringing you the best of old-school metal with legendary<br />
+          bands like Skid Row, Twisted Sister, and more.<br />
           Join the hairspray rebellion!
         </p>
 

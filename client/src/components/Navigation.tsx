@@ -3,7 +3,7 @@ import { Menu, ChevronDown, User, Calendar, Music, Send, Phone, MapPin, Heart, U
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import MetalThemeSwitcher from "./MetalThemeSwitcher";
-import AuthModal from "./AuthModal";
+
 import VerificationModal from "./VerificationModal";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,15 +14,7 @@ export default function Navigation() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
 
-  useEffect(() => {
-    const handleOpenAuthModal = (event: CustomEvent) => {
-      setAuthMode(event.detail?.mode || "login");
-      setIsAuthModalOpen(true);
-    };
 
-    window.addEventListener('openAuthModal', handleOpenAuthModal as EventListener);
-    return () => window.removeEventListener('openAuthModal', handleOpenAuthModal as EventListener);
-  }, []);
 
 
   const { colors, gradient, toggleTheme, isDarkMode } = useTheme();
