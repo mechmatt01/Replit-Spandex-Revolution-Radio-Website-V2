@@ -437,21 +437,15 @@ export default function Navigation() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         goToMusic();
                         setIsOpen(false);
                       }}
                       type="button"
                       className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                       style={{ color: colors.text }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
-                      }}
                     >
                       <Music size={20} style={{ color: colors.primary }} />
                       <span>MUSIC</span>
@@ -464,21 +458,15 @@ export default function Navigation() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         goToHomeSection("schedule");
                         setIsOpen(false);
                       }}
                       type="button"
                       className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                       style={{ color: colors.text }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
-                      }}
                     >
                       <Calendar size={20} style={{ color: colors.primary }} />
                       <span>SCHEDULE</span>
@@ -491,21 +479,15 @@ export default function Navigation() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         goToHomeSection("submissions");
                         setIsOpen(false);
                       }}
                       type="button"
                       className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                       style={{ color: colors.text }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
-                      }}
                     >
                       <Send size={20} style={{ color: colors.primary }} />
                       <span>SUBMISSIONS</span>
@@ -518,21 +500,15 @@ export default function Navigation() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         goToHomeSection("contact");
                         setIsOpen(false);
                       }}
                       type="button"
                       className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                       style={{ color: colors.text }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
-                      }}
                     >
                       <Phone size={20} style={{ color: colors.primary }} />
                       <span>CONTACT</span>
@@ -545,21 +521,15 @@ export default function Navigation() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         goToHomeSection("map");
                         setIsOpen(false);
                       }}
                       type="button"
                       className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                       style={{ color: colors.text }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
-                      }}
                     >
                       <MapPin size={20} style={{ color: colors.primary }} />
                       <span>LISTEN MAP</span>
@@ -572,21 +542,15 @@ export default function Navigation() {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
                         goToHomeSection("features");
                         setIsOpen(false);
                       }}
                       type="button"
                       className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                       style={{ color: colors.text }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
-                      }}
                     >
                       <Heart size={20} style={{ color: colors.primary }} />
                       <span>FEATURES</span>
@@ -601,7 +565,9 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               setAuthMode("login");
                               setIsAuthModalOpen(true);
                               setIsOpen(false);
@@ -612,14 +578,6 @@ export default function Navigation() {
                               color: colors.text,
                               backgroundColor: 'transparent',
                               border: `1px solid ${colors.primary}`
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary + '20';
-                              e.currentTarget.style.color = 'white';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
-                              e.currentTarget.style.color = colors.text;
                             }}
                             role="menuitem"
                             aria-label="Login"
@@ -635,7 +593,9 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
                               setAuthMode("register");
                               setIsAuthModalOpen(true);
                               setIsOpen(false);
@@ -646,12 +606,6 @@ export default function Navigation() {
                               color: 'white',
                               backgroundColor: colors.primary,
                               border: `1px solid ${colors.primary}`
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary + 'CC';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary;
                             }}
                             role="menuitem"
                             aria-label="Sign up"
@@ -684,7 +638,7 @@ export default function Navigation() {
                             }}
                           >
                             <User size={16} style={{ color: colors.primary }} />
-                            <span>Profile</span>
+                            <span>PROFILE</span>
                           </button>
                         </TooltipTrigger>
                         <TooltipContent side="right">
@@ -709,7 +663,7 @@ export default function Navigation() {
                             }}
                           >
                             <LogOut size={16} style={{ color: colors.primary }} />
-                            <span>Sign Out</span>
+                            <span>SIGN OUT</span>
                           </button>
                         </TooltipTrigger>
                         <TooltipContent side="right">
