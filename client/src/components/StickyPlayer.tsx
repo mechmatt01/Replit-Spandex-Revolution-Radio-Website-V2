@@ -61,7 +61,7 @@ export default function StickyPlayer() {
           </div>
 
           {/* Track Info */}
-          <div className={`min-w-0 flex-1 mx-3 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+          <div className={`min-w-0 flex-1 mr-28 ml-3 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <div className="w-full">
               <ScrollingText 
                 text={currentTrack.title !== stationName ? currentTrack.title : stationName}
@@ -78,32 +78,33 @@ export default function StickyPlayer() {
             </div>
           </div>
 
+          {/* Volume Controls - positioned at LIVE text height */}
+          <div className="hidden sm:flex items-center space-x-2 absolute right-14 top-6 z-10">
+            <Volume2 className="text-gray-400 h-3 w-3" />
+            <div className="w-16 h-1 bg-gray-700 rounded-full relative">
+              <div 
+                className="h-1 rounded-full transition-all duration-150"
+                style={{ 
+                  width: `${volume * 100}%`,
+                  background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                }}
+              ></div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={volume * 100}
+                onChange={handleVolumeChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+            </div>
+            <span className="text-xs text-gray-400 font-medium min-w-[24px] text-center">
+              {Math.round(volume * 100)}%
+            </span>
+          </div>
+
           {/* Player Controls */}
           <div className="flex items-center space-x-2">
-            {/* Volume Control - positioned at LIVE text height */}
-            <div className="hidden sm:flex items-center space-x-2 absolute right-14 top-1/2 transform -translate-y-1/2 z-10">
-              <Volume2 className="text-gray-400 h-3 w-3" />
-              <div className="w-16 h-1 bg-gray-700 rounded-full relative">
-                <div 
-                  className="h-1 rounded-full transition-all duration-150"
-                  style={{ 
-                    width: `${volume * 100}%`,
-                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-                  }}
-                ></div>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={volume * 100}
-                  onChange={handleVolumeChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-              </div>
-              <span className="text-xs text-gray-400 font-medium min-w-[24px] text-center">
-                {Math.round(volume * 100)}%
-              </span>
-            </div>
 
             {/* Play Button */}
             <Button
