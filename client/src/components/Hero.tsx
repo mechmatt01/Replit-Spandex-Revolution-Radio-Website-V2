@@ -67,7 +67,7 @@ export default function Hero() {
         <div className="mt-8 mb-8">
           <div className="flex items-center justify-center gap-3 mb-1">
             <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-black dark:text-white font-bold text-3xl">ON AIR IN</span>
+            <span className="text-red-500 font-bold text-3xl animate-pulse">ON AIR IN...</span>
           </div>
           <div className="flex justify-center space-x-4 text-center">
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">

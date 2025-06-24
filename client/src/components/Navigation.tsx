@@ -334,10 +334,10 @@ export default function Navigation() {
                   </Tooltip>
                 </div>
               )}
-              <div className="hidden xl:flex items-center space-x-3">
-                {!isAuthenticated ? (
-                  <></>
-                ) : (
+
+              {/* Theme toggle */}
+              <MetalThemeSwitcher />
+            </div>
                   <div className="flex items-center space-x-3">
                     <Tooltip>
                       <TooltipTrigger asChild>
