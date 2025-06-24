@@ -98,7 +98,7 @@ export default function StickyPlayer() {
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
                 </div>
-                <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center ml-1">
+                <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center ml-1 pl-[18px] pr-[18px] pt-[0px] pb-[0px] mt-[0px] mb-[0px]">
                   {Math.round(volume * 100)}%
                 </span>
               </div>
