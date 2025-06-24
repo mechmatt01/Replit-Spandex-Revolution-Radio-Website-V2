@@ -46,7 +46,7 @@ export default function StickyPlayer() {
     <div className={`fixed bottom-4 left-4 bg-card/95 backdrop-blur-sm z-40 transition-all duration-500 rounded-2xl shadow-lg ${
       isVisible ? 'transform translate-y-0 opacity-100' : 'transform translate-y-full opacity-0'
     }`} style={{ width: '320px', maxWidth: 'calc(100vw - 32px)' }}>
-      <div className="w-full px-3 py-2">
+      <div className="w-full px-3 py-2 relative">
         {/* Compact floating player layout */}
         <div className="flex items-center justify-between">
           {/* Album Art */}
@@ -60,8 +60,8 @@ export default function StickyPlayer() {
             />
           </div>
 
-          {/* Track Info */}
-          <div className={`min-w-0 flex-1 mr-28 ml-3 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+          {/* Track Info with increased width */}
+          <div className={`min-w-0 flex-1 ml-3 mr-20 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <div className="w-full">
               <ScrollingText 
                 text={currentTrack.title !== stationName ? currentTrack.title : stationName}
@@ -75,59 +75,55 @@ export default function StickyPlayer() {
               {/* LIVE indicator with red dot */}
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
               <span className="text-xs text-red-500 font-medium">LIVE</span>
+              
+              {/* Volume Controls - positioned inline with LIVE indicator */}
+              <div className="hidden sm:flex items-center space-x-2 ml-4">
+                <Volume2 className="text-gray-400 h-3 w-3" />
+                <div className="w-12 h-1 bg-gray-700 rounded-full relative">
+                  <div 
+                    className="h-1 rounded-full transition-all duration-150"
+                    style={{ 
+                      width: `${volume * 100}%`,
+                      background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                    }}
+                  ></div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={volume * 100}
+                    onChange={handleVolumeChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                </div>
+                <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center">
+                  {Math.round(volume * 100)}%
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Volume Controls - positioned at LIVE text height */}
-          <div className="hidden sm:flex items-center space-x-2 absolute right-14 top-6 z-10">
-            <Volume2 className="text-gray-400 h-3 w-3" />
-            <div className="w-16 h-1 bg-gray-700 rounded-full relative">
-              <div 
-                className="h-1 rounded-full transition-all duration-150"
-                style={{ 
-                  width: `${volume * 100}%`,
-                  background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-                }}
-              ></div>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume * 100}
-                onChange={handleVolumeChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
-            </div>
-            <span className="text-xs text-gray-400 font-medium min-w-[24px] text-center">
-              {Math.round(volume * 100)}%
-            </span>
-          </div>
-
-          {/* Player Controls */}
-          <div className="flex items-center space-x-2">
-
-            {/* Play Button */}
-            <Button
-              onClick={togglePlayback}
-              className="text-white w-10 h-10 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl"
-              style={{
-                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-                focusRingColor: colors.primary,
-                boxShadow: `0 4px 20px ${colors.primary}60`
-              }}
-              aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
-            >
-              {isPlaying ? (
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                  <rect x="6" y="6" width="12" height="12" rx="1" />
-                </svg>
-              ) : (
-                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                  <polygon points="7,4 20,12 7,20" />
-                </svg>
-              )}
-            </Button>
-          </div>
+          {/* Play Button */}
+          <Button
+            onClick={togglePlayback}
+            className="text-white w-10 h-10 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl"
+            style={{
+              background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+              focusRingColor: colors.primary,
+              boxShadow: `0 4px 20px ${colors.primary}60`
+            }}
+            aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
+          >
+            {isPlaying ? (
+              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="6" y="6" width="12" height="12" rx="1" />
+              </svg>
+            ) : (
+              <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                <polygon points="7,4 20,12 7,20" />
+              </svg>
+            )}
+          </Button>
         </div>
       </div>
     </div>
