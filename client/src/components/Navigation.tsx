@@ -360,6 +360,7 @@ export default function Navigation() {
               </button>
             </div>
           </div>
+          </div>
 
             {/* Mobile controls - Right side on mobile only */}
             <div className="xl:hidden flex items-center space-x-3">
