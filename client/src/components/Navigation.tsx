@@ -264,49 +264,41 @@ export default function Navigation() {
             </div>
 
             {/* Right side controls - Fixed to far right */}
-            <div className="flex items-center space-x-3 absolute right-4 top-1/2 transform -translate-y-1/2 hidden xl:flex">
+            <div className="flex items-center space-x-1 absolute right-4 top-1/2 transform -translate-y-1/2 hidden xl:flex">
               {/* Authentication buttons */}
               {!isAuthenticated ? (
-                <>
+                <div className="flex items-center gap-1">
                   <button
                     onClick={() => {
                       setAuthMode("register");
                       setIsAuthModalOpen(true);
                     }}
-                    className="px-4 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
+                    className="px-6 py-2 text-base font-bold rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
                     style={{
                       backgroundColor: colors.primary,
                       color: 'white',
                       border: `1px solid ${colors.primary}`,
-                      height: 'auto',
-                      width: '80px',
-                      padding: '0.72px 16px',
-                      transform: 'scale(0.6)',
-                      transformOrigin: 'center'
+                      width: '120px'
                     }}
                   >
-                    Sign Up
+                    SIGN UP
                   </button>
                   <button
                     onClick={() => {
                       setAuthMode("login");
                       setIsAuthModalOpen(true);
                     }}
-                    className="px-4 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105"
+                    className="px-6 py-2 text-base font-bold rounded-lg transition-all duration-200 hover:scale-105"
                     style={{
                       color: colors.text,
                       border: `1px solid ${colors.primary}`,
                       backgroundColor: 'transparent',
-                      height: 'auto',
-                      width: '80px',
-                      padding: '0.72px 16px',
-                      transform: 'scale(0.6)',
-                      transformOrigin: 'center'
+                      width: '120px'
                     }}
                   >
-                    Login
+                    LOGIN
                   </button>
-                </>
+                </div>
               ) : (
                 <div className="flex items-center space-x-2">
                   <Tooltip>
