@@ -273,12 +273,13 @@ export default function Navigation() {
                       setAuthMode("login");
                       setIsAuthModalOpen(true);
                     }}
-                    className="px-2 py-1 text-sm font-medium rounded-md transition-all duration-200 hover:scale-105"
+                    className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105"
                     style={{
                       color: colors.text,
                       border: `1px solid ${colors.primary}`,
                       backgroundColor: 'transparent',
-                      height: '32px'
+                      height: '40px',
+                      width: '80px'
                     }}
                   >
                     Sign In
@@ -288,12 +289,13 @@ export default function Navigation() {
                       setAuthMode("register");
                       setIsAuthModalOpen(true);
                     }}
-                    className="px-2 py-1 text-sm font-medium rounded-md transition-all duration-200 hover:scale-105"
+                    className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105"
                     style={{
                       backgroundColor: colors.primary,
                       color: 'white',
                       border: `1px solid ${colors.primary}`,
-                      height: '32px'
+                      height: '40px',
+                      width: '80px'
                     }}
                   >
                     Sign Up
