@@ -91,14 +91,26 @@ let lastUpdateTime = Date.now();
 export async function getCurrentRadioTrack(): Promise<TrackMetadata> {
   const now = Date.now();
   
-  // Update track every 30 seconds for testing, then every 2-3 minutes for realistic rotation
-  const updateInterval = 30000; // 30 seconds for testing
+  // Update track every 20 seconds for testing - fast rotation to see changes
+  const updateInterval = 20000; // 20 seconds for testing
   
-  if (now - lastUpdateTime > updateInterval) {
+  if (now - lastUpdateTime > updateInterval || lastUpdateTime === 0) {
     currentTrackIndex = (currentTrackIndex + 1) % authenticHipHopTracks.length;
     lastUpdateTime = now;
     console.log(`🎵 Track rotation: Now playing "${authenticHipHopTracks[currentTrackIndex].title}" by ${authenticHipHopTracks[currentTrackIndex].artist}`);
     console.log(`🎨 Artwork URL: ${authenticHipHopTracks[currentTrackIndex].artwork}`);
+  }
+  
+  // Occasionally show commercials (8% chance)
+  if (Math.random() < 0.08) {
+    console.log('🔊 Commercial break triggered');
+    return {
+      title: "Commercial Break",
+      artist: "Hot 97",
+      album: "Advertisement",
+      artwork: "advertisement",
+      isAd: true
+    };
   }
   
   return authenticHipHopTracks[currentTrackIndex];
