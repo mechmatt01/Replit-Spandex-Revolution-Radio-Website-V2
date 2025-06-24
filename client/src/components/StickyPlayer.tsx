@@ -71,10 +71,37 @@ export default function StickyPlayer() {
                 backgroundColor="hsl(var(--background))"
               />
             </div>
-            <div className="flex items-center space-x-1 mt-1">
-              {/* LIVE indicator with red dot - restored */}
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="text-xs text-red-500 font-medium">LIVE</span>
+            <div className="flex items-center justify-between mt-1">
+              <div className="flex items-center space-x-1">
+                {/* LIVE indicator with red dot - restored */}
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                <span className="text-xs text-red-500 font-medium">LIVE</span>
+              </div>
+              
+              {/* Volume Controls - inline with LIVE text, centered between LIVE and play button */}
+              <div className="hidden sm:flex items-center space-x-2">
+                <Volume2 className="text-gray-400 h-3 w-3" />
+                <div className="w-12 h-1 bg-gray-700 rounded-full relative">
+                  <div 
+                    className="h-1 rounded-full transition-all duration-150"
+                    style={{ 
+                      width: `${volume * 100}%`,
+                      background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                    }}
+                  ></div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={volume * 100}
+                    onChange={handleVolumeChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                </div>
+                <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center">
+                  {Math.round(volume * 100)}%
+                </span>
+              </div>
             </div>
           </div>
 
@@ -99,31 +126,6 @@ export default function StickyPlayer() {
               </svg>
             )}
           </Button>
-        </div>
-
-        {/* Volume Controls - moved to bottom of floating player */}
-        <div className="hidden sm:flex items-center justify-center space-x-2 px-2 pt-1">
-          <Volume2 className="text-gray-400 h-3 w-3" />
-          <div className="w-12 h-1 bg-gray-700 rounded-full relative">
-            <div 
-              className="h-1 rounded-full transition-all duration-150"
-              style={{ 
-                width: `${volume * 100}%`,
-                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-              }}
-            ></div>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={volume * 100}
-              onChange={handleVolumeChange}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            />
-          </div>
-          <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center">
-            {Math.round(volume * 100)}%
-          </span>
         </div>
       </div>
     </div>
