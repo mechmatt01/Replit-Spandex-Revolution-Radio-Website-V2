@@ -267,18 +267,19 @@ export default function Navigation() {
             <div className="flex items-center space-x-1 absolute right-4 top-1/2 transform -translate-y-1/2 hidden xl:flex">
               {/* Authentication buttons */}
               {!isAuthenticated ? (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center space-x-2">
                   <button
                     onClick={() => {
                       setAuthMode("register");
                       setIsAuthModalOpen(true);
                     }}
-                    className="px-6 py-2 text-base font-bold rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
+                    className="px-4 py-2 text-sm font-bold rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
                     style={{
                       backgroundColor: colors.primary,
                       color: 'white',
                       border: `1px solid ${colors.primary}`,
-                      width: '120px'
+                      height: '40px',
+                      minWidth: '100px'
                     }}
                   >
                     SIGN UP
@@ -288,12 +289,13 @@ export default function Navigation() {
                       setAuthMode("login");
                       setIsAuthModalOpen(true);
                     }}
-                    className="px-6 py-2 text-base font-bold rounded-lg transition-all duration-200 hover:scale-105"
+                    className="px-4 py-2 text-sm font-bold rounded-lg transition-all duration-200 hover:scale-105"
                     style={{
                       color: colors.text,
                       border: `1px solid ${colors.primary}`,
                       backgroundColor: 'transparent',
-                      width: '120px'
+                      height: '40px',
+                      minWidth: '100px'
                     }}
                   >
                     LOGIN
