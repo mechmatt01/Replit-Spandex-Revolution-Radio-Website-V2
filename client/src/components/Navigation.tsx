@@ -119,12 +119,14 @@ export default function Navigation() {
 
   // Direct navigation functions for clarity
   const goToMusic = () => {
+    console.log('Navigating to music page...');
     setIsOpen(false);
     setIsDropdownOpen(false);
     setLocation("/music");
   };
 
   const goToHomeSection = (sectionId: string) => {
+    console.log(`Navigating to home section: ${sectionId}`);
     setIsOpen(false);
     setIsDropdownOpen(false);
     if (location !== "/") {
@@ -146,12 +148,66 @@ export default function Navigation() {
   };
 
   const menuItems = [
-    { id: 1, label: "MUSIC", icon: Music, action: goToMusic, tooltip: "Listen to live radio and music" },
-    { id: 2, label: "SCHEDULE", icon: Calendar, action: () => goToHomeSection("schedule"), tooltip: "View show schedule and programming" },
-    { id: 3, label: "SUBMISSIONS", icon: Send, action: () => goToHomeSection("submissions"), tooltip: "Submit song requests and feedback" },
-    { id: 4, label: "CONTACT", icon: Phone, action: () => goToHomeSection("contact"), tooltip: "Get in touch with the station" },
-    { id: 5, label: "LISTEN MAP", icon: MapPin, action: () => goToHomeSection("map"), tooltip: "View live listener map worldwide" },
-    { id: 6, label: "FEATURES", icon: Heart, action: () => goToHomeSection("features"), tooltip: "Explore premium features and subscription tiers" },
+    { 
+      id: 1, 
+      label: "MUSIC", 
+      icon: Music, 
+      action: () => {
+        console.log('Music action triggered');
+        goToMusic();
+      }, 
+      tooltip: "Listen to live radio and music" 
+    },
+    { 
+      id: 2, 
+      label: "SCHEDULE", 
+      icon: Calendar, 
+      action: () => {
+        console.log('Schedule action triggered');
+        goToHomeSection("schedule");
+      }, 
+      tooltip: "View show schedule and programming" 
+    },
+    { 
+      id: 3, 
+      label: "SUBMISSIONS", 
+      icon: Send, 
+      action: () => {
+        console.log('Submissions action triggered');
+        goToHomeSection("submissions");
+      }, 
+      tooltip: "Submit song requests and feedback" 
+    },
+    { 
+      id: 4, 
+      label: "CONTACT", 
+      icon: Phone, 
+      action: () => {
+        console.log('Contact action triggered');
+        goToHomeSection("contact");
+      }, 
+      tooltip: "Get in touch with the station" 
+    },
+    { 
+      id: 5, 
+      label: "LISTEN MAP", 
+      icon: MapPin, 
+      action: () => {
+        console.log('Listen Map action triggered');
+        goToHomeSection("map");
+      }, 
+      tooltip: "View live listener map worldwide" 
+    },
+    { 
+      id: 6, 
+      label: "FEATURES", 
+      icon: Heart, 
+      action: () => {
+        console.log('Features action triggered');
+        goToHomeSection("features");
+      }, 
+      tooltip: "Explore premium features and subscription tiers" 
+    },
   ];
 
   return (
@@ -288,7 +344,12 @@ export default function Navigation() {
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                item.action();
+                                console.log(`Desktop dropdown clicked: ${item.label}`);
+                                try {
+                                  item.action();
+                                } catch (error) {
+                                  console.error('Navigation error:', error);
+                                }
                               }}
                               className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg w-full"
                               style={{ 
@@ -443,7 +504,12 @@ export default function Navigation() {
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            item.action();
+                            console.log(`Mobile dropdown clicked: ${item.label}`);
+                            try {
+                              item.action();
+                            } catch (error) {
+                              console.error('Navigation error:', error);
+                            }
                           }}
                           type="button"
                           className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
@@ -477,6 +543,7 @@ export default function Navigation() {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
+                              console.log('Mobile login clicked');
                               setAuthMode("login");
                               setIsAuthModalOpen(true);
                               setIsOpen(false);
@@ -517,6 +584,7 @@ export default function Navigation() {
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
+                              console.log('Mobile signup clicked');
                               setAuthMode("register");
                               setIsAuthModalOpen(true);
                               setIsOpen(false);
@@ -557,7 +625,10 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log('Mobile profile clicked');
                               setLocation('/profile');
                               setIsOpen(false);
                             }}
@@ -587,7 +658,10 @@ export default function Navigation() {
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <button
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              console.log('Mobile logout clicked');
                               logout();
                               setIsOpen(false);
                             }}
