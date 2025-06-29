@@ -313,13 +313,27 @@ export default function MetalThemeSwitcher() {
                       <Button
                         onClick={() => setShowPremiumDialog(false)}
                         variant="ghost"
-                        className="flex-1 text-white border border-white/30 hover:bg-white/10"
+                        className="flex-1 text-white border border-white/30 hover:bg-white/20 font-semibold px-6 py-3 text-base"
+                        style={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(10px)',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
+                          borderRadius: '8px'
+                        }}
                       >
                         Cancel
                       </Button>
                       <Button
                         onClick={scrollToSubscription}
-                        className="flex-1 bg-white text-purple-900 hover:bg-white/90 font-semibold"
+                        className="flex-1 font-bold px-6 py-3 text-base"
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%)',
+                          color: '#8b0080',
+                          backdropFilter: 'blur(10px)',
+                          border: '1px solid rgba(255, 255, 255, 0.4)',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 20px rgba(255, 255, 255, 0.2)'
+                        }}
                       >
                         Get Premium
                       </Button>
