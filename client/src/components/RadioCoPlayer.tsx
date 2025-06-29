@@ -16,6 +16,7 @@ const radioStations: RadioStation[] = [
     frequency: "95.5 FM",
     location: "Dallas, TX",
     description: "Hip Hop & R&B",
+    genre: "Hip Hop",
     streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFB_FMAAC.aac"
   },
   {
@@ -24,6 +25,7 @@ const radioStations: RadioStation[] = [
     frequency: "97.1 FM",
     location: "New York, NY",
     description: "Hip Hop & R&B",
+    genre: "Hip Hop",
     streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM_SC"
   },
   {
@@ -32,6 +34,7 @@ const radioStations: RadioStation[] = [
     frequency: "105.9 FM",
     location: "Los Angeles, CA",
     description: "Hip Hop & R&B",
+    genre: "Hip Hop",
     streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC_SC"
   },
   {
@@ -40,6 +43,7 @@ const radioStations: RadioStation[] = [
     frequency: "Online",
     location: "San Francisco, CA",
     description: "Heavy Metal & Hard Rock",
+    genre: "Metal",
     streamUrl: "https://ice1.somafm.com/metal-128-mp3"
   }
 ];
@@ -49,13 +53,12 @@ export default function RadioCoPlayer() {
     isPlaying, 
     volume, 
     setVolume, 
-    play, 
-    pause, 
-    nowPlaying, 
+    togglePlayback,
+    currentTrack,
     error, 
     isLoading,
     currentStation,
-    switchStation 
+    changeStation 
   } = useRadio();
   
   const { getColors, isDarkMode } = useTheme();
@@ -81,16 +84,12 @@ export default function RadioCoPlayer() {
   }, [showStationSelector]);
 
   const handlePlayPause = () => {
-    if (isPlaying) {
-      pause();
-    } else {
-      play();
-    }
+    togglePlayback();
   };
 
   const handleStationChange = async (station: RadioStation) => {
     setIsTransitioning(true);
-    await switchStation(station);
+    await changeStation(station);
     setShowStationSelector(false);
     
     setTimeout(() => {
@@ -213,9 +212,11 @@ export default function RadioCoPlayer() {
       <div className="flex justify-center mb-6 relative">
         <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
           <InteractiveAlbumArt 
-            artwork={nowPlaying?.artwork}
+            artwork={currentTrack?.artwork}
+            title={currentTrack?.title || currentStation?.name || "95.5 The Beat"}
+            artist={currentTrack?.artist || currentStation?.description || "Hip Hop & R&B"}
             isPlaying={isPlaying}
-            size="large"
+            size="lg"
           />
           
           {/* LIVE Indicator - positioned to overlap 50% on top of album artwork */}
@@ -244,20 +245,17 @@ export default function RadioCoPlayer() {
       <div className="mb-6 text-center">
         <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
           <ScrollingText 
-            text={nowPlaying?.title || currentStation?.name || "95.5 The Beat"}
+            text={currentTrack?.title || currentStation?.name || "95.5 The Beat"}
             className="text-xl font-bold mb-1"
-            speed={30}
           />
           <ScrollingText 
-            text={nowPlaying?.artist || currentStation?.description || "Hip Hop & R&B"}
+            text={currentTrack?.artist || currentStation?.description || "Hip Hop & R&B"}
             className="text-lg text-muted-foreground mb-1"
-            speed={25}
           />
-          {nowPlaying?.album && (
+          {currentTrack?.album && (
             <ScrollingText 
-              text={nowPlaying.album}
+              text={currentTrack.album}
               className="text-sm text-muted-foreground/80"
-              speed={20}
             />
           )}
         </div>
