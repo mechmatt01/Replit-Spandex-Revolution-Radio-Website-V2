@@ -210,7 +210,7 @@ export default function Navigation() {
     },
   ];
 
-  
+
 
   return (
     <TooltipProvider>
@@ -514,8 +514,12 @@ export default function Navigation() {
                             }
                           }}
                           type="button"
-                          className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                          style={{ color: colors.text }}
+                          className="flex items-center justify-start space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
+                          style={{ 
+                            color: colors.text,
+                            minHeight: '48px',
+                            alignItems: 'center'
+                          }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.backgroundColor = colors.primary + '20';
                             e.currentTarget.style.color = 'white';
@@ -528,10 +532,12 @@ export default function Navigation() {
                           aria-label={`Navigate to ${item.label.toLowerCase()}`}
                         >
                           <IconComponent size={20} style={{ color: colors.primary }} />
-                          <span>{item.label}</span>
+                          <span style={{ lineHeight: '1.2' }}>{item.label}</span>
                         </button>
                       </TooltipTrigger>
-                      <TooltipContent side="right">{item.tooltip}</TooltipContent>
+                      <TooltipContent side="right" align="center" sideOffset={8}>
+                        {item.tooltip}
+                      </TooltipContent>
                     </Tooltip>
                   );
                 })}
@@ -613,8 +619,8 @@ export default function Navigation() {
                           Create a new account
                         </TooltipContent>
                       </Tooltip>
-                      
-                       
+
+
 
                     </>
                   ) : (
