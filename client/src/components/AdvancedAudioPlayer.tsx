@@ -23,7 +23,66 @@ import {
   ChevronDown
 } from "lucide-react";
 import { useAudio } from "@/contexts/AudioContext";
+import { useRadio } from "@/contexts/RadioContext";
 import type { NowPlaying } from "@shared/schema";
+
+interface RadioStation {
+  id: string;
+  name: string;
+  frequency: string;
+  location: string;
+  genre: string;
+  streamUrl: string;
+  description: string;
+}
+
+const radioStations: RadioStation[] = [
+  {
+    id: "beat-955",
+    name: "95.5 The Beat",
+    frequency: "95.5 FM",
+    location: "Dallas, TX",
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
+    description: "Dallas Hip Hop & R&B"
+  },
+  {
+    id: "hot-97",
+    name: "Hot 97",
+    frequency: "97.1 FM", 
+    location: "New York, NY",
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
+    description: "New York's Hip Hop & R&B"
+  },
+  {
+    id: "power-106",
+    name: "Power 106",
+    frequency: "105.9 FM",
+    location: "Los Angeles, CA", 
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
+    description: "LA's #1 for Hip Hop"
+  },
+  {
+    id: "soma-metal",
+    name: "SomaFM Metal",
+    frequency: "Online",
+    location: "San Francisco, CA",
+    genre: "Metal",
+    streamUrl: "https://ice1.somafm.com/metal-128-mp3",
+    description: "Heavy Metal & Hard Rock"
+  },
+  {
+    id: "spandex-salvation",
+    name: "Spandex Salvation Radio",
+    frequency: "Online",
+    location: "Global",
+    genre: "Classic Metal",
+    streamUrl: "/api/radio-stream",
+    description: "Old School Metal 24/7"
+  }
+];
 
 interface PlaylistTrack {
   id: string;
@@ -87,8 +146,11 @@ const samplePlaylists: Playlist[] = [
 
 export default function AdvancedAudioPlayer() {
   const { currentTrack, isPlaying, volume, togglePlayback, setVolume, nextTrack, previousTrack, currentTrackIndex } = useAudio();
+  const { currentStation, changeStation } = useRadio();
   const [playlists, setPlaylists] = useState<Playlist[]>(samplePlaylists);
   const [activePlaylist, setActivePlaylist] = useState<Playlist>(samplePlaylists[0]);
+  const [showStationSelector, setShowStationSelector] = useState(false);
+  const stationDropdownRef = useRef<HTMLDivElement>(null);
   const [currentPlaylistTrackIndex, setCurrentPlaylistTrackIndex] = useState(0);
   const [showPlaylist, setShowPlaylist] = useState(false);
   const [repeat, setRepeat] = useState<'none' | 'all' | 'one'>('none');
@@ -98,6 +160,28 @@ export default function AdvancedAudioPlayer() {
   const [isMuted, setIsMuted] = useState(false);
   const [previousVolume, setPreviousVolume] = useState(volume);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  // Station selector event handling
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (stationDropdownRef.current && !stationDropdownRef.current.contains(event.target as Node)) {
+        setShowStationSelector(false);
+      }
+    };
+
+    if (showStationSelector) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showStationSelector]);
+
+  const handleStationChange = async (station: RadioStation) => {
+    await changeStation(station);
+    setShowStationSelector(false);
+  };
 
   const { data: nowPlaying } = useQuery<NowPlaying>({
     queryKey: ["/api/now-playing"],
@@ -219,7 +303,166 @@ export default function AdvancedAudioPlayer() {
 
   return (
     <div className="space-y-6">
+      {/* Main Player Section */}
+      <Card className="bg-dark-bg/50 border-gray-800">
+        <CardContent className="p-6">
+          <div className="flex flex-col lg:flex-row items-center gap-8">
+            {/* Album Art Section with Station Selector */}
+            <div className="flex-shrink-0 relative">
+              {/* Station Selector Button */}
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-10">
+                <div className="relative" ref={stationDropdownRef}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowStationSelector(!showStationSelector)}
+                    className="bg-dark-bg/90 backdrop-blur-sm border-gray-700 hover:bg-dark-bg/95 transition-all duration-200 text-xs px-3 py-1 text-white"
+                  >
+                    <RadioIcon className="w-3 h-3 mr-1" />
+                    {currentStation?.name || "95.5 The Beat"}
+                    <ChevronDown className="w-3 h-3 ml-1" />
+                  </Button>
+                  
+                  {showStationSelector && (
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-dark-bg/95 backdrop-blur-md border border-gray-700 rounded-md shadow-lg z-20">
+                      <div className="p-2 max-h-60 overflow-y-auto">
+                        {radioStations.map((station) => (
+                          <button
+                            key={station.id}
+                            onClick={() => handleStationChange(station)}
+                            className={`w-full p-3 text-left rounded-md transition-all duration-200 ${
+                              station.id === (currentStation?.id || "beat-955")
+                                ? 'bg-metal-orange/20 border border-metal-orange/20' 
+                                : 'hover:bg-gray-800/50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0">
+                                <RadioIcon className="w-4 h-4 text-white" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                  <div className="font-semibold text-sm text-white truncate">
+                                    {station.name}
+                                  </div>
+                                  {station.id === (currentStation?.id || "beat-955") && (
+                                    <Volume2 className="w-4 h-4 text-metal-orange flex-shrink-0" />
+                                  )}
+                                </div>
+                                <div className="text-xs text-gray-400 truncate">
+                                  {station.frequency} • {station.location}
+                                </div>
+                                <div className="text-xs text-gray-500 truncate">
+                                  {station.description}
+                                </div>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* LIVE Indicator - Positioned on top of artwork */}
+              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10">
+                <div className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  LIVE
+                </div>
+              </div>
+              
+              {/* Album Art */}
+              <div className="w-48 h-48 bg-gradient-to-br from-metal-orange via-metal-red to-purple-600 rounded-lg p-1">
+                <div className="w-full h-full bg-dark-surface rounded-lg flex items-center justify-center relative overflow-hidden">
+                  {currentTrack && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-metal-orange/20 via-metal-red/20 to-purple-600/20" />
+                  )}
+                  <Music className="h-20 w-20 text-gray-400" />
+                </div>
+              </div>
+            </div>
 
+            {/* Track Info and Controls */}
+            <div className="flex-1 text-center lg:text-left">
+              <div className="mb-6">
+                <h2 className="text-2xl font-black text-white mb-2">
+                  {currentTrack?.title || "Spandex Salvation Radio"}
+                </h2>
+                <p className="text-gray-400 text-lg font-semibold">
+                  {currentTrack?.artist || "Old School Metal 24/7"}
+                </p>
+              </div>
+
+              {/* Playback Controls */}
+              <div className="flex items-center justify-center lg:justify-start space-x-4 mb-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handlePrevious}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <SkipBack className="h-5 w-5" />
+                </Button>
+
+                <Button
+                  onClick={handlePlayPause}
+                  size="lg"
+                  className="w-12 h-12 rounded-full bg-gradient-to-r from-metal-orange to-metal-red text-white hover:shadow-lg transform hover:scale-105 transition-all"
+                >
+                  {isPlaying ? (
+                    <Pause className="h-6 w-6" />
+                  ) : (
+                    <Play className="h-6 w-6 ml-1" />
+                  )}
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleNext}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <SkipForward className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Volume Control */}
+              <div className="flex items-center justify-center lg:justify-start space-x-3 mb-6">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleMute}
+                  className="text-gray-400 hover:text-white"
+                >
+                  {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
+                </Button>
+                <Slider
+                  value={[volume]}
+                  onValueChange={handleVolumeChange}
+                  max={100}
+                  step={1}
+                  className="w-32"
+                />
+                <span className="text-sm text-gray-400 w-8">{Math.round(volume)}</span>
+              </div>
+
+              {/* Additional Controls */}
+              <div className="flex items-center justify-center lg:justify-start space-x-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowPlaylist(!showPlaylist)}
+                  className="text-gray-400 hover:text-white"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Playlist Section - Mobile Optimized */}
       {showPlaylist && (
