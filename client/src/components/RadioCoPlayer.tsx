@@ -326,13 +326,23 @@ export default function RadioCoPlayer() {
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
           </Button>
 
-          <div className="flex-1 px-2">
+          <div className="flex-1 px-4">
             <div className="w-full h-2 bg-gray-700 rounded-full relative">
               <div 
                 className="h-2 rounded-full transition-all duration-150"
                 style={{ 
                   width: `${(isMuted ? 0 : volume) * 100}%`,
                   background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                }}
+              ></div>
+              {/* Custom thumb */}
+              <div 
+                className="absolute top-1/2 w-4 h-4 rounded-full transition-all duration-150 transform -translate-y-1/2 cursor-pointer shadow-lg"
+                style={{ 
+                  left: `calc(${(isMuted ? 0 : volume) * 100}% - 8px)`,
+                  background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+                  border: '2px solid white',
+                  boxShadow: `0 2px 8px ${colors.primary}40`
                 }}
               ></div>
               <input
