@@ -82,9 +82,12 @@ export default function Hero() {
 
         {/* Countdown Timer */}
         <div className="mt-8 mb-8">
-          <div className="flex items-center justify-center gap-3 mb-1">
-            <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            <span className="text-white font-bold text-3xl">ON AIR IN...</span>
+          <div className="flex items-center justify-center mb-1">
+            {/* Large LIVE Indicator - 2x size */}
+            <div className="flex items-center gap-2 bg-red-500 text-white px-4 py-1 rounded-full text-lg font-bold shadow-lg">
+              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+              LIVE
+            </div>
           </div>
           <div className="flex justify-center space-x-4 text-center">
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
