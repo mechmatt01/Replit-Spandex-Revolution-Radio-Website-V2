@@ -94,12 +94,22 @@ export default function RadioCoPlayer() {
       }
     };
 
+    const handleScroll = () => {
+      if (showStationSelector) {
+        setShowStationSelector(false);
+      }
+    };
+
     if (showStationSelector) {
       document.addEventListener('mousedown', handleClickOutside);
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      document.addEventListener('scroll', handleScroll, { passive: true });
     }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll);
     };
   }, [showStationSelector]);
 
@@ -163,53 +173,62 @@ export default function RadioCoPlayer() {
             onClick={() => setShowStationSelector(!showStationSelector)}
             className="bg-card/90 backdrop-blur-sm border-border/50 hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1 min-w-fit whitespace-nowrap"
             style={{
-              borderColor: colors.primary + '40',
+              borderColor: colors.primary + '20',
               width: 'auto'
             } as React.CSSProperties}
           >
-            <RadioIcon className="w-3 h-3 mr-1" />
-            {currentStation?.name || "95.5 The Beat"}
-            <ChevronDown className="w-3 h-3 ml-1" />
+            <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
+            <span style={{ color: colors.primary }}>{currentStation?.name || "95.5 The Beat"}</span>
+            <ChevronDown className="w-3 h-3 ml-1 text-gray-400" />
           </Button>
           
           {showStationSelector && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-black/95 backdrop-blur-lg border border-border rounded-md shadow-xl z-20">
-              <div className="p-2 max-h-60 overflow-y-auto">
-                {radioStations.map((station) => (
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-black/80 backdrop-blur-md border rounded-md shadow-xl z-20 max-h-96 overflow-y-auto"
+                 style={{ borderColor: colors.primary + '40' }}>
+              <div className="p-2">
+                {radioStations
+                  .sort((a, b) => {
+                    // Sort with current station first
+                    if (a.id === (currentStation?.id || "beat-955")) return -1;
+                    if (b.id === (currentStation?.id || "beat-955")) return 1;
+                    return 0;
+                  })
+                  .map((station) => (
                   <button
                     key={station.id}
                     onClick={() => handleStationChange(station)}
-                    className={`w-full p-3 text-left rounded-md transition-all duration-200 ${
-                      station.id === (currentStation?.id || "beat-955")
-                        ? 'bg-primary/20 border border-primary/20' 
-                        : 'hover:bg-muted/50'
-                    }`}
+                    className="w-full p-3 text-left rounded-md transition-all duration-200 hover:bg-muted/20 focus:outline-none"
+                    style={{
+                      backgroundColor: station.id === (currentStation?.id || "beat-955") ? colors.primary + '20' : 'transparent'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (station.id !== (currentStation?.id || "beat-955")) {
+                        e.currentTarget.style.backgroundColor = colors.primary + '10';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = station.id === (currentStation?.id || "beat-955") ? colors.primary + '20' : 'transparent';
+                    }}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0" style={{ backgroundColor: colors.primary + '20' }}>
-                        <img 
-                          src={MusicLogoPath} 
-                          alt="Radio Icon" 
-                          className="w-4 h-4 object-contain"
-                          style={{ 
-                            filter: getIconFilter(),
-                            WebkitFilter: getIconFilter()
-                          }}
-                        />
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0">
+                        <span className="text-lg">{station.icon}</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <div className="font-semibold text-sm truncate text-foreground">
+                          <div className="font-semibold text-sm text-white truncate">
                             {station.name}
                           </div>
-                          {station.id === (currentStation?.id || "beat-955") && (
-                            <Volume2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.primary }} />
-                          )}
+                          <div className="flex items-center justify-center h-full">
+                            {station.id === (currentStation?.id || "beat-955") && (
+                              <Volume2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.primary }} />
+                            )}
+                          </div>
                         </div>
-                        <div className="text-xs text-muted-foreground truncate">
+                        <div className="text-xs text-gray-300 truncate">
                           {station.frequency} • {station.location}
                         </div>
-                        <div className="text-xs text-muted-foreground/80 truncate">
+                        <div className="text-xs text-gray-400 truncate">
                           {station.description}
                         </div>
                       </div>
