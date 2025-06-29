@@ -37,7 +37,7 @@ export default function Navigation() {
   const logout = () => {
     window.location.href = "/api/logout";
   };
-  const menuRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const brandTextRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);

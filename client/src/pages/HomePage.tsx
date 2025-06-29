@@ -8,7 +8,7 @@ import InteractiveListenerMap from "@/components/InteractiveListenerMap";
 import Contact from "@/components/Contact";
 import StripePaymentProcessor from "@/components/StripePaymentProcessor";
 import ShopifyEcommerce from "@/components/ShopifyEcommerce";
-import AdvancedAdminDashboard from "@/components/AdvancedAdminDashboard";
+
 import { useState } from "react";
 import Footer from "@/components/Footer";
 import StickyPlayer from "@/components/StickyPlayer";

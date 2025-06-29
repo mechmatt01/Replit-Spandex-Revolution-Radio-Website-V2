@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '@/contexts/ThemeContext';
 import ThemedMusicLogo from '@/components/ThemedMusicLogo';
-import AdLogo from '@/components/AdLogo';
+
 
 interface InteractiveAlbumArtProps {
   artwork?: string;
