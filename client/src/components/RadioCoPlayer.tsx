@@ -397,9 +397,9 @@ export default function RadioCoPlayer() {
         </div>
       </div>
 
-      <div className="flex flex-col items-center space-y-4">
-        {/* Play/Pause and Mute Button Row - Centered */}
-        <div className="flex items-center justify-center space-x-4">
+      <div className="flex flex-col items-center justify-center space-y-4">
+        {/* Play/Pause and Mute Button Row - Perfectly Centered */}
+        <div className="flex items-center justify-center space-x-4 w-full">
           {/* Mute Button with Animated Volume Slider */}
           <div className="relative group">
             <Button
@@ -424,7 +424,7 @@ export default function RadioCoPlayer() {
             </Button>
 
             {/* Animated Vertical Volume Slider - Opens Upward with Reduced Padding */}
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto">
+            <div className="absolute top-auto bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto">
               <div className="bg-black/80 backdrop-blur-lg rounded-lg p-2 shadow-xl border border-white/20">
                 <div className="flex flex-col items-center h-28 w-6">
                   {/* Volume Level Display */}
@@ -459,11 +459,11 @@ export default function RadioCoPlayer() {
             </div>
           </div>
 
-          {/* Play/Pause Button */}
+          {/* Play/Pause Button - Centered */}
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
-            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center"
+            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center justify-center mx-auto"
             style={{
               background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
               color: 'white',
