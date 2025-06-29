@@ -433,57 +433,59 @@ export default function RadioCoPlayer() {
         </Button>
 
         {/* Volume Controls */}
-        <div className="flex items-center space-x-3 rounded-xl p-3"
-               style={{
-                 background: 'rgba(255, 255, 255, 0.1)',
-                 backdropFilter: 'blur(15px)',
-                 border: '1px solid rgba(255, 255, 255, 0.2)'
-               }}>
-            <Button
-              onClick={toggleMute}
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/20 rounded-full p-2 w-10 h-10 flex items-center justify-center transition-all duration-200"
-              style={{
-                background: isMuted ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                border: isMuted ? '1px solid rgba(255, 0, 0, 0.3)' : '1px solid rgba(255, 255, 255, 0.2)'
-              }}
-              aria-label={isMuted ? "Unmute" : "Mute"}
-            >
-              {isMuted ? (
-                <VolumeX className="h-5 w-5" />
-              ) : volume > 0.5 ? (
-                <Volume2 className="h-5 w-5" />
-              ) : (
-                <Volume2 className="h-5 w-5" />
-              )}
-            </Button>
-
-            <div className="flex-1 min-w-0 max-w-[120px]">
-              <Slider
-                value={[isMuted ? 0 : volume * 100]}
-                onValueChange={(value) => setVolume(value[0] / 100)}
-                max={100}
-                step={1}
-                className="w-full [&_.range-slider]:bg-gradient-to-r [&_.range-slider]:from-blue-400 [&_.range-slider]:to-purple-500"
+        <div className="flex items-center justify-center">
+          <div className="flex items-center space-x-4 rounded-xl p-4 min-w-[280px]"
+                 style={{
+                   background: 'rgba(255, 255, 255, 0.1)',
+                   backdropFilter: 'blur(15px)',
+                   border: '1px solid rgba(255, 255, 255, 0.2)'
+                 }}>
+              <Button
+                onClick={toggleMute}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/20 rounded-full p-2 w-10 h-10 flex items-center justify-center transition-all duration-200 flex-shrink-0"
                 style={{
-                  '--slider-track': 'rgba(255, 255, 255, 0.2)',
-                  '--slider-range': 'linear-gradient(90deg, #60a5fa, #a855f7)',
-                  '--slider-thumb': '#ffffff'
-                } as any}
-                aria-label="Volume control"
-              />
-            </div>
+                  background: isMuted ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                  border: isMuted ? '1px solid rgba(255, 0, 0, 0.3)' : '1px solid rgba(255, 255, 255, 0.2)'
+                }}
+                aria-label={isMuted ? "Unmute" : "Mute"}
+              >
+                {isMuted ? (
+                  <VolumeX className="h-5 w-5" />
+                ) : volume > 0.5 ? (
+                  <Volume2 className="h-5 w-5" />
+                ) : (
+                  <Volume2 className="h-5 w-5" />
+                )}
+              </Button>
 
-            <span className="text-sm font-bold text-white/90 min-w-[3ch] text-right px-2 py-1 rounded-md"
+              <div className="flex-1 min-w-0 w-[180px]">
+                <Slider
+                  value={[isMuted ? 0 : volume * 100]}
+                  onValueChange={(value) => setVolume(value[0] / 100)}
+                  max={100}
+                  step={1}
+                  className="w-full [&_.range-slider]:bg-gradient-to-r [&_.range-slider]:from-blue-400 [&_.range-slider]:to-purple-500"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.15)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)'
-                  }}>
-              {Math.round((isMuted ? 0 : volume) * 100)}%
-            </span>
-          </div>
+                    '--slider-track': 'rgba(255, 255, 255, 0.2)',
+                    '--slider-range': 'linear-gradient(90deg, #60a5fa, #a855f7)',
+                    '--slider-thumb': '#ffffff'
+                  } as any}
+                  aria-label="Volume control"
+                />
+              </div>
+
+              <span className="text-sm font-bold text-white/90 min-w-[3ch] text-right px-2 py-1 rounded-md flex-shrink-0"
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                    }}>
+                {Math.round((isMuted ? 0 : volume) * 100)}%
+              </span>
+            </div>
+        </div>
 
       </div>
 
