@@ -94,7 +94,9 @@ export default function RadioCoPlayer() {
   const colors = getColors();
 
   const [showStationSelector, setShowStationSelector] = useState(false);
+  const [volumeSliderPosition, setVolumeSliderPosition] = useState<'top' | 'bottom'>('top');
   const stationDropdownRef = useRef<HTMLDivElement>(null);
+  const volumeButtonRef = useRef<HTMLDivElement>(null);
 
   // Station selector event handling
   useEffect(() => {
@@ -128,6 +130,36 @@ export default function RadioCoPlayer() {
       document.removeEventListener('scroll', handleScroll);
     };
   }, [showStationSelector]);
+
+  // Volume slider positioning based on screen position
+  useEffect(() => {
+    const handleVolumeSliderPosition = () => {
+      if (volumeButtonRef.current) {
+        const rect = volumeButtonRef.current.getBoundingClientRect();
+        const spaceAbove = rect.top;
+        const sliderHeight = 120; // Approximate height of volume slider
+        
+        // If there's not enough space above (less than slider height + 20px buffer), position below
+        if (spaceAbove < sliderHeight + 20) {
+          setVolumeSliderPosition('bottom');
+        } else {
+          setVolumeSliderPosition('top');
+        }
+      }
+    };
+
+    // Check position on scroll and resize
+    window.addEventListener('scroll', handleVolumeSliderPosition, { passive: true });
+    window.addEventListener('resize', handleVolumeSliderPosition, { passive: true });
+    
+    // Initial check
+    handleVolumeSliderPosition();
+
+    return () => {
+      window.removeEventListener('scroll', handleVolumeSliderPosition);
+      window.removeEventListener('resize', handleVolumeSliderPosition);
+    };
+  }, [isPlaying]);
 
   const handleStationChange = async (station: RadioStation) => {
     try {
@@ -402,7 +434,7 @@ export default function RadioCoPlayer() {
         <div className="flex items-center justify-center w-full relative">
           {/* Volume Button - Only visible when playing, positioned to the left */}
           {isPlaying && (
-            <div className="absolute left-1/2 transform -translate-x-40 group">
+            <div className="absolute left-1/2 transform -translate-x-40 group" ref={volumeButtonRef}>
               <Button
                 onClick={toggleMute}
                 variant="ghost"
@@ -424,8 +456,14 @@ export default function RadioCoPlayer() {
                 )}
               </Button>
 
-              {/* Animated Vertical Volume Slider - Opens Upward with Reduced Padding */}
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto z-50">
+              {/* Animated Vertical Volume Slider - Opens Upward (or downward if near top) */}
+              <div 
+                className={`absolute left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto z-50 ${
+                  volumeSliderPosition === 'top' 
+                    ? 'bottom-full mb-1' 
+                    : 'top-full mt-1'
+                }`}
+              >
                 <div className="bg-black/80 backdrop-blur-lg rounded-lg p-1 shadow-xl border border-white/20">
                   <div className="flex flex-col items-center h-24 w-5">
                     {/* Volume Level Display */}
