@@ -107,7 +107,7 @@ export default function Submissions() {
   const hasPaidSubscription = user?.stripeSubscriptionId || false;
 
   return (
-    <section id="submissions" className="py-20 bg-dark-bg">
+    <section id="submissions" className="py-20 bg-black">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="font-orbitron font-bold text-3xl md:text-4xl mb-4 text-black dark:text-white">
