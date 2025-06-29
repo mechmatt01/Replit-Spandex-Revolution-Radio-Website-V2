@@ -430,54 +430,109 @@ export default function RadioCoPlayer() {
       </div>
 
       <div className="flex flex-col items-center justify-center space-y-4">
-        {/* Play/Pause and Volume Button Row - Truly centered layout */}
-        <div className="flex items-center justify-center w-full">
-          {/* Volume Button - Left side */}
+        {/* Play/Pause and Volume Button Row - Centered with volume next to play button */}
+        <div className="flex items-center justify-center gap-4 w-full">
+          {/* Play/Pause Button - Main centered button */}
+          <Button
+            onClick={togglePlayback}
+            disabled={isLoading}
+            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center justify-center"
+            style={{
+              background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+              color: 'white',
+              borderColor: colors.primary,
+              boxShadow: `0 10px 40px ${colors.primary}60`
+            }}
+          >
+            {isLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3" />
+                <span className="font-semibold text-lg">CONNECTING...</span>
+              </>
+            ) : isPlaying ? (
+              <>
+                <svg className="h-18 w-18 mr-4" fill="currentColor" viewBox="0 0 24 24">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                </svg>
+                <span className="font-semibold text-lg">STOP</span>
+              </>
+            ) : (
+              <>
+                <svg className="h-18 w-18 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                  <polygon points="4,1 23,12 4,23" />
+                </svg>
+                <span className="font-semibold text-lg">PLAY LIVE</span>
+              </>
+            )}
+          </Button>
+
+          {/* Volume Button - Next to play button */}
           <div className="relative group" ref={volumeButtonRef}>
             <Button
               onClick={toggleMute}
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-white/20 rounded-full p-2 w-12 h-12 flex items-center justify-center transition-all duration-200"
+              className="text-white hover:bg-white/10 rounded-full p-3 w-12 h-12 flex items-center justify-center transition-all duration-300"
               style={{
-                background: isMuted ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                border: isMuted ? '2px solid rgba(255, 0, 0, 0.4)' : '2px solid rgba(255, 255, 255, 0.2)',
-                backdropFilter: 'blur(15px)'
+                background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(20px)'
               }}
               aria-label={isMuted ? "Unmute" : "Mute"}
             >
               {isMuted ? (
-                <VolumeX className="h-6 w-6" />
+                <VolumeX className="h-5 w-5" />
               ) : volume > 0.5 ? (
-                <Volume2 className="h-6 w-6" />
+                <Volume2 className="h-5 w-5" />
               ) : (
-                <Volume2 className="h-6 w-6" />
+                <Volume2 className="h-5 w-5" />
               )}
             </Button>
 
-            {/* Animated Vertical Volume Slider - Always Opens Upward */}
+            {/* Modern Volume Dropdown - Animates upward from button */}
             <div 
-              className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto z-50"
+              className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-3 scale-95 opacity-0 translate-y-2 group-hover:scale-100 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
             >
-              <div className="bg-black/90 backdrop-blur-lg rounded-lg p-2 shadow-xl border border-white/30">
-                <div className="flex flex-col items-center space-y-1">
+              <div 
+                className="rounded-2xl p-4 shadow-2xl backdrop-blur-xl"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.primary}20, ${colors.secondary}10)`,
+                  border: `1px solid ${colors.primary}30`
+                }}
+              >
+                <div className="flex flex-col items-center space-y-3">
                   {/* Volume Level Display */}
-                  <div className="text-xs text-white font-bold">
-                    {Math.round((isMuted ? 0 : volume) * 100)}
+                  <div 
+                    className="text-sm font-bold px-3 py-1 rounded-full"
+                    style={{
+                      background: `${colors.primary}20`,
+                      color: colors.primary
+                    }}
+                  >
+                    {Math.round((isMuted ? 0 : volume) * 100)}%
                   </div>
                   
-                  {/* Vertical Slider Container */}
-                  <div className="relative h-16 w-3 bg-white/20 rounded-full">
-                    {/* Filled Volume Bar */}
+                  {/* Modern Vertical Slider */}
+                  <div className="relative h-20 w-4 bg-white/10 rounded-full overflow-hidden">
+                    {/* Volume Fill */}
                     <div 
-                      className="absolute bottom-0 w-full rounded-full transition-all duration-200"
+                      className="absolute bottom-0 w-full rounded-full transition-all duration-200 ease-out"
                       style={{
                         height: `${(isMuted ? 0 : volume) * 100}%`,
                         background: `linear-gradient(180deg, ${colors.primary}, ${colors.secondary})`
                       }}
                     />
                     
-                    {/* Interactive Overlay for Volume Control */}
+                    {/* Interactive Thumb */}
+                    <div 
+                      className="absolute w-6 h-6 rounded-full -translate-x-1 transition-all duration-200 shadow-lg"
+                      style={{
+                        bottom: `${(isMuted ? 0 : volume) * 100 - 6}%`,
+                        background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+                        border: '2px solid white'
+                      }}
+                    />
+                    
+                    {/* Click Area */}
                     <div 
                       className="absolute inset-0 cursor-pointer"
                       onClick={(e) => {
@@ -488,55 +543,44 @@ export default function RadioCoPlayer() {
                       }}
                     />
                   </div>
+
+                  {/* Quick Volume Buttons */}
+                  <div className="flex gap-2">
+                    <button 
+                      onClick={() => setVolume(0.5)}
+                      className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
+                      style={{
+                        background: `${colors.primary}20`,
+                        color: colors.primary
+                      }}
+                    >
+                      50%
+                    </button>
+                    <button 
+                      onClick={() => setVolume(1)}
+                      className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
+                      style={{
+                        background: `${colors.primary}20`,
+                        color: colors.primary
+                      }}
+                    >
+                      MAX
+                    </button>
+                  </div>
                 </div>
+                
+                {/* Modern Arrow Pointer */}
+                <div 
+                  className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0"
+                  style={{
+                    borderLeft: '8px solid transparent',
+                    borderRight: '8px solid transparent',
+                    borderTop: `8px solid ${colors.primary}30`
+                  }}
+                />
               </div>
             </div>
           </div>
-
-          {/* Spacer to push play button to center */}
-          <div className="flex-1"></div>
-
-          {/* Play/Pause Button - Absolutely centered */}
-          <div className="flex justify-center">
-            <Button
-              onClick={togglePlayback}
-              disabled={isLoading}
-              className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center justify-center"
-              style={{
-                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-                color: 'white',
-                borderColor: colors.primary,
-                boxShadow: `0 10px 40px ${colors.primary}60`
-              }}
-            >
-              {isLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3" />
-                  <span className="font-semibold text-lg">CONNECTING...</span>
-                </>
-              ) : isPlaying ? (
-                <>
-                  <svg className="h-18 w-18 mr-4" fill="currentColor" viewBox="0 0 24 24">
-                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                  </svg>
-                  <span className="font-semibold text-lg">STOP</span>
-                </>
-              ) : (
-                <>
-                  <svg className="h-18 w-18 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                    <polygon points="4,1 23,12 4,23" />
-                  </svg>
-                  <span className="font-semibold text-lg">PLAY LIVE</span>
-                </>
-              )}
-            </Button>
-          </div>
-
-          {/* Spacer to balance the layout */}
-          <div className="flex-1"></div>
-
-          {/* Invisible spacer to match volume button width */}
-          <div className="w-12 h-12"></div>
         </div>
 
       </div>
