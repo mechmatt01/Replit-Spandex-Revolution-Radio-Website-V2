@@ -269,40 +269,40 @@ export default function MetalThemeSwitcher() {
                 }}
               >
                 <div 
-                  className="rounded-lg p-6"
+                  className="rounded-lg p-4 max-w-md mx-auto"
                   style={{
                     backgroundColor: 'rgba(255, 255, 255, 0.08)',
                     backdropFilter: 'blur(20px)',
                     border: '1px solid rgba(255, 255, 255, 0.18)'
                   }}
                 >
-                  <DialogHeader className="text-center">
-                    <div className="flex justify-center mb-4">
+                  <DialogHeader className="text-center space-y-3">
+                    <div className="flex justify-center">
                       <div 
-                        className="w-16 h-16 rounded-full flex items-center justify-center"
+                        className="w-12 h-12 rounded-full flex items-center justify-center"
                         style={{
                           background: 'rgba(255, 255, 255, 0.1)',
                           backdropFilter: 'blur(20px)',
                           border: '1px solid rgba(255, 255, 255, 0.2)'
                         }}
                       >
-                        <Sparkles className="w-8 h-8 text-white" />
+                        <Sparkles className="w-6 h-6 text-white" />
                       </div>
                     </div>
-                    <DialogTitle className="text-2xl font-bold text-white">
+                    <DialogTitle className="text-xl font-bold text-white leading-tight">
                       Glassmorphism Rock Theme
                     </DialogTitle>
-                    <DialogDescription className="text-white/90 mt-2">
+                    <DialogDescription className="text-white/90 text-sm leading-relaxed px-2">
                       Experience the ultimate rock vibe with our premium glassmorphism theme featuring vibrant colors and stunning glass effects.
                     </DialogDescription>
                   </DialogHeader>
                   
-                  <div className="mt-6 space-y-4">
+                  <div className="mt-4 space-y-4">
                     <div className="text-center">
-                      <p className="text-white/80 text-sm">
-                        This premium theme is exclusive to subscribers and includes:
+                      <p className="text-white/80 text-xs">
+                        This premium theme includes:
                       </p>
-                      <ul className="text-white text-sm mt-2 space-y-1">
+                      <ul className="text-white text-xs mt-2 space-y-1 leading-relaxed">
                         <li>• Vibrant gradient backgrounds</li>
                         <li>• Glass morphism effects</li>
                         <li>• Rock-inspired color palette</li>
@@ -310,28 +310,28 @@ export default function MetalThemeSwitcher() {
                       </ul>
                     </div>
                     
-                    <div className="flex gap-3 mt-6">
+                    <div className="flex gap-2 mt-4">
                       <Button
                         onClick={() => setShowPremiumDialog(false)}
                         variant="ghost"
-                        className="flex-1 text-white border border-white/30 hover:bg-white/20 font-semibold px-6 py-3 text-base"
+                        className="flex-1 text-white border border-white/30 hover:bg-white/20 font-semibold px-4 py-2 text-sm"
                         style={{
                           backgroundColor: 'rgba(255, 255, 255, 0.1)',
                           backdropFilter: 'blur(10px)',
                           border: '1px solid rgba(255, 255, 255, 0.3)',
-                          borderRadius: '8px'
+                          borderRadius: '6px'
                         }}
                       >
                         Cancel
                       </Button>
                       <Button
                         onClick={scrollToSubscription}
-                        className="flex-1 font-bold px-6 py-3 text-base text-white"
+                        className="flex-1 font-bold px-4 py-2 text-sm text-white"
                         style={{
                           background: 'rgba(255, 255, 255, 0.15)',
                           backdropFilter: 'blur(15px)',
                           border: '1px solid rgba(255, 255, 255, 0.3)',
-                          borderRadius: '8px',
+                          borderRadius: '6px',
                           boxShadow: '0 4px 20px rgba(255, 255, 255, 0.1)'
                         }}
                       >
@@ -340,23 +340,23 @@ export default function MetalThemeSwitcher() {
                     </div>
                     
                     {/* TEMPORARY TESTING BUTTON - REMOVE BEFORE DEPLOYMENT */}
-                    <div className="mt-4 pt-4 border-t border-white/20">
+                    <div className="mt-3 pt-3 border-t border-white/20">
                       <Button
                         onClick={() => {
                           setTheme('glassmorphism-premium' as MetalTheme);
                           setShowPremiumDialog(false);
                           setIsOpen(false);
                         }}
-                        className="w-full font-bold px-6 py-3 text-base text-yellow-300"
+                        className="w-full font-semibold px-4 py-2 text-xs text-yellow-300"
                         style={{
                           background: 'rgba(255, 215, 0, 0.2)',
                           backdropFilter: 'blur(15px)',
                           border: '1px solid rgba(255, 215, 0, 0.4)',
-                          borderRadius: '8px',
+                          borderRadius: '6px',
                           boxShadow: '0 4px 20px rgba(255, 215, 0, 0.2)'
                         }}
                       >
-                        🔧 TESTING: Preview Theme (Remove Before Launch)
+                        Test Theme (Development Use Only)
                       </Button>
                     </div>
                   </div>
