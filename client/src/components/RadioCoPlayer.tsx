@@ -8,6 +8,7 @@ import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 import { useState, useRef, useEffect } from "react";
 import type { RadioStation } from "@/components/StationSelector";
+import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
 
 // Radio stations data
 const radioStations: RadioStation[] = [
@@ -107,6 +108,24 @@ export default function RadioCoPlayer() {
     setVolume(newVolume);
   };
 
+  // Get theme-aware filter for radio icons
+  const getIconFilter = () => {
+    const primaryColor = colors.primary;
+    
+    // Convert hex to filter values for different theme colors
+    const colorFilters: { [key: string]: string } = {
+      '#f97316': 'brightness(0) saturate(100%) invert(53%) sepia(75%) saturate(1200%) hue-rotate(24deg) brightness(1.1)', // Orange
+      '#ef4444': 'brightness(0) saturate(100%) invert(25%) sepia(95%) saturate(2000%) hue-rotate(340deg) brightness(1.2)', // Red
+      '#3b82f6': 'brightness(0) saturate(100%) invert(35%) sepia(95%) saturate(2000%) hue-rotate(200deg) brightness(1.2)', // Blue
+      '#8b5cf6': 'brightness(0) saturate(100%) invert(35%) sepia(95%) saturate(2000%) hue-rotate(280deg) brightness(1.2)', // Purple
+      '#10b981': 'brightness(0) saturate(100%) invert(45%) sepia(95%) saturate(1500%) hue-rotate(120deg) brightness(1.2)', // Green
+      '#ec4899': 'brightness(0) saturate(100%) invert(35%) sepia(95%) saturate(2000%) hue-rotate(320deg) brightness(1.2)', // Pink
+      '#f59e0b': 'brightness(0) saturate(100%) invert(60%) sepia(95%) saturate(1500%) hue-rotate(30deg) brightness(1.1)'   // Amber
+    };
+    
+    return colorFilters[primaryColor] || colorFilters['#f97316']; // Default to orange
+  };
+
   return (
     <section 
       className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg"
@@ -139,7 +158,7 @@ export default function RadioCoPlayer() {
           </Button>
           
           {showStationSelector && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-card/95 backdrop-blur-md border border-border/50 rounded-md shadow-lg z-20">
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-background/95 backdrop-blur-lg border border-border rounded-md shadow-xl z-20">
               <div className="p-2 max-h-60 overflow-y-auto">
                 {radioStations.map((station) => (
                   <button
@@ -152,12 +171,20 @@ export default function RadioCoPlayer() {
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0">
-                        <RadioIcon className="w-4 h-4 text-white" />
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0" style={{ backgroundColor: colors.primary + '20' }}>
+                        <img 
+                          src={MusicLogoPath} 
+                          alt="Radio Icon" 
+                          className="w-4 h-4 object-contain"
+                          style={{ 
+                            filter: getIconFilter(),
+                            WebkitFilter: getIconFilter()
+                          }}
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <div className="font-semibold text-sm truncate">
+                          <div className="font-semibold text-sm truncate text-foreground">
                             {station.name}
                           </div>
                           {station.id === (currentStation?.id || "beat-955") && (
