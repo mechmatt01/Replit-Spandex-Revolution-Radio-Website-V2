@@ -110,15 +110,8 @@ export default function Hero() {
           </div>
         </div>
 
-        <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto text-center">
-          Bringing you the best of old-school metal with legendary<br />
-          bands like Skid Row, Twisted Sister, and more.<br />
-          Join the hairspray rebellion!
-        </p>
-
-        {/* Live Radio Player */}
-        <div className="flex flex-col items-center justify-center space-y-6 mb-12 mt-8">
-          <RadioCoPlayer />
+        {/* View Schedule Button */}
+        <div className="flex justify-center mb-8">
           <Button 
             onClick={scrollToSchedule}
             variant="outline"
@@ -142,6 +135,17 @@ export default function Hero() {
             <Calendar className="mr-3 h-5 w-5" />
             VIEW SCHEDULE
           </Button>
+        </div>
+
+        <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto text-center">
+          Bringing you the best of old-school metal with legendary<br />
+          bands like Skid Row, Twisted Sister, and more.<br />
+          Join the hairspray rebellion!
+        </p>
+
+        {/* Live Radio Player */}
+        <div className="flex flex-col items-center justify-center space-y-6 mb-12 mt-8">
+          <RadioCoPlayer />
         </div>
 
 

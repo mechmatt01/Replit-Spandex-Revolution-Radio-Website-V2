@@ -431,7 +431,7 @@ export default function RadioCoPlayer() {
             </>
           ) : isPlaying ? (
             <>
-              <svg className="h-6 w-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="h-9 w-9 mr-4" fill="currentColor" viewBox="0 0 24 24">
                 <rect x="6" y="6" width="12" height="12" rx="1" />
               </svg>
               <span className="font-semibold text-lg">STOP</span>
