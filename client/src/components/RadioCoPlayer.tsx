@@ -108,27 +108,31 @@ export default function RadioCoPlayer() {
     setVolume(newVolume);
   };
 
-  // Get theme-aware filter for radio icons
+  // Get theme-aware filter for radio icons based on current theme
   const getIconFilter = () => {
-    const primaryColor = colors.primary;
+    // Use CSS custom property to dynamically match theme
+    const root = document.documentElement;
+    const primaryHsl = getComputedStyle(root).getPropertyValue('--primary').trim();
     
-    // More comprehensive color filters for better theme matching
-    const colorFilters: { [key: string]: string } = {
-      '#f97316': 'brightness(0) saturate(100%) invert(58%) sepia(82%) saturate(1500%) hue-rotate(24deg) brightness(1.1)', // Orange
-      '#ef4444': 'brightness(0) saturate(100%) invert(38%) sepia(98%) saturate(2500%) hue-rotate(343deg) brightness(1.2)', // Red  
-      '#3b82f6': 'brightness(0) saturate(100%) invert(58%) sepia(96%) saturate(2000%) hue-rotate(200deg) brightness(1.1)', // Blue
-      '#8b5cf6': 'brightness(0) saturate(100%) invert(65%) sepia(87%) saturate(1800%) hue-rotate(250deg) brightness(1.1)', // Purple
-      '#10b981': 'brightness(0) saturate(100%) invert(69%) sepia(56%) saturate(1500%) hue-rotate(120deg) brightness(1.1)', // Green
-      '#ec4899': 'brightness(0) saturate(100%) invert(58%) sepia(87%) saturate(2000%) hue-rotate(315deg) brightness(1.1)', // Pink
-      '#f59e0b': 'brightness(0) saturate(100%) invert(71%) sepia(95%) saturate(1200%) hue-rotate(15deg) brightness(1.1)',  // Amber
-      // Fallback for HSL values
-      'hsl(24.6 95% 53.1%)': 'brightness(0) saturate(100%) invert(58%) sepia(82%) saturate(1500%) hue-rotate(24deg) brightness(1.1)', // Orange HSL
-      'hsl(0 84.2% 60.2%)': 'brightness(0) saturate(100%) invert(38%) sepia(98%) saturate(2500%) hue-rotate(343deg) brightness(1.2)', // Red HSL
+    // Map common theme colors to appropriate filters
+    const themeFilters: { [key: string]: string } = {
+      // Classic Metal (Orange)
+      '24.6 95% 53.1%': 'brightness(0) saturate(100%) invert(58%) sepia(82%) saturate(1500%) hue-rotate(24deg) brightness(1.1)',
+      // Black Metal (Red)  
+      '0 84.2% 60.2%': 'brightness(0) saturate(100%) invert(38%) sepia(98%) saturate(2500%) hue-rotate(343deg) brightness(1.2)',
+      // Death Metal (Purple)
+      '271.5 91% 65.1%': 'brightness(0) saturate(100%) invert(65%) sepia(87%) saturate(1800%) hue-rotate(250deg) brightness(1.1)',
+      // Power Metal (Blue)
+      '213.1 93.9% 67.8%': 'brightness(0) saturate(100%) invert(58%) sepia(96%) saturate(2000%) hue-rotate(200deg) brightness(1.1)',
+      // Doom Metal (Green)
+      '158.1 64.4% 51.6%': 'brightness(0) saturate(100%) invert(69%) sepia(56%) saturate(1500%) hue-rotate(120deg) brightness(1.1)',
+      // Thrash Metal (Pink)
+      '323.4 86% 58%': 'brightness(0) saturate(100%) invert(58%) sepia(87%) saturate(2000%) hue-rotate(315deg) brightness(1.1)',
+      // Gothic Metal (Amber)
+      '43.3 96.4% 56.3%': 'brightness(0) saturate(100%) invert(71%) sepia(95%) saturate(1200%) hue-rotate(15deg) brightness(1.1)'
     };
     
-    // Check both hex and HSL formats
-    return colorFilters[primaryColor] || 
-           colorFilters['#f97316']; // Default to orange
+    return themeFilters[primaryHsl] || themeFilters['24.6 95% 53.1%']; // Default to orange
   };
 
   return (
@@ -163,7 +167,7 @@ export default function RadioCoPlayer() {
           </Button>
           
           {showStationSelector && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-black/90 dark:bg-black/95 backdrop-blur-lg border border-border rounded-md shadow-xl z-20">
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-black/95 backdrop-blur-lg border border-border rounded-md shadow-xl z-20">
               <div className="p-2 max-h-60 overflow-y-auto">
                 {radioStations.map((station) => (
                   <button
