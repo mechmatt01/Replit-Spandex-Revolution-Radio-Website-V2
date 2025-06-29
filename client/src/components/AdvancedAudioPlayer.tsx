@@ -25,16 +25,56 @@ import {
 import { useAudio } from "@/contexts/AudioContext";
 import { useRadio } from "@/contexts/RadioContext";
 import type { NowPlaying } from "@shared/schema";
+import type { RadioStation } from "@/components/StationSelector";
 
-interface RadioStation {
-  id: string;
-  name: string;
-  frequency: string;
-  location: string;
-  genre: string;
-  streamUrl: string;
-  description: string;
-}
+// Radio stations data
+const radioStations: RadioStation[] = [
+  {
+    id: "beat-955",
+    name: "95.5 The Beat",
+    frequency: "95.5 FM",
+    location: "Dallas, TX",
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
+    description: "Dallas Hip Hop & R&B"
+  },
+  {
+    id: "hot-97",
+    name: "Hot 97",
+    frequency: "97.1 FM", 
+    location: "New York, NY",
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
+    description: "New York's Hip Hop & R&B"
+  },
+  {
+    id: "power-106",
+    name: "Power 106",
+    frequency: "105.9 FM",
+    location: "Los Angeles, CA", 
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
+    description: "LA's #1 for Hip Hop"
+  },
+  {
+    id: "soma-metal",
+    name: "SomaFM Metal",
+    frequency: "Online",
+    location: "San Francisco, CA",
+    genre: "Metal",
+    streamUrl: "https://ice1.somafm.com/metal-128-mp3",
+    description: "Heavy Metal & Hard Rock"
+  },
+  {
+    id: "spandex-salvation",
+    name: "Spandex Salvation Radio",
+    frequency: "Online",
+    location: "Global",
+    genre: "Classic Metal",
+    streamUrl: "/api/radio-stream",
+    description: "Old School Metal 24/7"
+  }
+];
 
 interface PlaylistTrack {
   id: string;
@@ -152,7 +192,6 @@ export default function AdvancedAudioPlayer() {
           ...(index === 0 && {
             title: nowPlaying.title,
             artist: nowPlaying.artist,
-            album: nowPlaying.album || track.album,
           })
         }));
 
@@ -330,7 +369,7 @@ export default function AdvancedAudioPlayer() {
               {/* Album Art */}
               <div className="w-48 h-48 bg-gradient-to-br from-metal-orange via-metal-red to-purple-600 rounded-lg p-1">
                 <div className="w-full h-full bg-dark-surface rounded-lg flex items-center justify-center relative overflow-hidden">
-                  {currentTrack && (
+                  {nowPlaying && (
                     <div className="absolute inset-0 bg-gradient-to-br from-metal-orange/20 via-metal-red/20 to-purple-600/20" />
                   )}
                   <Music className="h-20 w-20 text-gray-400" />
@@ -342,10 +381,10 @@ export default function AdvancedAudioPlayer() {
             <div className="flex-1 text-center lg:text-left">
               <div className="mb-6">
                 <h2 className="text-2xl font-black text-white mb-2">
-                  {currentTrack?.title || "Spandex Salvation Radio"}
+                  {(nowPlaying as any)?.title || "Spandex Salvation Radio"}
                 </h2>
                 <p className="text-gray-400 text-lg font-semibold">
-                  {currentTrack?.artist || "Old School Metal 24/7"}
+                  {(nowPlaying as any)?.artist || "Old School Metal 24/7"}
                 </p>
               </div>
 
