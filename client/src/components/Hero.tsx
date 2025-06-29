@@ -44,15 +44,32 @@ export default function Hero() {
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden -mt-16 pt-16">
-      {/* Background */}
-      <div className="absolute inset-0 -top-16 bg-gradient-to-b from-background via-card to-background transition-colors duration-300">
+      {/* Background with Theme-Aware Fade */}
+      <div className="absolute inset-0 -top-16">
+        {/* Background Image */}
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-20 dark:opacity-20 light:opacity-30"
           style={{
             backgroundImage: "url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')"
           }}
         ></div>
+        
+        {/* Horizontal fade overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80 transition-colors duration-300"></div>
+        
+        {/* Theme-aware vertical fade to background */}
+        <div 
+          className="absolute inset-0 transition-all duration-300"
+          style={{
+            background: `linear-gradient(to bottom, 
+              transparent 0%, 
+              transparent 40%, 
+              ${isDarkMode ? 'rgba(0, 0, 0, 0.3)' : 'rgba(255, 255, 255, 0.3)'} 60%, 
+              ${isDarkMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)'} 80%, 
+              ${isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)'} 100%
+            )`
+          }}
+        ></div>
       </div>
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 pt-16">
         <h1 className="font-orbitron font-black text-5xl md:text-8xl mb-2 text-black dark:text-white">
