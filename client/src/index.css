@@ -587,6 +587,15 @@ img, video {
   }
 }
 
+@keyframes scrollLeftToRight {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 .scrolling-text {
   animation: scroll-left 20s linear infinite;
 }

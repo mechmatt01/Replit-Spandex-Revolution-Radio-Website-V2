@@ -399,9 +399,9 @@ export default function RadioCoPlayer() {
 
       <div className="flex flex-col items-center justify-center space-y-4">
         {/* Play/Pause and Mute Button Row - Perfectly Centered */}
-        <div className="flex items-center justify-center space-x-4 w-full">
-          {/* Mute Button with Animated Volume Slider */}
-          <div className="relative group">
+        <div className="flex items-center justify-center w-full relative">
+          {/* Mute Button with Animated Volume Slider - Positioned further left */}
+          <div className="absolute left-1/2 transform -translate-x-32 group">
             <Button
               onClick={toggleMute}
               variant="ghost"
@@ -424,16 +424,16 @@ export default function RadioCoPlayer() {
             </Button>
 
             {/* Animated Vertical Volume Slider - Opens Upward with Reduced Padding */}
-            <div className="absolute top-auto bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto">
-              <div className="bg-black/80 backdrop-blur-lg rounded-lg p-2 shadow-xl border border-white/20">
-                <div className="flex flex-col items-center h-28 w-6">
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto">
+              <div className="bg-black/80 backdrop-blur-lg rounded-lg p-1 shadow-xl border border-white/20">
+                <div className="flex flex-col items-center h-24 w-5">
                   {/* Volume Level Display */}
-                  <div className="text-xs text-white font-bold mb-1">
+                  <div className="text-xs text-white font-bold mb-0.5">
                     {Math.round((isMuted ? 0 : volume) * 100)}
                   </div>
                   
                   {/* Vertical Slider Container */}
-                  <div className="relative h-20 w-2 bg-white/20 rounded-full">
+                  <div className="relative h-18 w-2 bg-white/20 rounded-full">
                     {/* Filled Volume Bar */}
                     <div 
                       className="absolute bottom-0 w-full rounded-full transition-all duration-200"
@@ -459,14 +459,15 @@ export default function RadioCoPlayer() {
             </div>
           </div>
 
-          {/* Play/Pause Button - Centered */}
-          <Button
-            onClick={togglePlayback}
-            disabled={isLoading}
-            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center justify-center mx-auto"
-            style={{
-              background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-              color: 'white',
+          {/* Play/Pause Button - Perfectly Centered */}
+          <div className="flex justify-center w-full">
+            <Button
+              onClick={togglePlayback}
+              disabled={isLoading}
+              className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center justify-center"
+              style={{
+                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+                color: 'white',
               borderColor: colors.primary,
               boxShadow: `0 10px 40px ${colors.primary}60`
             }}
@@ -491,7 +492,8 @@ export default function RadioCoPlayer() {
                 <span className="font-semibold text-lg">PLAY LIVE</span>
               </>
             )}
-          </Button>
+            </Button>
+          </div>
         </div>
 
       </div>
