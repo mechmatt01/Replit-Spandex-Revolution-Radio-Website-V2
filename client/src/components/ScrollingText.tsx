@@ -56,12 +56,12 @@ export default function ScrollingText({
     }
   }, [shouldScroll]);
 
-  // If text doesn't need scrolling, just center it
+  // If text doesn't need scrolling, align based on alignment prop
   if (!shouldScroll) {
     return (
       <div 
         ref={containerRef}
-        className="flex justify-center overflow-hidden"
+        className={`flex overflow-hidden ${alignment === 'left' ? 'justify-start' : 'justify-center'}`}
         style={{ maxWidth, backgroundColor }}
       >
         <div
