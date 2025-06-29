@@ -196,8 +196,9 @@ export default function MetalThemeSwitcher() {
                             <Star 
                               className="w-4 h-4 flex-shrink-0"
                               style={{ 
-                                color: isLocked ? colors.textSecondary : '#ffd700',
-                                fill: isLocked ? 'none' : '#ffd700'
+                                color: '#ffd700',
+                                fill: '#ffd700',
+                                filter: isLocked ? 'grayscale(100%) opacity(0.5)' : 'drop-shadow(0 0 2px rgba(255, 215, 0, 0.3))'
                               }}
                             />
                           )}
