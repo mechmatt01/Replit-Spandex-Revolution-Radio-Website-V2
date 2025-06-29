@@ -65,10 +65,11 @@ export default function StickyPlayer() {
             <div className="w-full">
               <ScrollingText 
                 text={currentTrack.title !== stationName ? currentTrack.title : stationName}
-                className="font-semibold text-foreground text-sm"
+                className="font-semibold text-foreground text-sm text-left"
                 maxWidth="100%"
                 isFloating={true}
                 backgroundColor="hsl(var(--background))"
+                alignment="left"
               />
             </div>
             <div className="flex items-center justify-between mt-1">

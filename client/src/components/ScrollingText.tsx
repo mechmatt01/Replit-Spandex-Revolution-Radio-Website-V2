@@ -3,18 +3,21 @@ import { useEffect, useRef, useState } from 'react';
 interface ScrollingTextProps {
   text: string;
   className?: string;
-  maxWidth?: string;
   style?: React.CSSProperties;
+  maxWidth?: string;
   isFloating?: boolean;
   backgroundColor?: string;
+  alignment?: 'left' | 'center';
 }
 
 export default function ScrollingText({ 
   text, 
   className = "", 
-  style = {},
+  style = {}, 
   maxWidth = "100%",
-  backgroundColor = "transparent"
+  isFloating = false,
+  backgroundColor = "transparent",
+  alignment = "center"
 }: ScrollingTextProps) {
   const [isScrolling, setIsScrolling] = useState(false);
   const [shouldScroll, setShouldScroll] = useState(false);
