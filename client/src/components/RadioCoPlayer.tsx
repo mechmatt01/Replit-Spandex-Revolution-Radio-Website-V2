@@ -398,8 +398,8 @@ export default function RadioCoPlayer() {
       </div>
 
       <div className="flex flex-col items-center space-y-4">
-        {/* Play/Pause and Mute Button Row */}
-        <div className="flex items-center space-x-4">
+        {/* Play/Pause and Mute Button Row - Centered */}
+        <div className="flex items-center justify-center space-x-4">
           {/* Mute Button with Animated Volume Slider */}
           <div className="relative group">
             <Button
@@ -423,17 +423,17 @@ export default function RadioCoPlayer() {
               )}
             </Button>
 
-            {/* Animated Vertical Volume Slider - Appears on Hover */}
+            {/* Animated Vertical Volume Slider - Opens Upward with Reduced Padding */}
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto">
-              <div className="bg-black/80 backdrop-blur-lg rounded-lg p-3 shadow-xl border border-white/20">
-                <div className="flex flex-col items-center h-32 w-8">
+              <div className="bg-black/80 backdrop-blur-lg rounded-lg p-2 shadow-xl border border-white/20">
+                <div className="flex flex-col items-center h-28 w-6">
                   {/* Volume Level Display */}
-                  <div className="text-xs text-white font-bold mb-2">
+                  <div className="text-xs text-white font-bold mb-1">
                     {Math.round((isMuted ? 0 : volume) * 100)}
                   </div>
                   
                   {/* Vertical Slider Container */}
-                  <div className="relative h-24 w-2 bg-white/20 rounded-full">
+                  <div className="relative h-20 w-2 bg-white/20 rounded-full">
                     {/* Filled Volume Bar */}
                     <div 
                       className="absolute bottom-0 w-full rounded-full transition-all duration-200"
@@ -492,30 +492,6 @@ export default function RadioCoPlayer() {
               </>
             )}
           </Button>
-        </div>
-
-        {/* Horizontal Volume Slider - Centered Below */}
-        <div className="flex items-center justify-center">
-          <div className="w-[280px] rounded-xl p-4"
-               style={{
-                 background: 'rgba(255, 255, 255, 0.1)',
-                 backdropFilter: 'blur(15px)',
-                 border: '1px solid rgba(255, 255, 255, 0.2)'
-               }}>
-            <Slider
-              value={[isMuted ? 0 : volume * 100]}
-              onValueChange={(value) => setVolume(value[0] / 100)}
-              max={100}
-              step={1}
-              className="w-full [&_.range-slider]:bg-gradient-to-r [&_.range-slider]:from-blue-400 [&_.range-slider]:to-purple-500"
-              style={{
-                '--slider-track': 'rgba(255, 255, 255, 0.2)',
-                '--slider-range': 'linear-gradient(90deg, #60a5fa, #a855f7)',
-                '--slider-thumb': '#ffffff'
-              } as any}
-              aria-label="Volume control"
-            />
-          </div>
         </div>
 
       </div>

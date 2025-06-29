@@ -83,13 +83,14 @@ export default function ScrollingText({
     >
       <div
         ref={textRef}
-        className={`transition-transform duration-1000 ease-linear ${className}`}
+        className={`transition-transform duration-1000 ease-linear ${className} whitespace-nowrap`}
         style={{
           ...style,
           transform: isScrolling && shouldScroll ? 'translateX(-100%)' : 'translateX(0)',
           animation: isScrolling && shouldScroll ? 'scroll-left 8s linear infinite' : 'none',
           display: 'inline-block',
-          paddingRight: shouldScroll ? '100px' : '0'
+          paddingRight: shouldScroll ? '100px' : '0',
+          whiteSpace: 'nowrap'
         }}
       >
         {text}

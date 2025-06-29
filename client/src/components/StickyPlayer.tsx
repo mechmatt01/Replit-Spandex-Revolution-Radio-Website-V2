@@ -62,10 +62,10 @@ export default function StickyPlayer() {
 
           {/* Track Info with 60% width of player box */}
           <div className={`min-w-0 ml-3 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`} style={{ width: '60%' }}>
-            <div className="w-full">
+            <div className="w-full overflow-hidden">
               <ScrollingText 
                 text={currentTrack.title !== stationName ? currentTrack.title : stationName}
-                className="font-semibold text-foreground text-sm text-left"
+                className="font-semibold text-foreground text-sm whitespace-nowrap"
                 maxWidth="100%"
                 isFloating={true}
                 backgroundColor="hsl(var(--background))"
