@@ -190,8 +190,11 @@ export default function RadioCoPlayer() {
             <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
             <span style={{ color: colors.primary }}>{currentStation?.name || "95.5 The Beat"}</span>
             <ChevronDown 
-              className={`w-3 h-3 ml-1 text-gray-400 transition-transform duration-200 ${showStationSelector ? 'rotate-180' : 'rotate-0'}`}
-              style={{ opacity: 0.6 }}
+              className={`w-3 h-3 ml-1 transition-all duration-300 ease-in-out transform ${showStationSelector ? 'rotate-180' : 'rotate-0'}`}
+              style={{ 
+                opacity: 0.6,
+                color: colors.primary
+              }}
             />
           </Button>
           
@@ -234,22 +237,22 @@ export default function RadioCoPlayer() {
                       <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0">
                         <span className="text-lg">{station.icon}</span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between h-6">
+                      <div className="flex-1 min-w-0 flex items-center">
+                        <div className="flex-1">
                           <div className="font-semibold text-sm text-white truncate">
                             {station.name}
                           </div>
-                          <div className="flex items-center justify-center ml-2 w-6 h-6">
-                            {station.id === (currentStation?.id || "beat-955") && (
-                              <Volume2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.primary }} />
-                            )}
+                          <div className="text-xs text-gray-300 truncate">
+                            {station.frequency} • {station.location}
+                          </div>
+                          <div className="text-xs text-gray-400 truncate">
+                            {station.description}
                           </div>
                         </div>
-                        <div className="text-xs text-gray-300 truncate">
-                          {station.frequency} • {station.location}
-                        </div>
-                        <div className="text-xs text-gray-400 truncate">
-                          {station.description}
+                        <div className="flex items-center justify-center ml-2 w-6 h-6 flex-shrink-0">
+                          {station.id === (currentStation?.id || "beat-955") && (
+                            <Volume2 className="w-4 h-4" style={{ color: colors.primary }} />
+                          )}
                         </div>
                       </div>
                     </div>
