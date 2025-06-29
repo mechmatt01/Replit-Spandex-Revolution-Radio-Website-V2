@@ -92,7 +92,7 @@ export default function RadioCoPlayer() {
   } = useRadio();
   const { getColors, getGradient } = useTheme();
   const colors = getColors();
-  
+
   const [showStationSelector, setShowStationSelector] = useState(false);
   const stationDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -109,7 +109,7 @@ export default function RadioCoPlayer() {
         // Only close if dropdown is completely out of view
         const rect = stationDropdownRef.current.getBoundingClientRect();
         const isOutOfView = rect.bottom < 0 || rect.top > window.innerHeight;
-        
+
         if (isOutOfView) {
           setShowStationSelector(false);
         }
@@ -148,7 +148,7 @@ export default function RadioCoPlayer() {
     // Use CSS custom property to dynamically match theme
     const root = document.documentElement;
     const primaryHsl = getComputedStyle(root).getPropertyValue('--primary').trim();
-    
+
     // Map common theme colors to appropriate filters
     const themeFilters: { [key: string]: string } = {
       // Classic Metal (Orange)
@@ -166,7 +166,7 @@ export default function RadioCoPlayer() {
       // Gothic Metal (Amber)
       '43.3 96.4% 56.3%': 'brightness(0) saturate(100%) invert(71%) sepia(95%) saturate(1200%) hue-rotate(15deg) brightness(1.1)'
     };
-    
+
     return themeFilters[primaryHsl] || themeFilters['24.6 95% 53.1%']; // Default to orange
   };
 
@@ -216,7 +216,7 @@ export default function RadioCoPlayer() {
               }}
             />
           </Button>
-          
+
           {showStationSelector && (
             <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 border shadow-xl z-20 scrollbar-thin"
                  style={{ 
@@ -353,7 +353,7 @@ export default function RadioCoPlayer() {
             size="md"
           />
         </div>
-        
+
         {/* Compact LIVE Indicator - 50% overlapping top of album artwork */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold" style={{ boxShadow: 'none' }}>
@@ -433,7 +433,7 @@ export default function RadioCoPlayer() {
         </Button>
 
         {/* Volume Controls */}
-        <div className="flex items-center justify-center gap-3 w-full max-w-[250px]">
+        <div className="flex items-center justify-center gap-3 w-full max-w-[375px]">
           <Button
             onClick={toggleMute}
             variant="ghost"
@@ -454,7 +454,7 @@ export default function RadioCoPlayer() {
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
           </Button>
 
-          <div className="flex-1" style={{ paddingLeft: '3px', paddingRight: '3px' }}>
+          <div className="flex-1" style={{ paddingLeft: '3px', paddingRight: '3px', minWidth: '180px' }}>
             <div className="w-full h-2 bg-gray-700 rounded-full relative">
               <div 
                 className="h-2 rounded-full transition-all duration-150"
@@ -483,10 +483,7 @@ export default function RadioCoPlayer() {
             </div>
           </div>
 
-          <span 
-            className="text-sm font-semibold min-w-[40px]"
-            style={{ color: colors.primary }}
-          >
+          <span className="text-sm font-semibold min-w-[35px] text-center" style={{ color: colors.primary }}>
             {Math.round((isMuted ? 0 : volume) * 100)}%
           </span>
         </div>
