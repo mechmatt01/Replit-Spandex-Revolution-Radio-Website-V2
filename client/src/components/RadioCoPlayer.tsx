@@ -183,8 +183,9 @@ export default function RadioCoPlayer() {
             onClick={() => setShowStationSelector(!showStationSelector)}
             className="bg-card/90 backdrop-blur-sm hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1 min-w-fit whitespace-nowrap"
             style={{
-              borderColor: colors.primary + '60',
-              borderWidth: '3px',
+              borderColor: colors.primary,
+              borderWidth: '2px',
+              borderRadius: '19px',
               width: 'auto'
             } as React.CSSProperties}
           >

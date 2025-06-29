@@ -83,7 +83,7 @@ export default function Hero() {
         <div className="mt-8 mb-8">
           <div className="flex items-center justify-center mb-1">
             {/* Large LIVE IN Indicator - 2x size */}
-            <div className="flex items-center gap-2 bg-red-500 text-white px-4 py-1 rounded-full text-lg font-bold shadow-none">
+            <div className="flex items-center gap-2 bg-red-500 text-white px-4 py-1 rounded-full text-lg font-bold shadow-none opacity-60">
               <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
               LIVE IN
             </div>
