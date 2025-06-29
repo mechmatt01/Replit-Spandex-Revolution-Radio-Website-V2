@@ -398,65 +398,104 @@ export default function RadioCoPlayer() {
       </div>
 
       <div className="flex flex-col items-center space-y-4">
-        {/* Play/Pause Button */}
-        <Button
-          onClick={togglePlayback}
-          disabled={isLoading}
-          className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center"
-          style={{
-            background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-            color: 'white',
-            borderColor: colors.primary,
-            boxShadow: `0 10px 40px ${colors.primary}60`
-          }}
-        >
-          {isLoading ? (
-            <>
-              <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3" />
-              <span className="font-semibold text-lg">CONNECTING...</span>
-            </>
-          ) : isPlaying ? (
-            <>
-              <svg className="h-18 w-18 mr-4" fill="currentColor" viewBox="0 0 24 24">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-              </svg>
-              <span className="font-semibold text-lg">STOP</span>
-            </>
-          ) : (
-            <>
-              <svg className="h-18 w-18 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                <polygon points="4,1 23,12 4,23" />
-              </svg>
-              <span className="font-semibold text-lg">PLAY LIVE</span>
-            </>
-          )}
-        </Button>
+        {/* Play/Pause and Mute Button Row */}
+        <div className="flex items-center space-x-4">
+          {/* Mute Button with Animated Volume Slider */}
+          <div className="relative group">
+            <Button
+              onClick={toggleMute}
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 rounded-full p-2 w-12 h-12 flex items-center justify-center transition-all duration-200"
+              style={{
+                background: isMuted ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                border: isMuted ? '2px solid rgba(255, 0, 0, 0.4)' : '2px solid rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(15px)'
+              }}
+              aria-label={isMuted ? "Unmute" : "Mute"}
+            >
+              {isMuted ? (
+                <VolumeX className="h-6 w-6" />
+              ) : volume > 0.5 ? (
+                <Volume2 className="h-6 w-6" />
+              ) : (
+                <Volume2 className="h-6 w-6" />
+              )}
+            </Button>
 
-        {/* Volume Controls */}
-        <div className="flex items-center justify-center space-x-6">
-          {/* Mute Button */}
+            {/* Animated Vertical Volume Slider - Appears on Hover */}
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto">
+              <div className="bg-black/80 backdrop-blur-lg rounded-lg p-3 shadow-xl border border-white/20">
+                <div className="flex flex-col items-center h-32 w-8">
+                  {/* Volume Level Display */}
+                  <div className="text-xs text-white font-bold mb-2">
+                    {Math.round((isMuted ? 0 : volume) * 100)}
+                  </div>
+                  
+                  {/* Vertical Slider Container */}
+                  <div className="relative h-24 w-2 bg-white/20 rounded-full">
+                    {/* Filled Volume Bar */}
+                    <div 
+                      className="absolute bottom-0 w-full rounded-full transition-all duration-200"
+                      style={{
+                        height: `${(isMuted ? 0 : volume) * 100}%`,
+                        background: `linear-gradient(180deg, ${colors.primary}, ${colors.secondary})`
+                      }}
+                    />
+                    
+                    {/* Interactive Overlay for Volume Control */}
+                    <div 
+                      className="absolute inset-0 cursor-pointer"
+                      onClick={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const y = rect.bottom - e.clientY;
+                        const newVolume = Math.max(0, Math.min(1, y / rect.height));
+                        setVolume(newVolume);
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Play/Pause Button */}
           <Button
-            onClick={toggleMute}
-            variant="ghost"
-            size="sm"
-            className="text-white hover:bg-white/20 rounded-full p-2 w-12 h-12 flex items-center justify-center transition-all duration-200"
+            onClick={togglePlayback}
+            disabled={isLoading}
+            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center"
             style={{
-              background: isMuted ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-              border: isMuted ? '2px solid rgba(255, 0, 0, 0.4)' : '2px solid rgba(255, 255, 255, 0.2)',
-              backdropFilter: 'blur(15px)'
+              background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+              color: 'white',
+              borderColor: colors.primary,
+              boxShadow: `0 10px 40px ${colors.primary}60`
             }}
-            aria-label={isMuted ? "Unmute" : "Mute"}
           >
-            {isMuted ? (
-              <VolumeX className="h-6 w-6" />
-            ) : volume > 0.5 ? (
-              <Volume2 className="h-6 w-6" />
+            {isLoading ? (
+              <>
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3" />
+                <span className="font-semibold text-lg">CONNECTING...</span>
+              </>
+            ) : isPlaying ? (
+              <>
+                <svg className="h-18 w-18 mr-4" fill="currentColor" viewBox="0 0 24 24">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                </svg>
+                <span className="font-semibold text-lg">STOP</span>
+              </>
             ) : (
-              <Volume2 className="h-6 w-6" />
+              <>
+                <svg className="h-18 w-18 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                  <polygon points="4,1 23,12 4,23" />
+                </svg>
+                <span className="font-semibold text-lg">PLAY LIVE</span>
+              </>
             )}
           </Button>
+        </div>
 
-          {/* Volume Slider - Match Play Button Width */}
+        {/* Horizontal Volume Slider - Centered Below */}
+        <div className="flex items-center justify-center">
           <div className="w-[280px] rounded-xl p-4"
                style={{
                  background: 'rgba(255, 255, 255, 0.1)',
@@ -476,18 +515,6 @@ export default function RadioCoPlayer() {
               } as any}
               aria-label="Volume control"
             />
-          </div>
-
-          {/* Volume Percentage */}
-          <div className="w-16 h-12 flex items-center justify-center rounded-lg"
-               style={{
-                 background: 'rgba(255, 255, 255, 0.15)',
-                 backdropFilter: 'blur(10px)',
-                 border: '1px solid rgba(255, 255, 255, 0.2)'
-               }}>
-            <span className="text-sm font-bold text-white/90">
-              {Math.round((isMuted ? 0 : volume) * 100)}%
-            </span>
           </div>
         </div>
 
