@@ -417,15 +417,15 @@ export default function RadioCoPlayer() {
             </>
           ) : isPlaying ? (
             <>
-              <svg className="h-12 w-12 mr-4" fill="currentColor" viewBox="0 0 24 24">
-                <rect x="4" y="4" width="16" height="16" rx="2" />
+              <svg className="h-18 w-18 mr-4" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
               </svg>
               <span className="font-semibold text-lg">STOP</span>
             </>
           ) : (
             <>
-              <svg className="h-12 w-12 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                <polygon points="5,2 22,12 5,22" />
+              <svg className="h-18 w-18 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <polygon points="4,1 23,12 4,23" />
               </svg>
               <span className="font-semibold text-lg">PLAY LIVE</span>
             </>

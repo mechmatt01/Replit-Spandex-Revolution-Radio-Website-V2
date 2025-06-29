@@ -118,12 +118,12 @@ export default function StickyPlayer() {
             aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
           >
             {isPlaying ? (
-              <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-                <rect x="6" y="6" width="12" height="12" rx="1" />
+              <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" rx="2" />
               </svg>
             ) : (
-              <svg className="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-                <polygon points="7,4 20,12 7,20" />
+              <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 24 24">
+                <polygon points="5,2 22,12 5,22" />
               </svg>
             )}
           </Button>
