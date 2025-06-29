@@ -148,67 +148,7 @@ export default function RadioCoPlayer() {
         aria-label="Live radio stream"
       />
 
-      {/* Station Selector Button */}
-      <div className="flex justify-center mb-6">
-        <div className="relative" ref={stationDropdownRef}>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowStationSelector(!showStationSelector)}
-            className="bg-card/90 backdrop-blur-sm border-border/50 hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1"
-            style={{
-              borderColor: colors.primary + '40'
-            } as React.CSSProperties}
-          >
-            <RadioIcon className="w-3 h-3 mr-1" />
-            {currentStation?.name || "95.5 The Beat"}
-            <ChevronDown className="w-3 h-3 ml-1" />
-          </Button>
-          
-          {showStationSelector && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-black/90 dark:bg-black/95 backdrop-blur-lg rounded-md shadow-xl z-20">
-              <div className="p-2 max-h-60 overflow-y-auto">
-                {radioStations.map((station) => (
-                  <button
-                    key={station.id}
-                    onClick={() => handleStationChange(station)}
-                    className={`w-full p-3 text-left rounded-md transition-all duration-200 ${
-                      station.id === (currentStation?.id || "beat-955")
-                        ? 'bg-primary/20' 
-                        : 'hover:bg-muted/50'
-                    }`}
-                    style={station.id === (currentStation?.id || "beat-955") ? {
-                      backgroundColor: colors.primary + '20'
-                    } : {}}
-                  >
-                    <div className="flex items-center gap-3">
-                      <ThemedRadioIcon size="sm" />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <div className="font-semibold text-sm truncate text-foreground">
-                            {station.name}
-                          </div>
-                          {station.id === (currentStation?.id || "beat-955") && (
-                            <Volume2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.primary }} />
-                          )}
-                        </div>
-                        <div className="text-xs text-muted-foreground truncate">
-                          {station.frequency} • {station.location}
-                        </div>
-                        <div className="text-xs text-muted-foreground/80 truncate">
-                          {station.description}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Album Art with LIVE Indicator Overlay */}
+      {/* Album Art with Station Selector and LIVE Indicator */}
       <div className="flex justify-center mb-6 relative">
         <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
           <InteractiveAlbumArt 
@@ -219,19 +159,75 @@ export default function RadioCoPlayer() {
             size="lg"
           />
           
+          {/* Station Selector Button - positioned over album art */}
+          <div className="absolute top-2 right-2" ref={stationDropdownRef}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowStationSelector(!showStationSelector)}
+              className="bg-card/90 backdrop-blur-sm hover:bg-card/95 transition-all duration-200 text-xs px-2 py-1 h-6"
+              style={{
+                borderColor: colors.primary + '40'
+              } as React.CSSProperties}
+            >
+              <RadioIcon className="w-3 h-3 mr-1" />
+              <ChevronDown className="w-3 h-3" />
+            </Button>
+            
+            {showStationSelector && (
+              <div className="absolute top-full right-0 mt-1 w-80 bg-black/90 dark:bg-black/95 backdrop-blur-lg rounded-md shadow-xl z-20">
+                <div className="p-2 max-h-60 overflow-y-auto">
+                  {radioStations.map((station) => (
+                    <button
+                      key={station.id}
+                      onClick={() => handleStationChange(station)}
+                      className={`w-full p-3 text-left rounded-md transition-all duration-200 ${
+                        station.id === (currentStation?.id || "beat-955")
+                          ? 'bg-primary/20' 
+                          : 'hover:bg-muted/50'
+                      }`}
+                      style={station.id === (currentStation?.id || "beat-955") ? {
+                        backgroundColor: colors.primary + '20'
+                      } : {}}
+                    >
+                      <div className="flex items-center gap-3">
+                        <ThemedRadioIcon size="sm" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <div className="font-semibold text-sm truncate text-foreground">
+                              {station.name}
+                            </div>
+                            {station.id === (currentStation?.id || "beat-955") && (
+                              <Volume2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.primary }} />
+                            )}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate">
+                            {station.frequency} • {station.location}
+                          </div>
+                          <div className="text-xs text-muted-foreground/80 truncate">
+                            {station.description}
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          
           {/* LIVE Indicator - positioned to overlap 50% on top of album artwork */}
-          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+          <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 z-10">
             <div 
-              className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg border-2"
+              className="px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg"
               style={{
                 backgroundColor: colors.primary,
-                color: 'white',
-                borderColor: 'white'
+                color: 'white'
               }}
             >
               <div className="flex items-center gap-1">
                 <div 
-                  className="w-2 h-2 rounded-full animate-pulse"
+                  className="w-1.5 h-1.5 rounded-full animate-pulse"
                   style={{ backgroundColor: '#ff0000' }}
                 />
                 LIVE
