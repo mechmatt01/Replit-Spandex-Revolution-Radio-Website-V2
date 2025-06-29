@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Radio, ChevronDown, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -90,6 +90,25 @@ export default function StationSelector({ currentStation, onStationChange }: Sta
     ...radioStations.filter(station => station.id !== currentStation)
   ];
 
+  // Close dropdown when scrolling
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isOpen) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      document.addEventListener('scroll', handleScroll, { passive: true });
+    }
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, [isOpen]);
+
   const handleStationSelect = (station: RadioStation) => {
     onStationChange(station);
     setIsOpen(false);
@@ -108,11 +127,11 @@ export default function StationSelector({ currentStation, onStationChange }: Sta
             } as React.CSSProperties}
           >
             <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500">
-                <span className="text-sm">{selectedStation.icon}</span>
+              <div className="flex items-center justify-center w-8 h-8 rounded-full" style={{ backgroundColor: colors.primary }}>
+                <span className="text-sm text-white">{selectedStation.icon}</span>
               </div>
               <div className="flex flex-col items-start text-left">
-                <div className="font-semibold text-sm text-foreground">
+                <div className="font-semibold text-sm" style={{ color: colors.primary }}>
                   {selectedStation.name}
                 </div>
                 <div className="text-xs text-muted-foreground">
@@ -120,7 +139,7 @@ export default function StationSelector({ currentStation, onStationChange }: Sta
                 </div>
               </div>
             </div>
-            <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            <ChevronDown className="w-4 h-4 text-gray-400" />
           </Button>
         </DropdownMenuTrigger>
         
