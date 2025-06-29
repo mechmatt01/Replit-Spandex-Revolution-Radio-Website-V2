@@ -200,23 +200,9 @@ export default function RadioCoPlayer() {
             } as React.CSSProperties}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = colors.primary + '20';
-              // Set text color based on theme brightness
-              const isLightTheme = colors.background === '#ffffff' || colors.background === '#f8f8f8' || colors.background === '#fafafa';
-              e.currentTarget.style.color = isLightTheme ? '#000000' : '#ffffff';
-              // Update child elements color
-              const children = e.currentTarget.querySelectorAll('*');
-              children.forEach(child => {
-                (child as HTMLElement).style.color = isLightTheme ? '#000000' : '#ffffff';
-              });
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = '';
-              e.currentTarget.style.color = '';
-              // Reset child elements color
-              const children = e.currentTarget.querySelectorAll('*');
-              children.forEach(child => {
-                (child as HTMLElement).style.color = colors.primary;
-              });
             }}
           >
             <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
