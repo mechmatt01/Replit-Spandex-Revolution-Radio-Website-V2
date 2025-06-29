@@ -36,54 +36,6 @@ interface RadioStation {
   description: string;
 }
 
-const radioStations: RadioStation[] = [
-  {
-    id: "beat-955",
-    name: "95.5 The Beat",
-    frequency: "95.5 FM",
-    location: "Dallas, TX",
-    genre: "Hip Hop & R&B",
-    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
-    description: "Dallas Hip Hop & R&B"
-  },
-  {
-    id: "hot-97",
-    name: "Hot 97",
-    frequency: "97.1 FM", 
-    location: "New York, NY",
-    genre: "Hip Hop & R&B",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
-    description: "New York's Hip Hop & R&B"
-  },
-  {
-    id: "power-106",
-    name: "Power 106",
-    frequency: "105.9 FM",
-    location: "Los Angeles, CA", 
-    genre: "Hip Hop & R&B",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
-    description: "LA's #1 for Hip Hop"
-  },
-  {
-    id: "soma-metal",
-    name: "SomaFM Metal",
-    frequency: "Online",
-    location: "San Francisco, CA",
-    genre: "Metal",
-    streamUrl: "https://ice1.somafm.com/metal-128-mp3",
-    description: "Heavy Metal & Hard Rock"
-  },
-  {
-    id: "spandex-salvation",
-    name: "Spandex Salvation Radio",
-    frequency: "Online",
-    location: "Global",
-    genre: "Classic Metal",
-    streamUrl: "/api/radio-stream",
-    description: "Old School Metal 24/7"
-  }
-];
-
 interface PlaylistTrack {
   id: string;
   title: string;
@@ -103,6 +55,8 @@ interface Playlist {
   artwork?: string;
   isActive?: boolean;
 }
+
+
 
 // Sample playlists with metal tracks
 const samplePlaylists: Playlist[] = [
