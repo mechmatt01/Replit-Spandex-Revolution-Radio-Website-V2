@@ -341,7 +341,6 @@ export default function RadioCoPlayer() {
                 style={{ 
                   left: `calc(${(isMuted ? 0 : volume) * 100}% - 8px)`,
                   background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-                  border: '2px solid white',
                   boxShadow: `0 2px 8px ${colors.primary}40`
                 }}
               ></div>
