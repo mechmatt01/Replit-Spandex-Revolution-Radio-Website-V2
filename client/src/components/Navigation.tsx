@@ -6,7 +6,7 @@ import { useLocation } from "wouter";
 import MetalThemeSwitcher from "./MetalThemeSwitcher";
 
 import AuthModal from "./AuthModal";
-import VerificationModal from "./VerificationModal";
+
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "@/hooks/useAuth";
 import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
@@ -699,7 +699,7 @@ export default function Navigation() {
         initialMode={authMode}
       />
 
-      <VerificationModal />
+
     </TooltipProvider>
   );
 }
