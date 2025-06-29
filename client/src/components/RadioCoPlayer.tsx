@@ -156,9 +156,10 @@ export default function RadioCoPlayer() {
             variant="outline"
             size="sm"
             onClick={() => setShowStationSelector(!showStationSelector)}
-            className="bg-card/90 backdrop-blur-sm border-border/50 hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1"
+            className="bg-card/90 backdrop-blur-sm border-border/50 hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1 min-w-fit whitespace-nowrap"
             style={{
-              borderColor: colors.primary + '40'
+              borderColor: colors.primary + '40',
+              width: 'auto'
             } as React.CSSProperties}
           >
             <RadioIcon className="w-3 h-3 mr-1" />
@@ -275,7 +276,7 @@ export default function RadioCoPlayer() {
         <Button
           onClick={togglePlayback}
           disabled={isLoading}
-          className="font-bold py-6 px-10 rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2"
+          className="font-bold py-6 px-10 rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center"
           style={{
             background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
             color: 'white',
@@ -284,17 +285,23 @@ export default function RadioCoPlayer() {
           }}
         >
           {isLoading ? (
-            <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent" />
+            <>
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3" />
+              <span className="font-semibold text-lg">CONNECTING...</span>
+            </>
           ) : isPlaying ? (
-            <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-              <rect x="6" y="6" width="12" height="12" rx="1" />
-            </svg>
+            <>
+              <svg className="h-6 w-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="6" y="6" width="12" height="12" rx="1" />
+              </svg>
+              <span className="font-semibold text-lg">STOP</span>
+            </>
           ) : (
-            <Play className="h-6 w-6" />
+            <>
+              <Play className="h-6 w-6 mr-3" />
+              <span className="font-semibold text-lg">PLAY LIVE</span>
+            </>
           )}
-          <span className="ml-3 font-semibold text-lg">
-            {isLoading ? 'CONNECTING...' : isPlaying ? 'STOP' : 'PLAY LIVE'}
-          </span>
         </Button>
 
         {/* Volume Controls */}
@@ -325,7 +332,12 @@ export default function RadioCoPlayer() {
               onValueChange={handleVolumeChange}
               max={100}
               step={1}
-              className="w-full"
+              className="w-full theme-slider"
+              style={{
+                '--slider-track': `linear-gradient(90deg, ${colors.primary}33, #6b728080)`,
+                '--slider-range': `linear-gradient(90deg, ${colors.primary}, ${colors.primary}99)`,
+                '--slider-thumb': colors.primary
+              } as React.CSSProperties}
             />
           </div>
 

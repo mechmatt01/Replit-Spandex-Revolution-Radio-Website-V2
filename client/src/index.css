@@ -307,6 +307,35 @@ img, video {
     height: 20px;
   }
 
+  /* Volume slider styling with theme colors */
+  .slider-root [data-radix-slider-track] {
+    background: linear-gradient(90deg, hsl(var(--primary) / 0.2), hsl(var(--muted) / 0.5));
+    position: relative;
+    flex-grow: 1;
+    border-radius: 9999px;
+    height: 6px;
+  }
+
+  .slider-root [data-radix-slider-range] {
+    position: absolute;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.6));
+    border-radius: 9999px;
+    height: 100%;
+    box-shadow: 0 0 8px hsl(var(--primary) / 0.4);
+  }
+
+  .slider-root [data-radix-slider-thumb] {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: hsl(var(--primary));
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px hsl(var(--background)), 0 2px 12px hsl(var(--primary) / 0.5);
+    transition: all 150ms ease;
+  }
+
+  /* Fallback with direct selectors */
   [data-radix-slider-track] {
     background: linear-gradient(90deg, hsl(var(--primary) / 0.2), hsl(var(--muted) / 0.5));
     position: relative;
@@ -343,6 +372,19 @@ img, video {
     outline: none;
     transform: scale(1.05);
     box-shadow: 0 0 0 3px hsl(var(--background)), 0 0 12px hsl(var(--primary) / 0.6);
+  }
+
+  /* Force theme colors on slider with inline styles */
+  .theme-slider [data-radix-slider-track] {
+    background: var(--slider-track) !important;
+  }
+
+  .theme-slider [data-radix-slider-range] {
+    background: var(--slider-range) !important;
+  }
+
+  .theme-slider [data-radix-slider-thumb] {
+    background: var(--slider-thumb) !important;
   }
 
   /* Enhanced visibility for dark themes */
