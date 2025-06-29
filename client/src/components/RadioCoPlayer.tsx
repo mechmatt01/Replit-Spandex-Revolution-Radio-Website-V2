@@ -7,7 +7,17 @@ import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 import { useState, useRef, useEffect } from "react";
-import type { RadioStation } from "@/components/StationSelector";
+// RadioStation interface moved to RadioContext
+interface RadioStation {
+  id: string;
+  name: string;
+  frequency: string;
+  location: string;
+  genre: string;
+  streamUrl: string;
+  description: string;
+  icon: string;
+}
 import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
 
 // Radio stations data
@@ -332,7 +342,9 @@ export default function RadioCoPlayer() {
             </>
           ) : (
             <>
-              <Play className="h-6 w-6 mr-3" />
+              <svg className="h-6 w-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <polygon points="7,4 20,12 7,20" />
+              </svg>
               <span className="font-semibold text-lg">PLAY LIVE</span>
             </>
           )}

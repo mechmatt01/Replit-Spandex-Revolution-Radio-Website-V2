@@ -296,6 +296,7 @@ interface ThemeContextType {
   colors: ThemeColors;
   setTheme: (theme: MetalTheme) => void;
   toggleDarkMode: () => void;
+  toggleTheme: () => void;
   gradient: string;
   getColors: () => ThemeColors;
   getGradient: () => string;

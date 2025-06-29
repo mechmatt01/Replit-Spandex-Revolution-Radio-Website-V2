@@ -113,7 +113,6 @@ export default function StickyPlayer() {
             className="text-white w-10 h-10 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl"
             style={{
               background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-              focusRingColor: colors.primary,
               boxShadow: `0 4px 20px ${colors.primary}60`
             }}
             aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}

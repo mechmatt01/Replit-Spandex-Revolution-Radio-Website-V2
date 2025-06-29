@@ -1,5 +1,15 @@
 import { createContext, useContext, useState, useRef, useEffect, ReactNode } from "react";
-import type { RadioStation } from '@/components/StationSelector';
+// Radio station interface
+interface RadioStation {
+  id: string;
+  name: string;
+  frequency: string;
+  location: string;
+  genre: string;
+  streamUrl: string;
+  description: string;
+  icon: string;
+}
 
 interface TrackInfo {
   title: string;
