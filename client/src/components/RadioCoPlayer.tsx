@@ -327,18 +327,23 @@ export default function RadioCoPlayer() {
           </Button>
 
           <div className="flex-1 px-2">
-            <Slider
-              value={[isMuted ? 0 : volume * 100]}
-              onValueChange={handleVolumeChange}
-              max={100}
-              step={1}
-              className="w-full theme-slider"
-              style={{
-                '--slider-track': `linear-gradient(90deg, ${colors.primary}33, #6b728080)`,
-                '--slider-range': `linear-gradient(90deg, ${colors.primary}, ${colors.primary}99)`,
-                '--slider-thumb': colors.primary
-              } as React.CSSProperties}
-            />
+            <div className="w-full h-2 bg-gray-700 rounded-full relative">
+              <div 
+                className="h-2 rounded-full transition-all duration-150"
+                style={{ 
+                  width: `${(isMuted ? 0 : volume) * 100}%`,
+                  background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                }}
+              ></div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={(isMuted ? 0 : volume) * 100}
+                onChange={(e) => handleVolumeChange([parseInt(e.target.value)])}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+            </div>
           </div>
 
           <span 
