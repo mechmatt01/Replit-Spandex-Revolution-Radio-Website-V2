@@ -400,8 +400,8 @@ export default function RadioCoPlayer() {
       <div className="flex flex-col items-center justify-center space-y-4">
         {/* Play/Pause and Mute Button Row - Perfectly Centered */}
         <div className="flex items-center justify-center w-full relative">
-          {/* Mute Button with Animated Volume Slider - Positioned further left */}
-          <div className="absolute left-1/2 transform -translate-x-32 group">
+          {/* Mute Button with Animated Volume Slider - Positioned to the left of play button */}
+          <div className="absolute left-1/2 transform -translate-x-24 group">
             <Button
               onClick={toggleMute}
               variant="ghost"
