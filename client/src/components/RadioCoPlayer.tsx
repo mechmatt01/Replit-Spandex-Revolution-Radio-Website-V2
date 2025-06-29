@@ -183,8 +183,12 @@ export default function RadioCoPlayer() {
           </Button>
           
           {showStationSelector && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-black/80 backdrop-blur-md border rounded-md shadow-xl z-20 max-h-96 overflow-y-auto"
-                 style={{ borderColor: colors.primary + '40' }}>
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-black/80 backdrop-blur-md border rounded-md shadow-xl z-20 max-h-96 overflow-y-auto"
+                 style={{ 
+                   borderColor: colors.primary + '40',
+                   width: 'fit-content',
+                   minWidth: '300px'
+                 }}>
               <div className="p-2">
                 {radioStations
                   .sort((a, b) => {
@@ -193,13 +197,14 @@ export default function RadioCoPlayer() {
                     if (b.id === (currentStation?.id || "beat-955")) return 1;
                     return 0;
                   })
-                  .map((station) => (
+                  .map((station, index) => (
                   <button
                     key={station.id}
                     onClick={() => handleStationChange(station)}
                     className="w-full p-3 text-left rounded-md transition-all duration-200 hover:bg-muted/20 focus:outline-none"
                     style={{
-                      backgroundColor: station.id === (currentStation?.id || "beat-955") ? colors.primary + '20' : 'transparent'
+                      backgroundColor: station.id === (currentStation?.id || "beat-955") ? colors.primary + '20' : 'transparent',
+                      width: '100%'
                     }}
                     onMouseEnter={(e) => {
                       if (station.id !== (currentStation?.id || "beat-955")) {
@@ -210,8 +215,12 @@ export default function RadioCoPlayer() {
                       e.currentTarget.style.backgroundColor = station.id === (currentStation?.id || "beat-955") ? colors.primary + '20' : 'transparent';
                     }}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0">
+                    <div className="flex items-center gap-3" style={{ paddingRight: '5px' }}>
+                      <div className={`flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0 ${
+                        index === 0 && station.id === (currentStation?.id || "beat-955")
+                          ? 'bg-gradient-to-br from-orange-300 to-yellow-400' 
+                          : 'bg-gradient-to-br from-orange-400 to-red-500'
+                      }`}>
                         <span className="text-lg">{station.icon}</span>
                       </div>
                       <div className="flex-1 min-w-0">
@@ -219,7 +228,7 @@ export default function RadioCoPlayer() {
                           <div className="font-semibold text-sm text-white truncate">
                             {station.name}
                           </div>
-                          <div className="flex items-center justify-center h-full">
+                          <div className="flex items-center ml-2" style={{ alignSelf: 'center' }}>
                             {station.id === (currentStation?.id || "beat-955") && (
                               <Volume2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.primary }} />
                             )}
