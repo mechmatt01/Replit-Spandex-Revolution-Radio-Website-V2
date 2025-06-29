@@ -551,12 +551,8 @@ export default function Navigation() {
                               setIsOpen(false);
                             }}
                             type="button"
-                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer"
-                            style={{
-                              color: colors.text,
-                              backgroundColor: 'transparent',
-                              border: `1px solid ${colors.primary}`
-                            }}
+                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
+                            style={{ color: colors.text }}
                             onMouseEnter={(e) => {
                               e.currentTarget.style.backgroundColor = colors.primary + '20';
                               e.currentTarget.style.color = 'white';
@@ -572,7 +568,7 @@ export default function Navigation() {
                             role="menuitem"
                             aria-label="Login"
                           >
-                            <User size={16} style={{ color: colors.primary }} />
+                            <User size={20} style={{ color: colors.primary }} />
                             <span>LOGIN</span>
                           </button>
                         </TooltipTrigger>
@@ -592,28 +588,24 @@ export default function Navigation() {
                               setIsOpen(false);
                             }}
                             type="button"
-                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer"
-                            style={{
-                              color: 'white',
-                              backgroundColor: colors.primary,
-                              border: `1px solid ${colors.primary}`
-                            }}
+                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
+                            style={{ color: colors.text }}
                             onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary + 'CC';
+                              e.currentTarget.style.backgroundColor = colors.primary + '20';
                               e.currentTarget.style.color = 'white';
                               const icon = e.currentTarget.querySelector('svg');
                               if (icon) icon.style.color = 'white';
                             }}
                             onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary;
-                              e.currentTarget.style.color = 'white';
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.color = colors.text;
                               const icon = e.currentTarget.querySelector('svg');
-                              if (icon) icon.style.color = 'white';
+                              if (icon) icon.style.color = colors.primary;
                             }}
                             role="menuitem"
                             aria-label="Sign up"
                           >
-                            <UserPlus size={16} style={{ color: 'white' }} />
+                            <UserPlus size={20} style={{ color: colors.primary }} />
                             <span>SIGN UP</span>
                           </button>
                         </TooltipTrigger>
