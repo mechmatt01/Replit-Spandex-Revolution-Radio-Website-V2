@@ -430,9 +430,9 @@ export default function RadioCoPlayer() {
       </div>
 
       <div className="flex flex-col items-center justify-center space-y-4">
-        {/* Play/Pause and Volume Button Row - Centered layout with volume always visible */}
-        <div className="flex items-center justify-center gap-6 w-full">
-          {/* Volume Button - Always visible on the left */}
+        {/* Play/Pause and Volume Button Row - Truly centered layout */}
+        <div className="flex items-center justify-center w-full">
+          {/* Volume Button - Left side */}
           <div className="relative group" ref={volumeButtonRef}>
             <Button
               onClick={toggleMute}
@@ -493,39 +493,50 @@ export default function RadioCoPlayer() {
             </div>
           </div>
 
-          {/* Play/Pause Button - Centered */}
-          <Button
-            onClick={togglePlayback}
-            disabled={isLoading}
-            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center justify-center"
-            style={{
-              background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-              color: 'white',
-              borderColor: colors.primary,
-              boxShadow: `0 10px 40px ${colors.primary}60`
-            }}
-          >
-            {isLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3" />
-                <span className="font-semibold text-lg">CONNECTING...</span>
-              </>
-            ) : isPlaying ? (
-              <>
-                <svg className="h-18 w-18 mr-4" fill="currentColor" viewBox="0 0 24 24">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                </svg>
-                <span className="font-semibold text-lg">STOP</span>
-              </>
-            ) : (
-              <>
-                <svg className="h-18 w-18 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                  <polygon points="4,1 23,12 4,23" />
-                </svg>
-                <span className="font-semibold text-lg">PLAY LIVE</span>
-              </>
-            )}
-          </Button>
+          {/* Spacer to push play button to center */}
+          <div className="flex-1"></div>
+
+          {/* Play/Pause Button - Absolutely centered */}
+          <div className="flex justify-center">
+            <Button
+              onClick={togglePlayback}
+              disabled={isLoading}
+              className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center justify-center"
+              style={{
+                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+                color: 'white',
+                borderColor: colors.primary,
+                boxShadow: `0 10px 40px ${colors.primary}60`
+              }}
+            >
+              {isLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3" />
+                  <span className="font-semibold text-lg">CONNECTING...</span>
+                </>
+              ) : isPlaying ? (
+                <>
+                  <svg className="h-18 w-18 mr-4" fill="currentColor" viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                  </svg>
+                  <span className="font-semibold text-lg">STOP</span>
+                </>
+              ) : (
+                <>
+                  <svg className="h-18 w-18 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                    <polygon points="4,1 23,12 4,23" />
+                  </svg>
+                  <span className="font-semibold text-lg">PLAY LIVE</span>
+                </>
+              )}
+            </Button>
+          </div>
+
+          {/* Spacer to balance the layout */}
+          <div className="flex-1"></div>
+
+          {/* Invisible spacer to match volume button width */}
+          <div className="w-12 h-12"></div>
         </div>
 
       </div>
