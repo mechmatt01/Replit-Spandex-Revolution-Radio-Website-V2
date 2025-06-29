@@ -159,10 +159,9 @@ export default function EnhancedRadioPlayer() {
               {/* Album Art Section */}
               <div className="flex-shrink-0">
                 <div className="relative">
-                  {/* Station Selector and LIVE Indicator */}
-                  <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-10 flex flex-col items-center gap-2">
-                    {/* Station Selector Dropdown */}
-                    <div className="relative">
+                  {/* Station Selector */}
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-10">
+                    <div className="relative" ref={dropdownRef}>
                       <Button
                         variant="outline"
                         size="sm"
@@ -217,9 +216,11 @@ export default function EnhancedRadioPlayer() {
                         </div>
                       )}
                     </div>
-                    
-                    {/* LIVE Indicator */}
-                    <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                  </div>
+                  
+                  {/* LIVE Indicator - Positioned on top of artwork */}
+                  <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10">
+                    <div className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                       <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                       LIVE
                     </div>

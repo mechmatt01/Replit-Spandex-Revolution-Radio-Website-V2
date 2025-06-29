@@ -10,7 +10,7 @@ import StripePaymentProcessor from "@/components/StripePaymentProcessor";
 import ShopifyEcommerce from "@/components/ShopifyEcommerce";
 import AdvancedAdminDashboard from "@/components/AdvancedAdminDashboard";
 import { useState } from "react";
-import EnhancedRadioPlayer from "@/components/EnhancedRadioPlayer";
+import AdvancedAudioPlayer from "@/components/AdvancedAudioPlayer";
 
 import Footer from "@/components/Footer";
 import StickyPlayer from "@/components/StickyPlayer";
@@ -23,7 +23,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       <Navigation />
       <Hero />
-      <EnhancedRadioPlayer />
+      <AdvancedAudioPlayer />
       <Features />
       <About />
       <Schedule />

@@ -19,7 +19,8 @@ import {
   Music, 
   Clock, 
   Headphones,
-  Radio as RadioIcon 
+  Radio as RadioIcon,
+  ChevronDown
 } from "lucide-react";
 import { useAudio } from "@/contexts/AudioContext";
 import type { NowPlaying } from "@shared/schema";
