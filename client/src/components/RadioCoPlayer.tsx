@@ -1,4 +1,4 @@
-import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Radio as RadioIcon, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useRadio } from "@/contexts/RadioContext";
@@ -6,6 +6,57 @@ import { useTheme } from "@/contexts/ThemeContext";
 import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
+import { useState, useRef, useEffect } from "react";
+import type { RadioStation } from "@/components/StationSelector";
+
+// Radio stations data
+const radioStations: RadioStation[] = [
+  {
+    id: "beat-955",
+    name: "95.5 The Beat",
+    frequency: "95.5 FM",
+    location: "Dallas, TX",
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
+    description: "Dallas Hip Hop & R&B"
+  },
+  {
+    id: "hot-97",
+    name: "Hot 97",
+    frequency: "97.1 FM", 
+    location: "New York, NY",
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
+    description: "New York's Hip Hop & R&B"
+  },
+  {
+    id: "power-106",
+    name: "Power 106",
+    frequency: "105.9 FM",
+    location: "Los Angeles, CA", 
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
+    description: "LA's #1 for Hip Hop"
+  },
+  {
+    id: "soma-metal",
+    name: "SomaFM Metal",
+    frequency: "Online",
+    location: "San Francisco, CA",
+    genre: "Metal",
+    streamUrl: "https://ice1.somafm.com/metal-128-mp3",
+    description: "Heavy Metal & Hard Rock"
+  },
+  {
+    id: "spandex-salvation",
+    name: "Spandex Salvation Radio",
+    frequency: "Online",
+    location: "Global",
+    genre: "Classic Metal",
+    streamUrl: "/api/radio-stream",
+    description: "Old School Metal 24/7"
+  }
+];
 
 export default function RadioCoPlayer() {
   const { 
@@ -15,14 +66,41 @@ export default function RadioCoPlayer() {
     isMuted, 
     error, 
     currentTrack,
+    currentStation,
     isTransitioning,
     togglePlayback, 
     setVolume, 
     toggleMute,
+    changeStation,
     audioRef 
   } = useRadio();
   const { getColors, getGradient } = useTheme();
   const colors = getColors();
+  
+  const [showStationSelector, setShowStationSelector] = useState(false);
+  const stationDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Station selector event handling
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (stationDropdownRef.current && !stationDropdownRef.current.contains(event.target as Node)) {
+        setShowStationSelector(false);
+      }
+    };
+
+    if (showStationSelector) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showStationSelector]);
+
+  const handleStationChange = async (station: RadioStation) => {
+    await changeStation(station);
+    setShowStationSelector(false);
+  };
 
   const handleVolumeChange = (value: number[]) => {
     const newVolume = value[0] / 100;
@@ -43,10 +121,70 @@ export default function RadioCoPlayer() {
         aria-label="Live radio stream"
       />
 
-      {/* Live Indicator */}
-      <div className="flex items-center justify-center space-x-2 text-red-500 mb-4">
-        <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-        <span className="text-sm font-bold animate-pulse">LIVE</span>
+      {/* Station Selector with LIVE Indicator */}
+      <div className="flex flex-col items-center mb-4">
+        {/* Station Selector Button */}
+        <div className="relative mb-1" ref={stationDropdownRef}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowStationSelector(!showStationSelector)}
+            className="bg-card/90 backdrop-blur-sm border-border/50 hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1"
+            style={{
+              borderColor: colors.primary + '40'
+            } as React.CSSProperties}
+          >
+            <RadioIcon className="w-3 h-3 mr-1" />
+            {currentStation?.name || "95.5 The Beat"}
+            <ChevronDown className="w-3 h-3 ml-1" />
+          </Button>
+          
+          {showStationSelector && (
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-card/95 backdrop-blur-md border border-border/50 rounded-md shadow-lg z-20">
+              <div className="p-2 max-h-60 overflow-y-auto">
+                {radioStations.map((station) => (
+                  <button
+                    key={station.id}
+                    onClick={() => handleStationChange(station)}
+                    className={`w-full p-3 text-left rounded-md transition-all duration-200 ${
+                      station.id === (currentStation?.id || "beat-955")
+                        ? 'bg-primary/20 border border-primary/20' 
+                        : 'hover:bg-muted/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0">
+                        <RadioIcon className="w-4 h-4 text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <div className="font-semibold text-sm truncate">
+                            {station.name}
+                          </div>
+                          {station.id === (currentStation?.id || "beat-955") && (
+                            <Volume2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.primary }} />
+                          )}
+                        </div>
+                        <div className="text-xs text-muted-foreground truncate">
+                          {station.frequency} • {station.location}
+                        </div>
+                        <div className="text-xs text-muted-foreground/80 truncate">
+                          {station.description}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        
+        {/* Compact LIVE Indicator - 50% smaller */}
+        <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-sm">
+          <div className="w-1 h-1 bg-white rounded-full animate-pulse"></div>
+          LIVE
+        </div>
       </div>
 
       {/* Album Art with Fade Transition */}
