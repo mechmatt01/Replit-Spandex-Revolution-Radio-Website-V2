@@ -181,16 +181,17 @@ export default function RadioCoPlayer() {
             variant="outline"
             size="sm"
             onClick={() => setShowStationSelector(!showStationSelector)}
-            className="bg-card/90 backdrop-blur-sm border-border/50 hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1 min-w-fit whitespace-nowrap"
+            className="bg-card/90 backdrop-blur-sm hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1 min-w-fit whitespace-nowrap"
             style={{
-              borderColor: colors.primary + '20',
+              borderColor: colors.primary + '60',
+              borderWidth: '3px',
               width: 'auto'
             } as React.CSSProperties}
           >
             <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
             <span style={{ color: colors.primary }}>{currentStation?.name || "95.5 The Beat"}</span>
             <ChevronDown 
-              className={`w-3 h-3 ml-1 transition-all duration-300 ease-in-out transform ${showStationSelector ? 'rotate-0' : 'rotate-180'}`}
+              className={`w-3 h-3 ml-1 transition-all duration-300 ease-in-out transform ${showStationSelector ? 'rotate-180' : 'rotate-0'}`}
               style={{ 
                 opacity: 0.6,
                 color: colors.primary
@@ -199,7 +200,7 @@ export default function RadioCoPlayer() {
           </Button>
           
           {showStationSelector && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-black/80 backdrop-blur-md border shadow-xl z-20 scrollbar-thin"
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-black/90 backdrop-blur-lg border shadow-xl z-20 scrollbar-thin"
                  style={{ 
                    borderColor: colors.primary + '40',
                    width: 'fit-content',
@@ -252,13 +253,54 @@ export default function RadioCoPlayer() {
                         </div>
                         <div className="flex items-center justify-center ml-2 w-6 h-6 flex-shrink-0">
                           {station.id === (currentStation?.id || "beat-955") && (
-                            <Volume2 
-                              className="w-4 h-4 animate-pulse" 
-                              style={{ 
-                                color: colors.primary,
-                                animation: 'pulse 2s ease-in-out infinite'
-                              }} 
-                            />
+                            <div className="relative flex items-center justify-center">
+                              <svg 
+                                className="w-4 h-4" 
+                                viewBox="0 0 24 24" 
+                                fill="none" 
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                {/* Speaker body */}
+                                <path 
+                                  d="M11 5L6 9H2V15H6L11 19V5Z" 
+                                  fill={colors.primary} 
+                                />
+                                {/* Animated sound waves */}
+                                <path 
+                                  d="M14 8C15.1 9.1 15.1 10.9 14 12" 
+                                  stroke={colors.primary} 
+                                  strokeWidth="1.5" 
+                                  strokeLinecap="round"
+                                  className="animate-pulse"
+                                  style={{ 
+                                    animation: 'pulse 1.5s ease-in-out infinite',
+                                    animationDelay: '0s'
+                                  }}
+                                />
+                                <path 
+                                  d="M16 6C18.2 8.2 18.2 11.8 16 14" 
+                                  stroke={colors.primary} 
+                                  strokeWidth="1.5" 
+                                  strokeLinecap="round"
+                                  className="animate-pulse"
+                                  style={{ 
+                                    animation: 'pulse 1.5s ease-in-out infinite',
+                                    animationDelay: '0.3s'
+                                  }}
+                                />
+                                <path 
+                                  d="M18 4C21.3 7.3 21.3 12.7 18 16" 
+                                  stroke={colors.primary} 
+                                  strokeWidth="1.5" 
+                                  strokeLinecap="round"
+                                  className="animate-pulse"
+                                  style={{ 
+                                    animation: 'pulse 1.5s ease-in-out infinite',
+                                    animationDelay: '0.6s'
+                                  }}
+                                />
+                              </svg>
+                            </div>
                           )}
                         </div>
                       </div>
