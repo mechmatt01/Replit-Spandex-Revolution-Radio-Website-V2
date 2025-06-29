@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useRef, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useRef, useEffect, ReactNode, useCallback } from "react";
 // Radio station interface
 interface RadioStation {
   id: string;
@@ -278,6 +278,25 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     };
   }, [volume, isMuted]);
 
+  // Auto-play functionality - start playing when component mounts
+  useEffect(() => {
+    const initializeAutoPlay = async () => {
+      // Only auto-play if not already playing and no error
+      if (!isPlaying && !error) {
+        try {
+          // Small delay to ensure audio element is ready
+          setTimeout(() => {
+            togglePlayback();
+          }, 1000);
+        } catch (error) {
+          console.log('Auto-play prevented by browser:', error);
+        }
+      }
+    };
+
+    initializeAutoPlay();
+  }, []); // Run only once on mount
+
   // Track information fetching - only when playing and track changes
   useEffect(() => {
     let trackInterval: NodeJS.Timeout;
@@ -326,21 +345,6 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       if (trackInterval) clearInterval(trackInterval);
     };
   }, [isPlaying, stationName]);
-
-  const togglePlayback = useCallback(() => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-        // Keep current track info when pausing, don't reset to station name
-      } else {
-        audioRef.current.play().catch(error => {
-          console.error('Failed to play audio:', error);
-          setError('Failed to start playback. Please try again.');
-        });
-      }
-    }
-  }, [isPlaying]);
 
   const value: RadioContextType = {
     isPlaying,
