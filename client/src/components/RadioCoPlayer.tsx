@@ -434,7 +434,7 @@ export default function RadioCoPlayer() {
 
         {/* Volume Controls */}
         <div className="flex items-center justify-center">
-          <div className="flex items-center space-x-4 rounded-xl p-4 min-w-[280px]"
+          <div className="flex items-center space-x-4 rounded-xl p-4 min-w-[220px]"
                  style={{
                    background: 'rgba(255, 255, 255, 0.1)',
                    backdropFilter: 'blur(15px)',
@@ -460,7 +460,7 @@ export default function RadioCoPlayer() {
                 )}
               </Button>
 
-              <div className="flex-1 min-w-0 w-[180px]">
+              <div className="flex-1 min-w-0 w-[120px]">
                 <Slider
                   value={[isMuted ? 0 : volume * 100]}
                   onValueChange={(value) => setVolume(value[0] / 100)}
