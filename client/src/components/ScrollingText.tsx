@@ -9,89 +9,91 @@ interface ScrollingTextProps {
   backgroundColor?: string;
 }
 
-export default function ScrollingText({ text, className = '', maxWidth = '60%', style = {}, isFloating = false, backgroundColor }: ScrollingTextProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-  const [shouldScroll, setShouldScroll] = useState(false);
+export default function ScrollingText({ 
+  text, 
+  className = "", 
+  style = {},
+  maxWidth = "100%",
+  backgroundColor = "transparent"
+}: ScrollingTextProps) {
   const [isScrolling, setIsScrolling] = useState(false);
+  const [shouldScroll, setShouldScroll] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkOverflow = () => {
-      if (containerRef.current && textRef.current) {
-        const containerWidth = containerRef.current.offsetWidth;
+      if (textRef.current && containerRef.current) {
         const textWidth = textRef.current.scrollWidth;
-        const needsScroll = textWidth > containerWidth;
-        setShouldScroll(needsScroll);
+        const containerWidth = containerRef.current.clientWidth;
+        const needsScrolling = textWidth > containerWidth;
+        setShouldScroll(needsScrolling);
+
+        // If text fits, center it and don't scroll
+        if (!needsScrolling) {
+          setIsScrolling(false);
+        }
       }
     };
 
-    // Small delay to ensure layout is complete
-    const timer = setTimeout(checkOverflow, 100);
+    checkOverflow();
     window.addEventListener('resize', checkOverflow);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('resize', checkOverflow);
-    };
+    return () => window.removeEventListener('resize', checkOverflow);
   }, [text]);
 
   useEffect(() => {
-    // Start scrolling if text overflows the container
     if (shouldScroll) {
       const timer = setTimeout(() => {
         setIsScrolling(true);
-      }, 1000); // Start scrolling after 1 second
-      
+      }, 1000); // Wait 1 second before starting to scroll
+
       return () => clearTimeout(timer);
     } else {
       setIsScrolling(false);
     }
-  }, [text, shouldScroll]); // Reset scrolling when text changes
+  }, [shouldScroll]);
+
+  // If text doesn't need scrolling, just center it
+  if (!shouldScroll) {
+    return (
+      <div 
+        ref={containerRef}
+        className="flex justify-center overflow-hidden"
+        style={{ maxWidth, backgroundColor }}
+      >
+        <div
+          ref={textRef}
+          className={className}
+          style={style}
+        >
+          {text}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
       ref={containerRef}
-      className={`relative overflow-hidden ${className}`}
-      style={{ 
-        width: maxWidth,
-        ...style
-      }}
+      className="relative overflow-hidden whitespace-nowrap"
+      style={{ maxWidth, backgroundColor }}
     >
       <div
         ref={textRef}
-        className={`whitespace-nowrap ${isScrolling ? 'flex' : (isFloating ? 'flex items-center w-full' : 'flex justify-center items-center w-full')} ${
-          isScrolling ? (isFloating ? 'animate-scroll-floating' : 'animate-scroll') : ''
-        }`}
+        className={`transition-transform duration-1000 ease-linear ${className}`}
         style={{
-          ...(isScrolling ? {} : { transform: 'translateX(0)' })
+          ...style,
+          transform: isScrolling && shouldScroll ? 'translateX(-100%)' : 'translateX(0)',
+          animation: isScrolling && shouldScroll ? 'scroll-left 8s linear infinite' : 'none',
+          display: 'inline-block',
+          paddingRight: shouldScroll ? '100px' : '0'
         }}
       >
-        {isScrolling ? (
-          <>
-            <span className="mr-8">{text}</span>
-            <span className="mr-8">{text}</span>
-          </>
-        ) : (
-          <span>{text}</span>
+        {text}
+        {shouldScroll && (
+          <span style={{ paddingLeft: '100px' }}>{text}</span>
         )}
       </div>
-      
-      {/* Fade edges */}
-      {shouldScroll && (
-        <>
-          <div 
-            className="absolute left-0 top-0 h-full w-12 pointer-events-none z-10"
-            style={{
-              background: `linear-gradient(to right, ${backgroundColor || 'var(--color-background)'}, transparent)`
-            }}
-          />
-          <div 
-            className="absolute right-0 top-0 h-full w-20 pointer-events-none z-10"
-            style={{
-              background: `linear-gradient(to left, ${backgroundColor || 'var(--color-background)'}, transparent)`
-            }}
-          />
-        </>
-      )}
     </div>
   );
 }

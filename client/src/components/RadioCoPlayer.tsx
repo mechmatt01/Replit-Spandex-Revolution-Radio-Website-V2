@@ -130,8 +130,12 @@ export default function RadioCoPlayer() {
   }, [showStationSelector]);
 
   const handleStationChange = async (station: RadioStation) => {
-    await changeStation(station);
-    setShowStationSelector(false);
+    try {
+      await changeStation(station);
+      setShowStationSelector(false);
+    } catch (error) {
+      console.error('Failed to change station:', error);
+    }
   };
 
   const handleVolumeChange = (value: number[]) => {
@@ -412,7 +416,7 @@ export default function RadioCoPlayer() {
         <Button
           onClick={togglePlayback}
           disabled={isLoading}
-          className="font-bold py-6 px-10 rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center"
+          className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center"
           style={{
             background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
             color: 'white',
@@ -464,7 +468,7 @@ export default function RadioCoPlayer() {
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
           </Button>
 
-          <div className="flex-1" style={{ paddingLeft: '1px', paddingRight: '1px' }}>
+          <div className="flex-1" style={{ paddingLeft: '3px', paddingRight: '3px' }}>
             <div className="w-full h-2 bg-gray-700 rounded-full relative">
               <div 
                 className="h-2 rounded-full transition-all duration-150"

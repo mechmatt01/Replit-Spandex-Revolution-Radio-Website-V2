@@ -193,11 +193,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       setError(null);
       
       // Pause current playback
-      if (isPlaying) {
+      const wasPlaying = isPlaying;
+      if (wasPlaying) {
         audio.pause();
       }
 
-      // Update station info
+      // Update station info immediately
       setCurrentStation(station);
       setStationName(station.name);
       setCurrentTrack({
@@ -212,7 +213,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       audio.load();
 
       // Resume playback if it was playing
-      if (isPlaying) {
+      if (wasPlaying) {
         await audio.play();
       }
 
@@ -279,41 +280,55 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
   // Fetch track information more frequently when playing
   useEffect(() => {
-    if (!isPlaying) return;
+    if (!isPlaying || !currentStation) return;
     
     const fetchTrackInfo = async () => {
       try {
-        // Get station info and track info from our APIs
-        const [statusResponse, nowPlayingResponse] = await Promise.all([
-          fetch('/api/radio-status'),
-          fetch('/api/now-playing')
-        ]);
-        
-        let currentStationName = "Hot 97";
-        if (statusResponse.ok) {
-          const statusData = await statusResponse.json();
-          currentStationName = statusData.station || "Hot 97";
-          setStationName(currentStationName);
-        }
-        
-        if (nowPlayingResponse.ok) {
-          const nowPlayingData = await nowPlayingResponse.json();
-          console.log('Raw API response:', nowPlayingData);
+        // Only fetch metadata for stations that support it
+        if (currentStation.id === "beat-955" || currentStation.id === "hot-97" || currentStation.id === "power-106") {
+          const [statusResponse, nowPlayingResponse] = await Promise.all([
+            fetch('/api/radio-status'),
+            fetch('/api/now-playing')
+          ]);
           
-          // Always update the track data regardless of previous state to ensure freshness
-          const newTrack = {
-            title: nowPlayingData.title || currentStationName,
-            artist: nowPlayingData.artist || "New York's Hip Hop & R&B", 
-            album: nowPlayingData.album || "Hot 97 FM",
-            artwork: nowPlayingData.artwork || ""
-          };
+          if (statusResponse.ok) {
+            const statusData = await statusResponse.json();
+            setStationName(statusData.station || currentStation.name);
+          }
           
-          console.log('Setting new track:', newTrack);
-          setCurrentTrack(newTrack);
+          if (nowPlayingResponse.ok) {
+            const nowPlayingData = await nowPlayingResponse.json();
+            console.log('Raw API response:', nowPlayingData);
+            
+            // Update track data with fetched info
+            const newTrack = {
+              title: nowPlayingData.title || currentStation.name,
+              artist: nowPlayingData.artist || currentStation.description, 
+              album: nowPlayingData.album || currentStation.genre,
+              artwork: nowPlayingData.artwork || ""
+            };
+            
+            console.log('Setting new track:', newTrack);
+            setCurrentTrack(newTrack);
+          }
+        } else {
+          // For other stations, keep showing station info
+          setCurrentTrack({
+            title: currentStation.name,
+            artist: currentStation.description,
+            album: currentStation.genre,
+            artwork: ""
+          });
         }
       } catch (error) {
         console.error('Failed to fetch track info:', error);
-        // Don't update on error to prevent unnecessary transitions
+        // Fallback to station info on error
+        setCurrentTrack({
+          title: currentStation.name,
+          artist: currentStation.description,
+          album: currentStation.genre,
+          artwork: ""
+        });
       }
     };
 
@@ -322,7 +337,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     const interval = setInterval(fetchTrackInfo, 10000);
 
     return () => clearInterval(interval);
-  }, [isPlaying]);
+  }, [isPlaying, currentStation]);
 
   const value: RadioContextType = {
     isPlaying,
