@@ -457,7 +457,7 @@ export default function RadioCoPlayer() {
           </Button>
 
           {/* Volume Slider - Match Play Button Width */}
-          <div className="w-[200px] rounded-xl p-4"
+          <div className="w-[240px] rounded-xl p-4"
                style={{
                  background: 'rgba(255, 255, 255, 0.1)',
                  backdropFilter: 'blur(15px)',
