@@ -431,10 +431,10 @@ export default function RadioCoPlayer() {
 
       <div className="flex flex-col items-center justify-center space-y-4">
         {/* Play/Pause Button Row - Always Perfectly Centered */}
-        <div className="flex items-center justify-center w-full relative">
+        <div className="flex items-center justify-center w-full relative overflow-visible min-w-0" style={{ minWidth: '400px' }}>
           {/* Volume Button - Only visible when playing, positioned to the left */}
           {isPlaying && (
-            <div className="absolute left-1/2 transform -translate-x-40 group" ref={volumeButtonRef}>
+            <div className="absolute left-1/2 transform -translate-x-32 group" ref={volumeButtonRef}>
               <Button
                 onClick={toggleMute}
                 variant="ghost"
