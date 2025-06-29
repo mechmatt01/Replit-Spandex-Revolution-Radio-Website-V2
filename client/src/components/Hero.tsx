@@ -72,7 +72,9 @@ export default function Hero() {
       </div>
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 pt-16">
         <h1 className="font-orbitron font-black text-5xl md:text-8xl mb-2 text-black dark:text-white">
-          SPANDEX SALVATION RADIO
+          <div>SPANDEX</div>
+          <div>SALVATION</div>
+          <div>RADIO</div>
         </h1>
         <div className="mb-6">
           <p className="text-xl md:text-2xl font-bold text-metal-orange mb-1">Old School Metal</p>
