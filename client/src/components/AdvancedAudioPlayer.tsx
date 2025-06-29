@@ -302,72 +302,72 @@ export default function AdvancedAudioPlayer() {
           <div className="flex flex-col lg:flex-row items-center gap-8">
             {/* Album Art Section with Station Selector */}
             <div className="flex-shrink-0 relative">
-              {/* Station Selector Button */}
-              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 z-10">
-                <div className="relative" ref={stationDropdownRef}>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowStationSelector(!showStationSelector)}
-                    className="bg-dark-bg/90 backdrop-blur-sm border-gray-700 hover:bg-dark-bg/95 transition-all duration-200 text-xs px-3 py-1 text-white"
-                  >
-                    <RadioIcon className="w-3 h-3 mr-1" />
-                    {currentStation?.name || "95.5 The Beat"}
-                    <ChevronDown className="w-3 h-3 ml-1" />
-                  </Button>
-                  
-                  {showStationSelector && (
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-dark-bg/95 backdrop-blur-md border border-gray-700 rounded-md shadow-lg z-20">
-                      <div className="p-2 max-h-60 overflow-y-auto">
-                        {radioStations.map((station) => (
-                          <button
-                            key={station.id}
-                            onClick={() => handleStationChange(station)}
-                            className={`w-full p-3 text-left rounded-md transition-all duration-200 ${
-                              station.id === (currentStation?.id || "beat-955")
-                                ? 'bg-metal-orange/20 border border-metal-orange/20' 
-                                : 'hover:bg-gray-800/50'
-                            }`}
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0">
-                                <RadioIcon className="w-4 h-4 text-white" />
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between">
-                                  <div className="font-semibold text-sm text-white truncate">
-                                    {station.name}
-                                  </div>
-                                  {station.id === (currentStation?.id || "beat-955") && (
-                                    <Volume2 className="w-4 h-4 text-metal-orange flex-shrink-0" />
-                                  )}
-                                </div>
-                                <div className="text-xs text-gray-400 truncate">
-                                  {station.frequency} • {station.location}
-                                </div>
-                                <div className="text-xs text-gray-500 truncate">
-                                  {station.description}
-                                </div>
-                              </div>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              {/* LIVE Indicator - Positioned on top of artwork */}
-              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 z-10">
-                <div className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
-                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                  LIVE
-                </div>
-              </div>
-              
               {/* Album Art */}
-              <div className="w-48 h-48 bg-gradient-to-br from-metal-orange via-metal-red to-purple-600 rounded-lg p-1">
+              <div className="w-48 h-48 bg-gradient-to-br from-metal-orange via-metal-red to-purple-600 rounded-lg p-1 relative">
+                {/* Station Selector Button - Half on top of album artwork */}
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                  <div className="relative" ref={stationDropdownRef}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowStationSelector(!showStationSelector)}
+                      className="bg-dark-bg/90 backdrop-blur-sm border-gray-700 hover:bg-dark-bg/95 transition-all duration-200 text-xs px-3 py-1 text-white shadow-lg"
+                    >
+                      <RadioIcon className="w-3 h-3 mr-1" />
+                      {currentStation?.name || "95.5 The Beat"}
+                      <ChevronDown className="w-3 h-3 ml-1" />
+                    </Button>
+                    
+                    {showStationSelector && (
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-dark-bg/95 backdrop-blur-md border border-gray-700 rounded-md shadow-lg z-30">
+                        <div className="p-2 max-h-60 overflow-y-auto">
+                          {radioStations.map((station) => (
+                            <button
+                              key={station.id}
+                              onClick={() => handleStationChange(station)}
+                              className={`w-full p-3 text-left rounded-md transition-all duration-200 ${
+                                station.id === (currentStation?.id || "beat-955")
+                                  ? 'bg-metal-orange/20 border border-metal-orange/20' 
+                                  : 'hover:bg-gray-800/50'
+                              }`}
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0">
+                                  <RadioIcon className="w-4 h-4 text-white" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between">
+                                    <div className="font-semibold text-sm text-white truncate">
+                                      {station.name}
+                                    </div>
+                                    {station.id === (currentStation?.id || "beat-955") && (
+                                      <Volume2 className="w-4 h-4 text-metal-orange flex-shrink-0" />
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-gray-400 truncate">
+                                    {station.frequency} • {station.location}
+                                  </div>
+                                  <div className="text-xs text-gray-500 truncate">
+                                    {station.description}
+                                  </div>
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* LIVE Indicator - Positioned below station selector */}
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+                  <div className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    LIVE
+                  </div>
+                </div>
+                
                 <div className="w-full h-full bg-dark-surface rounded-lg flex items-center justify-center relative overflow-hidden">
                   {nowPlaying && (
                     <div className="absolute inset-0 bg-gradient-to-br from-metal-orange/20 via-metal-red/20 to-purple-600/20" />
