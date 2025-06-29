@@ -181,13 +181,33 @@ export default function RadioCoPlayer() {
             variant="outline"
             size="sm"
             onClick={() => setShowStationSelector(!showStationSelector)}
-            className="bg-card/90 backdrop-blur-sm hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1 min-w-fit whitespace-nowrap"
+            className="bg-card/90 backdrop-blur-sm transition-all duration-200 text-xs px-3 py-1 min-w-fit whitespace-nowrap"
             style={{
               borderColor: colors.primary,
               borderWidth: '2px',
               borderRadius: '9px',
               width: 'auto'
             } as React.CSSProperties}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = colors.primary + '20';
+              // Set text color based on theme brightness
+              const isLightTheme = colors.background === '#ffffff' || colors.background === '#f8f8f8' || colors.background === '#fafafa';
+              e.currentTarget.style.color = isLightTheme ? '#000000' : '#ffffff';
+              // Update child elements color
+              const children = e.currentTarget.querySelectorAll('*');
+              children.forEach(child => {
+                (child as HTMLElement).style.color = isLightTheme ? '#000000' : '#ffffff';
+              });
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '';
+              e.currentTarget.style.color = '';
+              // Reset child elements color
+              const children = e.currentTarget.querySelectorAll('*');
+              children.forEach(child => {
+                (child as HTMLElement).style.color = colors.primary;
+              });
+            }}
           >
             <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
             <span style={{ color: colors.primary }}>{currentStation?.name || "95.5 The Beat"}</span>
@@ -202,7 +222,7 @@ export default function RadioCoPlayer() {
           </Button>
           
           {showStationSelector && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-black/90 backdrop-blur-lg border shadow-xl z-20 scrollbar-thin"
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-card/95 backdrop-blur-sm border shadow-xl z-20 scrollbar-thin"
                  style={{ 
                    borderColor: colors.primary + '40',
                    width: 'fit-content',
@@ -225,16 +245,20 @@ export default function RadioCoPlayer() {
                     onClick={() => handleStationChange(station)}
                     className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none"
                     style={{
-                      backgroundColor: station.id === (currentStation?.id || "beat-955") ? colors.primary + '20' : 'transparent',
+                      backgroundColor: station.id === (currentStation?.id || "beat-955") ? colors.primary + '30' : 'transparent',
                       width: '100%'
                     }}
                     onMouseEnter={(e) => {
                       if (station.id !== (currentStation?.id || "beat-955")) {
-                        e.currentTarget.style.backgroundColor = colors.primary + '10';
+                        e.currentTarget.style.backgroundColor = colors.primary + '15';
+                        // Set text color based on theme brightness
+                        const isLightTheme = colors.background === '#ffffff' || colors.background === '#f8f8f8' || colors.background === '#fafafa';
+                        e.currentTarget.style.color = isLightTheme ? '#000000' : '#ffffff';
                       }
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = station.id === (currentStation?.id || "beat-955") ? colors.primary + '20' : 'transparent';
+                      e.currentTarget.style.backgroundColor = station.id === (currentStation?.id || "beat-955") ? colors.primary + '30' : 'transparent';
+                      e.currentTarget.style.color = '';
                     }}
                   >
                     <div className="flex items-center gap-3" style={{ paddingRight: '5px' }}>
@@ -258,7 +282,7 @@ export default function RadioCoPlayer() {
                             {station.description}
                           </div>
                         </div>
-                        <div className="flex items-center justify-center ml-2 w-9 h-9 flex-shrink-0">
+                        <div className="flex items-center justify-center ml-1 w-8 h-9 flex-shrink-0">
                           {station.id === (currentStation?.id || "beat-955") && (
                             <div className="relative flex items-center justify-center h-full">
                               <svg 
@@ -272,39 +296,39 @@ export default function RadioCoPlayer() {
                                   d="M11 5L6 9H2V15H6L11 19V5Z" 
                                   fill={colors.primary} 
                                 />
-                                {/* Animated sound waves - moved down 1.5px for alignment */}
+                                {/* Animated sound waves - moved down 1.75px for alignment, only animate when playing */}
                                 <path 
-                                  d="M14 9.5C15.1 10.6 15.1 12.4 14 13.5" 
+                                  d="M14 9.75C15.1 10.85 15.1 12.65 14 13.75" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
-                                  className="animate-pulse"
-                                  style={{ 
+                                  className={isPlaying ? "animate-pulse" : ""}
+                                  style={isPlaying ? { 
                                     animation: 'pulse 1.5s ease-in-out infinite',
                                     animationDelay: '0s'
-                                  }}
+                                  } : {}}
                                 />
                                 <path 
-                                  d="M16 7.5C18.2 9.7 18.2 13.3 16 15.5" 
+                                  d="M16 7.75C18.2 9.95 18.2 13.55 16 15.75" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
-                                  className="animate-pulse"
-                                  style={{ 
+                                  className={isPlaying ? "animate-pulse" : ""}
+                                  style={isPlaying ? { 
                                     animation: 'pulse 1.5s ease-in-out infinite',
                                     animationDelay: '0.3s'
-                                  }}
+                                  } : {}}
                                 />
                                 <path 
-                                  d="M18 5.5C21.3 8.8 21.3 14.2 18 17.5" 
+                                  d="M18 5.75C21.3 9.05 21.3 14.45 18 17.75" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
-                                  className="animate-pulse"
-                                  style={{ 
+                                  className={isPlaying ? "animate-pulse" : ""}
+                                  style={isPlaying ? { 
                                     animation: 'pulse 1.5s ease-in-out infinite',
                                     animationDelay: '0.6s'
-                                  }}
+                                  } : {}}
                                 />
                               </svg>
                             </div>
@@ -401,7 +425,7 @@ export default function RadioCoPlayer() {
             </>
           ) : (
             <>
-              <svg className="h-6 w-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="h-9 w-9 mr-3" fill="currentColor" viewBox="0 0 24 24">
                 <polygon points="7,4 20,12 7,20" />
               </svg>
               <span className="font-semibold text-lg">PLAY LIVE</span>
