@@ -338,6 +338,27 @@ export default function MetalThemeSwitcher() {
                         Get Premium
                       </Button>
                     </div>
+                    
+                    {/* TEMPORARY TESTING BUTTON - REMOVE BEFORE DEPLOYMENT */}
+                    <div className="mt-4 pt-4 border-t border-white/20">
+                      <Button
+                        onClick={() => {
+                          setTheme('glassmorphism-premium' as MetalTheme);
+                          setShowPremiumDialog(false);
+                          setIsOpen(false);
+                        }}
+                        className="w-full font-bold px-6 py-3 text-base text-yellow-300"
+                        style={{
+                          background: 'rgba(255, 215, 0, 0.2)',
+                          backdropFilter: 'blur(15px)',
+                          border: '1px solid rgba(255, 215, 0, 0.4)',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 20px rgba(255, 215, 0, 0.2)'
+                        }}
+                      >
+                        🔧 TESTING: Preview Theme (Remove Before Launch)
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </DialogContent>
