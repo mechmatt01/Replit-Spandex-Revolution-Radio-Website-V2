@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Menu, ChevronDown, User, Calendar, Music, Send, Phone, MapPin, Heart, UserPlus, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,10 +17,6 @@ export default function Navigation() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
-
-
-
-
 
   useEffect(() => {
     const handleOpenAuthModal = (event: CustomEvent) => {
@@ -698,8 +695,6 @@ export default function Navigation() {
         onClose={() => setIsAuthModalOpen(false)}
         initialMode={authMode}
       />
-
-
     </TooltipProvider>
   );
 }
