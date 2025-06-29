@@ -8,6 +8,14 @@ import {
   PopoverTrigger 
 } from "@/components/ui/popover";
 import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useAuth } from "@/contexts/AuthContext";
+import { 
   Palette, 
   Sun, 
   Moon, 
@@ -16,7 +24,9 @@ import {
   Crown, 
   TreePine, 
   Zap, 
-  Heart 
+  Heart,
+  Sparkles,
+  Star
 } from "lucide-react";
 import { useTheme, METAL_THEMES, type MetalTheme } from "@/contexts/ThemeContext";
 
@@ -29,13 +39,49 @@ const THEME_ICONS: Record<MetalTheme, React.ReactNode> = {
   "thrash-metal": <Zap className="w-4 h-4" />,
   "gothic-metal": <Heart className="w-4 h-4" />,
   "light-mode": <Sun className="w-4 h-4" />,
-  "dark-mode": <Moon className="w-4 h-4" />
+  "dark-mode": <Moon className="w-4 h-4" />,
+  "glassmorphism-premium": <Sparkles className="w-4 h-4" />
 };
 
 export default function MetalThemeSwitcher() {
   const { currentTheme, setTheme, getColors } = useTheme();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   const colors = getColors();
+
+  const hasActiveSubscription = user?.subscriptionStatus === 'active';
+
+  const handleThemeClick = (themeKey: string, themeConfig: any) => {
+    if (themeConfig.isPremium && !hasActiveSubscription) {
+      setShowPremiumDialog(true);
+      return;
+    }
+    
+    setTheme(themeKey as MetalTheme);
+    setIsOpen(false);
+  };
+
+  const scrollToSubscription = () => {
+    setShowPremiumDialog(false);
+    setIsOpen(false);
+    const subscriptionElement = document.getElementById('subscription-section');
+    if (subscriptionElement) {
+      subscriptionElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+      });
+    }
+  };
+
+  // Sort themes to put active theme first, then premium themes, then regular themes
+  const sortedThemes = Object.entries(METAL_THEMES).sort(([keyA, configA], [keyB, configB]) => {
+    if (keyA === currentTheme) return -1;
+    if (keyB === currentTheme) return 1;
+    if (configA.isPremium && !configB.isPremium) return -1;
+    if (!configA.isPremium && configB.isPremium) return 1;
+    return 0;
+  });
 
   return (
     <div className="flex items-center gap-2">
@@ -86,22 +132,21 @@ export default function MetalThemeSwitcher() {
             </CardHeader>
             
             <CardContent className="space-y-2 max-h-[60vh] overflow-y-auto pt-4">
-              {Object.entries(METAL_THEMES).map(([themeKey, themeConfig]) => {
+              {sortedThemes.map(([themeKey, themeConfig]) => {
                 const isActive = currentTheme === themeKey;
                 const isLightTheme = themeKey === "light-mode";
                 const themeColors = themeConfig.colors[isLightTheme ? "light" : "dark"];
+                const isPremium = themeConfig.isPremium;
+                const isLocked = isPremium && !hasActiveSubscription;
                 
                 return (
                   <Button
                     key={themeKey}
-                    onClick={() => {
-                      setTheme(themeKey as MetalTheme);
-                      setIsOpen(false);
-                    }}
+                    onClick={() => handleThemeClick(themeKey, themeConfig)}
                     variant="ghost"
                     className={`w-full justify-start p-3 h-auto hover:bg-opacity-20 ${
                       isActive ? 'ring-2' : ''
-                    }`}
+                    } ${isLocked ? 'opacity-75' : ''}`}
                     style={{ 
                       backgroundColor: isActive ? `${colors.primary}20` : 'transparent',
                       borderColor: isActive ? colors.primary : 'transparent',
@@ -115,6 +160,8 @@ export default function MetalThemeSwitcher() {
                         style={{ 
                           background: themeKey === 'dark-mode' 
                             ? 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)'
+                            : themeKey === 'glassmorphism-premium'
+                            ? 'linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)'
                             : themeConfig.gradient,
                           color: '#ffffff'
                         }}
@@ -124,24 +171,35 @@ export default function MetalThemeSwitcher() {
                       
                       {/* Theme Info */}
                       <div className="flex-1 text-left min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span 
-                            className="font-semibold text-sm"
-                            style={{ color: themeColors.primary }}
-                          >
-                            {themeConfig.name}
-                          </span>
-                          {isActive && (
-                            <Badge 
-                              variant="secondary" 
-                              className="text-xs px-2 py-0"
-                              style={{ 
-                                backgroundColor: colors.primary,
-                                color: colors.background
-                              }}
+                        <div className="flex items-center gap-2 justify-between">
+                          <div className="flex items-center gap-2">
+                            <span 
+                              className="font-semibold text-sm"
+                              style={{ color: themeColors.primary }}
                             >
-                              Active
-                            </Badge>
+                              {themeConfig.name}
+                            </span>
+                            {isActive && (
+                              <Badge 
+                                variant="secondary" 
+                                className="text-xs px-2 py-0"
+                                style={{ 
+                                  backgroundColor: colors.primary,
+                                  color: colors.background
+                                }}
+                              >
+                                Active
+                              </Badge>
+                            )}
+                          </div>
+                          {isPremium && (
+                            <Star 
+                              className="w-4 h-4 flex-shrink-0"
+                              style={{ 
+                                color: isLocked ? colors.textSecondary : '#ffd700',
+                                fill: isLocked ? 'none' : '#ffd700'
+                              }}
+                            />
                           )}
                         </div>
                         <p 
@@ -157,27 +215,38 @@ export default function MetalThemeSwitcher() {
                         
                         {/* Color Preview - Moved Below */}
                         <div className="flex gap-1 mt-2">
-                          <div 
-                            className="w-3 h-3 rounded-full border"
-                            style={{ 
-                              backgroundColor: themeColors.primary,
-                              borderColor: colors.border
-                            }}
-                          />
-                          <div 
-                            className="w-3 h-3 rounded-full border"
-                            style={{ 
-                              backgroundColor: themeColors.secondary,
-                              borderColor: colors.border
-                            }}
-                          />
-                          <div 
-                            className="w-3 h-3 rounded-full border"
-                            style={{ 
-                              backgroundColor: themeColors.accent,
-                              borderColor: colors.border
-                            }}
-                          />
+                          {themeKey === 'glassmorphism-premium' ? (
+                            <div className="flex gap-1">
+                              <div className="w-3 h-3 rounded-full border" style={{ backgroundColor: '#8b0080', borderColor: colors.border }} />
+                              <div className="w-3 h-3 rounded-full border" style={{ backgroundColor: '#ff0080', borderColor: colors.border }} />
+                              <div className="w-3 h-3 rounded-full border" style={{ backgroundColor: '#ff6600', borderColor: colors.border }} />
+                              <div className="w-3 h-3 rounded-full border" style={{ backgroundColor: '#ffff00', borderColor: colors.border }} />
+                            </div>
+                          ) : (
+                            <>
+                              <div 
+                                className="w-3 h-3 rounded-full border"
+                                style={{ 
+                                  backgroundColor: themeColors.primary,
+                                  borderColor: colors.border
+                                }}
+                              />
+                              <div 
+                                className="w-3 h-3 rounded-full border"
+                                style={{ 
+                                  backgroundColor: themeColors.secondary,
+                                  borderColor: colors.border
+                                }}
+                              />
+                              <div 
+                                className="w-3 h-3 rounded-full border"
+                                style={{ 
+                                  backgroundColor: themeColors.accent,
+                                  borderColor: colors.border
+                                }}
+                              />
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -185,6 +254,80 @@ export default function MetalThemeSwitcher() {
                 );
               })}
             </CardContent>
+
+            {/* Premium Theme Dialog */}
+            <Dialog open={showPremiumDialog} onOpenChange={setShowPremiumDialog}>
+              <DialogContent 
+                className="sm:max-w-md border-0"
+                style={{ 
+                  background: 'linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)',
+                  backgroundSize: '400% 400%',
+                  animation: 'glassmorphGradient 8s ease infinite',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(255, 255, 255, 0.18)'
+                }}
+              >
+                <div 
+                  className="rounded-lg p-6"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    backdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255, 255, 255, 0.18)'
+                  }}
+                >
+                  <DialogHeader className="text-center">
+                    <div className="flex justify-center mb-4">
+                      <div 
+                        className="w-16 h-16 rounded-full flex items-center justify-center"
+                        style={{
+                          background: 'rgba(255, 255, 255, 0.1)',
+                          backdropFilter: 'blur(20px)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)'
+                        }}
+                      >
+                        <Sparkles className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
+                    <DialogTitle className="text-2xl font-bold text-white">
+                      Glassmorphism Rock Theme
+                    </DialogTitle>
+                    <DialogDescription className="text-white/90 mt-2">
+                      Experience the ultimate rock vibe with our premium glassmorphism theme featuring vibrant colors and stunning glass effects.
+                    </DialogDescription>
+                  </DialogHeader>
+                  
+                  <div className="mt-6 space-y-4">
+                    <div className="text-center">
+                      <p className="text-white/80 text-sm">
+                        This premium theme is exclusive to subscribers and includes:
+                      </p>
+                      <ul className="text-white text-sm mt-2 space-y-1">
+                        <li>• Vibrant gradient backgrounds</li>
+                        <li>• Glass morphism effects</li>
+                        <li>• Rock-inspired color palette</li>
+                        <li>• Enhanced visual experience</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="flex gap-3 mt-6">
+                      <Button
+                        onClick={() => setShowPremiumDialog(false)}
+                        variant="ghost"
+                        className="flex-1 text-white border border-white/30 hover:bg-white/10"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={scrollToSubscription}
+                        className="flex-1 bg-white text-purple-900 hover:bg-white/90 font-semibold"
+                      >
+                        Get Premium
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </Card>
         </PopoverContent>
       </Popover>

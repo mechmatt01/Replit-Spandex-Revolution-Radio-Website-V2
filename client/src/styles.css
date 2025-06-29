@@ -3557,6 +3557,28 @@ img, video {
   }
 }
 
+@keyframes glassmorphGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  25% {
+    background-position: 50% 0%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  75% {
+    background-position: 50% 100%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);
@@ -3752,6 +3774,37 @@ body.mobile-player-active {
   body.mobile-player-expanded {
     padding-bottom: 280px;
   }
+}
+
+/* Glassmorphism theme styling */
+.glassmorphism-theme {
+  --glassmorphism-surface: rgba(255, 255, 255, 0.08);
+  --glassmorphism-border: rgba(255, 255, 255, 0.18);
+  --glassmorphism-hover: rgba(255, 255, 255, 0.12);
+}
+
+.glassmorphism-theme .bg-card,
+.glassmorphism-theme .bg-background,
+.glassmorphism-theme .bg-surface,
+.glassmorphism-theme .bg-muted {
+  background-color: var(--glassmorphism-surface) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid var(--glassmorphism-border) !important;
+}
+
+.glassmorphism-theme .border-border {
+  border-color: var(--glassmorphism-border) !important;
+}
+
+.glassmorphism-theme .hover\:bg-accent:hover,
+.glassmorphism-theme .hover\:bg-muted:hover {
+  background-color: var(--glassmorphism-hover) !important;
+}
+
+.glassmorphism-theme .bg-black\/80,
+.glassmorphism-theme .bg-black\/90 {
+  background-color: var(--glassmorphism-surface) !important;
+  backdrop-filter: blur(20px) !important;
 }
 
 .hover\:text-metal-orange:hover {

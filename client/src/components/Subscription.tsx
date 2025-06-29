@@ -132,7 +132,7 @@ export default function Subscription() {
                   MOST&nbsp;POPULAR
                 </div>
               )}
-              
+
               <div className="p-8 flex flex-col h-full justify-between">
                 <div className="text-center mb-6">
                   <h3 className={`font-bold text-xl mb-2 ${
@@ -149,7 +149,7 @@ export default function Subscription() {
                   </div>
                   <div className="text-gray-400 text-sm">per month</div>
                 </div>
-                
+
                 <ul className="space-y-3 mb-8 flex-grow">
                   {tier.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-center text-gray-300">

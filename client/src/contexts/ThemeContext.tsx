@@ -9,7 +9,8 @@ export type MetalTheme =
   | "thrash-metal"
   | "gothic-metal"
   | "light-mode"
-  | "dark-mode";
+  | "dark-mode"
+  | "glassmorphism-premium";
 
 interface ThemeColors {
   primary: string;
@@ -32,6 +33,7 @@ interface MetalThemeConfig {
     dark: ThemeColors;
   };
   gradient: string;
+  isPremium?: boolean;
 }
 
 export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
@@ -287,6 +289,38 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
       }
     },
     gradient: "linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)"
+  },
+  "glassmorphism-premium": {
+    name: "Glassmorphism Rock",
+    description: "Premium vibrant glass effect with rock vibes",
+    colors: {
+      dark: {
+        primary: "#ff0080",
+        primaryDark: "#e6006b",
+        primaryText: "#ffffff",
+        secondary: "#ff6600",
+        accent: "#ffff00",
+        background: "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
+        surface: "rgba(255, 255, 255, 0.08)",
+        text: "#ffffff",
+        textSecondary: "#e0e0e0",
+        border: "rgba(255, 255, 255, 0.18)"
+      },
+      light: {
+        primary: "#ff0080",
+        primaryDark: "#e6006b",
+        primaryText: "#ffffff",
+        secondary: "#ff6600",
+        accent: "#ffff00",
+        background: "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
+        surface: "rgba(255, 255, 255, 0.08)",
+        text: "#ffffff",
+        textSecondary: "#e0e0e0",
+        border: "rgba(255, 255, 255, 0.18)"
+      }
+    },
+    gradient: "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
+    isPremium: true
   }
 };
 
@@ -353,11 +387,27 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       // Add smooth transition
       root.style.transition = "all 0.3s ease";
       
+      // Handle glassmorphism theme special background
+      if (currentTheme === "glassmorphism-premium") {
+        document.body.style.background = colors.background;
+        document.body.style.backgroundSize = "400% 400%";
+        document.body.style.animation = "glassmorphGradient 8s ease infinite";
+        root.style.setProperty('--color-background', 'transparent');
+        
+        // Add glassmorphism class for special styling
+        root.classList.add("glassmorphism-theme");
+      } else {
+        document.body.style.background = "";
+        document.body.style.backgroundSize = "";
+        document.body.style.animation = "";
+        root.classList.remove("glassmorphism-theme");
+        root.style.setProperty('--color-background', colors.background);
+      }
+      
       // Set CSS custom properties
       root.style.setProperty('--color-primary', colors.primary);
       root.style.setProperty('--color-secondary', colors.secondary);
       root.style.setProperty('--color-accent', colors.accent);
-      root.style.setProperty('--color-background', colors.background);
       root.style.setProperty('--color-surface', colors.surface);
       root.style.setProperty('--color-text', colors.text);
       root.style.setProperty('--color-text-secondary', colors.textSecondary);
