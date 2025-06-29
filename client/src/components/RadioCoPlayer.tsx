@@ -327,7 +327,7 @@ export default function RadioCoPlayer() {
         
         {/* Compact LIVE Indicator - 50% overlapping top of album artwork */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-lg">
+          <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
             <div className="w-1 h-1 bg-white rounded-full animate-pulse"></div>
             LIVE
           </div>
