@@ -161,7 +161,7 @@ export default function MetalThemeSwitcher() {
                           background: themeKey === 'dark-mode' 
                             ? 'linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%)'
                             : themeKey === 'glassmorphism-premium'
-                            ? 'linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)'
+                            ? 'linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #cc9900 75%, #ff0080 100%)'
                             : themeConfig.gradient,
                           color: '#ffffff'
                         }}
@@ -221,7 +221,7 @@ export default function MetalThemeSwitcher() {
                               <div className="w-3 h-3 rounded-full border" style={{ backgroundColor: '#8b0080', borderColor: colors.border }} />
                               <div className="w-3 h-3 rounded-full border" style={{ backgroundColor: '#ff0080', borderColor: colors.border }} />
                               <div className="w-3 h-3 rounded-full border" style={{ backgroundColor: '#ff6600', borderColor: colors.border }} />
-                              <div className="w-3 h-3 rounded-full border" style={{ backgroundColor: '#ffff00', borderColor: colors.border }} />
+                              <div className="w-3 h-3 rounded-full border" style={{ backgroundColor: '#cc9900', borderColor: colors.border }} />
                             </div>
                           ) : (
                             <>
@@ -261,7 +261,7 @@ export default function MetalThemeSwitcher() {
               <DialogContent 
                 className="sm:max-w-md border-0"
                 style={{ 
-                  background: 'linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)',
+                  background: 'linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #cc9900 75%, #ff0080 100%)',
                   backgroundSize: '400% 400%',
                   animation: 'glassmorphGradient 8s ease infinite',
                   backdropFilter: 'blur(20px)',
@@ -326,14 +326,13 @@ export default function MetalThemeSwitcher() {
                       </Button>
                       <Button
                         onClick={scrollToSubscription}
-                        className="flex-1 font-bold px-6 py-3 text-base"
+                        className="flex-1 font-bold px-6 py-3 text-base text-white"
                         style={{
-                          background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.8) 100%)',
-                          color: '#8b0080',
-                          backdropFilter: 'blur(10px)',
-                          border: '1px solid rgba(255, 255, 255, 0.4)',
+                          background: 'rgba(255, 255, 255, 0.15)',
+                          backdropFilter: 'blur(15px)',
+                          border: '1px solid rgba(255, 255, 255, 0.3)',
                           borderRadius: '8px',
-                          boxShadow: '0 4px 20px rgba(255, 255, 255, 0.2)'
+                          boxShadow: '0 4px 20px rgba(255, 255, 255, 0.1)'
                         }}
                       >
                         Get Premium
