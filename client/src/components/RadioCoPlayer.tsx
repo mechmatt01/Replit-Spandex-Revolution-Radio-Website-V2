@@ -185,14 +185,14 @@ export default function RadioCoPlayer() {
             style={{
               borderColor: colors.primary,
               borderWidth: '2px',
-              borderRadius: '11px',
+              borderRadius: '9px',
               width: 'auto'
             } as React.CSSProperties}
           >
             <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
             <span style={{ color: colors.primary }}>{currentStation?.name || "95.5 The Beat"}</span>
             <ChevronDown 
-              className={`w-3 h-3 ml-1 transition-all duration-300 ease-in-out transform ${showStationSelector ? '-rotate-180' : 'rotate-0'}`}
+              className={`w-3 h-3 ml-1 transition-all duration-300 ease-in-out transform ${showStationSelector ? 'rotate-180' : 'rotate-0'}`}
               style={{ 
                 opacity: 0.6,
                 color: colors.primary
@@ -222,7 +222,7 @@ export default function RadioCoPlayer() {
                   <button
                     key={station.id}
                     onClick={() => handleStationChange(station)}
-                    className="w-full p-3 text-left rounded-md transition-all duration-200 hover:bg-muted/20 focus:outline-none"
+                    className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none"
                     style={{
                       backgroundColor: station.id === (currentStation?.id || "beat-955") ? colors.primary + '20' : 'transparent',
                       width: '100%'
@@ -237,7 +237,12 @@ export default function RadioCoPlayer() {
                     }}
                   >
                     <div className="flex items-center gap-3" style={{ paddingRight: '5px' }}>
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0">
+                      <div 
+                        className="flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0 transition-all duration-300"
+                        style={{ 
+                          background: `linear-gradient(to bottom right, ${colors.primary}, ${colors.secondary})`
+                        }}
+                      >
                         <span className="text-lg">{station.icon}</span>
                       </div>
                       <div className="flex-1 min-w-0 flex items-center">
@@ -266,9 +271,9 @@ export default function RadioCoPlayer() {
                                   d="M11 5L6 9H2V15H6L11 19V5Z" 
                                   fill={colors.primary} 
                                 />
-                                {/* Animated sound waves - moved down 1px for alignment */}
+                                {/* Animated sound waves - moved down 1.5px for alignment */}
                                 <path 
-                                  d="M14 9C15.1 10.1 15.1 11.9 14 13" 
+                                  d="M14 9.5C15.1 10.6 15.1 12.4 14 13.5" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
@@ -279,7 +284,7 @@ export default function RadioCoPlayer() {
                                   }}
                                 />
                                 <path 
-                                  d="M16 7C18.2 9.2 18.2 12.8 16 15" 
+                                  d="M16 7.5C18.2 9.7 18.2 13.3 16 15.5" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
@@ -290,7 +295,7 @@ export default function RadioCoPlayer() {
                                   }}
                                 />
                                 <path 
-                                  d="M18 5C21.3 8.3 21.3 13.7 18 17" 
+                                  d="M18 5.5C21.3 8.8 21.3 14.2 18 17.5" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
@@ -327,7 +332,7 @@ export default function RadioCoPlayer() {
         
         {/* Compact LIVE Indicator - 50% overlapping top of album artwork */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+          <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold" style={{ boxShadow: 'none' }}>
             <div className="w-1 h-1 bg-white rounded-full animate-pulse"></div>
             LIVE
           </div>

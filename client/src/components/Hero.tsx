@@ -7,11 +7,11 @@ import { useTheme } from "../contexts/ThemeContext";
 export default function Hero() {
   const { isDarkMode, getColors } = useTheme();
   const colors = getColors();
-  
+
   const scrollToSchedule = () => {
     document.getElementById('schedule')?.scrollIntoView({ behavior: 'smooth' });
   };
-  
+
   const [countdown, setCountdown] = useState({
     days: 0,
     hours: 0,
@@ -21,7 +21,7 @@ export default function Hero() {
 
   useEffect(() => {
     const launchDate = new Date("2025-07-14T00:00:00").getTime();
-    
+
     const updateCountdown = () => {
       const now = new Date().getTime();
       const distance = launchDate - now;
@@ -52,10 +52,10 @@ export default function Hero() {
             backgroundImage: "url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')"
           }}
         ></div>
-        
+
         {/* Horizontal fade overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80 transition-colors duration-300"></div>
-        
+
         {/* Theme-aware vertical fade to background */}
         <div 
           className="absolute inset-0 transition-all duration-300"
@@ -144,7 +144,7 @@ export default function Hero() {
 
 
       </div>
-      
+
       {/* Fade to Background Color */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/50 to-transparent transition-colors duration-300"></div>
     </section>

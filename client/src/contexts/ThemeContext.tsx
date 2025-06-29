@@ -345,31 +345,44 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     
     const root = document.documentElement;
     
-    // Add smooth transition
-    root.style.transition = "all 0.3s ease";
+    // Add fade out effect
+    document.body.style.opacity = '0.7';
+    document.body.style.transition = 'opacity 0.15s ease-out';
     
-    // Set CSS custom properties
-    root.style.setProperty('--color-primary', colors.primary);
-    root.style.setProperty('--color-secondary', colors.secondary);
-    root.style.setProperty('--color-accent', colors.accent);
-    root.style.setProperty('--color-background', colors.background);
-    root.style.setProperty('--color-surface', colors.surface);
-    root.style.setProperty('--color-text', colors.text);
-    root.style.setProperty('--color-text-secondary', colors.textSecondary);
-    root.style.setProperty('--color-border', colors.border);
-    root.style.setProperty('--gradient-primary', METAL_THEMES[currentTheme].gradient);
-    
-    // Apply theme class
-    root.classList.remove("light", "dark");
-    root.classList.add(isLightMode ? "light" : "dark");
-    
-    // Save preferences
-    localStorage.setItem("metal-theme", currentTheme);
-    
-    // Remove transition after animation
     setTimeout(() => {
-      root.style.transition = "";
-    }, 300);
+      // Add smooth transition
+      root.style.transition = "all 0.3s ease";
+      
+      // Set CSS custom properties
+      root.style.setProperty('--color-primary', colors.primary);
+      root.style.setProperty('--color-secondary', colors.secondary);
+      root.style.setProperty('--color-accent', colors.accent);
+      root.style.setProperty('--color-background', colors.background);
+      root.style.setProperty('--color-surface', colors.surface);
+      root.style.setProperty('--color-text', colors.text);
+      root.style.setProperty('--color-text-secondary', colors.textSecondary);
+      root.style.setProperty('--color-border', colors.border);
+      root.style.setProperty('--gradient-primary', METAL_THEMES[currentTheme].gradient);
+      
+      // Apply theme class
+      root.classList.remove("light", "dark");
+      root.classList.add(isLightMode ? "light" : "dark");
+      
+      // Save preferences
+      localStorage.setItem("metal-theme", currentTheme);
+      
+      // Fade back in
+      setTimeout(() => {
+        document.body.style.opacity = '1';
+        document.body.style.transition = 'opacity 0.15s ease-in';
+        
+        // Remove transition after animation
+        setTimeout(() => {
+          root.style.transition = "";
+          document.body.style.transition = "";
+        }, 150);
+      }, 150);
+    }, 150);
   }, [currentTheme, isDarkMode, colors]);
 
   const setTheme = (theme: MetalTheme) => {

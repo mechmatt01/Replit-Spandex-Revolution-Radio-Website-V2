@@ -231,13 +231,13 @@ export default function Navigation() {
                 />
               </div>
               <div className="flex flex-col" id="brand-text" ref={brandTextRef}>
-                <div className="text-xs sm:text-sm md:text-base lg:text-lg font-black leading-tight" style={{ color: colors.text }}>
+                <div className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-black leading-tight" style={{ color: colors.text }}>
                   SPANDEX
                 </div>
-                <div className="text-xs sm:text-sm md:text-base lg:text-lg font-black leading-tight" style={{ color: colors.text }}>
+                <div className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-black leading-tight" style={{ color: colors.text }}>
                   SALVATION
                 </div>
-                <div className="text-xs sm:text-sm md:text-base lg:text-lg font-black leading-tight" style={{ color: colors.primary }}>
+                <div className="text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-black leading-tight" style={{ color: colors.primary }}>
                   RADIO
                 </div>
               </div>
