@@ -327,13 +327,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
               type="button"
               variant="outline"
               onClick={handleGoogleAuth}
-              className="w-full bg-transparent hover:bg-gray-800"
-              style={{
-                borderColor: colors.primary + '40',
-                color: colors.text
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.primary + '20'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              className="w-full bg-white text-black border-gray-300 hover:bg-gray-50"
               disabled={loading}
             >
               <img 
@@ -341,7 +335,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                 alt="Google" 
                 className="mr-2 h-4 w-4"
               />
-              {mode === 'login' ? 'Sign in with Google' : 'Sign up with Google'}
+              {mode === 'login' ? 'Continue with Google' : 'Sign Up with Google'}
             </Button>
             
             <div className="text-center">

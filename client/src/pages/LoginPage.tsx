@@ -131,11 +131,11 @@ export default function LoginPage() {
           <Button
             type="button"
             variant="outline"
-            className="w-full"
+            className="w-full bg-white text-black border-gray-300 hover:bg-gray-50"
             onClick={handleGoogleAuth}
           >
             <img src="/assets/icons8-google_1750360286324.png" alt="Google" className="w-4 h-4 mr-2" />
-            Continue with Google
+            {isLogin ? "Continue with Google" : "Sign Up with Google"}
           </Button>
 
           <div className="relative">
