@@ -329,6 +329,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const toggleTheme = () => {
+    toggleDarkMode();
+  };
+
   const getThemeColors = (themeName: MetalTheme, isDark: boolean): ThemeColors => {
     const theme = METAL_THEMES[themeName];
     return isDark ? theme.colors.dark : theme.colors.light;
@@ -389,6 +393,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     },
     setTheme,
     toggleDarkMode,
+    toggleTheme,
     gradient: METAL_THEMES[currentTheme].gradient,
     getColors,
     getGradient
