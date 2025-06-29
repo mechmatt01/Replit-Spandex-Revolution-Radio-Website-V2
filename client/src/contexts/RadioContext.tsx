@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useRef, useEffect, ReactNode } from "react";
+import type { RadioStation } from '@/components/StationSelector';
 
 interface TrackInfo {
   title: string;
@@ -14,11 +15,13 @@ interface RadioContextType {
   isLoading: boolean;
   error: string | null;
   currentTrack: TrackInfo;
+  currentStation: RadioStation | null;
   stationName: string;
   isTransitioning: boolean;
   togglePlayback: () => Promise<void>;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
+  changeStation: (station: RadioStation) => Promise<void>;
   audioRef: React.RefObject<HTMLAudioElement>;
 }
 
@@ -45,6 +48,15 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentStation, setCurrentStation] = useState<RadioStation | null>({
+    id: "beat-955",
+    name: "95.5 The Beat",
+    frequency: "95.5 FM",
+    location: "Dallas, TX",
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
+    description: "Dallas Hip Hop & R&B"
+  });
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
     title: "95.5 The Beat",
     artist: "Dallas Hip Hop & R&B",
@@ -161,6 +173,46 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const changeStation = async (station: RadioStation) => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Pause current playback
+      if (isPlaying) {
+        audio.pause();
+      }
+
+      // Update station info
+      setCurrentStation(station);
+      setStationName(station.name);
+      setCurrentTrack({
+        title: station.name,
+        artist: station.description,
+        album: station.genre,
+        artwork: ""
+      });
+
+      // Set new stream URL
+      audio.src = station.streamUrl;
+      audio.load();
+
+      // Resume playback if it was playing
+      if (isPlaying) {
+        await audio.play();
+      }
+
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Failed to change station:', error);
+      setError('Failed to change station');
+      setIsLoading(false);
+    }
+  };
+
   // Audio event handlers
   const handlePlay = () => {
     setIsPlaying(true);
@@ -268,11 +320,13 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     isLoading,
     error,
     currentTrack,
+    currentStation,
     stationName,
     isTransitioning,
     togglePlayback,
     setVolume,
     toggleMute,
+    changeStation,
     audioRef,
   };
 
