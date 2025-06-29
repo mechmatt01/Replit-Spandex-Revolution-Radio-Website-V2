@@ -430,8 +430,8 @@ export default function RadioCoPlayer() {
       </div>
 
       <div className="flex flex-col items-center justify-center space-y-4">
-        {/* Play/Pause and Volume Button Row - Centered with volume next to play button */}
-        <div className="flex items-center justify-center gap-4 w-full">
+        {/* Play/Pause and Volume Button Row - Play button absolutely centered */}
+        <div className="relative w-full flex items-center justify-center">
           {/* Play/Pause Button - Main centered button */}
           <Button
             onClick={togglePlayback}
@@ -466,27 +466,75 @@ export default function RadioCoPlayer() {
             )}
           </Button>
 
-          {/* Volume Button - Next to play button */}
-          <div className="relative group" ref={volumeButtonRef}>
-            <Button
-              onClick={toggleMute}
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/10 rounded-full p-3 w-12 h-12 flex items-center justify-center transition-all duration-300"
-              style={{
-                background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(20px)'
-              }}
-              aria-label={isMuted ? "Unmute" : "Mute"}
-            >
-              {isMuted ? (
-                <VolumeX className="h-5 w-5" />
-              ) : volume > 0.5 ? (
-                <Volume2 className="h-5 w-5" />
-              ) : (
-                <Volume2 className="h-5 w-5" />
-              )}
-            </Button>
+          {/* Volume Button - Only visible when playing */}
+          {isPlaying && (
+            <div className="absolute left-1/2 transform -translate-x-32 group" ref={volumeButtonRef}>
+              <Button
+                onClick={toggleMute}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/10 rounded-full p-3 w-12 h-12 flex items-center justify-center transition-all duration-300"
+                style={{
+                  background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(20px)'
+                }}
+                aria-label={isMuted ? "Unmute" : "Mute"}
+              >
+                {isMuted ? (
+                  <VolumeX className="h-5 w-5" />
+                ) : (
+                  <div className="relative flex items-center justify-center">
+                    {/* Animated Speaker Icon */}
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="relative"
+                    >
+                      {/* Speaker cone */}
+                      <path
+                        d="M11 5L6 9H2v6h4l5 4V5z"
+                        fill="currentColor"
+                      />
+                      {/* Animated sound waves */}
+                      <path 
+                        d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07M12 12h.01" 
+                        stroke="currentColor" 
+                        strokeWidth="1.5" 
+                        strokeLinecap="round"
+                        className="animate-pulse"
+                        style={{ 
+                          animation: 'pulse 1.5s ease-in-out infinite',
+                          animationDelay: '0s'
+                        }}
+                      />
+                      <path 
+                        d="M15.54 8.46a5 5 0 0 1 0 7.07" 
+                        stroke="currentColor" 
+                        strokeWidth="1.5" 
+                        strokeLinecap="round"
+                        className="animate-pulse"
+                        style={{ 
+                          animation: 'pulse 1.5s ease-in-out infinite',
+                          animationDelay: '0.3s'
+                        }}
+                      />
+                      <path 
+                        d="M19.07 4.93a10 10 0 0 1 0 14.14" 
+                        stroke="currentColor" 
+                        strokeWidth="1.5" 
+                        strokeLinecap="round"
+                        className="animate-pulse"
+                        style={{ 
+                          animation: 'pulse 1.5s ease-in-out infinite',
+                          animationDelay: '0.6s'
+                        }}
+                      />
+                    </svg>
+                  </div>
+                )}
+              </Button>
 
             {/* Modern Volume Dropdown - Animates upward from button */}
             <div 
@@ -580,7 +628,7 @@ export default function RadioCoPlayer() {
                 />
               </div>
             </div>
-          </div>
+          )}
         </div>
 
       </div>
