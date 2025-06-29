@@ -1,9 +1,8 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { User } from '@shared/schema';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { apiRequest } from '@/lib/queryClient';
 
 interface AuthContextType {
-  user: User | null;
+  user: any | null;
   loading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
@@ -23,7 +22,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   const refreshUser = async () => {
@@ -49,12 +48,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       credentials: 'include',
       body: JSON.stringify({ email, password })
     });
-    
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Login failed');
     }
-    
+
     const data = await response.json();
     setUser(data.user);
   };
@@ -66,12 +65,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       credentials: 'include',
       body: JSON.stringify({ email, password, username, firstName, lastName, phoneNumber, recaptchaToken })
     });
-    
+
     if (!response.ok) {
       const error = await response.json();
       throw new Error(error.message || 'Registration failed');
     }
-    
+
     const data = await response.json();
     setUser(data.user);
   };
@@ -86,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     refreshUser();
-    
+
     // Set up auth state persistence
     const interval = setInterval(() => {
       // Refresh auth state every 5 minutes to ensure persistent login
@@ -94,7 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         refreshUser();
       }
     }, 5 * 60 * 1000);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -112,4 +111,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
-
