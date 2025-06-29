@@ -47,7 +47,7 @@ function getDefaultArtwork(title: string, artist: string): string {
     "Ace of Spades": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
     "Breaking the Law": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400"
   };
-  
+
   // Return specific artwork for known tracks, or a generic metal concert image
   return artworkMap[title] || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400";
 }
@@ -95,38 +95,38 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       } else {
         setIsLoading(true);
         setError(null);
-        
+
         // Try multiple stream formats
         let streamWorked = false;
-        
+
         for (let i = 0; i < streamUrls.length; i++) {
           try {
             const url = streamUrls[i];
             console.log(`Attempting to play stream ${i + 1}/${streamUrls.length}: ${url}`);
-            
+
             // Reset audio element
             audio.pause();
             audio.currentTime = 0;
             audio.src = url;
             audio.load();
-            
+
             // Wait for the audio to be ready
             await new Promise((resolve, reject) => {
               const timeout = setTimeout(() => {
                 reject(new Error('Stream loading timeout'));
               }, 10000);
-              
+
               audio.oncanplaythrough = () => {
                 clearTimeout(timeout);
                 resolve(true);
               };
-              
+
               audio.onerror = () => {
                 clearTimeout(timeout);
                 reject(new Error('Stream loading error'));
               };
             });
-            
+
             const playPromise = audio.play();
             if (playPromise !== undefined) {
               await playPromise;
@@ -136,14 +136,14 @@ export function RadioProvider({ children }: { children: ReactNode }) {
             }
           } catch (urlError: any) {
             console.warn(`Stream ${i + 1} failed:`, urlError);
-            
+
             if (i === streamUrls.length - 1) {
               // Last URL failed, throw error
               throw urlError;
             }
           }
         }
-        
+
         if (!streamWorked) {
           throw new Error("All stream formats failed");
         }
@@ -151,7 +151,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     } catch (error: any) {
       console.error("Playback error:", error);
       let errorMessage = "Failed to start playback";
-      
+
       if (error.name === 'NotAllowedError') {
         errorMessage = "Please click play to start the stream";
       } else if (error.name === 'NotSupportedError') {
@@ -161,7 +161,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       } else {
         errorMessage = "Unable to connect to radio stream";
       }
-      
+
       setError(errorMessage);
       setIsLoading(false);
       setIsPlaying(false);
@@ -178,7 +178,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const toggleMute = () => {
     const newMuted = !isMuted;
     setIsMuted(newMuted);
-    
+
     if (audioRef.current) {
       audioRef.current.volume = newMuted ? 0 : volume;
     }
@@ -191,7 +191,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Pause current playback
       const wasPlaying = isPlaying;
       if (wasPlaying) {
@@ -278,66 +278,69 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     };
   }, [volume, isMuted]);
 
-  // Fetch track information more frequently when playing
+  // Track information fetching - only when playing and track changes
   useEffect(() => {
-    if (!isPlaying || !currentStation) return;
-    
+    let trackInterval: NodeJS.Timeout;
+
     const fetchTrackInfo = async () => {
+      if (!isPlaying) return;
+
       try {
-        // Only fetch metadata for stations that support it
-        if (currentStation.id === "beat-955" || currentStation.id === "hot-97" || currentStation.id === "power-106") {
-          const [statusResponse, nowPlayingResponse] = await Promise.all([
-            fetch('/api/radio-status'),
-            fetch('/api/now-playing')
-          ]);
-          
-          if (statusResponse.ok) {
-            const statusData = await statusResponse.json();
-            setStationName(statusData.station || currentStation.name);
+        const response = await fetch('/api/now-playing');
+        if (response.ok) {
+          const trackData = await response.json();
+
+          // Only update if track has actually changed
+          if (trackData.title !== currentTrack.title || trackData.artist !== currentTrack.artist) {
+            setIsTransitioning(true);
+            setCurrentTrack({
+              title: trackData.title || stationName,
+              artist: trackData.artist || '',
+              album: trackData.album || '',
+              artwork: trackData.artwork || '',
+            });
+            setTimeout(() => setIsTransitioning(false), 300);
           }
-          
-          if (nowPlayingResponse.ok) {
-            const nowPlayingData = await nowPlayingResponse.json();
-            console.log('Raw API response:', nowPlayingData);
-            
-            // Update track data with fetched info
-            const newTrack = {
-              title: nowPlayingData.title || currentStation.name,
-              artist: nowPlayingData.artist || currentStation.description, 
-              album: nowPlayingData.album || currentStation.genre,
-              artwork: nowPlayingData.artwork || ""
-            };
-            
-            console.log('Setting new track:', newTrack);
-            setCurrentTrack(newTrack);
-          }
-        } else {
-          // For other stations, keep showing station info
-          setCurrentTrack({
-            title: currentStation.name,
-            artist: currentStation.description,
-            album: currentStation.genre,
-            artwork: ""
-          });
         }
       } catch (error) {
         console.error('Failed to fetch track info:', error);
-        // Fallback to station info on error
-        setCurrentTrack({
-          title: currentStation.name,
-          artist: currentStation.description,
-          album: currentStation.genre,
-          artwork: ""
-        });
       }
     };
 
-    // Fetch track info every 10 seconds when playing to reduce server load
-    fetchTrackInfo();
-    const interval = setInterval(fetchTrackInfo, 10000);
+    if (isPlaying) {
+      fetchTrackInfo();
+      trackInterval = setInterval(fetchTrackInfo, 15000); // Check every 15 seconds instead of 10
+    } else {
+      // When stopped, show station name only if no track is set
+      if (currentTrack.title === '' || currentTrack.title === stationName) {
+        setCurrentTrack({
+          title: stationName,
+          artist: '',
+          album: '',
+          artwork: '',
+        });
+      }
+    }
 
-    return () => clearInterval(interval);
-  }, [isPlaying, currentStation]);
+    return () => {
+      if (trackInterval) clearInterval(trackInterval);
+    };
+  }, [isPlaying, stationName]);
+
+  const togglePlayback = useCallback(() => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+        // Keep current track info when pausing, don't reset to station name
+      } else {
+        audioRef.current.play().catch(error => {
+          console.error('Failed to play audio:', error);
+          setError('Failed to start playback. Please try again.');
+        });
+      }
+    }
+  }, [isPlaying]);
 
   const value: RadioContextType = {
     isPlaying,

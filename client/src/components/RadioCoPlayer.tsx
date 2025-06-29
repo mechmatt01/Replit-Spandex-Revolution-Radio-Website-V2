@@ -433,45 +433,52 @@ export default function RadioCoPlayer() {
         </Button>
 
         {/* Volume Controls */}
-        <div className="flex items-center justify-center gap-3 w-full max-w-[375px]">
+        <div className="flex items-center justify-center space-x-4 px-6 py-4">
           <Button
             onClick={toggleMute}
             variant="ghost"
             size="sm"
-            className="p-1 transition-colors duration-200"
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110"
             style={{
-              color: colors.primary
+              background: `linear-gradient(135deg, ${colors.primary}20, ${colors.secondary}20)`,
+              backdropFilter: 'blur(10px)',
+              border: `1px solid ${colors.primary}30`,
+              color: isMuted ? colors.textSecondary : colors.primary
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = colors.secondary;
-              e.currentTarget.style.backgroundColor = colors.primary + '20';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = colors.primary;
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+            aria-label={isMuted ? "Unmute" : "Mute"}
           >
-            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            {isMuted ? (
+              <VolumeX className="h-4 w-4" />
+            ) : (
+              <Volume2 className="h-4 w-4" />
+            )}
           </Button>
 
-          <div className="flex-1" style={{ paddingLeft: '3px', paddingRight: '3px', minWidth: '180px' }}>
-            <div className="w-full h-2 bg-gray-700 rounded-full relative">
+          <div className="flex-1 max-w-[140px] relative group">
+            <div 
+              className="w-full h-1.5 rounded-full transition-all duration-300 relative overflow-hidden"
+              style={{ 
+                background: `linear-gradient(90deg, ${colors.primary}15, ${colors.surface})`,
+                backdropFilter: 'blur(5px)',
+                border: `1px solid ${colors.primary}20`
+              }}
+            >
               <div 
-                className="h-2 rounded-full transition-all duration-150"
+                className="h-full rounded-full transition-all duration-300 relative"
                 style={{ 
                   width: `${(isMuted ? 0 : volume) * 100}%`,
-                  background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                  background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`,
+                  boxShadow: `0 0 8px ${colors.primary}50`
                 }}
-              ></div>
-              {/* Custom thumb */}
-              <div 
-                className="absolute top-1/2 w-4 h-4 rounded-full transition-all duration-150 transform -translate-y-1/2 cursor-pointer shadow-lg"
-                style={{ 
-                  left: `calc(${(isMuted ? 0 : volume) * 100}% - 8px)`,
-                  background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-                  boxShadow: `0 2px 8px ${colors.primary}40`
-                }}
-              ></div>
+              >
+                <div 
+                  className="absolute right-0 top-1/2 w-3 h-3 rounded-full transform -translate-y-1/2 translate-x-1/2 transition-all duration-300 group-hover:scale-125"
+                  style={{ 
+                    background: `radial-gradient(circle, ${colors.primary}, ${colors.secondary})`,
+                    boxShadow: `0 0 6px ${colors.primary}60, 0 2px 4px rgba(0,0,0,0.2)`
+                  }}
+                ></div>
+              </div>
               <input
                 type="range"
                 min="0"
@@ -483,9 +490,17 @@ export default function RadioCoPlayer() {
             </div>
           </div>
 
-          <span className="text-sm font-semibold min-w-[35px] text-center" style={{ color: colors.primary }}>
+          <div 
+            className="text-xs font-bold min-w-[32px] text-center px-2 py-1 rounded-md transition-all duration-300"
+            style={{ 
+              background: `linear-gradient(135deg, ${colors.primary}15, ${colors.secondary}15)`,
+              backdropFilter: 'blur(5px)',
+              border: `1px solid ${colors.primary}25`,
+              color: colors.primary
+            }}
+          >
             {Math.round((isMuted ? 0 : volume) * 100)}%
-          </span>
+          </div>
         </div>
 
       </div>

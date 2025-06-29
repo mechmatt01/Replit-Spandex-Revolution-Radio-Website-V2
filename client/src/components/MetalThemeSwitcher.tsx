@@ -289,20 +289,20 @@ export default function MetalThemeSwitcher() {
                         <Sparkles className="w-6 h-6 text-white" />
                       </div>
                     </div>
-                    <DialogTitle className="text-xl font-bold text-white leading-tight">
+                    <DialogTitle className="text-xl font-bold text-white leading-tight text-center">
                       Glassmorphism Rock Theme
                     </DialogTitle>
-                    <DialogDescription className="text-white/90 text-sm leading-relaxed px-2">
+                    <DialogDescription className="text-white/90 text-sm leading-relaxed text-center px-2">
                       Experience the ultimate rock vibe with our premium glassmorphism theme featuring vibrant colors and stunning glass effects.
                     </DialogDescription>
                   </DialogHeader>
                   
                   <div className="mt-4 space-y-4">
                     <div className="text-center">
-                      <p className="text-white/80 text-xs">
+                      <p className="text-white/80 text-xs text-center">
                         This premium theme includes:
                       </p>
-                      <ul className="text-white text-xs mt-2 space-y-1 leading-relaxed">
+                      <ul className="text-white text-xs mt-2 space-y-1 leading-relaxed text-center list-none">
                         <li>• Vibrant gradient backgrounds</li>
                         <li>• Glass morphism effects</li>
                         <li>• Rock-inspired color palette</li>
@@ -356,7 +356,7 @@ export default function MetalThemeSwitcher() {
                           boxShadow: '0 4px 20px rgba(255, 215, 0, 0.2)'
                         }}
                       >
-                        Test Theme (Development Use Only)
+                        Preview Theme (Development Only)
                       </Button>
                     </div>
                   </div>
