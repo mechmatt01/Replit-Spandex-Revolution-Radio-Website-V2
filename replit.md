@@ -138,6 +138,7 @@ Required redirect URIs in Google Cloud Console:
 3. Save the changes
 
 ## Changelog
+- June 29, 2025: COMPLETED radio player layout fixes - volume button now always visible on left side of play button, removed conditional visibility and invisible spacer elements, play button properly centered in all states, maintained theme-aware volume slider with hover activation
 - June 29, 2025: FINAL Hero text layout correction - moved navigation bar text back to original 2-line format (SPANDEX SALVATION / RADIO), updated Hero section main title to display on 3 separate lines (SPANDEX, SALVATION, RADIO) for improved visual hierarchy and readability
 - June 29, 2025: COMPLETED comprehensive legal and authentication system updates - created Terms of Service and Privacy Policy pages with theme-aware styling, added legal page routing to app navigation (/terms, /privacy), updated volume slider with proper theme color gradients and filled thumb design, enhanced radio dropdown with darker background for better text visibility, improved station icon theme color conformance using dynamic CSS filters, maintained Firebase authentication integration with current best practices
 - June 29, 2025: FINAL navigation and volume slider improvements - centered dropdown menu under MORE button instead of right-aligned positioning, updated main player volume slider to match floating player theme colors with gradient design, added custom circular thumb without borders for clean appearance, maximized slider width with minimal 1px padding for optimal usability

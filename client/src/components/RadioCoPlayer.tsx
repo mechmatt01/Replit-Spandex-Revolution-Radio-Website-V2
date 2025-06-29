@@ -430,72 +430,70 @@ export default function RadioCoPlayer() {
       </div>
 
       <div className="flex flex-col items-center justify-center space-y-4">
-        {/* Play/Pause and Volume Button Row - Using flexbox for reliable positioning */}
+        {/* Play/Pause and Volume Button Row - Centered layout with volume always visible */}
         <div className="flex items-center justify-center gap-6 w-full">
-          {/* Volume Button - Only visible when playing, positioned to the left */}
-          {isPlaying && (
-            <div className="relative group" ref={volumeButtonRef}>
-              <Button
-                onClick={toggleMute}
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/20 rounded-full p-2 w-12 h-12 flex items-center justify-center transition-all duration-200"
-                style={{
-                  background: isMuted ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)',
-                  border: isMuted ? '2px solid rgba(255, 0, 0, 0.4)' : '2px solid rgba(255, 255, 255, 0.2)',
-                  backdropFilter: 'blur(15px)'
-                }}
-                aria-label={isMuted ? "Unmute" : "Mute"}
-              >
-                {isMuted ? (
-                  <VolumeX className="h-6 w-6" />
-                ) : volume > 0.5 ? (
-                  <Volume2 className="h-6 w-6" />
-                ) : (
-                  <Volume2 className="h-6 w-6" />
-                )}
-              </Button>
+          {/* Volume Button - Always visible on the left */}
+          <div className="relative group" ref={volumeButtonRef}>
+            <Button
+              onClick={toggleMute}
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-white/20 rounded-full p-2 w-12 h-12 flex items-center justify-center transition-all duration-200"
+              style={{
+                background: isMuted ? 'rgba(255, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.1)',
+                border: isMuted ? '2px solid rgba(255, 0, 0, 0.4)' : '2px solid rgba(255, 255, 255, 0.2)',
+                backdropFilter: 'blur(15px)'
+              }}
+              aria-label={isMuted ? "Unmute" : "Mute"}
+            >
+              {isMuted ? (
+                <VolumeX className="h-6 w-6" />
+              ) : volume > 0.5 ? (
+                <Volume2 className="h-6 w-6" />
+              ) : (
+                <Volume2 className="h-6 w-6" />
+              )}
+            </Button>
 
-              {/* Animated Vertical Volume Slider - Always Opens Upward */}
-              <div 
-                className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto z-50"
-              >
-                <div className="bg-black/90 backdrop-blur-lg rounded-lg p-2 shadow-xl border border-white/30">
-                  <div className="flex flex-col items-center space-y-1">
-                    {/* Volume Level Display */}
-                    <div className="text-xs text-white font-bold">
-                      {Math.round((isMuted ? 0 : volume) * 100)}
-                    </div>
+            {/* Animated Vertical Volume Slider - Always Opens Upward */}
+            <div 
+              className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out pointer-events-none group-hover:pointer-events-auto z-50"
+            >
+              <div className="bg-black/90 backdrop-blur-lg rounded-lg p-2 shadow-xl border border-white/30">
+                <div className="flex flex-col items-center space-y-1">
+                  {/* Volume Level Display */}
+                  <div className="text-xs text-white font-bold">
+                    {Math.round((isMuted ? 0 : volume) * 100)}
+                  </div>
+                  
+                  {/* Vertical Slider Container */}
+                  <div className="relative h-16 w-3 bg-white/20 rounded-full">
+                    {/* Filled Volume Bar */}
+                    <div 
+                      className="absolute bottom-0 w-full rounded-full transition-all duration-200"
+                      style={{
+                        height: `${(isMuted ? 0 : volume) * 100}%`,
+                        background: `linear-gradient(180deg, ${colors.primary}, ${colors.secondary})`
+                      }}
+                    />
                     
-                    {/* Vertical Slider Container */}
-                    <div className="relative h-16 w-3 bg-white/20 rounded-full">
-                      {/* Filled Volume Bar */}
-                      <div 
-                        className="absolute bottom-0 w-full rounded-full transition-all duration-200"
-                        style={{
-                          height: `${(isMuted ? 0 : volume) * 100}%`,
-                          background: `linear-gradient(180deg, ${colors.primary}, ${colors.secondary})`
-                        }}
-                      />
-                      
-                      {/* Interactive Overlay for Volume Control */}
-                      <div 
-                        className="absolute inset-0 cursor-pointer"
-                        onClick={(e) => {
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          const y = rect.bottom - e.clientY;
-                          const newVolume = Math.max(0, Math.min(1, y / rect.height));
-                          setVolume(newVolume);
-                        }}
-                      />
-                    </div>
+                    {/* Interactive Overlay for Volume Control */}
+                    <div 
+                      className="absolute inset-0 cursor-pointer"
+                      onClick={(e) => {
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const y = rect.bottom - e.clientY;
+                        const newVolume = Math.max(0, Math.min(1, y / rect.height));
+                        setVolume(newVolume);
+                      }}
+                    />
                   </div>
                 </div>
               </div>
             </div>
-          )}
+          </div>
 
-          {/* Play/Pause Button - Always centered in the flexbox */}
+          {/* Play/Pause Button - Centered */}
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
@@ -528,9 +526,6 @@ export default function RadioCoPlayer() {
               </>
             )}
           </Button>
-
-          {/* Invisible spacer to balance the layout when volume button is not visible */}
-          {!isPlaying && <div className="w-12 h-12"></div>}
         </div>
 
       </div>
