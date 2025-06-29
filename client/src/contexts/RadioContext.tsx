@@ -55,7 +55,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     location: "Dallas, TX",
     genre: "Hip Hop & R&B",
     streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
-    description: "Dallas Hip Hop & R&B"
+    description: "Dallas Hip Hop & R&B",
+    icon: "🎵"
   });
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
     title: "95.5 The Beat",

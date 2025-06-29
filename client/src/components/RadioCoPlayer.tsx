@@ -19,7 +19,8 @@ const radioStations: RadioStation[] = [
     location: "Dallas, TX",
     genre: "Hip Hop & R&B",
     streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
-    description: "Dallas Hip Hop & R&B"
+    description: "Dallas Hip Hop & R&B",
+    icon: "🎵"
   },
   {
     id: "hot-97",
@@ -28,7 +29,8 @@ const radioStations: RadioStation[] = [
     location: "New York, NY",
     genre: "Hip Hop & R&B",
     streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
-    description: "New York's Hip Hop & R&B"
+    description: "New York's Hip Hop & R&B",
+    icon: "🔥"
   },
   {
     id: "power-106",
@@ -37,7 +39,8 @@ const radioStations: RadioStation[] = [
     location: "Los Angeles, CA", 
     genre: "Hip Hop & R&B",
     streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
-    description: "LA's #1 for Hip Hop"
+    description: "LA's #1 for Hip Hop",
+    icon: "⚡"
   },
   {
     id: "soma-metal",
@@ -46,7 +49,8 @@ const radioStations: RadioStation[] = [
     location: "San Francisco, CA",
     genre: "Metal",
     streamUrl: "https://ice1.somafm.com/metal-128-mp3",
-    description: "Heavy Metal & Hard Rock"
+    description: "Heavy Metal & Hard Rock",
+    icon: "🤘"
   },
   {
     id: "spandex-salvation",
@@ -55,7 +59,8 @@ const radioStations: RadioStation[] = [
     location: "Global",
     genre: "Classic Metal",
     streamUrl: "/api/radio-stream",
-    description: "Old School Metal 24/7"
+    description: "Old School Metal 24/7",
+    icon: "🎸"
   }
 ];
 
