@@ -105,8 +105,14 @@ export default function RadioCoPlayer() {
     };
 
     const handleScroll = () => {
-      if (showStationSelector) {
-        setShowStationSelector(false);
+      if (showStationSelector && stationDropdownRef.current) {
+        // Only close if dropdown is completely out of view
+        const rect = stationDropdownRef.current.getBoundingClientRect();
+        const isOutOfView = rect.bottom < 0 || rect.top > window.innerHeight;
+        
+        if (isOutOfView) {
+          setShowStationSelector(false);
+        }
       }
     };
 
@@ -222,14 +228,17 @@ export default function RadioCoPlayer() {
           </Button>
           
           {showStationSelector && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-card/95 backdrop-blur-sm border shadow-xl z-20 scrollbar-thin"
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 border shadow-xl z-20 scrollbar-thin"
                  style={{ 
                    borderColor: colors.primary + '40',
                    width: 'fit-content',
                    minWidth: '300px',
                    maxHeight: '288px',
                    overflowY: 'auto',
-                   borderRadius: '12px'
+                   borderRadius: '12px',
+                   background: 'rgba(0, 0, 0, 0.85)',
+                   backdropFilter: 'blur(8px)',
+                   WebkitBackdropFilter: 'blur(8px)'
                  }}>
               <div className="p-2">
                 {radioStations
