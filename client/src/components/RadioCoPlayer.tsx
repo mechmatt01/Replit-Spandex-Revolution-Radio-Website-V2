@@ -326,7 +326,7 @@ export default function RadioCoPlayer() {
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
           </Button>
 
-          <div className="flex-1" style={{ paddingLeft: '5px', paddingRight: '5px' }}>
+          <div className="flex-1" style={{ paddingLeft: '1px', paddingRight: '1px' }}>
             <div className="w-full h-2 bg-gray-700 rounded-full relative">
               <div 
                 className="h-2 rounded-full transition-all duration-150"
