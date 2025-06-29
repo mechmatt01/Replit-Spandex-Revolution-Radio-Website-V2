@@ -1,4 +1,4 @@
-import { Play, Pause, Volume2, VolumeX, Music, Radio as RadioIcon, ChevronDown } from "lucide-react";
+import { Play, Pause, Volume2, VolumeX, Radio as RadioIcon, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useRadio } from "@/contexts/RadioContext";
@@ -8,68 +8,80 @@ import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 import { useState, useRef, useEffect } from "react";
 import type { RadioStation } from "@/components/StationSelector";
+import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
 
+// Radio stations data
 const radioStations: RadioStation[] = [
   {
     id: "beat-955",
     name: "95.5 The Beat",
     frequency: "95.5 FM",
     location: "Dallas, TX",
-    description: "Hip Hop & R&B",
-    genre: "Hip Hop",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFB_FMAAC.aac"
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
+    description: "Dallas Hip Hop & R&B"
   },
   {
     id: "hot-97",
     name: "Hot 97",
-    frequency: "97.1 FM",
+    frequency: "97.1 FM", 
     location: "New York, NY",
-    description: "Hip Hop & R&B",
-    genre: "Hip Hop",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM_SC"
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
+    description: "New York's Hip Hop & R&B"
   },
   {
     id: "power-106",
     name: "Power 106",
     frequency: "105.9 FM",
-    location: "Los Angeles, CA",
-    description: "Hip Hop & R&B",
-    genre: "Hip Hop",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC_SC"
+    location: "Los Angeles, CA", 
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
+    description: "LA's #1 for Hip Hop"
   },
   {
     id: "soma-metal",
     name: "SomaFM Metal",
     frequency: "Online",
     location: "San Francisco, CA",
-    description: "Heavy Metal & Hard Rock",
     genre: "Metal",
-    streamUrl: "https://ice1.somafm.com/metal-128-mp3"
+    streamUrl: "https://ice1.somafm.com/metal-128-mp3",
+    description: "Heavy Metal & Hard Rock"
+  },
+  {
+    id: "spandex-salvation",
+    name: "Spandex Salvation Radio",
+    frequency: "Online",
+    location: "Global",
+    genre: "Classic Metal",
+    streamUrl: "/api/radio-stream",
+    description: "Old School Metal 24/7"
   }
 ];
 
 export default function RadioCoPlayer() {
   const { 
     isPlaying, 
+    isLoading, 
     volume, 
-    setVolume, 
-    togglePlayback,
-    currentTrack,
+    isMuted, 
     error, 
-    isLoading,
+    currentTrack,
     currentStation,
-    changeStation 
+    isTransitioning,
+    togglePlayback, 
+    setVolume, 
+    toggleMute,
+    changeStation,
+    audioRef 
   } = useRadio();
-  
-  const { getColors, isDarkMode } = useTheme();
+  const { getColors, getGradient } = useTheme();
   const colors = getColors();
   
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [showStationSelector, setShowStationSelector] = useState(false);
   const stationDropdownRef = useRef<HTMLDivElement>(null);
 
-  // Handle click outside to close station selector
+  // Station selector event handling
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (stationDropdownRef.current && !stationDropdownRef.current.contains(event.target as Node)) {
@@ -79,22 +91,16 @@ export default function RadioCoPlayer() {
 
     if (showStationSelector) {
       document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
     }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [showStationSelector]);
 
-  const handlePlayPause = () => {
-    togglePlayback();
-  };
-
   const handleStationChange = async (station: RadioStation) => {
-    setIsTransitioning(true);
     await changeStation(station);
     setShowStationSelector(false);
-    
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 500);
   };
 
   const handleVolumeChange = (value: number[]) => {
@@ -102,36 +108,27 @@ export default function RadioCoPlayer() {
     setVolume(newVolume);
   };
 
-  // Create themed radio icon component matching navigation bar style
-  const ThemedRadioIcon = ({ size = "sm" }: { size?: "sm" | "md" | "lg" }) => {
-    const { getGradient } = useTheme();
-    const gradient = getGradient();
-
-    const sizeClasses = {
-      sm: "w-8 h-8",
-      md: "w-12 h-12", 
-      lg: "w-16 h-16"
+  // Get theme-aware filter for radio icons
+  const getIconFilter = () => {
+    const primaryColor = colors.primary;
+    
+    // More comprehensive color filters for better theme matching
+    const colorFilters: { [key: string]: string } = {
+      '#f97316': 'brightness(0) saturate(100%) invert(58%) sepia(82%) saturate(1500%) hue-rotate(24deg) brightness(1.1)', // Orange
+      '#ef4444': 'brightness(0) saturate(100%) invert(38%) sepia(98%) saturate(2500%) hue-rotate(343deg) brightness(1.2)', // Red  
+      '#3b82f6': 'brightness(0) saturate(100%) invert(58%) sepia(96%) saturate(2000%) hue-rotate(200deg) brightness(1.1)', // Blue
+      '#8b5cf6': 'brightness(0) saturate(100%) invert(65%) sepia(87%) saturate(1800%) hue-rotate(250deg) brightness(1.1)', // Purple
+      '#10b981': 'brightness(0) saturate(100%) invert(69%) sepia(56%) saturate(1500%) hue-rotate(120deg) brightness(1.1)', // Green
+      '#ec4899': 'brightness(0) saturate(100%) invert(58%) sepia(87%) saturate(2000%) hue-rotate(315deg) brightness(1.1)', // Pink
+      '#f59e0b': 'brightness(0) saturate(100%) invert(71%) sepia(95%) saturate(1200%) hue-rotate(15deg) brightness(1.1)',  // Amber
+      // Fallback for HSL values
+      'hsl(24.6 95% 53.1%)': 'brightness(0) saturate(100%) invert(58%) sepia(82%) saturate(1500%) hue-rotate(24deg) brightness(1.1)', // Orange HSL
+      'hsl(0 84.2% 60.2%)': 'brightness(0) saturate(100%) invert(38%) sepia(98%) saturate(2500%) hue-rotate(343deg) brightness(1.2)', // Red HSL
     };
-
-    const iconSizes = {
-      sm: "w-4 h-4",
-      md: "w-6 h-6",
-      lg: "w-8 h-8"
-    };
-
-    return (
-      <div 
-        className={`${sizeClasses[size]} rounded-lg flex items-center justify-center shadow-md`}
-        style={{ 
-          background: gradient,
-          border: `2px solid ${colors.primary}`
-        }}
-      >
-        <Music 
-          className={`${iconSizes[size]} text-white`}
-        />
-      </div>
-    );
+    
+    // Check both hex and HSL formats
+    return colorFilters[primaryColor] || 
+           colorFilters['#f97316']; // Default to orange
   };
 
   return (
@@ -148,169 +145,194 @@ export default function RadioCoPlayer() {
         aria-label="Live radio stream"
       />
 
-      {/* Album Art with Station Selector and LIVE Indicator */}
+      {/* Station Selector Button */}
+      <div className="flex justify-center mb-6">
+        <div className="relative" ref={stationDropdownRef}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowStationSelector(!showStationSelector)}
+            className="bg-card/90 backdrop-blur-sm border-border/50 hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1"
+            style={{
+              borderColor: colors.primary + '40'
+            } as React.CSSProperties}
+          >
+            <RadioIcon className="w-3 h-3 mr-1" />
+            {currentStation?.name || "95.5 The Beat"}
+            <ChevronDown className="w-3 h-3 ml-1" />
+          </Button>
+          
+          {showStationSelector && (
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-black/90 dark:bg-black/95 backdrop-blur-lg border border-border rounded-md shadow-xl z-20">
+              <div className="p-2 max-h-60 overflow-y-auto">
+                {radioStations.map((station) => (
+                  <button
+                    key={station.id}
+                    onClick={() => handleStationChange(station)}
+                    className={`w-full p-3 text-left rounded-md transition-all duration-200 ${
+                      station.id === (currentStation?.id || "beat-955")
+                        ? 'bg-primary/20 border border-primary/20' 
+                        : 'hover:bg-muted/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0" style={{ backgroundColor: colors.primary + '20' }}>
+                        <img 
+                          src={MusicLogoPath} 
+                          alt="Radio Icon" 
+                          className="w-4 h-4 object-contain"
+                          style={{ 
+                            filter: getIconFilter(),
+                            WebkitFilter: getIconFilter()
+                          }}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <div className="font-semibold text-sm truncate text-foreground">
+                            {station.name}
+                          </div>
+                          {station.id === (currentStation?.id || "beat-955") && (
+                            <Volume2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.primary }} />
+                          )}
+                        </div>
+                        <div className="text-xs text-muted-foreground truncate">
+                          {station.frequency} • {station.location}
+                        </div>
+                        <div className="text-xs text-muted-foreground/80 truncate">
+                          {station.description}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Album Art with LIVE Indicator Overlay */}
       <div className="flex justify-center mb-6 relative">
         <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
           <InteractiveAlbumArt 
-            artwork={currentTrack?.artwork}
-            title={currentTrack?.title || currentStation?.name || "95.5 The Beat"}
-            artist={currentTrack?.artist || currentStation?.description || "Hip Hop & R&B"}
-            isPlaying={isPlaying}
-            size="lg"
+            artwork={currentTrack.artwork}
+            title={currentTrack.title}
+            artist={currentTrack.artist}
+            size="md"
           />
-          
-          {/* Station Selector Button - positioned over album art */}
-          <div className="absolute top-2 right-2" ref={stationDropdownRef}>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowStationSelector(!showStationSelector)}
-              className="bg-card/90 backdrop-blur-sm hover:bg-card/95 transition-all duration-200 text-xs px-2 py-1 h-6"
-              style={{
-                borderColor: colors.primary + '40'
-              } as React.CSSProperties}
-            >
-              <RadioIcon className="w-3 h-3 mr-1" />
-              <ChevronDown className="w-3 h-3" />
-            </Button>
-            
-            {showStationSelector && (
-              <div className="absolute top-full right-0 mt-1 w-80 bg-black/90 dark:bg-black/95 backdrop-blur-lg rounded-md shadow-xl z-20">
-                <div className="p-2 max-h-60 overflow-y-auto">
-                  {radioStations.map((station) => (
-                    <button
-                      key={station.id}
-                      onClick={() => handleStationChange(station)}
-                      className={`w-full p-3 text-left rounded-md transition-all duration-200 ${
-                        station.id === (currentStation?.id || "beat-955")
-                          ? 'bg-primary/20' 
-                          : 'hover:bg-muted/50'
-                      }`}
-                      style={station.id === (currentStation?.id || "beat-955") ? {
-                        backgroundColor: colors.primary + '20'
-                      } : {}}
-                    >
-                      <div className="flex items-center gap-3">
-                        <ThemedRadioIcon size="sm" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <div className="font-semibold text-sm truncate text-foreground">
-                              {station.name}
-                            </div>
-                            {station.id === (currentStation?.id || "beat-955") && (
-                              <Volume2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.primary }} />
-                            )}
-                          </div>
-                          <div className="text-xs text-muted-foreground truncate">
-                            {station.frequency} • {station.location}
-                          </div>
-                          <div className="text-xs text-muted-foreground/80 truncate">
-                            {station.description}
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* LIVE Indicator - positioned to overlap 50% on top of album artwork */}
-          <div className="absolute -top-1.5 left-1/2 transform -translate-x-1/2 z-10">
-            <div 
-              className="px-2 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg"
-              style={{
-                backgroundColor: colors.primary,
-                color: 'white'
-              }}
-            >
-              <div className="flex items-center gap-1">
-                <div 
-                  className="w-1.5 h-1.5 rounded-full animate-pulse"
-                  style={{ backgroundColor: '#ff0000' }}
-                />
-                LIVE
-              </div>
-            </div>
+        </div>
+        
+        {/* Compact LIVE Indicator - 50% overlapping top of album artwork */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-lg">
+            <div className="w-1 h-1 bg-white rounded-full animate-pulse"></div>
+            LIVE
           </div>
         </div>
       </div>
 
-      {/* Track Info */}
-      <div className="mb-6 text-center">
+      {/* Track Info with Fade Animation */}
+      <div className="text-center mb-6">
         <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-          <ScrollingText 
-            text={currentTrack?.title || currentStation?.name || "95.5 The Beat"}
-            className="text-xl font-bold mb-1"
-          />
-          <ScrollingText 
-            text={currentTrack?.artist || currentStation?.description || "Hip Hop & R&B"}
-            className="text-lg text-muted-foreground mb-1"
-          />
-          {currentTrack?.album && (
+          <div className="flex justify-center mb-2">
             <ScrollingText 
-              text={currentTrack.album}
-              className="text-sm text-muted-foreground/80"
+              text={currentTrack.title}
+              className="font-bold text-foreground"
+              style={{ fontSize: '22px' }}
+              maxWidth="75%"
+              backgroundColor="hsl(var(--background))"
             />
+          </div>
+          {currentTrack.album && 
+           currentTrack.album !== "New York's Hip Hop & R&B" && 
+           currentTrack.album !== "Live Stream" && 
+           currentTrack.album !== currentTrack.title && 
+           currentTrack.album !== currentTrack.artist && (
+            <p className="text-foreground font-semibold text-lg mb-1 transition-opacity duration-500">
+              {currentTrack.album}
+            </p>
+          )}
+          {currentTrack.artist && currentTrack.artist !== currentTrack.title && currentTrack.artist !== "Live Stream" && (
+            <p className="text-foreground font-medium text-base mb-2 transition-opacity duration-500">
+              {currentTrack.artist}
+            </p>
+          )}
+          {currentTrack.title !== "Live Stream" && currentTrack.artist !== "Live Stream" && (
+            <p className="text-muted-foreground text-sm font-medium">
+              Live Stream
+            </p>
           )}
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="flex items-center justify-center gap-6 mb-6">
+      <div className="flex flex-col items-center space-y-4">
         {/* Play/Pause Button */}
         <Button
-          onClick={handlePlayPause}
+          onClick={togglePlayback}
           disabled={isLoading}
-          size="lg"
-          className="w-16 h-16 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+          className="font-bold py-6 px-10 rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2"
           style={{
-            backgroundColor: colors.primary,
-            color: 'white'
+            background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+            color: 'white',
+            borderColor: colors.primary,
+            boxShadow: `0 10px 40px ${colors.primary}60`
           }}
-          aria-label={isPlaying ? "Pause radio" : "Play radio"}
         >
           {isLoading ? (
-            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent" />
           ) : isPlaying ? (
-            <Pause className="w-8 h-8" />
+            <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+              <rect x="6" y="6" width="12" height="12" rx="1" />
+            </svg>
           ) : (
-            <Play className="w-8 h-8 ml-0.5" />
+            <Play className="h-6 w-6" />
           )}
+          <span className="ml-3 font-semibold text-lg">
+            {isLoading ? 'CONNECTING...' : isPlaying ? 'STOP' : 'PLAY LIVE'}
+          </span>
         </Button>
-      </div>
 
-      {/* Volume Control */}
-      <div className="flex items-center gap-3 mb-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setVolume(volume > 0 ? 0 : 0.7)}
-          className="w-8 h-8 p-0 hover:bg-muted/50"
-          aria-label={volume > 0 ? "Mute" : "Unmute"}
-        >
-          {volume > 0 ? (
-            <Volume2 className="w-4 h-4" style={{ color: colors.primary }} />
-          ) : (
-            <VolumeX className="w-4 h-4" style={{ color: colors.primary }} />
-          )}
-        </Button>
-        
-        <div className="flex-1">
-          <Slider
-            value={[volume * 100]}
-            onValueChange={handleVolumeChange}
-            max={100}
-            step={1}
-            className="w-full"
-            aria-label="Volume control"
-          />
+        {/* Volume Controls */}
+        <div className="flex items-center justify-center gap-3 w-full max-w-[250px]">
+          <Button
+            onClick={toggleMute}
+            variant="ghost"
+            size="sm"
+            className="p-1 transition-colors duration-200"
+            style={{
+              color: colors.primary
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = colors.secondary;
+              e.currentTarget.style.backgroundColor = colors.primary + '20';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = colors.primary;
+              e.currentTarget.style.backgroundColor = 'transparent';
+            }}
+          >
+            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+          </Button>
+
+          <div className="flex-1 px-2">
+            <Slider
+              value={[isMuted ? 0 : volume * 100]}
+              onValueChange={handleVolumeChange}
+              max={100}
+              step={1}
+              className="w-full"
+            />
+          </div>
+
+          <span 
+            className="text-sm font-semibold min-w-[40px]"
+            style={{ color: colors.primary }}
+          >
+            {Math.round((isMuted ? 0 : volume) * 100)}%
+          </span>
         </div>
-        
-        <span className="text-xs text-muted-foreground w-8 text-right">
-          {Math.round(volume * 100)}%
-        </span>
+
       </div>
 
       {/* Error Display */}
