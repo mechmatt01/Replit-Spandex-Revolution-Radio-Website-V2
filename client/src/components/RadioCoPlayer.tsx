@@ -216,11 +216,7 @@ export default function RadioCoPlayer() {
                     }}
                   >
                     <div className="flex items-center gap-3" style={{ paddingRight: '5px' }}>
-                      <div className={`flex items-center justify-center w-10 h-10 rounded-full flex-shrink-0 ${
-                        index === 0 && station.id === (currentStation?.id || "beat-955")
-                          ? 'bg-gradient-to-br from-orange-300 to-yellow-400' 
-                          : 'bg-gradient-to-br from-orange-400 to-red-500'
-                      }`}>
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex-shrink-0">
                         <span className="text-lg">{station.icon}</span>
                       </div>
                       <div className="flex-1 min-w-0">
