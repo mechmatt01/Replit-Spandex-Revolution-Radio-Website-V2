@@ -185,14 +185,14 @@ export default function RadioCoPlayer() {
             style={{
               borderColor: colors.primary,
               borderWidth: '2px',
-              borderRadius: '15px',
+              borderRadius: '11px',
               width: 'auto'
             } as React.CSSProperties}
           >
             <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
             <span style={{ color: colors.primary }}>{currentStation?.name || "95.5 The Beat"}</span>
             <ChevronDown 
-              className={`w-3 h-3 ml-1 transition-all duration-300 ease-in-out transform ${showStationSelector ? 'rotate-180' : 'rotate-0'}`}
+              className={`w-3 h-3 ml-1 transition-all duration-300 ease-in-out transform ${showStationSelector ? '-rotate-180' : 'rotate-0'}`}
               style={{ 
                 opacity: 0.6,
                 color: colors.primary
@@ -252,11 +252,11 @@ export default function RadioCoPlayer() {
                             {station.description}
                           </div>
                         </div>
-                        <div className="flex items-center justify-center ml-2 w-6 h-6 flex-shrink-0">
+                        <div className="flex items-center justify-center ml-2 w-9 h-9 flex-shrink-0">
                           {station.id === (currentStation?.id || "beat-955") && (
-                            <div className="relative flex items-center justify-center">
+                            <div className="relative flex items-center justify-center h-full">
                               <svg 
-                                className="w-4 h-4" 
+                                className="w-6 h-6" 
                                 viewBox="0 0 24 24" 
                                 fill="none" 
                                 xmlns="http://www.w3.org/2000/svg"
