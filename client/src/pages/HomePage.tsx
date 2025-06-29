@@ -18,7 +18,7 @@ import ChatButton from "@/components/ChatButton";
 export default function HomePage() {
 
   return (
-    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+    <div className="min-h-screen bg-black dark:bg-black text-white dark:text-white transition-colors duration-300">
       <Navigation />
       <Hero />
       <Features />
@@ -27,7 +27,7 @@ export default function HomePage() {
       <Submissions />
       <InteractiveListenerMap />
       <Contact />
-      <section id="subscribe" className="py-20 bg-dark-surface">
+      <section id="subscribe" className="py-20 bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-white">
