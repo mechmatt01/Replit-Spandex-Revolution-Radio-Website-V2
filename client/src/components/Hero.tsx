@@ -71,18 +71,19 @@ export default function Hero() {
         ></div>
       </div>
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 pt-16">
-        <h1 className="font-orbitron font-black text-5xl md:text-8xl mb-2 text-black dark:text-white">
+        <h1 className="font-orbitron font-black text-5xl md:text-8xl mb-8 text-black dark:text-white">
           <div>SPANDEX</div>
           <div>SALVATION</div>
           <div>RADIO</div>
         </h1>
-        <div className="mb-6">
-          <p className="text-xl md:text-2xl font-bold text-metal-orange mb-1">Old School Metal</p>
-          <p className="text-base md:text-lg font-semibold text-metal-orange">24/7 Live Stream</p>
+        
+        <div className="mb-8 flex flex-col justify-center items-center">
+          <p className="font-orbitron font-black text-xl md:text-2xl text-metal-orange mb-1">Old School Metal</p>
+          <p className="font-orbitron font-black text-base md:text-lg text-metal-orange">24/7 Live Stream</p>
         </div>
 
         {/* Countdown Timer */}
-        <div className="mt-8 mb-8">
+        <div className="mb-8">
           <div className="flex items-center justify-center mb-1">
             {/* Large LIVE IN Indicator - 2x size */}
             <div className="flex items-center gap-2 px-4 py-1 rounded-full text-lg font-bold shadow-none" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
