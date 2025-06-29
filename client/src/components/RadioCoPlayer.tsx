@@ -121,10 +121,9 @@ export default function RadioCoPlayer() {
         aria-label="Live radio stream"
       />
 
-      {/* Station Selector with LIVE Indicator */}
-      <div className="flex flex-col items-center mb-4">
-        {/* Station Selector Button */}
-        <div className="relative mb-1" ref={stationDropdownRef}>
+      {/* Station Selector Button */}
+      <div className="flex justify-center mb-6">
+        <div className="relative" ref={stationDropdownRef}>
           <Button
             variant="outline"
             size="sm"
@@ -179,16 +178,10 @@ export default function RadioCoPlayer() {
             </div>
           )}
         </div>
-        
-        {/* Compact LIVE Indicator - 50% smaller */}
-        <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-sm">
-          <div className="w-1 h-1 bg-white rounded-full animate-pulse"></div>
-          LIVE
-        </div>
       </div>
 
-      {/* Album Art with Fade Transition */}
-      <div className="flex justify-center mb-6">
+      {/* Album Art with LIVE Indicator Overlay */}
+      <div className="flex justify-center mb-6 relative">
         <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
           <InteractiveAlbumArt 
             artwork={currentTrack.artwork}
@@ -196,6 +189,14 @@ export default function RadioCoPlayer() {
             artist={currentTrack.artist}
             size="md"
           />
+        </div>
+        
+        {/* Compact LIVE Indicator - Overlapping album artwork, centered on webpage */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 mt-8">
+          <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-lg">
+            <div className="w-1 h-1 bg-white rounded-full animate-pulse"></div>
+            LIVE
+          </div>
         </div>
       </div>
 
