@@ -210,9 +210,7 @@ export default function Navigation() {
     },
   ];
 
-  const handleGoogleAuth = () => {
-    window.location.href = "/api/auth/google";
-  };
+  
 
   return (
     <TooltipProvider>
@@ -624,30 +622,7 @@ export default function Navigation() {
                         </TooltipContent>
                       </Tooltip>
                       
-                       <Button
-                        variant="outline"
-                        className="w-full justify-start bg-white text-black border-gray-300 hover:bg-gray-50"
-                        onClick={handleGoogleAuth}
-                      >
-                        <img 
-                          src="/assets/icons8-google_1750360286324.png" 
-                          alt="Google" 
-                          className="mr-2 h-4 w-4"
-                        />
-                        Continue with Google
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full justify-start bg-white text-black border-gray-300 hover:bg-gray-50"
-                        onClick={handleGoogleAuth}
-                      >
-                        <img 
-                          src="/assets/icons8-google_1750360286324.png" 
-                          alt="Google" 
-                          className="mr-2 h-4 w-4"
-                        />
-                        Sign Up with Google
-                      </Button>
+                       
 
                     </>
                   ) : (
