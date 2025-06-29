@@ -310,15 +310,20 @@ export default function RadioCoPlayer() {
             {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
           </Button>
 
-          <Slider
-            value={[isMuted ? 0 : volume * 100]}
-            onValueChange={handleVolumeChange}
-            max={100}
-            step={1}
-            className="flex-1"
-          />
+          <div className="flex-1 px-2">
+            <Slider
+              value={[isMuted ? 0 : volume * 100]}
+              onValueChange={handleVolumeChange}
+              max={100}
+              step={1}
+              className="w-full"
+            />
+          </div>
 
-          <span className="text-[var(--color-primary)] text-sm font-semibold min-w-[40px]">
+          <span 
+            className="text-sm font-semibold min-w-[40px]"
+            style={{ color: colors.primary }}
+          >
             {Math.round((isMuted ? 0 : volume) * 100)}%
           </span>
         </div>
