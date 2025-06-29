@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { useTheme } from "@/contexts/ThemeContext";
 import type { StreamStats } from "@shared/schema";
+import { Calendar, MapPin, ShoppingBag, Users } from "lucide-react";
 
 export default function Features() {
   const { data: stats } = useQuery<StreamStats>({
@@ -16,6 +17,19 @@ export default function Features() {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Scroll to radio player at top of page
+  const scrollToRadioPlayer = () => {
+    const heroSection = document.getElementById("home");
+    if (heroSection) {
+      const radioPlayer = heroSection.querySelector('[role="region"][aria-label="Radio player controls"]');
+      if (radioPlayer) {
+        radioPlayer.scrollIntoView({ behavior: "smooth", block: "center" });
+      } else {
+        heroSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   };
 
@@ -49,6 +63,7 @@ export default function Features() {
               e.currentTarget.style.borderColor = `${colors.primary}40`;
               e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
+            onClick={scrollToRadioPlayer}
           >
             <CardContent className="p-0">
               <div 
@@ -82,6 +97,7 @@ export default function Features() {
               e.currentTarget.style.borderColor = `${colors.primary}40`;
               e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
+            onClick={() => scrollToSection("map")}
           >
             <CardContent className="p-0">
               <div 
@@ -115,6 +131,7 @@ export default function Features() {
               e.currentTarget.style.borderColor = `${colors.primary}40`;
               e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
+            onClick={() => scrollToSection("schedule")}
           >
             <CardContent className="p-0">
               <div 
@@ -148,6 +165,7 @@ export default function Features() {
               e.currentTarget.style.borderColor = `${colors.primary}40`;
               e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
+            onClick={() => scrollToSection("submissions")}
           >
             <CardContent className="p-0">
               <div 
@@ -173,7 +191,10 @@ export default function Features() {
                   e.currentTarget.style.backgroundColor = 'transparent';
                   e.currentTarget.style.color = colors.primary;
                 }}
-                onClick={() => scrollToSection("submissions")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrollToSection("submissions");
+                }}
               >
                 Submit Request →
               </Button>
@@ -198,6 +219,7 @@ export default function Features() {
               e.currentTarget.style.borderColor = `${colors.primary}40`;
               e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
+            onClick={() => scrollToSection("subscribe")}
           >
             <CardContent className="p-0">
               <div 
@@ -223,7 +245,10 @@ export default function Features() {
                   e.currentTarget.style.backgroundColor = 'transparent';
                   e.currentTarget.style.color = colors.primary;
                 }}
-                onClick={() => scrollToSection("subscribe")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrollToSection("subscribe");
+                }}
               >
                 Learn More →
               </Button>
@@ -246,6 +271,7 @@ export default function Features() {
               e.currentTarget.style.borderColor = `${colors.primary}40`;
               e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
+            onClick={() => scrollToSection("merch")}
           >
             <CardContent className="p-0">
               <div 
@@ -271,7 +297,10 @@ export default function Features() {
                   e.currentTarget.style.backgroundColor = 'transparent';
                   e.currentTarget.style.color = colors.primary;
                 }}
-                onClick={() => scrollToSection("merch")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrollToSection("merch");
+                }}
               >
                 Shop Now →
               </Button>
