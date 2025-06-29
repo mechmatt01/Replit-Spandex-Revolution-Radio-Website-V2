@@ -138,7 +138,7 @@ Required redirect URIs in Google Cloud Console:
 3. Save the changes
 
 ## Changelog
-- June 29, 2025: FINAL radio station integration - moved station selector button to overlay halfway on top of album artwork in main player, positioned LIVE indicator below selector, removed second player component entirely, integrated all radio functionality into single AdvancedAudioPlayer with dropdown showing Hot 97, Power 106, SomaFM Metal, and 95.5 The Beat
+- June 29, 2025: COMPLETED radio station integration - moved station selector button to overlay halfway on album artwork in Hero player, created 50% smaller LIVE indicator positioned directly under selector button, completely removed second AdvancedAudioPlayer component from HomePage, restored original page layout with single Hero player containing full radio functionality (Hot 97, Power 106, SomaFM Metal, 95.5 The Beat)
 - June 29, 2025: IMPLEMENTED radio station selection feature - created StationSelector component with dropdown interface, added station switching functionality to RadioContext, integrated EnhancedRadioPlayer with multiple station support including Hot 97, Power 106, SomaFM Metal, and 95.5 The Beat
 - June 29, 2025: RESOLVED major CSS configuration issue - rebuilt complete Tailwind CSS setup with proper content paths, generated working styles.css file, restored full styling functionality across entire application
 - June 24, 2025: FINAL mobile navigation fix - completely rebuilt mobile dropdown using div elements instead of complex button/tooltip structures, direct function calls matching desktop behavior, simplified click handling for guaranteed functionality

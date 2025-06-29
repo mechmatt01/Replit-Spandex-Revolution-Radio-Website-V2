@@ -318,8 +318,16 @@ export default function AdvancedAudioPlayer() {
                       <ChevronDown className="w-3 h-3 ml-1" />
                     </Button>
                     
+                    {/* LIVE Indicator - Small and positioned directly under the button */}
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 z-10">
+                      <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-sm">
+                        <div className="w-1 h-1 bg-white rounded-full animate-pulse"></div>
+                        LIVE
+                      </div>
+                    </div>
+                    
                     {showStationSelector && (
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-dark-bg/95 backdrop-blur-md border border-gray-700 rounded-md shadow-lg z-30">
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-8 w-80 bg-dark-bg/95 backdrop-blur-md border border-gray-700 rounded-md shadow-lg z-30">
                         <div className="p-2 max-h-60 overflow-y-auto">
                           {radioStations.map((station) => (
                             <button
@@ -357,14 +365,6 @@ export default function AdvancedAudioPlayer() {
                         </div>
                       </div>
                     )}
-                  </div>
-                </div>
-                
-                {/* LIVE Indicator - Positioned below station selector */}
-                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
-                  <div className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
-                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                    LIVE
                   </div>
                 </div>
                 
