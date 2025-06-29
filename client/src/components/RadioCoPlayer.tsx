@@ -179,15 +179,20 @@ export default function RadioCoPlayer() {
           >
             <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
             <span style={{ color: colors.primary }}>{currentStation?.name || "95.5 The Beat"}</span>
-            <ChevronDown className="w-3 h-3 ml-1 text-gray-400" />
+            <ChevronDown 
+              className={`w-3 h-3 ml-1 text-gray-400 transition-transform duration-200 ${showStationSelector ? 'rotate-180' : 'rotate-0'}`}
+              style={{ opacity: 0.6 }}
+            />
           </Button>
           
           {showStationSelector && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-black/80 backdrop-blur-md border rounded-md shadow-xl z-20 max-h-72 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800"
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-black/80 backdrop-blur-md border rounded-md shadow-xl z-20 scrollbar-thin"
                  style={{ 
                    borderColor: colors.primary + '40',
                    width: 'fit-content',
-                   minWidth: '300px'
+                   minWidth: '300px',
+                   maxHeight: '288px',
+                   overflowY: 'auto'
                  }}>
               <div className="p-2">
                 {radioStations
@@ -220,11 +225,11 @@ export default function RadioCoPlayer() {
                         <span className="text-lg">{station.icon}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between h-6">
                           <div className="font-semibold text-sm text-white truncate">
                             {station.name}
                           </div>
-                          <div className="flex items-center justify-center ml-2 h-full" style={{ minHeight: '24px' }}>
+                          <div className="flex items-center justify-center ml-2 w-6 h-6">
                             {station.id === (currentStation?.id || "beat-955") && (
                               <Volume2 className="w-4 h-4 flex-shrink-0" style={{ color: colors.primary }} />
                             )}
