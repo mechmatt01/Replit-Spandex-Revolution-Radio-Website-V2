@@ -192,7 +192,7 @@ export default function RadioCoPlayer() {
             <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
             <span style={{ color: colors.primary }}>{currentStation?.name || "95.5 The Beat"}</span>
             <ChevronDown 
-              className={`w-3 h-3 ml-1 transition-all duration-300 ease-in-out transform ${showStationSelector ? 'rotate-180' : 'rotate-0'}`}
+              className={`w-3 h-3 ml-1 transition-all duration-300 ease-in-out transform ${showStationSelector ? '-rotate-180' : 'rotate-0'}`}
               style={{ 
                 opacity: 0.6,
                 color: colors.primary
