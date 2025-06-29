@@ -1,4 +1,4 @@
-import { Volume2 } from "lucide-react";
+import { Volume2, Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRadio } from "@/contexts/RadioContext";
 import { useTheme } from "@/contexts/ThemeContext";

@@ -327,7 +327,7 @@ export default function Navigation() {
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
                   <div 
-                    className="absolute right-0 mt-2 py-2 rounded-xl shadow-xl border animate-in fade-in-0 slide-in-from-top-2 duration-200 bg-black/80 backdrop-blur-md"
+                    className="absolute left-1/2 transform -translate-x-1/2 mt-2 py-2 rounded-xl shadow-xl border animate-in fade-in-0 slide-in-from-top-2 duration-200 bg-black/80 backdrop-blur-md"
                     style={{
                       borderColor: colors.primary + '40',
                       width: 'auto',
