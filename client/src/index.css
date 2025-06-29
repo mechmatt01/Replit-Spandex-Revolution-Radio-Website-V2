@@ -313,6 +313,7 @@ img, video {
     flex-grow: 1;
     border-radius: 9999px;
     height: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   [data-radix-slider-range] {
@@ -320,6 +321,7 @@ img, video {
     background-color: var(--color-primary);
     border-radius: 9999px;
     height: 100%;
+    box-shadow: 0 0 4px var(--color-primary);
   }
 
   [data-radix-slider-thumb] {
@@ -345,12 +347,35 @@ img, video {
 
   /* Enhanced visibility for dark themes */
   .dark [data-radix-slider-track] {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    height: 6px;
   }
 
   .dark [data-radix-slider-thumb] {
-    border: 2px solid var(--color-primary);
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--color-primary);
     background-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5), 0 0 12px var(--color-primary), 0 4px 15px rgba(0, 0, 0, 0.6);
+  }
+
+  .dark [data-radix-slider-thumb]:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6), 0 0 16px var(--color-primary), 0 6px 20px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Enhanced range visibility for dark themes */
+  .dark [data-radix-slider-range] {
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+    box-shadow: 0 0 12px var(--color-primary), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    height: 6px;
+  }
+
+  /* Make sure light themes still look good */
+  :not(.dark) [data-radix-slider-track] {
+    background-color: rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
   }
 
   /* Hover variants */
