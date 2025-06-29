@@ -112,18 +112,23 @@ export default function RadioCoPlayer() {
   const getIconFilter = () => {
     const primaryColor = colors.primary;
     
-    // Convert hex to filter values for different theme colors
+    // More comprehensive color filters for better theme matching
     const colorFilters: { [key: string]: string } = {
-      '#f97316': 'brightness(0) saturate(100%) invert(53%) sepia(75%) saturate(1200%) hue-rotate(24deg) brightness(1.1)', // Orange
-      '#ef4444': 'brightness(0) saturate(100%) invert(25%) sepia(95%) saturate(2000%) hue-rotate(340deg) brightness(1.2)', // Red
-      '#3b82f6': 'brightness(0) saturate(100%) invert(35%) sepia(95%) saturate(2000%) hue-rotate(200deg) brightness(1.2)', // Blue
-      '#8b5cf6': 'brightness(0) saturate(100%) invert(35%) sepia(95%) saturate(2000%) hue-rotate(280deg) brightness(1.2)', // Purple
-      '#10b981': 'brightness(0) saturate(100%) invert(45%) sepia(95%) saturate(1500%) hue-rotate(120deg) brightness(1.2)', // Green
-      '#ec4899': 'brightness(0) saturate(100%) invert(35%) sepia(95%) saturate(2000%) hue-rotate(320deg) brightness(1.2)', // Pink
-      '#f59e0b': 'brightness(0) saturate(100%) invert(60%) sepia(95%) saturate(1500%) hue-rotate(30deg) brightness(1.1)'   // Amber
+      '#f97316': 'brightness(0) saturate(100%) invert(58%) sepia(82%) saturate(1500%) hue-rotate(24deg) brightness(1.1)', // Orange
+      '#ef4444': 'brightness(0) saturate(100%) invert(38%) sepia(98%) saturate(2500%) hue-rotate(343deg) brightness(1.2)', // Red  
+      '#3b82f6': 'brightness(0) saturate(100%) invert(58%) sepia(96%) saturate(2000%) hue-rotate(200deg) brightness(1.1)', // Blue
+      '#8b5cf6': 'brightness(0) saturate(100%) invert(65%) sepia(87%) saturate(1800%) hue-rotate(250deg) brightness(1.1)', // Purple
+      '#10b981': 'brightness(0) saturate(100%) invert(69%) sepia(56%) saturate(1500%) hue-rotate(120deg) brightness(1.1)', // Green
+      '#ec4899': 'brightness(0) saturate(100%) invert(58%) sepia(87%) saturate(2000%) hue-rotate(315deg) brightness(1.1)', // Pink
+      '#f59e0b': 'brightness(0) saturate(100%) invert(71%) sepia(95%) saturate(1200%) hue-rotate(15deg) brightness(1.1)',  // Amber
+      // Fallback for HSL values
+      'hsl(24.6 95% 53.1%)': 'brightness(0) saturate(100%) invert(58%) sepia(82%) saturate(1500%) hue-rotate(24deg) brightness(1.1)', // Orange HSL
+      'hsl(0 84.2% 60.2%)': 'brightness(0) saturate(100%) invert(38%) sepia(98%) saturate(2500%) hue-rotate(343deg) brightness(1.2)', // Red HSL
     };
     
-    return colorFilters[primaryColor] || colorFilters['#f97316']; // Default to orange
+    // Check both hex and HSL formats
+    return colorFilters[primaryColor] || 
+           colorFilters['#f97316']; // Default to orange
   };
 
   return (
@@ -158,7 +163,7 @@ export default function RadioCoPlayer() {
           </Button>
           
           {showStationSelector && (
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-background/95 backdrop-blur-lg border border-border rounded-md shadow-xl z-20">
+            <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 w-80 bg-black/90 dark:bg-black/95 backdrop-blur-lg border border-border rounded-md shadow-xl z-20">
               <div className="p-2 max-h-60 overflow-y-auto">
                 {radioStations.map((station) => (
                   <button
