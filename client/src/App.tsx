@@ -15,6 +15,8 @@ import MusicPage from "@/pages/MusicPage";
 import ProfilePage from "@/pages/ProfilePage";
 import LoginPage from "@/pages/LoginPage";
 import SubscribePage from "@/pages/SubscribePage";
+import TermsOfService from "@/pages/TermsOfService";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import NotFound from "@/pages/not-found";
 import { useAuth } from './hooks/useAuth';
 
@@ -26,6 +28,8 @@ function Router() {
       <Route path="/profile" component={ProfilePage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/subscribe" component={SubscribePage} />
+      <Route path="/terms" component={TermsOfService} />
+      <Route path="/privacy" component={PrivacyPolicy} />
       <Route component={NotFound} />
     </Switch>
   );
