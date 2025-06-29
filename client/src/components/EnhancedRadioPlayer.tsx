@@ -129,7 +129,7 @@ export default function EnhancedRadioPlayer() {
                     title={currentTrack.title}
                     artist={currentTrack.artist}
                     isPlaying={isPlaying}
-                    size="large"
+                    size="lg"
                   />
                 </div>
               </div>

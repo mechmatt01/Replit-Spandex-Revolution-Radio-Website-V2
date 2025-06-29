@@ -7,6 +7,7 @@ interface InteractiveAlbumArtProps {
   artwork?: string;
   title: string;
   artist: string;
+  isPlaying?: boolean;
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }
@@ -15,6 +16,7 @@ export default function InteractiveAlbumArt({
   artwork, 
   title, 
   artist, 
+  isPlaying = false,
   size = 'md', 
   className = '' 
 }: InteractiveAlbumArtProps) {

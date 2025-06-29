@@ -138,6 +138,7 @@ Required redirect URIs in Google Cloud Console:
 3. Save the changes
 
 ## Changelog
+- June 29, 2025: IMPLEMENTED radio station selection feature - created StationSelector component with dropdown interface, added station switching functionality to RadioContext, integrated EnhancedRadioPlayer with multiple station support including Hot 97, Power 106, SomaFM Metal, and 95.5 The Beat
 - June 29, 2025: RESOLVED major CSS configuration issue - rebuilt complete Tailwind CSS setup with proper content paths, generated working styles.css file, restored full styling functionality across entire application
 - June 24, 2025: FINAL mobile navigation fix - completely rebuilt mobile dropdown using div elements instead of complex button/tooltip structures, direct function calls matching desktop behavior, simplified click handling for guaranteed functionality
 - June 24, 2025: COMPLETED comprehensive navigation bar fixes - all dropdown links working in desktop and mobile modes, proper routing with wouter for cross-page navigation, enhanced mobile dropdown with hover tooltips, fixed login/signup buttons with authentication modal triggers, added section IDs to all pages for smooth scrolling
