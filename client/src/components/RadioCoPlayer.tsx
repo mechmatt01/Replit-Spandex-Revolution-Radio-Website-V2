@@ -266,9 +266,9 @@ export default function RadioCoPlayer() {
                                   d="M11 5L6 9H2V15H6L11 19V5Z" 
                                   fill={colors.primary} 
                                 />
-                                {/* Animated sound waves */}
+                                {/* Animated sound waves - moved down 1px for alignment */}
                                 <path 
-                                  d="M14 8C15.1 9.1 15.1 10.9 14 12" 
+                                  d="M14 9C15.1 10.1 15.1 11.9 14 13" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
@@ -279,7 +279,7 @@ export default function RadioCoPlayer() {
                                   }}
                                 />
                                 <path 
-                                  d="M16 6C18.2 8.2 18.2 11.8 16 14" 
+                                  d="M16 7C18.2 9.2 18.2 12.8 16 15" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
@@ -290,7 +290,7 @@ export default function RadioCoPlayer() {
                                   }}
                                 />
                                 <path 
-                                  d="M18 4C21.3 7.3 21.3 12.7 18 16" 
+                                  d="M18 5C21.3 8.3 21.3 13.7 18 17" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
