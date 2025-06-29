@@ -185,7 +185,7 @@ export default function RadioCoPlayer() {
             style={{
               borderColor: colors.primary,
               borderWidth: '2px',
-              borderRadius: '19px',
+              borderRadius: '15px',
               width: 'auto'
             } as React.CSSProperties}
           >
