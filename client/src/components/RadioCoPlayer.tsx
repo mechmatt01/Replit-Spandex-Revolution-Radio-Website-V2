@@ -185,7 +185,7 @@ export default function RadioCoPlayer() {
             style={{
               borderColor: colors.primary,
               borderWidth: '2px',
-              borderRadius: '11px',
+              borderRadius: '15px',
               width: 'auto'
             } as React.CSSProperties}
           >
@@ -195,8 +195,7 @@ export default function RadioCoPlayer() {
               className={`w-3 h-3 ml-1 transition-all duration-300 ease-in-out transform ${showStationSelector ? 'rotate-180' : 'rotate-0'}`}
               style={{ 
                 opacity: 0.6,
-                color: colors.primary,
-                transform: showStationSelector ? 'rotate(180deg)' : 'rotate(0deg)'
+                color: colors.primary
               }}
             />
           </Button>
@@ -253,11 +252,11 @@ export default function RadioCoPlayer() {
                             {station.description}
                           </div>
                         </div>
-                        <div className="flex items-center justify-center ml-2 w-9 h-9 flex-shrink-0">
+                        <div className="flex items-center justify-center ml-2 w-6 h-6 flex-shrink-0">
                           {station.id === (currentStation?.id || "beat-955") && (
                             <div className="relative flex items-center justify-center">
                               <svg 
-                                className="w-6 h-6" 
+                                className="w-4 h-4" 
                                 viewBox="0 0 24 24" 
                                 fill="none" 
                                 xmlns="http://www.w3.org/2000/svg"
@@ -267,9 +266,9 @@ export default function RadioCoPlayer() {
                                   d="M11 5L6 9H2V15H6L11 19V5Z" 
                                   fill={colors.primary} 
                                 />
-                                {/* Animated sound waves - aligned with speaker center */}
+                                {/* Animated sound waves */}
                                 <path 
-                                  d="M14 9C14.8 9.8 14.8 11.2 14 12" 
+                                  d="M14 8C15.1 9.1 15.1 10.9 14 12" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
@@ -280,7 +279,7 @@ export default function RadioCoPlayer() {
                                   }}
                                 />
                                 <path 
-                                  d="M16 7C17.6 8.6 17.6 12.4 16 14" 
+                                  d="M16 6C18.2 8.2 18.2 11.8 16 14" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"
@@ -291,7 +290,7 @@ export default function RadioCoPlayer() {
                                   }}
                                 />
                                 <path 
-                                  d="M18 5C20.4 7.4 20.4 13.6 18 16" 
+                                  d="M18 4C21.3 7.3 21.3 12.7 18 16" 
                                   stroke={colors.primary} 
                                   strokeWidth="1.5" 
                                   strokeLinecap="round"

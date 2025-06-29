@@ -1,4 +1,3 @@
-
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -12,14 +11,14 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import SkipToContent from "@/components/SkipToContent";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
 import HomePage from "@/pages/HomePage";
+import MusicPage from "@/pages/MusicPage";
+import ProfilePage from "@/pages/ProfilePage";
 import LoginPage from "@/pages/LoginPage";
 import SubscribePage from "@/pages/SubscribePage";
 import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import NotFound from "@/pages/not-found";
 import { useAuth } from './hooks/useAuth';
-import ProfilePage from "@/pages/ProfilePage";
-import MusicPage from "@/pages/MusicPage";
 
 function Router() {
   return (
