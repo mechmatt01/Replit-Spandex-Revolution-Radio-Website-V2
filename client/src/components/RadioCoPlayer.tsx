@@ -430,11 +430,11 @@ export default function RadioCoPlayer() {
       </div>
 
       <div className="flex flex-col items-center justify-center space-y-4">
-        {/* Play/Pause Button Row - Always Perfectly Centered */}
-        <div className="flex items-center justify-center w-full relative">
-          {/* Volume Button - Only visible when playing, positioned to the left using absolute positioning */}
+        {/* Play/Pause and Volume Button Row - Using flexbox for reliable positioning */}
+        <div className="flex items-center justify-center gap-6 w-full">
+          {/* Volume Button - Only visible when playing, positioned to the left */}
           {isPlaying && (
-            <div className="absolute left-1/2 transform -translate-x-32 group" ref={volumeButtonRef}>
+            <div className="relative group" ref={volumeButtonRef}>
               <Button
                 onClick={toggleMute}
                 variant="ghost"
@@ -495,7 +495,7 @@ export default function RadioCoPlayer() {
             </div>
           )}
 
-          {/* Play/Pause Button - Always Perfectly Centered */}
+          {/* Play/Pause Button - Always centered in the flexbox */}
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
@@ -528,6 +528,9 @@ export default function RadioCoPlayer() {
               </>
             )}
           </Button>
+
+          {/* Invisible spacer to balance the layout when volume button is not visible */}
+          {!isPlaying && <div className="w-12 h-12"></div>}
         </div>
 
       </div>
