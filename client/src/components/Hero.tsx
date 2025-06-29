@@ -70,7 +70,7 @@ export default function Hero() {
           }}
         ></div>
       </div>
-      <div className="relative z-10 text-center max-w-4xl mx-auto px-4 pt-16">
+      <div className="relative z-10 text-center max-w-4xl mx-auto px-4 pt-8">
         <h1 className="font-orbitron font-black text-5xl md:text-8xl mb-8 text-black dark:text-white">
           <div>SPANDEX</div>
           <div>SALVATION</div>
