@@ -28,295 +28,99 @@ const radioStations: RadioStation[] = [
     name: "95.5 The Beat",
     frequency: "95.5 FM",
     location: "Dallas, TX",
-    genre: "Hip Hop & R&B",
-    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
-    description: "Dallas Hip Hop & R&B",
+    genre: "Hip-Hop & R&B",
+    streamUrl: "https://14923.live.streamtheworld.com/KBFBFMAAC",
+    description: "Dallas' Home for Hip-Hop and R&B",
     icon: "🎵"
   },
   {
     id: "hot-97",
     name: "Hot 97",
-    frequency: "97.1 FM", 
+    frequency: "97.1 FM",
     location: "New York, NY",
-    genre: "Hip Hop & R&B",
+    genre: "Hip-Hop",
     streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
-    description: "New York's Hip Hop & R&B",
+    description: "New York's Hip-Hop & R&B",
     icon: "🔥"
   },
   {
     id: "power-106",
     name: "Power 106",
     frequency: "105.9 FM",
-    location: "Los Angeles, CA", 
-    genre: "Hip Hop & R&B",
+    location: "Los Angeles, CA",
+    genre: "Hip-Hop",
     streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
-    description: "Los Angeles Hip Hop & R&B",
+    description: "LA's #1 for Hip-Hop",
     icon: "⚡"
   },
   {
-    id: "somafm-metal",
+    id: "soma-metal",
     name: "SomaFM Metal",
     frequency: "Online",
     location: "San Francisco, CA",
     genre: "Metal",
     streamUrl: "https://ice1.somafm.com/metal-128-mp3",
-    description: "Metal music from SomaFM",
+    description: "From black to doom, viking to thrash",
     icon: "🤘"
   }
 ];
 
 export default function RadioCoPlayer() {
   const { 
-    currentTrack, 
     isPlaying, 
     isLoading, 
-    error, 
-    togglePlayback, 
     volume, 
-    setVolume, 
     isMuted, 
-    toggleMute,
-    changeStation
+    currentTrack, 
+    error, 
+    stationName,
+    isTransitioning,
+    togglePlayback, 
+    setVolume, 
+    toggleMute
   } = useRadio();
-
-  const { getColors, getGradient } = useTheme();
-  const colors = getColors();
-
-  const [isStationDropdownOpen, setIsStationDropdownOpen] = useState(false);
-  const [selectedStation, setSelectedStation] = useState<RadioStation>(radioStations[0]);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   
+  const { getGradient, getColors } = useTheme();
+  const colors = getColors();
   const volumeButtonRef = useRef<HTMLDivElement>(null);
-  const stationDropdownRef = useRef<HTMLDivElement>(null);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (stationDropdownRef.current && !stationDropdownRef.current.contains(event.target as Node)) {
-        setIsStationDropdownOpen(false);
-      }
-    };
-
-    if (isStationDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [isStationDropdownOpen]);
-
-  const handleStationChange = async (station: RadioStation) => {
-    if (station.id === selectedStation.id) return;
-    
-    setIsTransitioning(true);
-    setSelectedStation(station);
-    setIsStationDropdownOpen(false);
-    
-    try {
-      await changeStation(station);
-    } catch (err) {
-      console.error('Failed to switch station:', err);
-    }
-    
-    setTimeout(() => setIsTransitioning(false), 500);
-  };
 
   return (
-    <section 
-      className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg"
-      role="region"
-      aria-label="Radio player controls"
-    >
-      {/* Hidden Audio Element */}
-      <audio 
-        ref={useRadio().audioRef}
-        preload="none"
-        crossOrigin="anonymous"
-        aria-label="Live radio stream"
-      />
+    <section className="flex flex-col items-center justify-center space-y-8 px-8 py-12 text-center">
 
-      {/* Station Selector */}
-      <div className="mb-6">
-        <div className="relative" ref={stationDropdownRef}>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsStationDropdownOpen(!isStationDropdownOpen)}
-            className="bg-card/90 backdrop-blur-sm hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1"
-            style={{
-              borderColor: colors.primary,
-              borderWidth: '2px',
-              borderRadius: '12px',
-              width: 'auto'
-            }}
-          >
-            <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
-            <span style={{ color: colors.primary }}>{selectedStation?.name || "95.5 The Beat"}</span>
-            <ChevronDown 
-              className={`w-3 h-3 ml-1 transition-transform duration-300 ease-in-out transform ${isStationDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
-              style={{
-                opacity: 0.6,
-                color: colors.primary
-              }}
-            />
-          </Button>
-          
-          {isStationDropdownOpen && (
-            <div className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto bg-black/90 backdrop-blur-lg border shadow-xl z-20 scrollbar-thin"
-                 style={{
-                   borderColor: colors.primary + '40',
-                   borderRadius: '12px',
-                   minWidth: '300px',
-                 }}>
-              <div className="p-2">
-                {/* Always show selected station first */}
-                {selectedStation && (
-                  <button
-                    key={selectedStation.id + '-selected'}
-                    onClick={() => handleStationChange(selectedStation)}
-                    className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none"
-                    style={{
-                      backgroundColor: colors.primary + '20',
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full">
-                        <span className="text-lg">{selectedStation.icon}</span>
-                      </div>
-                      <div className="flex-1 min-w-0 flex items-center">
-                        <div className="flex-1">
-                          <div className="font-semibold text-sm text-white truncate">
-                            {selectedStation.name}
-                          </div>
-                          <div className="text-xs text-gray-300 truncate">
-                            {selectedStation.frequency} • {selectedStation.location}
-                          </div>
-                          <div className="text-xs text-gray-400 truncate">
-                            {selectedStation.description}
-                          </div>
-                        </div>
-                        {isPlaying && (
-                          <div className="flex items-center justify-center w-9 h-9">
-                            {/* Playing Indicator */}
-                            <div className="flex items-center justify-center h-full">
-                              <svg 
-                                className="w-6 h-6" 
-                                fill="none" 
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path 
-                                  d="M11 5L6 9H2V15H6L11 19V5Z" 
-                                  fill={colors.primary} 
-                                />
-                                {/* Animated sound waves */}
-                                <path 
-                                  d="M14 9.5C15.1 10.6 15.1 12.4 14 13.5" 
-                                  stroke={colors.primary} 
-                                  strokeWidth="1.5" 
-                                  className="animate-pulse"
-                                  style={{ animation: 'pulse 1.5s ease-in-out infinite' }}
-                                />
-                                <path 
-                                  d="M16 7.5C18.2 9.7 18.2 13.3 16 15.5" 
-                                  stroke={colors.primary} 
-                                  strokeWidth="1.5" 
-                                  className="animate-pulse"
-                                  style={{ animation: 'pulse 1.5s ease-in-out infinite', animationDelay: '0.3s' }}
-                                />
-                                <path 
-                                  d="M18 5.5C21.3 8.8 21.3 14.2 18 17.5" 
-                                  stroke={colors.primary} 
-                                  strokeWidth="1.5" 
-                                  className="animate-pulse"
-                                  style={{ animation: 'pulse 1.5s ease-in-out infinite', animationDelay: '0.6s' }}
-                                />
-                              </svg>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-                )}
-                
-                {/* Other stations */}
-                {radioStations.filter(station => station.id !== selectedStation?.id).map((station) => (
-                  <button
-                    key={station.id}
-                    onClick={() => handleStationChange(station)}
-                    className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none"
-                    style={{
-                      backgroundColor: 'transparent',
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full">
-                        <span className="text-lg">{station.icon}</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm text-white truncate">
-                          {station.name}
-                        </div>
-                        <div className="text-xs text-gray-300 truncate">
-                          {station.frequency} • {station.location}
-                        </div>
-                        <div className="text-xs text-gray-400 truncate">
-                          {station.description}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Album Art with LIVE Indicator Overlay */}
-      <div className="flex justify-center mb-6 relative">
+      {/* Now Playing Info */}
+      <div className="flex flex-col items-center justify-center space-y-4 w-full max-w-md">
         <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-          <InteractiveAlbumArt 
-            artwork={currentTrack.artwork}
-            title={currentTrack.title}
-            artist={currentTrack.artist}
-            size="md"
+          <InteractiveAlbumArt
+            artwork={currentTrack.artwork || MusicLogoPath}
+            title={currentTrack.title || "Live Stream"}
+            artist={currentTrack.artist || stationName}
+            isPlaying={isPlaying}
+            size="lg"
+            className="w-64 h-64 mx-auto"
           />
         </div>
-        
-        {/* Compact LIVE Indicator - 50% overlapping top of album artwork */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
-            <div className="w-1 h-1 bg-white rounded-full animate-pulse opacity-90"></div>
-            <span className="opacity-90">LIVE</span>
-          </div>
-        </div>
-      </div>
 
-      {/* Track Info with Fade Animation */}
-      <div className="text-center mb-6">
-        <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-          <div className="flex justify-center mb-2">
+        <div className="text-center space-y-2">
+          <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
             <ScrollingText 
-              text={currentTrack.title}
-              className="font-bold text-foreground"
-              style={{ fontSize: '22px' }}
-              maxWidth="75%"
-              backgroundColor="hsl(var(--background))"
+              text={currentTrack.title !== "Live Stream" ? currentTrack.title : stationName}
+              className="text-3xl font-black text-foreground"
+              maxWidth="400px"
+              backgroundColor="transparent"
             />
           </div>
-          {currentTrack.album && 
-           currentTrack.album !== "New York's Hip Hop & R&B" && 
-           currentTrack.album !== "Live Stream" && 
-           currentTrack.album !== currentTrack.title && 
-           currentTrack.album !== currentTrack.artist && (
-            <p className="text-foreground font-semibold text-lg mb-1 transition-opacity duration-500">
-              {currentTrack.album}
-            </p>
+          
+          {currentTrack.artist !== "Live Stream" && currentTrack.artist !== stationName && (
+            <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+              <ScrollingText 
+                text={currentTrack.artist}
+                className="text-xl font-semibold text-muted-foreground"
+                maxWidth="350px"
+                backgroundColor="transparent"
+              />
+            </div>
           )}
-          {currentTrack.artist && currentTrack.artist !== currentTrack.title && currentTrack.artist !== "Live Stream" && (
-            <p className="text-foreground font-medium text-base mb-2 transition-opacity duration-500">
-              {currentTrack.artist}
-            </p>
-          )}
+          
           {currentTrack.title !== "Live Stream" && currentTrack.artist !== "Live Stream" && (
             <p className="text-muted-foreground text-sm font-medium">
               Live Stream
@@ -326,7 +130,7 @@ export default function RadioCoPlayer() {
       </div>
 
       {/* Play/Pause Button - Always centered */}
-      <div className="flex flex-col items-center justify-center space-y-4">
+      <div className="flex flex-col items-center justify-center space-y-2">
         <div className="flex items-center justify-center">
           <Button
             onClick={togglePlayback}
@@ -356,7 +160,7 @@ export default function RadioCoPlayer() {
             ) : (
               <>
                 <svg className="h-24 w-24 mb-1" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M4,1 L23,12 L4,23 Z" strokeLinejoin="round" strokeLinecap="round" stroke="currentColor" strokeWidth="0.5" />
+                  <path d="M6 4l12 8-12 8V4z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" fill="currentColor" style={{borderRadius: '3px'}} />
                 </svg>
                 <span className="font-semibold text-sm">PLAY LIVE</span>
               </>
