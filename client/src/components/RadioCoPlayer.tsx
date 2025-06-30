@@ -295,14 +295,16 @@ export default function RadioCoPlayer() {
       {/* Track Info with Fade Animation */}
       <div className="text-center mb-6">
         <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-          <div className="flex justify-center mb-2">
-            <ScrollingText 
-              text={currentTrack.title}
-              className="font-black text-foreground"
-              style={{ fontSize: '32px' }}
-              maxWidth="75%"
-              backgroundColor="hsl(var(--background))"
-            />
+          <div className="flex justify-center mb-2 w-full overflow-hidden">
+            <div className="w-full max-w-full">
+              <ScrollingText 
+                text={currentTrack.title}
+                className="font-black text-foreground whitespace-nowrap"
+                style={{ fontSize: '32px', lineHeight: '1' }}
+                maxWidth="100%"
+                backgroundColor="hsl(var(--background))"
+              />
+            </div>
           </div>
           {currentTrack.album && 
            currentTrack.album !== "New York's Hip Hop & R&B" && 
@@ -374,7 +376,7 @@ export default function RadioCoPlayer() {
                 onClick={toggleMute}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/10 rounded-full p-4 w-16 h-16 flex items-center justify-center transition-all duration-300 group-hover:scale-105"
+                className="text-white hover:bg-white/10 rounded-full p-4 w-20 h-20 flex items-center justify-center transition-all duration-300"
                 style={{
                   background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
                   backdropFilter: 'blur(20px)'
@@ -426,18 +428,23 @@ export default function RadioCoPlayer() {
 
             {/* Downward Bouncing Volume Bar - Drops from button center */}
             <div 
-              className="absolute top-full left-1/2 -translate-x-1/2 mt-1 transform scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 transform scale-0 opacity-0 origin-top group-hover/volume:scale-100 group-hover/volume:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover/volume:pointer-events-auto z-50"
               style={{
-                transformOrigin: 'top center'
+                transformOrigin: 'top center',
+                background: `${colors.primary}10`,
+                backdropFilter: 'blur(10px)',
+                borderRadius: '12px',
+                padding: '8px'
               }}
             >
-              <div className="p-2">
+              <div>
                 {/* Simple Volume Bar - Same style as floating player but thicker/wider */}
                 <div 
-                  className="relative w-48 h-6 rounded-full overflow-hidden shadow-lg"
+                  className="relative w-48 h-8 rounded-full overflow-hidden shadow-2xl border"
                   style={{ 
-                    background: `${colors.primary}20`,
-                    backdropFilter: 'blur(10px)'
+                    background: `linear-gradient(90deg, ${colors.primary}15, ${colors.secondary}15)`,
+                    backdropFilter: 'blur(10px)',
+                    border: `1px solid ${colors.primary}40`
                   }}
                 >
                   {/* Volume fill */}
