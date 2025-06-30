@@ -213,6 +213,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       // Try multiple stream formats for the selected station
       const stationStreamUrls = [
         station.streamUrl,
+        station.streamUrl + (station.streamUrl.includes('?') ? '&' : '?') + 'nocache=' + Date.now(),
         station.streamUrl.replace('.aac', '.mp3'),
         station.streamUrl.replace('https://', 'http://'),
         "/api/radio-stream"

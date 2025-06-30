@@ -342,16 +342,18 @@ export default function RadioCoPlayer() {
       </div>
 
       {/* Play/Pause Button - Always centered */}
-      <div className="flex flex-col items-center justify-center space-y-4">
-        <div className="flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center space-y-4 relative">
+        <div className="flex items-center justify-center w-full">
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
-            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center"
+            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center mx-auto"
             style={{
               background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
               color: 'white',
-              boxShadow: `0 10px 40px ${colors.primary}60`
+              boxShadow: `0 10px 40px ${colors.primary}60`,
+              position: 'relative',
+              zIndex: 1
             }}
           >
             {isLoading ? (
@@ -361,15 +363,15 @@ export default function RadioCoPlayer() {
               </>
             ) : isPlaying ? (
               <>
-                <svg className="h-36 w-36 mr-4" fill="currentColor" viewBox="0 0 24 24">
-                  <rect x="3" y="3" width="18" height="18" rx="4" />
+                <svg className="h-20 w-20 mr-4" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
+                  <rect x="3" y="3" width="18" height="18" rx="3" strokeLinejoin="round" strokeLinecap="round" />
                 </svg>
                 <span className="font-semibold text-lg">STOP</span>
               </>
             ) : (
               <>
-                <svg className="h-10 w-10 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" strokeWidth="0.5" />
+                <svg className="h-20 w-20 mr-3" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
+                  <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" strokeWidth="0.5" rx="3" />
                 </svg>
                 <span className="font-semibold text-lg">PLAY LIVE</span>
               </>
@@ -397,15 +399,16 @@ export default function RadioCoPlayer() {
                 tabIndex={0}
               >
                 {isMuted ? (
-                  <VolumeX className="h-20 w-20" />
+                  <VolumeX className="h-14 w-14" style={{ transform: 'scale(1.75)' }} />
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="84"
-                      height="84"
+                      width="98"
+                      height="98"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
+                      style={{ transform: 'scale(1.75)' }}
                     >
                       <path
                         d="M11 5L6 9H2v6h4l5 4V5z"
@@ -441,13 +444,14 @@ export default function RadioCoPlayer() {
 
             {/* Downward Bouncing Volume Bar - Drops from button center */}
             <div 
-              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 transform scale-0 opacity-0 origin-top group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 transform scale-0 opacity-0 origin-top group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
               style={{
                 transformOrigin: 'top center',
-                background: `${colors.primary}10`,
-                backdropFilter: 'blur(10px)',
+                background: `${colors.primary}20`,
+                backdropFilter: 'blur(15px)',
                 borderRadius: '12px',
-                padding: '8px'
+                padding: '12px',
+                boxShadow: `0 8px 32px ${colors.primary}30`
               }}
             >
               <div>
