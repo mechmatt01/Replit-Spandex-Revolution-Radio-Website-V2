@@ -1,69 +1,11 @@
-import { Play, Pause, Volume2, VolumeX, Radio as RadioIcon, ChevronDown } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { useRadio } from "@/contexts/RadioContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
-import { useState, useRef, useEffect } from "react";
-
-// RadioStation interface moved to RadioContext
-interface RadioStation {
-  id: string;
-  name: string;
-  frequency: string;
-  location: string;
-  genre: string;
-  streamUrl: string;
-  description: string;
-  icon: string;
-}
+import { useRef } from "react";
 import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
-
-// Radio stations data
-const radioStations: RadioStation[] = [
-  {
-    id: "beat-955",
-    name: "95.5 The Beat",
-    frequency: "95.5 FM",
-    location: "Dallas, TX",
-    genre: "Hip-Hop & R&B",
-    streamUrl: "https://14923.live.streamtheworld.com/KBFBFMAAC",
-    description: "Dallas' Home for Hip-Hop and R&B",
-    icon: "🎵"
-  },
-  {
-    id: "hot-97",
-    name: "Hot 97",
-    frequency: "97.1 FM",
-    location: "New York, NY",
-    genre: "Hip-Hop",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
-    description: "New York's Hip-Hop & R&B",
-    icon: "🔥"
-  },
-  {
-    id: "power-106",
-    name: "Power 106",
-    frequency: "105.9 FM",
-    location: "Los Angeles, CA",
-    genre: "Hip-Hop",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
-    description: "LA's #1 for Hip-Hop",
-    icon: "⚡"
-  },
-  {
-    id: "soma-metal",
-    name: "SomaFM Metal",
-    frequency: "Online",
-    location: "San Francisco, CA",
-    genre: "Metal",
-    streamUrl: "https://ice1.somafm.com/metal-128-mp3",
-    description: "From black to doom, viking to thrash",
-    icon: "🤘"
-  }
-];
 
 export default function RadioCoPlayer() {
   const { 
@@ -80,13 +22,12 @@ export default function RadioCoPlayer() {
     toggleMute
   } = useRadio();
   
-  const { getGradient, getColors } = useTheme();
+  const { getColors } = useTheme();
   const colors = getColors();
   const volumeButtonRef = useRef<HTMLDivElement>(null);
 
   return (
     <section className="flex flex-col items-center justify-center space-y-8 px-8 py-12 text-center">
-
       {/* Now Playing Info */}
       <div className="flex flex-col items-center justify-center space-y-4 w-full max-w-md">
         <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
@@ -129,7 +70,7 @@ export default function RadioCoPlayer() {
         </div>
       </div>
 
-      {/* Play/Pause Button - Always centered */}
+      {/* Play/Pause Button - Enhanced per user requirements */}
       <div className="flex flex-col items-center justify-center space-y-2">
         <div className="flex items-center justify-center">
           <Button
@@ -160,7 +101,7 @@ export default function RadioCoPlayer() {
             ) : (
               <>
                 <svg className="h-24 w-24 mb-1" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M6 4l12 8-12 8V4z" stroke="currentColor" strokeWidth="1" strokeLinejoin="round" fill="currentColor" style={{borderRadius: '3px'}} />
+                  <path d="M6 4l12 8-12 8V4z" strokeLinejoin="round" />
                 </svg>
                 <span className="font-semibold text-sm">PLAY LIVE</span>
               </>
@@ -168,14 +109,13 @@ export default function RadioCoPlayer() {
           </Button>
         </div>
 
-        {/* Volume Control - Centered below play button, with smooth fade animations */}
+        {/* Volume Control */}
         {isPlaying && (
           <div 
             className="relative group transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100"
             ref={volumeButtonRef}
           >
             <div className="relative flex items-center justify-center">
-              {/* Volume Button - stays centered */}
               <Button
                 onClick={toggleMute}
                 variant="ghost"
@@ -230,12 +170,11 @@ export default function RadioCoPlayer() {
               </Button>
             </div>
 
-            {/* Downward Bouncing Volume Bar - Drops from button center */}
+            {/* Volume Bar */}
             <div 
               className="absolute top-full left-1/2 -translate-x-1/2 mt-2 scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
             >
               <div className="p-2">
-                {/* Simple Volume Bar - Same style as floating player but thicker/wider */}
                 <div 
                   className="relative w-48 h-6 rounded-full overflow-hidden shadow-lg"
                   style={{ 
@@ -243,7 +182,6 @@ export default function RadioCoPlayer() {
                     backdropFilter: 'blur(10px)'
                   }}
                 >
-                  {/* Volume fill */}
                   <div 
                     className="absolute left-0 h-full rounded-full transition-all duration-200 ease-out"
                     style={{  
@@ -252,7 +190,6 @@ export default function RadioCoPlayer() {
                     }}
                   />
                   
-                  {/* Volume thumb */}
                   <div 
                     className="absolute w-6 h-6 rounded-full top-1/2 -translate-y-1/2 -translate-x-3 transition-all duration-200 shadow-lg border-2 border-white/20"
                     style={{
@@ -261,7 +198,6 @@ export default function RadioCoPlayer() {
                     }}
                   />
                   
-                  {/* Click area for volume control */}
                   <div 
                     className="absolute inset-0 cursor-pointer"
                     onClick={(e) => {
