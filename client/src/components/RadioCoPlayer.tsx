@@ -362,21 +362,27 @@ export default function RadioCoPlayer() {
                 <span className="font-semibold text-lg">CONNECTING...</span>
               </>
             ) : isPlaying ? (
-              <>
-                <svg className="h-20 w-20 mr-4" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
-                  <rect x="3" y="3" width="18" height="18" rx="3" strokeLinejoin="round" strokeLinecap="round" />
-                </svg>
-                <span className="font-semibold text-lg">STOP</span>
-              </>
+              <svg className="h-20 w-20" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
+                <rect x="3" y="3" width="18" height="18" rx="3" strokeLinejoin="round" strokeLinecap="round" />
+              </svg>
             ) : (
-              <>
-                <svg className="h-20 w-20 mr-3" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
-                  <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" strokeWidth="0.5" rx="3" />
-                </svg>
-                <span className="font-semibold text-lg">PLAY LIVE</span>
-              </>
+              <svg className="h-20 w-20" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
+                <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" strokeWidth="0.5" rx="3" />
+              </svg>
             )}
           </Button>
+        </div>
+
+        {/* Button Label - Theme-aware text below button */}
+        <div className="flex justify-center mt-2">
+          <span 
+            className="text-sm font-medium transition-colors duration-300"
+            style={{ 
+              color: colors.text
+            }}
+          >
+            {isLoading ? 'CONNECTING...' : isPlaying ? 'Stop' : 'Play Live'}
+          </span>
         </div>
 
         {/* Volume Control - Centered below play button, with smooth fade animations */}
