@@ -354,7 +354,7 @@ export default function RadioCoPlayer() {
             ) : (
               <>
                 <svg className="h-36 w-36 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M7,4 C5,4 4,5 4,7 L4,17 C4,19 5,20 7,20 L7,12 L20,12 L7,4 Z" />
+                  <path d="M8 5v14l11-7z" strokeLinejoin="round" strokeLinecap="round" stroke="currentColor" strokeWidth="0.5" />
                 </svg>
                 <span className="font-semibold text-lg">PLAY LIVE</span>
               </>
