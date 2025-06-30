@@ -363,18 +363,18 @@ export default function RadioCoPlayer() {
               </>
             ) : isPlaying ? (
               <svg className="h-20 w-20" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
-                <rect x="3" y="3" width="18" height="18" rx="3" strokeLinejoin="round" strokeLinecap="round" />
+                <rect x="3" y="3" width="18" height="18" rx="4" strokeLinejoin="round" strokeLinecap="round" />
               </svg>
             ) : (
               <svg className="h-20 w-20" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
-                <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" strokeWidth="0.5" rx="3" />
+                <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" strokeWidth="0.5" />
               </svg>
             )}
           </Button>
         </div>
 
         {/* Button Label - Theme-aware text below button */}
-        <div className="flex justify-center mt-2">
+        <div className="flex justify-center mt-1">
           <span 
             className="text-sm font-medium transition-colors duration-300"
             style={{ 
@@ -395,22 +395,25 @@ export default function RadioCoPlayer() {
               {/* Volume Button - stays centered */}
               <div
                 onClick={toggleMute}
-                className="text-white hover:bg-white/10 rounded-full p-4 w-20 h-20 flex items-center justify-center transition-all duration-300 cursor-pointer"
+                className="text-white hover:bg-white/10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer"
                 style={{
                   background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
-                  backdropFilter: 'blur(20px)'
+                  backdropFilter: 'blur(20px)',
+                  padding: '5px',
+                  width: 'fit-content',
+                  height: 'fit-content'
                 }}
                 aria-label={isMuted ? "Unmute" : "Mute"}
                 role="button"
                 tabIndex={0}
               >
                 {isMuted ? (
-                  <VolumeX className="h-4 w-4" />
+                  <VolumeX className="h-5 w-5" />
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="16"
-                      height="16"
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
