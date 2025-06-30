@@ -134,7 +134,10 @@ export default function RadioCoPlayer() {
             <div className="flex items-center space-x-3">
               <div 
                 className="w-10 h-10 rounded-full flex items-center justify-center text-lg"
-                style={{ background: getGradient() }}
+                style={{ 
+                  background: `${colors.primary}30`,
+                  color: colors.secondary
+                }}
               >
                 {selectedStation.icon}
               </div>
@@ -144,47 +147,6 @@ export default function RadioCoPlayer() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              {isPlaying && (
-                <div className="flex items-center space-x-1">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="relative transform scale-150"
-                    style={{ color: colors.primary }}
-                  >
-                    <path
-                      d="M11 5L6 9H2v6h4l5 4V5z"
-                      fill="currentColor"
-                    />
-                    <path 
-                      d="M15.54 8.46a5 5 0 0 1 0 7.07" 
-                      stroke="currentColor" 
-                      strokeWidth="1.5" 
-                      strokeLinecap="round"
-                      className="animate-pulse"
-                      style={{ 
-                        animation: 'pulse 1.5s ease-in-out infinite',
-                        animationDelay: '0s',
-                        transform: 'translateY(1px)'
-                      }}
-                    />
-                    <path 
-                      d="M19.07 4.93a10 10 0 0 1 0 14.14" 
-                      stroke="currentColor" 
-                      strokeWidth="1.5" 
-                      strokeLinecap="round"
-                      className="animate-pulse"
-                      style={{ 
-                        animation: 'pulse 1.5s ease-in-out infinite',
-                        animationDelay: '0.3s',
-                        transform: 'translateY(1px)'
-                      }}
-                    />
-                  </svg>
-                </div>
-              )}
               <ChevronDown 
                 className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
                   isStationDropdownOpen ? 'rotate-180' : 'rotate-0'
@@ -196,9 +158,11 @@ export default function RadioCoPlayer() {
           {/* Station Dropdown */}
           {isStationDropdownOpen && (
             <div 
-              className="absolute top-full left-0 right-0 mt-2 rounded-xl shadow-xl z-40 overflow-hidden backdrop-blur-xl"
+              className="absolute top-full left-0 right-0 mt-2 rounded-xl shadow-xl z-40 overflow-hidden backdrop-blur-xl max-h-80 overflow-y-auto"
               style={{
-                background: `linear-gradient(135deg, ${colors.primary}20, ${colors.secondary}10)`
+                background: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6))`,
+                backdropFilter: 'blur(20px)',
+                border: `1px solid ${colors.primary}20`
               }}
             >
               {radioStations.map((station) => (
@@ -210,8 +174,8 @@ export default function RadioCoPlayer() {
                   <div 
                     className="w-8 h-8 rounded-full flex items-center justify-center text-sm"
                     style={{ 
-                      background: station.id === selectedStation.id ? getGradient() : `${colors.primary}20`,
-                      filter: station.id === selectedStation.id ? 'none' : `hue-rotate(${colors.primary === '#f97316' ? '0' : '180'}deg)`
+                      background: station.id === selectedStation.id ? `${colors.primary}40` : `${colors.primary}20`,
+                      color: station.id === selectedStation.id ? colors.secondary : colors.primary
                     }}
                   >
                     {station.icon}
@@ -222,7 +186,41 @@ export default function RadioCoPlayer() {
                   </div>
                   {isPlaying && station.id === selectedStation.id && (
                     <div className="flex items-center space-x-1">
-                      <div className="w-2 h-2 bg-current rounded-full animate-pulse opacity-90" style={{ color: colors.primary }}></div>
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="relative"
+                        style={{ color: colors.primary }}
+                      >
+                        <path
+                          d="M11 5L6 9H2v6h4l5 4V5z"
+                          fill="currentColor"
+                        />
+                        <path 
+                          d="M15.54 8.46a5 5 0 0 1 0 7.07" 
+                          stroke="currentColor" 
+                          strokeWidth="1.5" 
+                          strokeLinecap="round"
+                          className="animate-pulse"
+                          style={{ 
+                            animation: 'pulse 1.5s ease-in-out infinite',
+                            animationDelay: '0s'
+                          }}
+                        />
+                        <path 
+                          d="M19.07 4.93a10 10 0 0 1 0 14.14" 
+                          stroke="currentColor" 
+                          strokeWidth="1.5" 
+                          strokeLinecap="round"
+                          className="animate-pulse"
+                          style={{ 
+                            animation: 'pulse 1.5s ease-in-out infinite',
+                            animationDelay: '0.3s'
+                          }}
+                        />
+                      </svg>
                       <span className="text-xs font-medium opacity-90" style={{ color: colors.primary }}>LIVE</span>
                     </div>
                   )}
