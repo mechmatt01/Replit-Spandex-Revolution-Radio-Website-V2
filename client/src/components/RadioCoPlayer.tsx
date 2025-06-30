@@ -76,7 +76,8 @@ export default function RadioCoPlayer() {
     setVolume, 
     isMuted, 
     toggleMute,
-    changeStation
+    changeStation,
+    currentStation
   } = useRadio();
 
   const { getColors, getGradient } = useTheme();
@@ -84,6 +85,14 @@ export default function RadioCoPlayer() {
 
   const [isStationDropdownOpen, setIsStationDropdownOpen] = useState(false);
   const [selectedStation, setSelectedStation] = useState<RadioStation>(radioStations[0]);
+  
+  // Initialize selected station with first station on mount
+  useEffect(() => {
+    const firstStation = radioStations[0];
+    if (firstStation && !selectedStation) {
+      setSelectedStation(firstStation);
+    }
+  }, []);
   const [isTransitioning, setIsTransitioning] = useState(false);
   
   const volumeButtonRef = useRef<HTMLDivElement>(null);
@@ -106,12 +115,15 @@ export default function RadioCoPlayer() {
   const handleStationChange = async (station: RadioStation) => {
     if (station.id === selectedStation.id) return;
     
+    console.log(`Attempting to change station to: ${station.name} (${station.streamUrl})`);
+    
     setIsTransitioning(true);
     setSelectedStation(station);
     setIsStationDropdownOpen(false);
     
     try {
       await changeStation(station);
+      console.log(`Successfully changed to station: ${station.name}`);
     } catch (err) {
       console.error('Failed to switch station:', err);
     }
@@ -174,8 +186,9 @@ export default function RadioCoPlayer() {
                     onClick={() => handleStationChange(selectedStation)}
                     className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none"
                     style={{
-                      background: `linear-gradient(135deg, ${colors.primary}30, ${colors.secondary}20)`,
-                      border: `1px solid ${colors.primary}60`,
+                      background: `linear-gradient(135deg, ${colors.primary}40, ${colors.secondary}25)`,
+                      border: `1px solid ${colors.primary}80`,
+                      boxShadow: `0 2px 8px ${colors.primary}20`
                     }}
                   >
                     <div className="flex items-center gap-3">
@@ -428,7 +441,7 @@ export default function RadioCoPlayer() {
 
             {/* Downward Bouncing Volume Bar - Drops from button center */}
             <div 
-              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 transform scale-0 opacity-0 origin-top group-hover/volume:scale-100 group-hover/volume:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover/volume:pointer-events-auto z-50"
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 transform scale-0 opacity-0 origin-top group-hover:scale-100 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
               style={{
                 transformOrigin: 'top center',
                 background: `${colors.primary}10`,
