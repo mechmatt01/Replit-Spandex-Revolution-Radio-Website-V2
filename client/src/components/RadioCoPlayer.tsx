@@ -369,7 +369,7 @@ export default function RadioCoPlayer() {
             ) : (
               <>
                 <svg className="h-10 w-10 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" rx="3" />
+                  <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" strokeWidth="0.5" />
                 </svg>
                 <span className="font-semibold text-lg">PLAY LIVE</span>
               </>
@@ -380,21 +380,21 @@ export default function RadioCoPlayer() {
         {/* Volume Control - Centered below play button, with smooth fade animations */}
         {isPlaying && (
           <div 
-            className="relative group transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100"
+            className="relative group hover:scale-105 transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100"
             ref={volumeButtonRef}
           >
             <div className="relative flex items-center justify-center">
               {/* Volume Button - stays centered */}
-              <Button
+              <div
                 onClick={toggleMute}
-                variant="ghost"
-                size="sm"
-                className="text-white hover:bg-white/10 rounded-full p-4 w-20 h-20 flex items-center justify-center transition-all duration-300"
+                className="text-white hover:bg-white/10 rounded-full p-4 w-20 h-20 flex items-center justify-center transition-all duration-300 cursor-pointer"
                 style={{
                   background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
                   backdropFilter: 'blur(20px)'
                 }}
                 aria-label={isMuted ? "Unmute" : "Mute"}
+                role="button"
+                tabIndex={0}
               >
                 {isMuted ? (
                   <VolumeX className="h-20 w-20" />
@@ -436,7 +436,7 @@ export default function RadioCoPlayer() {
                     </svg>
                   </div>
                 )}
-              </Button>
+              </div>
             </div>
 
             {/* Downward Bouncing Volume Bar - Drops from button center */}
