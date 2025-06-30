@@ -393,27 +393,24 @@ export default function RadioCoPlayer() {
           >
             <div className="relative flex items-center justify-center">
               {/* Volume Button - stays centered */}
-              <div
+              <Button
                 onClick={toggleMute}
-                className="text-white hover:bg-white/10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer"
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/10 rounded-full p-4 w-16 h-16 flex items-center justify-center transition-all duration-300 group-hover:scale-105"
                 style={{
                   background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
-                  backdropFilter: 'blur(20px)',
-                  padding: '5px',
-                  width: 'fit-content',
-                  height: 'fit-content'
+                  backdropFilter: 'blur(20px)'
                 }}
                 aria-label={isMuted ? "Unmute" : "Mute"}
-                role="button"
-                tabIndex={0}
               >
                 {isMuted ? (
-                  <VolumeX className="h-5 w-5" />
+                  <VolumeX className="h-10 w-10" />
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="20"
-                      height="20"
+                      width="45"
+                      height="45"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
@@ -447,29 +444,23 @@ export default function RadioCoPlayer() {
                     </svg>
                   </div>
                 )}
-              </div>
+              </Button>
             </div>
 
             {/* Downward Bouncing Volume Bar - Drops from button center */}
             <div 
-              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 transform scale-0 opacity-0 origin-top group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-1 transform scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
               style={{
-                transformOrigin: 'top center',
-                background: `${colors.primary}20`,
-                backdropFilter: 'blur(15px)',
-                borderRadius: '12px',
-                padding: '12px',
-                boxShadow: `0 8px 32px ${colors.primary}30`
+                transformOrigin: 'top center'
               }}
             >
-              <div>
+              <div className="p-2">
                 {/* Simple Volume Bar - Same style as floating player but thicker/wider */}
                 <div 
-                  className="relative w-48 h-8 rounded-full overflow-hidden shadow-2xl border"
+                  className="relative w-48 h-6 rounded-full overflow-hidden shadow-lg"
                   style={{ 
-                    background: `linear-gradient(90deg, ${colors.primary}15, ${colors.secondary}15)`,
-                    backdropFilter: 'blur(10px)',
-                    border: `1px solid ${colors.primary}40`
+                    background: `${colors.primary}20`,
+                    backdropFilter: 'blur(10px)'
                   }}
                 >
                   {/* Volume fill */}
