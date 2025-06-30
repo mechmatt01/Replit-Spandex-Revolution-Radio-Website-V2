@@ -278,7 +278,7 @@ export default function RadioCoPlayer() {
             artwork={currentTrack.artwork}
             title={currentTrack.title}
             artist={currentTrack.artist}
-            size="md"
+            size="lg"
           />
         </div>
         
@@ -297,8 +297,8 @@ export default function RadioCoPlayer() {
           <div className="flex justify-center mb-2">
             <ScrollingText 
               text={currentTrack.title}
-              className="font-bold text-foreground"
-              style={{ fontSize: '22px' }}
+              className="font-black text-foreground"
+              style={{ fontSize: '32px' }}
               maxWidth="75%"
               backgroundColor="hsl(var(--background))"
             />
@@ -374,7 +374,7 @@ export default function RadioCoPlayer() {
                 onClick={toggleMute}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/10 rounded-full p-3 w-14 h-14 flex items-center justify-center transition-all duration-300"
+                className="text-white hover:bg-white/10 rounded-full p-4 w-16 h-16 flex items-center justify-center transition-all duration-300 group-hover:scale-105"
                 style={{
                   background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
                   backdropFilter: 'blur(20px)'
@@ -382,12 +382,12 @@ export default function RadioCoPlayer() {
                 aria-label={isMuted ? "Unmute" : "Mute"}
               >
                 {isMuted ? (
-                  <VolumeX className="h-6 w-6" />
+                  <VolumeX className="h-10 w-10" />
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="24"
-                      height="24"
+                      width="40"
+                      height="40"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
@@ -426,7 +426,10 @@ export default function RadioCoPlayer() {
 
             {/* Downward Bouncing Volume Bar - Drops from button center */}
             <div 
-              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-1 transform scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+              style={{
+                transformOrigin: 'top center'
+              }}
             >
               <div className="p-2">
                 {/* Simple Volume Bar - Same style as floating player but thicker/wider */}
