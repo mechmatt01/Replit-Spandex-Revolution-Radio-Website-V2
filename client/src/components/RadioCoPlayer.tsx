@@ -331,32 +331,34 @@ export default function RadioCoPlayer() {
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
-            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center justify-center"
+            className="font-bold py-8 px-12 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none border-2 flex flex-col items-center justify-center"
             style={{
               background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
               color: 'white',
               borderColor: colors.primary,
-              boxShadow: `0 10px 40px ${colors.primary}60`
+              boxShadow: `0 10px 40px ${colors.primary}60`,
+              height: '120px',
+              width: '180px'
             }}
           >
             {isLoading ? (
               <>
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3" />
-                <span className="font-semibold text-lg">CONNECTING...</span>
+                <div className="animate-spin rounded-full h-8 w-8 border-2 border-white border-t-transparent mb-2" />
+                <span className="font-semibold text-sm">CONNECTING...</span>
               </>
             ) : isPlaying ? (
               <>
-                <svg className="h-18 w-18 mr-4" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="h-12 w-12 mb-2" fill="currentColor" viewBox="0 0 24 24">
                   <rect x="3" y="3" width="18" height="18" rx="4" />
                 </svg>
-                <span className="font-semibold text-lg">STOP</span>
+                <span className="font-semibold text-sm">STOP</span>
               </>
             ) : (
               <>
-                <svg className="h-18 w-18 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="h-12 w-12 mb-2" fill="currentColor" viewBox="0 0 24 24">
                   <polygon points="4,1 23,12 4,23" />
                 </svg>
-                <span className="font-semibold text-lg">PLAY LIVE</span>
+                <span className="font-semibold text-sm">PLAY LIVE</span>
               </>
             )}
           </Button>
@@ -365,10 +367,10 @@ export default function RadioCoPlayer() {
         {/* Volume Control - Centered below play button, with smooth fade animations */}
         {isPlaying && (
           <div 
-            className="relative group transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100"
+            className="relative transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100"
             ref={volumeButtonRef}
           >
-            <div className="relative flex items-center justify-center">
+            <div className="relative flex items-center justify-center group">
               {/* Volume Button - stays centered */}
               <Button
                 onClick={toggleMute}
@@ -422,12 +424,11 @@ export default function RadioCoPlayer() {
                   </div>
                 )}
               </Button>
-            </div>
 
-            {/* Downward Bouncing Volume Bar - Drops from button center */}
-            <div 
-              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
-            >
+              {/* Downward Bouncing Volume Bar - Drops from button center */}
+              <div 
+                className="absolute top-full left-1/2 -translate-x-1/2 mt-2 scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+              >
               <div className="p-2">
                 {/* Simple Volume Bar - Same style as floating player but thicker/wider */}
                 <div 
