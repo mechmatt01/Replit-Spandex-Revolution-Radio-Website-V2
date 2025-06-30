@@ -371,13 +371,13 @@ export default function RadioCoPlayer() {
           }`}
         >
           <div className="relative flex items-center justify-center group" ref={volumeButtonRef}>
-            {/* Volume Button - shifts left when slider is open */}
+            {/* Volume Button - shifts left when slider is open to stay on screen */}
             <Button
               onClick={toggleMute}
               variant="ghost"
               size="sm"
               className={`text-white hover:bg-white/10 rounded-full p-3 w-14 h-14 flex items-center justify-center transition-all duration-300 ${
-                'group-hover:-translate-x-16'
+                'group-hover:-translate-x-24'
               }`}
               style={{
                 background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
@@ -427,19 +427,19 @@ export default function RadioCoPlayer() {
               )}
             </Button>
 
-            {/* Horizontal Volume Slider - Animates from button to the right */}
+            {/* Horizontal Volume Slider - Positioned to the right of button */}
             <div 
-              className="absolute left-full ml-4 scale-x-0 opacity-0 origin-left group-hover:scale-x-100 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+              className="absolute left-16 scale-x-0 opacity-0 origin-left group-hover:scale-x-100 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
             >
               <div 
-                className="rounded-2xl p-3 shadow-2xl backdrop-blur-xl flex items-center space-x-4"
+                className="rounded-2xl p-3 shadow-2xl backdrop-blur-xl flex items-center space-x-4 whitespace-nowrap"
                 style={{
                   background: `linear-gradient(135deg, ${colors.primary}15, ${colors.secondary}05)`
                 }}
               >
                 {/* Volume percentage display */}
                 <div 
-                  className="text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap"
+                  className="text-sm font-bold px-3 py-1 rounded-full"
                   style={{
                     background: `${colors.primary}20`,
                     color: colors.primary
@@ -481,7 +481,7 @@ export default function RadioCoPlayer() {
                 <div className="flex gap-1">
                   <button 
                     onClick={() => setVolume(0.5)}
-                    className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
+                    className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
                     style={{
                       background: `${colors.primary}20`,
                       color: colors.primary
@@ -491,7 +491,7 @@ export default function RadioCoPlayer() {
                   </button>
                   <button 
                     onClick={() => setVolume(1)}
-                    className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
+                    className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
                     style={{
                       background: `${colors.primary}20`,
                       color: colors.primary

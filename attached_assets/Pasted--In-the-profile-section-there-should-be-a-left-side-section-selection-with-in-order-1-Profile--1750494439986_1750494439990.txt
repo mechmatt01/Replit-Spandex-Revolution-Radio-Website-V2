@@ -1,24 +1,0 @@
-
-In the profile section there should be a left side section selection with in order… 1. “Profile”,  2. “Subscription Management” (okay if this is two lines, also SHOULD NOT appear if no active subscription), 3. “Submission Requests” (Also okay if it takes up two lines) 4. “Logout”  In the “Profile” Section…  
-- In this section the elements should be ordered vertically and as always and everywhere on the site matching the theme and design already created… 
-1. Profile Image (with button under with themed text of word “Change” with two options dropdown appearing when clicked, Option 1: Upload from a File (only allow images to be chosen/uploaded here), Option 2: “Spandex Salvation Avatars”  (this should be a premium only feature (if not active subscription user have the text in half size of button text right under the button text still in the button though say “Subscription Required”. When clicked and user has subscription if not take them to the subscription screen but if so this should display a popup of about 10 to 15 sick looking designed rock music type avatars to choose from
-- If user has active subscription put a cool badge next to their profile image that is in the bottom right of the fully rounded circular image on top of it half on and half off like a verified checkmark on profiles for social media like Twitter and Facebook/Instagram do 
-2. “User Display Name” (Prefilled from Google if signed up in with Google)
-3. Phone Number (Prefilled from Google if signed up in with Google and is present in Google profile, if not then prefilled with the one signed up with, if still none then placeholder text and allow user to enter theirs if they want to)
-4. Email Address (Prefilled from Google if signed up in with Google, if not then prefilled with the email address signed up with)
-5. Save button that saves all profile changes made to the firebase databse 
-
-In the “Subscription Management” section…
-1. Information on the current price they are paying
-2. The next renewal date/charge date (it is monthly)
-3. Credit card on file with stripe (last 4 digits and a logo/icon of the card type, like Amex, Visa, Mastercard etc
-4. A cancel subscription button that cancels their subscription and deactivates it after the current billing cycle ends 
-- A popup should appear asking them to confirm cancellation if they select this and only cancel it if they select “Confirm” not “Cancel” here 
-
-In the “Submission Requests” section…
-- This should just show all their submission requests, information from the exact request submitted and the date of the request
-- If none are present provide the option to add a new one and say none are present however is best to word it 
-- This section should also only be active when the user has an active subscription 
-
-Lastly the “Logout” button of course which should be in red text always… should just have a popup show up when clicked that confirms the user actually wants to sign out and the options “Logout” and “Cancel” and if they do logout then log them out of the account and refresh the site and bring them back to the main home page 
-
