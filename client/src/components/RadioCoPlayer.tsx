@@ -347,7 +347,7 @@ export default function RadioCoPlayer() {
             ) : isPlaying ? (
               <>
                 <svg className="h-18 w-18 mr-4" fill="currentColor" viewBox="0 0 24 24">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <rect x="3" y="3" width="18" height="18" rx="4" />
                 </svg>
                 <span className="font-semibold text-lg">STOP</span>
               </>
@@ -363,115 +363,113 @@ export default function RadioCoPlayer() {
         </div>
 
         {/* Volume Control - Centered below play button, with smooth fade animations */}
-        <div 
-          className={`relative group transition-all duration-500 ease-in-out transform ${
-            isPlaying 
-              ? 'opacity-100 translate-y-0 scale-100' 
-              : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
-          }`}
-          ref={volumeButtonRef}
-        >
-          <div className="relative flex items-center justify-center">
-            {/* Volume Button - stays centered */}
-            <Button
-              onClick={toggleMute}
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-white/10 rounded-full p-3 w-14 h-14 flex items-center justify-center transition-all duration-300"
-              style={{
-                background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
-                backdropFilter: 'blur(20px)'
-              }}
-              aria-label={isMuted ? "Unmute" : "Mute"}
-            >
-              {isMuted ? (
-                <VolumeX className="h-6 w-6" />
-              ) : (
-                <div className="relative flex items-center justify-center">
-                  <svg
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="relative"
-                  >
-                    <path
-                      d="M11 5L6 9H2v6h4l5 4V5z"
-                      fill="currentColor"
-                    />
-                    <path 
-                      d="M15.54 8.46a5 5 0 0 1 0 7.07" 
-                      stroke="currentColor" 
-                      strokeWidth="1.5" 
-                      strokeLinecap="round"
-                      className="animate-pulse"
-                      style={{ 
-                        animation: 'pulse 1.5s ease-in-out infinite',
-                        animationDelay: '0s'
-                      }}
-                    />
-                    <path 
-                      d="M19.07 4.93a10 10 0 0 1 0 14.14" 
-                      stroke="currentColor" 
-                      strokeWidth="1.5" 
-                      strokeLinecap="round"
-                      className="animate-pulse"
-                      style={{ 
-                        animation: 'pulse 1.5s ease-in-out infinite',
-                        animationDelay: '0.3s'
-                      }}
-                    />
-                  </svg>
-                </div>
-              )}
-            </Button>
-          </div>
-
-          {/* Downward Bouncing Volume Bar - Drops from button center */}
+        {isPlaying && (
           <div 
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-2 scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+            className="relative group transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100"
+            ref={volumeButtonRef}
           >
-            <div className="p-2">
-              {/* Simple Volume Bar - Same style as floating player but thicker/wider */}
-              <div 
-                className="relative w-48 h-6 rounded-full overflow-hidden shadow-lg"
-                style={{ 
-                  background: `${colors.primary}20`,
-                  backdropFilter: 'blur(10px)'
+            <div className="relative flex items-center justify-center">
+              {/* Volume Button - stays centered */}
+              <Button
+                onClick={toggleMute}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/10 rounded-full p-3 w-14 h-14 flex items-center justify-center transition-all duration-300"
+                style={{
+                  background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
+                  backdropFilter: 'blur(20px)'
                 }}
+                aria-label={isMuted ? "Unmute" : "Mute"}
               >
-                {/* Volume fill */}
+                {isMuted ? (
+                  <VolumeX className="h-6 w-6" />
+                ) : (
+                  <div className="relative flex items-center justify-center">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      className="relative"
+                    >
+                      <path
+                        d="M11 5L6 9H2v6h4l5 4V5z"
+                        fill="currentColor"
+                      />
+                      <path 
+                        d="M15.54 8.46a5 5 0 0 1 0 7.07" 
+                        stroke="currentColor" 
+                        strokeWidth="1.5" 
+                        strokeLinecap="round"
+                        className="animate-pulse"
+                        style={{ 
+                          animation: 'pulse 1.5s ease-in-out infinite',
+                          animationDelay: '0s'
+                        }}
+                      />
+                      <path 
+                        d="M19.07 4.93a10 10 0 0 1 0 14.14" 
+                        stroke="currentColor" 
+                        strokeWidth="1.5" 
+                        strokeLinecap="round"
+                        className="animate-pulse"
+                        style={{ 
+                          animation: 'pulse 1.5s ease-in-out infinite',
+                          animationDelay: '0.3s'
+                        }}
+                      />
+                    </svg>
+                  </div>
+                )}
+              </Button>
+            </div>
+
+            {/* Downward Bouncing Volume Bar - Drops from button center */}
+            <div 
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-2 scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+            >
+              <div className="p-2">
+                {/* Simple Volume Bar - Same style as floating player but thicker/wider */}
                 <div 
-                  className="absolute left-0 h-full rounded-full transition-all duration-200 ease-out"
-                  style={{  
-                    width: `${(isMuted ? 0 : volume) * 100}%`,
-                    background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`
+                  className="relative w-48 h-6 rounded-full overflow-hidden shadow-lg"
+                  style={{ 
+                    background: `${colors.primary}20`,
+                    backdropFilter: 'blur(10px)'
                   }}
-                />
-                
-                {/* Volume thumb */}
-                <div 
-                  className="absolute w-6 h-6 rounded-full top-1/2 -translate-y-1/2 -translate-x-3 transition-all duration-200 shadow-lg border-2 border-white/20"
-                  style={{
-                    left: `${(isMuted ? 0 : volume) * 100}%`,
-                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-                  }}
-                />
-                
-                {/* Click area for volume control */}
-                <div 
-                  className="absolute inset-0 cursor-pointer"
-                  onClick={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const newVolume = Math.max(0, Math.min(1, x / rect.width));
-                    setVolume(newVolume);
-                  }}
-                />
+                >
+                  {/* Volume fill */}
+                  <div 
+                    className="absolute left-0 h-full rounded-full transition-all duration-200 ease-out"
+                    style={{  
+                      width: `${(isMuted ? 0 : volume) * 100}%`,
+                      background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`
+                    }}
+                  />
+                  
+                  {/* Volume thumb */}
+                  <div 
+                    className="absolute w-6 h-6 rounded-full top-1/2 -translate-y-1/2 -translate-x-3 transition-all duration-200 shadow-lg border-2 border-white/20"
+                    style={{
+                      left: `${(isMuted ? 0 : volume) * 100}%`,
+                      background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                    }}
+                  />
+                  
+                  {/* Click area for volume control */}
+                  <div 
+                    className="absolute inset-0 cursor-pointer"
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const newVolume = Math.max(0, Math.min(1, x / rect.width));
+                      setVolume(newVolume);
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Error Display */}
