@@ -405,16 +405,15 @@ export default function RadioCoPlayer() {
                 tabIndex={0}
               >
                 {isMuted ? (
-                  <VolumeX className="h-14 w-14" style={{ transform: 'scale(1.75)' }} />
+                  <VolumeX className="h-8 w-8" />
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="98"
-                      height="98"
+                      width="32"
+                      height="32"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
-                      style={{ transform: 'scale(1.75)' }}
                     >
                       <path
                         d="M11 5L6 9H2v6h4l5 4V5z"
