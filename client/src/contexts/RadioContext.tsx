@@ -208,9 +208,60 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         artwork: ""
       });
 
-      // Set new stream URL
-      audio.src = station.streamUrl;
-      audio.load();
+      console.log(`Switching to station: ${station.name} - ${station.streamUrl}`);
+
+      // Try multiple stream formats for the selected station
+      const stationStreamUrls = [
+        station.streamUrl,
+        station.streamUrl.replace('.aac', '.mp3'),
+        station.streamUrl.replace('https://', 'http://'),
+        "/api/radio-stream"
+      ];
+
+      let streamWorked = false;
+
+      for (let i = 0; i < stationStreamUrls.length; i++) {
+        try {
+          const url = stationStreamUrls[i];
+          console.log(`Trying station stream ${i + 1}/${stationStreamUrls.length}: ${url}`);
+
+          // Reset audio element
+          audio.pause();
+          audio.currentTime = 0;
+          audio.src = url;
+          audio.load();
+
+          // Wait for the audio to be ready
+          await new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              reject(new Error('Station stream loading timeout'));
+            }, 8000);
+
+            audio.oncanplaythrough = () => {
+              clearTimeout(timeout);
+              resolve(true);
+            };
+
+            audio.onerror = () => {
+              clearTimeout(timeout);
+              reject(new Error('Station stream error'));
+            };
+          });
+
+          // If we got here, the stream is ready
+          console.log(`Station stream ${i + 1} ready: ${url}`);
+          streamWorked = true;
+          break;
+
+        } catch (streamError) {
+          console.log(`Station stream ${i + 1} failed:`, streamError);
+          continue;
+        }
+      }
+
+      if (!streamWorked) {
+        throw new Error('All station stream formats failed');
+      }
 
       // Resume playback if it was playing
       if (wasPlaying) {
@@ -220,7 +271,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     } catch (error) {
       console.error('Failed to change station:', error);
-      setError('Failed to change station');
+      setError(`Failed to connect to ${station.name}`);
       setIsLoading(false);
     }
   };

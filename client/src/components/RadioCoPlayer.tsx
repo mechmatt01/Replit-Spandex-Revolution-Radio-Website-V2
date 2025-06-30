@@ -174,7 +174,8 @@ export default function RadioCoPlayer() {
                     onClick={() => handleStationChange(selectedStation)}
                     className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none"
                     style={{
-                      backgroundColor: colors.primary + '20',
+                      background: `linear-gradient(135deg, ${colors.primary}30, ${colors.secondary}20)`,
+                      border: `1px solid ${colors.primary}60`,
                     }}
                   >
                     <div className="flex items-center gap-3">
@@ -352,8 +353,8 @@ export default function RadioCoPlayer() {
               </>
             ) : (
               <>
-                <svg className="h-12 w-12 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" />
+                <svg className="h-10 w-10 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" rx="3" />
                 </svg>
                 <span className="font-semibold text-lg">PLAY LIVE</span>
               </>
@@ -381,12 +382,12 @@ export default function RadioCoPlayer() {
                 aria-label={isMuted ? "Unmute" : "Mute"}
               >
                 {isMuted ? (
-                  <VolumeX className="h-10 w-10" />
+                  <VolumeX className="h-20 w-20" />
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="48"
-                      height="48"
+                      width="84"
+                      height="84"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
