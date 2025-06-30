@@ -87,6 +87,21 @@ export default function RadioCoPlayer() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   
   const volumeButtonRef = useRef<HTMLDivElement>(null);
+  const stationDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (stationDropdownRef.current && !stationDropdownRef.current.contains(event.target as Node)) {
+        setIsStationDropdownOpen(false);
+      }
+    };
+
+    if (isStationDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isStationDropdownOpen]);
 
   const handleStationChange = async (station: RadioStation) => {
     if (station.id === selectedStation.id) return;
@@ -120,112 +135,137 @@ export default function RadioCoPlayer() {
 
       {/* Station Selector */}
       <div className="mb-6">
-        <div className="relative" ref={useRef<HTMLDivElement>(null)}>
-          <button 
+        <div className="relative" ref={stationDropdownRef}>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setIsStationDropdownOpen(!isStationDropdownOpen)}
-            className="w-full px-4 py-3 rounded-xl text-left transition-all duration-200 flex items-center justify-between hover:shadow-md"
+            className="bg-card/90 backdrop-blur-sm hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1"
             style={{
-              background: `linear-gradient(135deg, ${colors.primary}10, ${colors.secondary}05)`,
-              borderRadius: '11px'
+              borderColor: colors.primary,
+              borderWidth: '2px',
+              borderRadius: '12px',
+              width: 'auto'
             }}
-            aria-expanded={isStationDropdownOpen}
-            aria-haspopup="listbox"
           >
-            <div className="flex items-center space-x-3">
-              <div 
-                className="w-10 h-10 rounded-full flex items-center justify-center text-lg"
-                style={{ 
-                  background: `${colors.primary}30`,
-                  color: colors.secondary
-                }}
-              >
-                {selectedStation.icon}
-              </div>
-              <div>
-                <div className="font-semibold text-foreground">{selectedStation.name}</div>
-                <div className="text-sm text-muted-foreground">{selectedStation.description}</div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <ChevronDown 
-                className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${
-                  isStationDropdownOpen ? 'rotate-180' : 'rotate-0'
-                }`}
-              />
-            </div>
-          </button>
-
-          {/* Station Dropdown */}
-          {isStationDropdownOpen && (
-            <div 
-              className="absolute top-full left-0 right-0 mt-2 rounded-xl shadow-xl z-40 overflow-hidden backdrop-blur-xl max-h-80 overflow-y-auto"
+            <RadioIcon className="w-3 h-3 mr-1" style={{ color: colors.primary }} />
+            <span style={{ color: colors.primary }}>{selectedStation?.name || "95.5 The Beat"}</span>
+            <ChevronDown 
+              className={`w-3 h-3 ml-1 transition-transform duration-300 ease-in-out transform ${isStationDropdownOpen ? 'rotate-180' : 'rotate-0'}`}
               style={{
-                background: `linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6))`,
-                backdropFilter: 'blur(20px)',
-                border: `1px solid ${colors.primary}20`
+                opacity: 0.6,
+                color: colors.primary
               }}
-            >
-              {radioStations.map((station) => (
-                <button
-                  key={station.id}
-                  onClick={() => handleStationChange(station)}
-                  className="w-full px-4 py-3 text-left hover:bg-white/10 transition-all duration-200 flex items-center space-x-3 border-b border-white/10 last:border-b-0"
-                >
-                  <div 
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm"
-                    style={{ 
-                      background: station.id === selectedStation.id ? `${colors.primary}40` : `${colors.primary}20`,
-                      color: station.id === selectedStation.id ? colors.secondary : colors.primary
+            />
+          </Button>
+          
+          {isStationDropdownOpen && (
+            <div className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto bg-black/90 backdrop-blur-lg border shadow-xl z-20 scrollbar-thin"
+                 style={{
+                   borderColor: colors.primary + '40',
+                   borderRadius: '12px',
+                   minWidth: '300px',
+                 }}>
+              <div className="p-2">
+                {/* Always show selected station first */}
+                {selectedStation && (
+                  <button
+                    key={selectedStation.id + '-selected'}
+                    onClick={() => handleStationChange(selectedStation)}
+                    className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none"
+                    style={{
+                      backgroundColor: colors.primary + '20',
                     }}
                   >
-                    {station.icon}
-                  </div>
-                  <div className="flex-1">
-                    <div className="font-medium text-foreground">{station.name}</div>
-                    <div className="text-xs text-muted-foreground">{station.location}</div>
-                  </div>
-                  {isPlaying && station.id === selectedStation.id && (
-                    <div className="flex items-center space-x-1">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        className="relative"
-                        style={{ color: colors.primary }}
-                      >
-                        <path
-                          d="M11 5L6 9H2v6h4l5 4V5z"
-                          fill="currentColor"
-                        />
-                        <path 
-                          d="M15.54 8.46a5 5 0 0 1 0 7.07" 
-                          stroke="currentColor" 
-                          strokeWidth="1.5" 
-                          strokeLinecap="round"
-                          className="animate-pulse"
-                          style={{ 
-                            animation: 'pulse 1.5s ease-in-out infinite',
-                            animationDelay: '0s'
-                          }}
-                        />
-                        <path 
-                          d="M19.07 4.93a10 10 0 0 1 0 14.14" 
-                          stroke="currentColor" 
-                          strokeWidth="1.5" 
-                          strokeLinecap="round"
-                          className="animate-pulse"
-                          style={{ 
-                            animation: 'pulse 1.5s ease-in-out infinite',
-                            animationDelay: '0.3s'
-                          }}
-                        />
-                      </svg>
-                      <span className="text-xs font-medium opacity-90" style={{ color: colors.primary }}>LIVE</span>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full">
+                        <span className="text-lg">{selectedStation.icon}</span>
+                      </div>
+                      <div className="flex-1 min-w-0 flex items-center">
+                        <div className="flex-1">
+                          <div className="font-semibold text-sm text-white truncate">
+                            {selectedStation.name}
+                          </div>
+                          <div className="text-xs text-gray-300 truncate">
+                            {selectedStation.frequency} • {selectedStation.location}
+                          </div>
+                          <div className="text-xs text-gray-400 truncate">
+                            {selectedStation.description}
+                          </div>
+                        </div>
+                        {isPlaying && (
+                          <div className="flex items-center justify-center w-9 h-9">
+                            {/* Playing Indicator */}
+                            <div className="flex items-center justify-center h-full">
+                              <svg 
+                                className="w-6 h-6" 
+                                fill="none" 
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path 
+                                  d="M11 5L6 9H2V15H6L11 19V5Z" 
+                                  fill={colors.primary} 
+                                />
+                                {/* Animated sound waves */}
+                                <path 
+                                  d="M14 9.5C15.1 10.6 15.1 12.4 14 13.5" 
+                                  stroke={colors.primary} 
+                                  strokeWidth="1.5" 
+                                  className="animate-pulse"
+                                  style={{ animation: 'pulse 1.5s ease-in-out infinite' }}
+                                />
+                                <path 
+                                  d="M16 7.5C18.2 9.7 18.2 13.3 16 15.5" 
+                                  stroke={colors.primary} 
+                                  strokeWidth="1.5" 
+                                  className="animate-pulse"
+                                  style={{ animation: 'pulse 1.5s ease-in-out infinite', animationDelay: '0.3s' }}
+                                />
+                                <path 
+                                  d="M18 5.5C21.3 8.8 21.3 14.2 18 17.5" 
+                                  stroke={colors.primary} 
+                                  strokeWidth="1.5" 
+                                  className="animate-pulse"
+                                  style={{ animation: 'pulse 1.5s ease-in-out infinite', animationDelay: '0.6s' }}
+                                />
+                              </svg>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                </button>
-              ))}
+                  </button>
+                )}
+                
+                {/* Other stations */}
+                {radioStations.filter(station => station.id !== selectedStation?.id).map((station) => (
+                  <button
+                    key={station.id}
+                    onClick={() => handleStationChange(station)}
+                    className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none"
+                    style={{
+                      backgroundColor: 'transparent',
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full">
+                        <span className="text-lg">{station.icon}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-sm text-white truncate">
+                          {station.name}
+                        </div>
+                        <div className="text-xs text-gray-300 truncate">
+                          {station.frequency} • {station.location}
+                        </div>
+                        <div className="text-xs text-gray-400 truncate">
+                          {station.description}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>
