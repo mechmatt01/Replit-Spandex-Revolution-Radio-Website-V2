@@ -332,12 +332,15 @@ export default function RadioCoPlayer() {
               : 'opacity-0 -translate-y-4 scale-95 pointer-events-none'
           }`}
         >
-          <div className="flex flex-col items-center space-y-3 group" ref={volumeButtonRef}>
+          <div className="relative flex items-center justify-center group" ref={volumeButtonRef}>
+            {/* Volume Button - shifts left when slider is open */}
             <Button
               onClick={toggleMute}
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-white/10 rounded-full p-3 w-14 h-14 flex items-center justify-center transition-all duration-300"
+              className={`text-white hover:bg-white/10 rounded-full p-3 w-14 h-14 flex items-center justify-center transition-all duration-300 ${
+                'group-hover:-translate-x-16'
+              }`}
               style={{
                 background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
                 backdropFilter: 'blur(20px)'
@@ -386,87 +389,79 @@ export default function RadioCoPlayer() {
               )}
             </Button>
 
-            {/* Modern Volume Dropdown - Animates upward */}
+            {/* Horizontal Volume Slider - Animates from button to the right */}
             <div 
-              className="absolute bottom-full mb-3 scale-90 opacity-0 translate-y-3 group-hover:scale-100 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+              className="absolute left-full ml-4 scale-x-0 opacity-0 origin-left group-hover:scale-x-100 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
             >
               <div 
-                className="rounded-2xl p-4 shadow-2xl backdrop-blur-xl"
+                className="rounded-2xl p-3 shadow-2xl backdrop-blur-xl flex items-center space-x-4"
                 style={{
                   background: `linear-gradient(135deg, ${colors.primary}15, ${colors.secondary}05)`
                 }}
               >
-                <div className="flex flex-col items-center space-y-3">
+                {/* Volume percentage display */}
+                <div 
+                  className="text-sm font-bold px-3 py-1 rounded-full whitespace-nowrap"
+                  style={{
+                    background: `${colors.primary}20`,
+                    color: colors.primary
+                  }}
+                >
+                  {Math.round((isMuted ? 0 : volume) * 100)}%
+                </div>
+                
+                {/* Horizontal volume slider */}
+                <div className="relative w-32 h-4 rounded-full overflow-hidden" style={{ background: `${colors.primary}10` }}>
                   <div 
-                    className="text-sm font-bold px-3 py-1 rounded-full"
+                    className="absolute left-0 h-full rounded-full transition-all duration-200 ease-out"
+                    style={{  
+                      width: `${(isMuted ? 0 : volume) * 100}%`,
+                      background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`
+                    }}
+                  />
+                  
+                  <div 
+                    className="absolute w-5 h-5 rounded-full top-1/2 -translate-y-1/2 -translate-x-2.5 transition-all duration-200 shadow-lg"
+                    style={{
+                      left: `${(isMuted ? 0 : volume) * 100}%`,
+                      background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                    }}
+                  />
+                  
+                  <div 
+                    className="absolute inset-0 cursor-pointer"
+                    onClick={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const newVolume = Math.max(0, Math.min(1, x / rect.width));
+                      setVolume(newVolume);
+                    }}
+                  />
+                </div>
+
+                {/* Quick volume buttons */}
+                <div className="flex gap-1">
+                  <button 
+                    onClick={() => setVolume(0.5)}
+                    className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
                     style={{
                       background: `${colors.primary}20`,
                       color: colors.primary
                     }}
                   >
-                    {Math.round((isMuted ? 0 : volume) * 100)}%
-                  </div>
-                  
-                  <div className="relative h-20 w-4 rounded-full overflow-hidden" style={{ background: `${colors.primary}10` }}>
-                    <div 
-                      className="absolute bottom-0 w-full rounded-full transition-all duration-200 ease-out"
-                      style={{
-                        height: `${(isMuted ? 0 : volume) * 100}%`,
-                        background: `linear-gradient(180deg, ${colors.primary}, ${colors.secondary})`
-                      }}
-                    />
-                    
-                    <div 
-                      className="absolute w-5 h-5 rounded-full -translate-x-0.5 transition-all duration-200 shadow-lg"
-                      style={{
-                        bottom: `${(isMuted ? 0 : volume) * 100 - 10}%`,
-                        background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-                      }}
-                    />
-                    
-                    <div 
-                      className="absolute inset-0 cursor-pointer"
-                      onClick={(e) => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const y = rect.bottom - e.clientY;
-                        const newVolume = Math.max(0, Math.min(1, y / rect.height));
-                        setVolume(newVolume);
-                      }}
-                    />
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button 
-                      onClick={() => setVolume(0.5)}
-                      className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
-                      style={{
-                        background: `${colors.primary}20`,
-                        color: colors.primary
-                      }}
-                    >
-                      50%
-                    </button>
-                    <button 
-                      onClick={() => setVolume(1)}
-                      className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
-                      style={{
-                        background: `${colors.primary}20`,
-                        color: colors.primary
-                      }}
-                    >
-                      MAX
-                    </button>
-                  </div>
+                    50%
+                  </button>
+                  <button 
+                    onClick={() => setVolume(1)}
+                    className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
+                    style={{
+                      background: `${colors.primary}20`,
+                      color: colors.primary
+                    }}
+                  >
+                    MAX
+                  </button>
                 </div>
-                
-                <div 
-                  className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0"
-                  style={{
-                    borderLeft: '8px solid transparent',
-                    borderRight: '8px solid transparent',
-                    borderTop: `8px solid ${colors.primary}15`
-                  }}
-                />
               </div>
             </div>
           </div>
