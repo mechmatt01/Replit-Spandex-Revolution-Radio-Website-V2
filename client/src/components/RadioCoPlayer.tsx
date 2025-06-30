@@ -292,6 +292,7 @@ export default function RadioCoPlayer() {
         <div className="relative w-full flex items-center justify-center">
           
           {/* Volume Button - Positioned on the left, only visible when playing */}
+          <div className="text-xs text-gray-500 mb-2">Debug: isPlaying = {isPlaying ? 'true' : 'false'}</div>
           {isPlaying && (
             <div className="absolute left-1/2 transform -translate-x-32 group" ref={volumeButtonRef}>
               <Button
