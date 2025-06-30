@@ -331,11 +331,10 @@ export default function RadioCoPlayer() {
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
-            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl border-2 flex items-center justify-center"
+            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center"
             style={{
               background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
               color: 'white',
-              borderColor: colors.primary,
               boxShadow: `0 10px 40px ${colors.primary}60`
             }}
           >
@@ -353,8 +352,8 @@ export default function RadioCoPlayer() {
               </>
             ) : (
               <>
-                <svg className="h-36 w-36 mr-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M8 5v14l11-7z" strokeLinejoin="round" strokeLinecap="round" stroke="currentColor" strokeWidth="0.5" />
+                <svg className="h-12 w-12 mr-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" />
                 </svg>
                 <span className="font-semibold text-lg">PLAY LIVE</span>
               </>
@@ -386,8 +385,8 @@ export default function RadioCoPlayer() {
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="40"
-                      height="40"
+                      width="48"
+                      height="48"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
