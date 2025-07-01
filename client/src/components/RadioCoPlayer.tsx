@@ -501,13 +501,20 @@ export default function RadioCoPlayer() {
               {/* Volume Slider - positioned within hover area */}
               <div 
                 ref={volumeSliderRef}
-                className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 transition-all duration-300 ease-out z-50 ${
+                className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 ${
                   isVolumeSliderVisible 
-                    ? 'scale-100 opacity-100 translate-y-0 pointer-events-auto' 
-                    : 'scale-75 opacity-0 -translate-y-4 pointer-events-none'
+                    ? 'pointer-events-auto' 
+                    : 'pointer-events-none'
                 }`}
                 style={{
-                  transformOrigin: 'top center'
+                  transformOrigin: 'top center',
+                  transition: 'all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                  transform: isVolumeSliderVisible 
+                    ? 'translateX(-50%) translateY(0px) scale(1) rotateX(0deg)' 
+                    : 'translateX(-50%) translateY(-20px) scale(0.3) rotateX(-90deg)',
+                  opacity: isVolumeSliderVisible ? 1 : 0,
+                  filter: isVolumeSliderVisible ? 'blur(0px)' : 'blur(2px)',
+                  perspective: '200px'
                 }}
               >
                 {/* Volume slider - exact same as floating player but bigger */}
