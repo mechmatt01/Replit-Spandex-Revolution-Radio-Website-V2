@@ -342,7 +342,7 @@ export default function RadioCoPlayer() {
             </p>
           )}
           {currentTrack.title !== "Live Stream" && currentTrack.title !== currentTrack.artist && (
-            <p className="text-foreground font-medium text-base mb-2 transition-opacity duration-500">
+            <p className="text-foreground font-black text-2xl mb-2 transition-opacity duration-500">
               {selectedStation?.name || "95.5 The Beat"}
             </p>
           )}
