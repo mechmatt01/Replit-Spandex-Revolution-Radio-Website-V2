@@ -360,13 +360,14 @@ export default function RadioCoPlayer() {
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
-            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center mx-auto"
+            className={`font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center mx-auto ${isPlaying ? 'animate-pulse' : ''}`}
             style={{
               background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
               color: 'white',
               boxShadow: `0 10px 40px ${colors.primary}60`,
               position: 'relative',
-              zIndex: 1
+              zIndex: 1,
+              animation: isPlaying ? 'pulse 2s ease-in-out infinite' : 'none'
             }}
           >
             {isLoading ? (
@@ -375,14 +376,7 @@ export default function RadioCoPlayer() {
                 <span className="font-semibold text-lg">CONNECTING...</span>
               </>
             ) : isPlaying ? (
-              <svg 
-                className="h-12 w-12" 
-                fill="currentColor" 
-                viewBox="0 0 24 24"
-                style={{
-                  animation: 'pulse 2s ease-in-out infinite'
-                }}
-              >
+              <svg className="h-12 w-12" fill="currentColor" viewBox="0 0 24 24">
                 <rect x="6" y="6" width="12" height="12" rx="2" />
               </svg>
             ) : (
