@@ -3626,6 +3626,22 @@ img, video {
   animation: glow 2s ease-in-out infinite;
 }
 
+/* Custom pulse animation for play button */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 10px 40px rgba(255, 107, 53, 0.6);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 15px 60px rgba(255, 107, 53, 0.8);
+  }
+}
+
+.animate-pulse-button {
+  animation: pulse 2s ease-in-out infinite;
+}
+
 /* Theme-aware button styling */
 
 .btn-theme-hover:hover {
