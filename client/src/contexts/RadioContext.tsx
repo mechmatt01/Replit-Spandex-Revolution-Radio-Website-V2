@@ -192,104 +192,39 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       setIsLoading(true);
       setError(null);
 
-      // Pause current playback
-      const wasPlaying = isPlaying;
-      if (wasPlaying) {
+      // Stop current playback
+      if (isPlaying) {
         audio.pause();
+        setIsPlaying(false);
       }
 
-      // Update station info immediately
+      // Update station info
       setCurrentStation(station);
       setStationName(station.name);
-      setCurrentTrack({
+
+      // Update track info with station-specific metadata
+      const stationTrackInfo = {
         title: station.name,
         artist: station.description,
-        album: station.genre,
+        album: `${station.frequency} • ${station.location}`,
         artwork: ""
-      });
+      };
 
-      console.log(`Switching to station: ${station.name} - ${station.streamUrl}`);
+      setCurrentTrack(stationTrackInfo);
 
-      // Immediately fetch track info for the new station
-      try {
-        const response = await fetch(`/api/now-playing?station=${station.id}`);
-        if (response.ok) {
-          const trackData = await response.json();
-          setCurrentTrack({
-            title: trackData.title || station.name,
-            artist: trackData.artist || station.description,
-            album: trackData.album || station.genre,
-            artwork: trackData.artwork || '',
-          });
-        }
-      } catch (err) {
-        console.log('Initial track fetch failed:', err);
-      }
+      // Set new stream URL through proxy with station-specific URL
+      const proxyUrl = `/api/radio-stream?url=${encodeURIComponent(station.streamUrl)}`;
+      audio.src = proxyUrl;
 
-      // Try multiple stream formats for the selected station
-      const stationStreamUrls = [
-        station.streamUrl,
-        `/api/radio-stream?url=${encodeURIComponent(station.streamUrl)}`,
-        station.streamUrl + (station.streamUrl.includes('?') ? '&' : '?') + 'nocache=' + Date.now(),
-        station.streamUrl.replace('.aac', '.mp3'),
-        station.streamUrl.replace('https://', 'http://'),
-        "/api/radio-stream"
-      ];
+      // Preload the new stream
+      audio.load();
 
-      let streamWorked = false;
+      console.log(`Station changed to: ${station.name} (${station.streamUrl})`);
 
-      for (let i = 0; i < stationStreamUrls.length; i++) {
-        try {
-          const url = stationStreamUrls[i];
-          console.log(`Trying station stream ${i + 1}/${stationStreamUrls.length}: ${url}`);
-
-          // Reset audio element
-          audio.pause();
-          audio.currentTime = 0;
-          audio.src = url;
-          audio.load();
-
-          // Wait for the audio to be ready
-          await new Promise((resolve, reject) => {
-            const timeout = setTimeout(() => {
-              reject(new Error('Station stream loading timeout'));
-            }, 8000);
-
-            audio.oncanplaythrough = () => {
-              clearTimeout(timeout);
-              resolve(true);
-            };
-
-            audio.onerror = () => {
-              clearTimeout(timeout);
-              reject(new Error('Station stream error'));
-            };
-          });
-
-          // If we got here, the stream is ready
-          console.log(`Station stream ${i + 1} ready: ${url}`);
-          streamWorked = true;
-          break;
-
-        } catch (streamError) {
-          console.log(`Station stream ${i + 1} failed:`, streamError);
-          continue;
-        }
-      }
-
-      if (!streamWorked) {
-        throw new Error('All station stream formats failed');
-      }
-
-      // Resume playback if it was playing
-      if (wasPlaying) {
-        await audio.play();
-      }
-
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Failed to change station:', error);
-      setError(`Failed to connect to ${station.name}`);
+    } catch (err) {
+      console.error('Failed to change station:', err);
+      setError('Failed to switch station');
+    } finally {
       setIsLoading(false);
     }
   };

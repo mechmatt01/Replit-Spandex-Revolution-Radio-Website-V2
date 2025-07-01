@@ -21,7 +21,7 @@ interface RadioStation {
 }
 import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
 
-// Radio stations data
+// Radio stations data with corrected streaming URLs and fallbacks
 const radioStations: RadioStation[] = [
   {
     id: "beat-955",
@@ -29,7 +29,7 @@ const radioStations: RadioStation[] = [
     frequency: "95.5 FM",
     location: "Dallas, TX",
     genre: "Hip Hop & R&B",
-    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
     description: "Dallas Hip Hop & R&B",
     icon: "🎵"
   },
@@ -368,11 +368,12 @@ export default function RadioCoPlayer() {
                 <span className="font-semibold text-lg">CONNECTING...</span>
               </>
             ) : isPlaying ? (
-              <svg className="h-20 w-20" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
-                <rect x="3" y="3" width="18" height="18" rx="4" strokeLinejoin="round" strokeLinecap="round" />
+              <svg className="h-12 w-12" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="6" y="4" width="4" height="16" rx="2" />
+                <rect x="14" y="4" width="4" height="16" rx="2" />
               </svg>
             ) : (
-              <svg className="h-20 w-20" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
+              <svg className="h-12 w-12" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" />
               </svg>
             )}
@@ -431,12 +432,12 @@ export default function RadioCoPlayer() {
                 }}
               >
                 {isMuted ? (
-                  <VolumeX className="h-10 w-10" />
+                  <VolumeX className="h-8 w-8" />
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="56"
-                      height="56"
+                      width="32"
+                      height="32"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"

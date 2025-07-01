@@ -8,19 +8,43 @@ export function setupRadioProxy(app: Express) {
     // Get the station URL from query parameter, fallback to default streams
     const requestedStream = req.query.url as string;
     
-    const streamUrls = requestedStream ? [
-      requestedStream,
-      requestedStream + (requestedStream.includes('?') ? '&' : '?') + 'nocache=' + Date.now(),
-      requestedStream.replace('.aac', '.mp3'),
-      // Fallback to default streams
-      "https://ice1.somafm.com/metal-128-mp3",
-      "https://24883.live.streamtheworld.com/KBFBFMAAC",
-      "https://14923.live.streamtheworld.com/KBFBFMAAC"
-    ] : [
+    // Station-specific fallback URLs
+    const stationFallbacks: { [key: string]: string[] } = {
+      "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac": [
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
+        "https://24883.live.streamtheworld.com/KBFBFMAAC",
+        "https://14923.live.streamtheworld.com/KBFBFMAAC",
+        "https://ice1.somafm.com/metal-128-mp3"
+      ],
+      "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac": [
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
+        "https://n1ca-ice-cast.streamon.fm/Hot97_SC",
+        "https://ice1.somafm.com/metal-128-mp3"
+      ],
+      "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac": [
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
+        "https://ice1.somafm.com/metal-128-mp3"
+      ],
+      "https://ice1.somafm.com/metal-128-mp3": [
+        "https://ice1.somafm.com/metal-128-mp3",
+        "https://ice2.somafm.com/metal-128-mp3",
+        "https://ice6.somafm.com/metal-128-mp3"
+      ]
+    };
+    
+    const streamUrls = requestedStream ? (
+      stationFallbacks[requestedStream] || [
+        requestedStream,
+        requestedStream + (requestedStream.includes('?') ? '&' : '?') + 'nocache=' + Date.now(),
+        requestedStream.replace('.aac', '.mp3'),
+        // Final fallback
+        "https://ice1.somafm.com/metal-128-mp3"
+      ]
+    ) : [
       // Default streams if no URL provided
-      "https://ice1.somafm.com/metal-128-mp3",
+      "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
       "https://24883.live.streamtheworld.com/KBFBFMAAC",
-      "https://14923.live.streamtheworld.com/KBFBFMAAC"
+      "https://ice1.somafm.com/metal-128-mp3"
     ];
 
     let currentStreamIndex = 0;
