@@ -504,60 +504,41 @@ export default function RadioCoPlayer() {
                 className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 transition-all duration-300 ease-out z-50 ${
                   isVolumeSliderVisible 
                     ? 'scale-100 opacity-100 translate-y-0 pointer-events-auto' 
-                    : 'scale-90 opacity-0 -translate-y-2 pointer-events-none'
+                    : 'scale-75 opacity-0 -translate-y-4 pointer-events-none'
                 }`}
                 style={{
                   transformOrigin: 'top center'
                 }}
               >
-                <div 
-                  className="p-3"
-                  style={{
-                    background: `${colors.primary}20`,
-                    backdropFilter: 'blur(10px)',
-                    borderRadius: '12px'
-                  }}
-                >
-                  {/* Horizontal Volume Bar - Exact same style as StickyPlayer but bigger */}
-                  <div className="flex items-center space-x-3">
-                    <div className="w-48 h-4 bg-gray-700 rounded-full relative">
-                      <div 
-                        className="h-4 rounded-full transition-all duration-150"
-                        style={{ 
-                          width: `${(isMuted ? 0 : volume) * 100}%`,
-                          background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-                        }}
-                      ></div>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={(isMuted ? 0 : volume) * 100}
-                        onChange={(e) => {
-                          const newVolume = parseInt(e.target.value) / 100;
-                          setVolume(newVolume);
-                          if (isMuted && newVolume > 0) {
-                            toggleMute(); // Unmute when adjusting volume
-                          }
-                        }}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      />
-                    </div>
-                    <span className="text-sm text-gray-400 font-medium min-w-[40px] text-center">
-                      {Math.round((isMuted ? 0 : volume) * 100)}%
-                    </span>
+                {/* Volume slider - exact same as floating player but bigger */}
+                <div className="flex items-center space-x-2">
+                  <div className="w-32 h-2 bg-gray-700 rounded-full relative">
+                    <div 
+                      className="h-2 rounded-full transition-all duration-150"
+                      style={{ 
+                        width: `${(isMuted ? 0 : volume) * 100}%`,
+                        background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                      }}
+                    ></div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={(isMuted ? 0 : volume) * 100}
+                      onChange={(e) => {
+                        const newVolume = parseInt(e.target.value) / 100;
+                        setVolume(newVolume);
+                        if (isMuted && newVolume > 0) {
+                          toggleMute(); // Unmute when adjusting volume
+                        }
+                      }}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
                   </div>
+                  <span className="text-xs text-gray-400 font-medium min-w-[30px] text-center">
+                    {Math.round((isMuted ? 0 : volume) * 100)}%
+                  </span>
                 </div>
-
-                {/* Tooltip arrow */}
-                <div 
-                  className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0"
-                  style={{
-                    borderLeft: '8px solid transparent',
-                    borderRight: '8px solid transparent',
-                    borderBottom: `8px solid ${colors.primary}20`
-                  }}
-                />
               </div>
             </div>
           </div>
