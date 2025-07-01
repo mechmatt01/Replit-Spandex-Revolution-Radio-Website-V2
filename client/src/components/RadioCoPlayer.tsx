@@ -341,14 +341,14 @@ export default function RadioCoPlayer() {
               {currentTrack.album}
             </p>
           )}
-          {currentTrack.artist && currentTrack.artist !== currentTrack.title && currentTrack.artist !== "Live Stream" && (
+          {currentTrack.title !== "Live Stream" && currentTrack.title !== currentTrack.artist && (
             <p className="text-foreground font-medium text-base mb-2 transition-opacity duration-500">
-              {currentTrack.artist}
+              {selectedStation?.name || "95.5 The Beat"}
             </p>
           )}
-          {currentTrack.title !== "Live Stream" && currentTrack.artist !== "Live Stream" && (
+          {currentTrack.artist && currentTrack.artist !== currentTrack.title && currentTrack.artist !== "Live Stream" && (
             <p className="text-muted-foreground text-sm font-medium">
-              Live Stream
+              {currentTrack.artist}
             </p>
           )}
         </div>
@@ -375,30 +375,25 @@ export default function RadioCoPlayer() {
                 <span className="font-semibold text-lg">CONNECTING...</span>
               </>
             ) : isPlaying ? (
-              <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
-                <rect x="6" y="6" width="12" height="12" rx="2" />
+              <svg className="h-15 w-15" fill="currentColor" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" rx="4" strokeLinejoin="round" strokeLinecap="round" />
               </svg>
             ) : (
-              <svg className="h-12 w-12" fill="currentColor" viewBox="0 0 24 24">
+              <svg 
+                className="h-15 w-15" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+                style={{
+                  animation: 'pulse 2s ease-in-out infinite'
+                }}
+              >
                 <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" />
               </svg>
             )}
           </Button>
         </div>
 
-        {/* Button Label - Theme-aware text below button */}
-        {!isLoading && (
-          <div className="flex justify-center" style={{ marginTop: '2px' }}>
-            <span 
-              className="text-sm font-medium transition-colors duration-300"
-              style={{ 
-                color: colors.text
-              }}
-            >
-              {isPlaying ? 'Stop' : 'Play Live'}
-            </span>
-          </div>
-        )}
+        
 
         {/* Volume Control - Centered below play button, with smooth fade animations */}
         {isPlaying && (
