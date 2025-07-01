@@ -359,10 +359,33 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
 }
 
 // Now Playing API with enhanced metadata and artwork
-  // Now Playing API - 95.5 The Beat (KBFB) Dallas Hip Hop Station
+  // Dynamic Now Playing API - supports multiple radio stations
   app.get("/api/now-playing", async (req, res) => {
     try {
-      // Get real track data from 95.5 The Beat Dallas (KBFB)
+      const stationId = req.query.station || "beat-955"; // Default to 95.5 The Beat
+      
+      // Station-specific metadata fetching
+      switch (stationId) {
+        case "beat-955":
+          return await fetch955Beat(res);
+        case "hot-97":
+          return await fetchHot97(res);
+        case "power-106":
+          return await fetchPower106(res);
+        case "somafm-metal":
+          return await fetchSomaFMMetal(res);
+        default:
+          return await fetch955Beat(res);
+      }
+    } catch (error) {
+      console.error('Failed to fetch track data:', error);
+      return res.status(500).json({ error: 'Failed to fetch track data' });
+    }
+  });
+
+  // 95.5 The Beat metadata fetcher
+  async function fetch955Beat(res: Response) {
+    try {
       const beatResponse = await fetch('https://np.tritondigital.com/public/nowplaying?mountName=KBFBFMAAC&numberToFetch=1&eventType=track', {
         headers: {
           'Accept': 'application/xml',
@@ -373,30 +396,21 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
       
       if (beatResponse.ok) {
         const xmlData = await beatResponse.text();
-        
-        // Parse XML to extract track info
         const titleMatch = xmlData.match(/<property name="cue_title"><!\[CDATA\[(.*?)\]\]>/);
         const artistMatch = xmlData.match(/<property name="track_artist_name"><!\[CDATA\[(.*?)\]\]>/);
         
         if (titleMatch && artistMatch) {
           const title = titleMatch[1];
           const artist = artistMatch[1];
-          
-          // Fetch artwork for the track
-          let artwork = null;
-          try {
-            artwork = await fetchiTunesArtwork(artist, title);
-          } catch (err) {
-            console.log('Artwork fetch failed:', err);
-          }
+          const artwork = await fetchiTunesArtwork(artist, title);
           
           const nowPlayingData = {
             id: 1,
-            title: title,
-            artist: artist,
+            title,
+            artist,
             album: "95.5 The Beat",
             duration: null,
-            artwork: artwork,
+            artwork,
             isAd: false,
             createdAt: new Date(),
             updatedAt: new Date()
@@ -407,27 +421,196 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
           return res.json(nowPlayingData);
         }
       }
-      
-      // Fallback to station info
-      const stationData = {
-        id: 1,
-        title: "95.5 The Beat",
-        artist: "Dallas Hip Hop & R&B",
-        album: "Live Stream",
-        duration: null,
-        artwork: null,
-        isAd: false,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      
-      await storage.updateNowPlaying(stationData);
-      return res.json(stationData);
     } catch (error) {
-      console.error('Failed to fetch track data:', error);
-      return res.status(500).json({ error: 'Failed to fetch track data' });
+      console.log('95.5 The Beat fetch failed:', error);
     }
-  });
+    
+    // Fallback
+    const fallbackData = {
+      id: 1,
+      title: "95.5 The Beat",
+      artist: "Dallas Hip Hop & R&B", 
+      album: "Live Stream",
+      duration: null,
+      artwork: null,
+      isAd: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    await storage.updateNowPlaying(fallbackData);
+    return res.json(fallbackData);
+  }
+
+  // Hot 97 metadata fetcher
+  async function fetchHot97(res: Response) {
+    try {
+      const hot97Response = await fetch('https://playerservices.streamtheworld.com/api/livestream?version=1.9&mount=WQHTFMAAC&lang=en', {
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'Hot97RadioApp/1.0'
+        },
+        signal: AbortSignal.timeout(3000)
+      });
+      
+      if (hot97Response.ok) {
+        const hot97Data = await hot97Response.json();
+        const nowPlaying = hot97Data?.results?.livestream?.[0]?.cue;
+        
+        if (nowPlaying && nowPlaying.title) {
+          const title = nowPlaying.title;
+          const artist = nowPlaying.artist || "Hot 97";
+          const artwork = await fetchiTunesArtwork(artist, title);
+          
+          const nowPlayingData = {
+            id: 1,
+            title,
+            artist,
+            album: "Hot 97 FM",
+            duration: null,
+            artwork,
+            isAd: false,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+          
+          await storage.updateNowPlaying(nowPlayingData);
+          console.log(`Now playing: "${title}" by ${artist}`);
+          return res.json(nowPlayingData);
+        }
+      }
+    } catch (error) {
+      console.log('Hot 97 fetch failed:', error);
+    }
+    
+    // Fallback
+    const fallbackData = {
+      id: 1,
+      title: "Hot 97",
+      artist: "New York's Hip Hop & R&B",
+      album: "Live Stream", 
+      duration: null,
+      artwork: null,
+      isAd: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    await storage.updateNowPlaying(fallbackData);
+    return res.json(fallbackData);
+  }
+
+  // Power 106 metadata fetcher
+  async function fetchPower106(res: Response) {
+    try {
+      const powerResponse = await fetch('https://playerservices.streamtheworld.com/api/livestream?version=1.9&mount=KPWRFMAAC&lang=en', {
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'Power106App/1.0'
+        },
+        signal: AbortSignal.timeout(3000)
+      });
+      
+      if (powerResponse.ok) {
+        const powerData = await powerResponse.json();
+        const nowPlaying = powerData?.results?.livestream?.[0]?.cue;
+        
+        if (nowPlaying && nowPlaying.title) {
+          const title = nowPlaying.title;
+          const artist = nowPlaying.artist || "Power 106";
+          const artwork = await fetchiTunesArtwork(artist, title);
+          
+          const nowPlayingData = {
+            id: 1,
+            title,
+            artist,
+            album: "Power 106 FM",
+            duration: null,
+            artwork,
+            isAd: false,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+          
+          await storage.updateNowPlaying(nowPlayingData);
+          console.log(`Now playing: "${title}" by ${artist}`);
+          return res.json(nowPlayingData);
+        }
+      }
+    } catch (error) {
+      console.log('Power 106 fetch failed:', error);
+    }
+    
+    // Fallback
+    const fallbackData = {
+      id: 1,
+      title: "Power 106",
+      artist: "Los Angeles Hip Hop & R&B",
+      album: "Live Stream",
+      duration: null,
+      artwork: null,
+      isAd: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    await storage.updateNowPlaying(fallbackData);
+    return res.json(fallbackData);
+  }
+
+  // SomaFM Metal metadata fetcher
+  async function fetchSomaFMMetal(res: Response) {
+    try {
+      const somaResponse = await fetch('https://api.somafm.com/songs/metal.json', {
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'SomaFMApp/1.0'
+        },
+        signal: AbortSignal.timeout(3000)
+      });
+      
+      if (somaResponse.ok) {
+        const somaData = await somaResponse.json();
+        const currentSong = somaData.songs?.[0];
+        
+        if (currentSong) {
+          const title = currentSong.title;
+          const artist = currentSong.artist;
+          const artwork = await fetchiTunesArtwork(artist, title);
+          
+          const nowPlayingData = {
+            id: 1,
+            title,
+            artist,
+            album: currentSong.album || "SomaFM Metal",
+            duration: null,
+            artwork,
+            isAd: false,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+          
+          await storage.updateNowPlaying(nowPlayingData);
+          console.log(`Now playing: "${title}" by ${artist}`);
+          return res.json(nowPlayingData);
+        }
+      }
+    } catch (error) {
+      console.log('SomaFM Metal fetch failed:', error);
+    }
+    
+    // Fallback
+    const fallbackData = {
+      id: 1,
+      title: "SomaFM Metal",
+      artist: "Metal Music Stream",
+      album: "Live Stream",
+      duration: null,
+      artwork: null,
+      isAd: false,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    await storage.updateNowPlaying(fallbackData);
+    return res.json(fallbackData);
+  }
 
   // Remove old endpoint completely
   app.get("/api/now-playing-disabled", async (req, res) => {

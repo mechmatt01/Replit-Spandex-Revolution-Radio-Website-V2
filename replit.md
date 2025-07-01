@@ -138,6 +138,7 @@ Required redirect URIs in Google Cloud Console:
 3. Save the changes
 
 ## Changelog
+- June 30, 2025: FINAL artwork and station system - implemented station-aware now-playing API with authentic metadata fetching for all 4 radio stations (95.5 The Beat, Hot 97, Power 106, SomaFM Metal), added immediate track info fetching on station switches, integrated iTunes artwork lookup for each station's live tracks
 - June 30, 2025: FINAL volume control polish - increased animated volume icon to 56x56 pixels (25% bigger) while maintaining button circle dimensions, restored glassy background with proper blur effects matching reference code
 - June 30, 2025: FINAL interface polish - reduced button-to-text padding by 50% for tighter layout, added rounded edges to all play/stop icons using strokeLinejoin/strokeLinecap, increased floating player icon size by 25%, optimized volume button with 25% larger icon and compact 5px padding background circle
 - June 30, 2025: FINAL button interface cleanup - removed all text from Play Live/Stop buttons while maintaining exact dimensions, centered play/stop icons perfectly within buttons, added theme-aware text labels below button that dynamically show "Play Live" or "Stop", text color automatically adapts to all themes (white in dark modes, black in light mode), enhanced radio station dropdown background highlighting, improved volume bar hover functionality, optimized volume icon sizing to 16x16 pixels for perfect proportions

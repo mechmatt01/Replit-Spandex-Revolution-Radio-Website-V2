@@ -210,6 +210,22 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
       console.log(`Switching to station: ${station.name} - ${station.streamUrl}`);
 
+      // Immediately fetch track info for the new station
+      try {
+        const response = await fetch(`/api/now-playing?station=${station.id}`);
+        if (response.ok) {
+          const trackData = await response.json();
+          setCurrentTrack({
+            title: trackData.title || station.name,
+            artist: trackData.artist || station.description,
+            album: trackData.album || station.genre,
+            artwork: trackData.artwork || '',
+          });
+        }
+      } catch (err) {
+        console.log('Initial track fetch failed:', err);
+      }
+
       // Try multiple stream formats for the selected station
       const stationStreamUrls = [
         station.streamUrl,
@@ -358,7 +374,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       if (!isPlaying) return;
 
       try {
-        const response = await fetch('/api/now-playing');
+        const stationParam = currentStation?.id ? `?station=${currentStation.id}` : '';
+        const response = await fetch(`/api/now-playing${stationParam}`);
         if (response.ok) {
           const trackData = await response.json();
 
@@ -397,7 +414,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     return () => {
       if (trackInterval) clearInterval(trackInterval);
     };
-  }, [isPlaying, stationName]);
+  }, [isPlaying, stationName, currentStation?.id]);
 
   const value: RadioContextType = {
     isPlaying,
