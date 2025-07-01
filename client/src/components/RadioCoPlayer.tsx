@@ -99,6 +99,7 @@ export default function RadioCoPlayer() {
   const volumeButtonRef = useRef<HTMLDivElement>(null);
   const volumeSliderRef = useRef<HTMLDivElement>(null);
   const stationDropdownRef = useRef<HTMLDivElement>(null);
+  const volumeHoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -114,23 +115,29 @@ export default function RadioCoPlayer() {
     }
   }, [isStationDropdownOpen]);
 
-  // Volume slider hover handlers
-  const handleVolumeMouseEnter = () => {
+  // Enhanced volume slider hover handlers with proper debouncing
+  const handleVolumeAreaMouseEnter = () => {
+    if (volumeHoverTimeoutRef.current) {
+      clearTimeout(volumeHoverTimeoutRef.current);
+      volumeHoverTimeoutRef.current = null;
+    }
     setIsVolumeSliderVisible(true);
   };
 
-  const handleVolumeMouseLeave = () => {
-    setIsVolumeSliderVisible(false);
+  const handleVolumeAreaMouseLeave = () => {
+    volumeHoverTimeoutRef.current = setTimeout(() => {
+      setIsVolumeSliderVisible(false);
+    }, 150); // Small delay to prevent flickering
   };
 
-  // Keep slider visible when hovering over the slider itself
-  const handleSliderMouseEnter = () => {
-    setIsVolumeSliderVisible(true);
-  };
-
-  const handleSliderMouseLeave = () => {
-    setIsVolumeSliderVisible(false);
-  };
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (volumeHoverTimeoutRef.current) {
+        clearTimeout(volumeHoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleStationChange = async (station: RadioStation) => {
     if (station.id === selectedStation.id) return;
@@ -422,13 +429,16 @@ export default function RadioCoPlayer() {
 
         
 
-        {/* Volume Control - Centered below play button, with smooth fade animations */}
+        {/* Volume Control - Centered below play button, with proper hover area */}
         {isPlaying && (
           <div 
             className="relative transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100"
             ref={volumeButtonRef}
+            onMouseEnter={handleVolumeAreaMouseEnter}
+            onMouseLeave={handleVolumeAreaMouseLeave}
           >
-            <div className="relative flex items-center justify-center">
+            {/* Extended hover area that includes button and slider */}
+            <div className="relative flex items-center justify-center pb-16">
               {/* Volume Button - stays centered */}
               <Button
                 onClick={toggleMute}
@@ -443,16 +453,14 @@ export default function RadioCoPlayer() {
                   height: 'auto'
                 }}
                 aria-label={isMuted ? "Unmute" : "Mute"}
-                onMouseEnter={handleVolumeMouseEnter}
-                onMouseLeave={handleVolumeMouseLeave}
               >
                 {isMuted ? (
                   <VolumeX className="w-10 h-10" />
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="40"
-                      height="40"
+                      width="48"
+                      height="48"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
@@ -460,6 +468,8 @@ export default function RadioCoPlayer() {
                       <path
                         d="M11 5L6 9H2v6h4l5 4V5z"
                         fill="currentColor"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
                       />
                       <path 
                         d="M15.54 8.46a5 5 0 0 1 0 7.07" 
@@ -488,27 +498,42 @@ export default function RadioCoPlayer() {
                 )}
               </Button>
 
-              {/* Downward Bouncing Volume Bar - Drops from button center */}
+              {/* Volume Slider - positioned within hover area */}
               <div 
                 ref={volumeSliderRef}
-                className={`volume-slider absolute top-full left-1/2 -translate-x-1/2 mt-1 transform origin-top transition-all duration-300 ease-out z-50 ${
+                className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 transition-all duration-300 ease-out z-50 ${
                   isVolumeSliderVisible 
-                    ? 'scale-y-100 opacity-100 pointer-events-auto' 
-                    : 'scale-y-0 opacity-0 pointer-events-none'
+                    ? 'scale-100 opacity-100 translate-y-0 pointer-events-auto' 
+                    : 'scale-90 opacity-0 -translate-y-2 pointer-events-none'
                 }`}
                 style={{
                   transformOrigin: 'top center'
                 }}
-                onMouseEnter={handleSliderMouseEnter}
-                onMouseLeave={handleSliderMouseLeave}
               >
-                <div className="p-2">
-                  {/* Simple Volume Bar - Same style as floating player but thicker/wider */}
+                <div 
+                  className="p-3 rounded-2xl shadow-xl backdrop-blur-xl border border-white/10"
+                  style={{
+                    background: `linear-gradient(135deg, ${colors.primary}15, ${colors.secondary}05)`,
+                    backdropFilter: 'blur(20px)'
+                  }}
+                >
+                  {/* Volume percentage display */}
                   <div 
-                    className="relative w-48 h-6 rounded-full overflow-hidden shadow-lg"
-                    style={{ 
+                    className="text-xs font-bold text-center mb-2 px-2 py-1 rounded-full"
+                    style={{
                       background: `${colors.primary}20`,
-                      backdropFilter: 'blur(10px)'
+                      color: colors.primary
+                    }}
+                  >
+                    {Math.round((isMuted ? 0 : volume) * 100)}%
+                  </div>
+
+                  {/* Horizontal Volume Bar */}
+                  <div 
+                    className="relative w-40 h-4 rounded-full overflow-hidden shadow-inner"
+                    style={{ 
+                      background: `${colors.primary}10`,
+                      border: `1px solid ${colors.primary}20`
                     }}
                   >
                     {/* Volume fill */}
@@ -516,20 +541,22 @@ export default function RadioCoPlayer() {
                       className="absolute left-0 h-full rounded-full transition-all duration-200 ease-out"
                       style={{  
                         width: `${(isMuted ? 0 : volume) * 100}%`,
-                        background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`
+                        background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`,
+                        boxShadow: `0 0 8px ${colors.primary}40`
                       }}
                     />
 
                     {/* Volume thumb */}
                     <div 
-                      className="absolute w-6 h-6 rounded-full top-1/2 -translate-y-1/2 -translate-x-3 transition-all duration-200 shadow-lg border-2 border-white/20"
+                      className="absolute w-4 h-4 rounded-full top-1/2 -translate-y-1/2 -translate-x-2 transition-all duration-200 shadow-lg"
                       style={{
                         left: `${(isMuted ? 0 : volume) * 100}%`,
-                        background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                        background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+                        border: `2px solid white`
                       }}
                     />
 
-                    {/* Click area for volume control */}
+                    {/* Interactive area for volume control */}
                     <div 
                       className="absolute inset-0 cursor-pointer"
                       onClick={(e) => {
@@ -537,10 +564,71 @@ export default function RadioCoPlayer() {
                         const x = e.clientX - rect.left;
                         const newVolume = Math.max(0, Math.min(1, x / rect.width));
                         setVolume(newVolume);
+                        if (isMuted) {
+                          toggleMute(); // Unmute when adjusting volume
+                        }
+                      }}
+                      onMouseMove={(e) => {
+                        if (e.buttons === 1) { // Left mouse button is pressed
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const x = e.clientX - rect.left;
+                          const newVolume = Math.max(0, Math.min(1, x / rect.width));
+                          setVolume(newVolume);
+                          if (isMuted) {
+                            toggleMute(); // Unmute when dragging
+                          }
+                        }
                       }}
                     />
                   </div>
+
+                  {/* Quick volume preset buttons */}
+                  <div className="flex justify-center gap-1 mt-2">
+                    <button 
+                      onClick={() => setVolume(0.25)}
+                      className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
+                      style={{
+                        background: `${colors.primary}15`,
+                        color: colors.primary,
+                        border: `1px solid ${colors.primary}30`
+                      }}
+                    >
+                      25%
+                    </button>
+                    <button 
+                      onClick={() => setVolume(0.5)}
+                      className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
+                      style={{
+                        background: `${colors.primary}15`,
+                        color: colors.primary,
+                        border: `1px solid ${colors.primary}30`
+                      }}
+                    >
+                      50%
+                    </button>
+                    <button 
+                      onClick={() => setVolume(1)}
+                      className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
+                      style={{
+                        background: `${colors.primary}15`,
+                        color: colors.primary,
+                        border: `1px solid ${colors.primary}30`
+                      }}
+                    >
+                      MAX
+                    </button>
+                  </div>
                 </div>
+
+                {/* Tooltip arrow */}
+                <div 
+                  className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0"
+                  style={{
+                    borderLeft: '8px solid transparent',
+                    borderRight: '8px solid transparent',
+                    borderBottom: `8px solid ${colors.primary}15`
+                  }}
+                />
               </div>
             </div>
           </div>
