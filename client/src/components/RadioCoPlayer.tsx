@@ -375,7 +375,7 @@ export default function RadioCoPlayer() {
                 <span className="font-semibold text-lg">CONNECTING...</span>
               </>
             ) : isPlaying ? (
-              <svg className="h-15 w-15" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="h-16 w-16" fill="currentColor" viewBox="0 0 24 24">
                 <rect x="4" y="4" width="16" height="16" rx="4" strokeLinejoin="round" strokeLinecap="round" />
               </svg>
             ) : (
