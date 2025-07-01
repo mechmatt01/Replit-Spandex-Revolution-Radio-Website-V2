@@ -360,14 +360,13 @@ export default function RadioCoPlayer() {
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
-            className={`font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center mx-auto ${isPlaying ? 'animate-pulse' : ''}`}
+            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center mx-auto"
             style={{
               background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
               color: 'white',
               boxShadow: `0 10px 40px ${colors.primary}60`,
               position: 'relative',
-              zIndex: 1,
-              animation: isPlaying ? 'pulse 2s ease-in-out infinite' : 'none'
+              zIndex: 1
             }}
           >
             {isLoading ? (

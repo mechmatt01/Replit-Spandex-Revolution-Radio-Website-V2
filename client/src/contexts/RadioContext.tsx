@@ -335,31 +335,30 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         if (response.ok) {
           const trackData = await response.json();
 
-          console.log('Fetched track data:', trackData);
-
-          // Always update track info, even if it seems the same
-          setIsTransitioning(true);
-          
-          // Don't show generic data - use actual track info or station info
-          const displayTitle = trackData.title && trackData.title !== "Radio Stream" 
-            ? trackData.title 
-            : currentStation?.name || stationName;
-          
-          const displayArtist = trackData.artist && trackData.artist !== "Live Stream" && trackData.artist !== "Live Broadcast"
-            ? trackData.artist
-            : currentStation?.description || '';
-          
-          const displayAlbum = trackData.album && trackData.album !== "Live Stream"
-            ? trackData.album
-            : (currentStation ? `${currentStation.frequency} • ${currentStation.location}` : '');
-          
-          setCurrentTrack({
-            title: displayTitle,
-            artist: displayArtist,
-            album: displayAlbum,
-            artwork: trackData.artwork || '',
-          });
-          setTimeout(() => setIsTransitioning(false), 300);
+          // Only update if track has actually changed
+          if (trackData.title !== currentTrack.title || trackData.artist !== currentTrack.artist) {
+            setIsTransitioning(true);
+            
+            // If we get generic "Radio Stream" data, show station info instead
+            const displayTitle = (trackData.title === "Radio Stream" || !trackData.title) 
+              ? currentStation?.name || stationName 
+              : trackData.title;
+            
+            const displayArtist = (trackData.artist === "Live Stream" || !trackData.artist)
+              ? currentStation?.description || ''
+              : trackData.artist;
+            
+            const displayAlbum = trackData.album || 
+              (currentStation ? `${currentStation.frequency} • ${currentStation.location}` : '');
+            
+            setCurrentTrack({
+              title: displayTitle,
+              artist: displayArtist,
+              album: displayAlbum,
+              artwork: trackData.artwork || '',
+            });
+            setTimeout(() => setIsTransitioning(false), 300);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch track info:', error);
@@ -368,7 +367,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
     if (isPlaying) {
       fetchTrackInfo();
-      trackInterval = setInterval(fetchTrackInfo, 10000); // Check every 10 seconds
+      trackInterval = setInterval(fetchTrackInfo, 15000); // Check every 15 seconds instead of 10
     } else {
       // When stopped, show station name only if no track is set
       if (currentTrack.title === '' || currentTrack.title === stationName) {
