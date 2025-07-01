@@ -85,6 +85,7 @@ export default function RadioCoPlayer() {
 
   const [isStationDropdownOpen, setIsStationDropdownOpen] = useState(false);
   const [selectedStation, setSelectedStation] = useState<RadioStation>(radioStations[0]);
+  const [isVolumeSliderVisible, setIsVolumeSliderVisible] = useState(false);
 
   // Initialize selected station with first station on mount
   useEffect(() => {
@@ -96,6 +97,7 @@ export default function RadioCoPlayer() {
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const volumeButtonRef = useRef<HTMLDivElement>(null);
+  const volumeSliderRef = useRef<HTMLDivElement>(null);
   const stationDropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -111,6 +113,24 @@ export default function RadioCoPlayer() {
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
   }, [isStationDropdownOpen]);
+
+  // Volume slider hover handlers
+  const handleVolumeMouseEnter = () => {
+    setIsVolumeSliderVisible(true);
+  };
+
+  const handleVolumeMouseLeave = () => {
+    setIsVolumeSliderVisible(false);
+  };
+
+  // Keep slider visible when hovering over the slider itself
+  const handleSliderMouseEnter = () => {
+    setIsVolumeSliderVisible(true);
+  };
+
+  const handleSliderMouseLeave = () => {
+    setIsVolumeSliderVisible(false);
+  };
 
   const handleStationChange = async (station: RadioStation) => {
     if (station.id === selectedStation.id) return;
@@ -405,8 +425,10 @@ export default function RadioCoPlayer() {
         {/* Volume Control - Centered below play button, with smooth fade animations */}
         {isPlaying && (
           <div 
-            className="relative group transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100"
+            className="relative transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100"
             ref={volumeButtonRef}
+            onMouseEnter={handleVolumeMouseEnter}
+            onMouseLeave={handleVolumeMouseLeave}
           >
             <div className="relative flex items-center justify-center">
               {/* Volume Button - stays centered */}
@@ -414,7 +436,7 @@ export default function RadioCoPlayer() {
                 onClick={toggleMute}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-105"
+                className="text-white hover:bg-white/10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105"
                 style={{
                   background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
                   backdropFilter: 'blur(20px)',
@@ -469,10 +491,17 @@ export default function RadioCoPlayer() {
 
             {/* Downward Bouncing Volume Bar - Drops from button center */}
             <div 
-              className="volume-slider absolute top-full left-1/2 -translate-x-1/2 mt-1 transform scale-y-0 opacity-0 origin-top transition-all duration-300 ease-out pointer-events-none group-hover:scale-y-100 group-hover:opacity-100 group-hover:pointer-events-auto z-50"
+              ref={volumeSliderRef}
+              className={`volume-slider absolute top-full left-1/2 -translate-x-1/2 mt-1 transform origin-top transition-all duration-300 ease-out z-50 ${
+                isVolumeSliderVisible 
+                  ? 'scale-y-100 opacity-100 pointer-events-auto' 
+                  : 'scale-y-0 opacity-0 pointer-events-none'
+              }`}
               style={{
                 transformOrigin: 'top center'
               }}
+              onMouseEnter={handleSliderMouseEnter}
+              onMouseLeave={handleSliderMouseLeave}
             >
               <div className="p-2">
                 {/* Simple Volume Bar - Same style as floating player but thicker/wider */}
