@@ -346,7 +346,10 @@ export default function RadioCoPlayer() {
               {selectedStation?.name || "95.5 The Beat"}
             </p>
           )}
-          {currentTrack.artist && currentTrack.artist !== currentTrack.title && currentTrack.artist !== "Live Stream" && (
+          {currentTrack.artist && 
+           currentTrack.artist !== currentTrack.title && 
+           currentTrack.artist !== "Live Stream" && 
+           currentTrack.artist !== (selectedStation?.name || "95.5 The Beat") && (
             <p className="text-muted-foreground text-sm font-medium">
               {currentTrack.artist}
             </p>
