@@ -369,20 +369,20 @@ export default function RadioCoPlayer() {
               {currentTrack.album}
             </p>
           )}
-          {currentTrack.title !== "Live Stream" && 
-           currentTrack.title !== currentTrack.artist && 
-           currentTrack.title !== (selectedStation?.name || "95.5 The Beat") && 
-           (selectedStation?.name || "95.5 The Beat") !== currentTrack.title && (
-            <p className="text-foreground font-black text-2xl mb-2 transition-opacity duration-500">
-              {selectedStation?.name || "95.5 The Beat"}
-            </p>
-          )}
           {currentTrack.artist && 
            currentTrack.artist !== currentTrack.title && 
            currentTrack.artist !== "Live Stream" && 
            currentTrack.artist !== (selectedStation?.name || "95.5 The Beat") && (
-            <p className="text-muted-foreground text-sm font-medium">
+            <p className="text-muted-foreground text-sm font-medium mb-2 transition-opacity duration-500">
               {currentTrack.artist}
+            </p>
+          )}
+          {currentTrack.title !== "Live Stream" && 
+           currentTrack.title !== currentTrack.artist && 
+           currentTrack.title !== (selectedStation?.name || "95.5 The Beat") && 
+           (selectedStation?.name || "95.5 The Beat") !== currentTrack.title && (
+            <p className="text-foreground font-black text-2xl transition-opacity duration-500">
+              {selectedStation?.name || "95.5 The Beat"}
             </p>
           )}
         </div>
@@ -511,62 +511,35 @@ export default function RadioCoPlayer() {
                 }}
               >
                 <div 
-                  className="p-2"
+                  className="p-3"
                   style={{
                     background: `${colors.primary}20`,
                     backdropFilter: 'blur(10px)',
                     borderRadius: '12px'
                   }}
                 >
-                  {/* Simple Volume Bar - Same style as floating player but bigger */}
-                  <div 
-                    className="relative w-48 h-6 rounded-full overflow-hidden shadow-lg"
-                    style={{ 
-                      background: `${colors.primary}20`,
-                      backdropFilter: 'blur(10px)'
-                    }}
-                  >
-                    {/* Volume fill */}
+                  {/* Horizontal Volume Bar - Same style as floating player but bigger */}
+                  <div className="w-48 h-3 bg-gray-700 rounded-full relative">
                     <div 
-                      className="absolute left-0 h-full rounded-full transition-all duration-200 ease-out"
-                      style={{  
+                      className="h-3 rounded-full transition-all duration-150"
+                      style={{ 
                         width: `${(isMuted ? 0 : volume) * 100}%`,
-                        background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`
-                      }}
-                    />
-
-                    {/* Volume thumb */}
-                    <div 
-                      className="absolute w-6 h-6 rounded-full top-1/2 -translate-y-1/2 -translate-x-3 transition-all duration-200 shadow-lg"
-                      style={{
-                        left: `${(isMuted ? 0 : volume) * 100}%`,
                         background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
                       }}
-                    />
-
-                    {/* Interactive area for volume control */}
-                    <div 
-                      className="absolute inset-0 cursor-pointer"
-                      onClick={(e) => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const newVolume = Math.max(0, Math.min(1, x / rect.width));
+                    ></div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={(isMuted ? 0 : volume) * 100}
+                      onChange={(e) => {
+                        const newVolume = parseInt(e.target.value) / 100;
                         setVolume(newVolume);
-                        if (isMuted) {
+                        if (isMuted && newVolume > 0) {
                           toggleMute(); // Unmute when adjusting volume
                         }
                       }}
-                      onMouseMove={(e) => {
-                        if (e.buttons === 1) { // Left mouse button is pressed
-                          const rect = e.currentTarget.getBoundingClientRect();
-                          const x = e.clientX - rect.left;
-                          const newVolume = Math.max(0, Math.min(1, x / rect.width));
-                          setVolume(newVolume);
-                          if (isMuted) {
-                            toggleMute(); // Unmute when dragging
-                          }
-                        }
-                      }}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                   </div>
                 </div>
@@ -577,7 +550,7 @@ export default function RadioCoPlayer() {
                   style={{
                     borderLeft: '8px solid transparent',
                     borderRight: '8px solid transparent',
-                    borderBottom: `8px solid ${colors.primary}15`
+                    borderBottom: `8px solid ${colors.primary}20`
                   }}
                 />
               </div>
