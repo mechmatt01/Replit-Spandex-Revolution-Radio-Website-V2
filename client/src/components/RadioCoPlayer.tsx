@@ -518,29 +518,34 @@ export default function RadioCoPlayer() {
                     borderRadius: '12px'
                   }}
                 >
-                  {/* Horizontal Volume Bar - Same style as floating player but bigger */}
-                  <div className="w-48 h-3 bg-gray-700 rounded-full relative">
-                    <div 
-                      className="h-3 rounded-full transition-all duration-150"
-                      style={{ 
-                        width: `${(isMuted ? 0 : volume) * 100}%`,
-                        background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
-                      }}
-                    ></div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={(isMuted ? 0 : volume) * 100}
-                      onChange={(e) => {
-                        const newVolume = parseInt(e.target.value) / 100;
-                        setVolume(newVolume);
-                        if (isMuted && newVolume > 0) {
-                          toggleMute(); // Unmute when adjusting volume
-                        }
-                      }}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    />
+                  {/* Horizontal Volume Bar - Exact same style as StickyPlayer but bigger */}
+                  <div className="flex items-center space-x-3">
+                    <div className="w-48 h-4 bg-gray-700 rounded-full relative">
+                      <div 
+                        className="h-4 rounded-full transition-all duration-150"
+                        style={{ 
+                          width: `${(isMuted ? 0 : volume) * 100}%`,
+                          background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
+                        }}
+                      ></div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={(isMuted ? 0 : volume) * 100}
+                        onChange={(e) => {
+                          const newVolume = parseInt(e.target.value) / 100;
+                          setVolume(newVolume);
+                          if (isMuted && newVolume > 0) {
+                            toggleMute(); // Unmute when adjusting volume
+                          }
+                        }}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                    </div>
+                    <span className="text-sm text-gray-400 font-medium min-w-[40px] text-center">
+                      {Math.round((isMuted ? 0 : volume) * 100)}%
+                    </span>
                   </div>
                 </div>
 
