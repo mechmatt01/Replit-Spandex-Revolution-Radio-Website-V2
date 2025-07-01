@@ -364,7 +364,23 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
     try {
       const stationId = req.query.station || "beat-955"; // Default to 95.5 The Beat
       
-      // Return fallback data for now to get app running
+      // Route to appropriate station metadata fetcher
+      switch (stationId) {
+        case "beat-955":
+          return await fetch955Beat(res);
+        case "hot-97":
+          return await fetchHot97(res);
+        case "power-106":
+          return await fetchPower106(res);
+        case "somafm-metal":
+          return await fetchSomaFMMetal(res);
+        default:
+          return await fetch955Beat(res);
+      }
+    } catch (error) {
+      console.error('Failed to fetch track data:', error);
+      
+      // Final fallback only if all station fetchers fail
       const fallbackData = {
         id: 1,
         title: "Radio Stream",
@@ -379,9 +395,6 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
       
       await storage.updateNowPlaying(fallbackData);
       return res.json(fallbackData);
-    } catch (error) {
-      console.error('Failed to fetch track data:', error);
-      return res.status(500).json({ error: 'Failed to fetch track data' });
     }
   });
 

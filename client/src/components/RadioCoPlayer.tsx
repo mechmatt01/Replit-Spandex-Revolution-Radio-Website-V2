@@ -511,29 +511,19 @@ export default function RadioCoPlayer() {
                 }}
               >
                 <div 
-                  className="p-3 rounded-2xl shadow-xl backdrop-blur-xl border border-white/10"
+                  className="p-2"
                   style={{
-                    background: `linear-gradient(135deg, ${colors.primary}15, ${colors.secondary}05)`,
-                    backdropFilter: 'blur(20px)'
+                    background: `${colors.primary}20`,
+                    backdropFilter: 'blur(10px)',
+                    borderRadius: '12px'
                   }}
                 >
-                  {/* Volume percentage display */}
+                  {/* Simple Volume Bar - Same style as floating player but bigger */}
                   <div 
-                    className="text-xs font-bold text-center mb-2 px-2 py-1 rounded-full"
-                    style={{
-                      background: `${colors.primary}20`,
-                      color: colors.primary
-                    }}
-                  >
-                    {Math.round((isMuted ? 0 : volume) * 100)}%
-                  </div>
-
-                  {/* Horizontal Volume Bar */}
-                  <div 
-                    className="relative w-40 h-4 rounded-full overflow-hidden shadow-inner"
+                    className="relative w-48 h-6 rounded-full overflow-hidden shadow-lg"
                     style={{ 
-                      background: `${colors.primary}10`,
-                      border: `1px solid ${colors.primary}20`
+                      background: `${colors.primary}20`,
+                      backdropFilter: 'blur(10px)'
                     }}
                   >
                     {/* Volume fill */}
@@ -541,18 +531,16 @@ export default function RadioCoPlayer() {
                       className="absolute left-0 h-full rounded-full transition-all duration-200 ease-out"
                       style={{  
                         width: `${(isMuted ? 0 : volume) * 100}%`,
-                        background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`,
-                        boxShadow: `0 0 8px ${colors.primary}40`
+                        background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`
                       }}
                     />
 
                     {/* Volume thumb */}
                     <div 
-                      className="absolute w-4 h-4 rounded-full top-1/2 -translate-y-1/2 -translate-x-2 transition-all duration-200 shadow-lg"
+                      className="absolute w-6 h-6 rounded-full top-1/2 -translate-y-1/2 -translate-x-3 transition-all duration-200 shadow-lg"
                       style={{
                         left: `${(isMuted ? 0 : volume) * 100}%`,
-                        background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-                        border: `2px solid white`
+                        background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
                       }}
                     />
 
@@ -580,43 +568,6 @@ export default function RadioCoPlayer() {
                         }
                       }}
                     />
-                  </div>
-
-                  {/* Quick volume preset buttons */}
-                  <div className="flex justify-center gap-1 mt-2">
-                    <button 
-                      onClick={() => setVolume(0.25)}
-                      className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
-                      style={{
-                        background: `${colors.primary}15`,
-                        color: colors.primary,
-                        border: `1px solid ${colors.primary}30`
-                      }}
-                    >
-                      25%
-                    </button>
-                    <button 
-                      onClick={() => setVolume(0.5)}
-                      className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
-                      style={{
-                        background: `${colors.primary}15`,
-                        color: colors.primary,
-                        border: `1px solid ${colors.primary}30`
-                      }}
-                    >
-                      50%
-                    </button>
-                    <button 
-                      onClick={() => setVolume(1)}
-                      className="text-xs px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105"
-                      style={{
-                        background: `${colors.primary}15`,
-                        color: colors.primary,
-                        border: `1px solid ${colors.primary}30`
-                      }}
-                    >
-                      MAX
-                    </button>
                   </div>
                 </div>
 
