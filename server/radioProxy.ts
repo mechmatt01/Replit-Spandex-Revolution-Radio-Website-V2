@@ -4,8 +4,20 @@ import type { Express, Request, Response } from "express";
 export function setupRadioProxy(app: Express) {
   // Radio stream proxy to handle CORS and format issues
   app.get("/api/radio-stream", (req: Request, res: Response) => {
-    const streamUrls = [
-      // Working reliable streams
+    // Get the station URL from query parameter, fallback to default streams
+    const requestedStream = req.query.url as string;
+    
+    const streamUrls = requestedStream ? [
+      requestedStream,
+      requestedStream + (requestedStream.includes('?') ? '&' : '?') + 'nocache=' + Date.now(),
+      requestedStream.replace('.aac', '.mp3'),
+      requestedStream.replace('https://', 'http://'),
+      // Fallback to default streams
+      "https://ice1.somafm.com/metal-128-mp3",
+      "https://24883.live.streamtheworld.com/KBFBFMAAC",
+      "https://14923.live.streamtheworld.com/KBFBFMAAC"
+    ] : [
+      // Default streams if no URL provided
       "https://ice1.somafm.com/metal-128-mp3",
       "https://24883.live.streamtheworld.com/KBFBFMAAC",
       "https://14923.live.streamtheworld.com/KBFBFMAAC"
