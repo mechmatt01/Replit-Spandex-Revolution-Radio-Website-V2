@@ -381,22 +381,44 @@ export default function RadioCoPlayer() {
         </div>
 
         {/* Button Label - Theme-aware text below button */}
-        <div className="flex justify-center" style={{ marginTop: '2px' }}>
-          <span 
-            className="text-sm font-medium transition-colors duration-300"
-            style={{ 
-              color: colors.text
-            }}
-          >
-            {isLoading ? 'CONNECTING...' : isPlaying ? 'Stop' : 'Play Live'}
-          </span>
-        </div>
+        {!isLoading && (
+          <div className="flex justify-center" style={{ marginTop: '2px' }}>
+            <span 
+              className="text-sm font-medium transition-colors duration-300"
+              style={{ 
+                color: colors.text
+              }}
+            >
+              {isPlaying ? 'Stop' : 'Play Live'}
+            </span>
+          </div>
+        )}
 
         {/* Volume Control - Centered below play button, with smooth fade animations */}
         {isPlaying && (
           <div 
             className="relative group transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100"
             ref={volumeButtonRef}
+            onMouseEnter={() => {
+              const volumeSlider = volumeButtonRef.current?.querySelector('.volume-slider') as HTMLElement;
+              if (volumeSlider) {
+                volumeSlider.style.transform = 'translateX(-50%) scaleY(1)';
+                volumeSlider.style.opacity = '1';
+                volumeSlider.style.pointerEvents = 'auto';
+              }
+            }}
+            onMouseLeave={() => {
+              const volumeSlider = volumeButtonRef.current?.querySelector('.volume-slider') as HTMLElement;
+              if (volumeSlider) {
+                setTimeout(() => {
+                  if (!volumeSlider.matches(':hover')) {
+                    volumeSlider.style.transform = 'translateX(-50%) scaleY(0)';
+                    volumeSlider.style.opacity = '0';
+                    volumeSlider.style.pointerEvents = 'none';
+                  }
+                }, 100);
+              }
+            }}
           >
             <div className="relative flex items-center justify-center">
               {/* Volume Button - stays centered */}
@@ -410,26 +432,6 @@ export default function RadioCoPlayer() {
                   backdropFilter: 'blur(20px)'
                 }}
                 aria-label={isMuted ? "Unmute" : "Mute"}
-                onMouseEnter={() => {
-                  const volumeSlider = volumeButtonRef.current?.querySelector('.volume-slider') as HTMLElement;
-                  if (volumeSlider) {
-                    volumeSlider.style.transform = 'translateX(-50%) scaleY(1)';
-                    volumeSlider.style.opacity = '1';
-                    volumeSlider.style.pointerEvents = 'auto';
-                  }
-                }}
-                onMouseLeave={() => {
-                  const volumeSlider = volumeButtonRef.current?.querySelector('.volume-slider') as HTMLElement;
-                  if (volumeSlider) {
-                    setTimeout(() => {
-                      if (!volumeSlider.matches(':hover')) {
-                        volumeSlider.style.transform = 'translateX(-50%) scaleY(0)';
-                        volumeSlider.style.opacity = '0';
-                        volumeSlider.style.pointerEvents = 'none';
-                      }
-                    }, 100);
-                  }
-                }}
               >
                 {isMuted ? (
                   <VolumeX className="h-8 w-8" />
@@ -476,7 +478,7 @@ export default function RadioCoPlayer() {
 
             {/* Downward Bouncing Volume Bar - Drops from button center */}
             <div 
-              className="volume-slider absolute top-full left-1/2 -translate-x-1/2 mt-1 transform scale-y-0 opacity-0 origin-top group-hover:scale-y-100 group-hover:opacity-100 transition-all duration-300 ease-out pointer-events-none group-hover:pointer-events-auto z-50"
+              className="volume-slider absolute top-full left-1/2 -translate-x-1/2 mt-1 transform scale-y-0 opacity-0 origin-top transition-all duration-300 ease-out pointer-events-none z-50"
               style={{
                 transformOrigin: 'top center'
               }}
