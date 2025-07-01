@@ -122,8 +122,22 @@ export default function RadioCoPlayer() {
     setIsStationDropdownOpen(false);
     
     try {
+      // Stop current playback if playing
+      if (isPlaying) {
+        await togglePlayback();
+        // Wait a moment for the stop to complete
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+      
+      // Change to new station
       await changeStation(station);
       console.log(`Successfully changed to station: ${station.name}`);
+      
+      // Auto-start playing the new station
+      await new Promise(resolve => setTimeout(resolve, 500));
+      if (!isPlaying) {
+        await togglePlayback();
+      }
     } catch (err) {
       console.error('Failed to switch station:', err);
     }
@@ -369,8 +383,7 @@ export default function RadioCoPlayer() {
               </>
             ) : isPlaying ? (
               <svg className="h-12 w-12" fill="currentColor" viewBox="0 0 24 24">
-                <rect x="6" y="4" width="4" height="16" rx="2" />
-                <rect x="14" y="4" width="4" height="16" rx="2" />
+                <rect x="6" y="6" width="12" height="12" rx="2" />
               </svg>
             ) : (
               <svg className="h-12 w-12" fill="currentColor" viewBox="0 0 24 24">
@@ -426,20 +439,23 @@ export default function RadioCoPlayer() {
                 onClick={toggleMute}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/10 rounded-full p-4 w-16 h-16 flex items-center justify-center transition-all duration-300 group-hover:scale-105"
+                className="text-white hover:bg-white/10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:scale-105"
                 style={{
                   background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
-                  backdropFilter: 'blur(20px)'
+                  backdropFilter: 'blur(20px)',
+                  padding: '5px',
+                  width: 'auto',
+                  height: 'auto'
                 }}
                 aria-label={isMuted ? "Unmute" : "Mute"}
               >
                 {isMuted ? (
-                  <VolumeX className="h-8 w-8" />
+                  <VolumeX className="h-12 w-12" />
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="32"
-                      height="32"
+                      width="48"
+                      height="48"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"

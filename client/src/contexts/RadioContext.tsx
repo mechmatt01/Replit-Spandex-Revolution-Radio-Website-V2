@@ -71,7 +71,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
     title: "95.5 The Beat",
     artist: "Dallas Hip Hop & R&B",
-    album: "Dallas Hip Hop & R&B",
+    album: "95.5 FM • Dallas, TX",
     artwork: ""
   });
   const [stationName, setStationName] = useState("95.5 The Beat");
@@ -317,10 +317,23 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           // Only update if track has actually changed
           if (trackData.title !== currentTrack.title || trackData.artist !== currentTrack.artist) {
             setIsTransitioning(true);
+            
+            // If we get generic "Radio Stream" data, show station info instead
+            const displayTitle = (trackData.title === "Radio Stream" || !trackData.title) 
+              ? currentStation?.name || stationName 
+              : trackData.title;
+            
+            const displayArtist = (trackData.artist === "Live Stream" || !trackData.artist)
+              ? currentStation?.description || ''
+              : trackData.artist;
+            
+            const displayAlbum = trackData.album || 
+              (currentStation ? `${currentStation.frequency} • ${currentStation.location}` : '');
+            
             setCurrentTrack({
-              title: trackData.title || stationName,
-              artist: trackData.artist || '',
-              album: trackData.album || '',
+              title: displayTitle,
+              artist: displayArtist,
+              album: displayAlbum,
               artwork: trackData.artwork || '',
             });
             setTimeout(() => setIsTransitioning(false), 300);

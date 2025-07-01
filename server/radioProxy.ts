@@ -8,27 +8,32 @@ export function setupRadioProxy(app: Express) {
     // Get the station URL from query parameter, fallback to default streams
     const requestedStream = req.query.url as string;
     
-    // Station-specific fallback URLs
+    // Station-specific fallback URLs with better working streams
     const stationFallbacks: { [key: string]: string[] } = {
       "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac": [
+        "https://24883.live.streamtheworld.com/KBFBFMAAC.aac",
+        "https://14923.live.streamtheworld.com/KBFBFMAAC.aac", 
+        "https://17943.live.streamtheworld.com/KBFBFMAAC.aac",
         "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
-        "https://24883.live.streamtheworld.com/KBFBFMAAC",
-        "https://14923.live.streamtheworld.com/KBFBFMAAC",
         "https://ice1.somafm.com/metal-128-mp3"
       ],
       "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac": [
+        "https://24883.live.streamtheworld.com/WQHTFMAAC.aac",
+        "https://14923.live.streamtheworld.com/WQHTFMAAC.aac",
         "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
-        "https://n1ca-ice-cast.streamon.fm/Hot97_SC",
         "https://ice1.somafm.com/metal-128-mp3"
       ],
       "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac": [
+        "https://24883.live.streamtheworld.com/KPWRFMAAC.aac",
+        "https://14923.live.streamtheworld.com/KPWRFMAAC.aac",
         "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
         "https://ice1.somafm.com/metal-128-mp3"
       ],
       "https://ice1.somafm.com/metal-128-mp3": [
         "https://ice1.somafm.com/metal-128-mp3",
         "https://ice2.somafm.com/metal-128-mp3",
-        "https://ice6.somafm.com/metal-128-mp3"
+        "https://ice6.somafm.com/metal-128-mp3",
+        "https://ice4.somafm.com/metal-128-mp3"
       ]
     };
     
@@ -65,7 +70,53 @@ export function setupRadioProxy(app: Express) {
       const requestModule = isHttps ? https : http;
       
       const request = requestModule.get(streamUrl, (response) => {
-        if (response.statusCode === 200 && !res.headersSent) {
+        // Handle redirects for streaming services
+        if ((response.statusCode === 301 || response.statusCode === 302) && response.headers.location) {
+          console.log(`Stream ${currentStreamIndex + 1} redirected to: ${response.headers.location}`);
+          const redirectUrl = response.headers.location;
+          const redirectModule = redirectUrl.startsWith('https://') ? https : http;
+          
+          const redirectRequest = redirectModule.get(redirectUrl, (redirectResponse) => {
+            if (redirectResponse.statusCode === 200 && !res.headersSent) {
+              // Set headers for audio streaming
+              res.setHeader('Content-Type', 'audio/mpeg');
+              res.setHeader('Access-Control-Allow-Origin', '*');
+              res.setHeader('Access-Control-Allow-Methods', 'GET');
+              res.setHeader('Cache-Control', 'no-cache');
+              res.setHeader('Accept-Ranges', 'bytes');
+
+              // Pipe the stream directly
+              redirectResponse.pipe(res);
+              console.log(`Stream ${currentStreamIndex + 1} connected successfully via redirect`);
+
+              redirectResponse.on('error', (error) => {
+                console.error(`Redirect stream ${currentStreamIndex + 1} error:`, error);
+                if (!res.headersSent) {
+                  currentStreamIndex++;
+                  tryNextStream();
+                }
+              });
+            } else {
+              console.log(`Redirect stream ${currentStreamIndex + 1} failed with status ${redirectResponse.statusCode}`);
+              currentStreamIndex++;
+              tryNextStream();
+            }
+          });
+
+          redirectRequest.on('error', (error) => {
+            console.error(`Redirect request ${currentStreamIndex + 1} error:`, error);
+            currentStreamIndex++;
+            tryNextStream();
+          });
+
+          redirectRequest.setTimeout(10000, () => {
+            console.log(`Redirect stream ${currentStreamIndex + 1} timeout`);
+            redirectRequest.destroy();
+            currentStreamIndex++;
+            tryNextStream();
+          });
+          
+        } else if (response.statusCode === 200 && !res.headersSent) {
           // Set headers for audio streaming
           res.setHeader('Content-Type', 'audio/mpeg');
           res.setHeader('Access-Control-Allow-Origin', '*');
@@ -75,6 +126,7 @@ export function setupRadioProxy(app: Express) {
 
           // Pipe the stream directly
           response.pipe(res);
+          console.log(`Stream ${currentStreamIndex + 1} connected successfully`);
 
           response.on('error', (error) => {
             console.error(`Stream ${currentStreamIndex + 1} error:`, error);
@@ -96,7 +148,7 @@ export function setupRadioProxy(app: Express) {
         tryNextStream();
       });
 
-      request.setTimeout(5000, () => {
+      request.setTimeout(10000, () => {
         console.log(`Stream ${currentStreamIndex + 1} timeout`);
         request.destroy();
         currentStreamIndex++;
