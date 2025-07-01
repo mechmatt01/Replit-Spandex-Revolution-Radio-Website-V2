@@ -336,12 +336,16 @@ export default function RadioCoPlayer() {
            currentTrack.album !== "New York's Hip Hop & R&B" && 
            currentTrack.album !== "Live Stream" && 
            currentTrack.album !== currentTrack.title && 
-           currentTrack.album !== currentTrack.artist && (
+           currentTrack.album !== currentTrack.artist && 
+           currentTrack.album !== (selectedStation?.name || "95.5 The Beat") && (
             <p className="text-foreground font-semibold text-lg mb-1 transition-opacity duration-500">
               {currentTrack.album}
             </p>
           )}
-          {currentTrack.title !== "Live Stream" && currentTrack.title !== currentTrack.artist && (
+          {currentTrack.title !== "Live Stream" && 
+           currentTrack.title !== currentTrack.artist && 
+           currentTrack.title !== (selectedStation?.name || "95.5 The Beat") && 
+           (selectedStation?.name || "95.5 The Beat") !== currentTrack.title && (
             <p className="text-foreground font-black text-2xl mb-2 transition-opacity duration-500">
               {selectedStation?.name || "95.5 The Beat"}
             </p>
