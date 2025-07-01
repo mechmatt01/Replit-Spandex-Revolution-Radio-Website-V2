@@ -85,7 +85,7 @@ export default function RadioCoPlayer() {
 
   const [isStationDropdownOpen, setIsStationDropdownOpen] = useState(false);
   const [selectedStation, setSelectedStation] = useState<RadioStation>(radioStations[0]);
-  
+
   // Initialize selected station with first station on mount
   useEffect(() => {
     const firstStation = radioStations[0];
@@ -94,7 +94,7 @@ export default function RadioCoPlayer() {
     }
   }, []);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  
+
   const volumeButtonRef = useRef<HTMLDivElement>(null);
   const stationDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -114,34 +114,27 @@ export default function RadioCoPlayer() {
 
   const handleStationChange = async (station: RadioStation) => {
     if (station.id === selectedStation.id) return;
-    
+
     console.log(`Attempting to change station to: ${station.name} (${station.streamUrl})`);
-    
+
     setIsTransitioning(true);
     setSelectedStation(station);
     setIsStationDropdownOpen(false);
-    
+
     try {
-      // Stop current playback if playing
-      if (isPlaying) {
-        await togglePlayback();
-        // Wait a moment for the stop to complete
-        await new Promise(resolve => setTimeout(resolve, 300));
-      }
-      
-      // Change to new station
       await changeStation(station);
       console.log(`Successfully changed to station: ${station.name}`);
-      
-      // Auto-start playing the new station
-      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Auto-play the new station after switching
       if (!isPlaying) {
-        await togglePlayback();
+        setTimeout(() => {
+          togglePlayback();
+        }, 500);
       }
     } catch (err) {
       console.error('Failed to switch station:', err);
     }
-    
+
     setTimeout(() => setIsTransitioning(false), 500);
   };
 
@@ -184,7 +177,7 @@ export default function RadioCoPlayer() {
               }}
             />
           </Button>
-          
+
           {isStationDropdownOpen && (
             <div className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto bg-black/90 backdrop-blur-lg border shadow-xl z-20 scrollbar-thin"
                  style={{
@@ -264,7 +257,7 @@ export default function RadioCoPlayer() {
                     </div>
                   </button>
                 )}
-                
+
                 {/* Other stations */}
                 {radioStations.filter(station => station.id !== selectedStation?.id).map((station) => (
                   <button
@@ -315,7 +308,7 @@ export default function RadioCoPlayer() {
             size="lg"
           />
         </div>
-        
+
         {/* Compact LIVE Indicator - 50% overlapping top of album artwork */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
@@ -450,12 +443,12 @@ export default function RadioCoPlayer() {
                 aria-label={isMuted ? "Unmute" : "Mute"}
               >
                 {isMuted ? (
-                  <VolumeX className="h-12 w-12" />
+                  <VolumeX className="w-10 h-10" />
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="48"
-                      height="48"
+                      width="40"
+                      height="40"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
@@ -526,7 +519,7 @@ export default function RadioCoPlayer() {
                       background: `linear-gradient(90deg, ${colors.primary}, ${colors.secondary})`
                     }}
                   />
-                  
+
                   {/* Volume thumb */}
                   <div 
                     className="absolute w-6 h-6 rounded-full top-1/2 -translate-y-1/2 -translate-x-3 transition-all duration-200 shadow-lg border-2 border-white/20"
@@ -535,7 +528,7 @@ export default function RadioCoPlayer() {
                       background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
                     }}
                   />
-                  
+
                   {/* Click area for volume control */}
                   <div 
                     className="absolute inset-0 cursor-pointer"

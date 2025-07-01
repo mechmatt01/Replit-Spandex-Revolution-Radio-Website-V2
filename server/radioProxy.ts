@@ -7,36 +7,33 @@ export function setupRadioProxy(app: Express) {
   app.get("/api/radio-stream", (req: Request, res: Response) => {
     // Get the station URL from query parameter, fallback to default streams
     const requestedStream = req.query.url as string;
-    
+
     // Station-specific fallback URLs with better working streams
     const stationFallbacks: { [key: string]: string[] } = {
       "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac": [
-        "https://24883.live.streamtheworld.com/KBFBFMAAC.aac",
-        "https://14923.live.streamtheworld.com/KBFBFMAAC.aac", 
-        "https://17943.live.streamtheworld.com/KBFBFMAAC.aac",
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
+        "https://24883.live.streamtheworld.com/KBFBFMAAC",
+        "https://14923.live.streamtheworld.com/KBFBFMAAC", 
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFM.mp3",
         "https://ice1.somafm.com/metal-128-mp3"
       ],
       "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac": [
-        "https://24883.live.streamtheworld.com/WQHTFMAAC.aac",
-        "https://14923.live.streamtheworld.com/WQHTFMAAC.aac",
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
+        "https://n07.radiojar.com/4wqmj9krs5mtv",
+        "https://n1ca-ice-cast.streamon.fm/Hot97_SC",
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM.mp3",
         "https://ice1.somafm.com/metal-128-mp3"
       ],
       "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac": [
-        "https://24883.live.streamtheworld.com/KPWRFMAAC.aac",
-        "https://14923.live.streamtheworld.com/KPWRFMAAC.aac",
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
+        "https://n30.radiojar.com/ggd4cs6rs5mtv",
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFM.mp3",
         "https://ice1.somafm.com/metal-128-mp3"
       ],
       "https://ice1.somafm.com/metal-128-mp3": [
         "https://ice1.somafm.com/metal-128-mp3",
         "https://ice2.somafm.com/metal-128-mp3",
-        "https://ice6.somafm.com/metal-128-mp3",
-        "https://ice4.somafm.com/metal-128-mp3"
+        "https://ice6.somafm.com/metal-128-mp3"
       ]
     };
-    
+
     const streamUrls = requestedStream ? (
       stationFallbacks[requestedStream] || [
         requestedStream,
@@ -68,14 +65,14 @@ export function setupRadioProxy(app: Express) {
       // Choose the appropriate module based on protocol
       const isHttps = streamUrl.startsWith('https://');
       const requestModule = isHttps ? https : http;
-      
+
       const request = requestModule.get(streamUrl, (response) => {
         // Handle redirects for streaming services
         if ((response.statusCode === 301 || response.statusCode === 302) && response.headers.location) {
           console.log(`Stream ${currentStreamIndex + 1} redirected to: ${response.headers.location}`);
           const redirectUrl = response.headers.location;
           const redirectModule = redirectUrl.startsWith('https://') ? https : http;
-          
+
           const redirectRequest = redirectModule.get(redirectUrl, (redirectResponse) => {
             if (redirectResponse.statusCode === 200 && !res.headersSent) {
               // Set headers for audio streaming
@@ -115,7 +112,7 @@ export function setupRadioProxy(app: Express) {
             currentStreamIndex++;
             tryNextStream();
           });
-          
+
         } else if (response.statusCode === 200 && !res.headersSent) {
           // Set headers for audio streaming
           res.setHeader('Content-Type', 'audio/mpeg');

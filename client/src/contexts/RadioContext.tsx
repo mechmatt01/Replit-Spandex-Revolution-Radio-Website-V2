@@ -202,22 +202,43 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       setCurrentStation(station);
       setStationName(station.name);
 
-      // Update track info with station-specific metadata
-      const stationTrackInfo = {
-        title: station.name,
-        artist: station.description,
-        album: `${station.frequency} • ${station.location}`,
-        artwork: ""
-      };
-
-      setCurrentTrack(stationTrackInfo);
-
       // Set new stream URL through proxy with station-specific URL
       const proxyUrl = `/api/radio-stream?url=${encodeURIComponent(station.streamUrl)}`;
       audio.src = proxyUrl;
 
       // Preload the new stream
       audio.load();
+
+      // Immediately fetch track info for the new station
+      try {
+        const response = await fetch(`/api/now-playing?station=${station.id}`);
+        if (response.ok) {
+          const trackData = await response.json();
+          setCurrentTrack({
+            title: trackData.title || station.name,
+            artist: trackData.artist || station.description,
+            album: trackData.album || `${station.frequency} • ${station.location}`,
+            artwork: trackData.artwork || "",
+          });
+        } else {
+          // Fallback to station info
+          setCurrentTrack({
+            title: station.name,
+            artist: station.description,
+            album: `${station.frequency} • ${station.location}`,
+            artwork: ""
+          });
+        }
+      } catch (trackError) {
+        console.error('Failed to fetch initial track info:', trackError);
+        // Fallback to station info
+        setCurrentTrack({
+          title: station.name,
+          artist: station.description,
+          album: `${station.frequency} • ${station.location}`,
+          artwork: ""
+        });
+      }
 
       console.log(`Station changed to: ${station.name} (${station.streamUrl})`);
 
