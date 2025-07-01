@@ -409,8 +409,8 @@ export default function RadioCoPlayer() {
                 ) : (
                   <div className="relative flex items-center justify-center">
                     <svg
-                      width="45"
-                      height="45"
+                      width="56"
+                      height="56"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
