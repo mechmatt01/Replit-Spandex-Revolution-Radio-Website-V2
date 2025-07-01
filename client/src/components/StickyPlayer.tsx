@@ -124,7 +124,7 @@ export default function StickyPlayer() {
               </svg>
             ) : (
               <svg className="h-15 w-15" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" rx="3" />
+                <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" />
               </svg>
             )}
           </Button>

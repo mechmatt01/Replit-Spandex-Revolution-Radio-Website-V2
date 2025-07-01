@@ -367,7 +367,7 @@ export default function RadioCoPlayer() {
               </svg>
             ) : (
               <svg className="h-20 w-20" fill="currentColor" viewBox="0 0 24 24" style={{ transform: 'scale(2)' }}>
-                <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" strokeWidth="0.5" rx="3" />
+                <path d="M8 5.14v13.72L19 12L8 5.14z" strokeLinejoin="round" strokeLinecap="round" strokeWidth="0.5" />
               </svg>
             )}
           </Button>
