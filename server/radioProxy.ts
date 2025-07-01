@@ -1,4 +1,5 @@
 import https from "https";
+import http from "http";
 import type { Express, Request, Response } from "express";
 
 export function setupRadioProxy(app: Express) {
@@ -11,7 +12,6 @@ export function setupRadioProxy(app: Express) {
       requestedStream,
       requestedStream + (requestedStream.includes('?') ? '&' : '?') + 'nocache=' + Date.now(),
       requestedStream.replace('.aac', '.mp3'),
-      requestedStream.replace('https://', 'http://'),
       // Fallback to default streams
       "https://ice1.somafm.com/metal-128-mp3",
       "https://24883.live.streamtheworld.com/KBFBFMAAC",
@@ -36,7 +36,11 @@ export function setupRadioProxy(app: Express) {
       const streamUrl = streamUrls[currentStreamIndex];
       console.log(`Trying radio stream ${currentStreamIndex + 1}: ${streamUrl}`);
 
-      const request = https.get(streamUrl, (response) => {
+      // Choose the appropriate module based on protocol
+      const isHttps = streamUrl.startsWith('https://');
+      const requestModule = isHttps ? https : http;
+      
+      const request = requestModule.get(streamUrl, (response) => {
         if (response.statusCode === 200 && !res.headersSent) {
           // Set headers for audio streaming
           res.setHeader('Content-Type', 'audio/mpeg');
