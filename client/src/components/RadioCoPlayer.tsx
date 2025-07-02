@@ -359,22 +359,22 @@ export default function RadioCoPlayer() {
               />
             </div>
           </div>
+          {currentTrack.artist && 
+           currentTrack.artist !== currentTrack.title && 
+           currentTrack.artist !== "Live Stream" && 
+           currentTrack.artist !== (selectedStation?.name || "95.5 The Beat") && (
+            <p className="text-foreground font-semibold text-lg mb-1 transition-opacity duration-500">
+              {currentTrack.artist}
+            </p>
+          )}
           {currentTrack.album && 
            currentTrack.album !== "New York's Hip Hop & R&B" && 
            currentTrack.album !== "Live Stream" && 
            currentTrack.album !== currentTrack.title && 
            currentTrack.album !== currentTrack.artist && 
            currentTrack.album !== (selectedStation?.name || "95.5 The Beat") && (
-            <p className="text-foreground font-semibold text-lg mb-1 transition-opacity duration-500">
-              {currentTrack.album}
-            </p>
-          )}
-          {currentTrack.artist && 
-           currentTrack.artist !== currentTrack.title && 
-           currentTrack.artist !== "Live Stream" && 
-           currentTrack.artist !== (selectedStation?.name || "95.5 The Beat") && (
             <p className="text-muted-foreground text-sm font-medium mb-2 transition-opacity duration-500">
-              {currentTrack.artist}
+              {currentTrack.album}
             </p>
           )}
           {currentTrack.title !== "Live Stream" && 
