@@ -126,6 +126,11 @@ export default function Schedule() {
                     </div>
                   </CardContent>
                 </Card>
+              ))}
+            </div>
+          </div>
+          )}
+        </div>
 </old_str>
                     </div>
                   </CardContent>
