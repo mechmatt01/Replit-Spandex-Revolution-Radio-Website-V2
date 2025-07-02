@@ -62,10 +62,10 @@ export default function Schedule() {
                     </div>
                     <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{show.description}</p>
                     <div className="flex items-center justify-between mt-auto">
-                      <span className="text-gray-500 text-xs font-semibold">Hosted by: {show.host}</span>
+                      <span className="text-gray-500 text-xs font-bold">Hosted by: {show.host}</span>
                       <div className="flex items-center space-x-2">
                         <Calendar className="text-gray-500 h-3 w-3" />
-                        <span className="text-gray-500 text-xs font-semibold">{show.dayOfWeek}</span>
+                        <span className="text-gray-500 text-xs font-bold">{show.dayOfWeek}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -89,13 +89,13 @@ export default function Schedule() {
                     <h4 className="font-black mb-2 text-center text-lg">{show.title}</h4>
                     <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{formatDate(show.date)}</p>
                     <div className="flex items-center justify-between mt-auto">
-                      <span className="text-gray-500 text-xs font-semibold">
+                      <span className="text-gray-500 text-xs font-bold">
                         {show.duration ? formatDuration(show.duration) : "N/A"}
                       </span>
                       <Button 
                         size="sm" 
                         variant="ghost" 
-                        className="p-0 h-auto transition-colors duration-300"
+                        className="p-0 h-auto transition-colors duration-300 font-bold"
                         style={{ color: 'var(--color-primary)' }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.color = 'var(--color-secondary)';
@@ -109,6 +109,7 @@ export default function Schedule() {
                         </svg>
                         Play
                       </Button>
+</old_str>
                     </div>
                   </CardContent>
                 </Card>
