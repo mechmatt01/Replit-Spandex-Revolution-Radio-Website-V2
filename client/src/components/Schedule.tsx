@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, Clock, Play } from "lucide-react";
@@ -61,7 +60,7 @@ export default function Schedule() {
               {weeklyShows.map((show) => (
                 <Card 
                   key={show.id} 
-                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2 h-32"
+                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2 h-40"
                   style={{ borderColor: colors.primary }}
                 >
                   <CardContent className="p-4 h-full flex flex-col">
@@ -93,7 +92,7 @@ export default function Schedule() {
               {pastShows.slice(0, 3).map((show) => (
                 <Card 
                   key={show.id} 
-                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2 h-32"
+                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2 h-40"
                   style={{ borderColor: colors.primary }}
                 >
                   <CardContent className="p-4 h-full flex flex-col">
