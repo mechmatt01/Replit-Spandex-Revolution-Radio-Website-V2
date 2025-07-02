@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Send, Mail, Clock, Radio, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Send, Mail, Clock, Radio, Facebook, Twitter, Instagram, Youtube, Check, X, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,11 @@ export default function Contact() {
     message: "",
   });
 
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [originalMessage, setOriginalMessage] = useState("");
+
   const { toast } = useToast();
   const { getColors } = useTheme();
   const colors = getColors();
@@ -31,10 +36,8 @@ export default function Contact() {
       return response.json();
     },
     onSuccess: () => {
-      toast({
-        title: "Message Sent!",
-        description: "We'll get back to you within 24-48 hours.",
-      });
+      setOriginalMessage(formData.message);
+      setShowSuccess(true);
       setFormData({
         firstName: "",
         lastName: "",
@@ -42,19 +45,45 @@ export default function Contact() {
         subject: "",
         message: "",
       });
+      setValidationErrors([]);
     },
     onError: () => {
-      toast({
-        title: "Message Failed",
-        description: "Please check your information and try again.",
-        variant: "destructive",
-      });
+      setOriginalMessage(formData.message);
+      setShowError(true);
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate form
+    const errors: string[] = [];
+    if (!formData.firstName.trim()) errors.push("First Name");
+    if (!formData.lastName.trim()) errors.push("Last Name");
+    if (!formData.email.trim()) errors.push("Email Address");
+    if (!formData.subject.trim()) errors.push("Subject");
+    if (!formData.message.trim()) errors.push("Message");
+    
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+    
+    setValidationErrors([]);
     contactMutation.mutate(formData);
+  };
+
+  const handleCopyMessage = () => {
+    navigator.clipboard.writeText(originalMessage);
+    toast({
+      title: "Message Copied",
+      description: "Your message has been copied to clipboard.",
+    });
+  };
+
+  const handleTryAgain = () => {
+    setShowError(false);
+    setShowSuccess(false);
   };
 
   const handleInputChange = (field: keyof InsertContact, value: string) => {
@@ -75,9 +104,25 @@ export default function Contact() {
 
         <div className="flex justify-center items-center min-h-[500px]">
           <div className="w-full max-w-lg">
-            <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 mx-auto">
+            <Card 
+              className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 mx-auto"
+              style={{ borderColor: colors.primary }}
+            >
               <CardContent className="p-8">
-                <h3 className="font-black text-xl mb-6 text-center text-metal-orange">Send us a Message</h3>
+                {!showSuccess && !showError && (
+                  <>
+                    <h3 className="font-black text-xl mb-6 text-center text-metal-orange">Send us a Message</h3>
+                    
+                    {validationErrors.length > 0 && (
+                      <div className="mb-4 p-3 bg-red-900/20 border border-red-500 rounded-md">
+                        <p className="text-red-400 text-sm font-semibold">Please fill out the following required fields:</p>
+                        <ul className="text-red-300 text-sm mt-1">
+                          {validationErrors.map((field, index) => (
+                            <li key={index}>• {field}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}</>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -167,6 +212,66 @@ export default function Contact() {
                   {contactMutation.isPending ? "SENDING..." : "SEND MESSAGE"}
                 </Button>
                 </form>
+                </>
+                )}
+
+                {/* Success State */}
+                {showSuccess && (
+                  <div className="text-center animate-in fade-in duration-500">
+                    <div className="relative inline-flex items-center justify-center mb-4">
+                      <div 
+                        className="absolute w-16 h-16 rounded-full opacity-50"
+                        style={{ backgroundColor: colors.primary }}
+                      ></div>
+                      <Check className="w-8 h-8 text-green-400 relative z-10" />
+                    </div>
+                    <h3 className="font-black text-xl mb-2 text-green-400">Message Sent Successfully!</h3>
+                    <p className="text-gray-300 text-sm">We'll get back to you within 24-48 hours.</p>
+                    <Button
+                      onClick={handleTryAgain}
+                      className="mt-4 px-6 py-2 rounded-full font-bold transition-all duration-300"
+                      style={{
+                        backgroundColor: colors.primary,
+                        color: colors.primaryText || 'white'
+                      }}
+                    >
+                      Send Another Message
+                    </Button>
+                  </div>
+                )}
+
+                {/* Error State */}
+                {showError && (
+                  <div className="text-center animate-in fade-in duration-500">
+                    <div className="relative inline-flex items-center justify-center mb-4">
+                      <div className="absolute w-16 h-16 rounded-full bg-red-600 opacity-50"></div>
+                      <X className="w-8 h-8 text-red-400 relative z-10" />
+                    </div>
+                    <h3 className="font-black text-xl mb-2 text-red-400">Message Failed to Send</h3>
+                    <p className="text-gray-300 text-sm mb-4">Please refresh the site and try again.</p>
+                    
+                    <div className="space-y-3">
+                      <Button
+                        onClick={handleCopyMessage}
+                        className="w-full px-6 py-2 rounded-full font-bold transition-all duration-300 bg-gray-600 hover:bg-gray-500 text-white"
+                      >
+                        <Copy className="mr-2 h-4 w-4" />
+                        Copy Message to Clipboard
+                      </Button>
+                      
+                      <Button
+                        onClick={handleTryAgain}
+                        className="w-full px-6 py-2 rounded-full font-bold transition-all duration-300"
+                        style={{
+                          backgroundColor: colors.primary,
+                          color: colors.primaryText || 'white'
+                        }}
+                      >
+                        Try Again
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
