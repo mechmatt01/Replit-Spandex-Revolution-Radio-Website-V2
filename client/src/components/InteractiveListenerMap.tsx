@@ -33,7 +33,6 @@ export default function InteractiveListenerMap() {
   const [colors, setColors] = useState({
     text: 'white',
     primary: 'orange',
-    textSecondary: 'gray',
   });
 
   const { data: stats } = useQuery<StreamStats>({
@@ -126,8 +125,8 @@ export default function InteractiveListenerMap() {
           <div className="space-y-6">
             <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
               <CardContent className="p-6">
-                <h3 className="font-black text-xl mb-3" style={{ color: colors.primary }}>Live Statistics</h3>
-
+                <h3 className="font-black text-xl mb-3 text-metal-orange">Live Statistics</h3>
+                
                 <div className="space-y-2 flex-1">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold" style={{ color: colors.text }}>Total Listeners</span>
@@ -153,15 +152,15 @@ export default function InteractiveListenerMap() {
                     .sort((a, b) => b.count - a.count)
                     .slice(0, 5)
                     .map((listener, index) => (
-                      <div className="flex items-center justify-between">
+                      <div key={listener.id} className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <span className="font-bold mr-3" style={{ color: colors.primary }}>#{index + 1}</span>
+                          <span className="text-metal-orange font-bold mr-3">#{index + 1}</span>
                           <div>
-                            <p className="font-semibold text-sm" style={{ color: colors.text }}>{listener.city}</p>
-                            <p className="text-xs" style={{ color: colors.textSecondary }}>{listener.country}</p>
+                            <p className="text-white font-semibold text-sm">{listener.city}</p>
+                            <p className="text-gray-400 text-xs">{listener.country}</p>
                           </div>
                         </div>
-                        <span className="font-bold" style={{ color: colors.primary }}>{listener.count}</span>
+                        <span className="text-metal-orange font-bold">{listener.count}</span>
                       </div>
                     ))}
                 </div>
