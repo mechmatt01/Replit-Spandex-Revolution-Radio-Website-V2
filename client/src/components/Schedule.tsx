@@ -124,7 +124,7 @@ export default function Schedule() {
                   className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2"
                   style={{ borderColor: colors.primary, height: '160px' }}
                 >
-                  <CardContent className="p-4" style={{ height: '160px', display: 'flex', flexDirection: 'column' }}>
+                  <CardContent style={{ height: '160px', display: 'flex', flexDirection: 'column' }}>
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-black text-lg text-center flex-1">{show.title}</h4>
                     </div>
@@ -134,7 +134,7 @@ export default function Schedule() {
                         {show.duration ? formatDuration(show.duration) : "N/A"}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between" style={{ marginTop: 'auto', paddingTop: '8px', paddingBottom: '8px' }}>
+                    <div className="flex items-center justify-between" style={{ marginTop: 'auto' }}>
                       <div className="flex items-center space-x-2">
                         <Calendar className="text-gray-500 h-3 w-3" />
                         <span className="text-gray-500 text-xs font-bold">{formatShortDate(show.date)}</span>
