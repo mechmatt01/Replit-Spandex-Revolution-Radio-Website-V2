@@ -98,11 +98,13 @@ export default function Schedule() {
                   <CardContent className="p-4 h-full flex flex-col">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-black text-lg text-center flex-1">{show.title}</h4>
+                    </div>
+                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{show.description || "Past episode archive"}</p>
+                    <div className="text-center mb-2">
                       <span className="text-metal-orange text-sm font-bold">
                         {show.duration ? formatDuration(show.duration) : "N/A"}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{show.description || "Past episode archive"}</p>
                     <div className="flex items-center justify-between mt-auto">
                       <div className="flex items-center space-x-2">
                         <Calendar className="text-gray-500 h-3 w-3" />
