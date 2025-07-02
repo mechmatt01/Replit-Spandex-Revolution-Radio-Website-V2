@@ -44,13 +44,17 @@ export default function Schedule() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Weekly Schedule */}
-          <div className="lg:col-span-2">
+          <div>
             <h3 className="font-black text-xl mb-6" style={{ color: 'var(--color-primary)' }}>This Week's Lineup</h3>
             <div className="space-y-4">
               {weeklyShows.map((show) => (
-                <Card key={show.id} className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
+                <Card 
+                  key={show.id} 
+                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2"
+                  style={{ borderColor: colors.primary }}
+                >
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-black text-lg">{show.title}</h4>
@@ -76,7 +80,11 @@ export default function Schedule() {
             <h3 className="font-black text-xl mb-6" style={{ color: 'var(--color-primary)' }}>Past Shows</h3>
             <div className="space-y-4">
               {pastShows.slice(0, 3).map((show) => (
-                <Card key={show.id} className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
+                <Card 
+                  key={show.id} 
+                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2"
+                  style={{ borderColor: colors.primary }}
+                >
                   <CardContent className="p-4">
                     <h4 className="font-black mb-2">{show.title}</h4>
                     <p className="text-gray-400 text-sm font-semibold mb-2">{formatDate(show.date)}</p>
