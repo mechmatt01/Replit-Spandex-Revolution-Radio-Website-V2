@@ -89,18 +89,18 @@ export default function Schedule() {
               {weeklyShows.map((show) => (
                 <Card 
                   key={show.id} 
-                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2 h-40"
-                  style={{ borderColor: colors.primary }}
+                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2"
+                  style={{ borderColor: colors.primary, height: '160px' }}
                 >
-                  <CardContent className="p-4 h-full flex flex-col">
+                  <CardContent className="p-4" style={{ height: '160px', display: 'flex', flexDirection: 'column' }}>
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-black text-lg text-center flex-1">{show.title}</h4>
                     </div>
-                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{show.description}</p>
+                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center flex-1">{show.description}</p>
                     <div className="text-center mb-2">
                       <span className="text-metal-orange text-sm font-bold">{formatTime(show.time)}</span>
                     </div>
-                    <div className="flex items-center justify-between mt-auto">
+                    <div className="flex items-center justify-between" style={{ marginTop: 'auto', paddingTop: '8px' }}>
                       <div className="flex items-center space-x-2">
                         <Calendar className="text-gray-500 h-3 w-3" />
                         <span className="text-gray-500 text-xs font-bold">{show.dayOfWeek}</span>
@@ -121,20 +121,20 @@ export default function Schedule() {
               {pastShows.slice(0, 3).map((show) => (
                 <Card 
                   key={show.id} 
-                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2 h-40"
-                  style={{ borderColor: colors.primary }}
+                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2"
+                  style={{ borderColor: colors.primary, height: '160px' }}
                 >
-                  <CardContent className="p-4 h-full flex flex-col">
+                  <CardContent className="p-4" style={{ height: '160px', display: 'flex', flexDirection: 'column' }}>
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-black text-lg text-center flex-1">{show.title}</h4>
                     </div>
-                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{show.description || "Past episode archive"}</p>
+                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center flex-1">{show.description || "Past episode archive"}</p>
                     <div className="text-center mb-2">
                       <span className="text-metal-orange text-sm font-bold">
                         {show.duration ? formatDuration(show.duration) : "N/A"}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between mt-auto">
+                    <div className="flex items-center justify-between" style={{ marginTop: 'auto', paddingTop: '8px' }}>
                       <div className="flex items-center space-x-2">
                         <Calendar className="text-gray-500 h-3 w-3" />
                         <span className="text-gray-500 text-xs font-bold">{formatShortDate(show.date)}</span>
