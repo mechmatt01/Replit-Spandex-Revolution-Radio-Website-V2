@@ -9,7 +9,7 @@ import type { ShowSchedule, PastShow } from "@shared/schema";
 export default function Schedule() {
   const { getColors } = useTheme();
   const colors = getColors();
-  
+
   const { data: weeklyShows = [] } = useQuery<ShowSchedule[]>({
     queryKey: ["/api/schedules"],
   });
@@ -105,7 +105,7 @@ export default function Schedule() {
                         }}
                       >
                         <svg className="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M8 5v14l11-7z" strokeLinejoin="round" strokeLinecap="round"/>
+                          <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" />
                         </svg>
                         Play
                       </Button>
@@ -114,12 +114,12 @@ export default function Schedule() {
                 </Card>
               ))}
             </div>
-            
+
 
           </div>
           )}
         </div>
-        
+
         {/* Centered View All Archives Button - Outside grid for full page centering */}
         <div className="mt-12 flex justify-center w-full">
           <Button 
