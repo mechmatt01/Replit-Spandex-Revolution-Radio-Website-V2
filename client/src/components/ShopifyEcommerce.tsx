@@ -221,15 +221,17 @@ export default function ShopifyEcommerce() {
         {/* Featured Products */}
         <div className="mb-12 text-center">
           <h3 className="font-black text-xl mb-6 text-center" style={{ color: colors.primary }}>Featured Products</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
-            {products.filter(product => product.featured).map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={(variant, quantity) => addToCart(product, variant, quantity)}
-                onViewDetails={() => setSelectedProduct(product)}
-              />
-            ))}
+          <div className="flex justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl">
+              {products.filter(product => product.featured).map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={(variant, quantity) => addToCart(product, variant, quantity)}
+                  onViewDetails={() => setSelectedProduct(product)}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
@@ -304,7 +306,7 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
 
         <h4 className="font-black text-white mb-2">{product.title}</h4>
         {product.compareAtPrice && (
-          <Badge className="bg-metal-red text-white mb-2 w-fit">
+          <Badge className="bg-metal-red text-white mb-2 inline-block px-2 py-1 text-xs">
             Sale
           </Badge>
         )}

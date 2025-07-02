@@ -167,9 +167,9 @@ export default function Contact() {
                   <Label htmlFor="subject" className="text-gray-300 font-semibold">Subject*</Label>
                   <Select value={formData.subject} onValueChange={(value) => handleInputChange("subject", value)}>
                     <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange data-[placeholder]:text-gray-400 data-[placeholder]:opacity-60">
-                      <SelectValue placeholder="Select a subject" />
+                      <SelectValue placeholder="Select a subject" className="text-gray-400 opacity-60" />
                     </SelectTrigger>
-                    <SelectContent className="bg-dark-bg/90">
+                    <SelectContent className="bg-black border-dark-border">
                       <SelectItem value="general">General Inquiry</SelectItem>
                       <SelectItem value="technical">Technical Support</SelectItem>
                       <SelectItem value="partnership">Partnership/Collaboration</SelectItem>
