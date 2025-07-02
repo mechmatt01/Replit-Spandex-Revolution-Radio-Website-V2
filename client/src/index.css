@@ -20,6 +20,15 @@ body {
   transform: translateZ(0);
 }
 
+/* 3D Globe CSS */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
 /* Reduce layout shifts */
 img, video {
   height: auto;
