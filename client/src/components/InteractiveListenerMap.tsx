@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Globe, MapPin, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import type { StreamStats } from "@shared/schema";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface Listener {
   id: string;
