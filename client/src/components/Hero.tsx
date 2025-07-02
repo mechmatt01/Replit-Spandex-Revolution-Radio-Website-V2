@@ -85,6 +85,11 @@ export default function Hero() {
           Join the hairspray rebellion!
         </p>
 
+        <div className="mb-8 flex flex-col justify-center items-center">
+          <p className="font-orbitron font-black text-xl md:text-2xl text-metal-orange mb-1">Old School Metal</p>
+          <p className="font-orbitron font-black text-base md:text-lg text-metal-orange">24/7 Live Stream</p>
+        </div>
+
         {/* Countdown Timer */}
         <div className="mb-8">
           <div className="flex items-center justify-center mb-1">
@@ -112,11 +117,6 @@ export default function Hero() {
               <div className="text-xs text-gray-400 opacity-65 font-semibold">SECS</div>
             </div>
           </div>
-        </div>
-
-        <div className="mb-8 flex flex-col justify-center items-center">
-          <p className="font-orbitron font-black text-xl md:text-2xl text-metal-orange mb-1">Old School Metal</p>
-          <p className="font-orbitron font-black text-base md:text-lg text-metal-orange">24/7 Live Stream</p>
         </div>
 
         {/* Live Radio Player */}

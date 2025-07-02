@@ -55,7 +55,7 @@ export default function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate form
     const errors: string[] = [];
     if (!formData.firstName.trim()) errors.push("First Name");
@@ -63,12 +63,12 @@ export default function Contact() {
     if (!formData.email.trim()) errors.push("Email Address");
     if (!formData.subject.trim()) errors.push("Subject");
     if (!formData.message.trim()) errors.push("Message");
-    
+
     if (errors.length > 0) {
       setValidationErrors(errors);
       return;
     }
-    
+
     setValidationErrors([]);
     contactMutation.mutate(formData);
   };
@@ -112,7 +112,7 @@ export default function Contact() {
                 {!showSuccess && !showError && (
                   <>
                     <h3 className="font-black text-xl mb-6 text-center text-metal-orange">Send us a Message</h3>
-                    
+
                     {validationErrors.length > 0 && (
                       <div className="mb-4 p-3 bg-red-900/20 border border-red-500 rounded-md">
                         <p className="text-red-400 text-sm font-semibold">Please fill out the following required fields:</p>
@@ -122,7 +122,8 @@ export default function Contact() {
                           ))}
                         </ul>
                       </div>
-                    )}</>
+                    )}
+              
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -212,7 +213,6 @@ export default function Contact() {
                   {contactMutation.isPending ? "SENDING..." : "SEND MESSAGE"}
                 </Button>
                 </form>
-                </>
                 )}
 
                 {/* Success State */}
@@ -249,7 +249,7 @@ export default function Contact() {
                     </div>
                     <h3 className="font-black text-xl mb-2 text-red-400">Message Failed to Send</h3>
                     <p className="text-gray-300 text-sm mb-4">Please refresh the site and try again.</p>
-                    
+
                     <div className="space-y-3">
                       <Button
                         onClick={handleCopyMessage}
@@ -258,7 +258,7 @@ export default function Contact() {
                         <Copy className="mr-2 h-4 w-4" />
                         Copy Message to Clipboard
                       </Button>
-                      
+
                       <Button
                         onClick={handleTryAgain}
                         className="w-full px-6 py-2 rounded-full font-bold transition-all duration-300"
