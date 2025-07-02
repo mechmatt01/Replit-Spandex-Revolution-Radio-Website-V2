@@ -26,6 +26,14 @@ export default function Schedule() {
     });
   };
 
+  const formatShortDate = (date: string | Date) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      month: "numeric",
+      day: "numeric",
+      year: "2-digit",
+    });
+  };
+
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
@@ -86,12 +94,18 @@ export default function Schedule() {
                   style={{ borderColor: colors.primary }}
                 >
                   <CardContent className="p-4 h-full flex flex-col">
-                    <h4 className="font-black mb-2 text-center text-lg">{show.title}</h4>
-                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{formatDate(show.date)}</p>
-                    <div className="flex items-center justify-between mt-auto">
-                      <span className="text-gray-500 text-xs font-bold">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-black text-lg text-center flex-1">{show.title}</h4>
+                      <span className="text-metal-orange text-sm font-bold">
                         {show.duration ? formatDuration(show.duration) : "N/A"}
                       </span>
+                    </div>
+                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{show.description || "Past episode archive"}</p>
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="text-gray-500 h-3 w-3" />
+                        <span className="text-gray-500 text-xs font-bold">{formatShortDate(show.date)}</span>
+                      </div>
                       <Button 
                         size="sm" 
                         variant="ghost" 
@@ -109,6 +123,9 @@ export default function Schedule() {
                         </svg>
                         Play
                       </Button>
+                    </div>
+                  </CardContent>
+                </Card>
 </old_str>
                     </div>
                   </CardContent>
