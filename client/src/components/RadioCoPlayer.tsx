@@ -454,10 +454,12 @@ export default function RadioCoPlayer() {
                 }}
                 aria-label={isMuted ? "Unmute" : "Mute"}
               >
-                {isMuted ? (
-                  <VolumeX className="w-10 h-10" />
+                {isMuted || volume === 0 ? (
+                  <div className="transition-all duration-300 ease-in-out">
+                    <VolumeX className="w-10 h-10" />
+                  </div>
                 ) : (
-                  <div className="relative flex items-center justify-center">
+                  <div className="relative flex items-center justify-center transition-all duration-300 ease-in-out">
                     <svg
                       width="48"
                       height="48"
