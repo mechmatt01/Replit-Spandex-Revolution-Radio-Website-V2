@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Globe, MapPin, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import type { StreamStats } from "@shared/schema";
+import { useTheme } from "next-themes";
 
 interface Listener {
   id: string;
@@ -30,10 +31,7 @@ const generateListenerData = (): Listener[] => [
 export default function InteractiveListenerMap() {
   const [listeners, setListeners] = useState<Listener[]>([]);
   const [selectedListener, setSelectedListener] = useState<Listener | null>(null);
-  const [colors, setColors] = useState({
-    text: 'white',
-    primary: 'orange',
-  });
+  const { colors } = useTheme();
 
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
@@ -125,8 +123,8 @@ export default function InteractiveListenerMap() {
           <div className="space-y-6">
             <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
               <CardContent className="p-6">
-                <h3 className="font-black text-xl mb-3 text-metal-orange">Live Statistics</h3>
-                
+                <h3 className="font-black text-xl mb-3" style={{ color: colors.primary }}>Live Statistics</h3>
+
                 <div className="space-y-2 flex-1">
                   <div className="flex justify-between items-center">
                     <span className="font-semibold" style={{ color: colors.text }}>Total Listeners</span>
@@ -146,7 +144,7 @@ export default function InteractiveListenerMap() {
 
             <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
               <CardContent className="p-6">
-                <h3 className="font-black text-xl mb-4 text-metal-orange">Top Locations</h3>
+                <h3 className="font-black text-xl mb-4" style={{ color: colors.primary }}>Top Locations</h3>
                 <div className="space-y-3">
                   {listeners
                     .sort((a, b) => b.count - a.count)
@@ -154,13 +152,13 @@ export default function InteractiveListenerMap() {
                     .map((listener, index) => (
                       <div key={listener.id} className="flex items-center justify-between">
                         <div className="flex items-center">
-                          <span className="text-metal-orange font-bold mr-3">#{index + 1}</span>
+                          <span className="font-bold mr-3" style={{ color: colors.primary }}>#{index + 1}</span>
                           <div>
-                            <p className="text-white font-semibold text-sm">{listener.city}</p>
-                            <p className="text-gray-400 text-xs">{listener.country}</p>
+                            <p className="font-semibold text-sm" style={{ color: colors.text }}>{listener.city}</p>
+                            <p className="text-xs" style={{ color: colors.textSecondary }}>{listener.country}</p>
                           </div>
                         </div>
-                        <span className="text-metal-orange font-bold">{listener.count}</span>
+                        <span className="font-bold" style={{ color: colors.primary }}>{listener.count}</span>
                       </div>
                     ))}
                 </div>
