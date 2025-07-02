@@ -52,20 +52,20 @@ export default function Schedule() {
               {weeklyShows.map((show) => (
                 <Card 
                   key={show.id} 
-                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2"
+                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2 h-32"
                   style={{ borderColor: colors.primary }}
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="p-4 h-full flex flex-col">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-black text-lg">{show.title}</h4>
+                      <h4 className="font-black text-lg text-center flex-1">{show.title}</h4>
                       <span className="text-metal-orange text-sm font-bold">{show.time}</span>
                     </div>
-                    <p className="text-gray-400 text-sm font-semibold mb-2">{show.description}</p>
-                    <div className="flex items-center justify-between">
+                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{show.description}</p>
+                    <div className="flex items-center justify-between mt-auto">
                       <span className="text-gray-500 text-xs font-semibold">Hosted by: {show.host}</span>
                       <div className="flex items-center space-x-2">
                         <Calendar className="text-gray-500 h-3 w-3" />
-                        <span className="text-gray-500 text-xs">{show.dayOfWeek}</span>
+                        <span className="text-gray-500 text-xs font-semibold">{show.dayOfWeek}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -82,13 +82,13 @@ export default function Schedule() {
               {pastShows.slice(0, 3).map((show) => (
                 <Card 
                   key={show.id} 
-                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2"
+                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2 h-32"
                   style={{ borderColor: colors.primary }}
                 >
-                  <CardContent className="p-4">
-                    <h4 className="font-black mb-2">{show.title}</h4>
-                    <p className="text-gray-400 text-sm font-semibold mb-2">{formatDate(show.date)}</p>
-                    <div className="flex items-center justify-between">
+                  <CardContent className="p-4 h-full flex flex-col">
+                    <h4 className="font-black mb-2 text-center text-lg">{show.title}</h4>
+                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{formatDate(show.date)}</p>
+                    <div className="flex items-center justify-between mt-auto">
                       <span className="text-gray-500 text-xs font-semibold">
                         {show.duration ? formatDuration(show.duration) : "N/A"}
                       </span>
