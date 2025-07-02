@@ -2,7 +2,9 @@ import { useEffect, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Play, Pause, MapPin, Users, Globe2, TrendingUp } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Play, Pause, MapPin, TrendingUp } from 'lucide-react';
+import CountriesIconPath from '@assets/CountriesIcon_1751444364909.png';
+import LiveNowIconPath from '@assets/LiveNowIcon_1751444364911.png';
 import { useTheme } from '@/contexts/ThemeContext';
 import type { StreamStats } from '@shared/schema';
 
@@ -362,7 +364,20 @@ export default function FullWidthGlobeMap() {
                       Live Now
                     </div>
                     <div className="flex justify-center mt-2">
-                      <Users className="h-5 w-5" style={{ color: colors.primary }} />
+                      <div 
+                        className="h-7 w-7 bg-current"
+                        style={{ 
+                          maskImage: `url(${LiveNowIconPath})`,
+                          maskSize: 'contain',
+                          maskRepeat: 'no-repeat',
+                          maskPosition: 'center',
+                          WebkitMaskImage: `url(${LiveNowIconPath})`,
+                          WebkitMaskSize: 'contain',
+                          WebkitMaskRepeat: 'no-repeat',
+                          WebkitMaskPosition: 'center',
+                          color: colors.primary
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -375,7 +390,20 @@ export default function FullWidthGlobeMap() {
                       Countries
                     </div>
                     <div className="flex justify-center mt-2">
-                      <Globe2 className="h-5 w-5" style={{ color: colors.primary }} />
+                      <div 
+                        className="h-7 w-7 bg-current"
+                        style={{ 
+                          maskImage: `url(${CountriesIconPath})`,
+                          maskSize: 'contain',
+                          maskRepeat: 'no-repeat',
+                          maskPosition: 'center',
+                          WebkitMaskImage: `url(${CountriesIconPath})`,
+                          WebkitMaskSize: 'contain',
+                          WebkitMaskRepeat: 'no-repeat',
+                          WebkitMaskPosition: 'center',
+                          color: colors.primary
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -388,7 +416,7 @@ export default function FullWidthGlobeMap() {
                       Total Listeners
                     </div>
                     <div className="flex justify-center mt-2">
-                      <TrendingUp className="h-5 w-5" style={{ color: colors.primary }} />
+                      <TrendingUp className="h-7 w-7" style={{ color: colors.primary }} />
                     </div>
                   </div>
                 </div>
@@ -418,22 +446,22 @@ export default function FullWidthGlobeMap() {
                         }}
                       >
                         <div 
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3 transition-all duration-300"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3 transition-all duration-300 flex-shrink-0"
                           style={{ backgroundColor: colors.primary, color: 'white' }}
                         >
                           #{index + 1}
                         </div>
-                        <MapPin className="w-4 h-4 mr-2" style={{ color: colors.primary }} />
-                        <div className="flex-1">
-                          <div className={`font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                        <MapPin className="w-4 h-4 mr-2 flex-shrink-0" style={{ color: colors.primary }} />
+                        <div className="flex-1 min-w-0">
+                          <div className={`font-semibold text-sm truncate ${isDarkMode ? 'text-white' : 'text-black'}`}>
                             {listener.city}, {listener.country}
                           </div>
-                          <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          <div className={`text-xs truncate ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                             {listener.username} • {listener.lastSeen.toLocaleTimeString()}
                           </div>
                         </div>
                         <div 
-                          className="w-2 h-2 rounded-full animate-pulse"
+                          className="w-2 h-2 rounded-full animate-pulse flex-shrink-0 ml-2"
                           style={{ backgroundColor: colors.primary }}
                         />
                       </div>
@@ -452,22 +480,22 @@ export default function FullWidthGlobeMap() {
                         }}
                       >
                         <div 
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3 transition-all duration-300"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3 transition-all duration-300 flex-shrink-0"
                           style={{ backgroundColor: colors.primary, color: 'white' }}
                         >
                           #{index + 6}
                         </div>
-                        <MapPin className="w-4 h-4 mr-2" style={{ color: colors.primary }} />
-                        <div className="flex-1">
-                          <div className={`font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                        <MapPin className="w-4 h-4 mr-2 flex-shrink-0" style={{ color: colors.primary }} />
+                        <div className="flex-1 min-w-0">
+                          <div className={`font-semibold text-sm truncate ${isDarkMode ? 'text-white' : 'text-black'}`}>
                             {listener.city}, {listener.country}
                           </div>
-                          <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          <div className={`text-xs truncate ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                             {listener.username} • {listener.lastSeen.toLocaleTimeString()}
                           </div>
                         </div>
                         <div 
-                          className="w-2 h-2 rounded-full animate-pulse"
+                          className="w-2 h-2 rounded-full animate-pulse flex-shrink-0 ml-2"
                           style={{ backgroundColor: colors.primary }}
                         />
                       </div>
