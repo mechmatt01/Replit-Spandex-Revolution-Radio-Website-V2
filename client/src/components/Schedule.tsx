@@ -47,7 +47,7 @@ export default function Schedule() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Weekly Schedule */}
           <div>
-            <h3 className="font-black text-xl mb-6" style={{ color: 'var(--color-primary)' }}>This Week's Lineup</h3>
+            <h3 className="font-black text-xl mb-6 text-center" style={{ color: 'var(--color-primary)' }}>This Week's Lineup</h3>
             <div className="space-y-4">
               {weeklyShows.map((show) => (
                 <Card 
@@ -77,7 +77,7 @@ export default function Schedule() {
           {/* Past Shows Archive */}
           {pastShows.length > 0 && (
           <div>
-            <h3 className="font-black text-xl mb-6" style={{ color: 'var(--color-primary)' }}>Past Shows</h3>
+            <h3 className="font-black text-xl mb-6 text-center" style={{ color: 'var(--color-primary)' }}>Past Shows</h3>
             <div className="space-y-4">
               {pastShows.slice(0, 3).map((show) => (
                 <Card 
