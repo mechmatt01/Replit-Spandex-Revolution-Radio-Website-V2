@@ -74,7 +74,7 @@ export default function InteractiveListenerMap() {
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Globe className="text-gray-600 h-32 w-32 opacity-30" />
                   </div>
-                  
+
                   {/* Listener Dots */}
                   <div className="absolute inset-0">
                     {listeners.map((listener) => (
@@ -118,11 +118,11 @@ export default function InteractiveListenerMap() {
           </div>
 
           {/* Listener Stats */}
-          <div className="space-y-6">
-            <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
-              <CardContent className="p-6">
-                <h3 className="font-black text-xl mb-3 text-metal-orange">Live Statistics</h3>
-                <div className="space-y-2">
+          <div className="flex flex-col min-h-[500px] h-full">
+            <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 flex-1">
+              <CardContent className="p-5 h-full flex flex-col">
+                <h3 className="font-black text-lg mb-3 text-metal-orange">Live Statistics</h3>
+                <div className="space-y-2 flex-1">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400 font-semibold">Total Listeners</span>
                     <span className="text-white font-black text-lg">{stats?.currentListeners || totalListeners}</span>
@@ -139,10 +139,12 @@ export default function InteractiveListenerMap() {
               </CardContent>
             </Card>
 
-            <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
-              <CardContent className="p-6">
-                <h3 className="font-black text-xl mb-4 text-metal-orange">Top Locations</h3>
-                <div className="space-y-3">
+            <div className="h-3"></div>
+
+            <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 flex-1">
+              <CardContent className="p-5 h-full flex flex-col">
+                <h3 className="font-black text-lg mb-3 text-metal-orange">Top Locations</h3>
+                <div className="space-y-2 flex-1">
                   {listeners
                     .sort((a, b) => b.count - a.count)
                     .slice(0, 5)
