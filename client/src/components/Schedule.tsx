@@ -47,6 +47,28 @@ export default function Schedule() {
     }
   };
 
+  const formatTime = (timeString: string) => {
+    try {
+      // Parse the time string (assuming format like "14:00" or "14:00:00")
+      const [hours, minutes] = timeString.split(':').map(Number);
+      
+      // Create a date object with today's date and the specified time
+      const date = new Date();
+      date.setHours(hours, minutes || 0, 0, 0);
+      
+      // Format to 12-hour time in user's timezone
+      return date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      });
+    } catch (error) {
+      // Fallback to original time if parsing fails
+      return timeString;
+    }
+  };
+
   return (
     <section id="schedule" className="py-20 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,7 +98,7 @@ export default function Schedule() {
                     </div>
                     <p className="text-gray-400 text-sm font-semibold mb-2 text-center">{show.description}</p>
                     <div className="text-center mb-2">
-                      <span className="text-metal-orange text-sm font-bold">{show.time}</span>
+                      <span className="text-metal-orange text-sm font-bold">{formatTime(show.time)}</span>
                     </div>
                     <div className="flex items-center justify-between mt-auto">
                       <div className="flex items-center space-x-2">
