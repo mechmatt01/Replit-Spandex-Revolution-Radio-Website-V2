@@ -104,7 +104,9 @@ export default function Schedule() {
                           e.currentTarget.style.color = 'var(--color-primary)';
                         }}
                       >
-                        <Play className="mr-1 h-3 w-3" />
+                        <svg className="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" strokeLinejoin="round" strokeLinecap="round"/>
+                        </svg>
                         Play
                       </Button>
                     </div>
