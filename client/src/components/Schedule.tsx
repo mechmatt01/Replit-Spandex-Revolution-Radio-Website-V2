@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, Clock, Play } from "lucide-react";
@@ -128,22 +129,6 @@ export default function Schedule() {
                 </Card>
               ))}
             </div>
-          </div>
-          )}
-        </div>
-              ))}
-            </div>
-          </div>
-          )}
-        </div>
-</old_str>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-
           </div>
           )}
         </div>
