@@ -7,7 +7,7 @@ import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 import { useState, useEffect } from "react";
 
 export default function StickyPlayer() {
-  const { isPlaying, volume, currentTrack, stationName, isTransitioning, togglePlayback, setVolume } = useRadio();
+  const { isPlaying, volume, currentTrack, stationName, togglePlayback, setVolume } = useRadio();
   const { getGradient, getColors } = useTheme();
   const colors = getColors();
   const [isVisible, setIsVisible] = useState(true);
@@ -20,7 +20,7 @@ export default function StickyPlayer() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+            const currentScrollY = window.scrollY;
       const documentHeight = document.documentElement.scrollHeight;
       const windowHeight = window.innerHeight;
       const footerOffset = 200; // Approximate footer height
@@ -50,20 +50,18 @@ export default function StickyPlayer() {
         {/* Compact floating player layout */}
         <div className="flex items-center justify-between mb-2">
           {/* Album Art */}
-          <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-            <InteractiveAlbumArt 
-              artwork={currentTrack.artwork}
-              title={currentTrack.title}
-              artist={currentTrack.artist}
-              size="sm"
-              className="w-12 h-12"
-            />
-          </div>
+          <InteractiveAlbumArt
+            artwork={currentTrack.artwork}
+            title={currentTrack.title}
+            artist={currentTrack.artist}
+            size="sm"
+            className="w-12 h-12"
+          />
 
           {/* Track Info with 60% width of player box */}
-          <div className={`min-w-0 ml-3 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`} style={{ width: '60%' }}>
+          <div className="min-w-0 ml-3" style={{ width: '60%' }}>
             <div className="w-full overflow-hidden">
-              <ScrollingText 
+              <ScrollingText
                 text={currentTrack.title !== stationName ? currentTrack.title : stationName}
                 className="font-semibold text-foreground text-sm whitespace-nowrap"
                 maxWidth="100%"
@@ -78,15 +76,15 @@ export default function StickyPlayer() {
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                 <span className="text-xs text-red-500 font-medium">LIVE</span>
               </div>
-              
+
               {/* Volume Controls - Centered between LIVE and play button */}
               <div className="hidden sm:flex items-center justify-center flex-1 mx-2">
                 <div className="flex items-center space-x-2">
                   <Volume2 className="text-gray-400 h-3 w-3" />
                   <div className="w-16 h-1 bg-gray-700 rounded-full relative">
-                    <div 
+                    <div
                       className="h-1 rounded-full transition-all duration-150"
-                      style={{ 
+                      style={{
                         width: `${volume * 100}%`,
                         background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`
                       }}
