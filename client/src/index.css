@@ -29,6 +29,30 @@ body {
   transform-style: preserve-3d;
 }
 
+/* Smooth animations for Active Locations */
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+}
+
 /* Reduce layout shifts */
 img, video {
   height: auto;

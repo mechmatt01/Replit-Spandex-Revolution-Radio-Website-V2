@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Play, Pause, MapPin } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Play, Pause, MapPin, Users, Globe2, TrendingUp } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import type { StreamStats } from '@shared/schema';
 
@@ -86,19 +86,27 @@ export default function FullWidthGlobeMap() {
     };
   }, [isRotating, isDragging]);
 
-  // Simulate loading and dynamic listener updates
+  // Simulate loading and dynamic listener updates with smooth animations
   useEffect(() => {
     setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 2000);
+    const timer = setTimeout(() => setIsLoading(false), 1500);
 
-    // Simulate listeners coming online/offline
+    // Simulate listeners coming online/offline with smoother transitions
     const interval = setInterval(() => {
-      setLiveListeners(prev => prev.map(listener => ({
-        ...listener,
-        isActive: Math.random() > 0.1, // 90% chance to stay active
-        lastSeen: listener.isActive ? new Date() : listener.lastSeen
-      })));
-    }, 3000);
+      setLiveListeners(prev => {
+        const updated = prev.map(listener => ({
+          ...listener,
+          isActive: Math.random() > 0.15, // 85% chance to stay active
+          lastSeen: listener.isActive ? new Date() : listener.lastSeen
+        }));
+        
+        // Sort by activity and last seen time for consistent ordering
+        return updated.sort((a, b) => {
+          if (a.isActive !== b.isActive) return b.isActive ? 1 : -1;
+          return b.lastSeen.getTime() - a.lastSeen.getTime();
+        });
+      });
+    }, 4000);
 
     return () => {
       clearTimeout(timer);
@@ -162,7 +170,7 @@ export default function FullWidthGlobeMap() {
           <Card className={`w-full mb-8 ${isDarkMode ? 'bg-black/50' : 'bg-white/90'} backdrop-blur-md border-0`}>
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className={`text-2xl font-black ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                <CardTitle className="text-2xl font-black" style={{ color: colors.primary }}>
                   Live Listener Map
                 </CardTitle>
                 <div className="flex gap-2">
@@ -172,7 +180,7 @@ export default function FullWidthGlobeMap() {
                     className={`${isDarkMode ? 'text-white hover:bg-white/10' : 'text-black hover:bg-black/10'}`}
                     onClick={toggleRotation}
                   >
-                    {isRotating ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                    {isRotating ? <Pause className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4 fill-current" />}
                   </Button>
                   <Button
                     variant="ghost"
@@ -180,7 +188,7 @@ export default function FullWidthGlobeMap() {
                     className={`${isDarkMode ? 'text-white hover:bg-white/10' : 'text-black hover:bg-black/10'}`}
                     onClick={handleZoomOut}
                   >
-                    <ZoomOut className="h-4 w-4" />
+                    <ZoomOut className="h-4 w-4 fill-current" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -188,7 +196,7 @@ export default function FullWidthGlobeMap() {
                     className={`${isDarkMode ? 'text-white hover:bg-white/10' : 'text-black hover:bg-black/10'}`}
                     onClick={handleZoomIn}
                   >
-                    <ZoomIn className="h-4 w-4" />
+                    <ZoomIn className="h-4 w-4 fill-current" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -340,7 +348,7 @@ export default function FullWidthGlobeMap() {
           <div className="lg:col-span-1">
             <Card className={`h-full ${isDarkMode ? 'bg-black/50' : 'bg-white/90'} backdrop-blur-md border-0`}>
               <CardHeader>
-                <CardTitle className={`text-xl font-black ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                <CardTitle className="text-xl font-black" style={{ color: colors.primary }}>
                   Live Statistics
                 </CardTitle>
               </CardHeader>
@@ -353,6 +361,9 @@ export default function FullWidthGlobeMap() {
                     <div className={`text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
                       Live Now
                     </div>
+                    <div className="flex justify-center mt-2">
+                      <Users className="h-5 w-5" style={{ color: colors.primary }} />
+                    </div>
                   </div>
                 </div>
                 <div className={`p-4 rounded-lg ${isDarkMode ? 'bg-white/5' : 'bg-black/5'} backdrop-blur-sm`}>
@@ -362,6 +373,9 @@ export default function FullWidthGlobeMap() {
                     </div>
                     <div className={`text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
                       Countries
+                    </div>
+                    <div className="flex justify-center mt-2">
+                      <Globe2 className="h-5 w-5" style={{ color: colors.primary }} />
                     </div>
                   </div>
                 </div>
@@ -373,6 +387,9 @@ export default function FullWidthGlobeMap() {
                     <div className={`text-sm font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
                       Total Listeners
                     </div>
+                    <div className="flex justify-center mt-2">
+                      <TrendingUp className="h-5 w-5" style={{ color: colors.primary }} />
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -383,7 +400,7 @@ export default function FullWidthGlobeMap() {
           <div className="lg:col-span-2">
             <Card className={`h-full ${isDarkMode ? 'bg-black/50' : 'bg-white/90'} backdrop-blur-md border-0`}>
               <CardHeader>
-                <CardTitle className={`text-xl font-black ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                <CardTitle className="text-xl font-black" style={{ color: colors.primary }}>
                   Active Locations
                 </CardTitle>
               </CardHeader>
@@ -394,10 +411,14 @@ export default function FullWidthGlobeMap() {
                     {top10Listeners.slice(0, 5).map((listener, index) => (
                       <div 
                         key={listener.id}
-                        className={`flex items-center p-3 rounded-lg ${isDarkMode ? 'bg-white/5' : 'bg-black/5'} backdrop-blur-sm hover:bg-opacity-20 transition-all duration-200`}
+                        className={`flex items-center p-3 rounded-lg ${isDarkMode ? 'bg-white/5' : 'bg-black/5'} backdrop-blur-sm hover:bg-opacity-20 transition-all duration-500 transform hover:scale-105`}
+                        style={{
+                          animationDelay: `${index * 100}ms`,
+                          animation: 'slideInFromLeft 0.5s ease-out forwards'
+                        }}
                       >
                         <div 
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3 transition-all duration-300"
                           style={{ backgroundColor: colors.primary, color: 'white' }}
                         >
                           #{index + 1}
@@ -424,10 +445,14 @@ export default function FullWidthGlobeMap() {
                     {top10Listeners.slice(5, 10).map((listener, index) => (
                       <div 
                         key={listener.id}
-                        className={`flex items-center p-3 rounded-lg ${isDarkMode ? 'bg-white/5' : 'bg-black/5'} backdrop-blur-sm hover:bg-opacity-20 transition-all duration-200`}
+                        className={`flex items-center p-3 rounded-lg ${isDarkMode ? 'bg-white/5' : 'bg-black/5'} backdrop-blur-sm hover:bg-opacity-20 transition-all duration-500 transform hover:scale-105`}
+                        style={{
+                          animationDelay: `${(index + 5) * 100}ms`,
+                          animation: 'slideInFromRight 0.5s ease-out forwards'
+                        }}
                       >
                         <div 
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3"
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3 transition-all duration-300"
                           style={{ backgroundColor: colors.primary, color: 'white' }}
                         >
                           #{index + 6}
