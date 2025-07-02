@@ -293,7 +293,7 @@ export default function StripePaymentProcessor() {
               </span>
             </div>
           )}
-          
+
           <div className="p-6 flex flex-col h-full justify-between">
             <div>
               <div className="text-center mb-6">
@@ -302,7 +302,7 @@ export default function StripePaymentProcessor() {
                   <span className="text-3xl font-black text-metal-orange">${tier.price}</span>
                   <span className="text-gray-400 font-semibold">/month</span>
                 </div>
-                
+
                 {/* Package Icon */}
                 <div className="flex justify-center mb-6">
                   <img 
@@ -345,7 +345,7 @@ export default function StripePaymentProcessor() {
                 e.currentTarget.style.transform = tier.popular ? 'scale(1)' : 'scale(0.85)';
               }}
             >
-              {tier.name}
+              Subscribe
             </button>
           </div>
         </div>

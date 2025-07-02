@@ -128,17 +128,7 @@ export default function Footer() {
                 <span className="text-metal-orange mr-2">🛡️</span>
                 Secure & Reliable
               </div>
-              <div className="mt-4">
-                <button 
-                  onClick={() => {
-                    const event = new CustomEvent('openAuthModal', { detail: { mode: 'admin' } });
-                    window.dispatchEvent(event);
-                  }}
-                  className="text-sm text-muted-foreground hover:text-metal-orange transition-colors"
-                >
-                  Admin Login
-                </button>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -152,6 +142,15 @@ export default function Footer() {
             <a href="#" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">Terms of Service</a>
             <a href="#" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">Privacy Policy</a>
             <a href="#" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">Cookies</a>
+            <button 
+              onClick={() => {
+                const event = new CustomEvent('openAuthModal', { detail: { mode: 'admin' } });
+                window.dispatchEvent(event);
+              }}
+              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors"
+            >
+              Admin
+            </button>
           </div>
         </div>
       </div>

@@ -78,7 +78,7 @@ export default function Contact() {
             <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 mx-auto">
               <CardContent className="p-8">
                 <h3 className="font-black text-xl mb-6 text-center text-metal-orange">Send us a Message</h3>
-              
+
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -135,7 +135,7 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <Label htmlFor="contactMessage" className="text-gray-300 font-semibold">Message *</Label>
+                  <Label htmlFor="contactMessage" className="text-gray-300 font-semibold">Message*</Label>
                   <Textarea
                     id="contactMessage"
                     value={formData.message}
@@ -143,9 +143,8 @@ export default function Contact() {
                     placeholder="Tell us what's on your mind..."
                     rows={5}
                     required
-                    className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange resize-none"
-                  />
-                </div>
+                    className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange resize-none"
+                  /></div>
 
                 <Button
                   type="submit"

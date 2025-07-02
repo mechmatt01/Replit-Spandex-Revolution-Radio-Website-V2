@@ -219,9 +219,9 @@ export default function ShopifyEcommerce() {
         )}
 
         {/* Featured Products */}
-        <div className="mb-12">
-          <h3 className="font-black text-xl mb-6 text-metal-orange">Featured Products</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mb-12 text-center">
+          <h3 className="font-black text-xl mb-6 text-center" style={{ color: colors.primary }}>Featured Products</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 justify-items-center">
             {products.filter(product => product.featured).map((product) => (
               <ProductCard
                 key={product.id}
@@ -260,8 +260,11 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
   const colors = getColors();
 
   return (
-    <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 group">
-      <CardContent className="p-4">
+    <Card 
+      className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 group h-full flex flex-col"
+      style={{ borderColor: colors.primary }}
+    >
+      <CardContent className="p-4 flex flex-col h-full">
         <div className="relative mb-4">
           <img
             src={product.images[0]}
@@ -269,13 +272,8 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
             className="w-full h-48 object-cover rounded-lg"
           />
           {product.featured && (
-            <Badge className="absolute top-2 left-2 bg-metal-orange text-white">
+            <Badge className="absolute top-2 left-2" style={{ backgroundColor: colors.primary, color: 'white' }}>
               Featured
-            </Badge>
-          )}
-          {product.compareAtPrice && (
-            <Badge className="absolute top-2 right-2 bg-metal-red text-white">
-              Sale
             </Badge>
           )}
           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
@@ -305,7 +303,12 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
         </div>
 
         <h4 className="font-black text-white mb-2">{product.title}</h4>
-        <p className="text-gray-400 text-sm font-semibold mb-3 line-clamp-2">{product.description}</p>
+        {product.compareAtPrice && (
+          <Badge className="bg-metal-red text-white mb-2 w-fit">
+            Sale
+          </Badge>
+        )}
+        <p className="text-gray-400 text-sm font-semibold mb-3 line-clamp-2 flex-grow">{product.description}</p>
 
         <div className="flex items-center mb-3">
           <div className="flex items-center">
@@ -335,40 +338,50 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
           )}
         </div>
 
-        {product.variants.length > 1 && (
-          <select
-            value={selectedVariant.id}
-            onChange={(e) => setSelectedVariant(product.variants.find(v => v.id === e.target.value)!)}
-            className="w-full mb-3 p-2 bg-dark-bg/50 text-white rounded"
-          >
-            {product.variants.map((variant) => (
-              <option key={variant.id} value={variant.id} disabled={!variant.available}>
-                {variant.title} {!variant.available && "(Out of Stock)"}
-              </option>
-            ))}
-          </select>
-        )}
+        <div className="mt-auto">
+          {product.variants.length > 1 && (
+            <div className="relative mb-3">
+              <select
+                value={selectedVariant.id}
+                onChange={(e) => setSelectedVariant(product.variants.find(v => v.id === e.target.value)!)}
+                className="w-full p-2 bg-dark-bg/50 text-white rounded appearance-none pr-8"
+                style={{ borderColor: colors.primary }}
+              >
+                {product.variants.map((variant) => (
+                  <option key={variant.id} value={variant.id} disabled={!variant.available}>
+                    {variant.title} {!variant.available && "(Out of Stock)"}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+          )}
 
-        <Button
-          onClick={() => onAddToCart(selectedVariant, 1)}
-          disabled={!product.inStock || !selectedVariant.available}
-          className="w-full font-bold transition-all duration-300"
-          style={{
-            backgroundColor: colors.primary,
-            color: colors.primaryText || 'white'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
-            e.currentTarget.style.transform = 'scale(1.02)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = colors.primary;
-            e.currentTarget.style.transform = 'scale(1)';
-          }}
-        >
-          <ShoppingCart className="mr-2 h-4 w-4" />
-          Add to Cart
-        </Button>
+          <Button
+            onClick={() => onAddToCart(selectedVariant, 1)}
+            disabled={!product.inStock || !selectedVariant.available}
+            className="w-full font-bold transition-all duration-300"
+            style={{
+              backgroundColor: colors.primary,
+              color: colors.primaryText || 'white'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
+              e.currentTarget.style.transform = 'scale(1.02)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = colors.primary;
+              e.currentTarget.style.transform = 'scale(1)';
+            }}
+          >
+            <ShoppingCart className="mr-2 h-4 w-4" />
+            Add to Cart
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
