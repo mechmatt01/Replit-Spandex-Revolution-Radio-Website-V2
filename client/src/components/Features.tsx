@@ -73,8 +73,8 @@ export default function Features() {
                 <Radio className="text-white h-8 w-8" />
               </div>
               <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>24/7 Live Streaming</h3>
-              <p className="font-semibold text-lg leading-relaxed" style={{ color: colors.textMuted }}>Non-stop old-school metal streaming with high-quality audio and minimal buffering.</p>
-              <div className="flex items-center text-sm font-bold mt-8" style={{ color: colors.primary }}>
+              <p className="font-semibold text-lg leading-relaxed mb-6" style={{ color: colors.textMuted, minHeight: '3.5rem' }}>Non-stop old-school metal streaming with high-quality audio and minimal buffering.</p>
+              <div className="flex items-center text-sm font-bold" style={{ color: colors.primary }}>
                 <div className="w-3 h-3 rounded-full mr-3 animate-pulse" style={{ backgroundColor: colors.primary }}></div>
                 <span>Currently Live</span>
               </div>
@@ -107,8 +107,8 @@ export default function Features() {
                 <Globe className="text-white h-8 w-8" />
               </div>
               <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>Global Listener Map</h3>
-              <p className="font-semibold text-lg leading-relaxed" style={{ color: colors.textMuted }}>See where metalheads around the world are tuning in from in real-time.</p>
-              <div className="flex items-center text-sm font-bold mt-8" style={{ color: colors.primary }}>
+              <p className="font-semibold text-lg leading-relaxed mb-6" style={{ color: colors.textMuted, minHeight: '3.5rem' }}>See where metalheads around the world are tuning in from in real-time.</p>
+              <div className="flex items-center text-sm font-bold" style={{ color: colors.primary }}>
                 <div className="w-3 h-3 rounded-full mr-3 animate-pulse" style={{ backgroundColor: colors.primary }}></div>
                 <span>{stats?.currentListeners || 1247} listeners online</span>
               </div>
@@ -141,8 +141,8 @@ export default function Features() {
                 <Archive className="text-white h-8 w-8" />
               </div>
               <h3 className="font-black text-2xl mb-4" style={{ color: colors.text }}>Show Archives</h3>
-              <p className="font-semibold text-lg leading-relaxed" style={{ color: colors.textMuted }}>Access past shows, special episodes, and exclusive metal content on-demand.</p>
-              <div className="flex items-center text-sm font-bold mt-8" style={{ color: colors.primary }}>
+              <p className="font-semibold text-lg leading-relaxed mb-6" style={{ color: colors.textMuted, minHeight: '3.5rem' }}>Access past shows, special episodes, and exclusive metal content on-demand.</p>
+              <div className="flex items-center text-sm font-bold" style={{ color: colors.primary }}>
                 <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: colors.primary }}></div>
                 <span>200+ hours of content</span>
               </div>

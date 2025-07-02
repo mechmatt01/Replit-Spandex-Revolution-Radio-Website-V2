@@ -96,7 +96,7 @@ export default function Schedule() {
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-black text-lg text-center flex-1">{show.title}</h4>
                     </div>
-                    <p className="text-gray-400 text-sm font-semibold mb-2 text-center flex-1">{show.description}</p>
+                    <p className="text-gray-400 text-sm font-semibold mb-1 text-center flex-1">{show.description}</p>
                     <div className="text-center mb-2">
                       <span className="text-metal-orange text-sm font-bold">{formatTime(show.time)}</span>
                     </div>

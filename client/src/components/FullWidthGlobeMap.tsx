@@ -187,7 +187,7 @@ export default function FullWidthGlobeMap() {
                     className={`${isDarkMode ? 'text-white hover:bg-white/10' : 'text-black hover:bg-black/10'}`}
                     onClick={toggleRotation}
                   >
-                    {isRotating ? <Pause className="h-4 w-4 fill-current" /> : <Play className="h-4 w-4 fill-current" />}
+                    {isRotating ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                   </Button>
                   <Button
                     variant="ghost"
@@ -195,7 +195,7 @@ export default function FullWidthGlobeMap() {
                     className={`${isDarkMode ? 'text-white hover:bg-white/10' : 'text-black hover:bg-black/10'}`}
                     onClick={handleZoomOut}
                   >
-                    <ZoomOut className="h-4 w-4 fill-current" />
+                    <ZoomOut className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -203,7 +203,7 @@ export default function FullWidthGlobeMap() {
                     className={`${isDarkMode ? 'text-white hover:bg-white/10' : 'text-black hover:bg-black/10'}`}
                     onClick={handleZoomIn}
                   >
-                    <ZoomIn className="h-4 w-4 fill-current" />
+                    <ZoomIn className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
