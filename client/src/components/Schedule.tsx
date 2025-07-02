@@ -100,7 +100,7 @@ export default function Schedule() {
                     <div className="text-center mb-2">
                       <span className="text-metal-orange text-sm font-bold">{formatTime(show.time)}</span>
                     </div>
-                    <div className="flex items-center justify-between" style={{ marginTop: 'auto', paddingTop: '8px', paddingBottom: '8px' }}>
+                    <div className="flex items-center justify-between" style={{ marginTop: 'auto', paddingTop: '8px' }}>
                       <div className="flex items-center space-x-2">
                         <Calendar className="text-gray-500 h-3 w-3" />
                         <span className="text-gray-500 text-xs font-bold">{show.dayOfWeek}</span>
@@ -134,7 +134,7 @@ export default function Schedule() {
                         {show.duration ? formatDuration(show.duration) : "N/A"}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between" style={{ marginTop: 'auto', paddingTop: '8px' }}>
+                    <div className="flex items-center justify-between" style={{ marginTop: 'auto', paddingTop: '8px', paddingBottom: '8px' }}>
                       <div className="flex items-center space-x-2">
                         <Calendar className="text-gray-500 h-3 w-3" />
                         <span className="text-gray-500 text-xs font-bold">{formatShortDate(show.date)}</span>
