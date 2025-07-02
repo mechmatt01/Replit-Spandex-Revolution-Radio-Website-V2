@@ -82,31 +82,31 @@ export default function Contact() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <Label htmlFor="firstName" className="text-gray-300 font-semibold">First Name *</Label>
+                    <Label htmlFor="firstName" className="text-gray-300 font-semibold">First Name*</Label>
                     <Input
                       id="firstName"
                       value={formData.firstName}
                       onChange={(e) => handleInputChange("firstName", e.target.value)}
                       placeholder="John"
                       required
-                      className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange"
+                      className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lastName" className="text-gray-300 font-semibold">Last Name *</Label>
+                    <Label htmlFor="lastName" className="text-gray-300 font-semibold">Last Name*</Label>
                     <Input
                       id="lastName"
                       value={formData.lastName}
                       onChange={(e) => handleInputChange("lastName", e.target.value)}
                       placeholder="Doe"
                       required
-                      className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange"
+                      className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <Label htmlFor="email" className="text-gray-300 font-semibold">Email Address *</Label>
+                  <Label htmlFor="email" className="text-gray-300 font-semibold">Email Address*</Label>
                   <Input
                     id="email"
                     type="email"
@@ -114,12 +114,12 @@ export default function Contact() {
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     placeholder="john@example.com"
                     required
-                    className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange"
+                    className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
                   />
                 </div>
 
                 <div>
-                  <Label htmlFor="subject" className="text-gray-300 font-semibold">Subject *</Label>
+                  <Label htmlFor="subject" className="text-gray-300 font-semibold">Subject*</Label>
                   <Select value={formData.subject} onValueChange={(value) => handleInputChange("subject", value)}>
                     <SelectTrigger className="bg-dark-bg/50 text-white focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50">
                       <SelectValue placeholder="Select a subject" />
