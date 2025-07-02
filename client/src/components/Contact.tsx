@@ -121,7 +121,7 @@ export default function Contact() {
                 <div>
                   <Label htmlFor="subject" className="text-gray-300 font-semibold">Subject*</Label>
                   <Select value={formData.subject} onValueChange={(value) => handleInputChange("subject", value)}>
-                    <SelectTrigger className="bg-dark-bg/50 text-white focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50">
+                    <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange data-[placeholder]:text-gray-400 data-[placeholder]:opacity-60">
                       <SelectValue placeholder="Select a subject" />
                     </SelectTrigger>
                     <SelectContent className="bg-dark-bg/90">
