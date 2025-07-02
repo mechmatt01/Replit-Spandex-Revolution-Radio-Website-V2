@@ -1,0 +1,10 @@
+[nix]
+channel = "stable-22_11"
+
+[deployment]
+run = ["sh", "-c", "npm install --production && NODE_ENV=production node dist/index.js"]
+deploymentTarget = "autoscale"
+
+[[ports]]
+localPort = 5000
+externalPort = 80

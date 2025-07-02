@@ -138,6 +138,7 @@ Required redirect URIs in Google Cloud Console:
 3. Save the changes
 
 ## Changelog
+- July 2, 2025: DEPLOYMENT FIXES APPLIED - Fixed production build module resolution errors by updating vite.config import to use .js extension, added conditional dotenv loading for production compatibility, ensured server listens on 0.0.0.0 for Replit deployment, created comprehensive error handling wrapper, added replit.toml configuration for proper deployment with npm install --production
 - June 30, 2025: FINAL artwork and station system - implemented station-aware now-playing API with authentic metadata fetching for all 4 radio stations (95.5 The Beat, Hot 97, Power 106, SomaFM Metal), added immediate track info fetching on station switches, integrated iTunes artwork lookup for each station's live tracks
 - June 30, 2025: FINAL volume control polish - increased animated volume icon to 56x56 pixels (25% bigger) while maintaining button circle dimensions, restored glassy background with proper blur effects matching reference code
 - June 30, 2025: FINAL interface polish - reduced button-to-text padding by 50% for tighter layout, added rounded edges to all play/stop icons using strokeLinejoin/strokeLinecap, increased floating player icon size by 25%, optimized volume button with 25% larger icon and compact 5px padding background circle
