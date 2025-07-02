@@ -90,8 +90,13 @@ export default function FullWidthGlobeMap() {
 
   // Simulate loading and dynamic listener updates with smooth animations
   useEffect(() => {
+    console.log('Globe loading started...');
     setIsLoading(true);
-    const timer = setTimeout(() => setIsLoading(false), 1500);
+    
+    const timer = setTimeout(() => {
+      console.log('Globe loading complete!');
+      setIsLoading(false);
+    }, 2000);
 
     // Simulate listeners coming online/offline with smoother transitions
     const interval = setInterval(() => {
@@ -108,7 +113,7 @@ export default function FullWidthGlobeMap() {
           return b.lastSeen.getTime() - a.lastSeen.getTime();
         });
       });
-    }, 4000);
+    }, 5000);
 
     return () => {
       clearTimeout(timer);
@@ -284,11 +289,11 @@ export default function FullWidthGlobeMap() {
                       </div>
 
                       {/* Loading state */}
-                      {isLoading && (
+                      {isLoading ? (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="animate-spin w-12 h-12 border-2 border-white border-t-transparent rounded-full" />
                         </div>
-                      )}
+                      ) : null}
 
                       {/* Listener dots */}
                       {!isLoading && activeListeners.map((listener) => {
@@ -364,19 +369,15 @@ export default function FullWidthGlobeMap() {
                       Live Now
                     </div>
                     <div className="flex justify-center mt-2">
-                      <div 
-                        className="h-7 w-7 bg-current"
-                        style={{ 
-                          maskImage: `url(${LiveNowIconPath})`,
-                          maskSize: 'contain',
-                          maskRepeat: 'no-repeat',
-                          maskPosition: 'center',
-                          WebkitMaskImage: `url(${LiveNowIconPath})`,
-                          WebkitMaskSize: 'contain',
-                          WebkitMaskRepeat: 'no-repeat',
-                          WebkitMaskPosition: 'center',
-                          color: colors.primary
+                      <img 
+                        src={LiveNowIconPath} 
+                        alt="Live Now" 
+                        className="h-7 w-7"
+                        style={{
+                          filter: `brightness(0) saturate(100%) invert(47%) sepia(97%) saturate(1352%) hue-rotate(346deg) brightness(100%) contrast(91%)`
                         }}
+                        onLoad={() => console.log('LiveNow icon loaded')}
+                        onError={(e) => console.error('LiveNow icon failed to load:', e)}
                       />
                     </div>
                   </div>
@@ -390,18 +391,12 @@ export default function FullWidthGlobeMap() {
                       Countries
                     </div>
                     <div className="flex justify-center mt-2">
-                      <div 
-                        className="h-7 w-7 bg-current"
-                        style={{ 
-                          maskImage: `url(${CountriesIconPath})`,
-                          maskSize: 'contain',
-                          maskRepeat: 'no-repeat',
-                          maskPosition: 'center',
-                          WebkitMaskImage: `url(${CountriesIconPath})`,
-                          WebkitMaskSize: 'contain',
-                          WebkitMaskRepeat: 'no-repeat',
-                          WebkitMaskPosition: 'center',
-                          color: colors.primary
+                      <img 
+                        src={CountriesIconPath} 
+                        alt="Countries" 
+                        className="h-7 w-7"
+                        style={{
+                          filter: `brightness(0) saturate(100%) invert(47%) sepia(97%) saturate(1352%) hue-rotate(346deg) brightness(100%) contrast(91%)`
                         }}
                       />
                     </div>
