@@ -124,7 +124,7 @@ export default function Schedule() {
                   className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2"
                   style={{ borderColor: colors.primary, height: '160px' }}
                 >
-                  <CardContent style={{ height: '160px', display: 'flex', flexDirection: 'column' }}>
+                  <CardContent className="p-4" style={{ height: '160px', display: 'flex', flexDirection: 'column' }}>
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-black text-lg text-center flex-1">{show.title}</h4>
                     </div>
