@@ -113,7 +113,7 @@ export default function Schedule() {
                       <Button 
                         size="sm" 
                         variant="ghost" 
-                        className="p-0 h-auto transition-colors duration-300 font-bold"
+                        className="p-0 h-auto transition-colors duration-300 font-bold text-xs"
                         style={{ color: 'var(--color-primary)' }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.color = 'var(--color-secondary)';
