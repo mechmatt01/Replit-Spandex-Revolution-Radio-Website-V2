@@ -158,7 +158,7 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
             onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
             placeholder="John Doe"
             required
-            className="bg-dark-bg/50 text-white placeholder-gray-500 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
+            className="bg-dark-bg/50 text-white placeholder-gray-400/60 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
           />
         </div>
         <div>
@@ -170,7 +170,7 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
             onChange={(e) => setCustomerInfo(prev => ({ ...prev, email: e.target.value }))}
             placeholder="john@example.com"
             required
-            className="bg-dark-bg/50 text-white placeholder-gray-500 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
+            className="bg-dark-bg/50 text-white placeholder-gray-400/60 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
           />
         </div>
       </div>

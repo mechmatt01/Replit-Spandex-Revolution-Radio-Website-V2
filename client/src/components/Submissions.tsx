@@ -220,7 +220,7 @@ export default function Submissions() {
                   value={formData.submitterName || ""}
                   onChange={(e) => handleInputChange("submitterName", e.target.value)}
                   placeholder="Enter your name (optional)"
-                  className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
+                  className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange"
                 />
               </div>
 
@@ -232,7 +232,7 @@ export default function Submissions() {
                   onChange={(e) => handleInputChange("message", e.target.value)}
                   placeholder="Tell us why this song rocks or share any additional details..."
                   rows={4}
-                  className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange resize-none"
+                  className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange resize-none"
                 />
               </div>
 
