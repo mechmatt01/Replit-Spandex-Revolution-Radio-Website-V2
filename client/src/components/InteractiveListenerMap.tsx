@@ -30,6 +30,10 @@ const generateListenerData = (): Listener[] => [
 export default function InteractiveListenerMap() {
   const [listeners, setListeners] = useState<Listener[]>([]);
   const [selectedListener, setSelectedListener] = useState<Listener | null>(null);
+  const [colors, setColors] = useState({
+    text: 'white',
+    primary: 'orange',
+  });
 
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
@@ -74,7 +78,7 @@ export default function InteractiveListenerMap() {
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Globe className="text-gray-600 h-32 w-32 opacity-30" />
                   </div>
-                  
+
                   {/* Listener Dots */}
                   <div className="absolute inset-0">
                     {listeners.map((listener) => (
@@ -122,18 +126,19 @@ export default function InteractiveListenerMap() {
             <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
               <CardContent className="p-6">
                 <h3 className="font-black text-xl mb-3 text-metal-orange">Live Statistics</h3>
-                <div className="space-y-2">
+                
+                <div className="space-y-2 flex-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400 font-semibold">Total Listeners</span>
-                    <span className="text-white font-black text-lg">{stats?.currentListeners || totalListeners}</span>
+                    <span className="font-semibold" style={{ color: colors.text }}>Total Listeners</span>
+                    <span className="font-black text-lg" style={{ color: colors.primary }}>{stats?.currentListeners || totalListeners}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400 font-semibold">Countries</span>
-                    <span className="text-white font-black text-lg">{listeners.length}</span>
+                    <span className="font-semibold" style={{ color: colors.text }}>Countries</span>
+                    <span className="font-black text-lg" style={{ color: colors.primary }}>{listeners.length}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-400 font-semibold">Peak Today</span>
-                    <span className="text-white font-black text-lg">{stats?.peakListeners || 1847}</span>
+                    <span className="font-semibold" style={{ color: colors.text }}>Peak Today</span>
+                    <span className="font-black text-lg" style={{ color: colors.primary }}>{stats?.peakListeners || 1847}</span>
                   </div>
                 </div>
               </CardContent>
