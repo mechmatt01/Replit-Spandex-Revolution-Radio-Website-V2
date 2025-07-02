@@ -123,9 +123,8 @@ export default function Contact() {
                         </ul>
                       </div>
                     )}
-              
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="firstName" className="text-gray-300 font-semibold">First Name*</Label>
@@ -212,7 +211,8 @@ export default function Contact() {
                   <Send className="mr-2 h-4 w-4" />
                   {contactMutation.isPending ? "SENDING..." : "SEND MESSAGE"}
                 </Button>
-                </form>
+                    </form>
+                  </>
                 )}
 
                 {/* Success State */}
