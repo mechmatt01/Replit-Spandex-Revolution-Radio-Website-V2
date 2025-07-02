@@ -104,7 +104,7 @@ export default function Schedule() {
                           e.currentTarget.style.color = 'var(--color-primary)';
                         }}
                       >
-                        <svg className="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                        <svg className="mr-0.5 h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" />
                         </svg>
                         Play
