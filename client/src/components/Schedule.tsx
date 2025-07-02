@@ -139,25 +139,23 @@ export default function Schedule() {
                         <Calendar className="text-gray-500 h-3 w-3" />
                         <span className="text-gray-500 text-xs font-bold">{formatShortDate(show.date)}</span>
                       </div>
-                      <span className="text-gray-500 text-xs font-bold">
-                        <Button 
-                          size="sm" 
-                          variant="ghost" 
-                          className="p-0 h-auto transition-colors duration-300 font-bold text-xs"
-                          style={{ color: 'var(--color-primary)' }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.color = 'var(--color-secondary)';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.color = 'var(--color-primary)';
-                          }}
-                        >
-                          <svg className="mr-0.5 h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" />
-                          </svg>
-                          Play
-                        </Button>
-                      </span>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        className="p-0 h-auto transition-colors duration-300 font-bold text-xs text-gray-500"
+                        style={{ color: 'var(--color-primary)' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = 'var(--color-secondary)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = 'var(--color-primary)';
+                        }}
+                      >
+                        <svg className="mr-0.5 h-3 w-3" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" />
+                        </svg>
+                        Play
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
