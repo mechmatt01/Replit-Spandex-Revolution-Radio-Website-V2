@@ -446,7 +446,7 @@ export default function RadioCoPlayer() {
                 size="sm"
                 className="text-white hover:bg-white/10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105"
                 style={{
-                  background: isMuted ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
+                  background: (isMuted || volume === 0) ? `${colors.primary}40` : 'rgba(255, 255, 255, 0.05)',
                   backdropFilter: 'blur(20px)',
                   padding: '5px',
                   width: 'auto',
