@@ -121,8 +121,8 @@ export default function InteractiveListenerMap() {
           <div className="space-y-6">
             <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
               <CardContent className="p-6">
-                <h3 className="font-black text-xl mb-4 text-metal-orange">Live Statistics</h3>
-                <div className="space-y-4">
+                <h3 className="font-black text-xl mb-3 text-metal-orange">Live Statistics</h3>
+                <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400 font-semibold">Total Listeners</span>
                     <span className="text-white font-black text-lg">{stats?.currentListeners || totalListeners}</span>
@@ -141,7 +141,7 @@ export default function InteractiveListenerMap() {
 
             <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
               <CardContent className="p-6">
-                <h3 className="font-black text-xl mb-4 text-white">Top Locations</h3>
+                <h3 className="font-black text-xl mb-4 text-metal-orange">Top Locations</h3>
                 <div className="space-y-3">
                   {listeners
                     .sort((a, b) => b.count - a.count)
