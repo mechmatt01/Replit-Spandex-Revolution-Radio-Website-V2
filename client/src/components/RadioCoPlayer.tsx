@@ -363,7 +363,7 @@ export default function RadioCoPlayer() {
            currentTrack.artist !== currentTrack.title && 
            currentTrack.artist !== "Live Stream" && 
            currentTrack.artist !== (selectedStation?.name || "95.5 The Beat") && (
-            <p className="text-foreground font-black text-2xl mb-1 transition-opacity duration-500">
+            <p className="text-foreground font-semibold text-lg mb-1 transition-opacity duration-500">
               {currentTrack.artist}
             </p>
           )}
@@ -381,7 +381,7 @@ export default function RadioCoPlayer() {
            currentTrack.title !== currentTrack.artist && 
            currentTrack.title !== (selectedStation?.name || "95.5 The Beat") && 
            (selectedStation?.name || "95.5 The Beat") !== currentTrack.title && (
-            <p className="text-foreground font-semibold text-lg transition-opacity duration-500">
+            <p className="text-foreground font-black text-2xl transition-opacity duration-500">
               {selectedStation?.name || "95.5 The Beat"}
             </p>
           )}
