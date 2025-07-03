@@ -335,29 +335,52 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         if (response.ok) {
           const trackData = await response.json();
 
-          // Only update if track has actually changed
-          if (trackData.title !== currentTrack.title || trackData.artist !== currentTrack.artist) {
-            setIsTransitioning(true);
-            
-            // If we get generic "Radio Stream" data, show station info instead
-            const displayTitle = (trackData.title === "Radio Stream" || !trackData.title) 
-              ? currentStation?.name || stationName 
-              : trackData.title;
-            
-            const displayArtist = (trackData.artist === "Live Stream" || !trackData.artist)
-              ? currentStation?.description || ''
-              : trackData.artist;
-            
-            const displayAlbum = trackData.album || 
-              (currentStation ? `${currentStation.frequency} • ${currentStation.location}` : '');
-            
-            setCurrentTrack({
-              title: displayTitle,
-              artist: displayArtist,
-              album: displayAlbum,
-              artwork: trackData.artwork || '',
-            });
-            setTimeout(() => setIsTransitioning(false), 300);
+          // Only update if track has actually changed (and it's not generic station info)
+          const isActualSong = trackData.title && 
+                              trackData.title !== "Radio Stream" && 
+                              trackData.title !== "Live Stream" && 
+                              trackData.title !== currentStation?.name &&
+                              trackData.title !== currentStation?.description;
+
+          const hasTrackChanged = trackData.title !== currentTrack.title || trackData.artist !== currentTrack.artist;
+
+          if (hasTrackChanged) {
+            // Only trigger cool animation for actual song changes
+            if (isActualSong && currentTrack.title !== currentStation?.name) {
+              setIsTransitioning(true);
+              
+              // Wait for transition to start, then update content
+              setTimeout(() => {
+                setCurrentTrack({
+                  title: trackData.title,
+                  artist: trackData.artist || '',
+                  album: trackData.album || '',
+                  artwork: trackData.artwork || '',
+                });
+              }, 350); // Half of transition duration
+              
+              // End transition after animation completes
+              setTimeout(() => setIsTransitioning(false), 1200);
+            } else {
+              // For station info or non-songs, update without animation
+              const displayTitle = (trackData.title === "Radio Stream" || !trackData.title) 
+                ? currentStation?.name || stationName 
+                : trackData.title;
+              
+              const displayArtist = (trackData.artist === "Live Stream" || !trackData.artist)
+                ? currentStation?.description || ''
+                : trackData.artist;
+              
+              const displayAlbum = trackData.album || 
+                (currentStation ? `${currentStation.frequency} • ${currentStation.location}` : '');
+              
+              setCurrentTrack({
+                title: displayTitle,
+                artist: displayArtist,
+                album: displayAlbum,
+                artwork: trackData.artwork || '',
+              });
+            }
           }
         }
       } catch (error) {

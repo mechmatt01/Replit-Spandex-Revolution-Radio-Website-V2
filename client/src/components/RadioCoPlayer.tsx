@@ -327,7 +327,16 @@ export default function RadioCoPlayer() {
 
       {/* Album Art with LIVE Indicator Overlay */}
       <div className="flex justify-center mb-6 relative">
-        <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+        <div className={`transition-all duration-1000 transform ${
+          isTransitioning 
+            ? 'opacity-0 scale-75 rotate-12 blur-md' 
+            : 'opacity-100 scale-100 rotate-0 blur-0'
+        }`}
+        style={{
+          transformOrigin: 'center',
+          filter: isTransitioning ? 'blur(4px) saturate(0.3)' : 'blur(0px) saturate(1)',
+          animation: isTransitioning ? 'none' : 'albumReveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+        }}>
           <InteractiveAlbumArt 
             artwork={currentTrack.artwork}
             title={currentTrack.title}
@@ -345,11 +354,20 @@ export default function RadioCoPlayer() {
         </div>
       </div>
 
-      {/* Track Info with Fade Animation */}
+      {/* Track Info with Cool Animation */}
       <div className="text-center mb-6">
-        <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+        <div className={`transition-all duration-700 transform ${
+          isTransitioning 
+            ? 'opacity-0 scale-95 translate-y-2 blur-sm' 
+            : 'opacity-100 scale-100 translate-y-0 blur-0'
+        }`}
+        style={{
+          transformOrigin: 'center',
+          filter: isTransitioning ? 'blur(2px)' : 'blur(0px)',
+          animation: isTransitioning ? 'none' : 'slideInFromBottom 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
+        }}>
           <div className="flex justify-center mb-2 w-full overflow-hidden">
-            <div className="w-full max-w-full">
+            <div className={`w-full max-w-full ${isTransitioning ? 'song-change-shimmer' : ''}`}>
               <ScrollingText 
                 text={currentTrack.title}
                 className="font-black text-foreground whitespace-nowrap"
