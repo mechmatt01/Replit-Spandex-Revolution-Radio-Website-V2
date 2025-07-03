@@ -54,7 +54,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("hero")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Home
                 </button>
@@ -62,7 +62,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("schedule")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Schedule
                 </button>
@@ -70,7 +70,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Submissions
                 </button>
@@ -78,7 +78,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Contact
                 </button>
@@ -86,7 +86,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("subscription")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Subscribe
                 </button>
@@ -101,7 +101,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/help"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
                 >
                   Help Center
                 </a>
@@ -109,7 +109,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Technical Support
                 </button>
@@ -117,7 +117,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Submit Songs
                 </button>
@@ -125,7 +125,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/guidelines"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
                 >
                   Community Guidelines
                 </a>
@@ -133,7 +133,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/privacy"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
                 >
                   Privacy Policy
                 </a>
@@ -146,30 +146,30 @@ export default function Footer() {
             <h4 className="font-semibold text-foreground mb-4">Stream Info</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <span className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-2">
+                <div className="text-muted-foreground">
+                  <span className="text-metal-orange mr-2 inline-block w-4">
                     <Radio className="h-4 w-4" />
                   </span>
                   24/7 Live Stream
-                </span>
+                </div>
               </li>
               <li>
-                <span className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-2">♪</span>
+                <div className="text-muted-foreground">
+                  <span className="text-metal-orange mr-2 inline-block w-4">♪</span>
                   320kbps Quality
-                </span>
+                </div>
               </li>
               <li>
-                <span className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-2">🌍</span>
+                <div className="text-muted-foreground">
+                  <span className="text-metal-orange mr-2 inline-block w-4">🌍</span>
                   Global Coverage
-                </span>
+                </div>
               </li>
               <li>
-                <span className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-2">🛡️</span>
+                <div className="text-muted-foreground">
+                  <span className="text-metal-orange mr-2 inline-block w-4">🛡️</span>
                   Secure & Reliable
-                </span>
+                </div>
               </li>
             </ul>
           </div>
