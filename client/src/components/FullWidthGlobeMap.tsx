@@ -546,7 +546,7 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Statistics and Active Locations Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
           {/* Live Statistics - 33% width */}
           <div className="lg:col-span-1" ref={statsRef}>
             <Card
@@ -562,8 +562,9 @@ export default function FullWidthGlobeMap() {
                   Live Statistics
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div
+              <CardContent>
+                <div className="grid grid-cols-3 lg:grid-cols-1 gap-4 lg:gap-6">
+                  <div
                   className={`p-4 rounded-lg ${isDarkMode ? "bg-white/5" : "bg-black/5"} backdrop-blur-sm`}
                 >
                   <div className="text-center">
@@ -643,6 +644,7 @@ export default function FullWidthGlobeMap() {
                       />
                     </div>
                   </div>
+                </div>
                 </div>
               </CardContent>
             </Card>

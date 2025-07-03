@@ -228,7 +228,7 @@ export default function Contact() {
                             handleInputChange("subject", value)
                           }
                         >
-                          <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange [&>span]:data-[placeholder]:text-gray-400 [&>span]:data-[placeholder]:opacity-60">
+                          <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange [&>span]:text-gray-400">
                             <SelectValue
                               placeholder="Select a subject"
                             />
