@@ -1,4 +1,3 @@
-
 import { Radio } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
@@ -177,11 +176,11 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <p className="text-sm text-muted-foreground font-semibold">
+          <div className="flex flex-col md:flex-row md:items-center justify-between">
+            <p className="text-sm text-muted-foreground font-semibold mb-4 md:mb-0">
               © 2025 Spandex Salvation Radio. All rights reserved.
             </p>
-            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground mt-4 md:mt-0">
+            <div className="flex flex-wrap items-baseline gap-6 text-sm text-muted-foreground">
               <a
                 href="/terms"
                 className="font-semibold hover:text-metal-orange transition-colors"
@@ -207,7 +206,7 @@ export default function Footer() {
                   });
                   window.dispatchEvent(event);
                 }}
-                className="font-semibold hover:text-metal-orange transition-colors"
+                className="font-semibold hover:text-metal-orange transition-colors bg-transparent border-none p-0 m-0 text-sm leading-none"
               >
                 Admin
               </button>
