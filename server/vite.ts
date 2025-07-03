@@ -118,42 +118,22 @@ export async function setupVite(app: Express, server: Server) {
 export function serveStatic(app: Express) {
   const distPath = path.resolve(process.cwd(), "client/dist");
   console.log("Serving static files from:", distPath);
-  
-  // Create dist directory if it doesn't exist
-  if (!fs.existsSync(distPath)) {
-    console.warn(`Static files directory not found: ${distPath}`);
-    console.log("Creating basic static file structure...");
-    fs.mkdirSync(distPath, { recursive: true });
-    
-    // Create a basic index.html if missing
-    const basicIndex = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spandex Salvation Radio</title>
-</head>
-<body>
-    <div id="root">Loading...</div>
-    <script>
-        // Basic fallback for missing build
-        document.getElementById('root').innerHTML = '<h1>Application Starting...</h1><p>Please wait while the application loads.</p>';
-    </script>
-</body>
-</html>`;
-    fs.writeFileSync(path.join(distPath, 'index.html'), basicIndex);
-  }
 
   if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
+    console.error(`Static files directory not found: ${distPath}`);
+    console.error("Please run 'npm run build' first");
+    return;
   }
 
   app.use(express.static(distPath));
 
-  // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  // Catch-all handler for SPA routing
+  app.get("*", (req, res) => {
+    const indexPath = path.join(distPath, "index.html");
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(404).send("Application not built. Please run 'npm run build'");
+    }
   });
 }
