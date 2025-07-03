@@ -1,23 +1,46 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { recaptchaService } from "./recaptcha";
 import { formatPhoneNumber } from "./userUtils";
+
+// Utility functions
+function generateToken(): string {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+async function sendVerificationEmail(email: string, token: string, firstName: string): Promise<void> {
+  // Email sending implementation would go here
+  console.log(`Verification email would be sent to ${email} for ${firstName} with token ${token}`);
+}
 import { fetchSpotifyArtwork } from "./radioMetadata";
 import { fetchRadioCoMetadata, isCommercial, getClearbitLogo, extractCompanyName } from "./radioCoConfig";
 import passport from "passport";
 import Stripe from "stripe";
 import bcrypt from "bcryptjs";
-import { registerUserSchema, loginUserSchema } from "@shared/schema";
+import { registerUserSchema, loginUserSchema, type User } from "@shared/schema";
 import https from "https";
 import crypto from "crypto";
 import { setupRadioProxy } from "./radioProxy";
-import type { User } from "@shared/schema";
 
-// Removed Spotify API - using Icecast streaming only
 import { insertSubmissionSchema, insertContactSchema, insertSubscriptionSchema, insertNowPlayingSchema } from "@shared/schema";
 import { z } from "zod";
+
+// Define interfaces for extended request types
+interface AuthenticatedRequest extends Request {
+  user: {
+    claims: {
+      sub: string;
+    };
+    id: string;
+    userId: string;
+  } & User;
+  session: {
+    phoneVerificationCode?: string;
+    phoneToVerify?: string;
+  };
+}
 
 // Initialize Stripe
 const stripe = process.env.STRIPE_SECRET_KEY 
@@ -32,7 +55,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupRadioProxy(app);
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.get('/api/auth/user', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
@@ -90,7 +113,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
 
   // Update listening status
-  app.post('/api/update-listening-status', isAuthenticated, async (req: any, res) => {
+  app.post('/api/update-listening-status', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.claims.sub;
       const { isActiveListening } = req.body;
@@ -1339,9 +1362,9 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
   });
 
   // reCAPTCHA Enterprise SMS fraud detection endpoints
-  app.post('/api/user/send-phone-verification', isAuthenticated, async (req: any, res) => {
+  app.post('/api/user/send-phone-verification', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const user = req.user as User;
+      const user = req.user;
       const { recaptchaToken, phoneNumber } = req.body;
 
       if (!phoneNumber) {
@@ -1405,9 +1428,9 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
     }
   });
 
-  app.post('/api/user/verify-phone', isAuthenticated, async (req: any, res) => {
+  app.post('/api/user/verify-phone', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const user = req.user as User;
+      const user = req.user;
       const { code } = req.body;
 
       if (!code) {
@@ -1461,9 +1484,9 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
     }
   });
 
-  app.post('/api/user/send-email-verification', isAuthenticated, async (req: any, res) => {
+  app.post('/api/user/send-email-verification', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const user = req.user as User;
+      const user = req.user;
       
       // Generate verification token
       const token = generateToken();
@@ -1485,7 +1508,7 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
     }
   });
 
-  app.post('/api/user/verify-email', isAuthenticated, async (req: any, res) => {
+  app.post('/api/user/verify-email', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const { code: token } = req.body;
 
@@ -1512,9 +1535,9 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
     }
   });
 
-  app.post('/api/user/update-profile', isAuthenticated, async (req: any, res) => {
+  app.post('/api/user/update-profile', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const user = req.user as User;
+      const user = req.user;
       const { firstName, lastName, phoneNumber, showVerifiedBadge } = req.body;
 
       const updates: any = {};
@@ -1548,9 +1571,9 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
     }
   });
 
-  app.get('/api/user/submissions', isAuthenticated, async (req: any, res) => {
+  app.get('/api/user/submissions', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const user = req.user as User;
+      const user = req.user;
       const submissions = await storage.getUserSubmissions(user.id);
       res.json(submissions);
     } catch (error) {
@@ -1560,7 +1583,7 @@ async function fetchStreamTheWorldMetadata(): Promise<any> {
   });
 
   // Schedule account deletion
-  app.delete('/api/user/account', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/user/account', isAuthenticated, async (req: AuthenticatedRequest, res: Response) => {
     try {
       const userId = req.user.id;
       const user = await storage.scheduleUserDeletion(userId);

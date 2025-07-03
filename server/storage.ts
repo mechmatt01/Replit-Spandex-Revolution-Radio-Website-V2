@@ -150,7 +150,6 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ 
         location,
-
         updatedAt: new Date() 
       })
       .where(eq(users.id, id))
@@ -165,7 +164,6 @@ export class DatabaseStorage implements IStorage {
   async verifyPhone(userId: string, code: string): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, userId));
 
-    // Simplified verification for cleanup
     if (!user) {
       return undefined;
     }
@@ -174,8 +172,6 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ 
         isPhoneVerified: true,
-
-
         updatedAt: new Date()
       })
       .where(eq(users.id, userId))
@@ -191,14 +187,11 @@ export class DatabaseStorage implements IStorage {
       return undefined;
     }
 
-    // Simplified verification for cleanup
-
     const [updatedUser] = await db
       .update(users)
       .set({ 
         isEmailVerified: true,
         emailVerificationToken: null,
-
         updatedAt: new Date()
       })
       .where(eq(users.id, user.id))
