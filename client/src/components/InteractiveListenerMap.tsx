@@ -263,24 +263,27 @@ export default function InteractiveListenerMap() {
                 >
                   {/* Loading State */}
                   {isLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
                       <div className="text-center">
-                        <Globe className={`${isDarkMode ? 'text-gray-600' : 'text-gray-400'} h-32 w-32 opacity-30 animate-pulse mx-auto mb-4`} />
-                        <div className="flex justify-center space-x-2">
+                        <Globe className={`${isDarkMode ? 'text-gray-600' : 'text-gray-400'} h-32 w-32 opacity-30 animate-spin mx-auto mb-4`} />
+                        <div className="flex justify-center space-x-2 mb-4">
                           {[0, 1, 2].map((i) => (
                             <div
                               key={i}
-                              className="w-3 h-3 rounded-full animate-pulse"
+                              className="w-4 h-4 rounded-full animate-bounce"
                               style={{
                                 backgroundColor: colors.primary,
-                                animationDelay: `${i * 0.3}s`,
-                                animationDuration: '1.5s'
+                                animationDelay: `${i * 0.15}s`,
+                                animationDuration: '1.2s'
                               }}
                             />
                           ))}
                         </div>
-                        <p className={`mt-4 font-semibold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <p className={`mt-2 font-black text-xl ${isDarkMode ? 'text-white' : 'text-black'}`}>
                           Loading global listeners...
+                        </p>
+                        <p className={`mt-1 font-semibold ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                          Connecting to metalheads worldwide 🤘
                         </p>
                       </div>
                     </div>

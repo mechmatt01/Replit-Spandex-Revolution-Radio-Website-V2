@@ -113,10 +113,14 @@ export default function Subscription() {
           {subscriptionTiers.map((tier, index) => (
             <div 
               key={tier.name}
-              className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
-                tier.popular ? "border-2 border-metal-gold transform scale-105" : ""
+              className={`relative flex flex-col rounded-lg ${
+                tier.popular ? "transform scale-105" : ""
               }`}
-              style={{ minHeight: '600px' }}
+              style={{ 
+                minHeight: '600px',
+                background: `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(135deg, ${tier.color === "metal-gold" ? "#FFD700, #FFA500" : tier.color === "metal-red" ? "#FF6B6B, #FF4444" : "#FF6B35, #F7931E"}) border-box`,
+                border: '2px solid transparent'
+              }}
             >
               {tier.popular && (
                 <div 
