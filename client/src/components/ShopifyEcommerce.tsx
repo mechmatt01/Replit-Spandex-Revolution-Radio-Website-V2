@@ -44,15 +44,42 @@ const sampleProducts: Product[] = [
   {
     id: "1",
     title: "Spandex Salvation Classic Tee",
-    description: "Premium cotton tee with vintage logo design. Perfect for any metal fan.",
+    description:
+      "Premium cotton tee with vintage logo design. Perfect for any metal fan.",
     price: 24.99,
     compareAtPrice: 29.99,
-    images: ["https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800"],
+    images: [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800",
+    ],
     variants: [
-      { id: "1-s", title: "Small", price: 24.99, available: true, option1: "S" },
-      { id: "1-m", title: "Medium", price: 24.99, available: true, option1: "M" },
-      { id: "1-l", title: "Large", price: 24.99, available: true, option1: "L" },
-      { id: "1-xl", title: "X-Large", price: 24.99, available: false, option1: "XL" },
+      {
+        id: "1-s",
+        title: "Small",
+        price: 24.99,
+        available: true,
+        option1: "S",
+      },
+      {
+        id: "1-m",
+        title: "Medium",
+        price: 24.99,
+        available: true,
+        option1: "M",
+      },
+      {
+        id: "1-l",
+        title: "Large",
+        price: 24.99,
+        available: true,
+        option1: "L",
+      },
+      {
+        id: "1-xl",
+        title: "X-Large",
+        price: 24.99,
+        available: false,
+        option1: "XL",
+      },
     ],
     tags: ["apparel", "tee", "classic"],
     rating: 4.8,
@@ -63,13 +90,34 @@ const sampleProducts: Product[] = [
   {
     id: "2",
     title: "Rebellion Hoodie",
-    description: "Heavy-duty hoodie with embroidered logo. Built for the coldest metal nights.",
+    description:
+      "Heavy-duty hoodie with embroidered logo. Built for the coldest metal nights.",
     price: 49.99,
-    images: ["https://images.unsplash.com/photo-1556821840-3a63f95609a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800"],
+    images: [
+      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800",
+    ],
     variants: [
-      { id: "2-s", title: "Small", price: 49.99, available: true, option1: "S" },
-      { id: "2-m", title: "Medium", price: 49.99, available: true, option1: "M" },
-      { id: "2-l", title: "Large", price: 49.99, available: true, option1: "L" },
+      {
+        id: "2-s",
+        title: "Small",
+        price: 49.99,
+        available: true,
+        option1: "S",
+      },
+      {
+        id: "2-m",
+        title: "Medium",
+        price: 49.99,
+        available: true,
+        option1: "M",
+      },
+      {
+        id: "2-l",
+        title: "Large",
+        price: 49.99,
+        available: true,
+        option1: "L",
+      },
     ],
     tags: ["apparel", "hoodie", "winter"],
     rating: 4.9,
@@ -79,9 +127,12 @@ const sampleProducts: Product[] = [
   {
     id: "3",
     title: "Metal Fuel Coffee Mug",
-    description: "15oz ceramic mug to fuel your metal mornings. Dishwasher safe.",
+    description:
+      "15oz ceramic mug to fuel your metal mornings. Dishwasher safe.",
     price: 19.99,
-    images: ["https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800"],
+    images: [
+      "https://images.unsplash.com/photo-1544787219-7f47ccb76574?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800",
+    ],
     variants: [
       { id: "3-default", title: "Default", price: 19.99, available: true },
     ],
@@ -94,11 +145,19 @@ const sampleProducts: Product[] = [
   {
     id: "4",
     title: "Limited Edition Vinyl Collection",
-    description: "Exclusive compilation of classic metal hits. Limited to 500 copies.",
+    description:
+      "Exclusive compilation of classic metal hits. Limited to 500 copies.",
     price: 34.99,
-    images: ["https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800"],
+    images: [
+      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=800",
+    ],
     variants: [
-      { id: "4-default", title: "Limited Edition", price: 34.99, available: true },
+      {
+        id: "4-default",
+        title: "Limited Edition",
+        price: 34.99,
+        available: true,
+      },
     ],
     tags: ["music", "vinyl", "limited"],
     rating: 5.0,
@@ -112,7 +171,9 @@ export default function ShopifyEcommerce() {
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { getColors } = useTheme();
@@ -126,24 +187,33 @@ export default function ShopifyEcommerce() {
     }, 1000);
   }, []);
 
-  const addToCart = (product: Product, variant: ProductVariant, quantity: number = 1) => {
-    const existingItem = cart.find(item => item.variantId === variant.id);
-    
+  const addToCart = (
+    product: Product,
+    variant: ProductVariant,
+    quantity: number = 1,
+  ) => {
+    const existingItem = cart.find((item) => item.variantId === variant.id);
+
     if (existingItem) {
-      setCart(cart.map(item => 
-        item.variantId === variant.id 
-          ? { ...item, quantity: item.quantity + quantity }
-          : item
-      ));
+      setCart(
+        cart.map((item) =>
+          item.variantId === variant.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item,
+        ),
+      );
     } else {
-      setCart([...cart, {
-        productId: product.id,
-        variantId: variant.id,
-        quantity,
-        title: `${product.title} - ${variant.title}`,
-        price: variant.price,
-        image: product.images[0],
-      }]);
+      setCart([
+        ...cart,
+        {
+          productId: product.id,
+          variantId: variant.id,
+          quantity,
+          title: `${product.title} - ${variant.title}`,
+          price: variant.price,
+          image: product.images[0],
+        },
+      ]);
     }
 
     toast({
@@ -153,18 +223,18 @@ export default function ShopifyEcommerce() {
   };
 
   const getCartTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   const handleCheckout = async () => {
     // In a real implementation, this would redirect to Shopify checkout
-    const checkoutUrl = `https://spandex-salvation-radio.myshopify.com/cart/${cart.map(item => `${item.variantId}:${item.quantity}`).join(',')}`;
-    
+    const checkoutUrl = `https://spandex-salvation-radio.myshopify.com/cart/${cart.map((item) => `${item.variantId}:${item.quantity}`).join(",")}`;
+
     toast({
       title: "Redirecting to Checkout",
       description: "Taking you to secure Shopify checkout...",
     });
-    
+
     // Simulate redirect
     console.log("Redirecting to:", checkoutUrl);
   };
@@ -185,7 +255,8 @@ export default function ShopifyEcommerce() {
             OFFICIAL MERCH STORE
           </h2>
           <p className="text-gray-400 text-lg font-semibold">
-            Show your metal pride with exclusive Spandex Salvation Radio merchandise.
+            Show your metal pride with exclusive Spandex Salvation Radio
+            merchandise.
           </p>
         </div>
 
@@ -198,7 +269,8 @@ export default function ShopifyEcommerce() {
                   <div className="flex items-center">
                     <ShoppingCart className="text-metal-orange h-5 w-5 mr-2" />
                     <span className="font-black text-white">
-                      {cart.reduce((total, item) => total + item.quantity, 0)} items in cart
+                      {cart.reduce((total, item) => total + item.quantity, 0)}{" "}
+                      items in cart
                     </span>
                   </div>
                   <div className="flex items-center space-x-4">
@@ -220,29 +292,38 @@ export default function ShopifyEcommerce() {
 
         {/* Featured Products */}
         <div className="mb-12 text-center">
-          <h3 className="font-black text-xl mb-6 text-center" style={{ color: colors.primary }}>Featured Products</h3>
+          <h3
+            className="font-black text-xl mb-6 text-center"
+            style={{ color: colors.primary }}
+          >
+            Featured Products
+          </h3>
           <div className="flex justify-center">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl">
-              {products.filter(product => product.featured).map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  onAddToCart={(variant, quantity) => addToCart(product, variant, quantity)}
-                  onViewDetails={() => setSelectedProduct(product)}
-                />
-              ))}
+              {products
+                .filter((product) => product.featured)
+                .map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={(variant, quantity) =>
+                      addToCart(product, variant, quantity)
+                    }
+                    onViewDetails={() => setSelectedProduct(product)}
+                  />
+                ))}
             </div>
           </div>
         </div>
-
-
 
         {/* Product Modal */}
         {selectedProduct && (
           <ProductModal
             product={selectedProduct}
             onClose={() => setSelectedProduct(null)}
-            onAddToCart={(variant, quantity) => addToCart(selectedProduct, variant, quantity)}
+            onAddToCart={(variant, quantity) =>
+              addToCart(selectedProduct, variant, quantity)
+            }
           />
         )}
       </div>
@@ -256,13 +337,19 @@ interface ProductCardProps {
   onViewDetails: () => void;
 }
 
-function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) {
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(product.variants[0]);
+function ProductCard({
+  product,
+  onAddToCart,
+  onViewDetails,
+}: ProductCardProps) {
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(
+    product.variants[0],
+  );
   const { getColors } = useTheme();
   const colors = getColors();
 
   return (
-    <Card 
+    <Card
       className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 group h-full flex flex-col"
       style={{ borderColor: colors.primary }}
     >
@@ -274,7 +361,10 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
             className="w-full h-48 object-cover rounded-lg"
           />
           {product.featured && (
-            <Badge className="absolute top-2 left-2" style={{ backgroundColor: colors.primary, color: 'white' }}>
+            <Badge
+              className="absolute top-2 left-2"
+              style={{ backgroundColor: colors.primary, color: "white" }}
+            >
               Featured
             </Badge>
           )}
@@ -310,7 +400,9 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
             Sale
           </Badge>
         )}
-        <p className="text-gray-400 text-sm font-semibold mb-3 line-clamp-2 flex-grow">{product.description}</p>
+        <p className="text-gray-400 text-sm font-semibold mb-3 line-clamp-2 flex-grow">
+          {product.description}
+        </p>
 
         <div className="flex items-center mb-3">
           <div className="flex items-center">
@@ -318,19 +410,27 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
               <Star
                 key={i}
                 className={`h-4 w-4 ${
-                  i < Math.floor(product.rating) ? "text-yellow-400 fill-current" : "text-gray-600"
+                  i < Math.floor(product.rating)
+                    ? "text-yellow-400 fill-current"
+                    : "text-gray-600"
                 }`}
               />
             ))}
           </div>
-          <span className="text-gray-400 text-sm font-semibold ml-2">({product.reviewCount})</span>
+          <span className="text-gray-400 text-sm font-semibold ml-2">
+            ({product.reviewCount})
+          </span>
         </div>
 
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="text-xl font-black text-metal-orange">${product.price}</span>
+            <span className="text-xl font-black text-metal-orange">
+              ${product.price}
+            </span>
             {product.compareAtPrice && (
-              <span className="text-gray-500 line-through ml-2">${product.compareAtPrice}</span>
+              <span className="text-gray-500 line-through ml-2">
+                ${product.compareAtPrice}
+              </span>
             )}
           </div>
           {!product.inStock && (
@@ -345,19 +445,37 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
             <div className="relative mb-3">
               <select
                 value={selectedVariant.id}
-                onChange={(e) => setSelectedVariant(product.variants.find(v => v.id === e.target.value)!)}
+                onChange={(e) =>
+                  setSelectedVariant(
+                    product.variants.find((v) => v.id === e.target.value)!,
+                  )
+                }
                 className="w-full p-2 bg-dark-bg/50 text-white rounded appearance-none pr-8"
                 style={{ borderColor: colors.primary }}
               >
                 {product.variants.map((variant) => (
-                  <option key={variant.id} value={variant.id} disabled={!variant.available}>
+                  <option
+                    key={variant.id}
+                    value={variant.id}
+                    disabled={!variant.available}
+                  >
                     {variant.title} {!variant.available && "(Out of Stock)"}
                   </option>
                 ))}
               </select>
               <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
                 </svg>
               </div>
             </div>
@@ -369,15 +487,16 @@ function ProductCard({ product, onAddToCart, onViewDetails }: ProductCardProps) 
             className="w-full font-bold transition-all duration-300"
             style={{
               backgroundColor: colors.primary,
-              color: colors.primaryText || 'white'
+              color: colors.primaryText || "white",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
-              e.currentTarget.style.transform = 'scale(1.02)';
+              e.currentTarget.style.backgroundColor =
+                colors.primaryDark || colors.primary;
+              e.currentTarget.style.transform = "scale(1.02)";
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.backgroundColor = colors.primary;
-              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.transform = "scale(1)";
             }}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
@@ -396,7 +515,9 @@ interface ProductModalProps {
 }
 
 function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(product.variants[0]);
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(
+    product.variants[0],
+  );
   const [quantity, setQuantity] = useState(1);
 
   return (
@@ -405,7 +526,11 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-6">
             <h3 className="font-black text-2xl text-white">{product.title}</h3>
-            <Button variant="ghost" onClick={onClose} className="text-gray-400 hover:text-white">
+            <Button
+              variant="ghost"
+              onClick={onClose}
+              className="text-gray-400 hover:text-white"
+            >
               ×
             </Button>
           </div>
@@ -420,7 +545,9 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
             </div>
 
             <div>
-              <p className="text-gray-300 font-semibold mb-4">{product.description}</p>
+              <p className="text-gray-300 font-semibold mb-4">
+                {product.description}
+              </p>
 
               <div className="flex items-center mb-4">
                 <div className="flex items-center">
@@ -428,7 +555,9 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                     <Star
                       key={i}
                       className={`h-5 w-5 ${
-                        i < Math.floor(product.rating) ? "text-yellow-400 fill-current" : "text-gray-600"
+                        i < Math.floor(product.rating)
+                          ? "text-yellow-400 fill-current"
+                          : "text-gray-600"
                       }`}
                     />
                   ))}
@@ -439,22 +568,36 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
               </div>
 
               <div className="mb-4">
-                <span className="text-2xl font-black text-metal-orange">${selectedVariant.price}</span>
+                <span className="text-2xl font-black text-metal-orange">
+                  ${selectedVariant.price}
+                </span>
                 {product.compareAtPrice && (
-                  <span className="text-gray-500 line-through ml-2">${product.compareAtPrice}</span>
+                  <span className="text-gray-500 line-through ml-2">
+                    ${product.compareAtPrice}
+                  </span>
                 )}
               </div>
 
               {product.variants.length > 1 && (
                 <div className="mb-4">
-                  <label className="block text-gray-300 font-semibold mb-2">Size:</label>
+                  <label className="block text-gray-300 font-semibold mb-2">
+                    Size:
+                  </label>
                   <select
                     value={selectedVariant.id}
-                    onChange={(e) => setSelectedVariant(product.variants.find(v => v.id === e.target.value)!)}
+                    onChange={(e) =>
+                      setSelectedVariant(
+                        product.variants.find((v) => v.id === e.target.value)!,
+                      )
+                    }
                     className="w-full p-2 bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange rounded"
                   >
                     {product.variants.map((variant) => (
-                      <option key={variant.id} value={variant.id} disabled={!variant.available}>
+                      <option
+                        key={variant.id}
+                        value={variant.id}
+                        disabled={!variant.available}
+                      >
                         {variant.title} {!variant.available && "(Out of Stock)"}
                       </option>
                     ))}
@@ -463,7 +606,9 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
               )}
 
               <div className="mb-6">
-                <label className="block text-gray-300 font-semibold mb-2">Quantity:</label>
+                <label className="block text-gray-300 font-semibold mb-2">
+                  Quantity:
+                </label>
                 <input
                   type="number"
                   min="1"

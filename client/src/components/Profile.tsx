@@ -8,7 +8,17 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Upload, Crown, LogOut, User, CreditCard, FileText, Camera, CheckCircle, Trash2 } from "lucide-react";
+import {
+  Upload,
+  Crown,
+  LogOut,
+  User,
+  CreditCard,
+  FileText,
+  Camera,
+  CheckCircle,
+  Trash2,
+} from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
@@ -45,7 +55,7 @@ const rockAvatars = [
   "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=300&h=300&fit=crop&crop=face",
   "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=300&fit=crop&crop=face",
   "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop&crop=face",
-  "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=300&h=300&fit=crop&crop=face"
+  "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=300&h=300&fit=crop&crop=face",
 ];
 
 export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
@@ -53,10 +63,13 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isCancelSubModalOpen, setIsCancelSubModalOpen] = useState(false);
-  const [showPremiumNotification, setShowPremiumNotification] = useState<{show: boolean, type: string}>({ show: false, type: '' });
+  const [showPremiumNotification, setShowPremiumNotification] = useState<{
+    show: boolean;
+    type: string;
+  }>({ show: false, type: "" });
   const [profileData, setProfileData] = useState<Partial<UserType>>({});
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  
+
   const { user, isAuthenticated } = useAuth();
   const { getColors, getGradient, theme } = useTheme();
   const { toast } = useToast();
@@ -103,13 +116,17 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
   // Cancel subscription mutation
   const cancelSubscriptionMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("POST", "/api/user/cancel-subscription");
+      const response = await apiRequest(
+        "POST",
+        "/api/user/cancel-subscription",
+      );
       return response.json();
     },
     onSuccess: () => {
       toast({
         title: "Subscription Canceled",
-        description: "Your subscription will end at the current billing period.",
+        description:
+          "Your subscription will end at the current billing period.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       setIsCancelSubModalOpen(false);
@@ -129,7 +146,8 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
       lastName: profileData.lastName || user?.lastName,
       phoneNumber: profileData.phoneNumber || user?.phoneNumber,
       profileImageUrl: profileData.profileImageUrl || user?.profileImageUrl,
-      showVerifiedBadge: profileData.showVerifiedBadge ?? user?.showVerifiedBadge ?? false,
+      showVerifiedBadge:
+        profileData.showVerifiedBadge ?? user?.showVerifiedBadge ?? false,
     };
     updateProfileMutation.mutate(updatedData);
   };
@@ -146,7 +164,8 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
     onSuccess: () => {
       toast({
         title: "Account Scheduled for Deletion",
-        description: "Your account will be deleted on your next renewal date. Subscription auto-renewal has been disabled.",
+        description:
+          "Your account will be deleted on your next renewal date. Subscription auto-renewal has been disabled.",
       });
       setShowDeleteConfirmation(false);
       // Redirect to home after brief delay
@@ -168,7 +187,7 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
   };
 
   const handleAvatarSelect = (avatarUrl: string) => {
-    setProfileData(prev => ({ ...prev, profileImageUrl: avatarUrl }));
+    setProfileData((prev) => ({ ...prev, profileImageUrl: avatarUrl }));
     setIsAvatarModalOpen(false);
   };
 
@@ -182,7 +201,10 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
       // In a real implementation, you'd upload to a service like AWS S3
       const reader = new FileReader();
       reader.onload = (e) => {
-        setProfileData(prev => ({ ...prev, profileImageUrl: e.target?.result as string }));
+        setProfileData((prev) => ({
+          ...prev,
+          profileImageUrl: e.target?.result as string,
+        }));
       };
       reader.readAsDataURL(file);
     }
@@ -202,8 +224,10 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
         <Card className="w-full max-w-md">
           <CardContent className="p-6 text-center">
             <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
-            <p className="text-muted-foreground mb-4">Please sign in to view your profile.</p>
-            <Button onClick={() => window.location.href = "/#/login"}>
+            <p className="text-muted-foreground mb-4">
+              Please sign in to view your profile.
+            </p>
+            <Button onClick={() => (window.location.href = "/#/login")}>
               Sign In
             </Button>
           </CardContent>
@@ -213,10 +237,12 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
   }
 
   return (
-    <div className={cn(
-      "min-h-screen",
-      theme === "light" ? "bg-white" : "bg-black"
-    )}>
+    <div
+      className={cn(
+        "min-h-screen",
+        theme === "light" ? "bg-white" : "bg-black",
+      )}
+    >
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar */}
@@ -232,10 +258,12 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </Button>
-                  
+
                   {hasActiveSubscription && (
                     <Button
-                      variant={activeSection === "subscription" ? "default" : "ghost"}
+                      variant={
+                        activeSection === "subscription" ? "default" : "ghost"
+                      }
                       className="w-full justify-start"
                       onClick={() => setActiveSection("subscription")}
                     >
@@ -243,18 +271,20 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                       Subscription Management
                     </Button>
                   )}
-                  
+
                   <Button
-                    variant={activeSection === "submissions" ? "default" : "ghost"}
+                    variant={
+                      activeSection === "submissions" ? "default" : "ghost"
+                    }
                     className="w-full justify-start"
                     onClick={() => setActiveSection("submissions")}
                   >
                     <FileText className="mr-2 h-4 w-4" />
                     Submission Requests
                   </Button>
-                  
+
                   <Separator className="my-4" />
-                  
+
                   <Button
                     variant="ghost"
                     className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
@@ -286,7 +316,7 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                         </AvatarFallback>
                       </Avatar>
                       {hasActiveSubscription && (
-                        <div 
+                        <div
                           className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center border-2 border-background"
                           style={{ backgroundColor: colors.primary }}
                         >
@@ -294,7 +324,7 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                         </div>
                       )}
                     </div>
-                    
+
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="outline">
@@ -315,13 +345,16 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                             />
                           </label>
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={() => {
                             if (hasActiveSubscription) {
                               setIsAvatarModalOpen(true);
                             } else {
                               // Show premium avatar notification
-                              setShowPremiumNotification({ show: true, type: 'premium_avatar' });
+                              setShowPremiumNotification({
+                                show: true,
+                                type: "premium_avatar",
+                              });
                             }
                           }}
                         >
@@ -342,7 +375,10 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                   {/* Verified Badge Toggle */}
                   <div className="flex items-center justify-between p-4 rounded-lg border">
                     <div className="flex items-center space-x-3">
-                      <CheckCircle className="h-5 w-5" style={{ color: colors.primary }} />
+                      <CheckCircle
+                        className="h-5 w-5"
+                        style={{ color: colors.primary }}
+                      />
                       <div>
                         <span className="font-semibold">Verified Badge</span>
                         <p className="text-sm text-muted-foreground">
@@ -355,19 +391,36 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => setShowPremiumNotification({ show: true, type: 'profile_badge' })}
+                          onClick={() =>
+                            setShowPremiumNotification({
+                              show: true,
+                              type: "profile_badge",
+                            })
+                          }
                           className="text-xs"
                         >
                           Premium
                         </Button>
                       )}
                       <Switch
-                        checked={hasActiveSubscription ? (profileData.showVerifiedBadge ?? user?.showVerifiedBadge ?? false) : false}
+                        checked={
+                          hasActiveSubscription
+                            ? (profileData.showVerifiedBadge ??
+                              user?.showVerifiedBadge ??
+                              false)
+                            : false
+                        }
                         onCheckedChange={(checked) => {
                           if (hasActiveSubscription) {
-                            setProfileData(prev => ({ ...prev, showVerifiedBadge: checked }));
+                            setProfileData((prev) => ({
+                              ...prev,
+                              showVerifiedBadge: checked,
+                            }));
                           } else {
-                            setShowPremiumNotification({ show: true, type: 'profile_badge' });
+                            setShowPremiumNotification({
+                              show: true,
+                              type: "profile_badge",
+                            });
                           }
                         }}
                         disabled={!hasActiveSubscription}
@@ -382,7 +435,12 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                       <Input
                         id="firstName"
                         value={profileData.firstName ?? user?.firstName ?? ""}
-                        onChange={(e) => setProfileData(prev => ({ ...prev, firstName: e.target.value }))}
+                        onChange={(e) =>
+                          setProfileData((prev) => ({
+                            ...prev,
+                            firstName: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                     <div>
@@ -390,7 +448,12 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                       <Input
                         id="lastName"
                         value={profileData.lastName ?? user?.lastName ?? ""}
-                        onChange={(e) => setProfileData(prev => ({ ...prev, lastName: e.target.value }))}
+                        onChange={(e) =>
+                          setProfileData((prev) => ({
+                            ...prev,
+                            lastName: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                     <div>
@@ -407,22 +470,31 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                       <Input
                         id="phone"
                         placeholder="Enter your phone number"
-                        value={profileData.phoneNumber ?? user?.phoneNumber ?? ""}
-                        onChange={(e) => setProfileData(prev => ({ ...prev, phoneNumber: e.target.value }))}
+                        value={
+                          profileData.phoneNumber ?? user?.phoneNumber ?? ""
+                        }
+                        onChange={(e) =>
+                          setProfileData((prev) => ({
+                            ...prev,
+                            phoneNumber: e.target.value,
+                          }))
+                        }
                       />
                     </div>
                   </div>
 
                   <div className="flex gap-4">
-                    <Button 
+                    <Button
                       onClick={handleProfileUpdate}
                       disabled={updateProfileMutation.isPending}
                       className="flex-1"
                     >
-                      {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+                      {updateProfileMutation.isPending
+                        ? "Saving..."
+                        : "Save Changes"}
                     </Button>
-                    
-                    <Button 
+
+                    <Button
                       variant="destructive"
                       onClick={() => setShowDeleteConfirmation(true)}
                       className="px-8 bg-red-600 hover:bg-red-700 text-white font-semibold transition-all duration-300"
@@ -462,7 +534,8 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                       <Label>Payment Method</Label>
                       <div className="flex items-center space-x-2">
                         <span className="text-lg font-semibold">
-                          **** **** **** {subscriptionDetails?.lastFourDigits || "4242"}
+                          **** **** ****{" "}
+                          {subscriptionDetails?.lastFourDigits || "4242"}
                         </span>
                         <div className="text-sm text-muted-foreground">
                           {subscriptionDetails?.cardType || "Visa"}
@@ -470,11 +543,11 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                       </div>
                     </div>
                   </div>
-                  
+
                   <Separator />
-                  
-                  <Button 
-                    variant="destructive" 
+
+                  <Button
+                    variant="destructive"
                     onClick={() => setIsCancelSubModalOpen(true)}
                   >
                     Cancel Subscription
@@ -492,7 +565,8 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                   {!hasActiveSubscription ? (
                     <div className="text-center py-8">
                       <p className="text-muted-foreground mb-4">
-                        Submission requests are available with an active subscription.
+                        Submission requests are available with an active
+                        subscription.
                       </p>
                       <Button onClick={onNavigateToSubscribe}>
                         Subscribe Now
@@ -503,7 +577,9 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                       <p className="text-muted-foreground mb-4">
                         No submission requests yet.
                       </p>
-                      <Button onClick={() => window.location.href = "/#submissions"}>
+                      <Button
+                        onClick={() => (window.location.href = "/#submissions")}
+                      >
                         Submit a Request
                       </Button>
                     </div>
@@ -514,26 +590,39 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
                           <CardContent className="p-4">
                             <div className="flex justify-between items-start">
                               <div>
-                                <h3 className="font-semibold">{submission.songTitle}</h3>
-                                <p className="text-muted-foreground">{submission.artistName}</p>
+                                <h3 className="font-semibold">
+                                  {submission.songTitle}
+                                </h3>
+                                <p className="text-muted-foreground">
+                                  {submission.artistName}
+                                </p>
                                 {submission.albumTitle && (
-                                  <p className="text-sm text-muted-foreground">{submission.albumTitle}</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    {submission.albumTitle}
+                                  </p>
                                 )}
                                 {submission.message && (
-                                  <p className="text-sm mt-2">{submission.message}</p>
+                                  <p className="text-sm mt-2">
+                                    {submission.message}
+                                  </p>
                                 )}
                               </div>
                               <div className="text-right">
-                                <Badge 
+                                <Badge
                                   variant={
-                                    submission.status === "approved" ? "default" :
-                                    submission.status === "rejected" ? "destructive" : "secondary"
+                                    submission.status === "approved"
+                                      ? "default"
+                                      : submission.status === "rejected"
+                                        ? "destructive"
+                                        : "secondary"
                                   }
                                 >
                                   {submission.status}
                                 </Badge>
                                 <p className="text-xs text-muted-foreground mt-1">
-                                  {new Date(submission.createdAt).toLocaleDateString()}
+                                  {new Date(
+                                    submission.createdAt,
+                                  ).toLocaleDateString()}
                                 </p>
                               </div>
                             </div>
@@ -550,7 +639,10 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
       </div>
 
       {/* Account Deletion Confirmation Modal */}
-      <Dialog open={showDeleteConfirmation} onOpenChange={setShowDeleteConfirmation}>
+      <Dialog
+        open={showDeleteConfirmation}
+        onOpenChange={setShowDeleteConfirmation}
+      >
         <DialogContent className="animate-in fade-in-0 zoom-in-95 duration-300">
           <DialogHeader>
             <DialogTitle className="text-red-600 flex items-center">
@@ -559,19 +651,22 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
             </DialogTitle>
             <DialogDescription className="space-y-3 pt-2">
               <p className="text-base">
-                Are you sure you want to delete your account? This action cannot be undone.
+                Are you sure you want to delete your account? This action cannot
+                be undone.
               </p>
               {user?.subscriptionStatus === "active" && (
                 <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-3">
                   <p className="text-sm text-orange-800 dark:text-orange-200">
-                    <strong>Subscription Notice:</strong> Your subscription auto-renewal will be cancelled immediately, 
-                    but your account will remain active until your next billing date. 
-                    Your account will be permanently deleted on that date.
+                    <strong>Subscription Notice:</strong> Your subscription
+                    auto-renewal will be cancelled immediately, but your account
+                    will remain active until your next billing date. Your
+                    account will be permanently deleted on that date.
                   </p>
                 </div>
               )}
               <p className="text-sm text-muted-foreground">
-                All your data, including profile information, submissions, and chat history will be permanently removed.
+                All your data, including profile information, submissions, and
+                chat history will be permanently removed.
               </p>
             </DialogDescription>
           </DialogHeader>
@@ -589,7 +684,9 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
               disabled={deleteAccountMutation.isPending}
               className="flex-1 bg-red-600 hover:bg-red-700 transition-all duration-200 hover:scale-105"
             >
-              {deleteAccountMutation.isPending ? "Processing..." : "Confirm and Delete Account"}
+              {deleteAccountMutation.isPending
+                ? "Processing..."
+                : "Confirm and Delete Account"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -631,7 +728,10 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsLogoutModalOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsLogoutModalOpen(false)}
+            >
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleLogout}>
@@ -642,24 +742,34 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
       </Dialog>
 
       {/* Cancel Subscription Modal */}
-      <Dialog open={isCancelSubModalOpen} onOpenChange={setIsCancelSubModalOpen}>
+      <Dialog
+        open={isCancelSubModalOpen}
+        onOpenChange={setIsCancelSubModalOpen}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Cancel Subscription</DialogTitle>
             <DialogDescription>
-              Are you sure you want to cancel your subscription? You'll lose access to premium features at the end of your current billing period.
+              Are you sure you want to cancel your subscription? You'll lose
+              access to premium features at the end of your current billing
+              period.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCancelSubModalOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setIsCancelSubModalOpen(false)}
+            >
               Cancel
             </Button>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               onClick={() => cancelSubscriptionMutation.mutate()}
               disabled={cancelSubscriptionMutation.isPending}
             >
-              {cancelSubscriptionMutation.isPending ? "Canceling..." : "Confirm"}
+              {cancelSubscriptionMutation.isPending
+                ? "Canceling..."
+                : "Confirm"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -669,7 +779,7 @@ export default function Profile({ onNavigateToSubscribe }: ProfileProps) {
       {showPremiumNotification.show && (
         <LiveChat
           isEnabled={true}
-          onToggle={() => setShowPremiumNotification({ show: false, type: '' })}
+          onToggle={() => setShowPremiumNotification({ show: false, type: "" })}
           premiumFeatureType={showPremiumNotification.type as any}
         />
       )}

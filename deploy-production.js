@@ -1,23 +1,23 @@
 #!/usr/bin/env node
 
-import { build } from 'esbuild';
-import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
-import { join } from 'path';
-import { spawn } from 'child_process';
+import { build } from "esbuild";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
+import { join } from "path";
+import { spawn } from "child_process";
 
 async function deployProduction() {
-  console.log('🚀 Starting production deployment build...');
-  
+  console.log("🚀 Starting production deployment build...");
+
   // Step 1: Build frontend
-  console.log('📦 Building frontend...');
+  console.log("📦 Building frontend...");
   await new Promise((resolve, reject) => {
-    const viteProcess = spawn('npx', ['vite', 'build'], { 
-      stdio: 'inherit',
-      env: { ...process.env, NODE_ENV: 'production' }
+    const viteProcess = spawn("npx", ["vite", "build"], {
+      stdio: "inherit",
+      env: { ...process.env, NODE_ENV: "production" },
     });
-    viteProcess.on('close', (code) => {
+    viteProcess.on("close", (code) => {
       if (code === 0) {
-        console.log('✅ Frontend build completed');
+        console.log("✅ Frontend build completed");
         resolve();
       } else {
         reject(new Error(`Frontend build failed with code ${code}`));
@@ -26,23 +26,23 @@ async function deployProduction() {
   });
 
   // Step 2: Build backend with comprehensive module handling
-  console.log('🔧 Building backend...');
+  console.log("🔧 Building backend...");
   await build({
-    entryPoints: ['server/index.ts'],
+    entryPoints: ["server/index.ts"],
     bundle: true,
-    platform: 'node',
-    target: 'node18',
-    format: 'esm',
-    outdir: 'dist',
+    platform: "node",
+    target: "node18",
+    format: "esm",
+    outdir: "dist",
     external: [
-      'vite',
-      'esbuild',
-      '@google-cloud/recaptcha-enterprise',
-      'puppeteer'
+      "vite",
+      "esbuild",
+      "@google-cloud/recaptcha-enterprise",
+      "puppeteer",
     ],
     define: {
-      'process.env.NODE_ENV': '"production"',
-      'import.meta.env.NODE_ENV': '"production"'
+      "process.env.NODE_ENV": '"production"',
+      "import.meta.env.NODE_ENV": '"production"',
     },
     banner: {
       js: `
@@ -64,17 +64,17 @@ process.exit = function(code) {
   }
   originalExit(code);
 };
-`
+`,
     },
-    resolveExtensions: ['.ts', '.js', '.mjs', '.json']
+    resolveExtensions: [".ts", ".js", ".mjs", ".json"],
   });
 
-  console.log('🔧 Applying deployment fixes...');
-  
+  console.log("🔧 Applying deployment fixes...");
+
   // Step 3: Fix the vite.config import issue
-  const indexPath = join('dist', 'index.js');
-  let content = readFileSync(indexPath, 'utf8');
-  
+  const indexPath = join("dist", "index.js");
+  let content = readFileSync(indexPath, "utf8");
+
   // Fix 1: Replace vite.config import with conditional loading
   content = content.replace(
     /import viteConfig from "\.\.\/vite\.config";/g,
@@ -107,7 +107,7 @@ if (!viteConfig || Object.keys(viteConfig).length === 0) {
       emptyOutDir: true,
     },
   };
-}`
+}`,
   );
 
   // Fix 2: Add production check to setupVite function
@@ -120,7 +120,7 @@ if (!viteConfig || Object.keys(viteConfig).length === 0) {
     return;
   }
   
-  try {`
+  try {`,
   );
 
   // Fix 3: Add error handling wrapper for setupVite
@@ -134,14 +134,14 @@ if (!viteConfig || Object.keys(viteConfig).length === 0) {
       return;
     }
     throw error;
-  }`
+  }`,
   );
 
   // Fix 4: Update serveStatic to use correct path
   content = content.replace(
     /const distPath = path\.resolve\(import\.meta\.dirname, "public"\);/g,
     `const distPath = path.resolve(process.cwd(), "client/dist");
-    console.log("Serving static files from:", distPath);`
+    console.log("Serving static files from:", distPath);`,
   );
 
   // Fix 5: Ensure proper host and port binding for Replit
@@ -150,7 +150,7 @@ if (!viteConfig || Object.keys(viteConfig).length === 0) {
     `server.listen({
     port: parseInt(process.env.PORT || process.env.REPL_LISTEN_PORT || '5000'),
     host: process.env.HOST || process.env.REPL_LISTEN_IP || '0.0.0.0'
-  }`
+  }`,
   );
 
   // Fix 6: Add comprehensive error handling wrapper
@@ -195,7 +195,7 @@ fi
 exec node dist/index.js
 `;
 
-  writeFileSync('./start-production.sh', startupScript);
+  writeFileSync("./start-production.sh", startupScript);
 
   // Step 5: Create .env.production file
   const envProduction = `NODE_ENV=production
@@ -203,29 +203,29 @@ PORT=\${PORT:-5000}
 HOST=\${HOST:-0.0.0.0}
 `;
 
-  writeFileSync('./.env.production', envProduction);
+  writeFileSync("./.env.production", envProduction);
 
-  console.log('✅ Production deployment build completed successfully!');
-  console.log('');
-  console.log('📋 Applied fixes:');
-  console.log('  ✅ Fixed vite.config import with conditional loading');
-  console.log('  ✅ Added production check to setupVite function');
-  console.log('  ✅ Updated serveStatic to use correct client/dist path');
-  console.log('  ✅ Ensured proper host/port binding for Replit');
-  console.log('  ✅ Added comprehensive error handling');
-  console.log('  ✅ Created production startup script');
-  console.log('');
-  console.log('🎯 Ready for deployment!');
-  console.log('');
-  console.log('Testing locally:');
-  console.log('  NODE_ENV=production node dist/index.js');
-  console.log('');
-  console.log('For Replit deployment:');
-  console.log('  The app will automatically detect the deployment environment');
-  console.log('  Make sure to set DATABASE_URL and other required secrets');
+  console.log("✅ Production deployment build completed successfully!");
+  console.log("");
+  console.log("📋 Applied fixes:");
+  console.log("  ✅ Fixed vite.config import with conditional loading");
+  console.log("  ✅ Added production check to setupVite function");
+  console.log("  ✅ Updated serveStatic to use correct client/dist path");
+  console.log("  ✅ Ensured proper host/port binding for Replit");
+  console.log("  ✅ Added comprehensive error handling");
+  console.log("  ✅ Created production startup script");
+  console.log("");
+  console.log("🎯 Ready for deployment!");
+  console.log("");
+  console.log("Testing locally:");
+  console.log("  NODE_ENV=production node dist/index.js");
+  console.log("");
+  console.log("For Replit deployment:");
+  console.log("  The app will automatically detect the deployment environment");
+  console.log("  Make sure to set DATABASE_URL and other required secrets");
 }
 
 deployProduction().catch((error) => {
-  console.error('❌ Production build failed:', error);
+  console.error("❌ Production build failed:", error);
   process.exit(1);
 });

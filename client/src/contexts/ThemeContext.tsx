@@ -1,11 +1,17 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
-export type MetalTheme = 
-  | "classic-metal" 
-  | "black-metal" 
-  | "death-metal" 
-  | "power-metal" 
-  | "doom-metal" 
+export type MetalTheme =
+  | "classic-metal"
+  | "black-metal"
+  | "death-metal"
+  | "power-metal"
+  | "doom-metal"
   | "thrash-metal"
   | "gothic-metal"
   | "light-mode"
@@ -45,13 +51,13 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         primary: "#ff6b35",
         primaryDark: "#e55a2b",
         primaryText: "#ffffff",
-        secondary: "#ff8c42", 
+        secondary: "#ff8c42",
         accent: "#ffd23f",
         background: "#000000",
         surface: "#1a1a1a",
         text: "#ffffff",
         textSecondary: "#cccccc",
-        border: "#333333"
+        border: "#333333",
       },
       light: {
         primary: "#d4510a",
@@ -62,11 +68,11 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         background: "#ffffff",
         surface: "#f5f5f5",
         text: "#000000",
-        textSecondary: "#666666", 
-        border: "#e0e0e0"
-      }
+        textSecondary: "#666666",
+        border: "#e0e0e0",
+      },
     },
-    gradient: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)"
+    gradient: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
   },
   "black-metal": {
     name: "Black Metal",
@@ -78,11 +84,11 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         primaryText: "#000000", // Black text on silver/white background
         secondary: "#8b8b8b",
         accent: "#ffffff",
-        background: "#0a0a0a", 
+        background: "#0a0a0a",
         surface: "#1a1a1a",
         text: "#e0e0e0",
         textSecondary: "#b0b0b0",
-        border: "#333333"
+        border: "#333333",
       },
       light: {
         primary: "#666666",
@@ -94,13 +100,13 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#eeeeee",
         text: "#1a1a1a",
         textSecondary: "#555555",
-        border: "#cccccc"
-      }
+        border: "#cccccc",
+      },
     },
-    gradient: "linear-gradient(135deg, #c0c0c0 0%, #8b8b8b 100%)"
+    gradient: "linear-gradient(135deg, #c0c0c0 0%, #8b8b8b 100%)",
   },
   "death-metal": {
-    name: "Death Metal", 
+    name: "Death Metal",
     description: "Blood red with dark crimson tones",
     colors: {
       dark: {
@@ -111,7 +117,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#1a0505",
         text: "#ffcccc",
         textSecondary: "#ff9999",
-        border: "#4d1414"
+        border: "#4d1414",
       },
       light: {
         primary: "#c62828",
@@ -121,10 +127,10 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#ffebee",
         text: "#1a0000",
         textSecondary: "#5d0000",
-        border: "#ffcdd2"
-      }
+        border: "#ffcdd2",
+      },
     },
-    gradient: "linear-gradient(135deg, #dc143c 0%, #b71c1c 100%)"
+    gradient: "linear-gradient(135deg, #dc143c 0%, #b71c1c 100%)",
   },
   "power-metal": {
     name: "Power Metal",
@@ -139,7 +145,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#1a1a2e",
         text: "#f0f8ff",
         textSecondary: "#ddeeff",
-        border: "#2a2a5a"
+        border: "#2a2a5a",
       },
       light: {
         primary: "#ffb300",
@@ -150,10 +156,10 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#e3f2fd",
         text: "#0d1421",
         textSecondary: "#1a237e",
-        border: "#bbdefb"
-      }
+        border: "#bbdefb",
+      },
     },
-    gradient: "linear-gradient(135deg, #ffd700 0%, #4169e1 100%)"
+    gradient: "linear-gradient(135deg, #ffd700 0%, #4169e1 100%)",
   },
   "doom-metal": {
     name: "Doom Metal",
@@ -167,7 +173,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#1a1a0a",
         text: "#f0e68c",
         textSecondary: "#daa520",
-        border: "#3e2723"
+        border: "#3e2723",
       },
       light: {
         primary: "#6d4c41",
@@ -177,10 +183,10 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#f1f8e9",
         text: "#2e2e2e",
         textSecondary: "#4e342e",
-        border: "#c8e6c9"
-      }
+        border: "#c8e6c9",
+      },
     },
-    gradient: "linear-gradient(135deg, #8b4513 0%, #2e7d32 100%)"
+    gradient: "linear-gradient(135deg, #8b4513 0%, #2e7d32 100%)",
   },
   "thrash-metal": {
     name: "Thrash Metal",
@@ -188,13 +194,13 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
     colors: {
       dark: {
         primary: "#ffeb3b",
-        secondary: "#9c27b0", 
+        secondary: "#9c27b0",
         accent: "#e91e63",
         background: "#0a0a0a",
         surface: "#1a0a1a",
         text: "#fff9c4",
         textSecondary: "#f4ff81",
-        border: "#4a148c"
+        border: "#4a148c",
       },
       light: {
         primary: "#f57f17",
@@ -204,10 +210,10 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#f3e5f5",
         text: "#1a1a00",
         textSecondary: "#4a0072",
-        border: "#e1bee7"
-      }
+        border: "#e1bee7",
+      },
     },
-    gradient: "linear-gradient(135deg, #ffeb3b 0%, #9c27b0 100%)"
+    gradient: "linear-gradient(135deg, #ffeb3b 0%, #9c27b0 100%)",
   },
   "gothic-metal": {
     name: "Gothic Metal",
@@ -218,10 +224,10 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         secondary: "#ad1457",
         accent: "#e1bee7",
         background: "#0a0a0a",
-        surface: "#1a0a1a", 
+        surface: "#1a0a1a",
         text: "#f3e5f5",
         textSecondary: "#e1bee7",
-        border: "#4a148c"
+        border: "#4a148c",
       },
       light: {
         primary: "#7b1fa2",
@@ -231,10 +237,10 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#f3e5f5",
         text: "#1a0014",
         textSecondary: "#4a0e4e",
-        border: "#f8bbd9"
-      }
+        border: "#f8bbd9",
+      },
     },
-    gradient: "linear-gradient(135deg, #9c27b0 0%, #ad1457 100%)"
+    gradient: "linear-gradient(135deg, #9c27b0 0%, #ad1457 100%)",
   },
   "light-mode": {
     name: "Light Mode",
@@ -248,7 +254,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#f8fafc",
         text: "#0f172a",
         textSecondary: "#475569",
-        border: "#e2e8f0"
+        border: "#e2e8f0",
       },
       light: {
         primary: "#2563eb",
@@ -258,10 +264,10 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#f8fafc",
         text: "#0f172a",
         textSecondary: "#475569",
-        border: "#e2e8f0"
-      }
+        border: "#e2e8f0",
+      },
     },
-    gradient: "linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)"
+    gradient: "linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%)",
   },
   "dark-mode": {
     name: "Dark Mode",
@@ -275,7 +281,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#1e293b",
         text: "#f1f5f9",
         textSecondary: "#cbd5e1",
-        border: "#334155"
+        border: "#334155",
       },
       light: {
         primary: "#60a5fa",
@@ -285,10 +291,10 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#1e293b",
         text: "#f1f5f9",
         textSecondary: "#cbd5e1",
-        border: "#334155"
-      }
+        border: "#334155",
+      },
     },
-    gradient: "linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)"
+    gradient: "linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)",
   },
   "glassmorphism-premium": {
     name: "Glassmorphism Rock",
@@ -300,11 +306,12 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         primaryText: "#ffffff",
         secondary: "#ff6600",
         accent: "#ffff00",
-        background: "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
+        background:
+          "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
         surface: "rgba(255, 255, 255, 0.08)",
         text: "#ffffff",
         textSecondary: "#e0e0e0",
-        border: "rgba(255, 255, 255, 0.18)"
+        border: "rgba(255, 255, 255, 0.18)",
       },
       light: {
         primary: "#ff0080",
@@ -312,16 +319,18 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         primaryText: "#ffffff",
         secondary: "#ff6600",
         accent: "#ffff00",
-        background: "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
+        background:
+          "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
         surface: "rgba(255, 255, 255, 0.08)",
         text: "#ffffff",
         textSecondary: "#e0e0e0",
-        border: "rgba(255, 255, 255, 0.18)"
-      }
+        border: "rgba(255, 255, 255, 0.18)",
+      },
     },
-    gradient: "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
-    isPremium: true
-  }
+    gradient:
+      "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
+    isPremium: true,
+  },
 };
 
 interface ThemeContextType {
@@ -356,7 +365,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   });
 
   const toggleDarkMode = () => {
-    setIsDarkMode(prev => {
+    setIsDarkMode((prev) => {
       const newMode = !prev;
       localStorage.setItem("theme-mode", newMode ? "dark" : "light");
       return newMode;
@@ -367,7 +376,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     toggleDarkMode();
   };
 
-  const getThemeColors = (themeName: MetalTheme, isDark: boolean): ThemeColors => {
+  const getThemeColors = (
+    themeName: MetalTheme,
+    isDark: boolean,
+  ): ThemeColors => {
     const theme = METAL_THEMES[themeName];
     return isDark ? theme.colors.dark : theme.colors.light;
   };
@@ -376,24 +388,24 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const isLightMode = currentTheme === "light-mode";
-    
+
     const root = document.documentElement;
-    
+
     // Add fade out effect
-    document.body.style.opacity = '0.7';
-    document.body.style.transition = 'opacity 0.15s ease-out';
-    
+    document.body.style.opacity = "0.7";
+    document.body.style.transition = "opacity 0.15s ease-out";
+
     setTimeout(() => {
       // Add smooth transition
       root.style.transition = "all 0.3s ease";
-      
+
       // Handle glassmorphism theme special background
       if (currentTheme === "glassmorphism-premium") {
         document.body.style.background = colors.background;
         document.body.style.backgroundSize = "400% 400%";
         document.body.style.animation = "glassmorphGradient 8s ease infinite";
-        root.style.setProperty('--color-background', 'transparent');
-        
+        root.style.setProperty("--color-background", "transparent");
+
         // Add glassmorphism class for special styling
         root.classList.add("glassmorphism-theme");
       } else {
@@ -401,31 +413,34 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         document.body.style.backgroundSize = "";
         document.body.style.animation = "";
         root.classList.remove("glassmorphism-theme");
-        root.style.setProperty('--color-background', colors.background);
+        root.style.setProperty("--color-background", colors.background);
       }
-      
+
       // Set CSS custom properties
-      root.style.setProperty('--color-primary', colors.primary);
-      root.style.setProperty('--color-secondary', colors.secondary);
-      root.style.setProperty('--color-accent', colors.accent);
-      root.style.setProperty('--color-surface', colors.surface);
-      root.style.setProperty('--color-text', colors.text);
-      root.style.setProperty('--color-text-secondary', colors.textSecondary);
-      root.style.setProperty('--color-border', colors.border);
-      root.style.setProperty('--gradient-primary', METAL_THEMES[currentTheme].gradient);
-      
+      root.style.setProperty("--color-primary", colors.primary);
+      root.style.setProperty("--color-secondary", colors.secondary);
+      root.style.setProperty("--color-accent", colors.accent);
+      root.style.setProperty("--color-surface", colors.surface);
+      root.style.setProperty("--color-text", colors.text);
+      root.style.setProperty("--color-text-secondary", colors.textSecondary);
+      root.style.setProperty("--color-border", colors.border);
+      root.style.setProperty(
+        "--gradient-primary",
+        METAL_THEMES[currentTheme].gradient,
+      );
+
       // Apply theme class
       root.classList.remove("light", "dark");
       root.classList.add(isLightMode ? "light" : "dark");
-      
+
       // Save preferences
       localStorage.setItem("metal-theme", currentTheme);
-      
+
       // Fade back in
       setTimeout(() => {
-        document.body.style.opacity = '1';
-        document.body.style.transition = 'opacity 0.15s ease-in';
-        
+        document.body.style.opacity = "1";
+        document.body.style.transition = "opacity 0.15s ease-in";
+
         // Remove transition after animation
         setTimeout(() => {
           root.style.transition = "";
@@ -452,20 +467,20 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     isDarkMode,
     colors: {
       ...colors,
-      primaryText: colors.primaryText || (colors.primary === "#c0c0c0" ? "#000000" : "#ffffff")
+      primaryText:
+        colors.primaryText ||
+        (colors.primary === "#c0c0c0" ? "#000000" : "#ffffff"),
     },
     setTheme,
     toggleDarkMode,
     toggleTheme,
     gradient: METAL_THEMES[currentTheme].gradient,
     getColors,
-    getGradient
+    getGradient,
   };
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 }
 

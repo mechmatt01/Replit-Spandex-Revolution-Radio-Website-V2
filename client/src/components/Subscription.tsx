@@ -5,7 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { InsertSubscription } from "@shared/schema";
@@ -68,7 +74,8 @@ export default function Subscription() {
     onSuccess: () => {
       toast({
         title: "Subscription Successful!",
-        description: "Welcome to the Hairspray Rebellion! Check your email for details.",
+        description:
+          "Welcome to the Hairspray Rebellion! Check your email for details.",
       });
       setEmail("");
       setIsDialogOpen(false);
@@ -105,28 +112,31 @@ export default function Subscription() {
             JOIN THE HAIRSPRAY REBELLION
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Unlock exclusive content, early access to shows, and premium perks with our subscription tiers.
+            Unlock exclusive content, early access to shows, and premium perks
+            with our subscription tiers.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
           {subscriptionTiers.map((tier, index) => (
-            <div 
+            <div
               key={tier.name}
               className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
-                tier.popular ? "border-2 border-metal-gold transform scale-105" : ""
+                tier.popular
+                  ? "border-2 border-metal-gold transform scale-105"
+                  : ""
               }`}
-              style={{ minHeight: '600px' }}
+              style={{ minHeight: "600px" }}
             >
               {tier.popular && (
-                <div 
+                <div
                   className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
                   style={{
-                    background: 'linear-gradient(135deg, #ff6b35, #f7931e)',
-                    color: 'black',
-                    whiteSpace: 'nowrap',
-                    fontSize: '11px',
-                    lineHeight: '1'
+                    background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                    color: "black",
+                    whiteSpace: "nowrap",
+                    fontSize: "11px",
+                    lineHeight: "1",
                   }}
                 >
                   MOST&nbsp;POPULAR
@@ -135,16 +145,26 @@ export default function Subscription() {
 
               <div className="p-8 flex flex-col h-full justify-between">
                 <div className="text-center mb-6">
-                  <h3 className={`font-bold text-xl mb-2 ${
-                    tier.color === "metal-gold" ? "text-metal-gold" : 
-                    tier.color === "metal-red" ? "text-metal-red" : "text-white"
-                  }`}>
+                  <h3
+                    className={`font-bold text-xl mb-2 ${
+                      tier.color === "metal-gold"
+                        ? "text-metal-gold"
+                        : tier.color === "metal-red"
+                          ? "text-metal-red"
+                          : "text-white"
+                    }`}
+                  >
                     {tier.name}
                   </h3>
-                  <div className={`text-3xl font-bold mb-1 ${
-                    tier.color === "metal-gold" ? "text-metal-gold" : 
-                    tier.color === "metal-red" ? "text-metal-red" : "text-metal-orange"
-                  }`}>
+                  <div
+                    className={`text-3xl font-bold mb-1 ${
+                      tier.color === "metal-gold"
+                        ? "text-metal-gold"
+                        : tier.color === "metal-red"
+                          ? "text-metal-red"
+                          : "text-metal-orange"
+                    }`}
+                  >
                     {tier.price}
                   </div>
                   <div className="text-gray-400 text-sm">per month</div>
@@ -152,11 +172,19 @@ export default function Subscription() {
 
                 <ul className="space-y-3 mb-8 flex-grow">
                   {tier.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center text-gray-300">
-                      <Check className={`mr-3 h-4 w-4 ${
-                        tier.color === "metal-gold" ? "text-metal-gold" : 
-                        tier.color === "metal-red" ? "text-metal-red" : "text-metal-orange"
-                      }`} />
+                    <li
+                      key={featureIndex}
+                      className="flex items-center text-gray-300"
+                    >
+                      <Check
+                        className={`mr-3 h-4 w-4 ${
+                          tier.color === "metal-gold"
+                            ? "text-metal-gold"
+                            : tier.color === "metal-red"
+                              ? "text-metal-red"
+                              : "text-metal-orange"
+                        }`}
+                      />
                       {feature}
                     </li>
                   ))}
@@ -167,17 +195,18 @@ export default function Subscription() {
                   className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300"
                   style={{
                     backgroundColor: colors.primary,
-                    color: colors.primaryText || 'black',
-                    border: 'none',
-                    cursor: 'pointer'
+                    color: colors.primaryText || "black",
+                    border: "none",
+                    cursor: "pointer",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
-                    e.currentTarget.style.transform = 'scale(1.02)';
+                    e.currentTarget.style.backgroundColor =
+                      colors.primaryDark || colors.primary;
+                    e.currentTarget.style.transform = "scale(1.02)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary;
-                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.transform = "scale(1)";
                   }}
                 >
                   {tier.name}
@@ -195,22 +224,32 @@ export default function Subscription() {
               <div className="w-16 h-16 bg-metal-orange/20 rounded-full flex items-center justify-center mb-4">
                 <VolumeX className="text-metal-orange h-8 w-8" />
               </div>
-              <h4 className="font-semibold text-lg mb-2">Premium Audio Quality</h4>
-              <p className="text-gray-400 text-center">Experience crystal-clear metal with our high-bitrate streaming.</p>
+              <h4 className="font-semibold text-lg mb-2">
+                Premium Audio Quality
+              </h4>
+              <p className="text-gray-400 text-center">
+                Experience crystal-clear metal with our high-bitrate streaming.
+              </p>
             </div>
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 bg-metal-gold/20 rounded-full flex items-center justify-center mb-4">
                 <Users className="text-metal-gold h-8 w-8" />
               </div>
-              <h4 className="font-semibold text-lg mb-2">Exclusive Community</h4>
-              <p className="text-gray-400 text-center">Connect with fellow metalheads in our VIP community spaces.</p>
+              <h4 className="font-semibold text-lg mb-2">
+                Exclusive Community
+              </h4>
+              <p className="text-gray-400 text-center">
+                Connect with fellow metalheads in our VIP community spaces.
+              </p>
             </div>
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 bg-metal-red/20 rounded-full flex items-center justify-center mb-4">
                 <Star className="text-metal-red h-8 w-8" />
               </div>
               <h4 className="font-semibold text-lg mb-2">Exclusive Content</h4>
-              <p className="text-gray-400 text-center">Access rare tracks, interviews, and behind-the-scenes content.</p>
+              <p className="text-gray-400 text-center">
+                Access rare tracks, interviews, and behind-the-scenes content.
+              </p>
             </div>
           </div>
         </div>
@@ -226,7 +265,9 @@ export default function Subscription() {
           </DialogHeader>
           <form onSubmit={handleConfirmSubscription} className="space-y-4">
             <div>
-              <Label htmlFor="email" className="text-gray-300">Email Address</Label>
+              <Label htmlFor="email" className="text-gray-300">
+                Email Address
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -242,7 +283,9 @@ export default function Subscription() {
               disabled={subscribeMutation.isPending}
               className="w-full bg-metal-orange hover:bg-orange-600 text-white"
             >
-              {subscribeMutation.isPending ? "Processing..." : "Confirm Subscription"}
+              {subscribeMutation.isPending
+                ? "Processing..."
+                : "Confirm Subscription"}
             </Button>
           </form>
         </DialogContent>

@@ -42,12 +42,12 @@ export default function Submissions() {
         window.location.href = "/#/login";
         return;
       }
-      
+
       if (!hasPaidSubscription) {
         setShowPremiumNotification(true);
         return;
       }
-      
+
       const response = await apiRequest("POST", "/api/submissions", data);
       return response.json();
     },
@@ -89,8 +89,11 @@ export default function Submissions() {
     submitMutation.mutate(formData);
   };
 
-  const handleInputChange = (field: keyof InsertSubmission, value: string | number | undefined) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const handleInputChange = (
+    field: keyof InsertSubmission,
+    value: string | number | undefined,
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const formatDate = (date: string | Date) => {
@@ -114,67 +117,80 @@ export default function Submissions() {
             SUBMIT YOUR REQUESTS
           </h2>
           <p className="text-gray-400 text-lg">
-            Got a metal track that needs to be heard? Submit your requests and help shape our playlist.
+            Got a metal track that needs to be heard? Submit your requests and
+            help shape our playlist.
           </p>
         </div>
 
         {!isAuthenticated || !hasPaidSubscription ? (
           <div className="mt-6">
-            <div 
+            <div
               className="p-6 rounded-lg text-center transition-all duration-300 animate-in fade-in slide-in-from-top-4"
-              style={{ 
+              style={{
                 backgroundColor: `${colors.primary}10`,
                 borderColor: `${colors.primary}20`,
-                border: `1px solid ${colors.primary}20`
+                border: `1px solid ${colors.primary}20`,
               }}
             >
-              <div className="flex items-center justify-center gap-2 mb-4" style={{ color: colors.primary }}>
+              <div
+                className="flex items-center justify-center gap-2 mb-4"
+                style={{ color: colors.primary }}
+              >
                 <Crown className="h-5 w-5" />
-                <span className="font-semibold">Premium Feature - Paid Subscription Required</span>
+                <span className="font-semibold">
+                  Premium Feature - Paid Subscription Required
+                </span>
               </div>
               <p className="text-gray-400 mb-6">
-                Song submissions are available exclusively to paid subscribers. 
+                Song submissions are available exclusively to paid subscribers.
                 Sign in and upgrade to submit your favorite tracks.
               </p>
               <div className="flex gap-4 justify-center">
-                <Button 
+                <Button
                   onClick={() => {
                     // Trigger auth modal instead of redirect
-                    const event = new CustomEvent('openAuthModal', { detail: { mode: 'login' } });
+                    const event = new CustomEvent("openAuthModal", {
+                      detail: { mode: "login" },
+                    });
                     window.dispatchEvent(event);
                   }}
                   className="px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
-                  style={{ 
+                  style={{
                     backgroundColor: colors.primary,
-                    color: colors.primaryText || 'white'
+                    color: colors.primaryText || "white",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
-                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.backgroundColor =
+                      colors.primaryDark || colors.primary;
+                    e.currentTarget.style.transform = "scale(1.05)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary;
-                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.transform = "scale(1)";
                   }}
                 >
                   Login
                 </Button>
-                <Button 
-                  onClick={() => document.getElementById('subscribe')?.scrollIntoView({ behavior: 'smooth' })}
+                <Button
+                  onClick={() =>
+                    document
+                      .getElementById("subscribe")
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
                   variant="outline"
                   className="px-6 py-3 rounded-full font-semibold transition-all duration-300"
-                  style={{ 
+                  style={{
                     borderColor: colors.primary,
                     color: colors.primary,
-                    backgroundColor: 'transparent'
+                    backgroundColor: "transparent",
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = `${colors.primary}10`;
-                    e.currentTarget.style.transform = 'scale(1.05)';
+                    e.currentTarget.style.transform = "scale(1.05)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.transform = 'scale(1)';
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.transform = "scale(1)";
                   }}
                 >
                   View Subscriptions
@@ -186,116 +202,169 @@ export default function Submissions() {
           <Card className="bg-dark-surface border-dark-border mb-12">
             <CardContent className="p-8">
               <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label
+                      htmlFor="songTitle"
+                      className="text-gray-300 font-semibold"
+                    >
+                      Song Title *
+                    </Label>
+                    <Input
+                      id="songTitle"
+                      value={formData.songTitle}
+                      onChange={(e) =>
+                        handleInputChange("songTitle", e.target.value)
+                      }
+                      placeholder="Enter song title"
+                      required
+                      className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
+                    />
+                  </div>
+                  <div>
+                    <Label
+                      htmlFor="artistName"
+                      className="text-gray-300 font-semibold"
+                    >
+                      Artist/Band *
+                    </Label>
+                    <Input
+                      id="artistName"
+                      value={formData.artistName}
+                      onChange={(e) =>
+                        handleInputChange("artistName", e.target.value)
+                      }
+                      placeholder="Enter artist name"
+                      required
+                      className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <Label htmlFor="songTitle" className="text-gray-300 font-semibold">Song Title *</Label>
+                  <Label
+                    htmlFor="submitterName"
+                    className="text-gray-300 font-semibold"
+                  >
+                    Your Name
+                  </Label>
                   <Input
-                    id="songTitle"
-                    value={formData.songTitle}
-                    onChange={(e) => handleInputChange("songTitle", e.target.value)}
-                    placeholder="Enter song title"
-                    required
-                    className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
+                    id="submitterName"
+                    value={formData.submitterName || ""}
+                    onChange={(e) =>
+                      handleInputChange("submitterName", e.target.value)
+                    }
+                    placeholder="Enter your name (optional)"
+                    className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange"
                   />
                 </div>
+
                 <div>
-                  <Label htmlFor="artistName" className="text-gray-300 font-semibold">Artist/Band *</Label>
-                  <Input
-                    id="artistName"
-                    value={formData.artistName}
-                    onChange={(e) => handleInputChange("artistName", e.target.value)}
-                    placeholder="Enter artist name"
-                    required
-                    className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
+                  <Label
+                    htmlFor="message"
+                    className="text-gray-300 font-semibold"
+                  >
+                    Additional Message
+                  </Label>
+                  <Textarea
+                    id="message"
+                    value={formData.message || ""}
+                    onChange={(e) =>
+                      handleInputChange("message", e.target.value)
+                    }
+                    placeholder="Tell us why this song rocks or share any additional details..."
+                    rows={4}
+                    className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange resize-none"
                   />
                 </div>
-              </div>
 
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="terms"
+                    checked={agreedToTerms}
+                    onCheckedChange={setAgreedToTerms}
+                    className="border-dark-border"
+                  />
+                  <Label htmlFor="terms" className="text-gray-400 text-sm">
+                    I agree that this submission follows metal music guidelines
+                    and community standards.
+                  </Label>
+                </div>
 
-
-              <div>
-                <Label htmlFor="submitterName" className="text-gray-300 font-semibold">Your Name</Label>
-                <Input
-                  id="submitterName"
-                  value={formData.submitterName || ""}
-                  onChange={(e) => handleInputChange("submitterName", e.target.value)}
-                  placeholder="Enter your name (optional)"
-                  className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange"
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="message" className="text-gray-300 font-semibold">Additional Message</Label>
-                <Textarea
-                  id="message"
-                  value={formData.message || ""}
-                  onChange={(e) => handleInputChange("message", e.target.value)}
-                  placeholder="Tell us why this song rocks or share any additional details..."
-                  rows={4}
-                  className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange resize-none"
-                />
-              </div>
-
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="terms"
-                  checked={agreedToTerms}
-                  onCheckedChange={setAgreedToTerms}
-                  className="border-dark-border"
-                />
-                <Label htmlFor="terms" className="text-gray-400 text-sm">
-                  I agree that this submission follows metal music guidelines and community standards.
-                </Label>
-              </div>
-
-              <Button
-                type="submit"
-                disabled={submitMutation.isPending}
-                className="w-full md:w-auto bg-metal-orange hover:bg-orange-600 text-white px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 animate-glow"
-              >
-                <Send className="mr-2 h-4 w-4" />
-                {submitMutation.isPending ? "SUBMITTING..." : "SUBMIT REQUEST"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+                <Button
+                  type="submit"
+                  disabled={submitMutation.isPending}
+                  className="w-full md:w-auto bg-metal-orange hover:bg-orange-600 text-white px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 animate-glow"
+                >
+                  <Send className="mr-2 h-4 w-4" />
+                  {submitMutation.isPending
+                    ? "SUBMITTING..."
+                    : "SUBMIT REQUEST"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
         )}
 
         {/* Recent Submissions */}
-        {(recentSubmissions.length > 0 && isAuthenticated && hasPaidSubscription) && (
-        <div className="mt-16">
-          <h3 className="font-bold text-xl mb-6" style={{ color: 'var(--color-primary)' }}>Recent Submissions</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {recentSubmissions.slice(0, 4).map((submission) => (
-              <Card key={submission.id} className="bg-dark-surface border-dark-border">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h4 className="font-semibold">{submission.songTitle}</h4>
-                      <p className="text-gray-400 text-sm">{submission.artistName}</p>
-                    </div>
-                    <span className={`text-xs px-2 py-1 rounded ${
-                      submission.status === "approved" ? "text-metal-orange bg-metal-orange/20" :
-                      submission.status === "rejected" ? "text-metal-red bg-metal-red/20" :
-                      "text-metal-gold bg-metal-gold/20"
-                    }`}>
-                      {submission.status === "approved" ? "Approved" :
-                       submission.status === "rejected" ? "Rejected" :
-                       "Pending"}
-                    </span>
-                  </div>
-                  <p className="text-gray-500 text-xs">
-                    {submission.submitterName ? `Submitted by: ${submission.submitterName}` : "Anonymous"}
-                  </p>
-                  <p className="text-gray-500 text-xs">
-                    {submission.createdAt ? formatDate(submission.createdAt) : "Recently"}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-        )}
+        {recentSubmissions.length > 0 &&
+          isAuthenticated &&
+          hasPaidSubscription && (
+            <div className="mt-16">
+              <h3
+                className="font-bold text-xl mb-6"
+                style={{ color: "var(--color-primary)" }}
+              >
+                Recent Submissions
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {recentSubmissions.slice(0, 4).map((submission) => (
+                  <Card
+                    key={submission.id}
+                    className="bg-dark-surface border-dark-border"
+                  >
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div>
+                          <h4 className="font-semibold">
+                            {submission.songTitle}
+                          </h4>
+                          <p className="text-gray-400 text-sm">
+                            {submission.artistName}
+                          </p>
+                        </div>
+                        <span
+                          className={`text-xs px-2 py-1 rounded ${
+                            submission.status === "approved"
+                              ? "text-metal-orange bg-metal-orange/20"
+                              : submission.status === "rejected"
+                                ? "text-metal-red bg-metal-red/20"
+                                : "text-metal-gold bg-metal-gold/20"
+                          }`}
+                        >
+                          {submission.status === "approved"
+                            ? "Approved"
+                            : submission.status === "rejected"
+                              ? "Rejected"
+                              : "Pending"}
+                        </span>
+                      </div>
+                      <p className="text-gray-500 text-xs">
+                        {submission.submitterName
+                          ? `Submitted by: ${submission.submitterName}`
+                          : "Anonymous"}
+                      </p>
+                      <p className="text-gray-500 text-xs">
+                        {submission.createdAt
+                          ? formatDate(submission.createdAt)
+                          : "Recently"}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
 
         {/* Premium Feature Notification */}
         {showPremiumNotification && (

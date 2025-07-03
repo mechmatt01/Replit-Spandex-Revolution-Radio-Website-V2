@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 interface ScrollingTextProps {
   text: string;
@@ -7,17 +7,17 @@ interface ScrollingTextProps {
   maxWidth?: string;
   isFloating?: boolean;
   backgroundColor?: string;
-  alignment?: 'left' | 'center';
+  alignment?: "left" | "center";
 }
 
-export default function ScrollingText({ 
-  text, 
-  className = "", 
-  style = {}, 
+export default function ScrollingText({
+  text,
+  className = "",
+  style = {},
   maxWidth = "100%",
   isFloating = false,
   backgroundColor = "transparent",
-  alignment = "center"
+  alignment = "center",
 }: ScrollingTextProps) {
   const [isScrolling, setIsScrolling] = useState(false);
   const [shouldScroll, setShouldScroll] = useState(false);
@@ -40,8 +40,8 @@ export default function ScrollingText({
     };
 
     checkOverflow();
-    window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
+    window.addEventListener("resize", checkOverflow);
+    return () => window.removeEventListener("resize", checkOverflow);
   }, [text]);
 
   useEffect(() => {
@@ -59,16 +59,12 @@ export default function ScrollingText({
   // If text doesn't need scrolling, align based on alignment prop
   if (!shouldScroll) {
     return (
-      <div 
+      <div
         ref={containerRef}
-        className={`flex overflow-hidden ${alignment === 'left' ? 'justify-start' : 'justify-center'}`}
+        className={`flex overflow-hidden ${alignment === "left" ? "justify-start" : "justify-center"}`}
         style={{ maxWidth, backgroundColor }}
       >
-        <div
-          ref={textRef}
-          className={className}
-          style={style}
-        >
+        <div ref={textRef} className={className} style={style}>
           {text}
         </div>
       </div>
@@ -76,7 +72,7 @@ export default function ScrollingText({
   }
 
   return (
-    <div 
+    <div
       ref={containerRef}
       className="relative overflow-hidden whitespace-nowrap"
       style={{ maxWidth, backgroundColor }}
@@ -86,18 +82,22 @@ export default function ScrollingText({
         className={`${className} whitespace-nowrap`}
         style={{
           ...style,
-          display: 'inline-block',
-          whiteSpace: 'nowrap',
-          animation: isScrolling && shouldScroll ? 'scrollLeftToRight 8s linear infinite' : 'none',
-          transform: isScrolling && shouldScroll ? 'translateX(0)' : 'translateX(0)'
+          display: "inline-block",
+          whiteSpace: "nowrap",
+          animation:
+            isScrolling && shouldScroll
+              ? "scrollLeftToRight 8s linear infinite"
+              : "none",
+          transform:
+            isScrolling && shouldScroll ? "translateX(0)" : "translateX(0)",
         }}
       >
         {text}
         {shouldScroll && isScrolling && (
-          <span style={{ paddingLeft: '50px' }}>{text}</span>
+          <span style={{ paddingLeft: "50px" }}>{text}</span>
         )}
       </div>
-      
+
       <style jsx>{`
         @keyframes scrollLeftToRight {
           0% {

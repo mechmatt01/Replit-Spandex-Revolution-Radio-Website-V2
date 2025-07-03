@@ -1,19 +1,25 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { 
-  LogOut, 
-  Calendar, 
-  Music, 
-  List, 
-  Users, 
-  Pause, 
-  RefreshCw 
+import {
+  LogOut,
+  Calendar,
+  Music,
+  List,
+  Users,
+  Pause,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -57,7 +63,13 @@ export default function AdminPanel() {
         title: "Now Playing Updated",
         description: "The current track has been updated successfully.",
       });
-      setNowPlayingForm({ title: "", artist: "", album: "", duration: 0, currentTime: 0 });
+      setNowPlayingForm({
+        title: "",
+        artist: "",
+        album: "",
+        duration: 0,
+        currentTime: 0,
+      });
       setIsNowPlayingOpen(false);
       queryClient.invalidateQueries({ queryKey: ["/api/now-playing"] });
     },
@@ -72,7 +84,11 @@ export default function AdminPanel() {
 
   const updateSubmissionStatusMutation = useMutation({
     mutationFn: async ({ id, status }: { id: number; status: string }) => {
-      const response = await apiRequest("PATCH", `/api/submissions/${id}/status`, { status });
+      const response = await apiRequest(
+        "PATCH",
+        `/api/submissions/${id}/status`,
+        { status },
+      );
       return response.json();
     },
     onSuccess: () => {
@@ -123,9 +139,13 @@ export default function AdminPanel() {
     return (
       <section className="py-20 bg-dark-surface border-t border-dark-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-orbitron font-bold text-2xl text-white mb-4">Admin Access Required</h2>
-          <p className="text-gray-400 mb-6">Please log in to access the admin panel.</p>
-          
+          <h2 className="font-orbitron font-bold text-2xl text-white mb-4">
+            Admin Access Required
+          </h2>
+          <p className="text-gray-400 mb-6">
+            Please log in to access the admin panel.
+          </p>
+
           <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
             <DialogTrigger asChild>
               <Button className="bg-metal-orange hover:bg-orange-600 text-white">
@@ -138,27 +158,44 @@ export default function AdminPanel() {
               </DialogHeader>
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <Label htmlFor="username" className="text-gray-300">Username</Label>
+                  <Label htmlFor="username" className="text-gray-300">
+                    Username
+                  </Label>
                   <Input
                     id="username"
                     value={loginForm.username}
-                    onChange={(e) => setLoginForm(prev => ({ ...prev, username: e.target.value }))}
+                    onChange={(e) =>
+                      setLoginForm((prev) => ({
+                        ...prev,
+                        username: e.target.value,
+                      }))
+                    }
                     className="bg-dark-bg border-dark-border text-white"
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="password" className="text-gray-300">Password</Label>
+                  <Label htmlFor="password" className="text-gray-300">
+                    Password
+                  </Label>
                   <Input
                     id="password"
                     type="password"
                     value={loginForm.password}
-                    onChange={(e) => setLoginForm(prev => ({ ...prev, password: e.target.value }))}
+                    onChange={(e) =>
+                      setLoginForm((prev) => ({
+                        ...prev,
+                        password: e.target.value,
+                      }))
+                    }
                     className="bg-dark-bg border-dark-border text-white"
                     required
                   />
                 </div>
-                <Button type="submit" className="w-full bg-metal-orange hover:bg-orange-600 text-white">
+                <Button
+                  type="submit"
+                  className="w-full bg-metal-orange hover:bg-orange-600 text-white"
+                >
                   Login
                 </Button>
               </form>
@@ -175,10 +212,12 @@ export default function AdminPanel() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="font-orbitron font-bold text-2xl text-white">ADMIN PANEL</h2>
+              <h2 className="font-orbitron font-bold text-2xl text-white">
+                ADMIN PANEL
+              </h2>
               <p className="text-gray-400">Welcome back, {user?.username}</p>
             </div>
-            <Button 
+            <Button
               onClick={logout}
               variant="destructive"
               className="bg-metal-red hover:bg-red-600"
@@ -193,15 +232,21 @@ export default function AdminPanel() {
           {/* Quick Stats */}
           <Card className="bg-dark-bg border-dark-border">
             <CardContent className="p-6">
-              <h3 className="font-bold text-lg mb-4 text-metal-orange">Quick Stats</h3>
+              <h3 className="font-bold text-lg mb-4 text-metal-orange">
+                Quick Stats
+              </h3>
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Active Listeners</span>
-                  <span className="font-semibold">{stats?.currentListeners || 0}</span>
+                  <span className="font-semibold">
+                    {stats?.currentListeners || 0}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Song Requests</span>
-                  <span className="font-semibold">{submissions.filter(s => s.status === "pending").length}</span>
+                  <span className="font-semibold">
+                    {submissions.filter((s) => s.status === "pending").length}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Total Submissions</span>
@@ -209,7 +254,9 @@ export default function AdminPanel() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Stream Uptime</span>
-                  <span className="font-semibold text-green-400">{stats?.uptime || "99.9%"}</span>
+                  <span className="font-semibold text-green-400">
+                    {stats?.uptime || "99.9%"}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -218,20 +265,25 @@ export default function AdminPanel() {
           {/* Content Management */}
           <Card className="bg-dark-bg border-dark-border">
             <CardContent className="p-6">
-              <h3 className="font-bold text-lg mb-4 text-metal-orange">Content Management</h3>
+              <h3 className="font-bold text-lg mb-4 text-metal-orange">
+                Content Management
+              </h3>
               <div className="space-y-3">
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="w-full justify-start bg-dark-surface border border-dark-border hover:border-metal-orange"
                 >
                   <Calendar className="mr-3 h-4 w-4 text-metal-orange" />
                   Update Schedule
                 </Button>
-                
-                <Dialog open={isNowPlayingOpen} onOpenChange={setIsNowPlayingOpen}>
+
+                <Dialog
+                  open={isNowPlayingOpen}
+                  onOpenChange={setIsNowPlayingOpen}
+                >
                   <DialogTrigger asChild>
-                    <Button 
-                      variant="ghost" 
+                    <Button
+                      variant="ghost"
                       className="w-full justify-start bg-dark-surface border border-dark-border hover:border-metal-orange"
                     >
                       <Music className="mr-3 h-4 w-4 text-metal-orange" />
@@ -240,82 +292,127 @@ export default function AdminPanel() {
                   </DialogTrigger>
                   <DialogContent className="bg-dark-surface border-dark-border">
                     <DialogHeader>
-                      <DialogTitle className="text-white">Update Now Playing</DialogTitle>
+                      <DialogTitle className="text-white">
+                        Update Now Playing
+                      </DialogTitle>
                     </DialogHeader>
-                    <form onSubmit={handleNowPlayingSubmit} className="space-y-4">
+                    <form
+                      onSubmit={handleNowPlayingSubmit}
+                      className="space-y-4"
+                    >
                       <div>
-                        <Label htmlFor="title" className="text-gray-300">Song Title</Label>
+                        <Label htmlFor="title" className="text-gray-300">
+                          Song Title
+                        </Label>
                         <Input
                           id="title"
                           value={nowPlayingForm.title}
-                          onChange={(e) => setNowPlayingForm(prev => ({ ...prev, title: e.target.value }))}
+                          onChange={(e) =>
+                            setNowPlayingForm((prev) => ({
+                              ...prev,
+                              title: e.target.value,
+                            }))
+                          }
                           className="bg-dark-bg border-dark-border text-white"
                           required
                         />
                       </div>
                       <div>
-                        <Label htmlFor="artist" className="text-gray-300">Artist</Label>
+                        <Label htmlFor="artist" className="text-gray-300">
+                          Artist
+                        </Label>
                         <Input
                           id="artist"
                           value={nowPlayingForm.artist}
-                          onChange={(e) => setNowPlayingForm(prev => ({ ...prev, artist: e.target.value }))}
+                          onChange={(e) =>
+                            setNowPlayingForm((prev) => ({
+                              ...prev,
+                              artist: e.target.value,
+                            }))
+                          }
                           className="bg-dark-bg border-dark-border text-white"
                           required
                         />
                       </div>
                       <div>
-                        <Label htmlFor="album" className="text-gray-300">Album</Label>
+                        <Label htmlFor="album" className="text-gray-300">
+                          Album
+                        </Label>
                         <Input
                           id="album"
                           value={nowPlayingForm.album || ""}
-                          onChange={(e) => setNowPlayingForm(prev => ({ ...prev, album: e.target.value }))}
+                          onChange={(e) =>
+                            setNowPlayingForm((prev) => ({
+                              ...prev,
+                              album: e.target.value,
+                            }))
+                          }
                           className="bg-dark-bg border-dark-border text-white"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="duration" className="text-gray-300">Duration (seconds)</Label>
+                          <Label htmlFor="duration" className="text-gray-300">
+                            Duration (seconds)
+                          </Label>
                           <Input
                             id="duration"
                             type="number"
                             value={nowPlayingForm.duration}
-                            onChange={(e) => setNowPlayingForm(prev => ({ ...prev, duration: parseInt(e.target.value) || 0 }))}
+                            onChange={(e) =>
+                              setNowPlayingForm((prev) => ({
+                                ...prev,
+                                duration: parseInt(e.target.value) || 0,
+                              }))
+                            }
                             className="bg-dark-bg border-dark-border text-white"
                             required
                           />
                         </div>
                         <div>
-                          <Label htmlFor="currentTime" className="text-gray-300">Current Time (seconds)</Label>
+                          <Label
+                            htmlFor="currentTime"
+                            className="text-gray-300"
+                          >
+                            Current Time (seconds)
+                          </Label>
                           <Input
                             id="currentTime"
                             type="number"
                             value={nowPlayingForm.currentTime}
-                            onChange={(e) => setNowPlayingForm(prev => ({ ...prev, currentTime: parseInt(e.target.value) || 0 }))}
+                            onChange={(e) =>
+                              setNowPlayingForm((prev) => ({
+                                ...prev,
+                                currentTime: parseInt(e.target.value) || 0,
+                              }))
+                            }
                             className="bg-dark-bg border-dark-border text-white"
                             required
                           />
                         </div>
                       </div>
-                      <Button 
-                        type="submit" 
+                      <Button
+                        type="submit"
                         disabled={updateNowPlayingMutation.isPending}
                         className="w-full bg-metal-orange hover:bg-orange-600 text-white"
                       >
-                        {updateNowPlayingMutation.isPending ? "Updating..." : "Update Now Playing"}
+                        {updateNowPlayingMutation.isPending
+                          ? "Updating..."
+                          : "Update Now Playing"}
                       </Button>
                     </form>
                   </DialogContent>
                 </Dialog>
 
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="w-full justify-start bg-dark-surface border border-dark-border hover:border-metal-orange"
                 >
                   <List className="mr-3 h-4 w-4 text-metal-orange" />
                   Review Submissions
                 </Button>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="w-full justify-start bg-dark-surface border border-dark-border hover:border-metal-orange"
                 >
                   <Users className="mr-3 h-4 w-4 text-metal-orange" />
@@ -328,7 +425,9 @@ export default function AdminPanel() {
           {/* Stream Control */}
           <Card className="bg-dark-bg border-dark-border">
             <CardContent className="p-6">
-              <h3 className="font-bold text-lg mb-4 text-metal-orange">Stream Control</h3>
+              <h3 className="font-bold text-lg mb-4 text-metal-orange">
+                Stream Control
+              </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-gray-400">Stream Status</span>
@@ -341,8 +440,8 @@ export default function AdminPanel() {
                   <Pause className="mr-2 h-4 w-4" />
                   Pause Stream
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full border-dark-border hover:border-metal-orange text-white"
                 >
                   <RefreshCw className="mr-2 h-4 w-4" />
@@ -356,38 +455,61 @@ export default function AdminPanel() {
         {/* Submissions Management */}
         <Card className="bg-dark-bg border-dark-border mt-8">
           <CardContent className="p-6">
-            <h3 className="font-bold text-lg mb-4 text-metal-orange">Recent Submissions</h3>
+            <h3 className="font-bold text-lg mb-4 text-metal-orange">
+              Recent Submissions
+            </h3>
             <div className="space-y-4">
               {submissions.slice(0, 5).map((submission) => (
-                <div key={submission.id} className="flex items-center justify-between p-4 bg-dark-surface rounded-lg">
+                <div
+                  key={submission.id}
+                  className="flex items-center justify-between p-4 bg-dark-surface rounded-lg"
+                >
                   <div>
                     <h4 className="font-semibold">{submission.songTitle}</h4>
-                    <p className="text-gray-400 text-sm">{submission.artistName}</p>
+                    <p className="text-gray-400 text-sm">
+                      {submission.artistName}
+                    </p>
                     <p className="text-gray-500 text-xs">
-                      {submission.submitterName ? `by ${submission.submitterName}` : "Anonymous"}
+                      {submission.submitterName
+                        ? `by ${submission.submitterName}`
+                        : "Anonymous"}
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      submission.status === "approved" ? "bg-green-500/20 text-green-400" :
-                      submission.status === "rejected" ? "bg-red-500/20 text-red-400" :
-                      "bg-yellow-500/20 text-yellow-400"
-                    }`}>
+                    <span
+                      className={`px-2 py-1 rounded text-xs ${
+                        submission.status === "approved"
+                          ? "bg-green-500/20 text-green-400"
+                          : submission.status === "rejected"
+                            ? "bg-red-500/20 text-red-400"
+                            : "bg-yellow-500/20 text-yellow-400"
+                      }`}
+                    >
                       {submission.status}
                     </span>
                     {submission.status === "pending" && (
                       <div className="flex space-x-1">
-                        <Button 
+                        <Button
                           size="sm"
-                          onClick={() => handleUpdateSubmissionStatus(submission.id, "approved")}
+                          onClick={() =>
+                            handleUpdateSubmissionStatus(
+                              submission.id,
+                              "approved",
+                            )
+                          }
                           className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 text-xs"
                           disabled={updateSubmissionStatusMutation.isPending}
                         >
                           Approve
                         </Button>
-                        <Button 
+                        <Button
                           size="sm"
-                          onClick={() => handleUpdateSubmissionStatus(submission.id, "rejected")}
+                          onClick={() =>
+                            handleUpdateSubmissionStatus(
+                              submission.id,
+                              "rejected",
+                            )
+                          }
                           className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-xs"
                           disabled={updateSubmissionStatusMutation.isPending}
                         >

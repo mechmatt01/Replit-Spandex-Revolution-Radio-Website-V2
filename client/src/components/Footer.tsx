@@ -19,24 +19,39 @@ export default function Footer() {
                 <Radio className="text-white text-lg h-5 w-5" />
               </div>
               <div>
-                <h3 className="font-orbitron font-bold text-lg text-metal-orange">SPANDEX SALVATION</h3>
+                <h3 className="font-orbitron font-bold text-lg text-metal-orange">
+                  SPANDEX SALVATION
+                </h3>
                 <p className="text-xs text-muted-foreground -mt-1">RADIO</p>
               </div>
             </div>
             <p className="text-muted-foreground text-sm mb-4">
-              Your home for old-school metal music. Broadcasting the rebellion since 2025.
+              Your home for old-school metal music. Broadcasting the rebellion
+              since 2025.
             </p>
             <div className="flex space-x-3">
-              <a href="#" className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
+              <a
+                href="#"
+                className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors"
+              >
                 <Facebook className="text-metal-orange h-4 w-4" />
               </a>
-              <a href="#" className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
+              <a
+                href="#"
+                className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors"
+              >
                 <Twitter className="text-metal-orange h-4 w-4" />
               </a>
-              <a href="#" className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
+              <a
+                href="#"
+                className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors"
+              >
                 <Instagram className="text-metal-orange h-4 w-4" />
               </a>
-              <a href="#" className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors">
+              <a
+                href="#"
+                className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors"
+              >
                 <Youtube className="text-metal-orange h-4 w-4" />
               </a>
             </div>
@@ -47,40 +62,40 @@ export default function Footer() {
             <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <button 
-                  onClick={() => scrollToSection("home")} 
+                <button
+                  onClick={() => scrollToSection("home")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors"
                 >
                   Home
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => scrollToSection("about")} 
+                <button
+                  onClick={() => scrollToSection("about")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors"
                 >
                   About
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => scrollToSection("schedule")} 
+                <button
+                  onClick={() => scrollToSection("schedule")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors"
                 >
                   Schedule
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => scrollToSection("contact")} 
+                <button
+                  onClick={() => scrollToSection("contact")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors"
                 >
                   Contact
                 </button>
               </li>
               <li>
-                <button 
-                  onClick={() => scrollToSection("subscribe")} 
+                <button
+                  onClick={() => scrollToSection("subscribe")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors"
                 >
                   Subscribe
@@ -93,18 +108,46 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="text-muted-foreground hover:text-metal-orange transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-metal-orange transition-colors">Technical Support</a></li>
               <li>
-                <button 
-                  onClick={() => scrollToSection("submissions")} 
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                >
+                  Help Center
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                >
+                  Technical Support
+                </a>
+              </li>
+              <li>
+                <button
+                  onClick={() => scrollToSection("submissions")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors"
                 >
                   Submit Songs
                 </button>
               </li>
-              <li><a href="#" className="text-muted-foreground hover:text-metal-orange transition-colors">Community Guidelines</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-metal-orange transition-colors">Privacy Policy</a></li>
+              <li>
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                >
+                  Community Guidelines
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                >
+                  Privacy Policy
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -128,7 +171,6 @@ export default function Footer() {
                 <span className="text-metal-orange mr-2">🛡️</span>
                 Secure & Reliable
               </div>
-              
             </div>
           </div>
         </div>
@@ -139,12 +181,29 @@ export default function Footer() {
             © 2025 Spandex Salvation Radio. All rights reserved.
           </p>
           <div className="flex items-center space-x-6 text-sm">
-            <a href="#" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">Terms of Service</a>
-            <a href="#" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">Privacy Policy</a>
-            <a href="#" className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors">Cookies</a>
-            <button 
+            <a
+              href="#"
+              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors"
+            >
+              Terms of Service
+            </a>
+            <a
+              href="#"
+              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="#"
+              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors"
+            >
+              Cookies
+            </a>
+            <button
               onClick={() => {
-                const event = new CustomEvent('openAuthModal', { detail: { mode: 'admin' } });
+                const event = new CustomEvent("openAuthModal", {
+                  detail: { mode: "admin" },
+                });
                 window.dispatchEvent(event);
               }}
               className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors"

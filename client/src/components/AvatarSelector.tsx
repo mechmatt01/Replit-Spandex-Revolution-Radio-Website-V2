@@ -1,11 +1,16 @@
-import { useState, useRef } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Upload, User, Camera } from 'lucide-react';
-import { useTheme } from '@/contexts/ThemeContext';
-import { useToast } from '@/hooks/use-toast';
-import { apiRequest } from '@/lib/queryClient';
+import { useState, useRef } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Upload, User, Camera } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface AvatarSelectorProps {
   isOpen: boolean;
@@ -16,32 +21,43 @@ interface AvatarSelectorProps {
 
 // Pre-made avatar options (these would be stored in Firebase storage)
 const AVATAR_OPTIONS = [
-  { id: 'metal-1', url: '/avatars/metal-skull.png', name: 'Metal Skull' },
-  { id: 'metal-2', url: '/avatars/metal-guitar.png', name: 'Guitar Hero' },
-  { id: 'metal-3', url: '/avatars/metal-horns.png', name: 'Metal Horns' },
-  { id: 'metal-4', url: '/avatars/metal-flames.png', name: 'Flaming Metal' },
-  { id: 'rock-1', url: '/avatars/rock-star.png', name: 'Rock Star' },
-  { id: 'rock-2', url: '/avatars/rock-band.png', name: 'Band Member' },
-  { id: 'vintage-1', url: '/avatars/vintage-vinyl.png', name: 'Vinyl Lover' },
-  { id: 'vintage-2', url: '/avatars/vintage-radio.png', name: 'Radio Head' },
-  { id: 'spandex-1', url: '/avatars/spandex-warrior.png', name: 'Spandex Warrior' },
-  { id: 'spandex-2', url: '/avatars/spandex-legend.png', name: 'Metal Legend' },
+  { id: "metal-1", url: "/avatars/metal-skull.png", name: "Metal Skull" },
+  { id: "metal-2", url: "/avatars/metal-guitar.png", name: "Guitar Hero" },
+  { id: "metal-3", url: "/avatars/metal-horns.png", name: "Metal Horns" },
+  { id: "metal-4", url: "/avatars/metal-flames.png", name: "Flaming Metal" },
+  { id: "rock-1", url: "/avatars/rock-star.png", name: "Rock Star" },
+  { id: "rock-2", url: "/avatars/rock-band.png", name: "Band Member" },
+  { id: "vintage-1", url: "/avatars/vintage-vinyl.png", name: "Vinyl Lover" },
+  { id: "vintage-2", url: "/avatars/vintage-radio.png", name: "Radio Head" },
+  {
+    id: "spandex-1",
+    url: "/avatars/spandex-warrior.png",
+    name: "Spandex Warrior",
+  },
+  { id: "spandex-2", url: "/avatars/spandex-legend.png", name: "Metal Legend" },
 ];
 
-export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvatarUpdate }: AvatarSelectorProps) {
-  const [selectedAvatar, setSelectedAvatar] = useState(currentAvatar || '');
+export default function AvatarSelector({
+  isOpen,
+  onClose,
+  currentAvatar,
+  onAvatarUpdate,
+}: AvatarSelectorProps) {
+  const [selectedAvatar, setSelectedAvatar] = useState(currentAvatar || "");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { colors } = useTheme();
   const { toast } = useToast();
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     // Validate file type
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith("image/")) {
       toast({
         title: "Invalid File",
         description: "Please select an image file.",
@@ -64,21 +80,21 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
 
     try {
       const formData = new FormData();
-      formData.append('avatar', file);
+      formData.append("avatar", file);
 
-      const response = await fetch('/api/user/upload-avatar', {
-        method: 'POST',
-        credentials: 'include',
+      const response = await fetch("/api/user/upload-avatar", {
+        method: "POST",
+        credentials: "include",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Upload failed');
+        throw new Error("Upload failed");
       }
 
       const { avatarUrl } = await response.json();
       setSelectedAvatar(avatarUrl);
-      
+
       toast({
         title: "Upload Successful",
         description: "Your profile image has been uploaded.",
@@ -86,7 +102,8 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
     } catch (error: any) {
       toast({
         title: "Upload Failed",
-        description: error.message || "Failed to upload image. Please try again.",
+        description:
+          error.message || "Failed to upload image. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -96,14 +113,14 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
 
   const handleSave = async () => {
     if (!selectedAvatar) return;
-    
+
     setSaving(true);
 
     try {
-      await apiRequest('POST', '/api/user/update-avatar', { 
-        profileImageUrl: selectedAvatar 
+      await apiRequest("POST", "/api/user/update-avatar", {
+        profileImageUrl: selectedAvatar,
       });
-      
+
       onAvatarUpdate(selectedAvatar);
       toast({
         title: "Avatar Updated",
@@ -113,7 +130,8 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
     } catch (error: any) {
       toast({
         title: "Update Failed",
-        description: error.message || "Failed to update avatar. Please try again.",
+        description:
+          error.message || "Failed to update avatar. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -123,12 +141,12 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
+      <DialogContent
         className="sm:max-w-2xl max-h-[80vh] overflow-y-auto"
-        style={{ 
+        style={{
           backgroundColor: colors.cardBackground,
           borderColor: colors.primary,
-          color: colors.text
+          color: colors.text,
         }}
       >
         <DialogHeader>
@@ -139,7 +157,10 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
         </DialogHeader>
 
         <Tabs defaultValue="avatars" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6" style={{ backgroundColor: colors.background }}>
+          <TabsList
+            className="grid w-full grid-cols-2 mb-6"
+            style={{ backgroundColor: colors.background }}
+          >
             <TabsTrigger value="avatars" style={{ color: colors.text }}>
               Pre-made Avatars
             </TabsTrigger>
@@ -154,10 +175,15 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
                 <div
                   key={avatar.id}
                   className={`relative cursor-pointer rounded-lg border-2 p-2 transition-all duration-200 hover:scale-105 ${
-                    selectedAvatar === avatar.url ? 'border-orange-500' : 'border-gray-600'
+                    selectedAvatar === avatar.url
+                      ? "border-orange-500"
+                      : "border-gray-600"
                   }`}
-                  style={{ 
-                    borderColor: selectedAvatar === avatar.url ? colors.primary : '#4B5563' 
+                  style={{
+                    borderColor:
+                      selectedAvatar === avatar.url
+                        ? colors.primary
+                        : "#4B5563",
                   }}
                   onClick={() => setSelectedAvatar(avatar.url)}
                 >
@@ -173,12 +199,17 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
                       }}
                     />
                   </div>
-                  <p className="text-xs text-center mt-2 truncate" style={{ color: colors.text }}>
+                  <p
+                    className="text-xs text-center mt-2 truncate"
+                    style={{ color: colors.text }}
+                  >
                     {avatar.name}
                   </p>
                   {selectedAvatar === avatar.url && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
-                         style={{ backgroundColor: colors.primary }}>
+                    <div
+                      className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: colors.primary }}
+                    >
                       <span className="text-xs text-white">✓</span>
                     </div>
                   )}
@@ -190,18 +221,21 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
           <TabsContent value="upload">
             <div className="space-y-6">
               <div className="text-center">
-                <div 
+                <div
                   className="mx-auto w-32 h-32 rounded-full border-2 border-dashed border-gray-600 flex items-center justify-center cursor-pointer hover:border-orange-500 transition-colors"
                   onClick={() => fileInputRef.current?.click()}
-                  style={{ borderColor: selectedAvatar ? colors.primary : '#4B5563' }}
+                  style={{
+                    borderColor: selectedAvatar ? colors.primary : "#4B5563",
+                  }}
                 >
-                  {selectedAvatar && selectedAvatar.startsWith('data:') ? (
+                  {selectedAvatar && selectedAvatar.startsWith("data:") ? (
                     <img
                       src={selectedAvatar}
                       alt="Uploaded avatar"
                       className="w-full h-full rounded-full object-cover"
                     />
-                  ) : selectedAvatar && !selectedAvatar.startsWith('/avatars/') ? (
+                  ) : selectedAvatar &&
+                    !selectedAvatar.startsWith("/avatars/") ? (
                     <img
                       src={selectedAvatar}
                       alt="Current avatar"
@@ -209,14 +243,17 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
                     />
                   ) : (
                     <div className="text-center">
-                      <Camera className="mx-auto h-8 w-8 mb-2" style={{ color: colors.text }} />
+                      <Camera
+                        className="mx-auto h-8 w-8 mb-2"
+                        style={{ color: colors.text }}
+                      />
                       <p className="text-sm" style={{ color: colors.text }}>
-                        {uploading ? 'Uploading...' : 'Click to upload'}
+                        {uploading ? "Uploading..." : "Click to upload"}
                       </p>
                     </div>
                   )}
                 </div>
-                
+
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -225,7 +262,7 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
                   className="hidden"
                   disabled={uploading}
                 />
-                
+
                 <Button
                   type="button"
                   variant="outline"
@@ -235,11 +272,14 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
                   style={{ borderColor: colors.primary, color: colors.primary }}
                 >
                   <Upload className="h-4 w-4 mr-2" />
-                  {uploading ? 'Uploading...' : 'Choose File'}
+                  {uploading ? "Uploading..." : "Choose File"}
                 </Button>
               </div>
-              
-              <div className="text-center text-sm opacity-75" style={{ color: colors.text }}>
+
+              <div
+                className="text-center text-sm opacity-75"
+                style={{ color: colors.text }}
+              >
                 <p>Supported formats: JPG, PNG, GIF</p>
                 <p>Maximum size: 5MB</p>
                 <p>Recommended: 200x200 pixels or larger</p>
@@ -248,7 +288,10 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
           </TabsContent>
         </Tabs>
 
-        <div className="flex justify-between pt-4 border-t" style={{ borderColor: '#374151' }}>
+        <div
+          className="flex justify-between pt-4 border-t"
+          style={{ borderColor: "#374151" }}
+        >
           <Button
             type="button"
             variant="ghost"
@@ -257,7 +300,7 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
           >
             Cancel
           </Button>
-          
+
           <Button
             type="button"
             onClick={handleSave}
@@ -265,11 +308,11 @@ export default function AvatarSelector({ isOpen, onClose, currentAvatar, onAvata
             className="px-6"
             style={{
               backgroundColor: colors.primary,
-              color: 'white',
-              opacity: (!selectedAvatar || saving) ? 0.6 : 1
+              color: "white",
+              opacity: !selectedAvatar || saving ? 0.6 : 1,
             }}
           >
-            {saving ? 'Saving...' : 'Save Avatar'}
+            {saving ? "Saving..." : "Save Avatar"}
           </Button>
         </div>
       </DialogContent>

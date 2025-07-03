@@ -4,7 +4,7 @@ export default {
   resolve: {
     alias: {
       "@": "./client/src",
-      "@shared": "./shared", 
+      "@shared": "./shared",
       "@assets": "./attached_assets",
     },
   },

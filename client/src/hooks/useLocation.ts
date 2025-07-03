@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/contexts/AuthContext';
-import { apiRequest } from '@/lib/queryClient';
+import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { apiRequest } from "@/lib/queryClient";
 
 interface LocationData {
   lat: number;
@@ -16,22 +16,24 @@ export function useLocation() {
 
   const requestLocation = async () => {
     if (!isAuthenticated) return;
-    
+
     setLoading(true);
     setError(null);
 
     try {
       if (!navigator.geolocation) {
-        throw new Error('Geolocation is not supported by this browser');
+        throw new Error("Geolocation is not supported by this browser");
       }
 
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000, // 5 minutes
-        });
-      });
+      const position = await new Promise<GeolocationPosition>(
+        (resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 300000, // 5 minutes
+          });
+        },
+      );
 
       const locationData: LocationData = {
         lat: position.coords.latitude,
@@ -41,34 +43,38 @@ export function useLocation() {
       // Try to get address from coordinates (optional)
       try {
         const response = await fetch(
-          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${locationData.lat}&longitude=${locationData.lng}&localityLanguage=en`
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${locationData.lat}&longitude=${locationData.lng}&localityLanguage=en`,
         );
-        
+
         if (response.ok) {
           const addressData = await response.json();
-          locationData.address = `${addressData.city || addressData.locality || ''}, ${addressData.countryName || ''}`.trim();
+          locationData.address =
+            `${addressData.city || addressData.locality || ""}, ${addressData.countryName || ""}`.trim();
         }
       } catch (addressError) {
-        console.warn('Could not fetch address:', addressError);
+        console.warn("Could not fetch address:", addressError);
       }
 
       setLocation(locationData);
 
       // Update location on server
-      await apiRequest('POST', '/api/user/location', { location: locationData });
+      await apiRequest("POST", "/api/user/location", {
+        location: locationData,
+      });
 
       return locationData;
     } catch (err: any) {
-      let errorMessage = 'Failed to get location';
-      
+      let errorMessage = "Failed to get location";
+
       if (err.code === 1) {
-        errorMessage = 'Location access denied. Please enable location services.';
+        errorMessage =
+          "Location access denied. Please enable location services.";
       } else if (err.code === 2) {
-        errorMessage = 'Location unavailable. Please try again.';
+        errorMessage = "Location unavailable. Please try again.";
       } else if (err.code === 3) {
-        errorMessage = 'Location request timed out. Please try again.';
+        errorMessage = "Location request timed out. Please try again.";
       }
-      
+
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {

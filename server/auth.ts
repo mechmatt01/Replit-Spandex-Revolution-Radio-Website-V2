@@ -36,7 +36,7 @@ export function getSession() {
     ttl: sessionTtl,
     tableName: "sessions",
   });
-  
+
   return session({
     secret: process.env.SESSION_SECRET || "your-session-secret",
     store: sessionStore,
@@ -57,91 +57,101 @@ export function setupPassport(app: Express) {
   app.use(passport.session());
 
   // Local strategy
-  passport.use(new LocalStrategy(
-    { usernameField: "email" },
-    async (email: string, password: string, done) => {
-      try {
-        const user = await storage.getUserByEmail(email);
-        if (!user || !user.password) {
-          return done(null, false, { message: "Invalid email or password" });
-        }
+  passport.use(
+    new LocalStrategy(
+      { usernameField: "email" },
+      async (email: string, password: string, done) => {
+        try {
+          const user = await storage.getUserByEmail(email);
+          if (!user || !user.password) {
+            return done(null, false, { message: "Invalid email or password" });
+          }
 
-        const isValidPassword = await bcrypt.compare(password, user.password);
-        if (!isValidPassword) {
-          return done(null, false, { message: "Invalid email or password" });
-        }
+          const isValidPassword = await bcrypt.compare(password, user.password);
+          if (!isValidPassword) {
+            return done(null, false, { message: "Invalid email or password" });
+          }
 
-        if (!user.isEmailVerified) {
-          return done(null, false, { message: "Please verify your email address" });
-        }
+          if (!user.isEmailVerified) {
+            return done(null, false, {
+              message: "Please verify your email address",
+            });
+          }
 
-        return done(null, user);
-      } catch (error) {
-        return done(error);
-      }
-    }
-  ));
+          return done(null, user);
+        } catch (error) {
+          return done(error);
+        }
+      },
+    ),
+  );
 
   // Google OAuth strategy
   if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
     // Use current domain from environment variable
     const baseUrl = `https://${process.env.REPLIT_DEV_DOMAIN}`;
-    
-    passport.use(new GoogleStrategy({
-      clientID: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: `${baseUrl}/api/auth/google/callback`
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        // Check if user exists with Google ID
-        let user = await storage.getUserByGoogleId(profile.id);
-        
-        if (!user) {
-          // Check if user exists with same email
-          user = await storage.getUserByEmail(profile.emails?.[0]?.value || "");
-          
-          if (user) {
-            // Link Google account to existing user
-            user = await storage.updateUser(user.id, {
-              googleId: profile.id,
-              isEmailVerified: true,
-            });
-          } else {
-            // Create new user
-            const email = profile.emails?.[0]?.value || "";
-            const firstName = profile.name?.givenName || "";
-            const lastName = profile.name?.familyName || "";
-            
-            // Generate username from email or name
-            let username = email.split('@')[0];
-            if (!username && firstName) {
-              username = firstName.toLowerCase();
-            }
-            if (!username) {
-              username = `user_${profile.id}`;
-            }
-            
-            user = await storage.upsertUser({
-              username,
-              email,
-              firstName,
-              lastName,
-              googleId: profile.id,
-              isEmailVerified: true,
-            });
-            
-            user = await storage.updateUser(user.id, {
-              isEmailVerified: true,
-            });
-          }
-        }
 
-        return done(null, user);
-      } catch (error) {
-        return done(error);
-      }
-    }));
+    passport.use(
+      new GoogleStrategy(
+        {
+          clientID: GOOGLE_CLIENT_ID,
+          clientSecret: GOOGLE_CLIENT_SECRET,
+          callbackURL: `${baseUrl}/api/auth/google/callback`,
+        },
+        async (accessToken, refreshToken, profile, done) => {
+          try {
+            // Check if user exists with Google ID
+            let user = await storage.getUserByGoogleId(profile.id);
+
+            if (!user) {
+              // Check if user exists with same email
+              user = await storage.getUserByEmail(
+                profile.emails?.[0]?.value || "",
+              );
+
+              if (user) {
+                // Link Google account to existing user
+                user = await storage.updateUser(user.id, {
+                  googleId: profile.id,
+                  isEmailVerified: true,
+                });
+              } else {
+                // Create new user
+                const email = profile.emails?.[0]?.value || "";
+                const firstName = profile.name?.givenName || "";
+                const lastName = profile.name?.familyName || "";
+
+                // Generate username from email or name
+                let username = email.split("@")[0];
+                if (!username && firstName) {
+                  username = firstName.toLowerCase();
+                }
+                if (!username) {
+                  username = `user_${profile.id}`;
+                }
+
+                user = await storage.upsertUser({
+                  username,
+                  email,
+                  firstName,
+                  lastName,
+                  googleId: profile.id,
+                  isEmailVerified: true,
+                });
+
+                user = await storage.updateUser(user.id, {
+                  isEmailVerified: true,
+                });
+              }
+            }
+
+            return done(null, user);
+          } catch (error) {
+            return done(error);
+          }
+        },
+      ),
+    );
   }
 
   passport.serializeUser((user: any, done) => {
@@ -159,7 +169,11 @@ export function setupPassport(app: Express) {
 }
 
 // Authentication middleware
-export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
+export const isAuthenticated = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   if (req.isAuthenticated()) {
     return next();
   }
@@ -186,9 +200,13 @@ export function generateJWT(userId: number): string {
   return jwt.sign({ userId }, JWT_SECRET, { expiresIn: "7d" });
 }
 
-export async function sendVerificationEmail(email: string, token: string, firstName: string) {
+export async function sendVerificationEmail(
+  email: string,
+  token: string,
+  firstName: string,
+) {
   const verificationUrl = `${process.env.CLIENT_URL || "http://localhost:5000"}/verify-email?token=${token}`;
-  
+
   const mailOptions = {
     from: process.env.SMTP_FROM || "noreply@spandexsalvationradio.com",
     to: email,

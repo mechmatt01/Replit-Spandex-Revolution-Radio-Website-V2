@@ -1,5 +1,16 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, query, where, getDocs } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
@@ -35,20 +46,22 @@ export interface FirebaseUser {
 }
 
 // User operations
-export const createUser = async (userData: Omit<FirebaseUser, 'createdAt' | 'updatedAt'>): Promise<FirebaseUser> => {
+export const createUser = async (
+  userData: Omit<FirebaseUser, "createdAt" | "updatedAt">,
+): Promise<FirebaseUser> => {
   const now = new Date();
   const user: FirebaseUser = {
     ...userData,
     createdAt: now,
     updatedAt: now,
   };
-  
-  await setDoc(doc(db, 'users', userData.id), user);
+
+  await setDoc(doc(db, "users", userData.id), user);
   return user;
 };
 
 export const getUser = async (userId: string): Promise<FirebaseUser | null> => {
-  const userDoc = await getDoc(doc(db, 'users', userId));
+  const userDoc = await getDoc(doc(db, "users", userId));
   if (userDoc.exists()) {
     const data = userDoc.data();
     return {
@@ -61,21 +74,26 @@ export const getUser = async (userId: string): Promise<FirebaseUser | null> => {
   return null;
 };
 
-export const updateUser = async (userId: string, updates: Partial<FirebaseUser>): Promise<FirebaseUser | null> => {
-  const userRef = doc(db, 'users', userId);
+export const updateUser = async (
+  userId: string,
+  updates: Partial<FirebaseUser>,
+): Promise<FirebaseUser | null> => {
+  const userRef = doc(db, "users", userId);
   const updatedData = {
     ...updates,
     updatedAt: new Date(),
   };
-  
+
   await updateDoc(userRef, updatedData);
   return await getUser(userId);
 };
 
-export const getUserByEmail = async (email: string): Promise<FirebaseUser | null> => {
-  const q = query(collection(db, 'users'), where('email', '==', email));
+export const getUserByEmail = async (
+  email: string,
+): Promise<FirebaseUser | null> => {
+  const q = query(collection(db, "users"), where("email", "==", email));
   const querySnapshot = await getDocs(q);
-  
+
   if (!querySnapshot.empty) {
     const doc = querySnapshot.docs[0];
     const data = doc.data();
@@ -89,7 +107,10 @@ export const getUserByEmail = async (email: string): Promise<FirebaseUser | null
   return null;
 };
 
-export const scheduleAccountDeletion = async (userId: string, deletionDate: Date): Promise<void> => {
+export const scheduleAccountDeletion = async (
+  userId: string,
+  deletionDate: Date,
+): Promise<void> => {
   await updateUser(userId, {
     accountDeletionScheduled: true,
     accountDeletionDate: deletionDate,
@@ -97,20 +118,22 @@ export const scheduleAccountDeletion = async (userId: string, deletionDate: Date
 };
 
 export const deleteUser = async (userId: string): Promise<void> => {
-  await deleteDoc(doc(db, 'users', userId));
+  await deleteDoc(doc(db, "users", userId));
 };
 
 // Get users scheduled for deletion
-export const getUsersScheduledForDeletion = async (): Promise<FirebaseUser[]> => {
+export const getUsersScheduledForDeletion = async (): Promise<
+  FirebaseUser[]
+> => {
   const now = new Date();
   const q = query(
-    collection(db, 'users'),
-    where('accountDeletionScheduled', '==', true),
-    where('accountDeletionDate', '<=', now)
+    collection(db, "users"),
+    where("accountDeletionScheduled", "==", true),
+    where("accountDeletionDate", "<=", now),
   );
-  
+
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => {
+  return querySnapshot.docs.map((doc) => {
     const data = doc.data();
     return {
       ...data,

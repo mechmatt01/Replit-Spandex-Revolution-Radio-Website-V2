@@ -1,4 +1,12 @@
-import { createContext, useContext, useState, useRef, useEffect, ReactNode, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useRef,
+  useEffect,
+  ReactNode,
+  useCallback,
+} from "react";
 // Radio station interface
 interface RadioStation {
   id: string;
@@ -40,16 +48,25 @@ const RadioContext = createContext<RadioContextType | undefined>(undefined);
 // Helper function to get default artwork URLs
 function getDefaultArtwork(title: string, artist: string): string {
   const artworkMap: Record<string, string> = {
-    "Youth Gone Wild": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
-    "18 and Life": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
-    "I Remember You": "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
-    "Master of Puppets": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
-    "Ace of Spades": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
-    "Breaking the Law": "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400"
+    "Youth Gone Wild":
+      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+    "18 and Life":
+      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+    "I Remember You":
+      "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+    "Master of Puppets":
+      "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+    "Ace of Spades":
+      "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+    "Breaking the Law":
+      "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
   };
 
   // Return specific artwork for known tracks, or a generic metal concert image
-  return artworkMap[title] || "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400";
+  return (
+    artworkMap[title] ||
+    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400"
+  );
 }
 
 export function RadioProvider({ children }: { children: ReactNode }) {
@@ -66,13 +83,13 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     genre: "Hip Hop & R&B",
     streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
     description: "Dallas Hip Hop & R&B",
-    icon: "🎵"
+    icon: "🎵",
   });
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
     title: "95.5 The Beat",
     artist: "Dallas Hip Hop & R&B",
     album: "95.5 FM • Dallas, TX",
-    artwork: ""
+    artwork: "",
   });
   const [stationName, setStationName] = useState("95.5 The Beat");
   const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
@@ -81,7 +98,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
   const streamUrls = [
     "/api/radio-stream",
-    "https://ice1.somafm.com/metal-128-mp3"
+    "https://ice1.somafm.com/metal-128-mp3",
   ];
 
   const togglePlayback = async () => {
@@ -102,7 +119,9 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         for (let i = 0; i < streamUrls.length; i++) {
           try {
             const url = streamUrls[i];
-            console.log(`Attempting to play stream ${i + 1}/${streamUrls.length}: ${url}`);
+            console.log(
+              `Attempting to play stream ${i + 1}/${streamUrls.length}: ${url}`,
+            );
 
             // Reset audio element
             audio.pause();
@@ -113,7 +132,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
             // Wait for the audio to be ready
             await new Promise((resolve, reject) => {
               const timeout = setTimeout(() => {
-                reject(new Error('Stream loading timeout'));
+                reject(new Error("Stream loading timeout"));
               }, 10000);
 
               audio.oncanplaythrough = () => {
@@ -123,7 +142,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
               audio.onerror = () => {
                 clearTimeout(timeout);
-                reject(new Error('Stream loading error'));
+                reject(new Error("Stream loading error"));
               };
             });
 
@@ -152,11 +171,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       console.error("Playback error:", error);
       let errorMessage = "Failed to start playback";
 
-      if (error.name === 'NotAllowedError') {
+      if (error.name === "NotAllowedError") {
         errorMessage = "Please click play to start the stream";
-      } else if (error.name === 'NotSupportedError') {
-        errorMessage = "Stream format not supported - trying alternative formats";
-      } else if (error.name === 'AbortError') {
+      } else if (error.name === "NotSupportedError") {
+        errorMessage =
+          "Stream format not supported - trying alternative formats";
+      } else if (error.name === "AbortError") {
         errorMessage = "Stream loading was interrupted";
       } else {
         errorMessage = "Unable to connect to radio stream";
@@ -217,7 +237,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           setCurrentTrack({
             title: trackData.title || station.name,
             artist: trackData.artist || station.description,
-            album: trackData.album || `${station.frequency} • ${station.location}`,
+            album:
+              trackData.album || `${station.frequency} • ${station.location}`,
             artwork: trackData.artwork || "",
           });
         } else {
@@ -226,25 +247,24 @@ export function RadioProvider({ children }: { children: ReactNode }) {
             title: station.name,
             artist: station.description,
             album: `${station.frequency} • ${station.location}`,
-            artwork: ""
+            artwork: "",
           });
         }
       } catch (trackError) {
-        console.error('Failed to fetch initial track info:', trackError);
+        console.error("Failed to fetch initial track info:", trackError);
         // Fallback to station info
         setCurrentTrack({
           title: station.name,
           artist: station.description,
           album: `${station.frequency} • ${station.location}`,
-          artwork: ""
+          artwork: "",
         });
       }
 
       console.log(`Station changed to: ${station.name} (${station.streamUrl})`);
-
     } catch (err) {
-      console.error('Failed to change station:', err);
-      setError('Failed to switch station');
+      console.error("Failed to change station:", err);
+      setError("Failed to switch station");
     } finally {
       setIsLoading(false);
     }
@@ -288,18 +308,18 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
     audio.volume = isMuted ? 0 : volume;
 
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('loadstart', handleLoadStart);
-    audio.addEventListener('canplay', handleCanPlay);
-    audio.addEventListener('error', handleError);
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
+    audio.addEventListener("loadstart", handleLoadStart);
+    audio.addEventListener("canplay", handleCanPlay);
+    audio.addEventListener("error", handleError);
 
     return () => {
-      audio.removeEventListener('play', handlePlay);
-      audio.removeEventListener('pause', handlePause);
-      audio.removeEventListener('loadstart', handleLoadStart);
-      audio.removeEventListener('canplay', handleCanPlay);
-      audio.removeEventListener('error', handleError);
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+      audio.removeEventListener("loadstart", handleLoadStart);
+      audio.removeEventListener("canplay", handleCanPlay);
+      audio.removeEventListener("error", handleError);
     };
   }, [volume, isMuted]);
 
@@ -314,7 +334,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
             togglePlayback();
           }, 1000);
         } catch (error) {
-          console.log('Auto-play prevented by browser:', error);
+          console.log("Auto-play prevented by browser:", error);
         }
       }
     };
@@ -330,61 +350,71 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       if (!isPlaying) return;
 
       try {
-        const stationParam = currentStation?.id ? `?station=${currentStation.id}` : '';
+        const stationParam = currentStation?.id
+          ? `?station=${currentStation.id}`
+          : "";
         const response = await fetch(`/api/now-playing${stationParam}`);
         if (response.ok) {
           const trackData = await response.json();
 
           // Only update if track has actually changed (and it's not generic station info)
-          const isActualSong = trackData.title && 
-                              trackData.title !== "Radio Stream" && 
-                              trackData.title !== "Live Stream" && 
-                              trackData.title !== currentStation?.name &&
-                              trackData.title !== currentStation?.description;
+          const isActualSong =
+            trackData.title &&
+            trackData.title !== "Radio Stream" &&
+            trackData.title !== "Live Stream" &&
+            trackData.title !== currentStation?.name &&
+            trackData.title !== currentStation?.description;
 
-          const hasTrackChanged = trackData.title !== currentTrack.title || trackData.artist !== currentTrack.artist;
+          const hasTrackChanged =
+            trackData.title !== currentTrack.title ||
+            trackData.artist !== currentTrack.artist;
 
           if (hasTrackChanged) {
             // Only trigger cool animation for actual song changes
             if (isActualSong && currentTrack.title !== currentStation?.name) {
               setIsTransitioning(true);
-              
+
               // Wait for transition to start, then update content
               setTimeout(() => {
                 setCurrentTrack({
                   title: trackData.title,
-                  artist: trackData.artist || '',
-                  album: trackData.album || '',
-                  artwork: trackData.artwork || '',
+                  artist: trackData.artist || "",
+                  album: trackData.album || "",
+                  artwork: trackData.artwork || "",
                 });
               }, 350); // Half of transition duration
-              
+
               // End transition after animation completes
               setTimeout(() => setIsTransitioning(false), 1200);
             } else {
               // For station info or non-songs, update without animation
-              const displayTitle = (trackData.title === "Radio Stream" || !trackData.title) 
-                ? currentStation?.name || stationName 
-                : trackData.title;
-              
-              const displayArtist = (trackData.artist === "Live Stream" || !trackData.artist)
-                ? currentStation?.description || ''
-                : trackData.artist;
-              
-              const displayAlbum = trackData.album || 
-                (currentStation ? `${currentStation.frequency} • ${currentStation.location}` : '');
-              
+              const displayTitle =
+                trackData.title === "Radio Stream" || !trackData.title
+                  ? currentStation?.name || stationName
+                  : trackData.title;
+
+              const displayArtist =
+                trackData.artist === "Live Stream" || !trackData.artist
+                  ? currentStation?.description || ""
+                  : trackData.artist;
+
+              const displayAlbum =
+                trackData.album ||
+                (currentStation
+                  ? `${currentStation.frequency} • ${currentStation.location}`
+                  : "");
+
               setCurrentTrack({
                 title: displayTitle,
                 artist: displayArtist,
                 album: displayAlbum,
-                artwork: trackData.artwork || '',
+                artwork: trackData.artwork || "",
               });
             }
           }
         }
       } catch (error) {
-        console.error('Failed to fetch track info:', error);
+        console.error("Failed to fetch track info:", error);
       }
     };
 
@@ -393,12 +423,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       trackInterval = setInterval(fetchTrackInfo, 15000); // Check every 15 seconds instead of 10
     } else {
       // When stopped, show station name only if no track is set
-      if (currentTrack.title === '' || currentTrack.title === stationName) {
+      if (currentTrack.title === "" || currentTrack.title === stationName) {
         setCurrentTrack({
           title: stationName,
-          artist: '',
-          album: '',
-          artwork: '',
+          artist: "",
+          album: "",
+          artwork: "",
         });
       }
     }
@@ -426,16 +456,14 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <RadioContext.Provider value={value}>
-      {children}
-    </RadioContext.Provider>
+    <RadioContext.Provider value={value}>{children}</RadioContext.Provider>
   );
 }
 
 export function useRadio() {
   const context = useContext(RadioContext);
   if (context === undefined) {
-    throw new Error('useRadio must be used within a RadioProvider');
+    throw new Error("useRadio must be used within a RadioProvider");
   }
   return context;
 }

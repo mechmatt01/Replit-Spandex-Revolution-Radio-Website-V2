@@ -38,19 +38,29 @@ export interface IStorage {
   createUser(user: RegisterUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
   updateUserLocation(id: string, location: any): Promise<User | undefined>;
-  updateListeningStatus(id: string, isActiveListening: boolean): Promise<User | undefined>;
+  updateListeningStatus(
+    id: string,
+    isActiveListening: boolean,
+  ): Promise<User | undefined>;
   getActiveListeners(): Promise<User[]>;
   verifyEmail(token: string): Promise<User | undefined>;
   verifyPhone(userId: string, code: string): Promise<User | undefined>;
   updatePassword(id: string, hashedPassword: string): Promise<User | undefined>;
-  updateStripeInfo(id: string, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined>;
+  updateStripeInfo(
+    id: string,
+    stripeCustomerId?: string,
+    stripeSubscriptionId?: string,
+  ): Promise<User | undefined>;
   getUserSubmissions(userId: string): Promise<Submission[]>;
 
   // Submissions
   getSubmissions(): Promise<Submission[]>;
   getSubmissionById(id: number): Promise<Submission | undefined>;
   createSubmission(submission: InsertSubmission): Promise<Submission>;
-  updateSubmissionStatus(id: number, status: string): Promise<Submission | undefined>;
+  updateSubmissionStatus(
+    id: number,
+    status: string,
+  ): Promise<Submission | undefined>;
 
   // Contacts
   getContacts(): Promise<Contact[]>;
@@ -60,7 +70,10 @@ export interface IStorage {
   getShowSchedules(): Promise<ShowSchedule[]>;
   getActiveShowSchedules(): Promise<ShowSchedule[]>;
   createShowSchedule(schedule: InsertShowSchedule): Promise<ShowSchedule>;
-  updateShowSchedule(id: number, schedule: Partial<InsertShowSchedule>): Promise<ShowSchedule | undefined>;
+  updateShowSchedule(
+    id: number,
+    schedule: Partial<InsertShowSchedule>,
+  ): Promise<ShowSchedule | undefined>;
 
   // Past shows
   getPastShows(): Promise<PastShow[]>;
@@ -113,11 +126,17 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
     return user || undefined;
   }
 
-  async updateListeningStatus(id: string, isActiveListening: boolean): Promise<User | undefined> {
+  async updateListeningStatus(
+    id: string,
+    isActiveListening: boolean,
+  ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
       .set({ isActiveListening, updatedAt: new Date() })
@@ -136,7 +155,10 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async updateUser(id: string, updates: Partial<User>): Promise<User | undefined> {
+  async updateUser(
+    id: string,
+    updates: Partial<User>,
+  ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
       .set({ ...updates, updatedAt: new Date() })
@@ -145,12 +167,15 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  async updateUserLocation(id: string, location: any): Promise<User | undefined> {
+  async updateUserLocation(
+    id: string,
+    location: any,
+  ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ 
+      .set({
         location,
-        updatedAt: new Date() 
+        updatedAt: new Date(),
       })
       .where(eq(users.id, id))
       .returning();
@@ -158,7 +183,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActiveListeners(): Promise<User[]> {
-    return await db.select().from(users).where(eq(users.isActiveListening, true));
+    return await db
+      .select()
+      .from(users)
+      .where(eq(users.isActiveListening, true));
   }
 
   async verifyPhone(userId: string, code: string): Promise<User | undefined> {
@@ -170,9 +198,9 @@ export class DatabaseStorage implements IStorage {
 
     const [updatedUser] = await db
       .update(users)
-      .set({ 
+      .set({
         isPhoneVerified: true,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(users.id, userId))
       .returning();
@@ -181,7 +209,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async verifyEmail(token: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.emailVerificationToken, token));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.emailVerificationToken, token));
 
     if (!user) {
       return undefined;
@@ -189,10 +220,10 @@ export class DatabaseStorage implements IStorage {
 
     const [updatedUser] = await db
       .update(users)
-      .set({ 
+      .set({
         isEmailVerified: true,
         emailVerificationToken: null,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(users.id, user.id))
       .returning();
@@ -200,24 +231,31 @@ export class DatabaseStorage implements IStorage {
     return updatedUser || undefined;
   }
 
-  async updatePassword(id: string, hashedPassword: string): Promise<User | undefined> {
+  async updatePassword(
+    id: string,
+    hashedPassword: string,
+  ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ 
-        updatedAt: new Date() 
+      .set({
+        updatedAt: new Date(),
       })
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
   }
 
-  async updateStripeInfo(id: string, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined> {
+  async updateStripeInfo(
+    id: string,
+    stripeCustomerId?: string,
+    stripeSubscriptionId?: string,
+  ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ 
+      .set({
         stripeCustomerId,
         stripeSubscriptionId,
-        updatedAt: new Date() 
+        updatedAt: new Date(),
       })
       .where(eq(users.id, id))
       .returning();
@@ -225,15 +263,23 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSubmissions(): Promise<Submission[]> {
-    return await db.select().from(submissions).orderBy(desc(submissions.createdAt));
+    return await db
+      .select()
+      .from(submissions)
+      .orderBy(desc(submissions.createdAt));
   }
 
   async getSubmissionById(id: number): Promise<Submission | undefined> {
-    const [submission] = await db.select().from(submissions).where(eq(submissions.id, id));
+    const [submission] = await db
+      .select()
+      .from(submissions)
+      .where(eq(submissions.id, id));
     return submission || undefined;
   }
 
-  async createSubmission(insertSubmission: InsertSubmission): Promise<Submission> {
+  async createSubmission(
+    insertSubmission: InsertSubmission,
+  ): Promise<Submission> {
     const [submission] = await db
       .insert(submissions)
       .values(insertSubmission)
@@ -242,10 +288,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserSubmissions(userId: string): Promise<Submission[]> {
-    return await db.select().from(submissions).where(eq(submissions.userId, userId));
+    return await db
+      .select()
+      .from(submissions)
+      .where(eq(submissions.userId, userId));
   }
 
-  async updateSubmissionStatus(id: number, status: string): Promise<Submission | undefined> {
+  async updateSubmissionStatus(
+    id: number,
+    status: string,
+  ): Promise<Submission | undefined> {
     const [submission] = await db
       .update(submissions)
       .set({ status })
@@ -271,10 +323,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActiveShowSchedules(): Promise<ShowSchedule[]> {
-    return await db.select().from(showSchedules).where(eq(showSchedules.isActive, true));
+    return await db
+      .select()
+      .from(showSchedules)
+      .where(eq(showSchedules.isActive, true));
   }
 
-  async createShowSchedule(insertSchedule: InsertShowSchedule): Promise<ShowSchedule> {
+  async createShowSchedule(
+    insertSchedule: InsertShowSchedule,
+  ): Promise<ShowSchedule> {
     const [schedule] = await db
       .insert(showSchedules)
       .values(insertSchedule)
@@ -282,7 +339,10 @@ export class DatabaseStorage implements IStorage {
     return schedule;
   }
 
-  async updateShowSchedule(id: number, updateData: Partial<InsertShowSchedule>): Promise<ShowSchedule | undefined> {
+  async updateShowSchedule(
+    id: number,
+    updateData: Partial<InsertShowSchedule>,
+  ): Promise<ShowSchedule | undefined> {
     const [schedule] = await db
       .update(showSchedules)
       .set(updateData)
@@ -296,7 +356,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCurrentTrack(): Promise<NowPlaying | undefined> {
-    const [track] = await db.select().from(nowPlaying).orderBy(desc(nowPlaying.id)).limit(1);
+    const [track] = await db
+      .select()
+      .from(nowPlaying)
+      .orderBy(desc(nowPlaying.id))
+      .limit(1);
     return track || undefined;
   }
 
@@ -310,16 +374,17 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return updated;
     } else {
-      const [newTrack] = await db
-        .insert(nowPlaying)
-        .values(track)
-        .returning();
+      const [newTrack] = await db.insert(nowPlaying).values(track).returning();
       return newTrack;
     }
   }
 
   async getStreamStats(): Promise<StreamStats | undefined> {
-    const [stats] = await db.select().from(streamStats).orderBy(desc(streamStats.id)).limit(1);
+    const [stats] = await db
+      .select()
+      .from(streamStats)
+      .orderBy(desc(streamStats.id))
+      .limit(1);
     return stats || undefined;
   }
 
@@ -342,10 +407,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSubscriptions(): Promise<Subscription[]> {
-    return await db.select().from(subscriptions).orderBy(desc(subscriptions.createdAt));
+    return await db
+      .select()
+      .from(subscriptions)
+      .orderBy(desc(subscriptions.createdAt));
   }
 
-  async createSubscription(insertSubscription: InsertSubscription): Promise<Subscription> {
+  async createSubscription(
+    insertSubscription: InsertSubscription,
+  ): Promise<Subscription> {
     const [subscription] = await db
       .insert(subscriptions)
       .values(insertSubscription)
@@ -359,10 +429,10 @@ export class DatabaseStorage implements IStorage {
 
     const [user] = await db
       .update(users)
-      .set({ 
+      .set({
         accountDeletionScheduled: true,
         accountDeletionDate: deletionDate,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       })
       .where(eq(users.id, id))
       .returning();

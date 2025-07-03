@@ -21,10 +21,20 @@ interface LiveChatProps {
   isEnabled: boolean;
   onToggle: () => void;
   isHost?: boolean;
-  premiumFeatureType?: 'chat' | 'submission' | 'avatar' | 'premium_avatar' | 'profile_badge';
+  premiumFeatureType?:
+    | "chat"
+    | "submission"
+    | "avatar"
+    | "premium_avatar"
+    | "profile_badge";
 }
 
-export default function LiveChat({ isEnabled, onToggle, isHost = false, premiumFeatureType = 'chat' }: LiveChatProps) {
+export default function LiveChat({
+  isEnabled,
+  onToggle,
+  isHost = false,
+  premiumFeatureType = "chat",
+}: LiveChatProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -53,15 +63,15 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false, premiumF
       username: user?.firstName || "Anonymous",
       message: message.trim(),
       timestamp: new Date(),
-      isHost: isHost
+      isHost: isHost,
     };
 
-    setMessages(prev => [...prev, newMessage]);
+    setMessages((prev) => [...prev, newMessage]);
     setMessage("");
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   // If user is not authenticated, don't show the chat at all
@@ -72,15 +82,15 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false, premiumF
   // Get contextual message based on feature type
   const getFeatureMessage = () => {
     switch (premiumFeatureType) {
-      case 'chat':
+      case "chat":
         return "Premium Subscription is required to access the live chat features";
-      case 'submission':
+      case "submission":
         return "Premium Subscription is required to submit live song requests to the Spandex Salvation Radio";
-      case 'avatar':
+      case "avatar":
         return "A Premium Subscription is required to enable the checkmark for your profile";
-      case 'premium_avatar':
+      case "premium_avatar":
         return "A Premium Subscription is required to use the rock music avatars";
-      case 'profile_badge':
+      case "profile_badge":
         return "A Premium Subscription is required to display the premium badge on your profile";
       default:
         return "Premium Subscription is required to access this feature";
@@ -91,33 +101,39 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false, premiumF
   if (!hasPaidSubscription && isEnabled && isAuthenticated) {
     return (
       <div className="fixed bottom-20 right-4 z-40">
-        <Card 
+        <Card
           className="w-80 shadow-lg border-2 backdrop-blur-sm"
-          style={{ 
+          style={{
             background: `linear-gradient(135deg, ${colors.primary}15, ${colors.primary}05)`,
-            borderColor: colors.primary
+            borderColor: colors.primary,
           }}
         >
           <CardContent className="p-4">
             <div className="text-center space-y-3">
-              <MessageCircle className="w-8 h-8 mx-auto" style={{ color: colors.primary }} />
-              <h3 className="font-bold text-lg" style={{ color: colors.primary }}>Premium Feature</h3>
-              <p className="text-sm text-foreground">
-                {getFeatureMessage()}
-              </p>
+              <MessageCircle
+                className="w-8 h-8 mx-auto"
+                style={{ color: colors.primary }}
+              />
+              <h3
+                className="font-bold text-lg"
+                style={{ color: colors.primary }}
+              >
+                Premium Feature
+              </h3>
+              <p className="text-sm text-foreground">{getFeatureMessage()}</p>
               <div className="space-y-2">
                 <p className="text-xs text-muted-foreground">
                   ✓ Live Chat Access ✓ Song Submissions ✓ Exclusive Content
                 </p>
                 <div className="flex gap-2">
-                  <Button 
-                    size="sm" 
-                    className="flex-1" 
-                    style={{ 
+                  <Button
+                    size="sm"
+                    className="flex-1"
+                    style={{
                       backgroundColor: colors.primary,
-                      color: colors.primaryText || 'white'
+                      color: colors.primaryText || "white",
                     }}
-                    onClick={() => window.location.href = "/subscribe"}
+                    onClick={() => (window.location.href = "/subscribe")}
                   >
                     Upgrade Now
                   </Button>
@@ -160,8 +176,13 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false, premiumF
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <CardTitle className="text-sm font-semibold text-white">Live Chat</CardTitle>
-                  <Badge variant="secondary" className="bg-green-500/10 text-green-400 text-xs">
+                  <CardTitle className="text-sm font-semibold text-white">
+                    Live Chat
+                  </CardTitle>
+                  <Badge
+                    variant="secondary"
+                    className="bg-green-500/10 text-green-400 text-xs"
+                  >
                     <div className="w-2 h-2 bg-green-400 rounded-full mr-1"></div>
                     LIVE
                   </Badge>
@@ -192,7 +213,7 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false, premiumF
                 </div>
               </div>
             </CardHeader>
-            
+
             <CardContent className="p-0 flex flex-col h-full">
               {/* Messages Area */}
               <ScrollArea className="flex-1 px-4" ref={scrollAreaRef}>
@@ -201,17 +222,27 @@ export default function LiveChat({ isEnabled, onToggle, isHost = false, premiumF
                     <div className="text-center text-gray-500 text-sm py-8">
                       <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-600" />
                       <p>Welcome to the live chat!</p>
-                      <p className="text-xs">Be respectful and enjoy the show.</p>
+                      <p className="text-xs">
+                        Be respectful and enjoy the show.
+                      </p>
                     </div>
                   ) : (
                     messages.map((msg) => (
                       <div key={msg.id} className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-xs">
-                          <span className={`font-medium ${msg.isHost ? 'text-orange-400' : 'text-gray-300'}`}>
+                          <span
+                            className={`font-medium ${msg.isHost ? "text-orange-400" : "text-gray-300"}`}
+                          >
                             {msg.username}
-                            {msg.isHost && <Badge className="ml-1 bg-orange-500/20 text-orange-400 text-xs px-1">HOST</Badge>}
+                            {msg.isHost && (
+                              <Badge className="ml-1 bg-orange-500/20 text-orange-400 text-xs px-1">
+                                HOST
+                              </Badge>
+                            )}
                           </span>
-                          <span className="text-gray-500">{formatTime(msg.timestamp)}</span>
+                          <span className="text-gray-500">
+                            {formatTime(msg.timestamp)}
+                          </span>
                         </div>
                         <p className="text-sm text-gray-200 bg-gray-800/30 rounded px-2 py-1">
                           {msg.message}

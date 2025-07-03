@@ -14,9 +14,7 @@ import Footer from "@/components/Footer";
 import StickyPlayer from "@/components/StickyPlayer";
 import ChatButton from "@/components/ChatButton";
 
-
 export default function HomePage() {
-
   return (
     <div className="min-h-screen bg-black dark:bg-black text-white dark:text-white transition-colors duration-300">
       <Navigation />
@@ -34,7 +32,8 @@ export default function HomePage() {
               PREMIUM SUBSCRIPTIONS
             </h2>
             <p className="text-gray-400 text-lg font-semibold">
-              Support the station and unlock exclusive content with secure Stripe payments.
+              Support the station and unlock exclusive content with secure
+              Stripe payments.
             </p>
           </div>
           <StripePaymentProcessor />

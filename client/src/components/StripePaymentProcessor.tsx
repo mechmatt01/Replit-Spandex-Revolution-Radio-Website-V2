@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -151,23 +156,31 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label htmlFor="name" className="text-gray-300 font-semibold">Full Name *</Label>
+          <Label htmlFor="name" className="text-gray-300 font-semibold">
+            Full Name *
+          </Label>
           <Input
             id="name"
             value={customerInfo.name}
-            onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
+            onChange={(e) =>
+              setCustomerInfo((prev) => ({ ...prev, name: e.target.value }))
+            }
             placeholder="John Doe"
             required
             className="bg-dark-bg/50 text-white placeholder-gray-400/60 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
           />
         </div>
         <div>
-          <Label htmlFor="email" className="text-gray-300 font-semibold">Email Address *</Label>
+          <Label htmlFor="email" className="text-gray-300 font-semibold">
+            Email Address *
+          </Label>
           <Input
             id="email"
             type="email"
             value={customerInfo.email}
-            onChange={(e) => setCustomerInfo(prev => ({ ...prev, email: e.target.value }))}
+            onChange={(e) =>
+              setCustomerInfo((prev) => ({ ...prev, email: e.target.value }))
+            }
             placeholder="john@example.com"
             required
             className="bg-dark-bg/50 text-white placeholder-gray-400/60 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
@@ -176,7 +189,9 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
       </div>
 
       <div>
-        <Label className="text-gray-300 font-semibold">Payment Information *</Label>
+        <Label className="text-gray-300 font-semibold">
+          Payment Information *
+        </Label>
         <div className="mt-2 p-4 bg-dark-bg/50 rounded-lg">
           <CardElement
             options={{
@@ -202,8 +217,12 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
 
       <div className="flex items-center justify-between p-4 bg-dark-surface/50 rounded-lg">
         <div>
-          <p className="font-black text-white">Total: ${selectedTier.price}/month</p>
-          <p className="text-gray-400 text-sm font-semibold">Billed monthly, cancel anytime</p>
+          <p className="font-black text-white">
+            Total: ${selectedTier.price}/month
+          </p>
+          <p className="text-gray-400 text-sm font-semibold">
+            Billed monthly, cancel anytime
+          </p>
         </div>
         <div className="flex items-center text-gray-400">
           <Lock className="h-4 w-4 mr-1" />
@@ -224,7 +243,9 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
 }
 
 export default function StripePaymentProcessor() {
-  const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(null);
+  const [selectedTier, setSelectedTier] = useState<SubscriptionTier | null>(
+    null,
+  );
   const [showPaymentForm, setShowPaymentForm] = useState(false);
 
   const handleTierSelect = (tier: SubscriptionTier) => {
@@ -243,14 +264,23 @@ export default function StripePaymentProcessor() {
         <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
           <CardContent className="p-8">
             <div className="text-center mb-8">
-              <h3 className="font-black text-2xl text-white mb-2">Complete Your Subscription</h3>
+              <h3 className="font-black text-2xl text-white mb-2">
+                Complete Your Subscription
+              </h3>
               <p className="text-gray-400 font-semibold">
-                You're subscribing to <span className="text-metal-orange font-bold">{selectedTier.name}</span> tier
+                You're subscribing to{" "}
+                <span className="text-metal-orange font-bold">
+                  {selectedTier.name}
+                </span>{" "}
+                tier
               </p>
             </div>
 
             <Elements stripe={stripePromise}>
-              <PaymentForm selectedTier={selectedTier} onSuccess={handlePaymentSuccess} />
+              <PaymentForm
+                selectedTier={selectedTier}
+                onSuccess={handlePaymentSuccess}
+              />
             </Elements>
 
             <Button
@@ -272,21 +302,21 @@ export default function StripePaymentProcessor() {
         <div
           key={tier.id}
           className="bg-transparent transition-all duration-300 relative rounded-lg flex flex-col"
-          style={{ 
-            minHeight: tier.popular ? '600px' : '450px',
-            marginTop: tier.popular ? '0' : '150px',
+          style={{
+            minHeight: tier.popular ? "600px" : "450px",
+            marginTop: tier.popular ? "0" : "150px",
             border: `2px solid transparent`,
-            background: `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`
+            background: `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,
           }}
         >
           {tier.popular && (
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span 
+              <span
                 className="px-4 py-1 rounded-full text-xs font-bold"
                 style={{
-                  background: 'linear-gradient(135deg, #ff6b35, #f7931e)',
-                  color: 'black',
-                  whiteSpace: 'nowrap'
+                  background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                  color: "black",
+                  whiteSpace: "nowrap",
                 }}
               >
                 MOST&nbsp;POPULAR
@@ -297,19 +327,23 @@ export default function StripePaymentProcessor() {
           <div className="p-6 flex flex-col h-full justify-between">
             <div>
               <div className="text-center mb-6">
-                <h3 className="font-black text-xl text-white mb-2">{tier.name}</h3>
+                <h3 className="font-black text-xl text-white mb-2">
+                  {tier.name}
+                </h3>
                 <div className="mb-4">
-                  <span className="text-3xl font-black text-metal-orange">${tier.price}</span>
+                  <span className="text-3xl font-black text-metal-orange">
+                    ${tier.price}
+                  </span>
                   <span className="text-gray-400 font-semibold">/month</span>
                 </div>
 
                 {/* Package Icon */}
                 <div className="flex justify-center mb-6">
-                  <img 
-                    src={tier.icon} 
+                  <img
+                    src={tier.icon}
                     alt={`${tier.name} package icon`}
                     className={`object-contain ${
-                      tier.id === 'rebel' ? 'w-20 h-20' : 'w-16 h-16'
+                      tier.id === "rebel" ? "w-20 h-20" : "w-16 h-16"
                     }`}
                   />
                 </div>
@@ -319,7 +353,9 @@ export default function StripePaymentProcessor() {
                 {tier.features.map((feature, index) => (
                   <li key={index} className="flex items-start">
                     <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-300 font-semibold text-base leading-relaxed">{feature}</span>
+                    <span className="text-gray-300 font-semibold text-base leading-relaxed">
+                      {feature}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -329,18 +365,22 @@ export default function StripePaymentProcessor() {
               onClick={() => handleTierSelect(tier)}
               className={`w-full font-bold rounded-full transition-all duration-300 text-white transform hover:scale-110 hover:shadow-2xl py-3 text-base`}
               style={{
-                fontSize: '16px',
+                fontSize: "16px",
                 background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
                 boxShadow: `0 4px 15px ${tier.gradientStart}40`,
-                ...(tier.popular ? {} : { transform: 'scale(0.85)' })
+                ...(tier.popular ? {} : { transform: "scale(0.85)" }),
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = `0 8px 25px ${tier.gradientStart}80, 0 0 20px ${tier.gradientEnd}60`;
-                e.currentTarget.style.transform = tier.popular ? 'scale(1.1)' : 'scale(0.935)';
+                e.currentTarget.style.transform = tier.popular
+                  ? "scale(1.1)"
+                  : "scale(0.935)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.boxShadow = `0 4px 15px ${tier.gradientStart}40`;
-                e.currentTarget.style.transform = tier.popular ? 'scale(1)' : 'scale(0.85)';
+                e.currentTarget.style.transform = tier.popular
+                  ? "scale(1)"
+                  : "scale(0.85)";
               }}
             >
               Subscribe

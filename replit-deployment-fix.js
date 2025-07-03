@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+import { readFileSync, writeFileSync, existsSync } from "fs";
+import { join } from "path";
 
-console.log('🚀 Applying comprehensive Replit deployment fixes...');
+console.log("🚀 Applying comprehensive Replit deployment fixes...");
 
-const distIndexPath = './dist/index.js';
-let content = readFileSync(distIndexPath, 'utf8');
+const distIndexPath = "./dist/index.js";
+let content = readFileSync(distIndexPath, "utf8");
 
 // Fix 1: Already applied - vite.config import with proper extension
-console.log('✅ Vite config import already fixed');
+console.log("✅ Vite config import already fixed");
 
-// Fix 2: Already applied - conditional dotenv loading  
-console.log('✅ Dotenv conditional loading already applied');
+// Fix 2: Already applied - conditional dotenv loading
+console.log("✅ Dotenv conditional loading already applied");
 
 // Fix 3: Wrap the entire application in a try-catch to handle any remaining import issues
 const wrappedContent = `
@@ -54,7 +54,7 @@ const finalContent = wrappedContent.replace(
     port: PORT,
     host: HOST,
     reusePort: true
-  }`
+  }`,
 );
 
 writeFileSync(distIndexPath, finalContent);
@@ -83,7 +83,7 @@ try {
 exec node dist/index.js
 `;
 
-writeFileSync('./start.sh', startupScript);
+writeFileSync("./start.sh", startupScript);
 
 // Fix 6: Create deployment-specific environment handling
 const envSetup = `
@@ -100,23 +100,29 @@ fi
 echo "Environment configured for Replit deployment"
 `;
 
-writeFileSync('./.env.production', envSetup);
+writeFileSync("./.env.production", envSetup);
 
-console.log('✅ Applied comprehensive Replit deployment fixes!');
-console.log('');
-console.log('📋 Summary of fixes:');
-console.log('1. ✅ Fixed vite.config import with proper .js extension');
-console.log('2. ✅ Added conditional dotenv loading');
-console.log('3. ✅ Added error handling for missing modules');
-console.log('4. ✅ Ensured proper host/port binding for Replit');
-console.log('5. ✅ Created startup script (start.sh)');
-console.log('6. ✅ Added production environment setup');
-console.log('');
-console.log('🎯 Deployment ready! Your app should now deploy successfully on Replit.');
-console.log('');
-console.log('Testing locally:');
-console.log('  NODE_ENV=production node dist/index.js');
-console.log('');
-console.log('For Replit deployment:');
-console.log('  The app is configured to use PORT and HOST environment variables');
-console.log('  Make sure DATABASE_URL and other secrets are set in Replit secrets');
+console.log("✅ Applied comprehensive Replit deployment fixes!");
+console.log("");
+console.log("📋 Summary of fixes:");
+console.log("1. ✅ Fixed vite.config import with proper .js extension");
+console.log("2. ✅ Added conditional dotenv loading");
+console.log("3. ✅ Added error handling for missing modules");
+console.log("4. ✅ Ensured proper host/port binding for Replit");
+console.log("5. ✅ Created startup script (start.sh)");
+console.log("6. ✅ Added production environment setup");
+console.log("");
+console.log(
+  "🎯 Deployment ready! Your app should now deploy successfully on Replit.",
+);
+console.log("");
+console.log("Testing locally:");
+console.log("  NODE_ENV=production node dist/index.js");
+console.log("");
+console.log("For Replit deployment:");
+console.log(
+  "  The app is configured to use PORT and HOST environment variables",
+);
+console.log(
+  "  Make sure DATABASE_URL and other secrets are set in Replit secrets",
+);

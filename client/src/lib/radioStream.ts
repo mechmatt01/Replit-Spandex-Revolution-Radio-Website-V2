@@ -14,9 +14,9 @@ class RadioStreamAPI {
   private audioElement: HTMLAudioElement | null = null;
   private isInitialized = false;
   private streamUrls = [
-    'http://168.119.74.185:9858/autodj',
-    'http://168.119.74.185:9858/stream',
-    'http://168.119.74.185:9858/live'
+    "http://168.119.74.185:9858/autodj",
+    "http://168.119.74.185:9858/stream",
+    "http://168.119.74.185:9858/live",
   ];
   private currentUrlIndex = 0;
 
@@ -32,31 +32,46 @@ class RadioStreamAPI {
       this.audioElement.volume = 0.7;
 
       // Set up comprehensive error handling
-      this.audioElement.addEventListener('error', this.handleStreamError.bind(this));
-      this.audioElement.addEventListener('loadstart', () => console.log('Stream loading started'));
-      this.audioElement.addEventListener('canplay', () => console.log('Stream ready to play'));
-      this.audioElement.addEventListener('playing', () => console.log('Stream is playing'));
-      this.audioElement.addEventListener('waiting', () => console.log('Stream buffering'));
-      this.audioElement.addEventListener('stalled', () => console.log('Stream stalled'));
+      this.audioElement.addEventListener(
+        "error",
+        this.handleStreamError.bind(this),
+      );
+      this.audioElement.addEventListener("loadstart", () =>
+        console.log("Stream loading started"),
+      );
+      this.audioElement.addEventListener("canplay", () =>
+        console.log("Stream ready to play"),
+      );
+      this.audioElement.addEventListener("playing", () =>
+        console.log("Stream is playing"),
+      );
+      this.audioElement.addEventListener("waiting", () =>
+        console.log("Stream buffering"),
+      );
+      this.audioElement.addEventListener("stalled", () =>
+        console.log("Stream stalled"),
+      );
 
       this.isInitialized = true;
       return true;
     } catch (error) {
-      console.error('Failed to initialize stream:', error);
+      console.error("Failed to initialize stream:", error);
       return false;
     }
   }
 
   private handleStreamError(event: Event) {
-    console.error('Stream error occurred:', event);
-    
+    console.error("Stream error occurred:", event);
+
     // Try next URL in the list
     if (this.currentUrlIndex < this.streamUrls.length - 1) {
       this.currentUrlIndex++;
-      console.log(`Trying fallback stream: ${this.streamUrls[this.currentUrlIndex]}`);
+      console.log(
+        `Trying fallback stream: ${this.streamUrls[this.currentUrlIndex]}`,
+      );
       this.tryPlayWithUrl(this.streamUrls[this.currentUrlIndex]);
     } else {
-      console.error('All stream URLs failed');
+      console.error("All stream URLs failed");
       this.currentUrlIndex = 0; // Reset for next attempt
     }
   }
@@ -76,9 +91,9 @@ class RadioStreamAPI {
 
   async togglePlayback(): Promise<boolean> {
     await this.initializeStream();
-    
+
     if (!this.audioElement) {
-      console.error('Audio element not available');
+      console.error("Audio element not available");
       return false;
     }
 
@@ -93,21 +108,21 @@ class RadioStreamAPI {
         return false;
       }
     } catch (error) {
-      console.error('Playback toggle failed:', error);
+      console.error("Playback toggle failed:", error);
       return false;
     }
   }
 
   async startStream(): Promise<boolean> {
     await this.initializeStream();
-    
+
     if (!this.audioElement) return false;
 
     try {
       await this.tryPlayWithUrl(this.streamUrls[this.currentUrlIndex]);
       return true;
     } catch (error) {
-      console.error('Failed to start stream:', error);
+      console.error("Failed to start stream:", error);
       return false;
     }
   }
@@ -115,7 +130,7 @@ class RadioStreamAPI {
   stopStream(): void {
     if (this.audioElement) {
       this.audioElement.pause();
-      this.audioElement.src = '';
+      this.audioElement.src = "";
     }
   }
 
@@ -138,7 +153,7 @@ class RadioStreamAPI {
   destroy(): void {
     if (this.audioElement) {
       this.audioElement.pause();
-      this.audioElement.src = '';
+      this.audioElement.src = "";
       this.audioElement = null;
     }
     this.isInitialized = false;
@@ -148,7 +163,7 @@ class RadioStreamAPI {
   async getStreamStatus(): Promise<LiveTrackInfo | null> {
     try {
       // First try the enhanced now-playing API
-      const nowPlayingResponse = await fetch('/api/now-playing');
+      const nowPlayingResponse = await fetch("/api/now-playing");
       if (nowPlayingResponse.ok) {
         const nowPlayingData = await nowPlayingResponse.json();
         if (nowPlayingData && nowPlayingData.title) {
@@ -158,43 +173,45 @@ class RadioStreamAPI {
             album: nowPlayingData.album,
             listeners: 0, // Will be updated by radio-status
             bitrate: 128,
-            server_name: 'Hot 97',
+            server_name: "Hot 97",
             server_description: "New York's Hip Hop & R&B",
-            genre: 'Hip Hop',
-            artwork: nowPlayingData.artwork
+            genre: "Hip Hop",
+            artwork: nowPlayingData.artwork,
           };
         }
       }
-      
+
       // Fallback to radio-status
-      const response = await fetch('/api/radio-status');
+      const response = await fetch("/api/radio-status");
       if (!response.ok) {
-        throw new Error('Failed to fetch stream status');
+        throw new Error("Failed to fetch stream status");
       }
-      
+
       const data = await response.json();
-      const source = data.icestats?.source?.find((s: any) => s.listenurl?.includes('autodj'));
-      
+      const source = data.icestats?.source?.find((s: any) =>
+        s.listenurl?.includes("autodj"),
+      );
+
       if (source) {
         // Parse the title format "Artist - Song"
-        const titleParts = source.title?.split(' - ') || ['Unknown', 'Unknown'];
-        const artist = titleParts[0] || 'Unknown Artist';
-        const title = titleParts.slice(1).join(' - ') || 'Unknown Title';
-        
+        const titleParts = source.title?.split(" - ") || ["Unknown", "Unknown"];
+        const artist = titleParts[0] || "Unknown Artist";
+        const title = titleParts.slice(1).join(" - ") || "Unknown Title";
+
         return {
           title,
           artist,
           listeners: source.listeners || 0,
           bitrate: source.bitrate || 128,
-          server_name: source.server_name || 'Spandex Salvation Radio',
-          server_description: source.server_description || 'Live Metal Radio',
-          genre: source.genre || 'Metal'
+          server_name: source.server_name || "Spandex Salvation Radio",
+          server_description: source.server_description || "Live Metal Radio",
+          genre: source.genre || "Metal",
         };
       }
-      
+
       return null;
     } catch (error) {
-      console.error('Failed to get stream status:', error);
+      console.error("Failed to get stream status:", error);
       return null;
     }
   }
@@ -204,11 +221,12 @@ export const radioStreamAPI = new RadioStreamAPI();
 
 // Helper function to check if browser supports audio streaming
 export function checkAudioSupport(): boolean {
-  const audio = document.createElement('audio');
-  return !!(audio.canPlayType && (
-    audio.canPlayType('audio/mpeg').replace(/no/, '') ||
-    audio.canPlayType('audio/mp3').replace(/no/, '')
-  ));
+  const audio = document.createElement("audio");
+  return !!(
+    audio.canPlayType &&
+    (audio.canPlayType("audio/mpeg").replace(/no/, "") ||
+      audio.canPlayType("audio/mp3").replace(/no/, ""))
+  );
 }
 
 // Alternative streaming approach using MediaSource API (experimental)
@@ -218,8 +236,8 @@ export class AdvancedRadioStream {
   private audioElement: HTMLAudioElement | null = null;
 
   async initializeAdvancedStream(): Promise<boolean> {
-    if (!('MediaSource' in window)) {
-      console.log('MediaSource API not supported, falling back to basic audio');
+    if (!("MediaSource" in window)) {
+      console.log("MediaSource API not supported, falling back to basic audio");
       return false;
     }
 
@@ -229,18 +247,18 @@ export class AdvancedRadioStream {
       this.audioElement.src = URL.createObjectURL(this.mediaSource);
 
       return new Promise((resolve) => {
-        this.mediaSource!.addEventListener('sourceopen', () => {
+        this.mediaSource!.addEventListener("sourceopen", () => {
           try {
-            this.sourceBuffer = this.mediaSource!.addSourceBuffer('audio/mpeg');
+            this.sourceBuffer = this.mediaSource!.addSourceBuffer("audio/mpeg");
             resolve(true);
           } catch (error) {
-            console.error('Failed to add source buffer:', error);
+            console.error("Failed to add source buffer:", error);
             resolve(false);
           }
         });
       });
     } catch (error) {
-      console.error('Failed to initialize advanced stream:', error);
+      console.error("Failed to initialize advanced stream:", error);
       return false;
     }
   }
@@ -251,12 +269,12 @@ export class AdvancedRadioStream {
     try {
       const response = await fetch(url);
       const reader = response.body?.getReader();
-      
-      if (!reader) throw new Error('No readable stream');
+
+      if (!reader) throw new Error("No readable stream");
 
       const pump = async (): Promise<void> => {
         const { done, value } = await reader.read();
-        
+
         if (done) {
           this.mediaSource?.endOfStream();
           return;
@@ -271,7 +289,7 @@ export class AdvancedRadioStream {
 
       await pump();
     } catch (error) {
-      console.error('Streaming error:', error);
+      console.error("Streaming error:", error);
     }
   }
 }

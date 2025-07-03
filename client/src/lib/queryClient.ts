@@ -38,27 +38,34 @@ export const getQueryFn: <T>(options: {
     }
 
     await throwIfResNotOk(res);
-    
+
     // Check content type first
-    const contentType = res.headers.get('content-type');
-    
+    const contentType = res.headers.get("content-type");
+
     // If it's not JSON, don't try to parse it
-    if (!contentType || !contentType.includes('application/json')) {
-      console.log('Non-JSON response detected, skipping parse');
+    if (!contentType || !contentType.includes("application/json")) {
+      console.log("Non-JSON response detected, skipping parse");
       return null;
     }
-    
+
     // Check if response has content before parsing JSON
     const text = await res.text();
-    if (!text || text.trim() === '' || text === 'undefined') {
-      console.log('Empty or undefined response, returning null');
+    if (!text || text.trim() === "" || text === "undefined") {
+      console.log("Empty or undefined response, returning null");
       return null;
     }
-    
+
     try {
       return JSON.parse(text);
     } catch (error) {
-      console.error('JSON parse error for query:', queryKey[0], 'Error:', error, 'Response text:', text);
+      console.error(
+        "JSON parse error for query:",
+        queryKey[0],
+        "Error:",
+        error,
+        "Response text:",
+        text,
+      );
       return null; // Return null instead of throwing to prevent crashes
     }
   };

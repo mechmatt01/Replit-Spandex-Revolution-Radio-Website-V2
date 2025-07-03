@@ -20,7 +20,7 @@ export default function LoginPage() {
     password: "",
     firstName: "",
     lastName: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
 
   const { getColors, theme } = useTheme();
@@ -42,7 +42,7 @@ export default function LoginPage() {
           });
           return;
         }
-        
+
         if (formData.password.length < 6) {
           toast({
             title: "Password Too Short",
@@ -73,13 +73,14 @@ export default function LoginPage() {
             ? "You have successfully signed in."
             : "Your account has been created. Please check your email for verification.",
         });
-        
+
         // Redirect to home page
         window.location.href = "/";
       } else {
         toast({
           title: "Authentication Failed",
-          description: data.message || "Please check your credentials and try again.",
+          description:
+            data.message || "Please check your credentials and try again.",
           variant: "destructive",
         });
       }
@@ -100,10 +101,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={cn(
-      "min-h-screen flex items-center justify-center p-4",
-      theme === "light" ? "bg-white" : "bg-black"
-    )}>
+    <div
+      className={cn(
+        "min-h-screen flex items-center justify-center p-4",
+        theme === "light" ? "bg-white" : "bg-black",
+      )}
+    >
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-4">
           <div className="flex items-center space-x-2">
@@ -125,7 +128,7 @@ export default function LoginPage() {
             </p>
           </div>
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           {/* Google Auth Button */}
           <Button
@@ -134,7 +137,11 @@ export default function LoginPage() {
             className="w-full bg-white text-black border-gray-300 hover:bg-gray-50"
             onClick={handleGoogleAuth}
           >
-            <img src="/assets/icons8-google_1750360286324.png" alt="Google" className="w-4 h-4 mr-2" />
+            <img
+              src="/assets/icons8-google_1750360286324.png"
+              alt="Google"
+              className="w-4 h-4 mr-2"
+            />
             {isLogin ? "Continue with Google" : "Sign Up with Google"}
           </Button>
 
@@ -163,7 +170,12 @@ export default function LoginPage() {
                       placeholder="John"
                       className="pl-10"
                       value={formData.firstName}
-                      onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          firstName: e.target.value,
+                        }))
+                      }
                       required
                     />
                   </div>
@@ -178,7 +190,12 @@ export default function LoginPage() {
                       placeholder="Doe"
                       className="pl-10"
                       value={formData.lastName}
-                      onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          lastName: e.target.value,
+                        }))
+                      }
                       required
                     />
                   </div>
@@ -196,7 +213,9 @@ export default function LoginPage() {
                   placeholder="john@example.com"
                   className="pl-10"
                   value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, email: e.target.value }))
+                  }
                   required
                 />
               </div>
@@ -209,10 +228,17 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder={isLogin ? "Enter your password" : "Create a password"}
+                  placeholder={
+                    isLogin ? "Enter your password" : "Create a password"
+                  }
                   className="pl-10 pr-10"
                   value={formData.password}
-                  onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }))
+                  }
                   required
                 />
                 <button
@@ -220,7 +246,11 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -236,20 +266,29 @@ export default function LoginPage() {
                     placeholder="Confirm your password"
                     className="pl-10"
                     value={formData.confirmPassword}
-                    onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        confirmPassword: e.target.value,
+                      }))
+                    }
                     required
                   />
                 </div>
               </div>
             )}
 
-            <Button 
-              type="submit" 
-              className="w-full" 
+            <Button
+              type="submit"
+              className="w-full"
               disabled={isLoading}
               style={{ backgroundColor: colors.primary }}
             >
-              {isLoading ? "Please wait..." : (isLogin ? "Login" : "Create Account")}
+              {isLoading
+                ? "Please wait..."
+                : isLogin
+                  ? "Login"
+                  : "Create Account"}
             </Button>
           </form>
 

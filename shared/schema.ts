@@ -1,4 +1,14 @@
-import { pgTable, text, serial, integer, boolean, timestamp, varchar, jsonb, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  serial,
+  integer,
+  boolean,
+  timestamp,
+  varchar,
+  jsonb,
+  index,
+} from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -29,7 +39,9 @@ export const users = pgTable("users", {
   renewalDate: timestamp("renewal_date"),
   isPhoneVerified: boolean("is_phone_verified").default(false),
   showVerifiedBadge: boolean("show_verified_badge").default(false),
-  accountDeletionScheduled: boolean("account_deletion_scheduled").default(false),
+  accountDeletionScheduled: boolean("account_deletion_scheduled").default(
+    false,
+  ),
   accountDeletionDate: timestamp("account_deletion_date"),
   isEmailVerified: boolean("is_email_verified").default(false),
   emailVerificationToken: varchar("email_verification_token"),
@@ -131,18 +143,23 @@ export const insertUserSchema = createInsertSchema(users).pick({
   emailVerificationToken: true,
 });
 
-export const registerUserSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Please enter a valid email address"),
-  phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  confirmPassword: z.string().optional(),
-}).refine((data) => !data.confirmPassword || data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+export const registerUserSchema = z
+  .object({
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    email: z.string().email("Please enter a valid email address"),
+    phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+    username: z.string().min(3, "Username must be at least 3 characters"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().optional(),
+  })
+  .refine(
+    (data) => !data.confirmPassword || data.password === data.confirmPassword,
+    {
+      message: "Passwords don't match",
+      path: ["confirmPassword"],
+    },
+  );
 
 export const loginUserSchema = z.object({
   email: z.string().email("Please enter a valid email address"),

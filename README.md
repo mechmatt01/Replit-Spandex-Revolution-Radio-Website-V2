@@ -7,6 +7,7 @@ Spandex Salvation Radio is a full-stack web application for streaming old-school
 ## System Architecture
 
 ### Frontend Architecture
+
 - **Framework**: React 18 with TypeScript
 - **Routing**: Wouter for client-side navigation
 - **UI Components**: Shadcn/ui component library with Radix UI primitives
@@ -16,6 +17,7 @@ Spandex Salvation Radio is a full-stack web application for streaming old-school
 - **Build Tool**: Vite for development and production builds
 
 ### Backend Architecture
+
 - **Runtime**: Node.js with TypeScript
 - **Framework**: Express.js for REST API
 - **Database**: PostgreSQL with Drizzle ORM
@@ -24,7 +26,9 @@ Spandex Salvation Radio is a full-stack web application for streaming old-school
 - **Development**: Hot reloading with Vite middleware integration
 
 ### Database Schema
+
 The application uses PostgreSQL with the following main entities:
+
 - **Users**: Admin authentication and user management
 - **Submissions**: Song request system with approval workflow
 - **Contacts**: Contact form submissions
@@ -37,24 +41,28 @@ The application uses PostgreSQL with the following main entities:
 ## Key Components
 
 ### Audio System
+
 - **Audio Context**: Centralized audio state management
 - **Sticky Player**: Persistent bottom player with playback controls
 - **Now Playing**: Real-time track information display
 - **Stream Stats**: Live listener count and engagement metrics
 
 ### Content Management
+
 - **Show Scheduling**: Weekly programming with host information
 - **Song Submissions**: Community-driven playlist requests with moderation
 - **Admin Panel**: Content moderation and stream management tools
 - **Contact System**: User inquiry handling
 
 ### User Interface
+
 - **Responsive Design**: Mobile-first approach with desktop optimization
 - **Dark Theme**: Metal-themed color scheme with orange/gold accents
 - **Interactive Map**: Global listener visualization (placeholder for future implementation)
 - **Subscription Tiers**: Premium membership system with feature differentiation
 
 ### External Integrations
+
 - **Firebase**: Authentication system (configured but not fully implemented)
 - **Shopify**: Merchandise store integration (placeholder)
 - **Social Media**: Platform links and sharing capabilities
@@ -70,18 +78,21 @@ The application uses PostgreSQL with the following main entities:
 ## External Dependencies
 
 ### Core Framework Dependencies
+
 - React ecosystem (React, React DOM, React Query)
 - Express.js with TypeScript support
 - Drizzle ORM with PostgreSQL adapter
 - Neon Database for serverless PostgreSQL
 
 ### UI and Styling
+
 - Tailwind CSS for utility-first styling
 - Radix UI for accessible component primitives
 - Shadcn/ui for pre-built component library
 - Lucide icons for consistent iconography
 
 ### Development Tools
+
 - Vite for build tooling and development server
 - TypeScript for type safety
 - ESBuild for production bundling
@@ -90,17 +101,20 @@ The application uses PostgreSQL with the following main entities:
 ## Deployment Strategy
 
 ### Development Environment
+
 - **Local Development**: Vite dev server with hot reloading
 - **Database**: Neon Database connection via environment variables
 - **Port Configuration**: Development on port 5000
 
 ### Production Build
+
 - **Frontend**: Vite builds optimized static assets
 - **Backend**: ESBuild bundles Node.js application
 - **Deployment Target**: Replit autoscale deployment
 - **Asset Serving**: Express serves static files in production
 
 ### Environment Configuration
+
 - Database URL configuration through environment variables
 - Firebase configuration for authentication
 - Production/development mode switching
@@ -108,36 +122,44 @@ The application uses PostgreSQL with the following main entities:
 ## Advanced Components Integration
 
 ### Real-time Interactive Features
+
 - **Interactive Listener Map**: Global geolocation visualization with real-time listener counts and country breakdowns
 - **Advanced Audio Player**: Full playlist functionality with shuffle, repeat, favorites, and social sharing
 - **Advanced Admin Dashboard**: Comprehensive analytics with streaming controls, social media metrics, and content management
 
 ### Payment & E-commerce Integration
+
 - **Stripe Payment Processing**: Secure subscription management with multiple tier options (Rebel, Legend, Icon)
 - **Shopify E-commerce Integration**: Complete merchandise store with cart functionality, product variants, and checkout flow
 
 ### Social Media & Revenue
+
 - **Social Media Integration**: Platform analytics, engagement tracking, and sharing capabilities across Facebook, Twitter, Instagram, and YouTube
 - **Google Ads Integration**: Revenue generation framework (ready for Google Ads implementation)
 
 ### Enhanced User Experience
+
 - **Borderless Modern Design**: Removed all borders throughout the site for clean, modern aesthetic
 - **Enhanced Typography**: Improved font weights (font-black for headings, font-semibold for content)
 - **Deep Black Default Theme**: Dark theme as default for first-time visitors
 - **Responsive Navigation**: Optimized spacing and mobile behavior
 
 ## Google OAuth Setup Notes
+
 Current development domain: `https://9c4b622d-92a4-4193-9bf1-e70aa305f5b5-00-nv1cf8s5dwtq.spock.replit.dev`
 Required redirect URIs in Google Cloud Console:
+
 - Development: `https://9c4b622d-92a4-4193-9bf1-e70aa305f5b5-00-nv1cf8s5dwtq.spock.replit.dev/api/auth/google/callback`
 - Production: `https://workspace.replit.app/api/auth/google/callback`
 
 **IMPORTANT**: You must add the current development redirect URI to your Google Cloud Console OAuth 2.0 credentials:
+
 1. Go to Google Cloud Console > APIs & Credentials > OAuth 2.0 Client IDs
 2. Add `https://9c4b622d-92a4-4193-9bf1-e70aa305f5b5-00-nv1cf8s5dwtq.spock.replit.dev/api/auth/google/callback` to Authorized redirect URIs
 3. Save the changes
 
 ## Changelog
+
 - June 24, 2025: COMPLETED comprehensive navigation bar fixes - all dropdown links working in desktop and mobile modes, proper routing with wouter for cross-page navigation, enhanced mobile dropdown with hover tooltips, fixed login/signup buttons with authentication modal triggers, added section IDs to all pages for smooth scrolling
 - June 24, 2025: Completed comprehensive authentication and streaming system testing - verified Replit Auth integration, input theme highlighting, phone number auto-formatting, user registration with proper database structure, radio streaming through proxy endpoint, and listening status tracking
 - June 21, 2025: Fixed countdown text color to display black in light mode and white in dark mode, implemented CSS Grid navigation centering for desktop and responsive flex layout for mobile to ensure proper positioning across all screen sizes
@@ -272,4 +294,5 @@ Required redirect URIs in Google Cloud Console:
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+
 # Replit-Spandex-Revolution-Radio-Website-V2
