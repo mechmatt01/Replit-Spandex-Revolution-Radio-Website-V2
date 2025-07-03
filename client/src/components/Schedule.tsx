@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, Clock, Play } from "lucide-react";
+import { Calendar, Clock, Play, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -12,6 +12,7 @@ export default function Schedule() {
   const colors = getColors();
   const { setCurrentTrack } = useRadio();
   const [selectedPastShow, setSelectedPastShow] = useState<PastShow | null>(null);
+  const [selectedWeeklyShow, setSelectedWeeklyShow] = useState<ShowSchedule | null>(null);
 
   const { data: weeklyShows = [] } = useQuery<ShowSchedule[]>({
     queryKey: ["/api/schedules"],
@@ -109,13 +110,27 @@ export default function Schedule() {
               {weeklyShows.map((show) => (
                 <Card
                   key={show.id}
-                  className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2"
-                  style={{ borderColor: colors.primary, height: "160px" }}
+                  className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
+                  style={{
+                    backgroundColor: colors.background,
+                    borderColor: `${colors.primary}40`,
+                    boxShadow: `0 8px 32px ${colors.primary}20`,
+                    height: "160px",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = colors.primary;
+                    e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = `${colors.primary}40`;
+                    e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
+                  }}
+                  onClick={() => setSelectedWeeklyShow(show)}
                 >
                   <CardContent
-                    className="p-4"
+                    className="p-0"
                     style={{
-                      height: "160px",
+                      height: "100%",
                       display: "flex",
                       flexDirection: "column",
                     }}
@@ -265,6 +280,84 @@ export default function Schedule() {
           </Button>
         </div>
       </div>
+
+      {/* Weekly Show Details Modal */}
+      {selectedWeeklyShow && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50"
+          onClick={() => setSelectedWeeklyShow(null)}
+        >
+          <div
+            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full mx-4 relative"
+            style={{
+              borderColor: colors.primary,
+              backgroundColor: colors.background,
+              boxShadow: `0 25px 50px ${colors.primary}40`,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedWeeklyShow(null)}
+              className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110"
+              style={{
+                color: colors.primary,
+                backgroundColor: `${colors.primary}20`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = colors.primary;
+                e.currentTarget.style.color = "white";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                e.currentTarget.style.color = colors.primary;
+              }}
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {/* Content */}
+            <div className="text-center space-y-4">
+              {/* Title */}
+              <h2 
+                className="font-black text-2xl"
+                style={{ color: colors.text }}
+              >
+                {selectedWeeklyShow.title}
+              </h2>
+
+              {/* Host */}
+              <p 
+                className="font-semibold text-base"
+                style={{ color: colors.text }}
+              >
+                Hosted by: {selectedWeeklyShow.host}
+              </p>
+
+              {/* Date and Time */}
+              <div className="flex items-center justify-center space-x-2">
+                <Calendar 
+                  className="h-4 w-4"
+                  style={{ color: colors.primary }}
+                />
+                <span 
+                  className="text-sm font-bold"
+                  style={{ color: colors.text }}
+                >
+                  {selectedWeeklyShow.dayOfWeek} at {formatTime(selectedWeeklyShow.time)}
+                </span>
+              </div>
+
+              {/* Description */}
+              <p 
+                className="text-gray-400 text-sm font-semibold leading-relaxed"
+              >
+                {selectedWeeklyShow.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
