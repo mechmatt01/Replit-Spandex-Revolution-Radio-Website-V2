@@ -299,10 +299,12 @@ export default function Schedule() {
             {/* Close Button */}
             <button
               onClick={() => setSelectedWeeklyShow(null)}
-              className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110"
+              className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110 flex items-center justify-center"
               style={{
                 color: colors.primary,
                 backgroundColor: `${colors.primary}20`,
+                width: "40px",
+                height: "40px",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = colors.primary;
