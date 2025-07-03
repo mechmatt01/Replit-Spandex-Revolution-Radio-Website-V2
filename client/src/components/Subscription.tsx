@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { useTheme } from "@/contexts/ThemeContext";
 import type { InsertSubscription } from "@shared/schema";
 
 const subscriptionTiers = [
@@ -119,98 +120,101 @@ export default function Subscription() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
           {subscriptionTiers.map((tier, index) => (
-            <div
-              key={tier.name}
-              className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
-                tier.popular
-                  ? "border-2 border-metal-gold transform scale-105"
-                  : ""
-              }`}
-              style={{ minHeight: "600px" }}
-            >
-              {tier.popular && (
-                <div
-                  className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
-                  style={{
-                    background: "linear-gradient(135deg, #ff6b35, #f7931e)",
-                    color: "black",
-                    whiteSpace: "nowrap",
-                    fontSize: "11px",
-                    lineHeight: "1",
-                  }}
-                >
-                  MOST&nbsp;POPULAR
-                </div>
-              )}
-
-              <div className="p-8 flex flex-col h-full justify-between">
-                <div className="text-center mb-6">
-                  <h3
-                    className={`font-bold text-xl mb-2 ${
-                      tier.color === "metal-gold"
-                        ? "text-metal-gold"
-                        : tier.color === "metal-red"
-                          ? "text-metal-red"
-                          : "text-white"
-                    }`}
-                  >
-                    {tier.name}
-                  </h3>
+            <div key={tier.name} className="relative">
+              {/* Title Above Box */}
+              <h3
+                className={`font-bold text-xl mb-4 text-center ${
+                  tier.color === "metal-gold"
+                    ? "text-metal-gold"
+                    : tier.color === "metal-red"
+                      ? "text-metal-red"
+                      : "text-white"
+                }`}
+              >
+                {tier.name}
+              </h3>
+              
+              <div
+                className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
+                  tier.popular
+                    ? "border-2 border-metal-gold transform scale-105"
+                    : ""
+                }`}
+                style={{ minHeight: tier.popular ? "520px" : "560px" }}
+              >
+                {tier.popular && (
                   <div
-                    className={`text-3xl font-bold mb-1 ${
-                      tier.color === "metal-gold"
-                        ? "text-metal-gold"
-                        : tier.color === "metal-red"
-                          ? "text-metal-red"
-                          : "text-metal-orange"
-                    }`}
+                    className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                    style={{
+                      background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                      color: "black",
+                      whiteSpace: "nowrap",
+                      fontSize: "11px",
+                      lineHeight: "1",
+                    }}
                   >
-                    {tier.price}
+                    MOST&nbsp;POPULAR
                   </div>
-                  <div className="text-gray-400 text-sm">per month</div>
-                </div>
+                )}
 
-                <ul className="space-y-3 mb-8 flex-grow">
-                  {tier.features.map((feature, featureIndex) => (
-                    <li
-                      key={featureIndex}
-                      className="flex items-center text-gray-300"
+                <div className="p-8 flex flex-col h-full justify-between">
+                  <div className="text-center mb-6">
+                    <div
+                      className={`text-3xl font-bold mb-1 ${
+                        tier.color === "metal-gold"
+                          ? "text-metal-gold"
+                          : tier.color === "metal-red"
+                            ? "text-metal-red"
+                            : "text-metal-orange"
+                      }`}
                     >
-                      <Check
-                        className={`mr-3 h-4 w-4 ${
-                          tier.color === "metal-gold"
-                            ? "text-metal-gold"
-                            : tier.color === "metal-red"
-                              ? "text-metal-red"
-                              : "text-metal-orange"
-                        }`}
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
+                      {tier.price}
+                    </div>
+                    <div className="text-gray-400 text-sm">per month</div>
+                  </div>
 
-                <button
-                  onClick={() => handleSubscribe(tier.name)}
-                  className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300"
-                  style={{
-                    backgroundColor: colors.primary,
-                    color: colors.primaryText || "black",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor =
-                      colors.primaryDark || colors.primary;
-                    e.currentTarget.style.transform = "scale(1.02)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary;
-                    e.currentTarget.style.transform = "scale(1)";
-                  }}
-                >
-                  {tier.name}
-                </button>
+                  <ul className={`space-y-3 ${tier.popular ? 'mb-6' : 'mb-8'} flex-grow`}>
+                    {tier.features.map((feature, featureIndex) => (
+                      <li
+                        key={featureIndex}
+                        className="flex items-center text-gray-300"
+                      >
+                        <Check
+                          className={`mr-3 h-4 w-4 ${
+                            tier.color === "metal-gold"
+                              ? "text-metal-gold"
+                              : tier.color === "metal-red"
+                                ? "text-metal-red"
+                                : "text-metal-orange"
+                          }`}
+                        />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={() => handleSubscribe(tier.name)}
+                    className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300"
+                    style={{
+                      backgroundColor: colors.primary,
+                      color: colors.primaryText || "black",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        colors.primaryDark || colors.primary;
+                      e.currentTarget.style.transform = "scale(1.02)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = colors.primary;
+                      e.currentTarget.style.transform = "scale(1)";
+                    }}
+                  >
+                    Subscribe
+                  </button>
+                </div>
               </div>
             </div>
           ))}

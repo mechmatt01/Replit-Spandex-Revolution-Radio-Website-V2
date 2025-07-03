@@ -83,7 +83,7 @@ export default function Hero() {
           <div>RADIO</div>
         </h1>
 
-        <p className="text-lg md:text-xl font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto text-center">
+        <p className="text-lg md:text-xl font-orbitron font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto text-center">
           Bringing you the best of old-school metal with legendary
           <br />
           bands like Skid Row, Twisted Sister, and more.
@@ -104,10 +104,7 @@ export default function Hero() {
         <div className="mb-8">
           <div className="flex items-center justify-center mb-1">
             {/* Large LIVE IN Indicator - 2x size */}
-            <div
-              className="flex items-center gap-2 px-4 py-1 rounded-full text-lg font-bold shadow-none"
-              style={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }}
-            >
+            <div className="flex items-center gap-2 text-lg font-bold">
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse opacity-90"></div>
               <span className="text-red-500 opacity-90 animate-pulse">
                 LIVE IN
