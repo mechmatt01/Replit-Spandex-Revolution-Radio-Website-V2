@@ -13,8 +13,8 @@ import {
   MapPin,
   TrendingUp,
 } from "lucide-react";
-import CountriesIconPath from "@assets/CountriesIcon_1751444364909.png";
-import LiveNowIconPath from "@assets/LiveNowIcon_1751444364911.png";
+import CountriesIconPath from "@assets/CountriesIcon.png";
+import LiveNowIconPath from "@assets/LiveNowIcon.png";
 import { useTheme } from "@/contexts/ThemeContext";
 import type { StreamStats } from "@shared/schema";
 
