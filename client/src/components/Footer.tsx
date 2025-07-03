@@ -64,7 +64,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("home")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Home
                 </button>
@@ -72,7 +72,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("about")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   About
                 </button>
@@ -80,7 +80,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("schedule")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Schedule
                 </button>
@@ -88,7 +88,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Contact
                 </button>
@@ -96,7 +96,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("subscribe")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Subscribe
                 </button>
@@ -127,7 +127,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Submit Songs
                 </button>

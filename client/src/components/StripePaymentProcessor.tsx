@@ -299,92 +299,89 @@ export default function StripePaymentProcessor() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {subscriptionTiers.map((tier) => (
-        <div
-          key={tier.id}
-          className="bg-transparent transition-all duration-300 relative rounded-lg flex flex-col"
-          style={{
-            minHeight: tier.popular ? "600px" : "450px",
-            marginTop: tier.popular ? "0" : "150px",
-            border: `2px solid transparent`,
-            background: `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,
-          }}
-        >
-          {tier.popular && (
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span
-                className="px-4 py-1 rounded-full text-xs font-bold"
-                style={{
-                  background: "linear-gradient(135deg, #ff6b35, #f7931e)",
-                  color: "black",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                MOST&nbsp;POPULAR
-              </span>
-            </div>
-          )}
+        <div key={tier.id} className="relative">
+          {/* Title Above Box */}
+          <h3 className="font-black text-xl text-white mb-4 text-center">
+            {tier.name}
+          </h3>
+          
+          <div
+            className="bg-transparent transition-all duration-300 relative rounded-lg flex flex-col"
+            style={{
+              minHeight: tier.popular ? "500px" : "540px",
+              border: `2px solid transparent`,
+              background: `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,
+            }}
+          >
+            {tier.popular && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <span
+                  className="px-4 py-1 rounded-full text-xs font-bold"
+                  style={{
+                    background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                    color: "black",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  MOST&nbsp;POPULAR
+                </span>
+              </div>
+            )}
 
-          <div className="p-6 flex flex-col h-full justify-between">
-            <div>
-              <div className="text-center mb-6">
-                <h3 className="font-black text-xl text-white mb-2">
-                  {tier.name}
-                </h3>
-                <div className="mb-4">
-                  <span className="text-3xl font-black text-metal-orange">
-                    ${tier.price}
-                  </span>
-                  <span className="text-gray-400 font-semibold">/month</span>
+            <div className="p-6 flex flex-col h-full justify-between">
+              <div>
+                <div className="text-center mb-6">
+                  <div className="mb-4">
+                    <span className="text-3xl font-black text-metal-orange">
+                      ${tier.price}
+                    </span>
+                    <span className="text-gray-400 font-semibold">/month</span>
+                  </div>
+
+                  {/* Package Icon */}
+                  <div className="flex justify-center mb-6">
+                    <img
+                      src={tier.icon}
+                      alt={`${tier.name} package icon`}
+                      className={`object-contain ${
+                        tier.id === "rebel" ? "w-20 h-20" : "w-16 h-16"
+                      }`}
+                    />
+                  </div>
                 </div>
 
-                {/* Package Icon */}
-                <div className="flex justify-center mb-6">
-                  <img
-                    src={tier.icon}
-                    alt={`${tier.name} package icon`}
-                    className={`object-contain ${
-                      tier.id === "rebel" ? "w-20 h-20" : "w-16 h-16"
-                    }`}
-                  />
-                </div>
+                <ul className={`space-y-4 ${tier.popular ? 'mb-4' : 'mb-8'} flex-grow`}>
+                  {tier.features.map((feature, index) => (
+                    <li key={index} className="flex items-start">
+                      <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-300 font-semibold text-base leading-relaxed">
+                        {feature}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
-              <ul className="space-y-4 mb-8 flex-grow">
-                {tier.features.map((feature, index) => (
-                  <li key={index} className="flex items-start">
-                    <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
-                    <span className="text-gray-300 font-semibold text-base leading-relaxed">
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              <button
+                onClick={() => handleTierSelect(tier)}
+                className="w-full font-bold rounded-full transition-all duration-300 text-white transform hover:scale-105 hover:shadow-2xl py-3 text-base"
+                style={{
+                  fontSize: "16px",
+                  background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
+                  boxShadow: `0 4px 15px ${tier.gradientStart}40`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = `0 8px 25px ${tier.gradientStart}80, 0 0 20px ${tier.gradientEnd}60`;
+                  e.currentTarget.style.transform = "scale(1.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = `0 4px 15px ${tier.gradientStart}40`;
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              >
+                Subscribe
+              </button>
             </div>
-
-            <button
-              onClick={() => handleTierSelect(tier)}
-              className={`w-full font-bold rounded-full transition-all duration-300 text-white transform hover:scale-110 hover:shadow-2xl py-3 text-base`}
-              style={{
-                fontSize: "16px",
-                background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
-                boxShadow: `0 4px 15px ${tier.gradientStart}40`,
-                ...(tier.popular ? {} : { transform: "scale(0.85)" }),
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = `0 8px 25px ${tier.gradientStart}80, 0 0 20px ${tier.gradientEnd}60`;
-                e.currentTarget.style.transform = tier.popular
-                  ? "scale(1.1)"
-                  : "scale(0.935)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = `0 4px 15px ${tier.gradientStart}40`;
-                e.currentTarget.style.transform = tier.popular
-                  ? "scale(1)"
-                  : "scale(0.85)";
-              }}
-            >
-              Subscribe
-            </button>
           </div>
         </div>
       ))}

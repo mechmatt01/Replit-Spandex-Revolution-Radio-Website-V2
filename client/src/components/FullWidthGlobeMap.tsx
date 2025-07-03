@@ -349,7 +349,10 @@ export default function FullWidthGlobeMap() {
                     onClick={toggleRotation}
                   >
                     {isRotating ? (
-                      <Pause className="h-4 w-4" />
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                        <rect x="6" y="4" width="4" height="16" rx="2" />
+                        <rect x="14" y="4" width="4" height="16" rx="2" />
+                      </svg>
                     ) : (
                       <Play className="h-4 w-4" />
                     )}

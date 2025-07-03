@@ -127,9 +127,9 @@ export default function Submissions() {
             <div
               className="p-6 rounded-lg text-center transition-all duration-300 animate-in fade-in slide-in-from-top-4"
               style={{
-                backgroundColor: `${colors.primary}10`,
-                borderColor: `${colors.primary}20`,
-                border: `1px solid ${colors.primary}20`,
+                backgroundColor: `${colors.primary}25`,
+                borderColor: `${colors.primary}30`,
+                border: `1px solid ${colors.primary}30`,
               }}
             >
               <div

@@ -106,7 +106,7 @@ export default function Hero() {
             {/* Large LIVE IN Indicator - 2x size */}
             <div className="flex items-center gap-2 text-lg font-bold">
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse opacity-90"></div>
-              <span className="text-red-500 opacity-90 animate-pulse">
+              <span className="text-red-500 opacity-90">
                 LIVE IN
               </span>
             </div>
