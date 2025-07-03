@@ -1,6 +1,4 @@
 
-#!/usr/bin/env node
-
 // Production startup wrapper with error handling
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error.message);
@@ -17,6 +15,8 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Set production environment
 process.env.NODE_ENV = 'production';
+process.env.PORT = process.env.PORT || '5000';
+process.env.HOST = process.env.HOST || '0.0.0.0';
 
 // Import and start the main application
 import('./dist/index.js').catch((error) => {

@@ -118,6 +118,31 @@ export async function setupVite(app: Express, server: Server) {
 export function serveStatic(app: Express) {
   const distPath = path.resolve(process.cwd(), "client/dist");
   console.log("Serving static files from:", distPath);
+  
+  // Create dist directory if it doesn't exist
+  if (!fs.existsSync(distPath)) {
+    console.warn(`Static files directory not found: ${distPath}`);
+    console.log("Creating basic static file structure...");
+    fs.mkdirSync(distPath, { recursive: true });
+    
+    // Create a basic index.html if missing
+    const basicIndex = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spandex Salvation Radio</title>
+</head>
+<body>
+    <div id="root">Loading...</div>
+    <script>
+        // Basic fallback for missing build
+        document.getElementById('root').innerHTML = '<h1>Application Starting...</h1><p>Please wait while the application loads.</p>';
+    </script>
+</body>
+</html>`;
+    fs.writeFileSync(path.join(distPath, 'index.html'), basicIndex);
+  }
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
