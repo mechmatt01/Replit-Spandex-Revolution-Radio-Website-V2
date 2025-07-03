@@ -9,7 +9,7 @@ import AuthModal from "./AuthModal";
 
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "@/hooks/useAuth";
-import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
+import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
