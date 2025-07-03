@@ -47,10 +47,10 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <div className="flex flex-col">
             <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
-            <ul className="space-y-3 text-sm">
-              <li>
+            <ul className="space-y-3 text-sm flex flex-col">
+              <li className="flex">
                 <button
                   onClick={() => scrollToSection("hero")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
@@ -58,7 +58,7 @@ export default function Footer() {
                   Home
                 </button>
               </li>
-              <li>
+              <li className="flex">
                 <button
                   onClick={() => scrollToSection("schedule")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
@@ -66,7 +66,7 @@ export default function Footer() {
                   Schedule
                 </button>
               </li>
-              <li>
+              <li className="flex">
                 <button
                   onClick={() => scrollToSection("submissions")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
@@ -74,7 +74,7 @@ export default function Footer() {
                   Submissions
                 </button>
               </li>
-              <li>
+              <li className="flex">
                 <button
                   onClick={() => scrollToSection("contact")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
@@ -82,7 +82,7 @@ export default function Footer() {
                   Contact
                 </button>
               </li>
-              <li>
+              <li className="flex">
                 <button
                   onClick={() => scrollToSection("subscription")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
@@ -94,10 +94,10 @@ export default function Footer() {
           </div>
 
           {/* Support */}
-          <div>
+          <div className="flex flex-col">
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
-            <ul className="space-y-3 text-sm">
-              <li>
+            <ul className="space-y-3 text-sm flex flex-col">
+              <li className="flex">
                 <a
                   href="/help"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
@@ -105,7 +105,7 @@ export default function Footer() {
                   Help Center
                 </a>
               </li>
-              <li>
+              <li className="flex">
                 <button
                   onClick={() => scrollToSection("contact")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
@@ -113,7 +113,7 @@ export default function Footer() {
                   Technical Support
                 </button>
               </li>
-              <li>
+              <li className="flex">
                 <button
                   onClick={() => scrollToSection("submissions")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
@@ -121,7 +121,7 @@ export default function Footer() {
                   Submit Songs
                 </button>
               </li>
-              <li>
+              <li className="flex">
                 <a
                   href="/guidelines"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
@@ -129,7 +129,7 @@ export default function Footer() {
                   Community Guidelines
                 </a>
               </li>
-              <li>
+              <li className="flex">
                 <a
                   href="/privacy"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
@@ -141,10 +141,10 @@ export default function Footer() {
           </div>
 
           {/* Stream Info */}
-          <div>
+          <div className="flex flex-col">
             <h4 className="font-semibold text-foreground mb-4">Stream Info</h4>
-            <ul className="space-y-3 text-sm">
-              <li className="text-muted-foreground">
+            <ul className="space-y-3 text-sm flex flex-col">
+              <li className="text-muted-foreground flex">
                 <span className="inline-flex items-center">
                   <span className="text-metal-orange mr-2">
                     <Radio className="h-4 w-4" />
@@ -152,19 +152,19 @@ export default function Footer() {
                   24/7 Live Stream
                 </span>
               </li>
-              <li className="text-muted-foreground">
+              <li className="text-muted-foreground flex">
                 <span className="inline-flex items-center">
                   <span className="text-metal-orange mr-2">♪</span>
                   320kbps Quality
                 </span>
               </li>
-              <li className="text-muted-foreground">
+              <li className="text-muted-foreground flex">
                 <span className="inline-flex items-center">
                   <span className="text-metal-orange mr-2">🌍</span>
                   Global Coverage
                 </span>
               </li>
-              <li className="text-muted-foreground">
+              <li className="text-muted-foreground flex">
                 <span className="inline-flex items-center">
                   <span className="text-metal-orange mr-2">🛡️</span>
                   Secure & Reliable
