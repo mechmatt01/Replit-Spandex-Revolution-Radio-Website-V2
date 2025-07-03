@@ -17,7 +17,7 @@ import {
   UserPlus,
   Phone,
 } from "lucide-react";
-import GoogleLogoPath from "@assets/icons8-google_1750360286324.png";
+import GoogleLogoPath from "@assets/GoogleLogoIcon.png";
 
 interface AuthModalProps {
   isOpen: boolean;
