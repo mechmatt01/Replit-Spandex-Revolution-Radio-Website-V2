@@ -98,12 +98,12 @@ export default function Footer() {
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <a
-                  href="/help"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
+                <button
+                  onClick={() => window.location.href = "/help"}
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Help Center
-                </a>
+                </button>
               </li>
               <li>
                 <button
@@ -122,20 +122,20 @@ export default function Footer() {
                 </button>
               </li>
               <li>
-                <a
-                  href="/guidelines"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
+                <button
+                  onClick={() => window.location.href = "/guidelines"}
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Community Guidelines
-                </a>
+                </button>
               </li>
               <li>
-                <a
-                  href="/privacy"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
+                <button
+                  onClick={() => window.location.href = "/privacy"}
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Privacy Policy
-                </a>
+                </button>
               </li>
             </ul>
           </div>
