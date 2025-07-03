@@ -105,7 +105,7 @@ export default function Footer() {
                   Help Center
                 </a>
               </li>
-              <li className="flex items-center">
+              <li className="flex items-center h-6">
                 <button
                   onClick={() => scrollToSection("contact")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0 w-full"
@@ -113,7 +113,7 @@ export default function Footer() {
                   Technical Support
                 </button>
               </li>
-              <li className="flex items-center">
+              <li className="flex items-center h-6">
                 <button
                   onClick={() => scrollToSection("submissions")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0 w-full"
@@ -121,7 +121,7 @@ export default function Footer() {
                   Submit Songs
                 </button>
               </li>
-              <li className="flex items-center">
+              <li className="flex items-center h-6">
                 <a
                   href="/guidelines"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
@@ -129,7 +129,7 @@ export default function Footer() {
                   Community Guidelines
                 </a>
               </li>
-              <li className="flex items-center">
+              <li className="flex items-center h-6">
                 <a
                   href="/privacy"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
@@ -176,7 +176,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8">
-          <div className="flex flex-col md:flex-row md:items-start justify-between">
+          <div className="flex flex-col md:flex-row md:items-center justify-between">
             <p className="text-sm text-muted-foreground font-semibold mb-4 md:mb-0">
               © 2025 Spandex Salvation Radio. All rights reserved.
             </p>
