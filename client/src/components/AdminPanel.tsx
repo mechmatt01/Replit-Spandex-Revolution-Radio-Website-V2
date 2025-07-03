@@ -306,7 +306,7 @@ export default function AdminPanel() {
                         </Label>
                         <Input
                           id="title"
-                          value={nowPlayingForm.title}
+                          value={nowPlayingForm.title || ""}
                           onChange={(e) =>
                             setNowPlayingForm((prev) => ({
                               ...prev,
@@ -379,7 +379,7 @@ export default function AdminPanel() {
                           <Input
                             id="currentTime"
                             type="number"
-                            value={nowPlayingForm.currentTime}
+                            value={nowPlayingForm.currentTime || 0}
                             onChange={(e) =>
                               setNowPlayingForm((prev) => ({
                                 ...prev,

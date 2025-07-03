@@ -54,8 +54,8 @@ export const users = pgTable("users", {
   subscriptionTier: varchar("subscription_tier"), // rebel, legend, icon
   lastLoginAt: timestamp("last_login_at"),
   isFirstLogin: boolean("is_first_login").default(true).notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const submissions = pgTable("submissions", {

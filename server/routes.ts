@@ -1,4 +1,5 @@
 import type { Express, Request, Response } from "express";
+import type { Session } from "express-session";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
@@ -52,7 +53,7 @@ interface AuthenticatedRequest extends Request {
     id: string;
     userId: string;
   } & User;
-  session: {
+  session: Express.Session & {
     phoneVerificationCode?: string;
     phoneToVerify?: string;
   };

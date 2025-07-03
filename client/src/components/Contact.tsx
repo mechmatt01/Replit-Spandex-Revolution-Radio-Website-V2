@@ -42,7 +42,7 @@ export default function Contact() {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [originalMessage, setOriginalMessage] = useState("");
+  const [originalMessage, setOriginalMessage] = useState<string>("");
 
   const { toast } = useToast();
   const { getColors } = useTheme();
@@ -92,11 +92,13 @@ export default function Contact() {
   };
 
   const handleCopyMessage = () => {
-    navigator.clipboard.writeText(originalMessage);
-    toast({
-      title: "Message Copied",
-      description: "Your message has been copied to clipboard.",
-    });
+    if (originalMessage) {
+      navigator.clipboard.writeText(originalMessage);
+      toast({
+        title: "Message Copied",
+        description: "Your message has been copied to clipboard.",
+      });
+    }
   };
 
   const handleTryAgain = () => {
