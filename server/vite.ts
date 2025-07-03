@@ -3,7 +3,38 @@ import fs from "fs";
 import path from "path";
 import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
-import viteConfig from "../vite.config.js";
+// Conditional vite config loading for production compatibility
+let viteConfig: any = {};
+
+// Only load vite config in development
+if (process.env.NODE_ENV === "development") {
+  try {
+    const viteConfigModule = await import("../vite.config.js");
+    viteConfig = viteConfigModule.default || {};
+  } catch (error) {
+    console.warn("Could not load vite.config.js:", error.message);
+  }
+}
+
+// Fallback config for production
+if (!viteConfig || Object.keys(viteConfig).length === 0) {
+  viteConfig = {
+    plugins: [],
+    resolve: {
+      alias: {
+        "@": "./client/src",
+        "@shared": "./shared",
+        "@assets": "./attached_assets",
+      },
+    },
+    root: "./client",
+    publicDir: "./client/public",
+    build: {
+      outDir: "./client/dist",
+      emptyOutDir: true,
+    },
+  };
+}
 import { nanoid } from "nanoid";
 
 const viteLogger = createLogger();
