@@ -43,17 +43,17 @@ export const users = pgTable("users", {
     false,
   ),
   accountDeletionDate: timestamp("account_deletion_date"),
-  isEmailVerified: boolean("is_email_verified").default(false),
+  isEmailVerified: boolean("is_email_verified").default(false).notNull(),
   emailVerificationToken: varchar("email_verification_token"),
   resetPasswordToken: varchar("reset_password_token"),
   resetPasswordExpires: timestamp("reset_password_expires"),
-  isAdmin: boolean("is_admin").default(false),
+  isAdmin: boolean("is_admin").default(false).notNull(),
   stripeCustomerId: varchar("stripe_customer_id"),
   stripeSubscriptionId: varchar("stripe_subscription_id"),
   subscriptionStatus: varchar("subscription_status"), // active, canceled, past_due, etc.
   subscriptionTier: varchar("subscription_tier"), // rebel, legend, icon
   lastLoginAt: timestamp("last_login_at"),
-  isFirstLogin: boolean("is_first_login").default(true),
+  isFirstLogin: boolean("is_first_login").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

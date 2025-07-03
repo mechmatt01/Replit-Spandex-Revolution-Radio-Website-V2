@@ -238,7 +238,7 @@ export default function AdminPanel() {
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Active Listeners</span>
-                  <span className="font-semibold">
+                  <span className="font-semibold text-white">
                     {stats?.currentListeners || 0}
                   </span>
                 </div>
@@ -341,7 +341,7 @@ export default function AdminPanel() {
                         <Input
                           id="album"
                           value={nowPlayingForm.album || ""}
-                          onChange={(e) =>
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             setNowPlayingForm((prev) => ({
                               ...prev,
                               album: e.target.value,
