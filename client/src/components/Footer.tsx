@@ -97,42 +97,42 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center">
+              <li>
                 <a
                   href="/help"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Help Center
                 </a>
               </li>
-              <li className="flex items-center">
+              <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0 w-full"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Technical Support
                 </button>
               </li>
-              <li className="flex items-center">
+              <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0 w-full"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Submit Songs
                 </button>
               </li>
-              <li className="flex items-center">
+              <li>
                 <a
                   href="/guidelines"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Community Guidelines
                 </a>
               </li>
-              <li className="flex items-center">
+              <li>
                 <a
                   href="/privacy"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Privacy Policy
                 </a>
@@ -177,9 +177,9 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
-            <p className="text-sm text-muted-foreground font-semibold mb-4 md:mb-0">
+            <div className="text-sm text-muted-foreground font-semibold mb-4 md:mb-0">
               © 2025 Spandex Salvation Radio. All rights reserved.
-            </p>
+            </div>
             <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
               <a
                 href="/terms"
