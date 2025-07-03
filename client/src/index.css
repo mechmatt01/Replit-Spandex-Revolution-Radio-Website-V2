@@ -91,51 +91,22 @@ p, h1, h2, h3, h4, h5, h6 {
   --chart-5: 340 75% 55%;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - restored to original thin style */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-primary, #f97316);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-accent, #ea580c);
-}
-
-/* Theme transitions */
-* {
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-/* Glassmorphism animation */
-@keyframes glassmorphGradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* Skip to content accessibility */
-.skip-to-content {
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: var(--color-primary, #f97316);
-  color: white;
-  padding: 8px;
-  text-decoration: none;
-  border-radius: 4px;
-  z-index: 1000;
-}
-
-.skip-to-content:focus {
-  top: 6px;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 /* Orbitron font for headings */
@@ -189,11 +160,6 @@ p, h1, h2, h3, h4, h5, h6 {
   }
 }
 
-/* Remove borders globally */
-.no-border, .no-border * {
-  border: none !important;
-}
-
 /* Pulse animation for live indicators */
 @keyframes pulse {
   0%, 100% {
@@ -211,33 +177,4 @@ p, h1, h2, h3, h4, h5, h6 {
 /* Smooth scrolling for anchor links */
 html {
   scroll-behavior: smooth;
-}
-
-/* Focus styles for accessibility */
-:focus-visible {
-  outline: 2px solid var(--color-primary, #f97316);
-  outline-offset: 2px;
-}
-
-/* Audio player customizations */
-audio::-webkit-media-controls-panel {
-  background-color: var(--color-surface, #1a1a1a);
-}
-
-/* Loading states */
-.loading {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-/* Error states */
-.error {
-  color: #dc2626;
-  border-color: #dc2626;
-}
-
-/* Success states */
-.success {
-  color: #16a34a;
-  border-color: #16a34a;
 }
