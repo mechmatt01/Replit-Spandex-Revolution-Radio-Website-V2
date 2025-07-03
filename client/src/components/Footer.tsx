@@ -1,6 +1,9 @@
-import { Radio, Facebook, Twitter, Instagram, Youtube } from "lucide-react";
+import { Radio } from "lucide-react";
+import { useTheme } from "../contexts/ThemeContext";
+import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
 
 export default function Footer() {
+  const { colors, gradient } = useTheme();
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -14,47 +17,33 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-metal-orange to-metal-red rounded-lg flex items-center justify-center">
-                <Radio className="text-white text-lg h-5 w-5" />
+            <div className="flex items-center space-x-4 mb-4">
+              <div 
+                className="flex items-center justify-center w-8 h-8 rounded-full"
+                style={{ 
+                  background: gradient,
+                  padding: '5px'
+                }}
+              >
+                <img 
+                  src={MusicLogoPath} 
+                  alt="Music Logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <div>
-                <h3 className="font-orbitron font-bold text-lg text-metal-orange">
+              <div className="flex flex-col">
+                <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
                   SPANDEX SALVATION
-                </h3>
-                <p className="text-xs text-muted-foreground -mt-1">RADIO</p>
+                </div>
+                <div className="text-sm font-black leading-tight" style={{ color: colors.primary }}>
+                  RADIO
+                </div>
               </div>
             </div>
-            <p className="text-muted-foreground text-sm mb-4">
+            <p className="text-muted-foreground text-sm">
               Your home for old-school metal music. Broadcasting the rebellion
               since 2025.
             </p>
-            <div className="flex space-x-3">
-              <a
-                href="#"
-                className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors"
-              >
-                <Facebook className="text-metal-orange h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors"
-              >
-                <Twitter className="text-metal-orange h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors"
-              >
-                <Instagram className="text-metal-orange h-4 w-4" />
-              </a>
-              <a
-                href="#"
-                className="w-8 h-8 bg-card/50 rounded-lg flex items-center justify-center hover:bg-metal-orange/20 transition-colors"
-              >
-                <Youtube className="text-metal-orange h-4 w-4" />
-              </a>
-            </div>
           </div>
 
           {/* Quick Links */}
@@ -63,42 +52,42 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <button
-                  onClick={() => scrollToSection("home")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
+                  onClick={() => scrollToSection("hero")}
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
                 >
-                  Home
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => scrollToSection("about")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
-                >
-                  About
+                  HOME
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => scrollToSection("schedule")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
                 >
-                  Schedule
+                  SCHEDULE
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => scrollToSection("submissions")}
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                >
+                  SUBMISSIONS
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
                 >
-                  Contact
+                  CONTACT
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection("subscribe")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
+                  onClick={() => scrollToSection("subscription")}
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
                 >
-                  Subscribe
+                  SUBSCRIBE
                 </button>
               </li>
             </ul>
@@ -110,40 +99,40 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <a
-                  href="#"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
+                  href="/help"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
                 >
                   Help Center
                 </a>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
+                <button
+                  onClick={() => scrollToSection("contact")}
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
                 >
                   Technical Support
-                </a>
+                </button>
               </li>
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
                 >
                   Submit Songs
                 </button>
               </li>
               <li>
                 <a
-                  href="#"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
+                  href="/guidelines"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
                 >
                   Community Guidelines
                 </a>
               </li>
               <li>
                 <a
-                  href="#"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
+                  href="/privacy"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
                 >
                   Privacy Policy
                 </a>
@@ -154,62 +143,64 @@ export default function Footer() {
           {/* Stream Info */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Stream Info</h4>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center text-muted-foreground text-left">
-                <Radio className="text-metal-orange mr-2 h-4 w-4" />
+            <ul className="space-y-3 text-sm">
+              <li className="flex items-center text-muted-foreground">
+                <Radio className="text-metal-orange mr-2 h-4 w-4 flex-shrink-0" />
                 24/7 Live Stream
-              </div>
-              <div className="flex items-center text-muted-foreground text-left">
-                <span className="text-metal-orange mr-2">♪</span>
+              </li>
+              <li className="flex items-center text-muted-foreground">
+                <span className="text-metal-orange mr-2 flex-shrink-0">♪</span>
                 320kbps Quality
-              </div>
-              <div className="flex items-center text-muted-foreground text-left">
-                <span className="text-metal-orange mr-2">🌍</span>
+              </li>
+              <li className="flex items-center text-muted-foreground">
+                <span className="text-metal-orange mr-2 flex-shrink-0">🌍</span>
                 Global Coverage
-              </div>
-              <div className="flex items-center text-muted-foreground text-left">
-                <span className="text-metal-orange mr-2">🛡️</span>
+              </li>
+              <li className="flex items-center text-muted-foreground">
+                <span className="text-metal-orange mr-2 flex-shrink-0">🛡️</span>
                 Secure & Reliable
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col md:flex-row items-center justify-between">
-          <p className="text-muted-foreground text-sm font-semibold mb-4 md:mb-0">
-            © 2025 Spandex Salvation Radio. All rights reserved.
-          </p>
-          <div className="flex items-center space-x-6 text-sm">
-            <a
-              href="#"
-              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors text-left"
-            >
-              Terms of Service
-            </a>
-            <a
-              href="#"
-              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors text-left"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="#"
-              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors text-left"
-            >
-              Cookies
-            </a>
-            <button
-              onClick={() => {
-                const event = new CustomEvent("openAuthModal", {
-                  detail: { mode: "admin" },
-                });
-                window.dispatchEvent(event);
-              }}
-              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors text-left"
-            >
-              Admin
-            </button>
+        <div className="pt-8 border-t border-border/50">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between pt-8">
+            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 text-sm text-muted-foreground">
+              <p className="font-semibold">
+                © 2025 Spandex Salvation Radio. All rights reserved.
+              </p>
+              <a
+                href="/terms"
+                className="font-semibold hover:text-metal-orange transition-colors"
+              >
+                Terms of Service
+              </a>
+              <a
+                href="/privacy"
+                className="font-semibold hover:text-metal-orange transition-colors"
+              >
+                Privacy Policy
+              </a>
+              <a
+                href="/cookies"
+                className="font-semibold hover:text-metal-orange transition-colors"
+              >
+                Cookies
+              </a>
+              <button
+                onClick={() => {
+                  const event = new CustomEvent("openAuthModal", {
+                    detail: { mode: "admin" },
+                  });
+                  window.dispatchEvent(event);
+                }}
+                className="font-semibold hover:text-metal-orange transition-colors text-left"
+              >
+                Admin
+              </button>
+            </div>
           </div>
         </div>
       </div>
