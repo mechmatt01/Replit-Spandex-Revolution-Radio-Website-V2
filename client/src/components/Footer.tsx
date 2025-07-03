@@ -180,7 +180,7 @@ export default function Footer() {
             <p className="text-sm text-muted-foreground font-semibold mb-4 md:mb-0">
               © 2025 Spandex Salvation Radio. All rights reserved.
             </p>
-            <div className="flex flex-wrap items-baseline gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
               <a
                 href="/terms"
                 className="font-semibold hover:text-metal-orange transition-colors"
@@ -206,7 +206,7 @@ export default function Footer() {
                   });
                   window.dispatchEvent(event);
                 }}
-                className="font-semibold hover:text-metal-orange transition-colors bg-transparent border-none p-0 m-0 text-sm leading-none"
+                className="font-semibold hover:text-metal-orange transition-colors bg-transparent border-none p-0 m-0 text-sm"
               >
                 Admin
               </button>
