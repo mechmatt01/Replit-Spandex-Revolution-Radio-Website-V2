@@ -100,7 +100,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/help"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
                 >
                   Help Center
                 </a>
@@ -124,7 +124,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/guidelines"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
                 >
                   Community Guidelines
                 </a>
@@ -132,7 +132,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/privacy"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
                 >
                   Privacy Policy
                 </a>
@@ -177,7 +177,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
-            <div className="text-sm text-muted-foreground font-semibold mb-4 md:mb-0">
+            <div className="text-sm text-muted-foreground font-semibold mb-4 md:mb-0 flex items-center">
               © 2025 Spandex Salvation Radio. All rights reserved.
             </div>
             <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
