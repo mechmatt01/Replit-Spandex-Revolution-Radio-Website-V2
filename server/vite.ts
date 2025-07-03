@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
-import viteConfig from "../vite.config";
+import viteConfig from "../vite.config.js";
 import { nanoid } from "nanoid";
 
 const viteLogger = createLogger();
@@ -20,28 +20,37 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
-  const serverOptions = {
-    middlewareMode: true,
-    hmr: { server },
-    allowedHosts: true,
-  };
+  // Skip Vite setup in production
+  if (process.env.NODE_ENV === "production") {
+    console.log("Skipping Vite setup in production mode");
+    return;
+  }
 
-  const vite = await createViteServer({
-    ...viteConfig,
-    configFile: false,
-    customLogger: {
-      ...viteLogger,
-      error: (msg, options) => {
-        viteLogger.error(msg, options);
-        process.exit(1);
+  try {
+    const serverOptions = {
+      middlewareMode: true,
+      hmr: { server },
+      allowedHosts: true,
+    };
+
+    const vite = await createViteServer({
+      ...viteConfig,
+      configFile: false,
+      customLogger: {
+        ...viteLogger,
+        error: (msg, options) => {
+          viteLogger.error(msg, options);
+          if (process.env.NODE_ENV !== "production") {
+            process.exit(1);
+          }
+        },
       },
-    },
-    server: serverOptions,
-    appType: "custom",
-  });
+      server: serverOptions,
+      appType: "custom",
+    });
 
   app.use(vite.middlewares);
-  app.use("*", async (req, res, next) => {
+    app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
 
     try {
@@ -61,14 +70,23 @@ export async function setupVite(app: Express, server: Server) {
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
-      vite.ssrFixStacktrace(e as Error);
-      next(e);
+        vite.ssrFixStacktrace(e as Error);
+        next(e);
+      }
+    });
+  } catch (error) {
+    console.error("Error setting up Vite:", error);
+    if (process.env.NODE_ENV === "production") {
+      console.log("Continuing without Vite in production");
+      return;
     }
-  });
+    throw error;
+  }
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  const distPath = path.resolve(process.cwd(), "client/dist");
+  console.log("Serving static files from:", distPath);
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
