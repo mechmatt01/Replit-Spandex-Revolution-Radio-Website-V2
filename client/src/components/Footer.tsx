@@ -97,42 +97,42 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
             <ul className="space-y-3 text-sm">
-              <li>
+              <li className="flex items-center">
                 <a
                   href="/help"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
                 >
                   Help Center
                 </a>
               </li>
-              <li>
+              <li className="flex items-center">
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0 w-full"
                 >
                   Technical Support
                 </button>
               </li>
-              <li>
+              <li className="flex items-center">
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0 w-full"
                 >
                   Submit Songs
                 </button>
               </li>
-              <li>
+              <li className="flex items-center">
                 <a
                   href="/guidelines"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
                 >
                   Community Guidelines
                 </a>
               </li>
-              <li>
+              <li className="flex items-center">
                 <a
                   href="/privacy"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
                 >
                   Privacy Policy
                 </a>
