@@ -99,9 +99,10 @@ export default function SubscribePage() {
               style={{
                 ringColor: selectedTier === tier.id ? colors.primary : undefined,
                 background: tier.popular 
-                  ? `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(135deg, ${colors.primary}, ${colors.primary}80) border-box`
-                  : `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(135deg, ${colors.primary}40, ${colors.primary}20) border-box`,
-                border: '2px solid transparent'
+                  ? `linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box, linear-gradient(135deg, ${colors.primary}, ${colors.primary}CC) border-box`
+                  : `linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box, linear-gradient(135deg, ${colors.primary}66, ${colors.primary}33) border-box`,
+                border: '2px solid transparent',
+                borderRadius: '8px'
               }}
             >
               {tier.popular && (

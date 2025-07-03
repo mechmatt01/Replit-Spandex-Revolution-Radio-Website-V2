@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/contexts/ThemeContext";
 import { apiRequest } from "@/lib/queryClient";
 import type { InsertSubscription } from "@shared/schema";
 
@@ -118,8 +119,13 @@ export default function Subscription() {
               }`}
               style={{ 
                 minHeight: '600px',
-                background: `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(135deg, ${tier.color === "metal-gold" ? "#FFD700, #FFA500" : tier.color === "metal-red" ? "#FF6B6B, #FF4444" : "#FF6B35, #F7931E"}) border-box`,
-                border: '2px solid transparent'
+                background: tier.color === "metal-gold" 
+                  ? `linear-gradient(#0a0a0a, #0a0a0a) padding-box, linear-gradient(135deg, #FFD700, #FFA500) border-box`
+                  : tier.color === "metal-red" 
+                    ? `linear-gradient(#0a0a0a, #0a0a0a) padding-box, linear-gradient(135deg, #FF6B6B, #FF4444) border-box`
+                    : `linear-gradient(#0a0a0a, #0a0a0a) padding-box, linear-gradient(135deg, #FF6B35, #F7931E) border-box`,
+                border: '2px solid transparent',
+                borderRadius: '8px'
               }}
             >
               {tier.popular && (
