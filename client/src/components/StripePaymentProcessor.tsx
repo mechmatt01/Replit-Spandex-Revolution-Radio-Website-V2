@@ -13,9 +13,9 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { CreditCard, Lock, Check } from "lucide-react";
-import RebelPackageIcon from "@assets/Rebel-Package@3x_1750576492831.png";
-import LegendPackageIcon from "@assets/Legend-Package@3x_1750576492830.png";
-import IconPackageIcon from "@assets/Icon-Package@3x_1750576492829.png";
+import RebelPackageIcon from "@assets/RebelPackageIcon.png";
+import LegendPackageIcon from "@assets/LegendPackageIcon.png";
+import IconPackageIcon from "@assets/IconPackageIcon.png";
 
 // Initialize Stripe
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY || "");

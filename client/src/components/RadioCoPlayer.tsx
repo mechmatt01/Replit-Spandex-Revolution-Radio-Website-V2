@@ -26,7 +26,7 @@ interface RadioStation {
   description: string;
   icon: string;
 }
-import MusicLogoPath from "@assets/MusicLogoIcon@3x_1750324989907.png";
+import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
 
 // Radio stations data with corrected streaming URLs and fallbacks
 const radioStations: RadioStation[] = [
