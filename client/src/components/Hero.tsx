@@ -102,14 +102,13 @@ export default function Hero() {
 
         {/* Countdown Timer */}
         <div className="mb-8">
-          <div className="flex items-center justify-center mb-1">
-            {/* Large LIVE IN Indicator - 2x size */}
-            <div className="flex items-center gap-2 text-lg font-bold">
-              <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse opacity-90"></div>
-              <span className="text-red-500 opacity-90">
-                LIVE IN
-              </span>
-            </div>
+          <div className="flex flex-col items-center mb-2">
+            {/* Animated dot above LIVE IN text */}
+            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse opacity-90 mb-1"></div>
+            {/* LIVE IN text centered */}
+            <span className="text-red-500 opacity-90 text-lg font-bold">
+              LIVE IN
+            </span>
           </div>
           <div className="flex justify-center space-x-4 text-center">
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">

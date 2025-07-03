@@ -118,21 +118,19 @@ export default function Subscription() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row md:justify-center md:items-start max-w-6xl mx-auto mb-16 gap-8 md:gap-0">
+        <div className="flex flex-col md:flex-row md:justify-center md:items-stretch max-w-6xl mx-auto mb-16 gap-8 md:gap-0 md:relative">
           {subscriptionTiers.map((tier, index) => (
             <div 
               key={tier.name} 
-              className={`relative ${
-                index === 0 ? 'md:z-10' : // Rebel: behind Legend
+              className={`relative transition-all duration-300 ${
+                index === 0 ? 'md:z-10 md:-mr-4' : // Rebel: overlaps right edge
                 index === 1 ? 'md:z-20' : // Legend: on top
-                'md:z-10' // Icon: behind Legend
+                'md:z-10 md:-ml-4' // Icon: overlaps left edge
               }`}
               style={{
-                width: '320px',
+                width: '100%',
                 maxWidth: '320px',
-                flex: 'none',
-                marginLeft: index === 0 ? '0' : (index === 1 ? '-16px' : '-16px'),
-                marginRight: index === 2 ? '0' : '0'
+                flex: '0 0 auto'
               }}
             >
               {/* Title Above Box */}

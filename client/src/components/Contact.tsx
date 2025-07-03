@@ -82,6 +82,12 @@ export default function Contact() {
     if (!formData.subject.trim()) errors.push("Subject");
     if (!formData.message.trim()) errors.push("Message");
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email)) {
+      errors.push("Please enter a valid email address");
+    }
+
     if (errors.length > 0) {
       setValidationErrors(errors);
       return;
@@ -156,7 +162,7 @@ export default function Contact() {
                             htmlFor="firstName"
                             className="text-gray-300 font-semibold"
                           >
-                            First Name*
+                            First Name{validationErrors.includes("First Name") && <span className="text-red-500">*</span>}
                           </Label>
                           <Input
                             id="firstName"
@@ -174,7 +180,7 @@ export default function Contact() {
                             htmlFor="lastName"
                             className="text-gray-300 font-semibold"
                           >
-                            Last Name*
+                            Last Name{validationErrors.includes("Last Name") && <span className="text-red-500">*</span>}
                           </Label>
                           <Input
                             id="lastName"
@@ -194,7 +200,7 @@ export default function Contact() {
                           htmlFor="email"
                           className="text-gray-300 font-semibold"
                         >
-                          Email Address*
+                          Email Address{validationErrors.includes("Email Address") && <span className="text-red-500">*</span>}
                         </Label>
                         <Input
                           id="email"
@@ -214,7 +220,7 @@ export default function Contact() {
                           htmlFor="subject"
                           className="text-gray-300 font-semibold"
                         >
-                          Subject*
+                          Subject{validationErrors.includes("Subject") && <span className="text-red-500">*</span>}
                         </Label>
                         <Select
                           value={formData.subject}
@@ -222,10 +228,9 @@ export default function Contact() {
                             handleInputChange("subject", value)
                           }
                         >
-                          <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange data-[placeholder]:text-gray-400 data-[placeholder]:opacity-60">
+                          <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange [&>span]:data-[placeholder]:text-gray-400 [&>span]:data-[placeholder]:opacity-60">
                             <SelectValue
                               placeholder="Select a subject"
-                              className="text-gray-400 opacity-60"
                             />
                           </SelectTrigger>
                           <SelectContent className="bg-black border-dark-border">
@@ -249,7 +254,7 @@ export default function Contact() {
                           htmlFor="contactMessage"
                           className="text-gray-300 font-semibold"
                         >
-                          Message*
+                          Message{validationErrors.includes("Message") && <span className="text-red-500">*</span>}
                         </Label>
                         <Textarea
                           id="contactMessage"

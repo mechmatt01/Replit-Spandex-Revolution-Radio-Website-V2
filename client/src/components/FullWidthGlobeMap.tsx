@@ -16,6 +16,7 @@ import {
 import CountriesIconPath from "@assets/CountriesIcon.png";
 import LiveNowIconPath from "@assets/LiveNowIcon.png";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import type { StreamStats } from "@shared/schema";
 
 interface ListenerData {
@@ -56,6 +57,10 @@ export default function FullWidthGlobeMap() {
   const globeRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
   const { colors, isDarkMode } = useTheme();
+  
+  // Add intersection observers for fade-in animations
+  const { ref: statsRef, isVisible: statsVisible } = useIntersectionObserver();
+  const { ref: locationsRef, isVisible: locationsVisible } = useIntersectionObserver();
 
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
@@ -543,13 +548,15 @@ export default function FullWidthGlobeMap() {
         {/* Statistics and Active Locations Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Live Statistics - 33% width */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1" ref={statsRef}>
             <Card
-              className={`h-full ${isDarkMode ? "bg-black/50" : "bg-white/90"} backdrop-blur-md border-0`}
+              className={`h-full ${isDarkMode ? "bg-black/50" : "bg-white/90"} backdrop-blur-md border-0 transition-all duration-600 ${
+                statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+              }`}
             >
               <CardHeader>
                 <CardTitle
-                  className="text-xl font-black"
+                  className="text-xl font-black text-center"
                   style={{ color: colors.primary }}
                 >
                   Live Statistics
@@ -642,13 +649,15 @@ export default function FullWidthGlobeMap() {
           </div>
 
           {/* Active Locations - 67% width in two columns */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2" ref={locationsRef}>
             <Card
-              className={`h-full ${isDarkMode ? "bg-black/50" : "bg-white/90"} backdrop-blur-md border-0`}
+              className={`h-full ${isDarkMode ? "bg-black/50" : "bg-white/90"} backdrop-blur-md border-0 transition-all duration-600 ${
+                locationsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
+              }`}
             >
               <CardHeader>
                 <CardTitle
-                  className="text-xl font-black"
+                  className="text-xl font-black text-center"
                   style={{ color: colors.primary }}
                 >
                   Active Locations
