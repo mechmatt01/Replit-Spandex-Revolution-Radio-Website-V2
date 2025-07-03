@@ -556,14 +556,10 @@ export default function Navigation() {
                             onMouseEnter={(e) => {
                               e.currentTarget.style.backgroundColor = colors.primary + '20';
                               e.currentTarget.style.color = 'white';
-                              const icon = e.currentTarget.querySelector('svg');
-                              if (icon) icon.style.color = 'white';
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.backgroundColor = 'transparent';
                               e.currentTarget.style.color = colors.text;
-                              const icon = e.currentTarget.querySelector('svg');
-                              if (icon) icon.style.color = colors.primary;
                             }}
                             role="menuitem"
                             aria-label="Login"
@@ -593,14 +589,10 @@ export default function Navigation() {
                             onMouseEnter={(e) => {
                               e.currentTarget.style.backgroundColor = colors.primary + '20';
                               e.currentTarget.style.color = 'white';
-                              const icon = e.currentTarget.querySelector('svg');
-                              if (icon) icon.style.color = 'white';
                             }}
                             onMouseLeave={(e) => {
                               e.currentTarget.style.backgroundColor = 'transparent';
                               e.currentTarget.style.color = colors.text;
-                              const icon = e.currentTarget.querySelector('svg');
-                              if (icon) icon.style.color = colors.primary;
                             }}
                             role="menuitem"
                             aria-label="Sign up"

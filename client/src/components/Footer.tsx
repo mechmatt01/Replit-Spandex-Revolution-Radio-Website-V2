@@ -183,19 +183,19 @@ export default function Footer() {
           <div className="flex items-center space-x-6 text-sm">
             <a
               href="#"
-              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors"
+              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors text-left"
             >
               Terms of Service
             </a>
             <a
               href="#"
-              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors"
+              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors text-left"
             >
               Privacy Policy
             </a>
             <a
               href="#"
-              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors"
+              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors text-left"
             >
               Cookies
             </a>
@@ -206,7 +206,7 @@ export default function Footer() {
                 });
                 window.dispatchEvent(event);
               }}
-              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors"
+              className="text-muted-foreground font-semibold hover:text-metal-orange transition-colors text-left"
             >
               Admin
             </button>

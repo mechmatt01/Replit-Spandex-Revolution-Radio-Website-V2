@@ -118,9 +118,21 @@ export default function Subscription() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-16">
+        <div className="flex flex-col md:flex-row md:justify-center md:items-start max-w-6xl mx-auto mb-16 gap-8 md:gap-0">
           {subscriptionTiers.map((tier, index) => (
-            <div key={tier.name} className="relative">
+            <div 
+              key={tier.name} 
+              className={`relative ${
+                index === 0 ? 'md:z-10 md:-mr-4' : // Rebel: overlaps 5% behind Legend
+                index === 1 ? 'md:z-20' : // Legend: on top
+                'md:z-10 md:-ml-4' // Icon: overlaps 5% behind Legend
+              }`}
+              style={{
+                width: index === 1 ? '100%' : '95%', // Legend full width, others 95%
+                maxWidth: '350px',
+                flex: index === 1 ? 'none' : '0 0 auto'
+              }}
+            >
               {/* Title Above Box */}
               <h3
                 className={`font-bold text-xl mb-4 text-center ${
