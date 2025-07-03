@@ -123,9 +123,9 @@ export default function Subscription() {
             <div 
               key={tier.name} 
               className={`relative transition-all duration-300 ${
-                index === 0 ? 'md:z-10 md:-mr-[16px]' : // Rebel: overlaps 5% of 320px = 16px
+                index === 0 ? 'md:z-10 md:ml-[16px]' : // Rebel: moves right, goes behind Legend
                 index === 1 ? 'md:z-20' : // Legend: on top
-                'md:z-10 md:-ml-[16px]' // Icon: overlaps 5% of 320px = 16px
+                'md:z-10 md:-ml-[32px]' // Icon: moves left more to go behind Legend
               }`}
               style={{
                 width: '100%',
