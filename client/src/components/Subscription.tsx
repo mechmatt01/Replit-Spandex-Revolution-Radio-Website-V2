@@ -132,8 +132,8 @@ export default function Subscription() {
                 maxWidth: '320px',
                 flex: '0 0 auto',
                 transform: index === 0 ? 'translateX(16px)' : // Rebel: moves right 5% of 320px
-                          index === 2 ? 'translateX(-16px)' : // Icon: moves left 5% of 320px
-                          'translateX(0)' // Legend: stays centered
+                          index === 1 ? 'translateY(-20px)' : // Legend: moves up 20px higher than others
+                          'translateX(-16px)' // Icon: moves left 5% of 320px
               }}
             >
               {/* Title Above Box */}
