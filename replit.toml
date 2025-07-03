@@ -1,10 +1,26 @@
+# Replit deployment configuration
+[deployment]
+run = ["sh", "-c", "node deploy-production.js && node dist/index.js"]
+deploymentTarget = "autoscale"
+ignorePorts = false
+
 [nix]
 channel = "stable-22_11"
 
-[deployment]
-run = ["sh", "-c", "npm install --production && NODE_ENV=production node dist/index.js"]
-deploymentTarget = "autoscale"
+[env]
+NODE_ENV = "production"
+PATH = "/home/runner/workspace/node_modules/.bin:$PATH"
 
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 5000
+externalPort = 443
+
+[deployment.run]
+command = ["sh", "-c", "node deploy-production.js && node dist/index.js"]
+
+[deployment.environment]
+NODE_ENV = "production"
