@@ -155,19 +155,19 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Stream Info</h4>
             <div className="space-y-3 text-sm">
-              <div className="flex items-center text-muted-foreground">
+              <div className="flex items-center text-muted-foreground text-left">
                 <Radio className="text-metal-orange mr-2 h-4 w-4" />
                 24/7 Live Stream
               </div>
-              <div className="flex items-center text-muted-foreground">
+              <div className="flex items-center text-muted-foreground text-left">
                 <span className="text-metal-orange mr-2">♪</span>
                 320kbps Quality
               </div>
-              <div className="flex items-center text-muted-foreground">
+              <div className="flex items-center text-muted-foreground text-left">
                 <span className="text-metal-orange mr-2">🌍</span>
                 Global Coverage
               </div>
-              <div className="flex items-center text-muted-foreground">
+              <div className="flex items-center text-muted-foreground text-left">
                 <span className="text-metal-orange mr-2">🛡️</span>
                 Secure & Reliable
               </div>

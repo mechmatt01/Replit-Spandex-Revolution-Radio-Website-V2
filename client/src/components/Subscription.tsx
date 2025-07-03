@@ -123,14 +123,16 @@ export default function Subscription() {
             <div 
               key={tier.name} 
               className={`relative ${
-                index === 0 ? 'md:z-10 md:-mr-4' : // Rebel: overlaps 5% behind Legend
+                index === 0 ? 'md:z-10' : // Rebel: behind Legend
                 index === 1 ? 'md:z-20' : // Legend: on top
-                'md:z-10 md:-ml-4' // Icon: overlaps 5% behind Legend
+                'md:z-10' // Icon: behind Legend
               }`}
               style={{
-                width: index === 1 ? '100%' : '95%', // Legend full width, others 95%
-                maxWidth: '350px',
-                flex: index === 1 ? 'none' : '0 0 auto'
+                width: '320px',
+                maxWidth: '320px',
+                flex: 'none',
+                marginLeft: index === 0 ? '0' : (index === 1 ? '-16px' : '-16px'),
+                marginRight: index === 2 ? '0' : '0'
               }}
             >
               {/* Title Above Box */}
