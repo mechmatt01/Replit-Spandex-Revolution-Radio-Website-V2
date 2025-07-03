@@ -50,138 +50,138 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
-            <ul className="space-y-3 text-sm">
-              <li>
+            <div className="space-y-3 text-sm">
+              <div>
                 <button
                   onClick={() => scrollToSection("hero")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Home
                 </button>
-              </li>
-              <li>
+              </div>
+              <div>
                 <button
                   onClick={() => scrollToSection("schedule")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Schedule
                 </button>
-              </li>
-              <li>
+              </div>
+              <div>
                 <button
                   onClick={() => scrollToSection("submissions")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Submissions
                 </button>
-              </li>
-              <li>
+              </div>
+              <div>
                 <button
                   onClick={() => scrollToSection("contact")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Contact
                 </button>
-              </li>
-              <li>
+              </div>
+              <div>
                 <button
                   onClick={() => scrollToSection("subscription")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Subscribe
                 </button>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
 
           {/* Support */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
-            <ul className="space-y-3 text-sm">
-              <li>
+            <div className="space-y-3 text-sm">
+              <div>
                 <a
                   href="/help"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
                 >
                   Help Center
                 </a>
-              </li>
-              <li>
+              </div>
+              <div>
                 <button
                   onClick={() => scrollToSection("contact")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Technical Support
                 </button>
-              </li>
-              <li>
+              </div>
+              <div>
                 <button
                   onClick={() => scrollToSection("submissions")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Submit Songs
                 </button>
-              </li>
-              <li>
+              </div>
+              <div>
                 <a
                   href="/guidelines"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
                 >
                   Community Guidelines
                 </a>
-              </li>
-              <li>
+              </div>
+              <div>
                 <a
                   href="/privacy"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0"
                 >
                   Privacy Policy
                 </a>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
 
           {/* Stream Info */}
           <div>
             <h4 className="font-semibold text-foreground mb-4">Stream Info</h4>
-            <ul className="space-y-3 text-sm">
-              <li>
+            <div className="space-y-3 text-sm">
+              <div>
                 <div className="text-muted-foreground flex items-center">
                   <span className="text-metal-orange mr-3 flex-shrink-0">
                     <Radio className="h-4 w-4" />
                   </span>
                   <span>24/7 Live Stream</span>
                 </div>
-              </li>
-              <li>
+              </div>
+              <div>
                 <div className="text-muted-foreground flex items-center">
                   <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">♪</span>
                   <span>320kbps Quality</span>
                 </div>
-              </li>
-              <li>
+              </div>
+              <div>
                 <div className="text-muted-foreground flex items-center">
                   <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">🌍</span>
                   <span>Global Coverage</span>
                 </div>
-              </li>
-              <li>
+              </div>
+              <div>
                 <div className="text-muted-foreground flex items-center">
                   <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">🛡️</span>
                   <span>Secure & Reliable</span>
                 </div>
-              </li>
-            </ul>
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
         <div className="pt-8">
-          <div className="flex flex-col md:flex-row items-center justify-between">
+          <div className="flex flex-col md:flex-row items-baseline justify-between">
             <p className="text-sm text-muted-foreground font-semibold">
               © 2025 Spandex Salvation Radio. All rights reserved.
             </p>
-            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground mt-4 md:mt-0">
+            <div className="flex flex-wrap items-baseline gap-6 text-sm text-muted-foreground mt-4 md:mt-0">
               <a
                 href="/terms"
                 className="font-semibold hover:text-metal-orange transition-colors"
