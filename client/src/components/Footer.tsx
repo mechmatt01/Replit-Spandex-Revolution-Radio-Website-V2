@@ -53,7 +53,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("hero")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Home
                 </button>
@@ -61,7 +61,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("schedule")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Schedule
                 </button>
@@ -69,7 +69,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Submissions
                 </button>
@@ -77,7 +77,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Contact
                 </button>
@@ -85,7 +85,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("subscription")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Subscribe
                 </button>
@@ -100,7 +100,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/help"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Help Center
                 </a>
@@ -108,7 +108,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Technical Support
                 </button>
@@ -116,7 +116,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Submit Songs
                 </button>
@@ -124,7 +124,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/guidelines"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Community Guidelines
                 </a>
@@ -132,7 +132,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/privacy"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Privacy Policy
                 </a>
@@ -144,35 +144,43 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Stream Info</h4>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center text-muted-foreground">
-                <span className="inline-flex items-center justify-center w-5 text-metal-orange flex-shrink-0 mr-2">
-                  <Radio className="h-4 w-4" />
+              <li className="text-muted-foreground">
+                <span className="inline-flex items-center">
+                  <span className="text-metal-orange mr-2">
+                    <Radio className="h-4 w-4" />
+                  </span>
+                  24/7 Live Stream
                 </span>
-                24/7 Live Stream
               </li>
-              <li className="flex items-center text-muted-foreground">
-                <span className="inline-flex items-center justify-center w-5 text-metal-orange flex-shrink-0 mr-2">♪</span>
-                320kbps Quality
+              <li className="text-muted-foreground">
+                <span className="inline-flex items-center">
+                  <span className="text-metal-orange mr-2">♪</span>
+                  320kbps Quality
+                </span>
               </li>
-              <li className="flex items-center text-muted-foreground">
-                <span className="inline-flex items-center justify-center w-5 text-metal-orange flex-shrink-0 mr-2">🌍</span>
-                Global Coverage
+              <li className="text-muted-foreground">
+                <span className="inline-flex items-center">
+                  <span className="text-metal-orange mr-2">🌍</span>
+                  Global Coverage
+                </span>
               </li>
-              <li className="flex items-center text-muted-foreground">
-                <span className="inline-flex items-center justify-center w-5 text-metal-orange flex-shrink-0 mr-2">🛡️</span>
-                Secure & Reliable
+              <li className="text-muted-foreground">
+                <span className="inline-flex items-center">
+                  <span className="text-metal-orange mr-2">🛡️</span>
+                  Secure & Reliable
+                </span>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-border/50">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between pt-8">
-            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 text-sm text-muted-foreground">
-              <p className="font-semibold">
-                © 2025 Spandex Salvation Radio. All rights reserved.
-              </p>
+        <div className="pt-8">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
+            <p className="text-sm text-muted-foreground font-semibold">
+              © 2025 Spandex Salvation Radio. All rights reserved.
+            </p>
+            <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 text-sm text-muted-foreground mt-4 md:mt-0">
               <a
                 href="/terms"
                 className="font-semibold hover:text-metal-orange transition-colors"
