@@ -97,7 +97,7 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center">
+              <li className="flex items-center h-6">
                 <a
                   href="/help"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
@@ -176,7 +176,7 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between">
+          <div className="flex flex-col md:flex-row md:items-start justify-between">
             <p className="text-sm text-muted-foreground font-semibold mb-4 md:mb-0">
               © 2025 Spandex Salvation Radio. All rights reserved.
             </p>
@@ -199,17 +199,19 @@ export default function Footer() {
               >
                 Cookies
               </a>
-              <button
-                onClick={() => {
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
                   const event = new CustomEvent("openAuthModal", {
                     detail: { mode: "admin" },
                   });
                   window.dispatchEvent(event);
                 }}
-                className="font-semibold hover:text-metal-orange transition-colors bg-transparent border-none p-0 m-0 text-sm"
+                className="font-semibold hover:text-metal-orange transition-colors"
               >
                 Admin
-              </button>
+              </a>
             </div>
           </div>
         </div>
