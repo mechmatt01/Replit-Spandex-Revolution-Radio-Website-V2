@@ -23,15 +23,8 @@ import {
   type Subscription,
   type InsertSubscription,
 } from "@shared/schema";
-import { db } from "./db.js";
+import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
-
-function ensureDb() {
-  if (!db) {
-    throw new Error("Database not initialized. Please check DATABASE_URL.");
-  }
-  return db;
-}
 
 // Interface for storage operations
 export interface IStorage {
@@ -94,12 +87,12 @@ export class DatabaseStorage implements IStorage {
   // (IMPORTANT) these user operations are mandatory for Replit Auth.
 
   async getUser(id: string): Promise<User | undefined> {
-    const [user] = await ensureDb().select().from(users).where(eq(users.id, id));
+    const [user] = await db.select().from(users).where(eq(users.id, id));
     return user;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await ensureDb()
+    const [user] = await db
       .insert(users)
       .values(userData)
       .onConflictDoUpdate({
@@ -115,17 +108,17 @@ export class DatabaseStorage implements IStorage {
 
   // Other operations
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await ensureDb().select().from(users).where(eq(users.email, email));
+    const [user] = await db.select().from(users).where(eq(users.email, email));
     return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await ensureDb().select().from(users).where(eq(users.username, username));
+    const [user] = await db.select().from(users).where(eq(users.username, username));
     return user || undefined;
   }
 
   async updateListeningStatus(id: string, isActiveListening: boolean): Promise<User | undefined> {
-    const [user] = await ensureDb()
+    const [user] = await db
       .update(users)
       .set({ isActiveListening, updatedAt: new Date() })
       .where(eq(users.id, id))
@@ -134,7 +127,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createUser(userData: any): Promise<User> {
-    const [user] = await ensureDb()
+    const [user] = await db
       .insert(users)
       .values({
         ...userData,
@@ -144,7 +137,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUser(id: string, updates: Partial<User>): Promise<User | undefined> {
-    const [user] = await ensureDb()
+    const [user] = await db
       .update(users)
       .set({ ...updates, updatedAt: new Date() })
       .where(eq(users.id, id))
@@ -153,7 +146,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserLocation(id: string, location: any): Promise<User | undefined> {
-    const [user] = await ensureDb()
+    const [user] = await db
       .update(users)
       .set({ 
         location,
@@ -166,18 +159,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActiveListeners(): Promise<User[]> {
-    return await ensureDb().select().from(users).where(eq(users.isActiveListening, true));
+    return await db.select().from(users).where(eq(users.isActiveListening, true));
   }
 
   async verifyPhone(userId: string, code: string): Promise<User | undefined> {
-    const [user] = await ensureDb().select().from(users).where(eq(users.id, userId));
+    const [user] = await db.select().from(users).where(eq(users.id, userId));
 
     // Simplified verification for cleanup
     if (!user) {
       return undefined;
     }
 
-    const [updatedUser] = await ensureDb()
+    const [updatedUser] = await db
       .update(users)
       .set({ 
         isPhoneVerified: true,
@@ -192,7 +185,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async verifyEmail(token: string): Promise<User | undefined> {
-    const [user] = await ensureDb().select().from(users).where(eq(users.emailVerificationToken, token));
+    const [user] = await db.select().from(users).where(eq(users.emailVerificationToken, token));
 
     if (!user) {
       return undefined;
@@ -200,7 +193,7 @@ export class DatabaseStorage implements IStorage {
 
     // Simplified verification for cleanup
 
-    const [updatedUser] = await ensureDb()
+    const [updatedUser] = await db
       .update(users)
       .set({ 
         isEmailVerified: true,
@@ -215,7 +208,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updatePassword(id: string, hashedPassword: string): Promise<User | undefined> {
-    const [user] = await ensureDb()
+    const [user] = await db
       .update(users)
       .set({ 
         updatedAt: new Date() 
@@ -226,7 +219,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateStripeInfo(id: string, stripeCustomerId?: string, stripeSubscriptionId?: string): Promise<User | undefined> {
-    const [user] = await ensureDb()
+    const [user] = await db
       .update(users)
       .set({ 
         stripeCustomerId,
@@ -239,17 +232,16 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSubmissions(): Promise<Submission[]> {
-    const database = ensureDb();
-    return await database.select().from(submissions).orderBy(desc(submissions.createdAt));
+    return await db.select().from(submissions).orderBy(desc(submissions.createdAt));
   }
 
   async getSubmissionById(id: number): Promise<Submission | undefined> {
-    const [submission] = await ensureDb().select().from(submissions).where(eq(submissions.id, id));
+    const [submission] = await db.select().from(submissions).where(eq(submissions.id, id));
     return submission || undefined;
   }
 
   async createSubmission(insertSubmission: InsertSubmission): Promise<Submission> {
-    const [submission] = await ensureDb()
+    const [submission] = await db
       .insert(submissions)
       .values(insertSubmission)
       .returning();
@@ -257,11 +249,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserSubmissions(userId: string): Promise<Submission[]> {
-    return await ensureDb().select().from(submissions).where(eq(submissions.userId, userId));
+    return await db.select().from(submissions).where(eq(submissions.userId, userId));
   }
 
   async updateSubmissionStatus(id: number, status: string): Promise<Submission | undefined> {
-    const [submission] = await ensureDb()
+    const [submission] = await db
       .update(submissions)
       .set({ status })
       .where(eq(submissions.id, id))
@@ -270,11 +262,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getContacts(): Promise<Contact[]> {
-    return await ensureDb().select().from(contacts).orderBy(desc(contacts.createdAt));
+    return await db.select().from(contacts).orderBy(desc(contacts.createdAt));
   }
 
   async createContact(insertContact: InsertContact): Promise<Contact> {
-    const [contact] = await ensureDb()
+    const [contact] = await db
       .insert(contacts)
       .values(insertContact)
       .returning();
@@ -282,15 +274,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getShowSchedules(): Promise<ShowSchedule[]> {
-    return await ensureDb().select().from(showSchedules);
+    return await db.select().from(showSchedules);
   }
 
   async getActiveShowSchedules(): Promise<ShowSchedule[]> {
-    return await ensureDb().select().from(showSchedules).where(eq(showSchedules.isActive, true));
+    return await db.select().from(showSchedules).where(eq(showSchedules.isActive, true));
   }
 
   async createShowSchedule(insertSchedule: InsertShowSchedule): Promise<ShowSchedule> {
-    const [schedule] = await ensureDb()
+    const [schedule] = await db
       .insert(showSchedules)
       .values(insertSchedule)
       .returning();
@@ -298,7 +290,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateShowSchedule(id: number, updateData: Partial<InsertShowSchedule>): Promise<ShowSchedule | undefined> {
-    const [schedule] = await ensureDb()
+    const [schedule] = await db
       .update(showSchedules)
       .set(updateData)
       .where(eq(showSchedules.id, id))
@@ -307,25 +299,25 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPastShows(): Promise<PastShow[]> {
-    return await ensureDb().select().from(pastShows);
+    return await db.select().from(pastShows);
   }
 
   async getCurrentTrack(): Promise<NowPlaying | undefined> {
-    const [track] = await ensureDb().select().from(nowPlaying).orderBy(desc(nowPlaying.id)).limit(1);
+    const [track] = await db.select().from(nowPlaying).orderBy(desc(nowPlaying.id)).limit(1);
     return track || undefined;
   }
 
   async updateNowPlaying(track: InsertNowPlaying): Promise<NowPlaying> {
     const existingTrack = await this.getCurrentTrack();
     if (existingTrack) {
-      const [updated] = await ensureDb()
+      const [updated] = await db
         .update(nowPlaying)
         .set({ ...track, updatedAt: new Date() })
         .where(eq(nowPlaying.id, existingTrack.id))
         .returning();
       return updated;
     } else {
-      const [newTrack] = await ensureDb()
+      const [newTrack] = await db
         .insert(nowPlaying)
         .values(track)
         .returning();
@@ -334,21 +326,21 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getStreamStats(): Promise<StreamStats | undefined> {
-    const [stats] = await ensureDb().select().from(streamStats).orderBy(desc(streamStats.id)).limit(1);
+    const [stats] = await db.select().from(streamStats).orderBy(desc(streamStats.id)).limit(1);
     return stats || undefined;
   }
 
   async updateStreamStats(stats: Partial<StreamStats>): Promise<StreamStats> {
     const existingStats = await this.getStreamStats();
     if (existingStats) {
-      const [updatedStats] = await ensureDb()
+      const [updatedStats] = await db
         .update(streamStats)
         .set(stats)
         .where(eq(streamStats.id, existingStats.id))
         .returning();
       return updatedStats;
     } else {
-      const [newStats] = await ensureDb()
+      const [newStats] = await db
         .insert(streamStats)
         .values(stats as any)
         .returning();
@@ -357,11 +349,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSubscriptions(): Promise<Subscription[]> {
-    return await ensureDb().select().from(subscriptions).orderBy(desc(subscriptions.createdAt));
+    return await db.select().from(subscriptions).orderBy(desc(subscriptions.createdAt));
   }
 
   async createSubscription(insertSubscription: InsertSubscription): Promise<Subscription> {
-    const [subscription] = await ensureDb()
+    const [subscription] = await db
       .insert(subscriptions)
       .values(insertSubscription)
       .returning();
@@ -372,7 +364,7 @@ export class DatabaseStorage implements IStorage {
     const deletionDate = new Date();
     deletionDate.setDate(deletionDate.getDate() + 30); // Schedule deletion 30 days from now
 
-    const [user] = await ensureDb()
+    const [user] = await db
       .update(users)
       .set({ 
         accountDeletionScheduled: true,
@@ -386,7 +378,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteUserAccount(id: string): Promise<void> {
-    await ensureDb().delete(users).where(eq(users.id, id));
+    await db.delete(users).where(eq(users.id, id));
   }
 }
 

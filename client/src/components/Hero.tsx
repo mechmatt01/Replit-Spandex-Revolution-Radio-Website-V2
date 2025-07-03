@@ -94,25 +94,25 @@ export default function Hero() {
         <div className="mb-8">
           <div className="flex items-center justify-center mb-1">
             {/* Large LIVE IN Indicator - 2x size */}
-            <div className="flex items-center gap-2 px-4 py-1 text-lg font-bold">
+            <div className="flex items-center gap-2 px-4 py-1 rounded-full text-lg font-bold shadow-none" style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}>
               <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse opacity-90"></div>
               <span className="text-red-500 opacity-90 animate-pulse">LIVE IN</span>
             </div>
           </div>
           <div className="flex justify-center space-x-4 text-center">
-            <div className="p-4 min-w-[90px] flex flex-col items-center">
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">{countdown.days}</div>
               <div className="text-xs text-gray-400 opacity-65 font-semibold">DAYS</div>
             </div>
-            <div className="p-4 min-w-[90px] flex flex-col items-center">
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">{countdown.hours}</div>
               <div className="text-xs text-gray-400 opacity-65 font-semibold">HOURS</div>
             </div>
-            <div className="p-4 min-w-[90px] flex flex-col items-center">
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">{countdown.minutes}</div>
               <div className="text-xs text-gray-400 opacity-65 font-semibold">MINS</div>
             </div>
-            <div className="p-4 min-w-[90px] flex flex-col items-center">
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">{countdown.seconds}</div>
               <div className="text-xs text-gray-400 opacity-65 font-semibold">SECS</div>
             </div>

@@ -94,15 +94,12 @@ export default function SubscribePage() {
               key={tier.id}
               className={cn(
                 "relative transition-all duration-300 hover:scale-105",
-                selectedTier === tier.id && "ring-2"
+                selectedTier === tier.id && "ring-2",
+                tier.popular && "border-2"
               )}
               style={{
                 ringColor: selectedTier === tier.id ? colors.primary : undefined,
-                background: tier.popular 
-                  ? `linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box, linear-gradient(135deg, ${colors.primary}, ${colors.primary}CC) border-box`
-                  : `linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box, linear-gradient(135deg, ${colors.primary}66, ${colors.primary}33) border-box`,
-                border: '2px solid transparent',
-                borderRadius: '8px'
+                borderColor: tier.popular ? colors.primary : undefined
               }}
             >
               {tier.popular && (

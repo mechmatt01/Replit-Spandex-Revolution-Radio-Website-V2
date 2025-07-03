@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { useTheme } from "@/contexts/ThemeContext";
 import { apiRequest } from "@/lib/queryClient";
 import type { InsertSubscription } from "@shared/schema";
 
@@ -114,19 +113,10 @@ export default function Subscription() {
           {subscriptionTiers.map((tier, index) => (
             <div 
               key={tier.name}
-              className={`relative flex flex-col rounded-lg ${
-                tier.popular ? "transform scale-105" : ""
+              className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
+                tier.popular ? "border-2 border-metal-gold transform scale-105" : ""
               }`}
-              style={{ 
-                minHeight: '600px',
-                background: tier.color === "metal-gold" 
-                  ? `linear-gradient(#0a0a0a, #0a0a0a) padding-box, linear-gradient(135deg, #FFD700, #FFA500) border-box`
-                  : tier.color === "metal-red" 
-                    ? `linear-gradient(#0a0a0a, #0a0a0a) padding-box, linear-gradient(135deg, #FF6B6B, #FF4444) border-box`
-                    : `linear-gradient(#0a0a0a, #0a0a0a) padding-box, linear-gradient(135deg, #FF6B35, #F7931E) border-box`,
-                border: '2px solid transparent',
-                borderRadius: '8px'
-              }}
+              style={{ minHeight: '600px' }}
             >
               {tier.popular && (
                 <div 
