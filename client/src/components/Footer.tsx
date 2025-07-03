@@ -97,7 +97,7 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-4">Support</h4>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center h-6">
+              <li className="flex items-center">
                 <a
                   href="/help"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
@@ -105,7 +105,7 @@ export default function Footer() {
                   Help Center
                 </a>
               </li>
-              <li className="flex items-center h-6">
+              <li className="flex items-center">
                 <button
                   onClick={() => scrollToSection("contact")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0 w-full"
@@ -113,7 +113,7 @@ export default function Footer() {
                   Technical Support
                 </button>
               </li>
-              <li className="flex items-center h-6">
+              <li className="flex items-center">
                 <button
                   onClick={() => scrollToSection("submissions")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0 w-full"
@@ -121,7 +121,7 @@ export default function Footer() {
                   Submit Songs
                 </button>
               </li>
-              <li className="flex items-center h-6">
+              <li className="flex items-center">
                 <a
                   href="/guidelines"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
@@ -129,7 +129,7 @@ export default function Footer() {
                   Community Guidelines
                 </a>
               </li>
-              <li className="flex items-center h-6">
+              <li className="flex items-center">
                 <a
                   href="/privacy"
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 w-full"
@@ -199,19 +199,17 @@ export default function Footer() {
               >
                 Cookies
               </a>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
+              <button
+                onClick={() => {
                   const event = new CustomEvent("openAuthModal", {
                     detail: { mode: "admin" },
                   });
                   window.dispatchEvent(event);
                 }}
-                className="font-semibold hover:text-metal-orange transition-colors"
+                className="font-semibold hover:text-metal-orange transition-colors bg-transparent border-none p-0 m-0 text-sm"
               >
                 Admin
-              </a>
+              </button>
             </div>
           </div>
         </div>
