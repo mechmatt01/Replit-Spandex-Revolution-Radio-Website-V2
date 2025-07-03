@@ -120,31 +120,24 @@ export default function Schedule() {
                       flexDirection: "column",
                     }}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-black text-lg text-center flex-1">
+                    <div className="text-center mb-2">
+                      <h4 className="font-black text-lg">
                         {show.title}
                       </h4>
+                      <p className="text-gray-500 text-sm font-semibold mt-1">
+                        Hosted by: {show.host}
+                      </p>
                     </div>
                     <p className="text-gray-400 text-sm font-semibold mb-1 text-center flex-1">
                       {show.description}
                     </p>
-                    <div className="text-center mb-2">
-                      <span className="text-metal-orange text-sm font-bold">
-                        {formatTime(show.time)}
-                      </span>
-                    </div>
                     <div
-                      className="flex items-center justify-between"
+                      className="flex items-center justify-center space-x-2"
                       style={{ marginTop: "auto", paddingTop: "8px" }}
                     >
-                      <div className="flex items-center space-x-2">
-                        <Calendar className="text-gray-500 h-3 w-3" />
-                        <span className="text-gray-500 text-xs font-bold">
-                          {show.dayOfWeek}
-                        </span>
-                      </div>
+                      <Calendar className="text-gray-500 h-3 w-3" />
                       <span className="text-gray-500 text-xs font-bold">
-                        Hosted by: {show.host}
+                        {show.dayOfWeek} at {formatTime(show.time)}
                       </span>
                     </div>
                   </CardContent>
@@ -171,7 +164,7 @@ export default function Schedule() {
                       backgroundColor: colors.background,
                       borderColor: `${colors.primary}40`,
                       boxShadow: `0 8px 32px ${colors.primary}20`,
-                      height: "160px",
+                      height: "200px",
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = colors.primary;
@@ -191,13 +184,19 @@ export default function Schedule() {
                         flexDirection: "column",
                       }}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="text-center mb-2">
                         <h4 
-                          className="font-black text-lg text-center flex-1"
+                          className="font-black text-lg"
                           style={{ color: colors.text }}
                         >
-                          {show.title} - {formatLongDate(show.date)}
+                          {show.title}
                         </h4>
+                        <p 
+                          className="text-sm font-semibold mt-1"
+                          style={{ color: colors.text }}
+                        >
+                          {formatLongDate(show.date)}
+                        </p>
                       </div>
                       <p 
                         className="text-sm font-semibold mb-2 text-center flex-1 text-gray-400"
