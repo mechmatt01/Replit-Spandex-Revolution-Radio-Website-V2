@@ -368,6 +368,18 @@ function ProductCard({
               Featured
             </Badge>
           )}
+          {product.compareAtPrice && (
+            <Badge
+              className="absolute top-2 left-2 w-auto"
+              style={{ 
+                backgroundColor: "#dc2626", 
+                color: "white",
+                marginTop: product.featured ? "30px" : "0"
+              }}
+            >
+              Sale
+            </Badge>
+          )}
           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-2">
             <Button
               size="sm"
@@ -395,11 +407,6 @@ function ProductCard({
         </div>
 
         <h4 className="font-black text-white mb-2">{product.title}</h4>
-        {product.compareAtPrice && (
-          <Badge className="bg-metal-red text-white mb-2 inline-block px-2 py-1 text-xs">
-            Sale
-          </Badge>
-        )}
         <p className="text-gray-400 text-sm font-semibold mb-3 line-clamp-2 flex-grow">
           {product.description}
         </p>
