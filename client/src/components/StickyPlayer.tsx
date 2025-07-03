@@ -129,7 +129,7 @@ export default function StickyPlayer() {
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div 
-                  className="w-10 h-10 border-2 border-t-transparent rounded-full animate-spin"
+                  className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin"
                   style={{ borderColor: colors.primary, borderTopColor: 'transparent' }}
                 ></div>
               </div>
@@ -145,30 +145,34 @@ export default function StickyPlayer() {
               aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
               disabled={isLoading}
             >
-              {isPlaying ? (
-                <svg
-                  className="h-15 w-15"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <rect
-                    x="4"
-                    y="4"
-                    width="16"
-                    height="16"
-                    rx="4"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  className="h-15 w-15"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" />
-                </svg>
+              {!isLoading && (
+                <>
+                  {isPlaying ? (
+                    <svg
+                      className="h-15 w-15"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <rect
+                        x="4"
+                        y="4"
+                        width="16"
+                        height="16"
+                        rx="4"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="h-15 w-15"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" />
+                    </svg>
+                  )}
+                </>
               )}
             </Button>
           </div>

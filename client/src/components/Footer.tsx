@@ -111,7 +111,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Help Center
                 </a>
@@ -119,7 +119,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Technical Support
                 </a>
@@ -135,7 +135,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Community Guidelines
                 </a>
@@ -143,7 +143,7 @@ export default function Footer() {
               <li>
                 <a
                   href="#"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left"
                 >
                   Privacy Policy
                 </a>

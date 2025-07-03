@@ -40,6 +40,7 @@ interface RadioContextType {
   setVolume: (volume: number) => void;
   toggleMute: () => void;
   changeStation: (station: RadioStation) => Promise<void>;
+  setCurrentTrack: (track: TrackInfo) => void;
   audioRef: React.RefObject<HTMLAudioElement>;
 }
 
@@ -452,6 +453,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     setVolume,
     toggleMute,
     changeStation,
+    setCurrentTrack,
     audioRef,
   };
 

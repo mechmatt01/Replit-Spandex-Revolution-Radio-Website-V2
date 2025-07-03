@@ -301,16 +301,24 @@ export default function StripePaymentProcessor() {
       {subscriptionTiers.map((tier) => (
         <div key={tier.id} className="relative">
           {/* Title Above Box */}
-          <h3 className="font-black text-xl text-white mb-4 text-center">
+          <h3 
+            className="font-black text-white mb-4 text-center"
+            style={{ 
+              fontSize: tier.name === "LEGEND" ? "1.75rem" : "1.25rem" // 28px for LEGEND (20px + 8px), 20px for others
+            }}
+          >
             {tier.name}
           </h3>
           
           <div
             className="bg-transparent transition-all duration-300 relative rounded-lg flex flex-col"
             style={{
-              minHeight: tier.popular ? "500px" : "540px",
-              border: `2px solid transparent`,
+              minHeight: "540px", // Same height for all tiers
+              border: `${tier.name === "LEGEND" ? "5px" : "2px"} solid transparent`, // Increased border for Legend
               background: `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,
+              boxShadow: tier.name === "LEGEND" 
+                ? `0 0 30px ${tier.gradientStart}60, 0 0 60px ${tier.gradientEnd}40, inset 0 0 20px ${tier.gradientStart}20`
+                : `0 8px 32px ${tier.gradientStart}20`,
             }}
           >
             {tier.popular && (
@@ -331,15 +339,8 @@ export default function StripePaymentProcessor() {
             <div className="p-6 flex flex-col h-full justify-between">
               <div>
                 <div className="text-center mb-6">
-                  <div className="mb-4">
-                    <span className="text-3xl font-black text-metal-orange">
-                      ${tier.price}
-                    </span>
-                    <span className="text-gray-400 font-semibold">/month</span>
-                  </div>
-
                   {/* Package Icon */}
-                  <div className="flex justify-center mb-6">
+                  <div className="flex justify-center mb-4">
                     <img
                       src={tier.icon}
                       alt={`${tier.name} package icon`}
@@ -348,9 +349,16 @@ export default function StripePaymentProcessor() {
                       }`}
                     />
                   </div>
+
+                  <div className="mb-4">
+                    <span className="text-3xl font-black text-metal-orange">
+                      ${tier.price}
+                    </span>
+                    <span className="text-gray-400 font-semibold">/month</span>
+                  </div>
                 </div>
 
-                <ul className={`space-y-4 ${tier.popular ? 'mb-4' : 'mb-8'} flex-grow`}>
+                <ul className="space-y-4 mb-12 flex-grow">
                   {tier.features.map((feature, index) => (
                     <li key={index} className="flex items-start">
                       <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />

@@ -4,11 +4,14 @@ import { Calendar, Clock, Play } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useRadio } from "@/contexts/RadioContext";
 import type { ShowSchedule, PastShow } from "@shared/schema";
 
 export default function Schedule() {
   const { getColors } = useTheme();
   const colors = getColors();
+  const { setCurrentTrack } = useRadio();
+  const [selectedPastShow, setSelectedPastShow] = useState<PastShow | null>(null);
 
   const { data: weeklyShows = [] } = useQuery<ShowSchedule[]>({
     queryKey: ["/api/schedules"],
@@ -66,6 +69,18 @@ export default function Schedule() {
       // Fallback to original time if parsing fails
       return timeString;
     }
+  };
+
+  const handlePastShowSelect = (show: PastShow) => {
+    setSelectedPastShow(show);
+    // Update current track with past show info including formatted date
+    const formattedTitle = `${show.title} - ${formatLongDate(show.date)}`;
+    setCurrentTrack({
+      title: formattedTitle,
+      artist: show.host || "Spandex Salvation Radio",
+      album: "Past Show Archive",
+      artwork: "",
+    });
   };
 
   return (
@@ -143,7 +158,7 @@ export default function Schedule() {
             <div>
               <h3
                 className="font-black text-xl mb-6 text-center"
-                style={{ color: "var(--color-primary)" }}
+                style={{ color: colors.primary }}
               >
                 Past Shows
               </h3>
@@ -151,27 +166,49 @@ export default function Schedule() {
                 {pastShows.slice(0, 3).map((show) => (
                   <Card
                     key={show.id}
-                    className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300 border-2"
-                    style={{ borderColor: colors.primary, height: "160px" }}
+                    className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
+                    style={{
+                      backgroundColor: colors.background,
+                      borderColor: `${colors.primary}40`,
+                      boxShadow: `0 8px 32px ${colors.primary}20`,
+                      height: "160px",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = colors.primary;
+                      e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = `${colors.primary}40`;
+                      e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
+                    }}
+                    onClick={() => handlePastShowSelect(show)}
                   >
                     <CardContent
-                      className="p-4"
+                      className="p-0"
                       style={{
-                        height: "160px",
+                        height: "100%",
                         display: "flex",
                         flexDirection: "column",
                       }}
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-black text-lg text-center flex-1">
-                          {show.title}
+                        <h4 
+                          className="font-black text-lg text-center flex-1"
+                          style={{ color: colors.text }}
+                        >
+                          {show.title} - {formatLongDate(show.date)}
                         </h4>
                       </div>
-                      <p className="text-gray-400 text-sm font-semibold mb-2 text-center flex-1">
+                      <p 
+                        className="text-sm font-semibold mb-2 text-center flex-1 text-gray-400"
+                      >
                         {show.description || "Past episode archive"}
                       </p>
                       <div className="text-center mb-2">
-                        <span className="text-metal-orange text-sm font-bold">
+                        <span 
+                          className="text-sm font-bold"
+                          style={{ color: colors.primary }}
+                        >
                           {show.duration
                             ? formatDuration(show.duration)
                             : "N/A"}
@@ -182,9 +219,14 @@ export default function Schedule() {
                         style={{ marginTop: "auto", paddingTop: "8px" }}
                       >
                         <div className="flex items-center space-x-2">
-                          <Calendar className="text-gray-500 h-3 w-3" />
-                          <span className="text-gray-500 text-xs font-bold">
-                            {formatLongDate(show.date)}
+                          <Play 
+                            className="h-4 w-4"
+                            style={{ color: colors.primary }}
+                          />
+                          <span 
+                            className="text-xs font-bold text-gray-400"
+                          >
+                            Click to Play
                           </span>
                         </div>
                       </div>

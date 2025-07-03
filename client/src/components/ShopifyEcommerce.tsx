@@ -298,8 +298,8 @@ export default function ShopifyEcommerce() {
           >
             Featured Products
           </h3>
-          <div className="flex justify-center">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          <div className="flex justify-center w-full">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl justify-items-center">
               {products
                 .filter((product) => product.featured)
                 .map((product) => (
