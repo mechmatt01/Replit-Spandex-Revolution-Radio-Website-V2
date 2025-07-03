@@ -53,41 +53,41 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("hero")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
                 >
-                  HOME
+                  Home
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => scrollToSection("schedule")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
                 >
-                  SCHEDULE
+                  Schedule
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
                 >
-                  SUBMISSIONS
+                  Submissions
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
                 >
-                  CONTACT
+                  Contact
                 </button>
               </li>
               <li>
                 <button
                   onClick={() => scrollToSection("subscription")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
                 >
-                  SUBSCRIBE
+                  Subscribe
                 </button>
               </li>
             </ul>
@@ -100,7 +100,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/help"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
                 >
                   Help Center
                 </a>
@@ -108,7 +108,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
                 >
                   Technical Support
                 </button>
@@ -116,7 +116,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
                 >
                   Submit Songs
                 </button>
@@ -124,7 +124,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/guidelines"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
                 >
                   Community Guidelines
                 </a>
@@ -132,7 +132,7 @@ export default function Footer() {
               <li>
                 <a
                   href="/privacy"
-                  className="text-muted-foreground hover:text-metal-orange transition-colors block text-left"
+                  className="text-muted-foreground hover:text-metal-orange transition-colors block w-full text-left"
                 >
                   Privacy Policy
                 </a>
@@ -145,19 +145,21 @@ export default function Footer() {
             <h4 className="font-semibold text-foreground mb-4">Stream Info</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center text-muted-foreground">
-                <Radio className="text-metal-orange mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="inline-flex items-center justify-center w-5 text-metal-orange flex-shrink-0 mr-2">
+                  <Radio className="h-4 w-4" />
+                </span>
                 24/7 Live Stream
               </li>
               <li className="flex items-center text-muted-foreground">
-                <span className="text-metal-orange mr-2 flex-shrink-0">♪</span>
+                <span className="inline-flex items-center justify-center w-5 text-metal-orange flex-shrink-0 mr-2">♪</span>
                 320kbps Quality
               </li>
               <li className="flex items-center text-muted-foreground">
-                <span className="text-metal-orange mr-2 flex-shrink-0">🌍</span>
+                <span className="inline-flex items-center justify-center w-5 text-metal-orange flex-shrink-0 mr-2">🌍</span>
                 Global Coverage
               </li>
               <li className="flex items-center text-muted-foreground">
-                <span className="text-metal-orange mr-2 flex-shrink-0">🛡️</span>
+                <span className="inline-flex items-center justify-center w-5 text-metal-orange flex-shrink-0 mr-2">🛡️</span>
                 Secure & Reliable
               </li>
             </ul>

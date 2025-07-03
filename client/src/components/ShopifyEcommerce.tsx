@@ -411,7 +411,7 @@ function ProductCard({
           {product.description}
         </p>
 
-        <div className="flex items-center mb-3">
+        <div className="flex flex-col items-center mb-3">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
@@ -423,14 +423,11 @@ function ProductCard({
                 }`}
               />
             ))}
+            <span className="text-gray-400 text-sm font-semibold ml-2">
+              ({product.reviewCount})
+            </span>
           </div>
-          <span className="text-gray-400 text-sm font-semibold ml-2">
-            ({product.reviewCount})
-          </span>
-        </div>
-
-        <div className="flex items-center justify-between mb-4">
-          <div>
+          <div className="mt-2">
             <span className="text-xl font-black text-metal-orange">
               ${product.price}
             </span>
@@ -441,7 +438,7 @@ function ProductCard({
             )}
           </div>
           {!product.inStock && (
-            <Badge variant="secondary" className="bg-gray-600 text-white">
+            <Badge variant="secondary" className="bg-gray-600 text-white mt-2">
               Out of Stock
             </Badge>
           )}
