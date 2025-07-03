@@ -24,6 +24,7 @@ import {
   type InsertSubscription,
 } from "@shared/schema";
 import { db } from "./db.js";
+import { eq, desc } from "drizzle-orm";
 
 function ensureDb() {
   if (!db) {
