@@ -146,29 +146,29 @@ export default function Footer() {
             <h4 className="font-semibold text-foreground mb-4">Stream Info</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <div className="text-muted-foreground">
-                  <span className="text-metal-orange mr-2 inline-block w-4">
+                <div className="text-muted-foreground flex items-center">
+                  <span className="text-metal-orange mr-3 flex-shrink-0">
                     <Radio className="h-4 w-4" />
                   </span>
-                  24/7 Live Stream
+                  <span>24/7 Live Stream</span>
                 </div>
               </li>
               <li>
-                <div className="text-muted-foreground">
-                  <span className="text-metal-orange mr-2 inline-block w-4">♪</span>
-                  320kbps Quality
+                <div className="text-muted-foreground flex items-center">
+                  <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">♪</span>
+                  <span>320kbps Quality</span>
                 </div>
               </li>
               <li>
-                <div className="text-muted-foreground">
-                  <span className="text-metal-orange mr-2 inline-block w-4">🌍</span>
-                  Global Coverage
+                <div className="text-muted-foreground flex items-center">
+                  <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">🌍</span>
+                  <span>Global Coverage</span>
                 </div>
               </li>
               <li>
-                <div className="text-muted-foreground">
-                  <span className="text-metal-orange mr-2 inline-block w-4">🛡️</span>
-                  Secure & Reliable
+                <div className="text-muted-foreground flex items-center">
+                  <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">🛡️</span>
+                  <span>Secure & Reliable</span>
                 </div>
               </li>
             </ul>
@@ -176,8 +176,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-border/50">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between">
+        <div className="pt-8">
+          <div className="flex flex-col md:flex-row items-center justify-between">
             <p className="text-sm text-muted-foreground font-semibold">
               © 2025 Spandex Salvation Radio. All rights reserved.
             </p>
