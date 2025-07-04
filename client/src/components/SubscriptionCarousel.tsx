@@ -101,7 +101,7 @@ export default function SubscriptionCarousel() {
       setTimeout(() => {
         setIsAnimating(false);
         console.log('Previous animation complete');
-      }, 700);
+      }, 400);
     }
   }, [isAnimating]);
 
@@ -114,7 +114,7 @@ export default function SubscriptionCarousel() {
       setTimeout(() => {
         setIsAnimating(false);
         console.log('Next animation complete');
-      }, 700);
+      }, 400);
     }
   }, [isAnimating]);
 
@@ -172,18 +172,15 @@ export default function SubscriptionCarousel() {
         {/* Main Card Display */}
         <div className="flex items-center justify-center h-full relative">
           <div
-            key={currentIndex}
-            className={`relative w-full max-w-md transition-all duration-700 ease-out ${
-              isAnimating ? 'animate-pulse' : ''
-            }`}
+            className="relative w-full max-w-md"
             style={{
               transform: isAnimating ? 
                 (slideDirection === 'left' ? 
-                  'translateX(50px) rotateY(-10deg) scale(0.95)' : 
-                  'translateX(-50px) rotateY(10deg) scale(0.95)'
-                ) : 'translateX(0) rotateY(0deg) scale(1)',
-              opacity: isAnimating ? 0.7 : 1,
-              transition: 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)'
+                  'translateX(30px) scale(0.98)' : 
+                  'translateX(-30px) scale(0.98)'
+                ) : 'translateX(0) scale(1)',
+              opacity: isAnimating ? 0.8 : 1,
+              transition: 'all 0.4s ease-in-out'
             }}
           >
             {/* Glow Effect - properly contained */}
