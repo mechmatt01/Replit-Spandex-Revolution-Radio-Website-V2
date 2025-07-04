@@ -118,26 +118,24 @@ export default function Subscription() {
           </p>
         </div>
 
-        <div className="relative flex flex-col md:flex-row md:justify-center md:items-stretch max-w-6xl mx-auto mb-16">
+        <div className="relative flex flex-col md:flex-row md:justify-center md:items-center max-w-6xl mx-auto mb-16 md:gap-0">
           {subscriptionTiers.map((tier, index) => (
             <div
               key={tier.name}
-              className={`relative transition-all duration-300 mx-auto md:mx-0 ${
+              className={`relative transition-all duration-300 mx-auto md:mx-0 mb-8 md:mb-0 ${
                 index === 0
-                  ? "md:z-10 md:-mr-[10px]" // Rebel: goes behind Legend, negative right margin
+                  ? "md:translate-x-[10px] md:z-10" // Rebel: moves 10px right, behind Legend
                   : index === 1
-                    ? "md:z-30" // Legend: on top (higher z-index)
-                    : "md:z-10 md:-ml-[10px]" // Icon: goes behind Legend, negative left margin
+                    ? "md:-translate-y-5 md:z-[100]" // Legend: moves up and has highest z-index
+                    : "md:-translate-x-[10px] md:z-10" // Icon: moves 10px left, behind Legend
               } ${
-                index !== 1 ? "mb-8 md:mb-0" : "mb-8 md:mb-0" // Gap for mobile view
+                // Add negative margins to create overlap
+                index === 0 ? "md:-mr-[10px]" : 
+                index === 2 ? "md:-ml-[10px]" : ""
               }`}
               style={{
                 width: "100%",
                 maxWidth: "320px",
-                transform:
-                  index === 1
-                    ? "translateY(-20px)" // Legend: moves up 20px higher than others
-                    : "translateY(0)", // Rebel and Icon stay at base level
               }}
             >
               {/* Title Above Box */}
