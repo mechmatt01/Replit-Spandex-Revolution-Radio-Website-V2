@@ -324,7 +324,7 @@ export default function StripePaymentProcessor() {
             }}
           >
             {tier.popular && (
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+              <div className="absolute -top-2.5 left-1/2 transform -translate-x-1/2">
                 <span
                   className="px-4 py-1 rounded-full text-xs font-bold"
                   style={{
@@ -360,13 +360,15 @@ export default function StripePaymentProcessor() {
                   </div>
                 </div>
 
-                <ul className="space-y-4 mb-12 flex-grow px-6">
+                <ul className="space-y-4 mb-12 flex-grow">
                   {tier.features.map((feature, index) => (
-                    <li key={index} className="flex items-start">
-                      <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
-                      <span className="text-gray-300 font-semibold text-base leading-relaxed">
-                        {feature}
-                      </span>
+                    <li key={index} className="flex items-start justify-center">
+                      <div className="flex items-start max-w-xs">
+                        <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
+                        <span className="text-gray-300 font-semibold text-base leading-relaxed">
+                          {feature}
+                        </span>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -413,10 +415,10 @@ export default function StripePaymentProcessor() {
             style={{
               width: "340px", // All packages same width
               left: index === 0 
-                ? "calc(50% - 335px)" // Rebel: 5px overlap (170 + 170 - 5)
+                ? "calc(50% - 345px)" // Rebel: only 5px overlap (170 + 170 + 5)
                 : index === 1 
                 ? "calc(50% - 170px)" // Legend: center (340px width / 2)
-                : "calc(50% - 5px)", // Icon: 5px overlap (170 - 170 - 5)
+                : "calc(50% + 5px)", // Icon: only 5px overlap
               top: "40px", // All packages at same height
               zIndex: index === 1 ? 50 : 10,
               transform: "none" // Remove scale transform
@@ -442,7 +444,7 @@ export default function StripePaymentProcessor() {
                   fontSize: "11px",
                   lineHeight: "1",
                   zIndex: 100,
-                  top: "93px" // Position it right on the top border of Legend card (40px top + 53px)
+                  top: "91px" // Position it right on the top border of Legend card
                 }}
               >
                 MOST&nbsp;POPULAR
