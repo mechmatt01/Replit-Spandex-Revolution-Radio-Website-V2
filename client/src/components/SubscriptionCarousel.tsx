@@ -112,9 +112,9 @@ export default function SubscriptionCarousel() {
   };
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto px-4">
-      {/* 3D Carousel Container - Responsive height */}
-      <div className="relative h-[calc(100vh-200px)] min-h-[500px] max-h-[650px] overflow-hidden">
+    <div className="relative w-full max-w-4xl mx-auto px-4">
+      {/* 3D Carousel Container - Fixed height to match original */}
+      <div className="relative h-[600px] overflow-hidden">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -148,8 +148,8 @@ export default function SubscriptionCarousel() {
                 style={{ width: `${100 / subscriptionTiers.length}%` }}
               >
                 <div
-                  className="relative w-full h-full max-w-[500px] mx-auto"
-                  style={{ maxHeight: "580px" }}
+                  className="relative w-full h-full max-w-[350px] mx-auto"
+                  style={{ maxHeight: "500px" }}
                 >
                   {/* Glow Effect - Fixed to match border radius */}
                   <div
@@ -161,7 +161,7 @@ export default function SubscriptionCarousel() {
 
                   {/* Main Card */}
                   <div
-                    className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-8 transform transition-all duration-500 hover:scale-105 h-full flex flex-col"
+                    className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 h-full flex flex-col"
                     style={{
                       border: tier.popular ? "8px solid transparent" : "5px solid transparent",
                       borderRadius: "24px",
@@ -180,9 +180,9 @@ export default function SubscriptionCarousel() {
                     {/* Top Section */}
                     <div className="flex-1 flex flex-col items-center text-center">
                       {/* Icon */}
-                      <div className="mb-6">
+                      <div className="mb-4">
                         <div
-                          className="w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300"
+                          className="w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300"
                           style={{
                             background: `linear-gradient(135deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
                             transform: hoveredTier === tier.id ? "scale(1.1)" : "scale(1)",
@@ -191,14 +191,14 @@ export default function SubscriptionCarousel() {
                           <img
                             src={tier.icon}
                             alt={`${tier.name} icon`}
-                            className="w-16 h-16 object-contain"
+                            className="w-12 h-12 object-contain"
                           />
                         </div>
                       </div>
 
                       {/* Title and Description */}
-                      <div className="text-center mb-6">
-                        <h3 className="text-4xl font-black mb-2">
+                      <div className="text-center mb-4">
+                        <h3 className="text-3xl font-black mb-2">
                           <span
                             className="gradient-text-display"
                             style={{
@@ -232,18 +232,18 @@ export default function SubscriptionCarousel() {
                       </div>
 
                       {/* Price */}
-                      <div className="mb-6">
+                      <div className="mb-4">
                         <div className="text-center">
-                          <span className="text-5xl font-black text-white">
+                          <span className="text-4xl font-black text-white">
                             ${tier.price}
                           </span>
-                          <span className="text-gray-400 text-lg ml-2">/month</span>
+                          <span className="text-gray-400 text-base ml-2">/month</span>
                         </div>
                       </div>
 
                       {/* Features */}
-                      <div className="flex-1 mb-6 w-full flex justify-center">
-                        <ul className="space-y-3 max-w-xs">
+                      <div className="flex-1 mb-4 w-full flex justify-center">
+                        <ul className="space-y-2 max-w-xs">
                           {tier.features.map((feature, idx) => (
                             <li
                               key={idx}
@@ -262,8 +262,8 @@ export default function SubscriptionCarousel() {
                       </div>
 
                       {/* Perks */}
-                      <div className="mb-6 w-full text-center">
-                        <h4 className="text-white font-bold mb-3 text-sm">Special Perks:</h4>
+                      <div className="mb-4 w-full text-center">
+                        <h4 className="text-white font-bold mb-2 text-sm">Special Perks:</h4>
                         <div className="flex flex-wrap gap-2 justify-center">
                           {tier.perks.map((perk, idx) => (
                             <span
