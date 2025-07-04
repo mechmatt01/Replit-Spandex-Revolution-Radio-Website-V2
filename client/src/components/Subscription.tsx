@@ -118,24 +118,21 @@ export default function Subscription() {
           </p>
         </div>
 
-        <div className="relative flex flex-col md:flex-row md:justify-center md:items-center max-w-6xl mx-auto mb-16 md:gap-0">
+        <div className="relative flex flex-col md:flex-row md:justify-center md:items-center max-w-6xl mx-auto mb-16">
           {subscriptionTiers.map((tier, index) => (
             <div
               key={tier.name}
-              className={`relative transition-all duration-300 mx-auto md:mx-0 mb-8 md:mb-0 ${
+              className={`transition-all duration-300 mx-auto md:mx-0 mb-8 md:mb-0 ${
                 index === 0
-                  ? "md:translate-x-[10px] md:z-10" // Rebel: moves 10px right, behind Legend
+                  ? "md:relative md:z-10 md:-mr-[10px]" // Rebel: negative right margin for overlap
                   : index === 1
-                    ? "md:-translate-y-5 md:z-[100]" // Legend: moves up and has highest z-index
-                    : "md:-translate-x-[10px] md:z-10" // Icon: moves 10px left, behind Legend
-              } ${
-                // Add negative margins to create overlap
-                index === 0 ? "md:-mr-[10px]" : 
-                index === 2 ? "md:-ml-[10px]" : ""
+                    ? "md:relative md:z-[200]" // Legend: highest z-index
+                    : "md:relative md:z-10 md:-ml-[10px]" // Icon: negative left margin for overlap
               }`}
               style={{
-                width: "100%",
-                maxWidth: "320px",
+                width: "320px",
+                maxWidth: "100%",
+                transform: index === 1 ? "translateY(-20px)" : "translateY(0)", // Only Legend moves up
               }}
             >
               {/* Title Above Box */}
@@ -154,7 +151,7 @@ export default function Subscription() {
               <div
                 className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
                   tier.popular
-                    ? "border-2 border-metal-gold transform scale-105"
+                    ? "legend-glow-border transform scale-105"
                     : ""
                 }`}
                 style={{ minHeight: tier.popular ? "520px" : "560px" }}
