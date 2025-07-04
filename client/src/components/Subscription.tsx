@@ -124,21 +124,19 @@ export default function Subscription() {
               key={tier.name}
               className={`relative transition-all duration-300 ${
                 index === 0
-                  ? "md:z-10" // Rebel: goes behind Legend
+                  ? "md:z-10 md:mr-[-10px]" // Rebel: goes behind Legend with negative margin
                   : index === 1
                     ? "md:z-30" // Legend: on top (higher z-index)
-                    : "md:z-10" // Icon: goes behind Legend
+                    : "md:z-10 md:ml-[-10px]" // Icon: goes behind Legend with negative margin
               }`}
               style={{
                 width: "100%",
                 maxWidth: "320px",
                 flex: "0 0 auto",
                 transform:
-                  index === 0
-                    ? "translateX(10px)" // Rebel: moves right 10px so Legend overlaps it
-                    : index === 1
-                      ? "translateY(-20px)" // Legend: moves up 20px higher than others
-                      : "translateX(-10px)", // Icon: moves left 10px so Legend overlaps it
+                  index === 1
+                    ? "translateY(-20px)" // Legend: moves up 20px higher than others
+                    : "translateY(0)", // Rebel and Icon stay at base level
               }}
             >
               {/* Title Above Box */}
