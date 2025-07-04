@@ -124,7 +124,7 @@ export default function SubscriptionCarousel() {
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/50 backdrop-blur-md border border-white/20 hover:bg-white/10 transition-all duration-300 group"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/50 backdrop-blur-md border border-white/20 hover:bg-white/10 transition-all duration-300 group opacity-50 hover:opacity-100"
           disabled={isAnimating}
         >
           <ChevronLeft className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
@@ -132,7 +132,7 @@ export default function SubscriptionCarousel() {
 
         <button
           onClick={handleNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/50 backdrop-blur-md border border-white/20 hover:bg-white/10 transition-all duration-300 group"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/50 backdrop-blur-md border border-white/20 hover:bg-white/10 transition-all duration-300 group opacity-50 hover:opacity-100"
           disabled={isAnimating}
         >
           <ChevronRight className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
@@ -173,17 +173,7 @@ export default function SubscriptionCarousel() {
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
             >
-              {/* Popular Badge */}
-              {currentTier.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 blur-md animate-pulse" />
-                    <div className="relative bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-2 rounded-full font-black text-sm">
-                      🔥 MOST POPULAR 🔥
-                    </div>
-                  </div>
-                </div>
-              )}
+
 
               {/* Package Icon with Animation */}
               <div className="flex justify-center mb-6">
@@ -216,6 +206,22 @@ export default function SubscriptionCarousel() {
                   {currentTier.name}
                 </h3>
                 <p className="text-gray-400 text-lg">{currentTier.description}</p>
+                
+                {/* MOST POPULAR badge for Legend package */}
+                {currentTier.popular && (
+                  <div className="mt-4">
+                    <span
+                      className="px-4 py-1 rounded-full text-xs font-bold"
+                      style={{
+                        background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                        color: "black",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      MOST&nbsp;POPULAR
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Price */}
@@ -282,33 +288,55 @@ export default function SubscriptionCarousel() {
           </div>
         </div>
 
-        {/* Mobile Swipe Hint / Desktop Click Hint */}
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-center text-gray-500 text-sm">
-          <span className="md:hidden">← Swipe to explore plans →</span>
-          <span className="hidden md:inline">← Click to explore plans →</span>
-        </div>
+      </div>
 
-        {/* Tier Indicators - Below the hint text */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
-          {subscriptionTiers.map((tier, index) => (
-            <button
-              key={tier.id}
-              onClick={() => handleSelectTier(index)}
-              className={cn(
-                "rounded-full transition-all duration-300",
+      {/* Mobile Swipe Hint / Desktop Click Hint */}
+      <div className="text-center text-gray-500 text-sm mt-8">
+        <span className="md:hidden">← Swipe to explore plans →</span>
+        <span className="hidden md:inline">← Click to explore plans →</span>
+      </div>
+
+      {/* Tier Indicators with Package Icons */}
+      <div className="flex justify-center items-center space-x-6 mt-6">
+        {subscriptionTiers.map((tier, index) => (
+          <button
+            key={tier.id}
+            onClick={() => handleSelectTier(index)}
+            className={cn(
+              "relative transition-all duration-300 p-2 rounded-full",
+              index === currentIndex
+                ? "scale-125"
+                : "opacity-50 hover:opacity-75"
+            )}
+            style={{
+              background:
                 index === currentIndex
-                  ? "w-6 h-1.5"
-                  : "w-1.5 h-1.5 bg-gray-600 hover:bg-gray-500"
+                  ? `linear-gradient(135deg, ${tier.gradientStart}30, ${tier.gradientEnd}30)`
+                  : undefined,
+            }}
+          >
+            <img
+              src={tier.icon}
+              alt={`${tier.name} icon`}
+              className={cn(
+                "object-contain transition-all duration-300",
+                index === currentIndex ? "w-8 h-8" : "w-6 h-6"
               )}
               style={{
-                background:
-                  index === currentIndex
-                    ? `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`
-                    : undefined,
+                filter: index === currentIndex ? "none" : "grayscale(100%)",
               }}
             />
-          ))}
-        </div>
+            {index === currentIndex && (
+              <div
+                className="absolute inset-0 rounded-full blur-md"
+                style={{
+                  background: `linear-gradient(135deg, ${tier.gradientStart}40, ${tier.gradientEnd}40)`,
+                  zIndex: -1,
+                }}
+              />
+            )}
+          </button>
+        ))}
       </div>
 
 
