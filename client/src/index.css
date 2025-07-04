@@ -84,13 +84,13 @@
 /* Legend package glow animation */
 @keyframes legend-glow {
   0% {
-    box-shadow: 0 0 20px #B56BFF, 0 0 40px #B56BFF, 0 0 60px #FF50C3, inset 0 0 20px rgba(181, 107, 255, 0.2);
+    box-shadow: 0 0 20px #E520C6, 0 0 40px #E520C6, 0 0 60px #F4654F, inset 0 0 20px rgba(229, 32, 198, 0.2);
   }
   50% {
-    box-shadow: 0 0 30px #FF50C3, 0 0 50px #FF50C3, 0 0 70px #B56BFF, inset 0 0 30px rgba(255, 80, 195, 0.3);
+    box-shadow: 0 0 30px #F4654F, 0 0 50px #F4654F, 0 0 70px #E520C6, inset 0 0 30px rgba(244, 101, 79, 0.3);
   }
   100% {
-    box-shadow: 0 0 20px #B56BFF, 0 0 40px #B56BFF, 0 0 60px #FF50C3, inset 0 0 20px rgba(181, 107, 255, 0.2);
+    box-shadow: 0 0 20px #E520C6, 0 0 40px #E520C6, 0 0 60px #F4654F, inset 0 0 20px rgba(229, 32, 198, 0.2);
   }
 }
 

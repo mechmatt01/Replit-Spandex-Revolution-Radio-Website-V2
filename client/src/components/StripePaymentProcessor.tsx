@@ -413,10 +413,10 @@ export default function StripePaymentProcessor() {
             style={{
               width: index === 1 ? "340px" : "320px",
               left: index === 0 
-                ? "calc(50% - 250px)" // Rebel: overlaps with Legend
+                ? "calc(50% - 310px)" // Rebel: slight overlap with Legend
                 : index === 1 
                 ? "calc(50% - 170px)" // Legend: center
-                : "calc(50% - 90px)", // Icon: overlaps with Legend
+                : "calc(50% - 30px)", // Icon: slight overlap with Legend
               top: index === 1 ? "0px" : "40px",
               zIndex: index === 1 ? 50 : 10,
               transform: index === 1 ? "scale(1.05)" : "none"
@@ -435,25 +435,28 @@ export default function StripePaymentProcessor() {
               className="rounded-lg flex flex-col transition-all duration-300 relative overflow-hidden"
               style={{ 
                 minHeight: "540px",
-                border: tier.popular ? "3px solid #B56BFF" : "2px solid #374151",
-                background: "rgba(31, 41, 55, 0.95)",
+                border: tier.popular ? "3px solid transparent" : "2px solid transparent",
+                background: tier.popular 
+                  ? `linear-gradient(rgba(31, 41, 55, 0.95), rgba(31, 41, 55, 0.95)) padding-box, linear-gradient(90deg, #E520C6, #F4654F) border-box`
+                  : `linear-gradient(rgba(31, 41, 55, 0.95), rgba(31, 41, 55, 0.95)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,
                 boxShadow: tier.popular 
-                  ? "0 0 20px #B56BFF, inset 0 0 20px rgba(181, 107, 255, 0.2)"
-                  : "none",
+                  ? "0 0 30px #E520C6, 0 0 60px #F4654F, inset 0 0 20px rgba(229, 32, 198, 0.3)"
+                  : `0 0 15px ${tier.gradientStart}40`,
                 animation: tier.popular ? "legend-glow 4s linear infinite" : "none"
               }}
             >
               {tier.popular && (
                 <>
                   <div
-                    className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                    className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
                     style={{
                       background: "linear-gradient(135deg, #ff6b35, #f7931e)",
                       color: "black",
                       whiteSpace: "nowrap",
                       fontSize: "11px",
                       lineHeight: "1",
-                      zIndex: 10
+                      zIndex: 100,
+                      marginTop: "-10px"
                     }}
                   >
                     MOST&nbsp;POPULAR
@@ -467,7 +470,7 @@ export default function StripePaymentProcessor() {
                       left: "-3px",
                       right: "-3px",
                       bottom: "-3px",
-                      background: "linear-gradient(45deg, #B56BFF, #FF50C3, #FFD700, #FF6B35, #B56BFF)",
+                      background: "linear-gradient(45deg, #ff6b35, #f7931e, #ffcc00, #f7931e, #ff6b35)",
                       backgroundSize: "400% 400%",
                       animation: "gradient-rotate 4s linear infinite",
                       zIndex: -1,
