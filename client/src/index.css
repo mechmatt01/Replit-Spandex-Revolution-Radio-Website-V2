@@ -29,6 +29,18 @@
   font-weight: 900;
 }
 
+/* Gradient text for subscription titles */
+.gradient-text-title {
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline-block !important;
+  background-size: 100% !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed;
+}
+
 /* Carousel slide animations */
 @keyframes slideInLeft {
   from {

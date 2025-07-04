@@ -201,12 +201,12 @@ export default function SubscriptionCarousel() {
               <div className="text-center mb-4">
                 <h3 className="text-3xl font-black mb-2">
                   <span
+                    className="gradient-text-title"
                     style={{
                       background: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
                       WebkitBackgroundClip: "text",
                       WebkitTextFillColor: "transparent",
                       backgroundClip: "text",
-                      color: "transparent",
                       display: "inline-block",
                     }}
                   >
