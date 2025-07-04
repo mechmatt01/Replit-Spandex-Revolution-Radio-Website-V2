@@ -118,21 +118,22 @@ export default function Subscription() {
           </p>
         </div>
 
-        <div className="flex flex-col md:flex-row md:justify-center md:items-stretch max-w-6xl mx-auto mb-16 gap-8 md:gap-0 md:relative">
+        <div className="relative flex flex-col md:flex-row md:justify-center md:items-stretch max-w-6xl mx-auto mb-16">
           {subscriptionTiers.map((tier, index) => (
             <div
               key={tier.name}
-              className={`relative transition-all duration-300 ${
+              className={`relative transition-all duration-300 mx-auto md:mx-0 ${
                 index === 0
-                  ? "md:z-10 md:mr-[-10px]" // Rebel: goes behind Legend with negative margin
+                  ? "md:z-10 md:-mr-[10px]" // Rebel: goes behind Legend, negative right margin
                   : index === 1
                     ? "md:z-30" // Legend: on top (higher z-index)
-                    : "md:z-10 md:ml-[-10px]" // Icon: goes behind Legend with negative margin
+                    : "md:z-10 md:-ml-[10px]" // Icon: goes behind Legend, negative left margin
+              } ${
+                index !== 1 ? "mb-8 md:mb-0" : "mb-8 md:mb-0" // Gap for mobile view
               }`}
               style={{
                 width: "100%",
                 maxWidth: "320px",
-                flex: "0 0 auto",
                 transform:
                   index === 1
                     ? "translateY(-20px)" // Legend: moves up 20px higher than others
