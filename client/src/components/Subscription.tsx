@@ -124,20 +124,10 @@ export default function Subscription() {
           </p>
         </div>
 
-        {/* Subscription Packages with Custom Positioning */}
-        <div className="subscription-container">
+        {/* Mobile Layout */}
+        <div className="md:hidden flex flex-col gap-8 max-w-sm mx-auto">
           {subscriptionTiers.map((tier, index) => (
-            <div
-              key={tier.name}
-              className={`${
-                index === 0 
-                  ? "package-rebel" 
-                  : index === 1 
-                  ? "package-legend" 
-                  : "package-icon"
-              }`}
-            >
-              {/* Package Title */}
+            <div key={`mobile-${tier.name}`}>
               <h3
                 className={`font-black text-white mb-4 text-center ${
                   tier.color === "metal-gold"
@@ -151,20 +141,16 @@ export default function Subscription() {
                 {tier.name}
               </h3>
 
-              {/* Package Card */}
               <div
-                className={`bg-transparent transition-all duration-300 rounded-lg flex flex-col ${
-                  tier.popular ? "legend-glow-border" : ""
-                }`}
+                className="rounded-lg flex flex-col transition-all duration-300"
                 style={{ 
                   minHeight: "540px",
-                  border: tier.popular ? "2px solid transparent" : "2px solid #374151",
-                  background: tier.popular 
-                    ? "linear-gradient(#1f2937, #1f2937) padding-box, linear-gradient(90deg, #B56BFF, #FF50C3) border-box"
-                    : "rgba(31, 41, 55, 0.8)",
+                  border: tier.popular ? "3px solid #B56BFF" : "2px solid #374151",
+                  background: "rgba(31, 41, 55, 0.95)",
                   boxShadow: tier.popular 
-                    ? "rgba(181, 107, 255, 0.125) 0px 8px 32px 0px, rgba(255, 80, 195, 0.125) 0px 16px 64px 0px"
-                    : "none"
+                    ? "0 0 20px #B56BFF, inset 0 0 20px rgba(181, 107, 255, 0.2)"
+                    : "none",
+                  animation: tier.popular ? "legend-glow 4s linear infinite" : "none"
                 }}
               >
                 {tier.popular && (
@@ -232,6 +218,143 @@ export default function Subscription() {
             </div>
           ))}
         </div>
+
+        {/* Desktop Layout with Overlapping */}
+        <div 
+          className="hidden md:block relative mx-auto"
+          style={{ 
+            width: "100%", 
+            maxWidth: "1000px", 
+            height: "600px" 
+          }}
+        >
+          {subscriptionTiers.map((tier, index) => (
+            <div
+              key={`desktop-${tier.name}`}
+              className="absolute transition-all duration-300"
+              style={{
+                width: index === 1 ? "340px" : "320px",
+                left: index === 0 
+                  ? "calc(50% - 250px)" // Rebel: overlaps with Legend
+                  : index === 1 
+                  ? "calc(50% - 170px)" // Legend: center
+                  : "calc(50% - 90px)", // Icon: overlaps with Legend
+                top: index === 1 ? "0px" : "40px",
+                zIndex: index === 1 ? 50 : 10,
+                transform: index === 1 ? "scale(1.05)" : "none"
+              }}
+            >
+              <h3
+                className={`font-black text-white mb-4 text-center ${
+                  tier.color === "metal-gold"
+                    ? "text-metal-gold"
+                    : tier.color === "metal-red"
+                      ? "text-metal-red"
+                      : "text-white"
+                }`}
+                style={{ fontSize: "1.25rem" }}
+              >
+                {tier.name}
+              </h3>
+
+              <div
+                className="rounded-lg flex flex-col transition-all duration-300 relative overflow-hidden"
+                style={{ 
+                  minHeight: "540px",
+                  border: tier.popular ? "3px solid #B56BFF" : "2px solid #374151",
+                  background: "rgba(31, 41, 55, 0.95)",
+                  boxShadow: tier.popular 
+                    ? "0 0 20px #B56BFF, inset 0 0 20px rgba(181, 107, 255, 0.2)"
+                    : "none",
+                  animation: tier.popular ? "legend-glow 4s linear infinite" : "none"
+                }}
+              >
+                {tier.popular && (
+                  <>
+                    <div
+                      className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                      style={{
+                        background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                        color: "black",
+                        whiteSpace: "nowrap",
+                        fontSize: "11px",
+                        lineHeight: "1",
+                        zIndex: 10
+                      }}
+                    >
+                      MOST&nbsp;POPULAR
+                    </div>
+                    
+                    {/* Animated gradient border overlay */}
+                    <div
+                      className="absolute"
+                      style={{
+                        top: "-3px",
+                        left: "-3px",
+                        right: "-3px",
+                        bottom: "-3px",
+                        background: "linear-gradient(45deg, #B56BFF, #FF50C3, #FFD700, #FF6B35, #B56BFF)",
+                        backgroundSize: "400% 400%",
+                        animation: "gradient-rotate 4s linear infinite",
+                        zIndex: -1,
+                        borderRadius: "inherit"
+                      }}
+                    />
+                  </>
+                )}
+
+                <div className="p-8 flex flex-col h-full justify-between">
+                  <div className="text-center mb-6">
+                    <div
+                      className={`text-3xl font-bold mb-1 ${
+                        tier.color === "metal-gold"
+                          ? "text-metal-gold"
+                          : tier.color === "metal-red"
+                            ? "text-metal-red"
+                            : "text-metal-orange"
+                      }`}
+                    >
+                      {tier.price}
+                    </div>
+                    <div className="text-gray-400 text-sm">per month</div>
+                  </div>
+
+                  <ul className={`space-y-3 ${tier.popular ? "mb-6" : "mb-8"} flex-grow`}>
+                    {tier.features.map((feature, featureIndex) => (
+                      <li
+                        key={featureIndex}
+                        className="flex items-start text-gray-300"
+                      >
+                        <Check className="w-5 h-5 text-metal-orange mr-3 mt-0.5 flex-shrink-0" />
+                        <span className="text-sm">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    onClick={() => handleSubscribe(tier.name)}
+                    className="w-full py-3 text-lg font-semibold"
+                    style={{
+                      background: `linear-gradient(135deg, ${
+                        tier.color === "metal-gold"
+                          ? "#f7931e, #ffcc00"
+                          : tier.color === "metal-red"
+                            ? "#dc2626, #ef4444"
+                            : "#ff6b35, #f7931e"
+                      })`,
+                      color: "white",
+                      border: "none",
+                    }}
+                  >
+                    CHOOSE {tier.name}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        
+        <div className="mb-16"></div>
 
         {/* Subscription Benefits */}
         <div className="text-center">
