@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight, Check, Star, Zap, Crown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useTheme } from "@/contexts/ThemeContext";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight, Star, Zap, Crown } from "lucide-react";
 
 // Import package icons
 import RebelPackageIcon from "@assets/RebelPackageIcon.png";
@@ -76,22 +78,24 @@ const subscriptionTiers: SubscriptionTier[] = [
       "Personal DJ requests",
       "Exclusive artist meet & greets",
       "Limited edition vinyl access",
-      "Monthly signed merchandise",
+      "Co-host opportunities",
     ],
-    perks: ["👑 VIP concert tickets", "🎭 Backstage access", "🎯 Personal curator"],
+    perks: ["🎵 Name a weekly show segment", "🏆 Annual VIP concert tickets", "👕 Custom merch line"],
   },
 ];
 
 export default function SubscriptionCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(1); // Start with Legend (middle)
+  const [currentIndex, setCurrentIndex] = useState(0); // Start with Rebel (first)
   const [isAnimating, setIsAnimating] = useState(false);
   const [hoveredTier, setHoveredTier] = useState<string | null>(null);
+  const { getColors } = useTheme();
+  const colors = getColors();
 
   const handlePrevious = () => {
     if (!isAnimating) {
       setIsAnimating(true);
       setCurrentIndex((prev) => (prev - 1 + subscriptionTiers.length) % subscriptionTiers.length);
-      setTimeout(() => setIsAnimating(false), 700);
+      setTimeout(() => setIsAnimating(false), 500);
     }
   };
 
@@ -99,7 +103,7 @@ export default function SubscriptionCarousel() {
     if (!isAnimating) {
       setIsAnimating(true);
       setCurrentIndex((prev) => (prev + 1) % subscriptionTiers.length);
-      setTimeout(() => setIsAnimating(false), 700);
+      setTimeout(() => setIsAnimating(false), 500);
     }
   };
 
@@ -107,14 +111,16 @@ export default function SubscriptionCarousel() {
     if (!isAnimating && index !== currentIndex) {
       setIsAnimating(true);
       setCurrentIndex(index);
-      setTimeout(() => setIsAnimating(false), 700);
+      setTimeout(() => setIsAnimating(false), 500);
     }
   };
 
+  const currentTier = subscriptionTiers[currentIndex];
+
   return (
-    <div className="relative w-full max-w-4xl mx-auto px-4">
-      {/* 3D Carousel Container - Fixed height to match original */}
-      <div className="relative h-[600px] overflow-hidden">
+    <div className="relative w-full max-w-6xl mx-auto px-4">
+      {/* 3D Carousel Container - Responsive height */}
+      <div className="relative h-[calc(100vh-200px)] min-h-[500px] max-h-[650px] perspective-1000">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -132,173 +138,163 @@ export default function SubscriptionCarousel() {
           <ChevronRight className="w-8 h-8 text-white hover:scale-110 transition-transform drop-shadow-lg" />
         </button>
 
-        {/* Sliding Carousel */}
-        <div className="relative w-full h-full">
+        {/* Main Card Display */}
+        <div className="flex items-center justify-center h-full">
           <div
-            className="flex transition-transform duration-700 ease-in-out h-full"
+            className="relative w-full max-w-md transform transition-all duration-500 preserve-3d"
             style={{
-              transform: `translateX(-${currentIndex * 100}%)`,
-              width: `${subscriptionTiers.length * 100}%`,
+              transform: isAnimating ? "rotateY(15deg)" : "rotateY(0deg)",
             }}
           >
-            {subscriptionTiers.map((tier, index) => (
-              <div
-                key={tier.id}
-                className="flex-shrink-0 h-full flex items-center justify-center"
-                style={{ width: `${100 / subscriptionTiers.length}%` }}
-              >
+            {/* Glow Effect */}
+            <div
+              className="absolute inset-0 rounded-2xl blur-3xl opacity-50"
+              style={{
+                background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+              }}
+            />
+
+            {/* Main Card */}
+            <div
+              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-8 transform transition-all duration-500 hover:scale-105"
+              style={{
+                border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
+                borderRadius: "24px",
+                background: currentTier.popular 
+                  ? `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${currentTier.gradientStart} 0%, ${currentTier.gradientEnd} 25%, ${currentTier.gradientStart} 50%, ${currentTier.gradientEnd} 75%, ${currentTier.gradientStart} 100%) border-box`
+                  : `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}) border-box`,
+                backgroundSize: currentTier.popular ? "300% 300%" : "100% 100%",
+                animation: currentTier.popular ? "gradientFlow 3s linear infinite" : "none",
+                boxShadow: currentTier.popular 
+                  ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40, inset 0 0 30px ${currentTier.gradientStart}20`
+                  : `0 20px 40px ${currentTier.gradientStart}40, inset 0 0 30px ${currentTier.gradientStart}20`,
+                minHeight: "580px", // Ensure all packages have same height
+              }}
+              onMouseEnter={() => setHoveredTier(currentTier.id)}
+              onMouseLeave={() => setHoveredTier(null)}
+            >
+
+
+              {/* Package Icon with Animation */}
+              <div className="flex justify-center mb-6">
                 <div
-                  className="relative w-full h-full max-w-[350px] mx-auto"
-                  style={{ maxHeight: "500px" }}
+                  className="relative p-4 rounded-full"
+                  style={{
+                    background: `linear-gradient(135deg, ${currentTier.gradientStart}20, ${currentTier.gradientEnd}20)`,
+                  }}
                 >
-                  {/* Glow Effect - Fixed to match border radius */}
-                  <div
-                    className="absolute inset-2 rounded-3xl blur-3xl opacity-50"
-                    style={{
-                      background: `linear-gradient(135deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
-                    }}
+                  <img
+                    src={currentTier.icon}
+                    alt={`${currentTier.name} icon`}
+                    className="w-24 h-24 object-contain animate-float"
                   />
-
-                  {/* Main Card */}
-                  <div
-                    className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 h-full flex flex-col"
-                    style={{
-                      border: tier.popular ? "8px solid transparent" : "5px solid transparent",
-                      borderRadius: "24px",
-                      background: tier.popular 
-                        ? `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart} 0%, ${tier.gradientEnd} 25%, ${tier.gradientStart} 50%, ${tier.gradientEnd} 75%, ${tier.gradientStart} 100%) border-box`
-                        : `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,
-                      backgroundSize: tier.popular ? "300% 300%" : "100% 100%",
-                      animation: tier.popular ? "gradientFlow 3s linear infinite" : "none",
-                      boxShadow: tier.popular 
-                        ? `0 0 40px ${tier.gradientStart}60, 0 0 80px ${tier.gradientEnd}40, inset 0 0 30px ${tier.gradientStart}20`
-                        : `0 20px 40px ${tier.gradientStart}40, inset 0 0 30px ${tier.gradientStart}20`,
-                    }}
-                    onMouseEnter={() => setHoveredTier(tier.id)}
-                    onMouseLeave={() => setHoveredTier(null)}
-                  >
-                    {/* Top Section */}
-                    <div className="flex-1 flex flex-col items-center text-center">
-                      {/* Icon */}
-                      <div className="mb-4">
-                        <div
-                          className="w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300"
-                          style={{
-                            background: `linear-gradient(135deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
-                            transform: hoveredTier === tier.id ? "scale(1.1)" : "scale(1)",
-                          }}
-                        >
-                          <img
-                            src={tier.icon}
-                            alt={`${tier.name} icon`}
-                            className="w-12 h-12 object-contain"
-                          />
-                        </div>
-                      </div>
-
-                      {/* Title and Description */}
-                      <div className="text-center mb-4">
-                        <h3 className="text-3xl font-black mb-2">
-                          <span
-                            className="gradient-text-display"
-                            style={{
-                              background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
-                              WebkitBackgroundClip: "text",
-                              WebkitTextFillColor: "transparent",
-                              backgroundClip: "text",
-                              color: "transparent",
-                            }}
-                          >
-                            {tier.name}
-                          </span>
-                        </h3>
-                        <p className="text-gray-400 text-lg">{tier.description}</p>
-                        
-                        {/* MOST POPULAR badge for Legend package */}
-                        {tier.popular && (
-                          <div className="mt-4">
-                            <span
-                              className="px-4 py-1 rounded-full text-xs font-bold"
-                              style={{
-                                background: "linear-gradient(135deg, #ff6b35, #f7931e)",
-                                color: "black",
-                                whiteSpace: "nowrap",
-                              }}
-                            >
-                              MOST POPULAR
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Price */}
-                      <div className="mb-4">
-                        <div className="text-center">
-                          <span className="text-4xl font-black text-white">
-                            ${tier.price}
-                          </span>
-                          <span className="text-gray-400 text-base ml-2">/month</span>
-                        </div>
-                      </div>
-
-                      {/* Features */}
-                      <div className="flex-1 mb-4 w-full flex justify-center">
-                        <ul className="space-y-2 max-w-xs">
-                          {tier.features.map((feature, idx) => (
-                            <li
-                              key={idx}
-                              className="flex items-center text-gray-300 text-sm text-center"
-                            >
-                              <span
-                                className="w-2 h-2 rounded-full mr-3 flex-shrink-0"
-                                style={{
-                                  background: `linear-gradient(135deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
-                                }}
-                              />
-                              <span className="flex-1">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      {/* Perks */}
-                      <div className="mb-4 w-full text-center">
-                        <h4 className="text-white font-bold mb-2 text-sm">Special Perks:</h4>
-                        <div className="flex flex-wrap gap-2 justify-center">
-                          {tier.perks.map((perk, idx) => (
-                            <span
-                              key={idx}
-                              className="px-3 py-1 rounded-full text-xs bg-white/10 text-gray-300"
-                            >
-                              {perk}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Bottom Section - CTA Button */}
-                    <div className="mt-auto">
-                      <button
-                        className="w-full py-4 px-6 rounded-xl font-bold text-white text-lg transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                        style={{
-                          background: `linear-gradient(135deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
-                          boxShadow: `0 8px 32px ${tier.gradientStart}40`,
-                        }}
-                      >
-                        Choose {tier.name}
-                      </button>
-                    </div>
-                  </div>
                 </div>
               </div>
-            ))}
+
+              {/* Title and Description */}
+              <div className="text-center mb-6">
+                <h3 className="text-4xl font-black mb-2">
+                  <span
+                    className="inline-block bg-gradient-to-r bg-clip-text text-transparent"
+                    style={{
+                      backgroundImage: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      color: "transparent",
+                      filter: "contrast(1.1) brightness(1.1)",
+                    }}
+                  >
+                    {currentTier.name}
+                  </span>
+                </h3>
+                <p className="text-gray-400 text-lg">{currentTier.description}</p>
+                
+                {/* MOST POPULAR badge for Legend package */}
+                {currentTier.popular && (
+                  <div className="mt-4">
+                    <span
+                      className="px-4 py-1 rounded-full text-xs font-bold"
+                      style={{
+                        background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                        color: "black",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      MOST&nbsp;POPULAR
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Price */}
+              <div className="text-center mb-8">
+                <div className="flex items-center justify-center">
+                  <span className="text-5xl font-black text-white">${currentTier.price}</span>
+                  <span className="text-gray-400 ml-2">/month</span>
+                </div>
+              </div>
+
+              {/* Features */}
+              <div className="space-y-4 mb-8">
+                {currentTier.features.map((feature, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start space-x-3 transform transition-all duration-300"
+                    style={{
+                      transform: hoveredTier === currentTier.id ? "translateX(10px)" : "translateX(0)",
+                      transitionDelay: `${index * 50}ms`,
+                    }}
+                  >
+                    <div
+                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                      style={{
+                        background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                      }}
+                    >
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="text-gray-300 font-medium">{feature}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Special Perks */}
+              <div className="bg-white/5 rounded-lg p-4 mb-8">
+                <h4 className="text-sm font-bold text-gray-400 mb-2">EXCLUSIVE PERKS</h4>
+                <div className="space-y-2">
+                  {currentTier.perks.map((perk, index) => (
+                    <div key={index} className="text-sm text-gray-300">
+                      {perk}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA Button */}
+              <Button
+                className="w-full py-6 text-lg font-bold rounded-xl transform transition-all duration-300 hover:scale-105"
+                style={{
+                  background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                  boxShadow: `0 10px 30px ${currentTier.gradientStart}50`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = `0 15px 40px ${currentTier.gradientStart}70`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = `0 10px 30px ${currentTier.gradientStart}50`;
+                }}
+              >
+                Get {currentTier.name} Now
+              </Button>
+            </div>
           </div>
         </div>
+
       </div>
 
-      {/* Instruction Text */}
-      <div className="text-center text-gray-400 mt-4 mb-6">
+      {/* Mobile Swipe Hint / Desktop Click Hint */}
+      <div className="text-center text-gray-500 text-sm mt-8">
         <span className="md:hidden">← Swipe to explore plans →</span>
         <span className="hidden md:inline">← Click to explore plans →</span>
       </div>
@@ -369,6 +365,8 @@ export default function SubscriptionCarousel() {
           </button>
         ))}
       </div>
+
+
     </div>
   );
 }
