@@ -297,11 +297,11 @@ export default function StripePaymentProcessor() {
   }
 
   return (
-    <>
+    <div className="w-full">
       {/* Mobile Layout */}
       <div className="md:hidden flex flex-col gap-8 max-w-sm mx-auto">
       {subscriptionTiers.map((tier) => (
-        <div key={tier.id} className="relative">
+        <div key={`mobile-${tier.id}`} className="relative">
           {/* Title Above Box */}
           <h3 
             className="font-black text-white mb-4 text-center"
@@ -411,15 +411,15 @@ export default function StripePaymentProcessor() {
             key={`desktop-${tier.id}`}
             className="absolute transition-all duration-300"
             style={{
-              width: index === 1 ? "340px" : "320px",
+              width: "340px", // All packages same width
               left: index === 0 
-                ? "calc(50% - 330px)" // Rebel: same overlap as Icon
+                ? "calc(50% - 335px)" // Rebel: 5px overlap (170 + 170 - 5)
                 : index === 1 
-                ? "calc(50% - 170px)" // Legend: center
-                : "calc(50% + 10px)", // Icon: same overlap as Rebel
+                ? "calc(50% - 170px)" // Legend: center (340px width / 2)
+                : "calc(50% - 5px)", // Icon: 5px overlap (170 - 170 - 5)
               top: index === 1 ? "0px" : "40px",
               zIndex: index === 1 ? 50 : 10,
-              transform: index === 1 ? "scale(1.05)" : "none"
+              transform: "none" // Remove scale transform
             }}
           >
             <h3 
@@ -452,7 +452,7 @@ export default function StripePaymentProcessor() {
             <div
               className="rounded-lg flex flex-col transition-all duration-300 relative overflow-hidden"
               style={{ 
-                minHeight: "540px",
+                height: "540px", // All packages same height
                 border: tier.popular ? "6px solid transparent" : "5px solid transparent",
                 background: tier.popular 
                   ? `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, #E520C6, #F4654F) border-box`
@@ -541,6 +541,6 @@ export default function StripePaymentProcessor() {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
