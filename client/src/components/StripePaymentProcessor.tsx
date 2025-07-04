@@ -360,7 +360,7 @@ export default function StripePaymentProcessor() {
                   </div>
                 </div>
 
-                <ul className="space-y-4 mb-12 flex-grow px-4">
+                <ul className="space-y-4 mb-12 flex-grow px-6">
                   {tier.features.map((feature, index) => (
                     <li key={index} className="flex items-start">
                       <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
@@ -413,10 +413,10 @@ export default function StripePaymentProcessor() {
             style={{
               width: index === 1 ? "340px" : "320px",
               left: index === 0 
-                ? "calc(50% - 490px)" // Rebel: just barely touching
+                ? "calc(50% - 330px)" // Rebel: same overlap as Icon
                 : index === 1 
                 ? "calc(50% - 170px)" // Legend: center
-                : "calc(50% + 150px)", // Icon: just barely touching
+                : "calc(50% + 10px)", // Icon: same overlap as Rebel
               top: index === 1 ? "0px" : "40px",
               zIndex: index === 1 ? 50 : 10,
               transform: index === 1 ? "scale(1.05)" : "none"
@@ -442,7 +442,7 @@ export default function StripePaymentProcessor() {
                   fontSize: "11px",
                   lineHeight: "1",
                   zIndex: 100,
-                  top: "46px" // Position it right on the top border of Legend card
+                  top: "53px" // Position it right on the top border of Legend card
                 }}
               >
                 MOST&nbsp;POPULAR
@@ -505,7 +505,7 @@ export default function StripePaymentProcessor() {
                     </div>
                   </div>
 
-                  <ul className="space-y-4 mb-12 flex-grow px-4">
+                  <ul className="space-y-4 mb-12 flex-grow px-6">
                     {tier.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
                         <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />

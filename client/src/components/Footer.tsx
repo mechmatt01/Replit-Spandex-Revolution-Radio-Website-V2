@@ -84,7 +84,7 @@ export default function Footer() {
               </li>
               <li>
                 <button
-                  onClick={() => scrollToSection("subscription")}
+                  onClick={() => scrollToSection("subscribe")}
                   className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Subscribe
