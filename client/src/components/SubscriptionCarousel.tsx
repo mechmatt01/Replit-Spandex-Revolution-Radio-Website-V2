@@ -123,7 +123,7 @@ export default function SubscriptionCarousel() {
   return (
     <div className="relative w-full max-w-6xl mx-auto px-4">
       {/* 3D Carousel Container - Full viewport height usage */}
-      <div className="relative h-[calc(100vh-140px)] min-h-[750px] perspective-1000 subscription-carousel-container">
+      <div className="relative h-[calc(100vh-180px)] min-h-[700px] perspective-1000 subscription-carousel-container">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -173,8 +173,8 @@ export default function SubscriptionCarousel() {
                 boxShadow: currentTier.popular 
                   ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40`
                   : `0 20px 40px ${currentTier.gradientStart}40`,
-                height: "calc(100vh - 140px)", // Increased height to accommodate longest package (Legend) with proper padding
-                minHeight: "750px", // Minimum height ensures all packages fit with adequate spacing
+                height: "calc(100vh - 180px)", // Adjusted height to fit all content including buttons
+                minHeight: "700px", // Increased minimum height to prevent button cutoff
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
