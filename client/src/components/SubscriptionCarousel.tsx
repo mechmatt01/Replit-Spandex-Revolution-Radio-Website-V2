@@ -190,8 +190,8 @@ export default function SubscriptionCarousel() {
                 boxShadow: currentTier.popular 
                   ? `0 0 60px ${currentTier.gradientStart}60, 0 0 120px ${currentTier.gradientEnd}40, 0 0 160px ${currentTier.gradientStart}20`
                   : `0 20px 40px ${currentTier.gradientStart}40`,
-                height: "calc(100vh - 180px)", // Adjusted height to fit all content including buttons
-                minHeight: "700px", // Increased minimum height to prevent button cutoff
+                height: "calc(100vh - 160px)", // Increased height to fit all content including buttons
+                minHeight: "750px", // Increased minimum height to prevent button cutoff
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -265,7 +265,7 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* Features - centered between price and exclusive perks */}
-              <div className="flex-1 flex items-center justify-center py-8">
+              <div className="flex-1 flex items-center justify-center py-4">
                 <div className="w-full max-w-xs">
                   {currentTier.features
                     .sort((a, b) => a.length - b.length) // Sort by text length - shortest first
@@ -295,7 +295,7 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* Special Perks - centered */}
-              <div className="mb-4">
+              <div className="mb-2">
                 <div className="bg-white/5 rounded-lg p-3 max-w-xs mx-auto">
                   <h4 className="text-xs font-bold text-gray-400 mb-2 text-center">EXCLUSIVE PERKS</h4>
                   <div className="space-y-1">
@@ -309,7 +309,7 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* CTA Button */}
-              <div className="mt-4">
+              <div className="mt-auto mb-4">
                 <Button
                   className="w-full py-4 text-base font-bold rounded-xl transform transition-all duration-300 hover:scale-105"
                   style={{
