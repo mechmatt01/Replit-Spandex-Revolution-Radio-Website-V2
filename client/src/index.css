@@ -103,6 +103,54 @@
   }
 }
 
+/* Gradient animation for popular packages */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Responsive subscription carousel adjustments */
+@media (max-height: 900px) {
+  .subscription-carousel-container {
+    height: calc(100vh - 20px) !important;
+    min-height: 700px !important;
+  }
+  
+  .subscription-card {
+    height: calc(100vh - 20px) !important;
+    min-height: 700px !important;
+  }
+  
+  .subscription-features {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+  }
+}
+
+@media (max-height: 700px) {
+  .subscription-carousel-container {
+    height: calc(100vh - 20px) !important;
+    min-height: 600px !important;
+  }
+  
+  .subscription-card {
+    height: calc(100vh - 20px) !important;
+    min-height: 600px !important;
+  }
+  
+  .subscription-features {
+    max-height: 200px !important;
+    overflow-y: auto !important;
+  }
+}
+
 /* Legend package glow animation */
 @keyframes legend-glow {
   0% {

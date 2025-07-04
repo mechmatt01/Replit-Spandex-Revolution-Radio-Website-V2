@@ -123,7 +123,7 @@ export default function SubscriptionCarousel() {
   return (
     <div className="relative w-full max-w-6xl mx-auto px-4">
       {/* 3D Carousel Container - Full viewport height usage */}
-      <div className="relative h-[calc(100vh-80px)] min-h-[800px] perspective-1000">
+      <div className="relative h-[calc(100vh-80px)] min-h-[800px] perspective-1000 subscription-carousel-container">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -161,7 +161,7 @@ export default function SubscriptionCarousel() {
 
             {/* Main Card */}
             <div
-              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col"
+              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col subscription-card"
               style={{
                 border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
                 borderRadius: "24px",
@@ -173,7 +173,8 @@ export default function SubscriptionCarousel() {
                 boxShadow: currentTier.popular 
                   ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40`
                   : `0 20px 40px ${currentTier.gradientStart}40`,
-                height: "calc(95vh - 100px)", // Use almost full viewport height with flex layout
+                height: "calc(100vh - 80px)", // Use almost full viewport height with flex layout
+                minHeight: "800px", // Ensure minimum height for all content
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -238,27 +239,29 @@ export default function SubscriptionCarousel() {
                 </div>
               </div>
 
-              {/* Features - centered with checkmark compensation */}
-              <div className="flex-1 mb-4">
-                <div className="max-w-xs mx-auto">
+              {/* Features - perfectly centered with checkmark compensation */}
+              <div className="mb-4">
+                <div className="w-full px-4">
                   {currentTier.features.map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-start space-x-3 mb-3 transform transition-all duration-300"
+                      className="flex items-start justify-center mb-3 transform transition-all duration-300"
                       style={{
                         transform: hoveredTier === currentTier.id ? "translateX(10px)" : "translateX(0)",
                         transitionDelay: `${index * 50}ms`,
                       }}
                     >
-                      <div
-                        className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                        style={{
-                          background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
-                        }}
-                      >
-                        <Check className="w-3 h-3 text-white" />
+                      <div className="flex items-start space-x-3 max-w-xs">
+                        <div
+                          className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                          style={{
+                            background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                          }}
+                        >
+                          <Check className="w-3 h-3 text-white" />
+                        </div>
+                        <span className="text-gray-300 text-sm font-medium text-left flex-1">{feature}</span>
                       </div>
-                      <span className="text-gray-300 text-sm font-medium text-left flex-1">{feature}</span>
                     </div>
                   ))}
                 </div>
