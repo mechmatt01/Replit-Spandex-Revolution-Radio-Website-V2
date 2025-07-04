@@ -124,15 +124,14 @@ export default function Subscription() {
               key={tier.name}
               className={`transition-all duration-300 mx-auto md:mx-0 mb-8 md:mb-0 ${
                 index === 0
-                  ? "md:relative md:z-10 md:-mr-[10px]" // Rebel: negative right margin for overlap
+                  ? "subscription-rebel" // Rebel: custom CSS class for overlap
                   : index === 1
-                    ? "md:relative md:z-[200]" // Legend: highest z-index
-                    : "md:relative md:z-10 md:-ml-[10px]" // Icon: negative left margin for overlap
+                    ? "subscription-legend" // Legend: custom CSS class with glow and positioning
+                    : "subscription-icon" // Icon: custom CSS class for overlap
               }`}
               style={{
                 width: "320px",
                 maxWidth: "100%",
-                transform: index === 1 ? "translateY(-20px)" : "translateY(0)", // Only Legend moves up
               }}
             >
               {/* Title Above Box */}
