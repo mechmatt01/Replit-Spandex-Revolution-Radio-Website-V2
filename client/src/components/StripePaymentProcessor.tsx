@@ -360,7 +360,7 @@ export default function StripePaymentProcessor() {
                   </div>
                 </div>
 
-                <ul className="space-y-4 mb-12 flex-grow">
+                <ul className="space-y-4 mb-12 flex-grow mx-auto max-w-xs">
                   {tier.features.map((feature, index) => (
                     <li key={index} className="flex items-start">
                       <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
@@ -413,10 +413,10 @@ export default function StripePaymentProcessor() {
             style={{
               width: index === 1 ? "340px" : "320px",
               left: index === 0 
-                ? "calc(50% - 360px)" // Rebel: minimal overlap with Legend
+                ? "calc(50% - 450px)" // Rebel: just touching edge
                 : index === 1 
                 ? "calc(50% - 170px)" // Legend: center
-                : "calc(50% + 20px)", // Icon: minimal overlap with Legend
+                : "calc(50% + 110px)", // Icon: just touching edge
               top: index === 1 ? "0px" : "40px",
               zIndex: index === 1 ? 50 : 10,
               transform: index === 1 ? "scale(1.05)" : "none"
@@ -442,7 +442,7 @@ export default function StripePaymentProcessor() {
                   fontSize: "11px",
                   lineHeight: "1",
                   zIndex: 100,
-                  top: "32px" // Position it just above the card
+                  top: "40px" // Position it right on the border of Legend
                 }}
               >
                 MOST&nbsp;POPULAR
@@ -505,7 +505,7 @@ export default function StripePaymentProcessor() {
                     </div>
                   </div>
 
-                  <ul className="space-y-4 mb-12 flex-grow">
+                  <ul className="space-y-4 mb-12 flex-grow mx-auto max-w-xs">
                     {tier.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
                         <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
