@@ -170,6 +170,16 @@ export default function Navigation() {
     },
     { 
       id: 3, 
+      label: "SUBSCRIBE", 
+      icon: Heart, 
+      action: () => {
+        console.log('Subscribe action triggered');
+        goToHomeSection("subscribe");
+      }, 
+      tooltip: "Support the station with premium subscriptions" 
+    },
+    { 
+      id: 4, 
       label: "SUBMISSIONS", 
       icon: Send, 
       action: () => {
@@ -179,7 +189,7 @@ export default function Navigation() {
       tooltip: "Submit song requests and feedback" 
     },
     { 
-      id: 4, 
+      id: 5, 
       label: "CONTACT", 
       icon: Phone, 
       action: () => {
@@ -189,7 +199,7 @@ export default function Navigation() {
       tooltip: "Get in touch with the station" 
     },
     { 
-      id: 5, 
+      id: 6, 
       label: "LISTEN MAP", 
       icon: MapPin, 
       action: () => {
