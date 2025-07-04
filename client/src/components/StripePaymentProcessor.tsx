@@ -424,7 +424,7 @@ export default function StripePaymentProcessor() {
                 : index === 1 
                 ? "calc(50% - 170px)" // Legend: center (340px width / 2)
                 : "calc(50% + 165px)", // Icon: only 5px overlap (170 - 5)
-              top: "40px", // All packages at same height
+              top: index === 1 ? "40px" : "40px", // All packages at same height
               zIndex: index === 1 ? 50 : 10,
               transform: "none" // Remove scale transform
             }}

@@ -7,6 +7,7 @@ import Submissions from "@/components/Submissions";
 import FullWidthGlobeMap from "@/components/FullWidthGlobeMap";
 import Contact from "@/components/Contact";
 import StripePaymentProcessor from "@/components/StripePaymentProcessor";
+import SubscriptionCarousel from "@/components/SubscriptionCarousel";
 import ShopifyEcommerce from "@/components/ShopifyEcommerce";
 
 import { useState } from "react";
@@ -36,6 +37,12 @@ export default function HomePage() {
             </p>
           </div>
           <StripePaymentProcessor />
+          
+          {/* New Amazing Subscription Design - Carousel Style */}
+          <div className="mt-32">
+            <h3 className="text-center text-2xl font-bold text-gray-500 mb-8">Alternative Design Preview</h3>
+            <SubscriptionCarousel />
+          </div>
         </div>
       </section>
       <ShopifyEcommerce />
