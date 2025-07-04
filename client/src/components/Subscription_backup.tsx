@@ -50,32 +50,33 @@ const subscriptionTiers = [
     popular: false,
     features: [
       "Everything in Legend tier",
-      "One-on-one artist video calls",
-      "Exclusive concert tickets",
-      "Limited edition vinyl records",
-      "Personal song dedications",
+      "Personal DJ requests",
+      "Exclusive artist meet & greets",
+      "Limited edition vinyl access",
+      "Co-host opportunities",
     ],
   },
 ];
 
 export default function Subscription() {
-  const [email, setEmail] = useState("");
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { getColors } = useTheme();
+  const colors = getColors();
+
   const { toast } = useToast();
-  const { colors } = useTheme();
 
   const subscribeMutation = useMutation({
     mutationFn: async (data: InsertSubscription) => {
-      return apiRequest("/api/subscriptions", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      const response = await apiRequest("POST", "/api/subscriptions", data);
+      return response.json();
     },
     onSuccess: () => {
       toast({
         title: "Subscription Successful!",
-        description: "Welcome to the Spandex Salvation family! 🤘",
+        description:
+          "Welcome to the Hairspray Rebellion! Check your email for details.",
       });
       setEmail("");
       setIsDialogOpen(false);
@@ -117,13 +118,12 @@ export default function Subscription() {
           </p>
         </div>
 
-        {/* Subscription Packages */}
         <div className="relative mx-auto mb-16 max-w-6xl">
-          
-          {/* Mobile Layout: Stack vertically */}
+          {/* Mobile: Stack vertically */}
           <div className="flex flex-col md:hidden gap-8">
-            {subscriptionTiers.map((tier) => (
+            {subscriptionTiers.map((tier, index) => (
               <div key={`mobile-${tier.name}`} className="w-full max-w-sm mx-auto">
+                {/* Mobile Title */}
                 <h3
                   className={`font-bold text-xl mb-4 text-center ${
                     tier.color === "metal-gold"
@@ -136,9 +136,12 @@ export default function Subscription() {
                   {tier.name}
                 </h3>
 
+                {/* Mobile Package Card */}
                 <div
                   className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
-                    tier.popular ? "legend-glow-border transform scale-105" : ""
+                    tier.popular
+                      ? "legend-glow-border transform scale-105"
+                      : ""
                   }`}
                   style={{ minHeight: tier.popular ? "520px" : "560px" }}
                 >
@@ -208,8 +211,8 @@ export default function Subscription() {
             ))}
           </div>
           
-          {/* Desktop Layout: Overlapping positioning */}
-          <div className="hidden md:block relative" style={{ height: "580px" }}>
+          {/* Desktop: Absolute positioning for overlap */}
+          <div className="hidden md:block relative" style={{ height: "600px" }}>
             {subscriptionTiers.map((tier, index) => (
               <div
                 key={`desktop-${tier.name}`}
@@ -217,97 +220,113 @@ export default function Subscription() {
                 style={{
                   width: "320px",
                   left: index === 0 
-                    ? "calc(50% - 170px)" // Rebel: 10px overlap with Legend
+                    ? "calc(50% - 170px)" // Rebel: positioned to be overlapped by Legend
                     : index === 1 
                     ? "calc(50% - 160px)" // Legend: center position
-                    : "calc(50% - 150px)", // Icon: 10px overlap with Legend
-                  top: index === 1 ? "0px" : "20px", // Legend elevated
+                    : "calc(50% - 150px)", // Icon: positioned to be overlapped by Legend
+                  top: index === 1 ? "0px" : "20px", // Legend elevated above others
                   zIndex: index === 1 ? 200 : 10, // Legend on top
                 }}
               >
-                <h3
-                  className={`font-bold text-xl mb-4 text-center ${
-                    tier.color === "metal-gold"
-                      ? "text-metal-gold"
-                      : tier.color === "metal-red"
-                        ? "text-metal-red"
-                        : "text-white"
-                  }`}
-                >
-                  {tier.name}
-                </h3>
+              {/* Title Above Box */}
+              <h3
+                className={`font-bold text-xl mb-4 text-center ${
+                  tier.color === "metal-gold"
+                    ? "text-metal-gold"
+                    : tier.color === "metal-red"
+                      ? "text-metal-red"
+                      : "text-white"
+                }`}
+              >
+                {tier.name}
+              </h3>
 
-                <div
-                  className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
-                    tier.popular ? "legend-glow-border transform scale-105" : ""
-                  }`}
-                  style={{ minHeight: tier.popular ? "520px" : "560px" }}
-                >
-                  {tier.popular && (
-                    <div
-                      className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
-                      style={{
-                        background: "linear-gradient(135deg, #ff6b35, #f7931e)",
-                        color: "black",
-                        whiteSpace: "nowrap",
-                        fontSize: "11px",
-                        lineHeight: "1",
-                      }}
-                    >
-                      MOST&nbsp;POPULAR
-                    </div>
-                  )}
-
-                  <div className="p-8 flex flex-col h-full justify-between">
-                    <div className="text-center mb-6">
-                      <div
-                        className={`text-3xl font-bold mb-1 ${
-                          tier.color === "metal-gold"
-                            ? "text-metal-gold"
-                            : tier.color === "metal-red"
-                              ? "text-metal-red"
-                              : "text-metal-orange"
-                        }`}
-                      >
-                        {tier.price}
-                      </div>
-                      <div className="text-gray-400 text-sm">per month</div>
-                    </div>
-
-                    <ul className={`space-y-3 ${tier.popular ? "mb-6" : "mb-8"} flex-grow`}>
-                      {tier.features.map((feature, featureIndex) => (
-                        <li
-                          key={featureIndex}
-                          className="flex items-start text-gray-300"
-                        >
-                          <Check className="w-5 h-5 text-metal-orange mr-3 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <Button
-                      onClick={() => handleSubscribe(tier.name)}
-                      className="w-full py-3 text-lg font-semibold"
-                      style={{
-                        background: `linear-gradient(135deg, ${
-                          tier.color === "metal-gold"
-                            ? "#f7931e, #ffcc00"
-                            : tier.color === "metal-red"
-                              ? "#dc2626, #ef4444"
-                              : "#ff6b35, #f7931e"
-                        })`,
-                        color: "white",
-                        border: "none",
-                      }}
-                    >
-                      CHOOSE {tier.name}
-                    </Button>
+              <div
+                className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
+                  tier.popular
+                    ? "legend-glow-border transform scale-105"
+                    : ""
+                }`}
+                style={{ minHeight: tier.popular ? "520px" : "560px" }}
+              >
+                {tier.popular && (
+                  <div
+                    className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                    style={{
+                      background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                      color: "black",
+                      whiteSpace: "nowrap",
+                      fontSize: "11px",
+                      lineHeight: "1",
+                    }}
+                  >
+                    MOST&nbsp;POPULAR
                   </div>
+                )}
+
+                <div className="p-8 flex flex-col h-full justify-between">
+                  <div className="text-center mb-6">
+                    <div
+                      className={`text-3xl font-bold mb-1 ${
+                        tier.color === "metal-gold"
+                          ? "text-metal-gold"
+                          : tier.color === "metal-red"
+                            ? "text-metal-red"
+                            : "text-metal-orange"
+                      }`}
+                    >
+                      {tier.price}
+                    </div>
+                    <div className="text-gray-400 text-sm">per month</div>
+                  </div>
+
+                  <ul
+                    className={`space-y-3 ${tier.popular ? "mb-6" : "mb-8"} flex-grow`}
+                  >
+                    {tier.features.map((feature, featureIndex) => (
+                      <li
+                        key={featureIndex}
+                        className="flex items-center text-gray-300"
+                      >
+                        <Check
+                          className={`mr-3 h-4 w-4 ${
+                            tier.color === "metal-gold"
+                              ? "text-metal-gold"
+                              : tier.color === "metal-red"
+                                ? "text-metal-red"
+                                : "text-metal-orange"
+                          }`}
+                        />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    onClick={() => handleSubscribe(tier.name)}
+                    className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300"
+                    style={{
+                      backgroundColor: colors.primary,
+                      color: colors.primaryText || "black",
+                      border: "none",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        colors.primaryDark || colors.primary;
+                      e.currentTarget.style.transform = "scale(1.02)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = colors.primary;
+                      e.currentTarget.style.transform = "scale(1)";
+                    }}
+                  >
+                    Subscribe
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
 
         {/* Subscription Benefits */}
@@ -359,7 +378,7 @@ export default function Subscription() {
           </DialogHeader>
           <form onSubmit={handleConfirmSubscription} className="space-y-4">
             <div>
-              <Label htmlFor="email" className="text-white">
+              <Label htmlFor="email" className="text-gray-300">
                 Email Address
               </Label>
               <Input
@@ -368,16 +387,18 @@ export default function Subscription() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="bg-dark-bg border-dark-border text-white"
                 required
+                className="bg-dark-bg border-dark-border text-white"
               />
             </div>
             <Button
               type="submit"
-              className="w-full"
               disabled={subscribeMutation.isPending}
+              className="w-full bg-metal-orange hover:bg-orange-600 text-white"
             >
-              {subscribeMutation.isPending ? "Processing..." : "Subscribe Now"}
+              {subscribeMutation.isPending
+                ? "Processing..."
+                : "Confirm Subscription"}
             </Button>
           </form>
         </DialogContent>
