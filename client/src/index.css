@@ -14,37 +14,109 @@
   --background-rgb: 31, 41, 55;
 }
 
+/* Subscription Package Positioning Classes */
+.subscription-container {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  height: 600px;
+  margin: 0 auto;
+}
+
+/* Desktop positioning for overlapping packages */
+@media (min-width: 768px) {
+  .package-rebel {
+    position: absolute !important;
+    width: 320px;
+    left: calc(50% - 250px); /* 90px overlap with Legend */
+    top: 40px;
+    z-index: 10;
+  }
+  
+  .package-legend {
+    position: absolute !important;
+    width: 340px;
+    left: calc(50% - 170px);
+    top: 0;
+    z-index: 50;
+    transform: scale(1.05);
+  }
+  
+  .package-icon {
+    position: absolute !important;
+    width: 320px;
+    left: calc(50% - 90px); /* 90px overlap with Legend */
+    top: 40px;
+    z-index: 10;
+  }
+}
+
+/* Mobile stacking */
+@media (max-width: 767px) {
+  .subscription-container {
+    height: auto;
+  }
+  
+  .package-rebel,
+  .package-legend,
+  .package-icon {
+    position: relative !important;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 2rem;
+    transform: none !important;
+  }
+}
+
 /* Legend Package Animated Border */
 @keyframes legend-glow {
-  0% {
-    background: linear-gradient(var(--background), var(--background)) padding-box, 
-                linear-gradient(90deg, #B56BFF, #FF50C3) border-box;
+  0%, 100% {
+    border-color: #B56BFF;
+    box-shadow: 0 0 20px #B56BFF, inset 0 0 20px rgba(181, 107, 255, 0.2);
   }
   25% {
-    background: linear-gradient(var(--background), var(--background)) padding-box, 
-                linear-gradient(180deg, #FF50C3, #FFD700) border-box;
+    border-color: #FF50C3;
+    box-shadow: 0 0 20px #FF50C3, inset 0 0 20px rgba(255, 80, 195, 0.2);
   }
   50% {
-    background: linear-gradient(var(--background), var(--background)) padding-box, 
-                linear-gradient(270deg, #FFD700, #FF6B35) border-box;
+    border-color: #FFD700;
+    box-shadow: 0 0 20px #FFD700, inset 0 0 20px rgba(255, 215, 0, 0.2);
   }
   75% {
-    background: linear-gradient(var(--background), var(--background)) padding-box, 
-                linear-gradient(360deg, #FF6B35, #B56BFF) border-box;
-  }
-  100% {
-    background: linear-gradient(var(--background), var(--background)) padding-box, 
-                linear-gradient(90deg, #B56BFF, #FF50C3) border-box;
+    border-color: #FF6B35;
+    box-shadow: 0 0 20px #FF6B35, inset 0 0 20px rgba(255, 107, 53, 0.2);
   }
 }
 
 .legend-glow-border {
-  border: 2px solid transparent !important;
-  background: linear-gradient(var(--background), var(--background)) padding-box, 
-              linear-gradient(90deg, #B56BFF, #FF50C3) border-box !important;
-  animation: legend-glow 3s ease-in-out infinite !important;
-  box-shadow: rgba(181, 107, 255, 0.125) 0px 8px 32px 0px, 
-              rgba(255, 80, 195, 0.125) 0px 16px 64px 0px !important;
+  position: relative;
+  border: 3px solid #B56BFF !important;
+  background: rgba(31, 41, 55, 0.95) !important;
+  animation: legend-glow 4s linear infinite !important;
+  overflow: hidden;
+}
+
+.legend-glow-border::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(45deg, #B56BFF, #FF50C3, #FFD700, #FF6B35, #B56BFF);
+  background-size: 400% 400%;
+  animation: gradient-rotate 4s linear infinite;
+  z-index: -1;
+  border-radius: inherit;
+}
+
+@keyframes gradient-rotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 400% 50%;
+  }
 }
 
 /* Base reset and variables */
