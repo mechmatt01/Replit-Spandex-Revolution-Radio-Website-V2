@@ -87,6 +87,7 @@ const subscriptionTiers: SubscriptionTier[] = [
 export default function SubscriptionCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0); // Start with Rebel (first)
   const [isAnimating, setIsAnimating] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right');
   const [hoveredTier, setHoveredTier] = useState<string | null>(null);
   const { getColors } = useTheme();
   const colors = getColors();
@@ -94,6 +95,7 @@ export default function SubscriptionCarousel() {
   const handlePrevious = () => {
     if (!isAnimating) {
       setIsAnimating(true);
+      setSlideDirection('right');
       setCurrentIndex((prev) => (prev - 1 + subscriptionTiers.length) % subscriptionTiers.length);
       setTimeout(() => setIsAnimating(false), 500);
     }
@@ -102,6 +104,7 @@ export default function SubscriptionCarousel() {
   const handleNext = () => {
     if (!isAnimating) {
       setIsAnimating(true);
+      setSlideDirection('left');
       setCurrentIndex((prev) => (prev + 1) % subscriptionTiers.length);
       setTimeout(() => setIsAnimating(false), 500);
     }
@@ -119,8 +122,8 @@ export default function SubscriptionCarousel() {
 
   return (
     <div className="relative w-full max-w-6xl mx-auto px-4">
-      {/* 3D Carousel Container - Responsive height */}
-      <div className="relative h-[calc(100vh-200px)] min-h-[500px] max-h-[650px] perspective-1000">
+      {/* 3D Carousel Container - Responsive height that fits viewport */}
+      <div className="relative h-[calc(90vh-120px)] min-h-[480px] max-h-[600px] perspective-1000">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -139,24 +142,26 @@ export default function SubscriptionCarousel() {
         </button>
 
         {/* Main Card Display */}
-        <div className="flex items-center justify-center h-full">
+        <div className="flex items-center justify-center h-full overflow-hidden">
           <div
-            className="relative w-full max-w-md transform transition-all duration-500 preserve-3d"
+            className={`relative w-full max-w-md transform transition-all duration-500 preserve-3d ${isAnimating ? `slide-enter-${slideDirection}` : ''}`}
             style={{
               transform: isAnimating ? "rotateY(15deg)" : "rotateY(0deg)",
             }}
           >
-            {/* Glow Effect */}
-            <div
-              className="absolute inset-0 rounded-2xl blur-3xl opacity-50"
-              style={{
-                background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
-              }}
-            />
+            {/* Glow Effect - properly contained */}
+            <div className="absolute inset-4 rounded-3xl overflow-hidden">
+              <div
+                className="absolute inset-0 blur-2xl opacity-40"
+                style={{
+                  background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                }}
+              />
+            </div>
 
             {/* Main Card */}
             <div
-              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-8 transform transition-all duration-500 hover:scale-105"
+              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-8 transform transition-all duration-500 hover:scale-105 overflow-hidden"
               style={{
                 border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
                 borderRadius: "24px",
@@ -166,9 +171,9 @@ export default function SubscriptionCarousel() {
                 backgroundSize: currentTier.popular ? "300% 300%" : "100% 100%",
                 animation: currentTier.popular ? "gradientFlow 3s linear infinite" : "none",
                 boxShadow: currentTier.popular 
-                  ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40, inset 0 0 30px ${currentTier.gradientStart}20`
-                  : `0 20px 40px ${currentTier.gradientStart}40, inset 0 0 30px ${currentTier.gradientStart}20`,
-                minHeight: "580px", // Ensure all packages have same height
+                  ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40`
+                  : `0 20px 40px ${currentTier.gradientStart}40`,
+                height: "min(550px, calc(85vh - 120px))", // Responsive height that fits viewport
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -193,20 +198,13 @@ export default function SubscriptionCarousel() {
 
               {/* Title and Description */}
               <div className="text-center mb-6">
-                <h3 className="text-4xl font-black mb-2">
-                  <span
-                    className="inline-block bg-gradient-to-r bg-clip-text text-transparent"
-                    style={{
-                      backgroundImage: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      backgroundClip: "text",
-                      color: "transparent",
-                      filter: "contrast(1.1) brightness(1.1)",
-                    }}
-                  >
-                    {currentTier.name}
-                  </span>
+                <h3 
+                  className="text-4xl font-black mb-2 bg-clip-text text-transparent"
+                  style={{
+                    backgroundImage: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                  }}
+                >
+                  {currentTier.name}
                 </h3>
                 <p className="text-gray-400 text-lg">{currentTier.description}</p>
                 
@@ -235,39 +233,43 @@ export default function SubscriptionCarousel() {
                 </div>
               </div>
 
-              {/* Features */}
-              <div className="space-y-4 mb-8">
-                {currentTier.features.map((feature, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start space-x-3 transform transition-all duration-300"
-                    style={{
-                      transform: hoveredTier === currentTier.id ? "translateX(10px)" : "translateX(0)",
-                      transitionDelay: `${index * 50}ms`,
-                    }}
-                  >
+              {/* Features - centered with checkmark compensation */}
+              <div className="mb-8">
+                <div className="max-w-xs mx-auto">
+                  {currentTier.features.map((feature, index) => (
                     <div
-                      className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                      key={index}
+                      className="flex items-start space-x-3 mb-4 transform transition-all duration-300"
                       style={{
-                        background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                        transform: hoveredTier === currentTier.id ? "translateX(10px)" : "translateX(0)",
+                        transitionDelay: `${index * 50}ms`,
                       }}
                     >
-                      <Check className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-gray-300 font-medium">{feature}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Special Perks */}
-              <div className="bg-white/5 rounded-lg p-4 mb-8">
-                <h4 className="text-sm font-bold text-gray-400 mb-2">EXCLUSIVE PERKS</h4>
-                <div className="space-y-2">
-                  {currentTier.perks.map((perk, index) => (
-                    <div key={index} className="text-sm text-gray-300">
-                      {perk}
+                      <div
+                        className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                        style={{
+                          background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                        }}
+                      >
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-gray-300 font-medium text-left flex-1">{feature}</span>
                     </div>
                   ))}
+                </div>
+              </div>
+
+              {/* Special Perks - centered */}
+              <div className="mb-8">
+                <div className="bg-white/5 rounded-lg p-4 max-w-xs mx-auto">
+                  <h4 className="text-sm font-bold text-gray-400 mb-2 text-center">EXCLUSIVE PERKS</h4>
+                  <div className="space-y-2">
+                    {currentTier.perks.map((perk, index) => (
+                      <div key={index} className="text-sm text-gray-300 text-center">
+                        {perk}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -367,6 +369,17 @@ export default function SubscriptionCarousel() {
       </div>
 
 
+      {/* Add gradient animation and text styles */}
+      <style>{`
+        @keyframes gradientFlow {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        .preserve-3d {
+          transform-style: preserve-3d;
+        }
+      `}</style>
     </div>
   );
 }
