@@ -122,8 +122,8 @@ export default function SubscriptionCarousel() {
 
   return (
     <div className="relative w-full max-w-6xl mx-auto px-4">
-      {/* 3D Carousel Container - Increased height for full content display */}
-      <div className="relative h-[calc(95vh-100px)] min-h-[700px] max-h-[800px] perspective-1000">
+      {/* 3D Carousel Container - Full viewport height usage */}
+      <div className="relative h-[calc(100vh-80px)] min-h-[800px] perspective-1000">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -161,7 +161,7 @@ export default function SubscriptionCarousel() {
 
             {/* Main Card */}
             <div
-              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-8 transform transition-all duration-500 hover:scale-105 overflow-hidden"
+              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col"
               style={{
                 border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
                 borderRadius: "24px",
@@ -173,7 +173,7 @@ export default function SubscriptionCarousel() {
                 boxShadow: currentTier.popular 
                   ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40`
                   : `0 20px 40px ${currentTier.gradientStart}40`,
-                height: "min(750px, calc(90vh - 100px))", // Increased height for full content display
+                height: "calc(95vh - 100px)", // Use almost full viewport height with flex layout
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -181,9 +181,9 @@ export default function SubscriptionCarousel() {
 
 
               {/* Package Icon with Animation */}
-              <div className="flex justify-center mb-6">
+              <div className="flex justify-center mb-4">
                 <div
-                  className="relative p-4 rounded-full"
+                  className="relative p-3 rounded-full"
                   style={{
                     background: `linear-gradient(135deg, ${currentTier.gradientStart}20, ${currentTier.gradientEnd}20)`,
                   }}
@@ -191,14 +191,14 @@ export default function SubscriptionCarousel() {
                   <img
                     src={currentTier.icon}
                     alt={`${currentTier.name} icon`}
-                    className="w-24 h-24 object-contain animate-float"
+                    className="w-20 h-20 object-contain animate-float"
                   />
                 </div>
               </div>
 
               {/* Title and Description */}
-              <div className="text-center mb-6">
-                <h3 className="text-4xl font-black mb-2">
+              <div className="text-center mb-4">
+                <h3 className="text-3xl font-black mb-2">
                   <span
                     style={{
                       background: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
@@ -211,7 +211,7 @@ export default function SubscriptionCarousel() {
                     {currentTier.name}
                   </span>
                 </h3>
-                <p className="text-gray-400 text-lg">{currentTier.description}</p>
+                <p className="text-gray-400 text-base">{currentTier.description}</p>
                 
                 {/* MOST POPULAR badge for Legend package */}
                 {currentTier.popular && (
@@ -231,46 +231,46 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* Price */}
-              <div className="text-center mb-8">
+              <div className="text-center mb-6">
                 <div className="flex items-center justify-center">
-                  <span className="text-5xl font-black text-white">${currentTier.price}</span>
+                  <span className="text-4xl font-black text-white">${currentTier.price}</span>
                   <span className="text-gray-400 ml-2">/month</span>
                 </div>
               </div>
 
               {/* Features - centered with checkmark compensation */}
-              <div className="mb-8">
+              <div className="flex-1 mb-4">
                 <div className="max-w-xs mx-auto">
                   {currentTier.features.map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-start space-x-3 mb-4 transform transition-all duration-300"
+                      className="flex items-start space-x-3 mb-3 transform transition-all duration-300"
                       style={{
                         transform: hoveredTier === currentTier.id ? "translateX(10px)" : "translateX(0)",
                         transitionDelay: `${index * 50}ms`,
                       }}
                     >
                       <div
-                        className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
+                        className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
                         style={{
                           background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
                         }}
                       >
-                        <Check className="w-4 h-4 text-white" />
+                        <Check className="w-3 h-3 text-white" />
                       </div>
-                      <span className="text-gray-300 font-medium text-left flex-1">{feature}</span>
+                      <span className="text-gray-300 text-sm font-medium text-left flex-1">{feature}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Special Perks - centered */}
-              <div className="mb-8">
-                <div className="bg-white/5 rounded-lg p-4 max-w-xs mx-auto">
-                  <h4 className="text-sm font-bold text-gray-400 mb-2 text-center">EXCLUSIVE PERKS</h4>
-                  <div className="space-y-2">
+              <div className="mb-4">
+                <div className="bg-white/5 rounded-lg p-3 max-w-xs mx-auto">
+                  <h4 className="text-xs font-bold text-gray-400 mb-2 text-center">EXCLUSIVE PERKS</h4>
+                  <div className="space-y-1">
                     {currentTier.perks.map((perk, index) => (
-                      <div key={index} className="text-sm text-gray-300 text-center">
+                      <div key={index} className="text-xs text-gray-300 text-center">
                         {perk}
                       </div>
                     ))}
@@ -279,21 +279,23 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* CTA Button */}
-              <Button
-                className="w-full py-6 text-lg font-bold rounded-xl transform transition-all duration-300 hover:scale-105"
-                style={{
-                  background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
-                  boxShadow: `0 10px 30px ${currentTier.gradientStart}50`,
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 15px 40px ${currentTier.gradientStart}70`;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = `0 10px 30px ${currentTier.gradientStart}50`;
-                }}
-              >
-                Get {currentTier.name} Now
-              </Button>
+              <div className="mt-auto">
+                <Button
+                  className="w-full py-4 text-base font-bold rounded-xl transform transition-all duration-300 hover:scale-105"
+                  style={{
+                    background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                    boxShadow: `0 10px 30px ${currentTier.gradientStart}50`,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = `0 15px 40px ${currentTier.gradientStart}70`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = `0 10px 30px ${currentTier.gradientStart}50`;
+                  }}
+                >
+                  Get {currentTier.name} Now
+                </Button>
+              </div>
             </div>
           </div>
         </div>
