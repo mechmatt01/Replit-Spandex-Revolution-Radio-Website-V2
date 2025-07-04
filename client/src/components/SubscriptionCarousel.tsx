@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight, Check, Star, Zap, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -85,7 +85,7 @@ const subscriptionTiers: SubscriptionTier[] = [
 ];
 
 export default function SubscriptionCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(1); // Start with Legend (middle)
+  const [currentIndex, setCurrentIndex] = useState(0); // Start with Rebel (first)
   const [isAnimating, setIsAnimating] = useState(false);
   const [hoveredTier, setHoveredTier] = useState<string | null>(null);
   const { getColors } = useTheme();
@@ -114,17 +114,6 @@ export default function SubscriptionCarousel() {
       setTimeout(() => setIsAnimating(false), 500);
     }
   };
-
-  // Auto-rotate every 5 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!hoveredTier) {
-        handleNext();
-      }
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [hoveredTier]);
 
   const currentTier = subscriptionTiers[currentIndex];
 
@@ -167,10 +156,19 @@ export default function SubscriptionCarousel() {
 
             {/* Main Card */}
             <div
-              className="relative bg-black/80 backdrop-blur-xl rounded-2xl p-8 border-2 transform transition-all duration-500 hover:scale-105"
+              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-8 transform transition-all duration-500 hover:scale-105"
               style={{
-                borderImage: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}) 1`,
-                boxShadow: `0 20px 40px ${currentTier.gradientStart}40, inset 0 0 30px ${currentTier.gradientStart}20`,
+                border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
+                borderRadius: "24px",
+                background: currentTier.popular 
+                  ? `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${currentTier.gradientStart} 0%, ${currentTier.gradientEnd} 25%, ${currentTier.gradientStart} 50%, ${currentTier.gradientEnd} 75%, ${currentTier.gradientStart} 100%) border-box`
+                  : `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}) border-box`,
+                backgroundSize: currentTier.popular ? "300% 300%" : "100% 100%",
+                animation: currentTier.popular ? "gradientFlow 3s linear infinite" : "none",
+                boxShadow: currentTier.popular 
+                  ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40, inset 0 0 30px ${currentTier.gradientStart}20`
+                  : `0 20px 40px ${currentTier.gradientStart}40, inset 0 0 30px ${currentTier.gradientStart}20`,
+                minHeight: "680px", // Ensure all packages have same height
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -206,9 +204,13 @@ export default function SubscriptionCarousel() {
               {/* Title and Description */}
               <div className="text-center mb-6">
                 <h3
-                  className="text-4xl font-black mb-2 bg-gradient-to-r text-transparent bg-clip-text"
+                  className="text-4xl font-black mb-2"
                   style={{
-                    backgroundImage: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                    background: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    color: "transparent",
                   }}
                 >
                   {currentTier.name}
@@ -280,22 +282,28 @@ export default function SubscriptionCarousel() {
           </div>
         </div>
 
-        {/* Tier Indicators */}
-        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 flex space-x-4">
+        {/* Mobile Swipe Hint / Desktop Click Hint */}
+        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-center text-gray-500 text-sm">
+          <span className="md:hidden">← Swipe to explore plans →</span>
+          <span className="hidden md:inline">← Click to explore plans →</span>
+        </div>
+
+        {/* Tier Indicators - Below the hint text */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3">
           {subscriptionTiers.map((tier, index) => (
             <button
               key={tier.id}
               onClick={() => handleSelectTier(index)}
               className={cn(
-                "w-3 h-3 rounded-full transition-all duration-300",
+                "rounded-full transition-all duration-300",
                 index === currentIndex
-                  ? "w-12 bg-gradient-to-r from-white to-gray-300"
-                  : "bg-gray-600 hover:bg-gray-500"
+                  ? "w-6 h-1.5"
+                  : "w-1.5 h-1.5 bg-gray-600 hover:bg-gray-500"
               )}
               style={{
                 background:
                   index === currentIndex
-                    ? `linear-gradient(135deg, ${tier.gradientStart}, ${tier.gradientEnd})`
+                    ? `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`
                     : undefined,
               }}
             />
@@ -303,30 +311,7 @@ export default function SubscriptionCarousel() {
         </div>
       </div>
 
-      {/* Mobile Swipe Hint */}
-      <div className="md:hidden text-center text-gray-500 text-sm mt-4">
-        ← Swipe to explore plans →
-      </div>
 
-      <style jsx>{`
-        .preserve-3d {
-          transform-style: preserve-3d;
-        }
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-        @keyframes float {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 }
