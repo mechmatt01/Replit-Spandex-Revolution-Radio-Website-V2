@@ -14,59 +14,7 @@
   --background-rgb: 31, 41, 55;
 }
 
-/* Subscription Package Positioning Classes */
-.subscription-container {
-  position: relative;
-  width: 100%;
-  max-width: 1000px;
-  height: 600px;
-  margin: 0 auto;
-}
-
-/* Desktop positioning for overlapping packages */
-@media (min-width: 768px) {
-  .package-rebel {
-    position: absolute !important;
-    width: 320px;
-    left: calc(50% - 250px); /* 90px overlap with Legend */
-    top: 40px;
-    z-index: 10;
-  }
-  
-  .package-legend {
-    position: absolute !important;
-    width: 340px;
-    left: calc(50% - 170px);
-    top: 0;
-    z-index: 50;
-    transform: scale(1.05);
-  }
-  
-  .package-icon {
-    position: absolute !important;
-    width: 320px;
-    left: calc(50% - 90px); /* 90px overlap with Legend */
-    top: 40px;
-    z-index: 10;
-  }
-}
-
-/* Mobile stacking */
-@media (max-width: 767px) {
-  .subscription-container {
-    height: auto;
-  }
-  
-  .package-rebel,
-  .package-legend,
-  .package-icon {
-    position: relative !important;
-    width: 100%;
-    max-width: 320px;
-    margin: 0 auto 2rem;
-    transform: none !important;
-  }
-}
+/* Removed old subscription positioning classes to prevent conflicts */
 
 /* Animated gradient border animation */
 @keyframes gradient-rotate {
