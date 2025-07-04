@@ -316,7 +316,7 @@ export default function StripePaymentProcessor() {
             className="bg-transparent transition-all duration-300 relative rounded-lg flex flex-col"
             style={{
               minHeight: "540px", // Same height for all tiers
-              border: `${tier.name === "LEGEND" ? "5px" : "2px"} solid transparent`, // Increased border for Legend
+              border: `${tier.name === "LEGEND" ? "6px" : "5px"} solid transparent`, // Increased border for Legend
               background: `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,
               boxShadow: tier.name === "LEGEND" 
                 ? `0 0 30px ${tier.gradientStart}60, 0 0 60px ${tier.gradientEnd}40, inset 0 0 20px ${tier.gradientStart}20`
@@ -353,10 +353,10 @@ export default function StripePaymentProcessor() {
                   </div>
 
                   <div className="mb-4">
-                    <span className="text-3xl font-black text-metal-orange">
+                    <div className="text-3xl font-black text-metal-orange">
                       ${tier.price}
-                    </span>
-                    <span className="text-gray-400 font-semibold">/month</span>
+                    </div>
+                    <div className="text-gray-400 font-semibold text-sm">per month</div>
                   </div>
                 </div>
 
@@ -413,10 +413,10 @@ export default function StripePaymentProcessor() {
             style={{
               width: index === 1 ? "340px" : "320px",
               left: index === 0 
-                ? "calc(50% - 310px)" // Rebel: slight overlap with Legend
+                ? "calc(50% - 360px)" // Rebel: minimal overlap with Legend
                 : index === 1 
                 ? "calc(50% - 170px)" // Legend: center
-                : "calc(50% - 30px)", // Icon: slight overlap with Legend
+                : "calc(50% + 20px)", // Icon: minimal overlap with Legend
               top: index === 1 ? "0px" : "40px",
               zIndex: index === 1 ? 50 : 10,
               transform: index === 1 ? "scale(1.05)" : "none"
@@ -431,14 +431,32 @@ export default function StripePaymentProcessor() {
               {tier.name}
             </h3>
             
+            {/* MOST POPULAR badge positioned above the card */}
+            {tier.popular && (
+              <div
+                className="absolute left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                style={{
+                  background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                  color: "black",
+                  whiteSpace: "nowrap",
+                  fontSize: "11px",
+                  lineHeight: "1",
+                  zIndex: 100,
+                  top: "32px" // Position it just above the card
+                }}
+              >
+                MOST&nbsp;POPULAR
+              </div>
+            )}
+            
             <div
               className="rounded-lg flex flex-col transition-all duration-300 relative overflow-hidden"
               style={{ 
                 minHeight: "540px",
-                border: tier.popular ? "3px solid transparent" : "2px solid transparent",
+                border: tier.popular ? "6px solid transparent" : "5px solid transparent",
                 background: tier.popular 
-                  ? `linear-gradient(rgba(31, 41, 55, 0.95), rgba(31, 41, 55, 0.95)) padding-box, linear-gradient(90deg, #E520C6, #F4654F) border-box`
-                  : `linear-gradient(rgba(31, 41, 55, 0.95), rgba(31, 41, 55, 0.95)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,
+                  ? `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, #E520C6, #F4654F) border-box`
+                  : `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,
                 boxShadow: tier.popular 
                   ? "0 0 30px #E520C6, 0 0 60px #F4654F, inset 0 0 20px rgba(229, 32, 198, 0.3)"
                   : `0 0 15px ${tier.gradientStart}40`,
@@ -447,29 +465,15 @@ export default function StripePaymentProcessor() {
             >
               {tier.popular && (
                 <>
-                  <div
-                    className="absolute -top-4 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
-                    style={{
-                      background: "linear-gradient(135deg, #ff6b35, #f7931e)",
-                      color: "black",
-                      whiteSpace: "nowrap",
-                      fontSize: "11px",
-                      lineHeight: "1",
-                      zIndex: 100,
-                      marginTop: "-10px"
-                    }}
-                  >
-                    MOST&nbsp;POPULAR
-                  </div>
                   
                   {/* Animated gradient border overlay */}
                   <div
                     className="absolute"
                     style={{
-                      top: "-3px",
-                      left: "-3px",
-                      right: "-3px",
-                      bottom: "-3px",
+                      top: "-6px",
+                      left: "-6px",
+                      right: "-6px",
+                      bottom: "-6px",
                       background: "linear-gradient(45deg, #ff6b35, #f7931e, #ffcc00, #f7931e, #ff6b35)",
                       backgroundSize: "400% 400%",
                       animation: "gradient-rotate 4s linear infinite",
@@ -494,10 +498,10 @@ export default function StripePaymentProcessor() {
                     </div>
 
                     <div className="mb-4">
-                      <span className="text-3xl font-black text-metal-orange">
+                      <div className="text-3xl font-black text-metal-orange">
                         ${tier.price}
-                      </span>
-                      <span className="text-gray-400 font-semibold">/month</span>
+                      </div>
+                      <div className="text-gray-400 font-semibold text-sm">per month</div>
                     </div>
                   </div>
 
