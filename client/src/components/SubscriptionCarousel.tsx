@@ -124,18 +124,18 @@ export default function SubscriptionCarousel() {
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/50 backdrop-blur-md border border-white/20 hover:bg-white/10 transition-all duration-300 group opacity-50 hover:opacity-100"
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 transition-all duration-300 opacity-50 hover:opacity-100"
           disabled={isAnimating}
         >
-          <ChevronLeft className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+          <ChevronLeft className="w-8 h-8 text-white hover:scale-110 transition-transform drop-shadow-lg" />
         </button>
 
         <button
           onClick={handleNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/50 backdrop-blur-md border border-white/20 hover:bg-white/10 transition-all duration-300 group opacity-50 hover:opacity-100"
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 transition-all duration-300 opacity-50 hover:opacity-100"
           disabled={isAnimating}
         >
-          <ChevronRight className="w-6 h-6 text-white group-hover:scale-110 transition-transform" />
+          <ChevronRight className="w-8 h-8 text-white hover:scale-110 transition-transform drop-shadow-lg" />
         </button>
 
         {/* Main Card Display */}
@@ -195,12 +195,14 @@ export default function SubscriptionCarousel() {
               <div className="text-center mb-6">
                 <h3 className="text-4xl font-black mb-2">
                   <span
+                    className="inline-block bg-gradient-to-r bg-clip-text text-transparent"
                     style={{
-                      background: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                      backgroundImage: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
                       WebkitBackgroundClip: "text",
                       WebkitTextFillColor: "transparent",
                       backgroundClip: "text",
-                      display: "inline-block",
+                      color: "transparent",
+                      filter: "contrast(1.1) brightness(1.1)",
                     }}
                   >
                     {currentTier.name}
