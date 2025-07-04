@@ -297,7 +297,9 @@ export default function StripePaymentProcessor() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <>
+      {/* Mobile Layout */}
+      <div className="md:hidden flex flex-col gap-8 max-w-sm mx-auto">
       {subscriptionTiers.map((tier) => (
         <div key={tier.id} className="relative">
           {/* Title Above Box */}
@@ -393,6 +395,145 @@ export default function StripePaymentProcessor() {
           </div>
         </div>
       ))}
-    </div>
+      </div>
+
+      {/* Desktop Layout with Overlapping */}
+      <div 
+        className="hidden md:block relative mx-auto"
+        style={{ 
+          width: "100%", 
+          maxWidth: "1000px", 
+          height: "600px" 
+        }}
+      >
+        {subscriptionTiers.map((tier, index) => (
+          <div
+            key={`desktop-${tier.id}`}
+            className="absolute transition-all duration-300"
+            style={{
+              width: index === 1 ? "340px" : "320px",
+              left: index === 0 
+                ? "calc(50% - 250px)" // Rebel: overlaps with Legend
+                : index === 1 
+                ? "calc(50% - 170px)" // Legend: center
+                : "calc(50% - 90px)", // Icon: overlaps with Legend
+              top: index === 1 ? "0px" : "40px",
+              zIndex: index === 1 ? 50 : 10,
+              transform: index === 1 ? "scale(1.05)" : "none"
+            }}
+          >
+            <h3 
+              className="font-black text-white mb-4 text-center"
+              style={{ 
+                fontSize: tier.name === "LEGEND" ? "1.75rem" : "1.25rem"
+              }}
+            >
+              {tier.name}
+            </h3>
+            
+            <div
+              className="rounded-lg flex flex-col transition-all duration-300 relative overflow-hidden"
+              style={{ 
+                minHeight: "540px",
+                border: tier.popular ? "3px solid #B56BFF" : "2px solid #374151",
+                background: "rgba(31, 41, 55, 0.95)",
+                boxShadow: tier.popular 
+                  ? "0 0 20px #B56BFF, inset 0 0 20px rgba(181, 107, 255, 0.2)"
+                  : "none",
+                animation: tier.popular ? "legend-glow 4s linear infinite" : "none"
+              }}
+            >
+              {tier.popular && (
+                <>
+                  <div
+                    className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                    style={{
+                      background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                      color: "black",
+                      whiteSpace: "nowrap",
+                      fontSize: "11px",
+                      lineHeight: "1",
+                      zIndex: 10
+                    }}
+                  >
+                    MOST&nbsp;POPULAR
+                  </div>
+                  
+                  {/* Animated gradient border overlay */}
+                  <div
+                    className="absolute"
+                    style={{
+                      top: "-3px",
+                      left: "-3px",
+                      right: "-3px",
+                      bottom: "-3px",
+                      background: "linear-gradient(45deg, #B56BFF, #FF50C3, #FFD700, #FF6B35, #B56BFF)",
+                      backgroundSize: "400% 400%",
+                      animation: "gradient-rotate 4s linear infinite",
+                      zIndex: -1,
+                      borderRadius: "inherit"
+                    }}
+                  />
+                </>
+              )}
+
+              <div className="p-6 flex flex-col h-full justify-between">
+                <div>
+                  <div className="text-center mb-6">
+                    <div className="flex justify-center mb-4">
+                      <img
+                        src={tier.icon}
+                        alt={`${tier.name} package icon`}
+                        className={`object-contain ${
+                          tier.id === "rebel" ? "w-20 h-20" : "w-16 h-16"
+                        }`}
+                      />
+                    </div>
+
+                    <div className="mb-4">
+                      <span className="text-3xl font-black text-metal-orange">
+                        ${tier.price}
+                      </span>
+                      <span className="text-gray-400 font-semibold">/month</span>
+                    </div>
+                  </div>
+
+                  <ul className="space-y-4 mb-12 flex-grow">
+                    {tier.features.map((feature, index) => (
+                      <li key={index} className="flex items-start">
+                        <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
+                        <span className="text-gray-300 font-semibold text-base leading-relaxed">
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <button
+                  onClick={() => handleTierSelect(tier)}
+                  className="w-full font-bold rounded-full transition-all duration-300 text-white transform hover:scale-105 hover:shadow-2xl py-3 text-base"
+                  style={{
+                    fontSize: "16px",
+                    background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
+                    boxShadow: `0 4px 15px ${tier.gradientStart}40`,
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = `0 8px 25px ${tier.gradientStart}80, 0 0 20px ${tier.gradientEnd}60`;
+                    e.currentTarget.style.transform = "scale(1.1)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = `0 4px 15px ${tier.gradientStart}40`;
+                    e.currentTarget.style.transform = "scale(1)";
+                  }}
+                >
+                  Subscribe
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
