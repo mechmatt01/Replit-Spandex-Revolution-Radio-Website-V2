@@ -176,8 +176,8 @@ export default function SubscriptionCarousel() {
             style={{
               transform: isAnimating ? 
                 (slideDirection === 'left' ? 
-                  'translateX(-30px) scale(0.98)' : 
-                  'translateX(30px) scale(0.98)'
+                  'translateX(30px) scale(0.98)' : 
+                  'translateX(-30px) scale(0.98)'
                 ) : 'translateX(0) scale(1)',
               opacity: isAnimating ? 0.8 : 1,
               transition: 'all 0.4s ease-in-out'
@@ -259,7 +259,7 @@ export default function SubscriptionCarousel() {
                   </span>
                 </h3>
                 <p className="text-gray-400 text-sm sm:text-base">{currentTier.description}</p>
-                
+
                 {/* MOST POPULAR badge for Legend package */}
                 {currentTier.popular && (
                   <div className="mt-4">
@@ -383,7 +383,7 @@ export default function SubscriptionCarousel() {
                 filter: "blur(12px)",
               }}
             />
-            
+
             {/* Icon container */}
             <div
               className={cn(
@@ -408,7 +408,7 @@ export default function SubscriptionCarousel() {
                 }}
               />
             </div>
-            
+
             {/* Active indicator ring */}
             {index === currentIndex && (
               <div

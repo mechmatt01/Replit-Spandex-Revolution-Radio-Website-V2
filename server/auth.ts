@@ -38,15 +38,17 @@ export function getSession() {
   });
 
   return session({
-    secret: process.env.SESSION_SECRET || "your-session-secret",
+    secret: process.env.SESSION_SECRET || crypto.randomBytes(64).toString('hex'),
     store: sessionStore,
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
       maxAge: sessionTtl,
     },
+    name: 'spandex.sid', // Obscure session name
   });
 }
 

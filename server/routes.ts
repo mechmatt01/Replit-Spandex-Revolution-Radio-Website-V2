@@ -36,6 +36,31 @@ import https from "https";
 import crypto from "crypto";
 import { setupRadioProxy } from "./radioProxy";
 
+// Rate limiting store
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+// Rate limiting middleware
+function rateLimit(maxRequests: number, windowMs: number) {
+  return (req: Request, res: Response, next: Function) => {
+    const key = req.ip || 'unknown';
+    const now = Date.now();
+    const windowStart = now - windowMs;
+    
+    const record = rateLimitStore.get(key);
+    if (!record || record.resetTime < now) {
+      rateLimitStore.set(key, { count: 1, resetTime: now + windowMs });
+      return next();
+    }
+    
+    if (record.count >= maxRequests) {
+      return res.status(429).json({ message: "Too many requests, please try again later" });
+    }
+    
+    record.count++;
+    next();
+  };
+}
+
 import {
   insertSubmissionSchema,
   insertContactSchema,
@@ -65,6 +90,16 @@ const stripe = process.env.STRIPE_SECRET_KEY
   : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Security headers middleware
+  app.use((req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    next();
+  });
+
   // Auth middleware
   await setupAuth(app);
 
@@ -88,15 +123,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   );
 
   // Registration route
-  app.post("/api/auth/register", async (req, res) => {
+  app.post("/api/auth/register", rateLimit(5, 15 * 60 * 1000), async (req, res) => {
     try {
       const validatedData = registerUserSchema.parse(req.body);
 
       // Generate unique user ID
       const userId = crypto.randomBytes(5).toString("hex");
 
-      // Hash password
-      const hashedPassword = await bcrypt.hash(validatedData.password, 10);
+      // Validate password strength
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(validatedData.password)) {
+        return res.status(400).json({ 
+          message: "Password must be at least 8 characters with uppercase, lowercase, number, and special character" 
+        });
+      }
+
+      // Hash password with higher salt rounds for production
+      const saltRounds = process.env.NODE_ENV === 'production' ? 12 : 10;
+      const hashedPassword = await bcrypt.hash(validatedData.password, saltRounds);
 
       // Create user data
       const userData = {
@@ -1510,6 +1554,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post(
     "/api/user/send-phone-verification",
     isAuthenticated,
+    rateLimit(3, 10 * 60 * 1000),
     async (req: AuthenticatedRequest, res: Response) => {
       try {
         const user = req.user;
@@ -1517,6 +1562,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         if (!phoneNumber) {
           return res.status(400).json({ message: "Phone number is required" });
+        }
+
+        // Validate phone number format before processing
+        const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+        if (!phoneRegex.test(phoneNumber.replace(/[\s\-\(\)]/g, ''))) {
+          return res.status(400).json({ message: "Invalid phone number format" });
         }
 
         // Format phone number to E.164 format
@@ -1803,6 +1854,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     },
   );
 
+  // CSRF token endpoint
+  app.get("/api/csrf-token", (req, res) => {
+    const token = crypto.randomBytes(32).toString('hex');
+    req.session.csrfToken = token;
+    res.json({ token });
+  });
+
   // Dynamic Open Graph image generation
   app.get("/api/og-image", (req, res) => {
     const {
@@ -1944,6 +2002,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.setHeader("Cache-Control", "public, max-age=300"); // Shorter cache for theme changes
     res.setHeader("Vary", "theme, primary, secondary");
     res.send(svg);
+  });
+
+  // Global error handling middleware
+  app.use((err: any, req: Request, res: Response, next: Function) => {
+    console.error('Global error handler:', err);
+    
+    // Don't leak sensitive information in production
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+    
+    res.status(500).json({ 
+      message: 'Internal server error',
+      error: err.message 
+    });
+  });
+
+  // 404 handler for API routes
+  app.use('/api/*', (req: Request, res: Response) => {
+    res.status(404).json({ message: 'API endpoint not found' });
   });
 
   const httpServer = createServer(app);
