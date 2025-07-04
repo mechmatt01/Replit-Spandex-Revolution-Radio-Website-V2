@@ -298,9 +298,10 @@ export default function StripePaymentProcessor() {
 
   return (
     <div className="w-full">
-      {/* Mobile Layout */}
-      <div className="md:hidden flex flex-col gap-8 max-w-sm mx-auto">
-      {subscriptionTiers.map((tier) => (
+      {/* Mobile Layout - Only visible on small screens */}
+      <div className="block md:hidden">
+        <div className="flex flex-col gap-8 max-w-sm mx-auto">
+        {subscriptionTiers.map((tier) => (
         <div key={`mobile-${tier.id}`} className="relative">
           {/* Title Above Box */}
           <h3 
@@ -324,7 +325,10 @@ export default function StripePaymentProcessor() {
             }}
           >
             {tier.popular && (
-              <div className="absolute -top-2.5 left-1/2 transform -translate-x-1/2">
+              <div 
+                className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                style={{ top: "0" }}
+              >
                 <span
                   className="px-4 py-1 rounded-full text-xs font-bold"
                   style={{
@@ -397,9 +401,10 @@ export default function StripePaymentProcessor() {
           </div>
         </div>
       ))}
+        </div>
       </div>
 
-      {/* Desktop Layout with Overlapping */}
+      {/* Desktop Layout with Overlapping - Only visible on medium screens and up */}
       <div 
         className="hidden md:block relative mx-auto"
         style={{ 
@@ -444,7 +449,7 @@ export default function StripePaymentProcessor() {
                   fontSize: "11px",
                   lineHeight: "1",
                   zIndex: 100,
-                  top: "91px" // Position it right on the top border of Legend card
+                  top: "40px" // Position exactly on the top border of Legend card
                 }}
               >
                 MOST&nbsp;POPULAR

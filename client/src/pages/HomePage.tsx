@@ -32,8 +32,7 @@ export default function HomePage() {
               PREMIUM SUBSCRIPTIONS
             </h2>
             <p className="text-gray-400 text-lg font-semibold">
-              Support the station and unlock exclusive content with secure
-              Stripe payments.
+              Support the station and unlock exclusive content.
             </p>
           </div>
           <StripePaymentProcessor />
