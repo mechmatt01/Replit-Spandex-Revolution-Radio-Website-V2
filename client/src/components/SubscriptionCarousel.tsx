@@ -123,7 +123,7 @@ export default function SubscriptionCarousel() {
   return (
     <div className="relative w-full max-w-6xl mx-auto px-4">
       {/* 3D Carousel Container - Full viewport height usage */}
-      <div className="relative h-[calc(100vh-80px)] min-h-[800px] perspective-1000 subscription-carousel-container">
+      <div className="relative h-[calc(100vh-120px)] min-h-[750px] perspective-1000 subscription-carousel-container">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -173,8 +173,8 @@ export default function SubscriptionCarousel() {
                 boxShadow: currentTier.popular 
                   ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40`
                   : `0 20px 40px ${currentTier.gradientStart}40`,
-                height: "calc(100vh - 80px)", // Use almost full viewport height with flex layout
-                minHeight: "800px", // Ensure minimum height for all content
+                height: "calc(100vh - 120px)", // Use almost full viewport height with flex layout
+                minHeight: "750px", // Ensure minimum height for all content
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -239,36 +239,36 @@ export default function SubscriptionCarousel() {
                 </div>
               </div>
 
-              {/* Features - perfectly centered with checkmark compensation */}
-              <div className="mb-4">
+              {/* Features - text centered with checkmarks on left */}
+              <div className="mb-6">
                 <div className="w-full px-4">
-                  {currentTier.features.map((feature, index) => (
+                  {currentTier.features
+                    .sort((a, b) => a.length - b.length) // Sort by text length - shortest first
+                    .map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-start justify-center mb-3 transform transition-all duration-300"
+                      className="flex items-start mb-3 transform transition-all duration-300"
                       style={{
                         transform: hoveredTier === currentTier.id ? "translateX(10px)" : "translateX(0)",
                         transitionDelay: `${index * 50}ms`,
                       }}
                     >
-                      <div className="flex items-start space-x-3 max-w-xs">
-                        <div
-                          className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                          style={{
-                            background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
-                          }}
-                        >
-                          <Check className="w-3 h-3 text-white" />
-                        </div>
-                        <span className="text-gray-300 text-sm font-medium text-left flex-1">{feature}</span>
+                      <div
+                        className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 mr-3"
+                        style={{
+                          background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                        }}
+                      >
+                        <Check className="w-3 h-3 text-white" />
                       </div>
+                      <span className="text-gray-300 text-sm font-medium text-center flex-1">{feature}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Special Perks - centered */}
-              <div className="mb-4">
+              <div className="mb-6">
                 <div className="bg-white/5 rounded-lg p-3 max-w-xs mx-auto">
                   <h4 className="text-xs font-bold text-gray-400 mb-2 text-center">EXCLUSIVE PERKS</h4>
                   <div className="space-y-1">
