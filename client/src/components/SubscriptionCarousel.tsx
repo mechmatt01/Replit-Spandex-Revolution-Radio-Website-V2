@@ -119,8 +119,8 @@ export default function SubscriptionCarousel() {
 
   return (
     <div className="relative w-full max-w-6xl mx-auto px-4">
-      {/* 3D Carousel Container */}
-      <div className="relative h-[700px] perspective-1000">
+      {/* 3D Carousel Container - Responsive height */}
+      <div className="relative h-[calc(100vh-200px)] min-h-[500px] max-h-[650px] perspective-1000">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -168,7 +168,7 @@ export default function SubscriptionCarousel() {
                 boxShadow: currentTier.popular 
                   ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40, inset 0 0 30px ${currentTier.gradientStart}20`
                   : `0 20px 40px ${currentTier.gradientStart}40, inset 0 0 30px ${currentTier.gradientStart}20`,
-                minHeight: "680px", // Ensure all packages have same height
+                minHeight: "580px", // Ensure all packages have same height
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -193,17 +193,18 @@ export default function SubscriptionCarousel() {
 
               {/* Title and Description */}
               <div className="text-center mb-6">
-                <h3
-                  className="text-4xl font-black mb-2"
-                  style={{
-                    background: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                    color: "transparent",
-                  }}
-                >
-                  {currentTier.name}
+                <h3 className="text-4xl font-black mb-2">
+                  <span
+                    style={{
+                      background: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      display: "inline-block",
+                    }}
+                  >
+                    {currentTier.name}
+                  </span>
                 </h3>
                 <p className="text-gray-400 text-lg">{currentTier.description}</p>
                 
@@ -303,35 +304,59 @@ export default function SubscriptionCarousel() {
             key={tier.id}
             onClick={() => handleSelectTier(index)}
             className={cn(
-              "relative transition-all duration-300 p-2 rounded-full",
+              "relative transition-all duration-500 ease-in-out p-3 rounded-full",
               index === currentIndex
-                ? "scale-125"
-                : "opacity-50 hover:opacity-75"
+                ? "scale-110"
+                : "opacity-40 hover:opacity-60 scale-90"
             )}
-            style={{
-              background:
-                index === currentIndex
-                  ? `linear-gradient(135deg, ${tier.gradientStart}30, ${tier.gradientEnd}30)`
-                  : undefined,
-            }}
           >
-            <img
-              src={tier.icon}
-              alt={`${tier.name} icon`}
+            {/* Smooth background glow */}
+            <div
               className={cn(
-                "object-contain transition-all duration-300",
-                index === currentIndex ? "w-8 h-8" : "w-6 h-6"
+                "absolute inset-0 rounded-full transition-all duration-500",
+                index === currentIndex ? "opacity-100" : "opacity-0"
               )}
               style={{
-                filter: index === currentIndex ? "none" : "grayscale(100%)",
+                background: `radial-gradient(circle, ${tier.gradientStart}20, transparent 70%)`,
+                filter: "blur(12px)",
               }}
             />
+            
+            {/* Icon container */}
+            <div
+              className={cn(
+                "relative rounded-full transition-all duration-500",
+                index === currentIndex ? "bg-black/20" : "bg-transparent"
+              )}
+              style={{
+                padding: "0.5rem",
+              }}
+            >
+              <img
+                src={tier.icon}
+                alt={`${tier.name} icon`}
+                className={cn(
+                  "object-contain transition-all duration-500",
+                  index === currentIndex ? "w-8 h-8" : "w-6 h-6"
+                )}
+                style={{
+                  filter: index === currentIndex 
+                    ? "drop-shadow(0 0 8px rgba(255,255,255,0.5))" 
+                    : "grayscale(100%) opacity(0.7)",
+                }}
+              />
+            </div>
+            
+            {/* Active indicator ring */}
             {index === currentIndex && (
               <div
-                className="absolute inset-0 rounded-full blur-md"
+                className="absolute inset-0 rounded-full"
                 style={{
-                  background: `linear-gradient(135deg, ${tier.gradientStart}40, ${tier.gradientEnd}40)`,
-                  zIndex: -1,
+                  background: `linear-gradient(135deg, ${tier.gradientStart}60, ${tier.gradientEnd}60)`,
+                  padding: "2px",
+                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMaskComposite: "xor",
+                  maskComposite: "exclude",
                 }}
               />
             )}
