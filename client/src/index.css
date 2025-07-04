@@ -41,6 +41,20 @@
   background-attachment: fixed;
 }
 
+/* Floating animation for package icons */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
 /* Carousel slide animations */
 @keyframes slideInLeft {
   from {
