@@ -123,7 +123,7 @@ export default function SubscriptionCarousel() {
   return (
     <div className="relative w-full max-w-6xl mx-auto px-4">
       {/* 3D Carousel Container - Full viewport height usage */}
-      <div className="relative h-[calc(100vh-200px)] min-h-[640px] perspective-1000 subscription-carousel-container">
+      <div className="relative h-[calc(100vh-180px)] min-h-[700px] perspective-1000 subscription-carousel-container">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -161,7 +161,7 @@ export default function SubscriptionCarousel() {
 
             {/* Main Card */}
             <div
-              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden subscription-card"
+              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col subscription-card"
               style={{
                 border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
                 borderRadius: "24px",
@@ -173,8 +173,8 @@ export default function SubscriptionCarousel() {
                 boxShadow: currentTier.popular 
                   ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40`
                   : `0 20px 40px ${currentTier.gradientStart}40`,
-                height: "calc(100vh - 200px)", // Further reduced height to eliminate bottom gap
-                minHeight: "640px", // Ensure minimum height for all content
+                height: "calc(100vh - 180px)", // Adjusted height to fit all content including buttons
+                minHeight: "700px", // Increased minimum height to prevent button cutoff
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -241,7 +241,7 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* Features - text centered within package width */}
-              <div className="mb-4">
+              <div className="flex-1 mb-4">
                 <div className="w-full">
                   {currentTier.features
                     .sort((a, b) => a.length - b.length) // Sort by text length - shortest first
