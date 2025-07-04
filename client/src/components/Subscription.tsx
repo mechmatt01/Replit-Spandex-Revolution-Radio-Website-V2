@@ -126,7 +126,7 @@ export default function Subscription() {
                 index === 0
                   ? "md:z-10" // Rebel: goes behind Legend
                   : index === 1
-                    ? "md:z-20" // Legend: on top
+                    ? "md:z-30" // Legend: on top (higher z-index)
                     : "md:z-10" // Icon: goes behind Legend
               }`}
               style={{
@@ -135,10 +135,10 @@ export default function Subscription() {
                 flex: "0 0 auto",
                 transform:
                   index === 0
-                    ? "translateX(16px)" // Rebel: moves right 5% of 320px
+                    ? "translateX(10px)" // Rebel: moves right 10px so Legend overlaps it
                     : index === 1
-                      ? "translateY(-50px)" // Legend: moves up 20px higher than others
-                      : "translateX(-16px)", // Icon: moves left 5% of 320px
+                      ? "translateY(-20px)" // Legend: moves up 20px higher than others
+                      : "translateX(-10px)", // Icon: moves left 10px so Legend overlaps it
               }}
             >
               {/* Title Above Box */}
@@ -171,13 +171,6 @@ export default function Subscription() {
                       whiteSpace: "nowrap",
                       fontSize: "11px",
                       lineHeight: "1",
-                      transform:
-                        index === 0
-                          ? "translateY(-50px)"
-                          : "translateX(16px)" // Rebel: moves right 5% of 320px
-                          : index === 1
-                            ? "translateY(-50px)" // Legend: moves up 20px higher than others
-                            : "translateX(-16px)", // Icon: moves left 5% of 320px
                     }}
                   >
                     MOST&nbsp;POPULAR
