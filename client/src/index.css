@@ -41,6 +41,19 @@
   background-attachment: fixed;
 }
 
+/* Ensure gradient text works consistently across all packages */
+.subscription-card h3 span {
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: content-box !important;
+  line-height: inherit !important;
+}
+
 /* Floating animation for package icons */
 @keyframes float {
   0%, 100% {

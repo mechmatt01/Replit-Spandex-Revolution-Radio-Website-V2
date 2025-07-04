@@ -199,17 +199,23 @@ export default function SubscriptionCarousel() {
 
               {/* Title and Description */}
               <div className="text-center mb-4">
-                <h3 
-                  className="text-3xl font-black mb-2"
-                  style={{
-                    background: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                    color: "transparent",
-                  }}
-                >
-                  {currentTier.name}
+                <h3 className="text-3xl font-black mb-2">
+                  <span
+                    key={currentTier.id}
+                    style={{
+                      background: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      color: "transparent",
+                      display: "inline",
+                      padding: 0,
+                      margin: 0,
+                      fontWeight: "inherit",
+                    }}
+                  >
+                    {currentTier.name}
+                  </span>
                 </h3>
                 <p className="text-gray-400 text-base">{currentTier.description}</p>
                 
