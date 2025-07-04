@@ -299,7 +299,7 @@ export default function StripePaymentProcessor() {
   return (
     <div className="w-full">
       {/* Mobile Layout - Only visible on small screens */}
-      <div className="block md:hidden">
+      <div className="md:hidden w-full">
         <div className="flex flex-col gap-8 max-w-sm mx-auto">
         {subscriptionTiers.map((tier) => (
         <div key={`mobile-${tier.id}`} className="relative">
@@ -420,10 +420,10 @@ export default function StripePaymentProcessor() {
             style={{
               width: "340px", // All packages same width
               left: index === 0 
-                ? "calc(50% - 345px)" // Rebel: only 5px overlap (170 + 170 + 5)
+                ? "calc(50% - 505px)" // Rebel: only 5px overlap (340 - 5 + 170)
                 : index === 1 
                 ? "calc(50% - 170px)" // Legend: center (340px width / 2)
-                : "calc(50% + 5px)", // Icon: only 5px overlap
+                : "calc(50% + 165px)", // Icon: only 5px overlap (170 - 5)
               top: "40px", // All packages at same height
               zIndex: index === 1 ? 50 : 10,
               transform: "none" // Remove scale transform
@@ -438,10 +438,10 @@ export default function StripePaymentProcessor() {
               {tier.name}
             </h3>
             
-            {/* MOST POPULAR badge positioned above the card */}
+            {/* MOST POPULAR badge positioned on card border */}
             {tier.popular && (
               <div
-                className="absolute left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                 style={{
                   background: "linear-gradient(135deg, #ff6b35, #f7931e)",
                   color: "black",
@@ -449,7 +449,10 @@ export default function StripePaymentProcessor() {
                   fontSize: "11px",
                   lineHeight: "1",
                   zIndex: 100,
-                  top: "40px" // Position exactly on the top border of Legend card
+                  top: "53px", // Position exactly on the top border of card (after title)
+                  padding: "4px 16px",
+                  borderRadius: "9999px",
+                  fontWeight: "bold"
                 }}
               >
                 MOST&nbsp;POPULAR
