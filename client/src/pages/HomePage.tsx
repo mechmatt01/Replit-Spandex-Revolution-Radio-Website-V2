@@ -26,7 +26,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-white">
-              PREMIUM SUBSCRIPTIONS
+              SUPPORT THE STATION
             </h2>
             <p className="text-gray-400 text-lg font-semibold">
               Support the station and unlock exclusive content.
