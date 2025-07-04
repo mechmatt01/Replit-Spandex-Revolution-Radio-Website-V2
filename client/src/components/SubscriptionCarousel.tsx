@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Check, Star, Zap, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -92,6 +92,24 @@ export default function SubscriptionCarousel() {
   const { getColors } = useTheme();
   const colors = getColors();
 
+  const handlePrevious = useCallback(() => {
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setSlideDirection('right');
+      setCurrentIndex((prev) => (prev - 1 + subscriptionTiers.length) % subscriptionTiers.length);
+      setTimeout(() => setIsAnimating(false), 600);
+    }
+  }, [isAnimating]);
+
+  const handleNext = useCallback(() => {
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setSlideDirection('left');
+      setCurrentIndex((prev) => (prev + 1) % subscriptionTiers.length);
+      setTimeout(() => setIsAnimating(false), 600);
+    }
+  }, [isAnimating]);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -106,25 +124,7 @@ export default function SubscriptionCarousel() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isAnimating]);
-
-  const handlePrevious = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setSlideDirection('right');
-      setCurrentIndex((prev) => (prev - 1 + subscriptionTiers.length) % subscriptionTiers.length);
-      setTimeout(() => setIsAnimating(false), 600);
-    }
-  };
-
-  const handleNext = () => {
-    if (!isAnimating) {
-      setIsAnimating(true);
-      setSlideDirection('left');
-      setCurrentIndex((prev) => (prev + 1) % subscriptionTiers.length);
-      setTimeout(() => setIsAnimating(false), 600);
-    }
-  };
+  }, [handlePrevious, handleNext]);
 
   const handleSelectTier = (index: number) => {
     if (!isAnimating && index !== currentIndex) {
@@ -160,11 +160,19 @@ export default function SubscriptionCarousel() {
         {/* Main Card Display */}
         <div className="flex items-center justify-center h-full overflow-hidden">
           <div
+            key={currentIndex}
             className={`relative w-full max-w-md transform preserve-3d ${
               isAnimating ? 
                 slideDirection === 'left' ? 'slide-enter-right' : 'slide-enter-left'
                 : ''
             }`}
+            style={{
+              animation: isAnimating ? 
+                (slideDirection === 'left' ? 
+                  'slide-in-right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards' : 
+                  'slide-in-left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards'
+                ) : 'none'
+            }}
           >
             {/* Glow Effect - properly contained */}
             <div className="absolute inset-4 rounded-3xl overflow-hidden">
@@ -210,9 +218,13 @@ export default function SubscriptionCarousel() {
                     src={currentTier.icon}
                     alt={`${currentTier.name} icon`}
                     className={`w-20 h-20 object-contain animate-float ${
-                      currentIndex === 0 ? '' : 
-                      currentIndex === 1 ? 'float-delay-1' : 'float-delay-2'
+                      currentIndex === 1 ? 'float-delay-1' : 
+                      currentIndex === 2 ? 'float-delay-2' : ''
                     }`}
+                    style={{
+                      animation: 'float 4s ease-in-out infinite',
+                      animationDelay: currentIndex === 1 ? '0.5s' : currentIndex === 2 ? '1s' : '0s'
+                    }}
                   />
                 </div>
               </div>
