@@ -94,19 +94,27 @@ export default function SubscriptionCarousel() {
 
   const handlePrevious = useCallback(() => {
     if (!isAnimating) {
+      console.log('Previous animation starting');
       setIsAnimating(true);
       setSlideDirection('right');
       setCurrentIndex((prev) => (prev - 1 + subscriptionTiers.length) % subscriptionTiers.length);
-      setTimeout(() => setIsAnimating(false), 800);
+      setTimeout(() => {
+        setIsAnimating(false);
+        console.log('Previous animation complete');
+      }, 800);
     }
   }, [isAnimating]);
 
   const handleNext = useCallback(() => {
     if (!isAnimating) {
+      console.log('Next animation starting');
       setIsAnimating(true);
       setSlideDirection('left');
       setCurrentIndex((prev) => (prev + 1) % subscriptionTiers.length);
-      setTimeout(() => setIsAnimating(false), 800);
+      setTimeout(() => {
+        setIsAnimating(false);
+        console.log('Next animation complete');
+      }, 800);
     }
   }, [isAnimating]);
 
@@ -139,11 +147,10 @@ export default function SubscriptionCarousel() {
   return (
     <div className="relative w-full max-w-6xl mx-auto px-4">
       {/* 3D Carousel Container - Responsive height with device compatibility */}
-      <div className="relative perspective-1000 subscription-carousel-container overflow-visible py-4 sm:py-6 md:py-8 lg:py-10"
+      <div className="relative perspective-1000 subscription-carousel-container overflow-visible py-2 sm:py-4 md:py-6 lg:py-8"
            style={{
-             height: 'clamp(600px, calc(100vh - 160px), 900px)',
-             minHeight: '600px',
-             maxHeight: '90vh'
+             minHeight: '700px',
+             height: 'auto'
            }}>
         {/* Navigation Buttons */}
         <button
@@ -163,18 +170,23 @@ export default function SubscriptionCarousel() {
         </button>
 
         {/* Main Card Display */}
-        <div className="flex items-center justify-center h-full overflow-hidden">
+        <div className="flex items-center justify-center h-full relative" style={{ overflow: 'visible' }}>
           <div
             key={`${currentIndex}-${isAnimating}`}
             className="relative w-full max-w-md transform"
             style={{
-              animation: isAnimating ? 
+              transform: isAnimating ? 
                 (slideDirection === 'left' ? 
-                  'slide-in-right 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards' : 
-                  'slide-in-left 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards'
-                ) : 'fadeSlideIn 0.5s ease-out forwards',
-              transformOrigin: 'center center',
-              perspective: '1000px'
+                  'translateX(0) scale(1) rotateY(0deg)' : 
+                  'translateX(0) scale(1) rotateY(0deg)'
+                ) : 'translateX(0) scale(1)',
+              transition: isAnimating ? 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
+              opacity: isAnimating ? 1 : 1,
+              animationName: isAnimating ? 
+                (slideDirection === 'left' ? 'slide-in-right' : 'slide-in-left') : 'fadeSlideIn',
+              animationDuration: isAnimating ? '0.8s' : '0.5s',
+              animationTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              animationFillMode: 'forwards'
             }}
           >
             {/* Glow Effect - properly contained */}
@@ -201,9 +213,8 @@ export default function SubscriptionCarousel() {
                 boxShadow: currentTier.popular 
                   ? `0 0 60px ${currentTier.gradientStart}60, 0 0 120px ${currentTier.gradientEnd}40, 0 0 160px ${currentTier.gradientStart}20`
                   : `0 20px 40px ${currentTier.gradientStart}40`,
-                height: "clamp(550px, calc(90vh - 180px), 800px)", // Responsive height with device compatibility
-                minHeight: "550px", // Minimum height for mobile devices
-                maxHeight: "800px" // Maximum height for large screens
+                minHeight: "600px", // Minimum height for mobile devices
+                height: "auto" // Auto height to prevent content cutoff
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -211,9 +222,9 @@ export default function SubscriptionCarousel() {
 
 
               {/* Package Icon with Animation */}
-              <div className="flex justify-center mb-4">
+              <div className="flex justify-center mb-2 sm:mb-4">
                 <div
-                  className="relative p-3 rounded-full"
+                  className="relative p-2 sm:p-3 rounded-full"
                   style={{
                     background: `linear-gradient(135deg, ${currentTier.gradientStart}20, ${currentTier.gradientEnd}20)`,
                   }}
@@ -221,7 +232,7 @@ export default function SubscriptionCarousel() {
                   <img
                     src={currentTier.icon}
                     alt={`${currentTier.name} icon`}
-                    className={`w-20 h-20 object-contain animate-float ${
+                    className={`w-16 h-16 sm:w-20 sm:h-20 object-contain animate-float ${
                       currentIndex === 1 ? 'float-delay-1' : 
                       currentIndex === 2 ? 'float-delay-2' : ''
                     }`}
@@ -234,8 +245,8 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* Title and Description */}
-              <div className="text-center mb-4">
-                <h3 className="text-3xl font-black mb-2">
+              <div className="text-center mb-2 sm:mb-4">
+                <h3 className="text-2xl sm:text-3xl font-black mb-1 sm:mb-2">
                   <span
                     key={currentTier.id}
                     style={{
@@ -253,7 +264,7 @@ export default function SubscriptionCarousel() {
                     {currentTier.name}
                   </span>
                 </h3>
-                <p className="text-gray-400 text-base">{currentTier.description}</p>
+                <p className="text-gray-400 text-sm sm:text-base">{currentTier.description}</p>
                 
                 {/* MOST POPULAR badge for Legend package */}
                 {currentTier.popular && (
@@ -273,22 +284,22 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* Price */}
-              <div className="text-center mb-6">
+              <div className="text-center mb-3 sm:mb-6">
                 <div className="flex items-center justify-center">
-                  <span className="text-4xl font-black text-white">${currentTier.price}</span>
-                  <span className="text-gray-400 ml-2">/month</span>
+                  <span className="text-3xl sm:text-4xl font-black text-white">${currentTier.price}</span>
+                  <span className="text-gray-400 ml-2 text-sm sm:text-base">/month</span>
                 </div>
               </div>
 
               {/* Features - centered between price and exclusive perks */}
-              <div className="flex-1 flex items-center justify-center py-4">
+              <div className="flex-1 flex items-center justify-center py-2 sm:py-4">
                 <div className="w-full max-w-xs">
                   {currentTier.features
                     .sort((a, b) => a.length - b.length) // Sort by text length - shortest first
                     .map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-center justify-center mb-3 transform transition-all duration-300"
+                      className="flex items-center justify-center mb-2 sm:mb-3 transform transition-all duration-300"
                       style={{
                         transform: hoveredTier === currentTier.id ? "translateX(10px)" : "translateX(0)",
                         transitionDelay: `${index * 50}ms`,
@@ -296,14 +307,14 @@ export default function SubscriptionCarousel() {
                     >
                       <div className="flex items-center">
                         <div
-                          className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mr-3"
+                          className="w-3 h-3 sm:w-4 sm:h-4 rounded-full flex items-center justify-center flex-shrink-0 mr-2 sm:mr-3"
                           style={{
                             background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
                           }}
                         >
-                          <Check className="w-2.5 h-2.5 text-white" />
+                          <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-white" />
                         </div>
-                        <span className="text-gray-300 text-sm font-medium text-center">{feature}</span>
+                        <span className="text-gray-300 text-xs sm:text-sm font-medium text-center">{feature}</span>
                       </div>
                     </div>
                   ))}
@@ -311,12 +322,12 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* Special Perks - centered */}
-              <div className="mb-2">
-                <div className="bg-white/5 rounded-lg p-3 max-w-xs mx-auto">
-                  <h4 className="text-xs font-bold text-gray-400 mb-2 text-center">EXCLUSIVE PERKS</h4>
-                  <div className="space-y-1">
+              <div className="mb-2 sm:mb-3">
+                <div className="bg-white/5 rounded-lg p-2 sm:p-3 max-w-xs mx-auto">
+                  <h4 className="text-xs font-bold text-gray-400 mb-1 sm:mb-2 text-center">EXCLUSIVE PERKS</h4>
+                  <div className="space-y-0.5 sm:space-y-1">
                     {currentTier.perks.map((perk, index) => (
-                      <div key={index} className="text-xs text-gray-300 text-center">
+                      <div key={index} className="text-xs text-gray-300 text-center leading-tight">
                         {perk}
                       </div>
                     ))}
@@ -325,9 +336,9 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* CTA Button */}
-              <div className="mt-auto mb-4">
+              <div className="mt-auto mb-3 sm:mb-4">
                 <Button
-                  className="w-full py-4 text-base font-bold rounded-xl transform transition-all duration-300 hover:scale-105"
+                  className="w-full py-3 sm:py-4 text-sm sm:text-base font-bold rounded-xl transform transition-all duration-300 hover:scale-105"
                   style={{
                     background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
                     boxShadow: `0 10px 30px ${currentTier.gradientStart}50`,
@@ -339,7 +350,7 @@ export default function SubscriptionCarousel() {
                     e.currentTarget.style.boxShadow = `0 10px 30px ${currentTier.gradientStart}50`;
                   }}
                 >
-                  Get {currentTier.name} Now
+                  Get {currentTier.name.charAt(0) + currentTier.name.slice(1).toLowerCase()} Now
                 </Button>
               </div>
             </div>
