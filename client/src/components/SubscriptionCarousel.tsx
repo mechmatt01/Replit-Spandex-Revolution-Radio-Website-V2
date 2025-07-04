@@ -97,7 +97,7 @@ export default function SubscriptionCarousel() {
       setIsAnimating(true);
       setSlideDirection('right');
       setCurrentIndex((prev) => (prev - 1 + subscriptionTiers.length) % subscriptionTiers.length);
-      setTimeout(() => setIsAnimating(false), 600);
+      setTimeout(() => setIsAnimating(false), 800);
     }
   }, [isAnimating]);
 
@@ -106,7 +106,7 @@ export default function SubscriptionCarousel() {
       setIsAnimating(true);
       setSlideDirection('left');
       setCurrentIndex((prev) => (prev + 1) % subscriptionTiers.length);
-      setTimeout(() => setIsAnimating(false), 600);
+      setTimeout(() => setIsAnimating(false), 800);
     }
   }, [isAnimating]);
 
@@ -138,8 +138,13 @@ export default function SubscriptionCarousel() {
 
   return (
     <div className="relative w-full max-w-6xl mx-auto px-4">
-      {/* 3D Carousel Container - Full viewport height usage */}
-      <div className="relative h-[calc(100vh-180px)] min-h-[700px] perspective-1000 subscription-carousel-container overflow-visible py-10">
+      {/* 3D Carousel Container - Responsive height with device compatibility */}
+      <div className="relative perspective-1000 subscription-carousel-container overflow-visible py-4 sm:py-6 md:py-8 lg:py-10"
+           style={{
+             height: 'clamp(600px, calc(100vh - 160px), 900px)',
+             minHeight: '600px',
+             maxHeight: '90vh'
+           }}>
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -160,18 +165,16 @@ export default function SubscriptionCarousel() {
         {/* Main Card Display */}
         <div className="flex items-center justify-center h-full overflow-hidden">
           <div
-            key={currentIndex}
-            className={`relative w-full max-w-md transform preserve-3d ${
-              isAnimating ? 
-                slideDirection === 'left' ? 'slide-enter-right' : 'slide-enter-left'
-                : ''
-            }`}
+            key={`${currentIndex}-${isAnimating}`}
+            className="relative w-full max-w-md transform"
             style={{
               animation: isAnimating ? 
                 (slideDirection === 'left' ? 
-                  'slide-in-right 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards' : 
-                  'slide-in-left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards'
-                ) : 'none'
+                  'slide-in-right 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards' : 
+                  'slide-in-left 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards'
+                ) : 'fadeSlideIn 0.5s ease-out forwards',
+              transformOrigin: 'center center',
+              perspective: '1000px'
             }}
           >
             {/* Glow Effect - properly contained */}
@@ -198,8 +201,9 @@ export default function SubscriptionCarousel() {
                 boxShadow: currentTier.popular 
                   ? `0 0 60px ${currentTier.gradientStart}60, 0 0 120px ${currentTier.gradientEnd}40, 0 0 160px ${currentTier.gradientStart}20`
                   : `0 20px 40px ${currentTier.gradientStart}40`,
-                height: "calc(100vh - 160px)", // Increased height to fit all content including buttons
-                minHeight: "750px", // Increased minimum height to prevent button cutoff
+                height: "clamp(550px, calc(90vh - 180px), 800px)", // Responsive height with device compatibility
+                minHeight: "550px", // Minimum height for mobile devices
+                maxHeight: "800px" // Maximum height for large screens
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}

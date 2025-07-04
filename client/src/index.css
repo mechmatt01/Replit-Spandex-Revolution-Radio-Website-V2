@@ -111,48 +111,45 @@
   animation: legend-border-glow 6s ease-in-out infinite;
 }
 
-/* Smooth sliding animations for carousel transitions */
+/* Enhanced sliding animations for carousel transitions */
 @keyframes slide-in-right {
-  from {
-    transform: translateX(100%) scale(0.8);
+  0% {
+    transform: translateX(120%) scale(0.7) rotateY(-15deg);
     opacity: 0;
   }
-  to {
-    transform: translateX(0) scale(1);
-    opacity: 1;
+  50% {
+    transform: translateX(20%) scale(0.9) rotateY(-5deg);
+    opacity: 0.8;
   }
-}
-
-@keyframes slide-out-left {
-  from {
-    transform: translateX(0) scale(1);
+  100% {
+    transform: translateX(0) scale(1) rotateY(0deg);
     opacity: 1;
-  }
-  to {
-    transform: translateX(-100%) scale(0.8);
-    opacity: 0;
   }
 }
 
 @keyframes slide-in-left {
-  from {
-    transform: translateX(-100%) scale(0.8);
+  0% {
+    transform: translateX(-120%) scale(0.7) rotateY(15deg);
     opacity: 0;
   }
-  to {
-    transform: translateX(0) scale(1);
+  50% {
+    transform: translateX(-20%) scale(0.9) rotateY(5deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(0) scale(1) rotateY(0deg);
     opacity: 1;
   }
 }
 
-@keyframes slide-out-right {
-  from {
-    transform: translateX(0) scale(1);
-    opacity: 1;
-  }
-  to {
-    transform: translateX(100%) scale(0.8);
+@keyframes fadeSlideIn {
+  0% {
+    transform: translateY(30px) scale(0.95);
     opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
   }
 }
 
