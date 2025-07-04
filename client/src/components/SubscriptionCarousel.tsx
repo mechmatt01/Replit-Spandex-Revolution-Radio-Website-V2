@@ -161,7 +161,7 @@ export default function SubscriptionCarousel() {
 
             {/* Main Card */}
             <div
-              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col subscription-card"
+              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden subscription-card"
               style={{
                 border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
                 borderRadius: "24px",
@@ -239,36 +239,38 @@ export default function SubscriptionCarousel() {
                 </div>
               </div>
 
-              {/* Features - text centered with checkmarks on left */}
-              <div className="mb-6">
-                <div className="w-full px-4">
+              {/* Features - text centered within package width */}
+              <div className="mb-4">
+                <div className="w-full">
                   {currentTier.features
                     .sort((a, b) => a.length - b.length) // Sort by text length - shortest first
                     .map((feature, index) => (
                     <div
                       key={index}
-                      className="flex items-start mb-3 transform transition-all duration-300"
+                      className="flex items-center justify-center mb-2 transform transition-all duration-300"
                       style={{
                         transform: hoveredTier === currentTier.id ? "translateX(10px)" : "translateX(0)",
                         transitionDelay: `${index * 50}ms`,
                       }}
                     >
-                      <div
-                        className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 mr-3"
-                        style={{
-                          background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
-                        }}
-                      >
-                        <Check className="w-3 h-3 text-white" />
+                      <div className="flex items-center">
+                        <div
+                          className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0 mr-2"
+                          style={{
+                            background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                          }}
+                        >
+                          <Check className="w-2.5 h-2.5 text-white" />
+                        </div>
+                        <span className="text-gray-300 text-sm font-medium">{feature}</span>
                       </div>
-                      <span className="text-gray-300 text-sm font-medium text-center flex-1">{feature}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Special Perks - centered */}
-              <div className="mb-6">
+              <div className="mb-4">
                 <div className="bg-white/5 rounded-lg p-3 max-w-xs mx-auto">
                   <h4 className="text-xs font-bold text-gray-400 mb-2 text-center">EXCLUSIVE PERKS</h4>
                   <div className="space-y-1">
@@ -282,7 +284,7 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* CTA Button */}
-              <div className="mt-auto">
+              <div className="mt-4">
                 <Button
                   className="w-full py-4 text-base font-bold rounded-xl transform transition-all duration-300 hover:scale-105"
                   style={{
