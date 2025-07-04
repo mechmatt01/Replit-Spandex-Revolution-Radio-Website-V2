@@ -120,20 +120,25 @@ export default function Subscription() {
 
         <div className="flex flex-col md:flex-row md:justify-center md:items-stretch max-w-6xl mx-auto mb-16 gap-8 md:gap-0 md:relative">
           {subscriptionTiers.map((tier, index) => (
-            <div 
-              key={tier.name} 
+            <div
+              key={tier.name}
               className={`relative transition-all duration-300 ${
-                index === 0 ? 'md:z-10' : // Rebel: goes behind Legend
-                index === 1 ? 'md:z-20' : // Legend: on top
-                'md:z-10' // Icon: goes behind Legend
+                index === 0
+                  ? "md:z-10" // Rebel: goes behind Legend
+                  : index === 1
+                    ? "md:z-20" // Legend: on top
+                    : "md:z-10" // Icon: goes behind Legend
               }`}
               style={{
-                width: '100%',
-                maxWidth: '320px',
-                flex: '0 0 auto',
-                transform: index === 0 ? 'translateX(16px)' : // Rebel: moves right 5% of 320px
-                          index === 1 ? 'translateY(-20px)' : // Legend: moves up 20px higher than others
-                          'translateX(-16px)' // Icon: moves left 5% of 320px
+                width: "100%",
+                maxWidth: "320px",
+                flex: "0 0 auto",
+                transform:
+                  index === 0
+                    ? "translateX(16px)" // Rebel: moves right 5% of 320px
+                    : index === 1
+                      ? "translateY(-50px)" // Legend: moves up 20px higher than others
+                      : "translateX(-16px)", // Icon: moves left 5% of 320px
               }}
             >
               {/* Title Above Box */}
@@ -148,7 +153,7 @@ export default function Subscription() {
               >
                 {tier.name}
               </h3>
-              
+
               <div
                 className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
                   tier.popular
@@ -166,6 +171,13 @@ export default function Subscription() {
                       whiteSpace: "nowrap",
                       fontSize: "11px",
                       lineHeight: "1",
+                      transform:
+                        index === 0
+                          ? "translateY(-50px)"
+                          : "translateX(16px)" // Rebel: moves right 5% of 320px
+                          : index === 1
+                            ? "translateY(-50px)" // Legend: moves up 20px higher than others
+                            : "translateX(-16px)", // Icon: moves left 5% of 320px
                     }}
                   >
                     MOST&nbsp;POPULAR
@@ -188,7 +200,9 @@ export default function Subscription() {
                     <div className="text-gray-400 text-sm">per month</div>
                   </div>
 
-                  <ul className={`space-y-3 ${tier.popular ? 'mb-6' : 'mb-8'} flex-grow`}>
+                  <ul
+                    className={`space-y-3 ${tier.popular ? "mb-6" : "mb-8"} flex-grow`}
+                  >
                     {tier.features.map((feature, featureIndex) => (
                       <li
                         key={featureIndex}
