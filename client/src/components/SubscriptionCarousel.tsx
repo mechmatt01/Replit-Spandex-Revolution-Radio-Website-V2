@@ -80,7 +80,7 @@ const subscriptionTiers: SubscriptionTier[] = [
       "Limited edition vinyl access",
       "Co-host opportunities",
     ],
-    perks: ["🎵 Name a weekly show segment", "🏆 Annual VIP concert tickets", "👕 Custom merch line"],
+    perks: ["🎤 Name a weekly show segment", "🏆 Annual VIP concert tickets", "👕 Custom merch line"],
   },
 ];
 
@@ -101,7 +101,7 @@ export default function SubscriptionCarousel() {
       setTimeout(() => {
         setIsAnimating(false);
         console.log('Previous animation complete');
-      }, 800);
+      }, 700);
     }
   }, [isAnimating]);
 
@@ -114,7 +114,7 @@ export default function SubscriptionCarousel() {
       setTimeout(() => {
         setIsAnimating(false);
         console.log('Next animation complete');
-      }, 800);
+      }, 700);
     }
   }, [isAnimating]);
 
@@ -170,23 +170,20 @@ export default function SubscriptionCarousel() {
         </button>
 
         {/* Main Card Display */}
-        <div className="flex items-center justify-center h-full relative" style={{ overflow: 'visible' }}>
+        <div className="flex items-center justify-center h-full relative">
           <div
-            key={`${currentIndex}-${isAnimating}`}
-            className="relative w-full max-w-md transform"
+            key={currentIndex}
+            className={`relative w-full max-w-md transition-all duration-700 ease-out ${
+              isAnimating ? 'animate-pulse' : ''
+            }`}
             style={{
               transform: isAnimating ? 
                 (slideDirection === 'left' ? 
-                  'translateX(0) scale(1) rotateY(0deg)' : 
-                  'translateX(0) scale(1) rotateY(0deg)'
-                ) : 'translateX(0) scale(1)',
-              transition: isAnimating ? 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
-              opacity: isAnimating ? 1 : 1,
-              animationName: isAnimating ? 
-                (slideDirection === 'left' ? 'slide-in-right' : 'slide-in-left') : 'fadeSlideIn',
-              animationDuration: isAnimating ? '0.8s' : '0.5s',
-              animationTimingFunction: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-              animationFillMode: 'forwards'
+                  'translateX(50px) rotateY(-10deg) scale(0.95)' : 
+                  'translateX(-50px) rotateY(10deg) scale(0.95)'
+                ) : 'translateX(0) rotateY(0deg) scale(1)',
+              opacity: isAnimating ? 0.7 : 1,
+              transition: 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)'
             }}
           >
             {/* Glow Effect - properly contained */}
