@@ -119,8 +119,7 @@ export default function Subscription() {
             JOIN THE HAIRSPRAY REBELLION
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Unlock exclusive content, early access to shows, and premium perks
-            with our subscription tiers.
+            Support the station and unlock exclusive content.
           </p>
         </div>
 
@@ -142,7 +141,7 @@ export default function Subscription() {
               </h3>
 
               <div
-                className="rounded-lg flex flex-col transition-all duration-300"
+                className="rounded-lg flex flex-col transition-all duration-300 relative"
                 style={{ 
                   minHeight: "540px",
                   border: tier.popular ? "3px solid #B56BFF" : "2px solid #374151",
@@ -155,13 +154,15 @@ export default function Subscription() {
               >
                 {tier.popular && (
                   <div
-                    className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                    className="absolute left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
                     style={{
+                      top: "-12px", // Centered over top border
                       background: "linear-gradient(135deg, #ff6b35, #f7931e)",
                       color: "black",
                       whiteSpace: "nowrap",
                       fontSize: "11px",
                       lineHeight: "1",
+                      zIndex: 10
                     }}
                   >
                     MOST&nbsp;POPULAR
@@ -188,10 +189,10 @@ export default function Subscription() {
                     {tier.features.map((feature, featureIndex) => (
                       <li
                         key={featureIndex}
-                        className="flex items-start text-gray-300"
+                        className="flex items-center justify-center text-gray-300"
                       >
-                        <Check className="w-5 h-5 text-metal-orange mr-3 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
+                        <Check className="w-5 h-5 text-metal-orange mr-3 flex-shrink-0" />
+                        <span className="text-sm text-center">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -233,15 +234,14 @@ export default function Subscription() {
               key={`desktop-${tier.name}`}
               className="absolute transition-all duration-300"
               style={{
-                width: index === 1 ? "340px" : "320px",
+                width: "320px",
                 left: index === 0 
-                  ? "calc(50% - 250px)" // Rebel: overlaps with Legend
+                  ? "calc(50% - 325px)" // Rebel: moved further left, only 5px overlap
                   : index === 1 
-                  ? "calc(50% - 170px)" // Legend: center
-                  : "calc(50% - 90px)", // Icon: overlaps with Legend
-                top: index === 1 ? "0px" : "40px",
-                zIndex: index === 1 ? 50 : 10,
-                transform: index === 1 ? "scale(1.05)" : "none"
+                  ? "calc(50% - 160px)" // Legend: center
+                  : "calc(50% + 5px)", // Icon: moved further right, only 5px overlap
+                top: index === 1 ? "20px" : "40px", // Legend higher than others
+                zIndex: index === 1 ? 50 : 10
               }}
             >
               <h3
@@ -272,8 +272,9 @@ export default function Subscription() {
                 {tier.popular && (
                   <>
                     <div
-                      className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                      className="absolute left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
                       style={{
+                        top: "-12px", // Centered over top border
                         background: "linear-gradient(135deg, #ff6b35, #f7931e)",
                         color: "black",
                         whiteSpace: "nowrap",
