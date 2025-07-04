@@ -67,10 +67,17 @@ export default function Subscription() {
 
   const subscribeMutation = useMutation({
     mutationFn: async (data: InsertSubscription) => {
-      return apiRequest("/api/subscriptions", {
+      const response = await fetch("/api/subscriptions", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       });
+      if (!response.ok) {
+        throw new Error("Failed to subscribe");
+      }
+      return response.json();
     },
     onSuccess: () => {
       toast({
@@ -137,8 +144,8 @@ export default function Subscription() {
                 </h3>
 
                 <div
-                  className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
-                    tier.popular ? "legend-glow-border transform scale-105" : ""
+                  className={`bg-dark-bg relative flex flex-col rounded-lg ${
+                    tier.popular ? "legend-glow-border" : "border border-dark-border"
                   }`}
                   style={{ minHeight: tier.popular ? "520px" : "560px" }}
                 >
@@ -208,105 +215,113 @@ export default function Subscription() {
             ))}
           </div>
           
-          {/* Desktop Layout: Overlapping positioning */}
-          <div className="hidden md:block relative" style={{ height: "580px" }}>
-            {subscriptionTiers.map((tier, index) => (
-              <div
-                key={`desktop-${tier.name}`}
-                className="absolute transition-all duration-300"
-                style={{
-                  width: "320px",
-                  left: index === 0 
-                    ? "calc(50% - 170px)" // Rebel: 10px overlap with Legend
-                    : index === 1 
-                    ? "calc(50% - 160px)" // Legend: center position
-                    : "calc(50% - 150px)", // Icon: 10px overlap with Legend
-                  top: index === 1 ? "0px" : "20px", // Legend elevated
-                  zIndex: index === 1 ? 200 : 10, // Legend on top
-                }}
-              >
-                <h3
-                  className={`font-bold text-xl mb-4 text-center ${
-                    tier.color === "metal-gold"
-                      ? "text-metal-gold"
-                      : tier.color === "metal-red"
-                        ? "text-metal-red"
-                        : "text-white"
-                  }`}
-                >
-                  {tier.name}
-                </h3>
-
+          {/* Desktop Layout: Grid with overlapping transforms */}
+          <div className="hidden md:block">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+              {subscriptionTiers.map((tier, index) => (
                 <div
-                  className={`bg-dark-bg border border-dark-border relative flex flex-col rounded-lg ${
-                    tier.popular ? "legend-glow-border transform scale-105" : ""
+                  key={`desktop-${tier.name}`}
+                  className={`relative transition-all duration-300 ${
+                    index === 0 
+                      ? "md:transform md:translate-x-4 md:z-10" // Rebel: slide right under Legend
+                      : index === 1 
+                      ? "md:transform md:scale-105 md:z-50" // Legend: scale up and on top
+                      : "md:transform md:-translate-x-4 md:z-10" // Icon: slide left under Legend
                   }`}
-                  style={{ minHeight: tier.popular ? "520px" : "560px" }}
                 >
-                  {tier.popular && (
-                    <div
-                      className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
-                      style={{
-                        background: "linear-gradient(135deg, #ff6b35, #f7931e)",
-                        color: "black",
-                        whiteSpace: "nowrap",
-                        fontSize: "11px",
-                        lineHeight: "1",
-                      }}
-                    >
-                      MOST&nbsp;POPULAR
-                    </div>
-                  )}
+                  <h3
+                    className={`font-black text-white mb-4 text-center ${
+                      tier.color === "metal-gold"
+                        ? "text-metal-gold"
+                        : tier.color === "metal-red"
+                          ? "text-metal-red"
+                          : "text-white"
+                    }`}
+                    style={{ fontSize: "1.25rem" }}
+                  >
+                    {tier.name}
+                  </h3>
 
-                  <div className="p-8 flex flex-col h-full justify-between">
-                    <div className="text-center mb-6">
+                  <div
+                    className={`bg-transparent transition-all duration-300 relative rounded-lg flex flex-col ${
+                      tier.popular ? "legend-glow-border" : ""
+                    }`}
+                    style={{ 
+                      minHeight: "540px",
+                      border: tier.popular ? "2px solid transparent" : "2px solid #374151",
+                      background: tier.popular 
+                        ? "linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, #B56BFF, #FF50C3) border-box"
+                        : "rgba(31, 41, 55, 0.8)",
+                      boxShadow: tier.popular 
+                        ? "rgba(181, 107, 255, 0.125) 0px 8px 32px 0px, rgba(255, 80, 195, 0.125) 0px 16px 64px 0px"
+                        : "none"
+                    }}
+                  >
+                    {tier.popular && (
                       <div
-                        className={`text-3xl font-bold mb-1 ${
-                          tier.color === "metal-gold"
-                            ? "text-metal-gold"
-                            : tier.color === "metal-red"
-                              ? "text-metal-red"
-                              : "text-metal-orange"
-                        }`}
+                        className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
+                        style={{
+                          background: "linear-gradient(135deg, #ff6b35, #f7931e)",
+                          color: "black",
+                          whiteSpace: "nowrap",
+                          fontSize: "11px",
+                          lineHeight: "1",
+                        }}
                       >
-                        {tier.price}
+                        MOST&nbsp;POPULAR
                       </div>
-                      <div className="text-gray-400 text-sm">per month</div>
-                    </div>
+                    )}
 
-                    <ul className={`space-y-3 ${tier.popular ? "mb-6" : "mb-8"} flex-grow`}>
-                      {tier.features.map((feature, featureIndex) => (
-                        <li
-                          key={featureIndex}
-                          className="flex items-start text-gray-300"
+                    <div className="p-8 flex flex-col h-full justify-between">
+                      <div className="text-center mb-6">
+                        <div
+                          className={`text-3xl font-bold mb-1 ${
+                            tier.color === "metal-gold"
+                              ? "text-metal-gold"
+                              : tier.color === "metal-red"
+                                ? "text-metal-red"
+                                : "text-metal-orange"
+                          }`}
                         >
-                          <Check className="w-5 h-5 text-metal-orange mr-3 mt-0.5 flex-shrink-0" />
-                          <span className="text-sm">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
+                          {tier.price}
+                        </div>
+                        <div className="text-gray-400 text-sm">per month</div>
+                      </div>
 
-                    <Button
-                      onClick={() => handleSubscribe(tier.name)}
-                      className="w-full py-3 text-lg font-semibold"
-                      style={{
-                        background: `linear-gradient(135deg, ${
-                          tier.color === "metal-gold"
-                            ? "#f7931e, #ffcc00"
-                            : tier.color === "metal-red"
-                              ? "#dc2626, #ef4444"
-                              : "#ff6b35, #f7931e"
-                        })`,
-                        color: "white",
-                        border: "none",
-                      }}
-                    >
-                      CHOOSE {tier.name}
-                    </Button>
+                      <ul className={`space-y-3 ${tier.popular ? "mb-6" : "mb-8"} flex-grow`}>
+                        {tier.features.map((feature, featureIndex) => (
+                          <li
+                            key={featureIndex}
+                            className="flex items-start text-gray-300"
+                          >
+                            <Check className="w-5 h-5 text-metal-orange mr-3 mt-0.5 flex-shrink-0" />
+                            <span className="text-sm">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+
+                      <Button
+                        onClick={() => handleSubscribe(tier.name)}
+                        className="w-full py-3 text-lg font-semibold"
+                        style={{
+                          background: `linear-gradient(135deg, ${
+                            tier.color === "metal-gold"
+                              ? "#f7931e, #ffcc00"
+                              : tier.color === "metal-red"
+                                ? "#dc2626, #ef4444"
+                                : "#ff6b35, #f7931e"
+                          })`,
+                          color: "white",
+                          border: "none",
+                        }}
+                      >
+                        CHOOSE {tier.name}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 

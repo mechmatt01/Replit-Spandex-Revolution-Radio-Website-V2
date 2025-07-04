@@ -3,6 +3,50 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* CSS Variables for Background */
+:root {
+  --background: #1f2937;
+  --background-rgb: 31, 41, 55;
+}
+
+.dark {
+  --background: #1f2937;
+  --background-rgb: 31, 41, 55;
+}
+
+/* Legend Package Animated Border */
+@keyframes legend-glow {
+  0% {
+    background: linear-gradient(var(--background), var(--background)) padding-box, 
+                linear-gradient(90deg, #B56BFF, #FF50C3) border-box;
+  }
+  25% {
+    background: linear-gradient(var(--background), var(--background)) padding-box, 
+                linear-gradient(180deg, #FF50C3, #FFD700) border-box;
+  }
+  50% {
+    background: linear-gradient(var(--background), var(--background)) padding-box, 
+                linear-gradient(270deg, #FFD700, #FF6B35) border-box;
+  }
+  75% {
+    background: linear-gradient(var(--background), var(--background)) padding-box, 
+                linear-gradient(360deg, #FF6B35, #B56BFF) border-box;
+  }
+  100% {
+    background: linear-gradient(var(--background), var(--background)) padding-box, 
+                linear-gradient(90deg, #B56BFF, #FF50C3) border-box;
+  }
+}
+
+.legend-glow-border {
+  border: 2px solid transparent !important;
+  background: linear-gradient(var(--background), var(--background)) padding-box, 
+              linear-gradient(90deg, #B56BFF, #FF50C3) border-box !important;
+  animation: legend-glow 3s ease-in-out infinite !important;
+  box-shadow: rgba(181, 107, 255, 0.125) 0px 8px 32px 0px, 
+              rgba(255, 80, 195, 0.125) 0px 16px 64px 0px !important;
+}
+
 /* Base reset and variables */
 *,
 *::before,
