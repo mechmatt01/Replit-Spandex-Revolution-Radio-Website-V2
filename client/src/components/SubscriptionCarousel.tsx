@@ -122,8 +122,8 @@ export default function SubscriptionCarousel() {
 
   return (
     <div className="relative w-full max-w-6xl mx-auto px-4">
-      {/* 3D Carousel Container - Responsive height that fits viewport */}
-      <div className="relative h-[calc(90vh-120px)] min-h-[480px] max-h-[600px] perspective-1000">
+      {/* 3D Carousel Container - Increased height for full content display */}
+      <div className="relative h-[calc(95vh-100px)] min-h-[700px] max-h-[800px] perspective-1000">
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
@@ -173,7 +173,7 @@ export default function SubscriptionCarousel() {
                 boxShadow: currentTier.popular 
                   ? `0 0 40px ${currentTier.gradientStart}60, 0 0 80px ${currentTier.gradientEnd}40`
                   : `0 20px 40px ${currentTier.gradientStart}40`,
-                height: "min(550px, calc(85vh - 120px))", // Responsive height that fits viewport
+                height: "min(750px, calc(90vh - 100px))", // Increased height for full content display
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}
@@ -198,13 +198,18 @@ export default function SubscriptionCarousel() {
 
               {/* Title and Description */}
               <div className="text-center mb-6">
-                <h3 
-                  className="text-4xl font-black mb-2 bg-clip-text text-transparent"
-                  style={{
-                    backgroundImage: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
-                  }}
-                >
-                  {currentTier.name}
+                <h3 className="text-4xl font-black mb-2">
+                  <span
+                    style={{
+                      background: `linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                      display: "inline-block",
+                    }}
+                  >
+                    {currentTier.name}
+                  </span>
                 </h3>
                 <p className="text-gray-400 text-lg">{currentTier.description}</p>
                 
