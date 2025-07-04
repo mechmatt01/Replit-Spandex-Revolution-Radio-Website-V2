@@ -176,8 +176,8 @@ export default function SubscriptionCarousel() {
             style={{
               transform: isAnimating ? 
                 (slideDirection === 'left' ? 
-                  'translateX(30px) scale(0.98)' : 
-                  'translateX(-30px) scale(0.98)'
+                  'translateX(-30px) scale(0.98)' : 
+                  'translateX(30px) scale(0.98)'
                 ) : 'translateX(0) scale(1)',
               opacity: isAnimating ? 0.8 : 1,
               transition: 'all 0.4s ease-in-out'
