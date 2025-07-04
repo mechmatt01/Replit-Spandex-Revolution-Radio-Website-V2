@@ -413,11 +413,11 @@ export default function StripePaymentProcessor() {
             style={{
               width: "340px", // All packages same width
               left: index === 0 
-                ? "calc(50% - 175px - 165px)" // Rebel: 5px overlap (Legend center - half width - gap + 5px)
+                ? "calc(50% - 335px)" // Rebel: 5px overlap (170 + 170 - 5)
                 : index === 1 
                 ? "calc(50% - 170px)" // Legend: center (340px width / 2)
-                : "calc(50% + 165px)", // Icon: 5px overlap (Legend center + half width + gap - 5px)
-              top: index === 1 ? "0px" : "40px",
+                : "calc(50% - 5px)", // Icon: 5px overlap (170 - 170 - 5)
+              top: "40px", // All packages at same height
               zIndex: index === 1 ? 50 : 10,
               transform: "none" // Remove scale transform
             }}
@@ -442,7 +442,7 @@ export default function StripePaymentProcessor() {
                   fontSize: "11px",
                   lineHeight: "1",
                   zIndex: 100,
-                  top: "53px" // Position it right on the top border of Legend card
+                  top: "93px" // Position it right on the top border of Legend card (40px top + 53px)
                 }}
               >
                 MOST&nbsp;POPULAR
