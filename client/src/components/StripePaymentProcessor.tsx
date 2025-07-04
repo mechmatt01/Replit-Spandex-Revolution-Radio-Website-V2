@@ -413,10 +413,10 @@ export default function StripePaymentProcessor() {
             style={{
               width: "340px", // All packages same width
               left: index === 0 
-                ? "calc(50% - 335px)" // Rebel: 5px overlap (170 + 170 - 5)
+                ? "calc(50% - 175px - 165px)" // Rebel: 5px overlap (Legend center - half width - gap + 5px)
                 : index === 1 
                 ? "calc(50% - 170px)" // Legend: center (340px width / 2)
-                : "calc(50% - 5px)", // Icon: 5px overlap (170 - 170 - 5)
+                : "calc(50% + 165px)", // Icon: 5px overlap (Legend center + half width + gap - 5px)
               top: index === 1 ? "0px" : "40px",
               zIndex: index === 1 ? 50 : 10,
               transform: "none" // Remove scale transform
