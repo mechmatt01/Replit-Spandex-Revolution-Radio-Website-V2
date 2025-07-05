@@ -106,6 +106,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup radio stream proxy
   setupRadioProxy(app);
 
+  // Config endpoint for client-side environment variables
+  app.get("/api/config", (req: Request, res: Response) => {
+    try {
+      res.json({
+        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || "",
+      });
+    } catch (error) {
+      console.error("Error fetching config:", error);
+      res.status(500).json({ error: "Failed to fetch configuration" });
+    }
+  });
+
   // Auth routes
   app.get(
     "/api/auth/user",
