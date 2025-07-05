@@ -1,8 +1,25 @@
 
 import { useState, useEffect, useRef } from "react";
-import { Menu, ChevronDown, User, Calendar, Music, Send, Phone, MapPin, Heart, UserPlus, LogOut } from "lucide-react";
+import { Menu, ChevronDown, User, Calendar, Music, Send, Phone, MapPin, Heart, UserPlus, LogOut, CreditCard, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useLocation } from "wouter";
 import MetalThemeSwitcher from "./MetalThemeSwitcher";
 import AuthModal from "./AuthModal";
@@ -15,6 +32,7 @@ export default function Navigation() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   useEffect(() => {
     const handleOpenAuthModal = (event: CustomEvent) => {
@@ -408,42 +426,148 @@ export default function Navigation() {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center space-x-2">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
+                <div className="flex items-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
                       <button
-                        onClick={goToProfile}
-                        className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
+                        className="relative flex items-center space-x-2 p-1 rounded-full transition-all duration-200 hover:scale-105"
                         style={{
                           backgroundColor: 'transparent',
-                          border: `1px solid ${colors.primary}`
                         }}
                       >
-                        <User size={16} style={{ color: colors.primary }} />
+                        <div className="relative">
+                          {/* Profile Image */}
+                          <div
+                            className="w-10 h-10 rounded-full bg-gradient-to-br flex items-center justify-center shadow-lg ring-2 ring-offset-2"
+                            style={{
+                              background: user?.profileImageUrl 
+                                ? `url(${user.profileImageUrl}) center/cover` 
+                                : gradient,
+                              ringColor: colors.primary,
+                              ringOffsetColor: isDarkMode ? '#000000' : '#ffffff',
+                            }}
+                          >
+                            {!user?.profileImageUrl && (
+                              <User size={20} className="text-white" />
+                            )}
+                          </div>
+                          
+                          {/* Verified Badge for Subscribers */}
+                          {user?.activeSubscription && (
+                            <div 
+                              className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center shadow-md"
+                              style={{
+                                backgroundColor: colors.primary,
+                                border: `2px solid ${isDarkMode ? '#000000' : '#ffffff'}`,
+                              }}
+                            >
+                              <svg 
+                                width="12" 
+                                height="12" 
+                                viewBox="0 0 24 24" 
+                                fill="none"
+                                className="text-white"
+                              >
+                                <path 
+                                  d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
+                                  stroke="currentColor" 
+                                  strokeWidth="2.5" 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <ChevronDown 
+                          size={16} 
+                          className="transition-transform duration-200"
+                          style={{ color: colors.text }}
+                        />
                       </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      View profile and settings
-                    </TooltipContent>
-                  </Tooltip>
-
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={handleLogout}
-                        className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
+                    </DropdownMenuTrigger>
+                    
+                    <DropdownMenuContent 
+                      align="end" 
+                      className="w-64 p-2 mt-2 shadow-2xl border-2"
+                      style={{
+                        backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                        backdropFilter: 'blur(10px)',
+                        borderColor: `${colors.primary}40`,
+                      }}
+                    >
+                      {/* User Info */}
+                      <div className="px-3 py-2 mb-2">
+                        <p 
+                          className="font-black text-sm"
+                          style={{ color: colors.text }}
+                        >
+                          {user?.firstName || user?.email?.split('@')[0] || 'User'}
+                        </p>
+                        <p 
+                          className="text-xs opacity-70"
+                          style={{ color: colors.text }}
+                        >
+                          {user?.email}
+                        </p>
+                      </div>
+                      
+                      <DropdownMenuSeparator className="opacity-20" />
+                      
+                      {/* Profile */}
+                      <DropdownMenuItem
+                        onClick={() => setLocation("/profile?section=profile")}
+                        className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
                         style={{
-                          backgroundColor: 'transparent',
-                          border: `1px solid ${colors.primary}`
+                          color: colors.text,
                         }}
                       >
-                        <LogOut size={16} style={{ color: colors.primary }} />
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">
-                      Sign out
-                    </TooltipContent>
-                  </Tooltip>
+                        <User size={18} style={{ color: colors.primary }} />
+                        <span className="font-semibold">Profile</span>
+                      </DropdownMenuItem>
+                      
+                      {/* Subscription Management - Only if active */}
+                      {user?.activeSubscription && (
+                        <DropdownMenuItem
+                          onClick={() => setLocation("/profile?section=subscription")}
+                          className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
+                          style={{
+                            color: colors.text,
+                          }}
+                        >
+                          <CreditCard size={18} style={{ color: colors.primary }} />
+                          <span className="font-semibold">Subscription<br/>Management</span>
+                        </DropdownMenuItem>
+                      )}
+                      
+                      {/* Submission Requests */}
+                      <DropdownMenuItem
+                        onClick={() => setLocation("/profile?section=submissions")}
+                        className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
+                        style={{
+                          color: colors.text,
+                        }}
+                      >
+                        <FileText size={18} style={{ color: colors.primary }} />
+                        <span className="font-semibold">Submission<br/>Requests</span>
+                      </DropdownMenuItem>
+                      
+                      <DropdownMenuSeparator className="opacity-20" />
+                      
+                      {/* Logout */}
+                      <DropdownMenuItem
+                        onClick={() => setShowLogoutDialog(true)}
+                        className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
+                        style={{
+                          color: '#EF4444',
+                        }}
+                      >
+                        <LogOut size={18} className="text-red-500" />
+                        <span className="font-semibold">Logout</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               )}
             </div>
@@ -750,6 +874,55 @@ export default function Navigation() {
           )}
         </div>
       </nav>
+
+      {/* Logout Confirmation Dialog */}
+      <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <AlertDialogContent
+          className="max-w-md animate-in fade-in zoom-in duration-300"
+          style={{
+            backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+            border: `2px solid ${colors.primary}40`,
+          }}
+        >
+          <AlertDialogHeader>
+            <AlertDialogTitle
+              className="text-xl font-black"
+              style={{ color: colors.text }}
+            >
+              Confirm Logout
+            </AlertDialogTitle>
+            <AlertDialogDescription
+              className="text-base"
+              style={{ color: colors.text, opacity: 0.8 }}
+            >
+              Are you sure you want to log out of your account?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex gap-3">
+            <AlertDialogCancel
+              className="font-semibold px-6 py-2 rounded-lg transition-all duration-200"
+              style={{
+                backgroundColor: 'transparent',
+                color: colors.text,
+                border: `1px solid ${colors.primary}40`,
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleLogout}
+              className="font-semibold px-6 py-2 rounded-lg transition-all duration-200"
+              style={{
+                backgroundColor: '#EF4444',
+                color: 'white',
+                border: '1px solid #EF4444',
+              }}
+            >
+              Logout
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Authentication Modal */}
       <AuthModal 
