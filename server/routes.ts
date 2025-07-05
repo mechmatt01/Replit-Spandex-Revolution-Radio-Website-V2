@@ -111,6 +111,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       res.json({
         googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || "",
+        googleMapsSigningSecret: "xUMvkKZN7YbwACexIGzpV2o5Fms=", // URL signing secret for enhanced security
         openWeatherApiKey: "bc23ce0746d4fc5c04d1d765589dadc5", // Working API key
       });
     } catch (error) {

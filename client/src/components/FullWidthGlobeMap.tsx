@@ -316,22 +316,37 @@ export default function FullWidthGlobeMap() {
   return (
     <section
       id="map"
-      className={`py-20 ${isDarkMode ? "bg-black" : "bg-white"} ${isFullscreen ? "fixed inset-0 z-40" : ""} transition-all duration-500 ease-in-out`}
+      className={`${isFullscreen ? "fixed z-40" : "py-20"} ${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out`}
       style={{
         ...(isFullscreen && {
-          paddingTop: "80px", // Keep header spacing
-          paddingBottom: "120px", // Space for floating player
-          height: "100vh", // Full viewport height
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: "100vh",
+          width: "100vw",
+          margin: 0,
+          padding: 0,
+          paddingBottom: "120px", // Space for floating player only
+          zIndex: 40,
         }),
       }}
     >
-      <div className={`max-w-full mx-auto px-4 sm:px-6 lg:px-8 ${isFullscreen ? "h-full" : ""}`}>
+      <div className={`${isFullscreen ? "h-full px-4 pt-4" : "max-w-full mx-auto px-4 sm:px-6 lg:px-8"}`}>
         <div className="text-center mb-16">
           <h2
             className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
           >
             LIVE INTERACTIVE MAP
           </h2>
+          
+          <p
+            className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
+          >
+            See where metal fans are tuning in from around the world in
+            real-time.
+          </p>
           
           {/* Weather Information Display */}
           <div className="mb-4">
@@ -340,7 +355,12 @@ export default function FullWidthGlobeMap() {
               <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                 New York County, New York
               </span>
-              <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"} ml-2`}>
+              <img
+                src="https://openweathermap.org/img/wn/01d@2x.png"
+                alt="Clear Sky"
+                className="w-8 h-8 ml-2"
+              />
+              <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"} ml-1`}>
                 71°F
               </span>
               <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"} ml-1`}>
@@ -348,13 +368,6 @@ export default function FullWidthGlobeMap() {
               </span>
             </div>
           </div>
-          
-          <p
-            className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-          >
-            See where metal fans are tuning in from around the world in
-            real-time.
-          </p>
         </div>
 
         {/* Full Width Globe Map */}
