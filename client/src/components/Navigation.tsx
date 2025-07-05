@@ -73,7 +73,7 @@ export default function Navigation() {
         const leftPosition = centerX - (navWidth / 2);
 
         setNavPosition(leftPosition);
-        console.log('Navigation centered at screen center:', leftPosition, 'px from left');
+
       }
     };
 
@@ -119,31 +119,33 @@ export default function Navigation() {
 
   // Direct navigation functions for clarity
   const goToMusic = () => {
-    console.log('Navigating to music page...');
     setIsOpen(false);
     setIsDropdownOpen(false);
-    setLocation("/music");
+    window.location.href = "/music";
   };
 
   const goToHomeSection = (sectionId: string) => {
-    console.log(`Navigating to home section: ${sectionId}`);
+    // Close any open menus
     setIsOpen(false);
     setIsDropdownOpen(false);
-    if (location !== "/") {
-      setLocation("/");
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 200);
+    
+    // If not on home page, navigate to home first
+    if (window.location.pathname !== "/") {
+      window.location.href = `/#${sectionId}`;
     } else {
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 50);
+      // Already on home page, just scroll
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else {
+        // If element not found, try again after a short delay
+        setTimeout(() => {
+          const el = document.getElementById(sectionId);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 300);
+      }
     }
   };
 
@@ -153,7 +155,6 @@ export default function Navigation() {
       label: "MUSIC", 
       icon: Music, 
       action: () => {
-        console.log('Music action triggered');
         goToMusic();
       }, 
       tooltip: "Listen to live radio and music" 
@@ -163,7 +164,6 @@ export default function Navigation() {
       label: "SCHEDULE", 
       icon: Calendar, 
       action: () => {
-        console.log('Schedule action triggered');
         goToHomeSection("schedule");
       }, 
       tooltip: "View show schedule and programming" 
@@ -173,7 +173,6 @@ export default function Navigation() {
       label: "SUPPORT US", 
       icon: Heart, 
       action: () => {
-        console.log('Support Us action triggered');
         goToHomeSection("subscribe");
       }, 
       tooltip: "Support the station with premium subscriptions" 
@@ -183,7 +182,6 @@ export default function Navigation() {
       label: "SUBMISSIONS", 
       icon: Send, 
       action: () => {
-        console.log('Submissions action triggered');
         goToHomeSection("submissions");
       }, 
       tooltip: "Submit song requests and feedback" 
@@ -193,7 +191,6 @@ export default function Navigation() {
       label: "CONTACT", 
       icon: Phone, 
       action: () => {
-        console.log('Contact action triggered');
         goToHomeSection("contact");
       }, 
       tooltip: "Get in touch with the station" 
@@ -203,17 +200,15 @@ export default function Navigation() {
       label: "LISTEN MAP", 
       icon: MapPin, 
       action: () => {
-        console.log('Listen Map action triggered');
         goToHomeSection("map");
       }, 
       tooltip: "View live listener map worldwide" 
     },
     { 
-      id: 6, 
+      id: 7, 
       label: "FEATURES", 
       icon: Heart, 
       action: () => {
-        console.log('Features action triggered');
         goToHomeSection("features");
       }, 
       tooltip: "Explore premium features and subscription tiers" 
@@ -347,6 +342,7 @@ export default function Navigation() {
                       minWidth: 'max-content',
                       zIndex: 50
                     }}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     {menuItems.slice(3).map((item) => {
                       const IconComponent = item.icon;
@@ -355,8 +351,8 @@ export default function Navigation() {
                           <TooltipTrigger asChild>
                             <button
                               onClick={() => {
-                                item.action();
                                 setIsDropdownOpen(false);
+                                item.action();
                               }}
                               className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg w-full"
                               style={{ 

@@ -9,12 +9,38 @@ import Contact from "@/components/Contact";
 import SubscriptionCarousel from "@/components/SubscriptionCarousel";
 import ShopifyEcommerce from "@/components/ShopifyEcommerce";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
 import StickyPlayer from "@/components/StickyPlayer";
 import ChatButton from "@/components/ChatButton";
 
 export default function HomePage() {
+  const [isScrollingEnabled, setIsScrollingEnabled] = useState(true);
+  
+  useEffect(() => {
+    // Handle hash navigation on page load
+    const handleHashNavigation = () => {
+      const hash = window.location.hash.substring(1); // Remove the #
+      if (hash) {
+        setTimeout(() => {
+          const element = document.getElementById(hash);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 100);
+      }
+    };
+
+    handleHashNavigation();
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashNavigation);
+    
+    return () => {
+      window.removeEventListener('hashchange', handleHashNavigation);
+    };
+  }, []);
+  
   return (
     <div className="min-h-screen bg-black dark:bg-black text-white dark:text-white transition-colors duration-300">
       <Navigation />
