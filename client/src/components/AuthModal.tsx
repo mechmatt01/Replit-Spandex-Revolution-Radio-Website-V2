@@ -204,7 +204,7 @@ export default function AuthModal({
                       id="username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                      className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
                       style={{
                         color: colors.text,
                         borderColor: "#374151",
@@ -215,6 +215,7 @@ export default function AuthModal({
                       onBlur={(e) =>
                         (e.currentTarget.style.borderColor = "#374151")
                       }
+                      placeholder="Username"
                       required
                     />
                   </div>
@@ -230,11 +231,12 @@ export default function AuthModal({
                         id="firstName"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                        className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
                         style={{
                           color: colors.text,
                           borderColor: colors.primary,
                         }}
+                        placeholder="John"
                         required
                       />
                     </div>
@@ -249,11 +251,12 @@ export default function AuthModal({
                         id="lastName"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                        className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
                         style={{
                           color: colors.text,
                           borderColor: colors.primary,
                         }}
+                        placeholder="Doe"
                         required
                       />
                     </div>
@@ -270,7 +273,7 @@ export default function AuthModal({
                       type="tel"
                       value={phoneNumber}
                       onChange={handlePhoneChange}
-                      className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                      className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
                       style={{
                         color: colors.text,
                         borderColor: "#374151",
@@ -281,7 +284,7 @@ export default function AuthModal({
                       onBlur={(e) =>
                         (e.currentTarget.style.borderColor = "#374151")
                       }
-                      placeholder="+1 (555) 123-4567"
+                      placeholder="+1 (111) 111-1111"
                       required
                     />
                   </div>
@@ -300,7 +303,7 @@ export default function AuthModal({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                  className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
                   style={{
                     color: colors.text,
                     borderColor: "#374151",
@@ -311,6 +314,7 @@ export default function AuthModal({
                   onBlur={(e) =>
                     (e.currentTarget.style.borderColor = "#374151")
                   }
+                  placeholder="johndoe@email.com"
                   required
                 />
               </div>
@@ -327,7 +331,7 @@ export default function AuthModal({
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0"
+                  className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
                   style={{
                     color: colors.text,
                     borderColor: "#374151",
@@ -338,6 +342,7 @@ export default function AuthModal({
                   onBlur={(e) =>
                     (e.currentTarget.style.borderColor = "#374151")
                   }
+                  placeholder="Password"
                   required
                 />
               </div>
