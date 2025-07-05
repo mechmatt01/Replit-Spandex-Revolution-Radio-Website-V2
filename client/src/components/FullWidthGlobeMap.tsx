@@ -724,8 +724,8 @@ export default function FullWidthGlobeMap() {
             style={{ 
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "calc(100vh - 140px)" : "100%",
-              marginTop: isFullscreen ? "140px" : "0",
+              height: isFullscreen ? "calc(100vh - 40px)" : "100%",
+              marginTop: isFullscreen ? "40px" : "0",
             }}
           />
 
