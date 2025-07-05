@@ -72,8 +72,22 @@ function getDefaultArtwork(title: string, artist: string): string {
 
 export function RadioProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolumeState] = useState(0.7);
-  const [isMuted, setIsMuted] = useState(false);
+  const [volume, setVolumeState] = useState(() => {
+    // Load volume from localStorage or default to 0.7
+    if (typeof window !== 'undefined') {
+      const savedVolume = localStorage.getItem('radio-volume');
+      return savedVolume ? parseFloat(savedVolume) : 0.7;
+    }
+    return 0.7;
+  });
+  const [isMuted, setIsMuted] = useState(() => {
+    // Load muted state from localStorage or default to false
+    if (typeof window !== 'undefined') {
+      const savedMuted = localStorage.getItem('radio-muted');
+      return savedMuted === 'true';
+    }
+    return false;
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentStation, setCurrentStation] = useState<RadioStation | null>({
@@ -191,6 +205,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
   const setVolume = (newVolume: number) => {
     setVolumeState(newVolume);
+    // Save volume to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('radio-volume', newVolume.toString());
+    }
     if (audioRef.current) {
       audioRef.current.volume = isMuted ? 0 : newVolume;
     }
@@ -199,6 +217,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const toggleMute = () => {
     const newMuted = !isMuted;
     setIsMuted(newMuted);
+    // Save muted state to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('radio-muted', newMuted.toString());
+    }
 
     if (audioRef.current) {
       audioRef.current.volume = newMuted ? 0 : volume;
