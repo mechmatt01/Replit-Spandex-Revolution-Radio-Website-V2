@@ -464,208 +464,122 @@ export default function Navigation() {
                 width: 'auto',
                 minWidth: 'max-content',
                 maxWidth: 'calc(100vw - 2rem)',
-                zIndex: 40
+                zIndex: 9999,
+                pointerEvents: 'auto'
               }}
             >
               <div className="px-4 py-6 space-y-3">
                 {/* Music Link */}
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    window.location.href = "/music";
-                  }}
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                <a
+                  href="/music"
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    cursor: 'pointer',
+                    display: 'flex',
+                    textDecoration: 'none'
                   }}
                 >
                   <Music size={20} style={{ color: colors.primary }} />
                   <span>MUSIC</span>
-                </button>
+                </a>
                 
                 {/* Schedule Link */}
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    if (window.location.pathname !== "/") {
-                      window.location.href = "/#schedule";
-                    } else {
-                      document.getElementById("schedule")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
-                  }}
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                <a
+                  href="/#schedule"
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    cursor: 'pointer',
+                    display: 'flex',
+                    textDecoration: 'none'
                   }}
                 >
                   <Calendar size={20} style={{ color: colors.primary }} />
                   <span>SCHEDULE</span>
-                </button>
+                </a>
                 
                 {/* Support Us Link */}
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    if (window.location.pathname !== "/") {
-                      window.location.href = "/#subscribe";
-                    } else {
-                      document.getElementById("subscribe")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
-                  }}
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                <a
+                  href="/#subscribe"
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    cursor: 'pointer',
+                    display: 'flex',
+                    textDecoration: 'none'
                   }}
                 >
                   <Heart size={20} style={{ color: colors.primary }} />
                   <span>SUPPORT US</span>
-                </button>
+                </a>
                 
                 {/* Submissions Link */}
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    if (window.location.pathname !== "/") {
-                      window.location.href = "/#submissions";
-                    } else {
-                      document.getElementById("submissions")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
-                  }}
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                <a
+                  href="/#submissions"
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    cursor: 'pointer',
+                    display: 'flex',
+                    textDecoration: 'none'
                   }}
                 >
                   <Send size={20} style={{ color: colors.primary }} />
                   <span>SUBMISSIONS</span>
-                </button>
+                </a>
                 
                 {/* Contact Link */}
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    if (window.location.pathname !== "/") {
-                      window.location.href = "/#contact";
-                    } else {
-                      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
-                  }}
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                <a
+                  href="/#contact"
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    cursor: 'pointer',
+                    display: 'flex',
+                    textDecoration: 'none'
                   }}
                 >
                   <Phone size={20} style={{ color: colors.primary }} />
                   <span>CONTACT</span>
-                </button>
+                </a>
                 
                 {/* Listen Map Link */}
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    if (window.location.pathname !== "/") {
-                      window.location.href = "/#map";
-                    } else {
-                      document.getElementById("map")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
-                  }}
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                <a
+                  href="/#map"
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    cursor: 'pointer',
+                    display: 'flex',
+                    textDecoration: 'none'
                   }}
                 >
                   <MapPin size={20} style={{ color: colors.primary }} />
                   <span>LISTEN MAP</span>
-                </button>
+                </a>
                 
                 {/* Features Link */}
-                <button
-                  onClick={() => {
-                    setIsOpen(false);
-                    if (window.location.pathname !== "/") {
-                      window.location.href = "/#features";
-                    } else {
-                      document.getElementById("features")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
-                  }}
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                <a
+                  href="/#features"
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    cursor: 'pointer',
+                    display: 'flex',
+                    textDecoration: 'none'
                   }}
                 >
                   <Heart size={20} style={{ color: colors.primary }} />
                   <span>FEATURES</span>
-                </button>
+                </a>
 
                 {/* Authentication Section */}
                 <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
