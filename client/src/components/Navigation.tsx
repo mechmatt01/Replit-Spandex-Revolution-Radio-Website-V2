@@ -170,10 +170,10 @@ export default function Navigation() {
     },
     { 
       id: 3, 
-      label: "SUBSCRIBE", 
+      label: "SUPPORT US", 
       icon: Heart, 
       action: () => {
-        console.log('Subscribe action triggered');
+        console.log('Support Us action triggered');
         goToHomeSection("subscribe");
       }, 
       tooltip: "Support the station with premium subscriptions" 
