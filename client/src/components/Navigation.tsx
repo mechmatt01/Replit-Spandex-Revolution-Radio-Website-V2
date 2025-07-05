@@ -455,172 +455,152 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Mobile Navigation Dropdown */}
+          {/* Mobile Navigation Dropdown - Clean Rewrite */}
           {isOpen && (
             <div 
               className="xl:hidden absolute top-full right-4 bg-black/90 backdrop-blur-md border rounded-xl animate-in slide-in-from-top-2 duration-300 shadow-xl" 
               style={{ 
                 borderColor: colors.primary + '40',
-                width: 'auto',
-                minWidth: 'max-content',
-                maxWidth: 'calc(100vw - 2rem)',
-                zIndex: 40
+                minWidth: '280px',
+                maxWidth: '320px',
+                zIndex: 9999
               }}
-              onClick={(e) => e.stopPropagation()}
             >
-              <div className="px-4 py-6 space-y-3">
-                {/* All Menu Items */}
+              <div className="p-4 space-y-2">
+                {/* Navigation Links */}
                 {menuItems.map((item) => {
                   const IconComponent = item.icon;
                   return (
-                    <div key={item.id}>
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          console.log(`Mobile nav: ${item.label}`);
-                          setIsOpen(false);
-                          // Use the action function
-                          item.action();
-                        }}
-                        className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                        style={{ 
-                          color: colors.text,
-                          backgroundColor: 'transparent',
-                          border: 'none'
-                        }}
-                        onTouchStart={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary + '20';
-                          e.currentTarget.style.color = 'white';
-                        }}
-                        onTouchEnd={(e) => {
-                          setTimeout(() => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = colors.text;
-                          }, 100);
-                        }}
-                      >
-                        <IconComponent size={20} style={{ color: colors.primary }} />
-                        <span>{item.label}</span>
-                      </div>
-                    </div>
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        // Call the same action as desktop navigation
+                        item.action();
+                        // Close the dropdown after action
+                        setIsOpen(false);
+                      }}
+                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full text-left hover:bg-opacity-20"
+                      style={{ 
+                        color: colors.text,
+                        backgroundColor: 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.primary + '20';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = colors.text;
+                      }}
+                    >
+                      <IconComponent size={20} style={{ color: colors.primary }} />
+                      <span>{item.label}</span>
+                    </button>
                   );
                 })}
 
-                {/* Authentication Section */}
-                <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
-                  {!isAuthenticated ? (
-                    <>
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsOpen(false);
-                          setAuthMode("login");
-                          setIsAuthModalOpen(true);
-                        }}
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                        style={{ 
-                          color: colors.text,
-                          border: `1px solid ${colors.primary}`,
-                          backgroundColor: 'transparent'
-                        }}
-                        onTouchStart={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary + '20';
-                          e.currentTarget.style.color = 'white';
-                        }}
-                        onTouchEnd={(e) => {
-                          setTimeout(() => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = colors.text;
-                          }, 100);
-                        }}
-                      >
-                        <User size={20} style={{ color: colors.primary }} />
-                        <span>LOGIN</span>
-                      </div>
-                      
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsOpen(false);
-                          setAuthMode("register");
-                          setIsAuthModalOpen(true);
-                        }}
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                        style={{ 
-                          backgroundColor: colors.primary,
-                          color: 'white',
-                          border: `1px solid ${colors.primary}`
-                        }}
-                        onTouchStart={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
-                        }}
-                        onTouchEnd={(e) => {
-                          setTimeout(() => {
-                            e.currentTarget.style.backgroundColor = colors.primary;
-                          }, 100);
-                        }}
-                      >
-                        <UserPlus size={20} style={{ color: 'white' }} />
-                        <span>SIGN UP</span>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsOpen(false);
-                          setLocation("/profile");
-                        }}
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                        style={{
-                          color: colors.text,
-                          backgroundColor: colors.primary + '20'
-                        }}
-                        onTouchStart={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary + '30';
-                          e.currentTarget.style.color = 'white';
-                        }}
-                        onTouchEnd={(e) => {
-                          setTimeout(() => {
-                            e.currentTarget.style.backgroundColor = colors.primary + '20';
-                            e.currentTarget.style.color = colors.text;
-                          }, 100);
-                        }}
-                      >
-                        <User size={16} style={{ color: colors.primary }} />
-                        <span>PROFILE</span>
-                      </div>
-                      
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setIsOpen(false);
-                          logout();
-                        }}
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                        style={{
-                          color: colors.primary,
-                          backgroundColor: 'transparent',
-                          border: `1px solid ${colors.primary}`
-                        }}
-                        onTouchStart={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary + '20';
-                          e.currentTarget.style.color = 'white';
-                        }}
-                        onTouchEnd={(e) => {
-                          setTimeout(() => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = colors.primary;
-                          }, 100);
-                        }}
-                      >
-                        <LogOut size={16} style={{ color: colors.primary }} />
-                        <span>SIGN OUT</span>
-                      </div>
-                    </>
-                  )}
-                </div>
+                {/* Divider */}
+                <div className="border-t my-3" style={{ borderColor: colors.primary + '40' }} />
+
+                {/* Authentication Buttons */}
+                {!isAuthenticated ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        openLogin();
+                        setIsOpen(false);
+                      }}
+                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full"
+                      style={{ 
+                        color: colors.text,
+                        border: `1px solid ${colors.primary}`,
+                        backgroundColor: 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.primary + '20';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = colors.text;
+                      }}
+                    >
+                      <User size={20} style={{ color: colors.primary }} />
+                      <span>LOGIN</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        openSignUp();
+                        setIsOpen(false);
+                      }}
+                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full"
+                      style={{ 
+                        backgroundColor: colors.primary,
+                        color: 'white',
+                        border: `1px solid ${colors.primary}`
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.primary;
+                      }}
+                    >
+                      <UserPlus size={20} style={{ color: 'white' }} />
+                      <span>SIGN UP</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        goToProfile();
+                        setIsOpen(false);
+                      }}
+                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full"
+                      style={{
+                        color: colors.text,
+                        backgroundColor: colors.primary + '20'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.primary + '30';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.primary + '20';
+                        e.currentTarget.style.color = colors.text;
+                      }}
+                    >
+                      <User size={16} style={{ color: colors.primary }} />
+                      <span>PROFILE</span>
+                    </button>
+                    
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        setIsOpen(false);
+                      }}
+                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full"
+                      style={{
+                        color: colors.primary,
+                        backgroundColor: 'transparent',
+                        border: `1px solid ${colors.primary}`
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.primary + '20';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = colors.primary;
+                      }}
+                    >
+                      <LogOut size={16} style={{ color: colors.primary }} />
+                      <span>SIGN OUT</span>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           )}
