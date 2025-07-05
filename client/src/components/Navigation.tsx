@@ -339,8 +339,9 @@ export default function Navigation() {
                 {/* Dropdown Menu */}
                 {isDropdownOpen && (
                   <div 
-                    className="absolute left-1/2 transform -translate-x-1/2 mt-2 py-2 rounded-xl shadow-xl border animate-in fade-in-0 slide-in-from-top-2 duration-200 bg-black/80 backdrop-blur-md"
+                    className="absolute left-1/2 transform -translate-x-1/2 mt-2 py-2 rounded-xl shadow-xl border animate-in fade-in-0 slide-in-from-top-2 duration-200 backdrop-blur-md"
                     style={{
+                      backgroundColor: !isDarkMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.95)',
                       borderColor: colors.primary + '40',
                       width: 'auto',
                       minWidth: 'max-content',
@@ -382,7 +383,7 @@ export default function Navigation() {
                               <span>{item.label}</span>
                             </button>
                           </TooltipTrigger>
-                          <TooltipContent side="bottom">
+                          <TooltipContent side="left" align="center" sideOffset={5}>
                             {item.tooltip}
                           </TooltipContent>
                         </Tooltip>
@@ -553,11 +554,9 @@ export default function Navigation() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          console.log('Mobile LOGIN clicked');
                           setAuthMode("login");
                           setIsAuthModalOpen(true);
                           setIsOpen(false);
-                          console.log('State should be: authMode=login, isAuthModalOpen=true');
                         }}
                         type="button"
                         className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
@@ -583,11 +582,9 @@ export default function Navigation() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          console.log('Mobile SIGN UP clicked');
                           setAuthMode("register");
                           setIsAuthModalOpen(true);
                           setIsOpen(false);
-                          console.log('State should be: authMode=register, isAuthModalOpen=true');
                         }}
                         type="button"
                         className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"

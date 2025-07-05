@@ -49,11 +49,6 @@ export default function AuthModal({
   const { getColors } = useTheme();
   const { toast } = useToast();
   const colors = getColors();
-  
-  // Debug logging
-  useEffect(() => {
-    console.log('AuthModal - isOpen:', isOpen, 'mode:', mode);
-  }, [isOpen, mode]);
 
   const handleGoogleAuth = () => {
     window.location.href = "/api/login";
