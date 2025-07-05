@@ -33,6 +33,9 @@ import dustIcon from "@assets/animated_weather_icons/dust.svg";
 import fogDayIcon from "@assets/animated_weather_icons/fog-day.svg";
 import fogNightIcon from "@assets/animated_weather_icons/fog-night.svg";
 import fogIcon from "@assets/animated_weather_icons/fog.svg";
+import frostDayIcon from "@assets/animated_weather_icons/frost-day.svg";
+import frostNightIcon from "@assets/animated_weather_icons/frost-night.svg";
+import frostIcon from "@assets/animated_weather_icons/frost.svg";
 import hailIcon from "@assets/animated_weather_icons/hail.svg";
 import hazeDayIcon from "@assets/animated_weather_icons/haze-day.svg";
 import hazeNightIcon from "@assets/animated_weather_icons/haze-night.svg";
@@ -83,25 +86,13 @@ interface ListenerData {
 }
 
 interface WeatherData {
-  location: {
-    city: string;
-    state: string;
-    country: string;
-  };
-  current: {
-    temp_f: number;
-    condition: {
-      text: string;
-      code: number;
-    };
-    wind_mph: number;
-    humidity: number;
-    feelslike_f: number;
-    vis_miles: number;
-    pressure_in: number;
-    dewpoint_f: number;
-    is_day: number;
-  };
+  location: string;
+  temperature: number;
+  description: string;
+  icon: string;
+  humidity: number;
+  windSpeed: number;
+  feelsLike: number;
 }
 
 // Weather condition mapping to animated icons
@@ -242,6 +233,14 @@ export default function FullWidthGlobeMap() {
   // Fetch weather data when user location is available
   const { data: weather, error: weatherError, isLoading: weatherLoading } = useQuery<WeatherData>({
     queryKey: ["/api/weather", userLocation?.lat, userLocation?.lng],
+    queryFn: async () => {
+      if (!userLocation) throw new Error("No location available");
+      const response = await fetch(`/api/weather?lat=${userLocation.lat}&lon=${userLocation.lng}`);
+      if (!response.ok) {
+        throw new Error(`Weather API error: ${response.status}`);
+      }
+      return response.json();
+    },
     enabled: !!userLocation,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchInterval: 10 * 60 * 1000, // 10 minutes
@@ -364,6 +363,9 @@ export default function FullWidthGlobeMap() {
         streetViewControl: false,
         zoomControl: true,
         gestureHandling: "cooperative",
+        disableDefaultUI: false,
+        keyboardShortcuts: false,
+        clickableIcons: false,
       });
 
       setMap(mapInstance);
@@ -441,86 +443,88 @@ export default function FullWidthGlobeMap() {
   return (
     <section
       id="map"
-      className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out`}
-      style={{
-        ...(isFullscreen ? {
-          position: "fixed",
-          top: "0px",
-          left: "0px",
-          right: "0px",
-          bottom: "0px",
-          height: "100vh",
-          width: "100vw",
-          margin: "0px",
-          padding: "0px",
-          paddingTop: "0px",
-          paddingBottom: "120px", // Space for floating player only
-          zIndex: 40,
-          transform: "none",
-        } : {
-          paddingTop: "80px",
-          paddingBottom: "80px",
-        }),
-      }}
+      className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out ${
+        isFullscreen ? "fixed inset-0 z-50 bg-black/80 backdrop-blur-md" : "py-20"
+      }`}
     >
-      <div className={`${isFullscreen ? "h-full px-4 pt-4" : "max-w-full mx-auto px-4 sm:px-6 lg:px-8"}`}>
-        <div className="text-center mb-16">
+      <div className={`${isFullscreen ? "h-full p-[5px]" : "max-w-full mx-auto px-4 sm:px-6 lg:px-8"}`}>
+        {/* Header */}
+        <div className={`text-center ${isFullscreen ? "mb-4" : "mb-16"}`}>
           <h2
             className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
           >
             LIVE INTERACTIVE MAP
           </h2>
           
-          <p
-            className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
-          >
-            See where metal fans are tuning in from around the world in
-            real-time.
-          </p>
-          
-          {/* Weather Information Display */}
-          {weather && (
-            <div className="mb-4">
-              <div className="flex items-center justify-center gap-2">
-                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  {weather.location.city}, {weather.location.state}
-                </span>
-                <img
-                  src={getWeatherIcon(weather.current.condition.text, weather.current.is_day === 1)}
-                  alt={weather.current.condition.text}
-                  className="w-8 h-8 ml-2"
-                />
-                <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"} ml-1`}>
-                  {Math.round(weather.current.temp_f)}°F
-                </span>
-                <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"} ml-1`}>
-                  {weather.current.condition.text}
-                </span>
-              </div>
-            </div>
-          )}
-          
-          {/* Loading state for weather */}
-          {weatherLoading && (
-            <div className="mb-4">
-              <div className="flex items-center justify-center gap-2">
-                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  Loading weather...
-                </span>
-              </div>
-            </div>
+          {!isFullscreen && (
+            <>
+              <p
+                className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
+              >
+                See where metal fans are tuning in from around the world in
+                real-time.
+              </p>
+              
+              {/* Weather Information Display */}
+              {weather && (
+                <div className="mb-4">
+                  <div className="flex items-center justify-center gap-2">
+                    <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                    <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      {weather.location}
+                    </span>
+                    <img
+                      src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
+                      alt={weather.description}
+                      className="w-8 h-8 ml-2"
+                    />
+                    <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"} ml-1`}>
+                      {Math.round(weather.temperature)}°F
+                    </span>
+                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"} ml-1`}>
+                      {weather.description}
+                    </span>
+                  </div>
+                </div>
+              )}
+              
+              {/* Loading state for weather */}
+              {weatherLoading && (
+                <div className="mb-4">
+                  <div className="flex items-center justify-center gap-2">
+                    <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                    <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                      Loading weather...
+                    </span>
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
 
         {/* Map Container */}
-        <div className={`relative ${isFullscreen ? "h-full" : "h-[600px]"} mb-16`}>
+        <div className={`relative ${isFullscreen ? "h-[calc(100vh-140px)]" : "h-[600px]"} ${isFullscreen ? "mb-[120px]" : "mb-16"}`}>
           <div
             ref={mapRef}
-            className={`w-full h-full rounded-lg ${isDarkMode ? "bg-gray-900" : "bg-gray-100"}`}
-            style={{ minHeight: "400px" }}
+            className={`w-full h-full ${isFullscreen ? "rounded-none" : "rounded-lg"} ${isDarkMode ? "bg-gray-900" : "bg-gray-100"} map-container`}
+            style={{ 
+              minHeight: "400px",
+            }}
           />
+          
+          {/* CSS to hide Google attribution */}
+          <style jsx>{`
+            .map-container .gm-style-cc,
+            .map-container .gmnoprint,
+            .map-container .gm-style-mtc,
+            .map-container a[href*="maps.google.com"],
+            .map-container a[href*="google.com/maps"],
+            .map-container .gm-svpc,
+            .map-container .gm-fullscreen-control {
+              display: none !important;
+            }
+          `}</style>
           
           {/* Fullscreen Toggle */}
           <Button
@@ -536,11 +540,21 @@ export default function FullWidthGlobeMap() {
 
         {/* Statistics Cards */}
         {!isFullscreen && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             {/* Live Statistics */}
-            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
+            <Card 
+              className={`backdrop-blur-md border-0 ${
+                isDarkMode 
+                  ? `bg-gray-900/50 ${colors.primary === 'orange' ? 'hover:bg-orange-900/20' : `hover:bg-${colors.primary}-900/20`}`
+                  : `bg-white/50 ${colors.primary === 'orange' ? 'hover:bg-orange-50/50' : `hover:bg-${colors.primary}-50/50`}`
+              } transition-all duration-300`}
+            >
               <CardHeader className="pb-3">
-                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
+                <CardTitle 
+                  className={`font-orbitron font-black text-lg ${
+                    isDarkMode ? "text-white" : "text-black"
+                  }`}
+                >
                   Live Statistics
                 </CardTitle>
               </CardHeader>
@@ -552,7 +566,11 @@ export default function FullWidthGlobeMap() {
                       Active Listeners
                     </span>
                   </div>
-                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  <span 
+                    className={`font-bold ${
+                      colors.primary === 'orange' ? 'text-orange-500' : `text-${colors.primary}-500`
+                    }`}
+                  >
                     {totalListeners}
                   </span>
                 </div>
@@ -563,47 +581,14 @@ export default function FullWidthGlobeMap() {
                       Countries
                     </span>
                   </div>
-                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  <span 
+                    className={`font-bold ${
+                      colors.primary === 'orange' ? 'text-orange-500' : `text-${colors.primary}-500`
+                    }`}
+                  >
                     {countriesWithListeners}
                   </span>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Active Locations */}
-            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
-              <CardHeader className="pb-3">
-                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
-                  Active Locations
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {top10Listeners.map((listener) => (
-                    <div key={listener.id} className="flex items-center justify-between">
-                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                        {listener.city}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                        <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
-                          Live
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Engagement Metrics */}
-            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
-              <CardHeader className="pb-3">
-                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
-                  Engagement
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <TrendingUp className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
@@ -611,7 +596,11 @@ export default function FullWidthGlobeMap() {
                       Peak Hours
                     </span>
                   </div>
-                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  <span 
+                    className={`font-bold ${
+                      colors.primary === 'orange' ? 'text-orange-500' : `text-${colors.primary}-500`
+                    }`}
+                  >
                     8-10 PM
                   </span>
                 </div>
@@ -622,9 +611,62 @@ export default function FullWidthGlobeMap() {
                       Avg. Session
                     </span>
                   </div>
-                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  <span 
+                    className={`font-bold ${
+                      colors.primary === 'orange' ? 'text-orange-500' : `text-${colors.primary}-500`
+                    }`}
+                  >
                     2.5 hrs
                   </span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Top 10 Listeners - Original Layout */}
+            <Card 
+              className={`backdrop-blur-md border-0 ${
+                isDarkMode 
+                  ? `bg-gray-900/50 ${colors.primary === 'orange' ? 'hover:bg-orange-900/20' : `hover:bg-${colors.primary}-900/20`}`
+                  : `bg-white/50 ${colors.primary === 'orange' ? 'hover:bg-orange-50/50' : `hover:bg-${colors.primary}-50/50`}`
+              } transition-all duration-300`}
+            >
+              <CardHeader className="pb-3">
+                <CardTitle 
+                  className={`font-orbitron font-black text-lg ${
+                    isDarkMode ? "text-white" : "text-black"
+                  }`}
+                >
+                  Top Locations
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 max-h-40 overflow-y-auto">
+                  {top10Listeners.map((listener, index) => (
+                    <div key={listener.id} className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span 
+                          className={`text-xs font-bold ${
+                            colors.primary === 'orange' ? 'text-orange-500' : `text-${colors.primary}-500`
+                          } w-6 text-center`}
+                        >
+                          #{index + 1}
+                        </span>
+                        <span className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                          {listener.city}, {listener.country}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className={`w-2 h-2 rounded-full animate-pulse ${
+                            colors.primary === 'orange' ? 'bg-orange-500' : `bg-${colors.primary}-500`
+                          }`} 
+                        />
+                        <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+                          Live
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
