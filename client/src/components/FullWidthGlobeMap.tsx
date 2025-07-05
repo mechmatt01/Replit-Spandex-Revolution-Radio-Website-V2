@@ -513,50 +513,69 @@ export default function FullWidthGlobeMap() {
 
           // Hide default InfoWindow styling and add close button functionality
           setTimeout(() => {
+            // Remove all Google Maps default styling
             const infoWindowElements = document.querySelectorAll('.gm-style-iw');
             infoWindowElements.forEach(element => {
-              const parent = element.parentElement;
-              if (parent) {
-                parent.style.background = 'transparent';
-                parent.style.boxShadow = 'none';
-                parent.style.border = 'none';
+              const parentElement = element.parentElement;
+              if (parentElement) {
+                parentElement.style.background = 'transparent !important';
+                parentElement.style.boxShadow = 'none !important';
+                parentElement.style.border = 'none !important';
               }
-              element.style.background = 'transparent';
-              element.style.boxShadow = 'none';
-              element.style.border = 'none';
-              element.style.padding = '0';
-              element.style.margin = '0';
+              (element as HTMLElement).style.background = 'transparent !important';
+              (element as HTMLElement).style.boxShadow = 'none !important';
+              (element as HTMLElement).style.border = 'none !important';
+              (element as HTMLElement).style.padding = '0 !important';
+              (element as HTMLElement).style.margin = '0 !important';
             });
 
-            // Hide the default close button and all other default elements
+            // Hide all default close buttons
             const closeButtons = document.querySelectorAll('.gm-ui-hover-effect');
             closeButtons.forEach(button => {
-              (button as HTMLElement).style.display = 'none';
+              (button as HTMLElement).style.display = 'none !important';
             });
             
-            // Hide the default white background containers
-            const gmStyleIwContainers = document.querySelectorAll('.gm-style-iw-d');
-            gmStyleIwContainers.forEach(container => {
-              (container as HTMLElement).style.background = 'transparent';
-              (container as HTMLElement).style.border = 'none';
-              (container as HTMLElement).style.boxShadow = 'none';
+            // Hide all default background containers
+            const allContainers = document.querySelectorAll('.gm-style-iw-d, .gm-style-iw-c, .gm-style-iw-tc');
+            allContainers.forEach(container => {
+              (container as HTMLElement).style.background = 'transparent !important';
+              (container as HTMLElement).style.border = 'none !important';
+              (container as HTMLElement).style.boxShadow = 'none !important';
+              (container as HTMLElement).style.overflow = 'visible !important';
             });
             
-            // Hide the tail/pointer background
-            const gmStyleIwTails = document.querySelectorAll('.gm-style-iw-t');
-            gmStyleIwTails.forEach(tail => {
-              (tail as HTMLElement).style.display = 'none';
+            // Hide the tail/pointer and arrow elements
+            const tailElements = document.querySelectorAll('.gm-style-iw-t, .gm-style-iw-t::after, .gm-style-iw-t::before');
+            tailElements.forEach(tail => {
+              (tail as HTMLElement).style.display = 'none !important';
             });
 
-            // Add functionality to custom close button
+            // Add functionality to custom close button with event delegation
             const customCloseButton = document.getElementById('close-info-window');
             if (customCloseButton) {
-              customCloseButton.onclick = () => {
+              // Remove any existing listeners
+              customCloseButton.onclick = null;
+              // Add new listener
+              customCloseButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 infoWindow.close();
                 currentInfoWindow.current = null;
-              };
+              });
             }
-          }, 100);
+          }, 150);
+
+          // Additional cleanup after 300ms to catch any delayed elements
+          setTimeout(() => {
+            const allGmElements = document.querySelectorAll('[class*="gm-style-iw"]');
+            allGmElements.forEach(element => {
+              if (element.className.includes('gm-style-iw') && !element.id) {
+                (element as HTMLElement).style.background = 'transparent !important';
+                (element as HTMLElement).style.border = 'none !important';
+                (element as HTMLElement).style.boxShadow = 'none !important';
+              }
+            });
+          }, 300);
         });
       });
     };
@@ -661,11 +680,8 @@ export default function FullWidthGlobeMap() {
         <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-5 pb-5" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
           {/* Fullscreen Weather Header */}
           {isFullscreen && (
-            <div className="absolute top-5 left-0 right-0 z-10 px-8">
+            <div className="absolute top-5 left-0 right-0 z-10 px-12">
               <div className="text-center mb-6">
-                 <h2 className={`font-orbitron font-black text-2xl md:text-3xl mb-2 ${isDarkMode ? "text-white" : "text-black"}`}>
-                  Global Listeners
-                </h2>
                 {/* Weather Display in Fullscreen */}
                 {weather && (
                   <div className="mb-4">
@@ -675,12 +691,12 @@ export default function FullWidthGlobeMap() {
                         {weather.location}
                       </span>
                     </div>
-                    <div className="flex items-center justify-center gap-1.5">
+                    <div className="flex items-center justify-center gap-1">
                       <img
                         src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
                         alt={weather.description}
-                        className="w-10 h-10 flex-shrink-0"
-                        style={{ marginTop: '4px' }}
+                        className="w-12 h-12 flex-shrink-0"
+                        style={{ marginTop: '6px' }}
                       />
                       <span className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
                         {Math.round(weather.temperature)}°F
@@ -697,12 +713,11 @@ export default function FullWidthGlobeMap() {
 
           <div
             ref={mapRef}
-            className={`w-full h-full ${isFullscreen ? "rounded-xl mx-8 mt-24" : "rounded-lg"} map-container`}
+            className={`w-full h-full ${isFullscreen ? "rounded-xl mx-12 mt-28" : "rounded-lg"} map-container`}
             style={{ 
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "calc(100vh - 160px)" : "100%",
-              border: isFullscreen ? `2px solid ${colors.primary}40` : "none",
+              height: isFullscreen ? "calc(100vh - 180px)" : "100%",
             }}
           />
 
@@ -825,7 +840,7 @@ export default function FullWidthGlobeMap() {
                       src={CountriesIconPath} 
                       alt="Countries" 
                       className="h-6 w-6" 
-                      style={{ filter: `brightness(0) saturate(100%) invert(61%) sepia(96%) saturate(1298%) hue-rotate(3deg) brightness(104%) contrast(101%)` }}
+                      style={{ filter: `brightness(0) saturate(100%) invert(65%) sepia(91%) saturate(2154%) hue-rotate(3deg) brightness(103%) contrast(101%)` }}
                     />
                     <span
                       className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
@@ -846,7 +861,7 @@ export default function FullWidthGlobeMap() {
                       src={LiveNowIconPath} 
                       alt="Total Listeners" 
                       className="h-6 w-6" 
-                      style={{ filter: `brightness(0) saturate(100%) invert(61%) sepia(96%) saturate(1298%) hue-rotate(3deg) brightness(104%) contrast(101%)` }}
+                      style={{ filter: `brightness(0) saturate(100%) invert(65%) sepia(91%) saturate(2154%) hue-rotate(3deg) brightness(103%) contrast(101%)` }}
                     />
                     <span
                       className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
@@ -861,51 +876,94 @@ export default function FullWidthGlobeMap() {
             {/* Active Locations - Combined Single Box */}
             <div className="lg:col-span-2">
               <Card
-                className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
+                className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2 h-full`}
                 style={{ borderColor: `${colors.primary}40` }}
               >
-                <CardContent className="p-6">
+                <CardContent className="p-6 h-full flex flex-col">
                   <h3
-                    className="font-black text-xl mb-4"
+                    className="font-black text-xl mb-6 text-center"
                     style={{ color: colors.primary }}
                   >
-                    Active Locations (1-10)
+                    Active Locations
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {top10Listeners
-                      .filter((l) => l.isActive)
-                      .map((listener, index) => (
-                        <div
-                          key={listener.id}
-                          className="flex items-center justify-between p-2 rounded transition-colors duration-200 hover:bg-opacity-10"
-                        >
-                          <div className="flex items-center gap-2">
-                            <span
-                              className="font-black text-sm w-6 text-center"
-                              style={{ color: colors.primary }}
-                            >
-                              #{index + 1}
-                            </span>
-                            <MapPin className="h-4 w-4" style={{ color: colors.primary }} />
-                            <div>
-                              <div
-                                className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                  <div className="grid grid-cols-2 gap-4 flex-1">
+                    {/* First Column (1-5) */}
+                    <div className="space-y-2">
+                      {top10Listeners
+                        .filter((l) => l.isActive)
+                        .slice(0, 5)
+                        .map((listener, index) => (
+                          <div
+                            key={listener.id}
+                            className="flex items-center justify-between p-2 rounded transition-colors duration-200 hover:bg-opacity-10"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="font-black text-sm w-6 text-center"
+                                style={{ color: colors.primary }}
                               >
-                                {listener.city}
-                              </div>
-                              <div
-                                className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                              >
-                                {listener.country}
+                                #{index + 1}
+                              </span>
+                              <MapPin className="h-4 w-4" style={{ color: colors.primary }} />
+                              <div>
+                                <div
+                                  className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                                >
+                                  {listener.city}
+                                </div>
+                                <div
+                                  className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                                >
+                                  {listener.country}
+                                </div>
                               </div>
                             </div>
+                            <div
+                              className="w-2 h-2 rounded-full animate-pulse"
+                              style={{ backgroundColor: colors.primary }}
+                            />
                           </div>
+                        ))}
+                    </div>
+                    
+                    {/* Second Column (6-10) */}
+                    <div className="space-y-2">
+                      {top10Listeners
+                        .filter((l) => l.isActive)
+                        .slice(5, 10)
+                        .map((listener, index) => (
                           <div
-                            className="w-2 h-2 rounded-full animate-pulse"
-                            style={{ backgroundColor: colors.primary }}
-                          />
-                        </div>
-                      ))}
+                            key={listener.id}
+                            className="flex items-center justify-between p-2 rounded transition-colors duration-200 hover:bg-opacity-10"
+                          >
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="font-black text-sm w-6 text-center"
+                                style={{ color: colors.primary }}
+                              >
+                                #{index + 6}
+                              </span>
+                              <MapPin className="h-4 w-4" style={{ color: colors.primary }} />
+                              <div>
+                                <div
+                                  className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                                >
+                                  {listener.city}
+                                </div>
+                                <div
+                                  className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                                >
+                                  {listener.country}
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className="w-2 h-2 rounded-full animate-pulse"
+                              style={{ backgroundColor: colors.primary }}
+                            />
+                          </div>
+                        ))}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
