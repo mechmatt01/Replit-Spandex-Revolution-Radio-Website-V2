@@ -464,122 +464,42 @@ export default function Navigation() {
                 width: 'auto',
                 minWidth: 'max-content',
                 maxWidth: 'calc(100vw - 2rem)',
-                zIndex: 9999,
-                pointerEvents: 'auto'
+                zIndex: 40
               }}
             >
               <div className="px-4 py-6 space-y-3">
-                {/* Music Link */}
-                <a
-                  href="/music"
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <Music size={20} style={{ color: colors.primary }} />
-                  <span>MUSIC</span>
-                </a>
-                
-                {/* Schedule Link */}
-                <a
-                  href="/#schedule"
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <Calendar size={20} style={{ color: colors.primary }} />
-                  <span>SCHEDULE</span>
-                </a>
-                
-                {/* Support Us Link */}
-                <a
-                  href="/#subscribe"
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <Heart size={20} style={{ color: colors.primary }} />
-                  <span>SUPPORT US</span>
-                </a>
-                
-                {/* Submissions Link */}
-                <a
-                  href="/#submissions"
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <Send size={20} style={{ color: colors.primary }} />
-                  <span>SUBMISSIONS</span>
-                </a>
-                
-                {/* Contact Link */}
-                <a
-                  href="/#contact"
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <Phone size={20} style={{ color: colors.primary }} />
-                  <span>CONTACT</span>
-                </a>
-                
-                {/* Listen Map Link */}
-                <a
-                  href="/#map"
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <MapPin size={20} style={{ color: colors.primary }} />
-                  <span>LISTEN MAP</span>
-                </a>
-                
-                {/* Features Link */}
-                <a
-                  href="/#features"
-                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full no-underline"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    textDecoration: 'none'
-                  }}
-                >
-                  <Heart size={20} style={{ color: colors.primary }} />
-                  <span>FEATURES</span>
-                </a>
+                {/* All Menu Items */}
+                {menuItems.map((item) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <div key={item.id}>
+                      <button
+                        onClick={() => {
+                          console.log(`Mobile nav: ${item.label}`);
+                          item.action();
+                        }}
+                        className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                        style={{ 
+                          color: colors.text,
+                          backgroundColor: 'transparent',
+                          border: 'none',
+                          cursor: 'pointer'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary + '20';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = colors.text;
+                        }}
+                      >
+                        <IconComponent size={20} style={{ color: colors.primary }} />
+                        <span>{item.label}</span>
+                      </button>
+                    </div>
+                  );
+                })}
 
                 {/* Authentication Section */}
                 <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
