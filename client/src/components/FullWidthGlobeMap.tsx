@@ -400,21 +400,78 @@ export default function FullWidthGlobeMap() {
       ];
 
       mockListeners.forEach((listener) => {
+        // Create animated theme-colored dot SVG
+        const animatedDotSvg = `
+          <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="6" fill="${colors.primary}" opacity="0.8">
+              <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="12" cy="12" r="4" fill="${colors.primary}">
+              <animate attributeName="opacity" values="1;0.6;1" dur="1.5s" repeatCount="indefinite"/>
+            </circle>
+          </svg>
+        `;
+        
         const marker = new google.maps.Marker({
           position: { lat: listener.lat, lng: listener.lng },
           map: mapInstance,
           title: `${listener.city}, ${listener.country}`,
           icon: {
-            url: LiveNowIconPath,
-            scaledSize: new google.maps.Size(20, 20),
+            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(animatedDotSvg)}`,
+            scaledSize: new google.maps.Size(24, 24),
+            anchor: new google.maps.Point(12, 12),
           },
         });
 
         const infoWindow = new google.maps.InfoWindow({
           content: `
-            <div style="color: black; font-weight: bold;">
-              <h3>${listener.city}, ${listener.country}</h3>
-              <p>🎵 Currently listening to metal!</p>
+            <div style="
+              background: ${isDarkMode ? '#1f2937' : '#ffffff'};
+              color: ${isDarkMode ? '#ffffff' : '#000000'};
+              border-radius: 12px;
+              padding: 16px;
+              box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+              border: 2px solid ${colors.primary}40;
+              min-width: 200px;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            ">
+              <div style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 8px;
+              ">
+                <div style="
+                  width: 12px;
+                  height: 12px;
+                  border-radius: 50%;
+                  background: ${colors.primary};
+                  animation: pulse 2s infinite;
+                "></div>
+                <h3 style="
+                  margin: 0;
+                  font-size: 16px;
+                  font-weight: 700;
+                  color: ${colors.primary};
+                ">${listener.city}, ${listener.country}</h3>
+              </div>
+              <p style="
+                margin: 0;
+                font-size: 14px;
+                color: ${isDarkMode ? '#e5e5e5' : '#4b5563'};
+                font-weight: 500;
+              ">🎵 Currently listening to metal!</p>
+              <div style="
+                margin-top: 12px;
+                padding: 8px;
+                background: ${isDarkMode ? '#374151' : '#f3f4f6'};
+                border-radius: 8px;
+                font-size: 12px;
+                color: ${isDarkMode ? '#d1d5db' : '#6b7280'};
+              ">
+                Live listener • Active now
+              </div>
             </div>
           `,
         });
@@ -483,12 +540,14 @@ export default function FullWidthGlobeMap() {
               {/* Weather Information Display */}
               {weather && (
                 <div className="mb-4">
-                  <div className="flex items-center justify-center gap-1">
+                  <div className="flex items-center justify-center gap-2 mb-2">
                     <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
                     <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                       {weather.location}
                     </span>
-                    <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"} mx-1`}>
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
                       {Math.round(weather.temperature)}°F
                     </span>
                     <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
@@ -497,7 +556,7 @@ export default function FullWidthGlobeMap() {
                     <img
                       src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
                       alt={weather.description}
-                      className="w-10 h-10 ml-1"
+                      className="w-10 h-10"
                     />
                   </div>
                 </div>
@@ -604,59 +663,104 @@ export default function FullWidthGlobeMap() {
           </Button>
         </div>
 
-        {/* Statistics Cards - Original 3-Column Layout */}
+        {/* Statistics Cards - Orange Themed Layout */}
         {!isFullscreen && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {/* Live Statistics */}
-            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
-              <CardHeader className="pb-3">
-                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
+            <Card
+              className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
+              style={{ borderColor: `${colors.primary}40` }}
+            >
+              <CardContent className="p-6">
+                <h3
+                  className="font-black text-xl mb-3"
+                  style={{ color: colors.primary }}
+                >
                   Live Statistics
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <img src={LiveNowIconPath} alt="Live" className="w-5 h-5" />
-                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span
+                      className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
+                    >
                       Active Listeners
                     </span>
-                  </div>
-                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                    {totalListeners}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <img src={CountriesIconPath} alt="Countries" className="w-5 h-5" />
-                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                      Countries
+                    <span
+                      className="font-black text-lg"
+                      style={{ color: colors.primary }}
+                    >
+                      {totalListeners}
                     </span>
                   </div>
-                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                    {countriesWithListeners}
-                  </span>
+                  <div className="flex justify-between items-center">
+                    <span
+                      className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
+                    >
+                      Countries
+                    </span>
+                    <span
+                      className="font-black text-lg"
+                      style={{ color: colors.primary }}
+                    >
+                      {countriesWithListeners}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span
+                      className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
+                    >
+                      Total Listeners
+                    </span>
+                    <span
+                      className="font-black text-lg"
+                      style={{ color: colors.primary }}
+                    >
+                      {stats?.currentListeners || 42}
+                    </span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Active Locations */}
-            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
-              <CardHeader className="pb-3">
-                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
-                  Active Locations
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+            {/* Top 10 Listeners */}
+            <Card
+              className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
+              style={{ borderColor: `${colors.primary}40` }}
+            >
+              <CardContent className="p-6">
+                <h3
+                  className="font-black text-xl mb-3"
+                  style={{ color: colors.primary }}
+                >
+                  Top Locations
+                </h3>
                 <div className="space-y-2 max-h-32 overflow-y-auto">
-                  {top10Listeners.map((listener) => (
-                    <div key={listener.id} className="flex items-center justify-between">
-                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                        {listener.city}
-                      </span>
-                      <div className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                        <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+                  {top10Listeners.slice(0, 10).map((listener, index) => (
+                    <div
+                      key={listener.id}
+                      className="flex justify-between items-center"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <span
+                          className="font-black text-sm w-6 text-center"
+                          style={{ color: colors.primary }}
+                        >
+                          #{index + 1}
+                        </span>
+                        <span
+                          className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                        >
+                          {listener.city}, {listener.country}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <div
+                          className="w-2 h-2 rounded-full animate-pulse"
+                          style={{ backgroundColor: colors.primary }}
+                        />
+                        <span
+                          className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                        >
                           Live
                         </span>
                       </div>
@@ -667,34 +771,44 @@ export default function FullWidthGlobeMap() {
             </Card>
 
             {/* Engagement Metrics */}
-            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
-              <CardHeader className="pb-3">
-                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
+            <Card
+              className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
+              style={{ borderColor: `${colors.primary}40` }}
+            >
+              <CardContent className="p-6">
+                <h3
+                  className="font-black text-xl mb-3"
+                  style={{ color: colors.primary }}
+                >
                   Engagement
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span
+                      className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
+                    >
                       Peak Hours
                     </span>
-                  </div>
-                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                    8-10 PM
-                  </span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Play className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                      Avg. Session
+                    <span
+                      className="font-black text-lg"
+                      style={{ color: colors.primary }}
+                    >
+                      8-10 PM
                     </span>
                   </div>
-                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                    2.5 hrs
-                  </span>
+                  <div className="flex justify-between items-center">
+                    <span
+                      className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
+                    >
+                      Avg. Session
+                    </span>
+                    <span
+                      className="font-black text-lg"
+                      style={{ color: colors.primary }}
+                    >
+                      2.5 hrs
+                    </span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
