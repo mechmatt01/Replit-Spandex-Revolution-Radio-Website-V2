@@ -439,17 +439,17 @@ export default function FullWidthGlobeMap() {
                 position: absolute;
                 top: -2px;
                 right: -2px;
-                background: rgba(55, 65, 81, 0.8);
+                background: transparent;
                 border: none;
-                color: #9ca3af;
+                color: white;
                 cursor: pointer;
-                font-size: 12px;
+                font-size: 20px;
                 font-weight: bold;
                 line-height: 1;
-                padding: 2px;
-                border-radius: 4px;
-                width: 16px;
-                height: 16px;
+                padding: 0;
+                border-radius: 0;
+                width: 24px;
+                height: 24px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -499,10 +499,10 @@ export default function FullWidthGlobeMap() {
             // Add close button functionality
             const closeButton = div.querySelector('.close-overlay') as HTMLButtonElement;
             closeButton.addEventListener('mouseenter', () => {
-              closeButton.style.background = 'rgba(75, 85, 99, 0.9)';
+              closeButton.style.background = 'transparent';
             });
             closeButton.addEventListener('mouseleave', () => {
-              closeButton.style.background = 'rgba(55, 65, 81, 0.8)';
+              closeButton.style.background = 'transparent';
             });
             closeButton.addEventListener('click', (e) => {
               e.preventDefault();
@@ -716,15 +716,15 @@ export default function FullWidthGlobeMap() {
         )}
 
         {/* Map Container */}
-        <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-16 pb-4" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
+        <div className={`relative ${isFullscreen ? "fixed inset-0 z-50" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
 
           <div
             ref={mapRef}
-            className={`w-full h-full ${isFullscreen ? "rounded-lg mx-8" : "rounded-lg"} map-container`}
+            className={`w-full ${isFullscreen ? "rounded-lg mx-8" : "rounded-lg"} map-container`}
             style={{ 
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "calc(100vh - 200px)" : "100%",
+              height: isFullscreen ? "calc(100vh - 180px)" : "100%",
               marginTop: isFullscreen ? "180px" : "0",
             }}
           />
@@ -848,7 +848,7 @@ export default function FullWidthGlobeMap() {
                       src={CountriesIconPath} 
                       alt="Countries" 
                       className="h-7 w-7" 
-                      style={{ filter: `brightness(0) saturate(100%) invert(65%) sepia(100%) saturate(1000%) hue-rotate(3deg) brightness(110%) contrast(95%)` }}
+                      style={{ filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)` }}
                     />
                     <span
                       className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
@@ -869,7 +869,7 @@ export default function FullWidthGlobeMap() {
                       src={LiveNowIconPath} 
                       alt="Total Listeners" 
                       className="h-7 w-7" 
-                      style={{ filter: `brightness(0) saturate(100%) invert(65%) sepia(100%) saturate(1000%) hue-rotate(3deg) brightness(110%) contrast(95%)` }}
+                      style={{ filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)` }}
                     />
                     <span
                       className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
@@ -927,7 +927,7 @@ export default function FullWidthGlobeMap() {
                               </div>
                             </div>
                             <div
-                              className="w-4 h-4 rounded-full animate-pulse ml-2"
+                              className="w-3 h-3 rounded-full animate-pulse ml-2"
                               style={{ backgroundColor: colors.primary }}
                             />
                           </div>
@@ -966,7 +966,7 @@ export default function FullWidthGlobeMap() {
                               </div>
                             </div>
                             <div
-                              className="w-4 h-4 rounded-full animate-pulse ml-2"
+                              className="w-3 h-3 rounded-full animate-pulse ml-2"
                               style={{ backgroundColor: colors.primary }}
                             />
                           </div>
