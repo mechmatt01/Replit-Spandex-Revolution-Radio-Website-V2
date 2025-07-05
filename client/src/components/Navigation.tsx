@@ -466,6 +466,7 @@ export default function Navigation() {
                 maxWidth: 'calc(100vw - 2rem)',
                 zIndex: 40
               }}
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="px-4 py-6 space-y-3">
                 {/* All Menu Items */}
@@ -473,30 +474,34 @@ export default function Navigation() {
                   const IconComponent = item.icon;
                   return (
                     <div key={item.id}>
-                      <button
-                        onClick={() => {
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
                           console.log(`Mobile nav: ${item.label}`);
+                          setIsOpen(false);
+                          // Use the action function
                           item.action();
                         }}
-                        className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                        className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                         style={{ 
                           color: colors.text,
                           backgroundColor: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer'
+                          border: 'none'
                         }}
-                        onMouseEnter={(e) => {
+                        onTouchStart={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary + '20';
                           e.currentTarget.style.color = 'white';
                         }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = colors.text;
+                        onTouchEnd={(e) => {
+                          setTimeout(() => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = colors.text;
+                          }, 100);
                         }}
                       >
                         <IconComponent size={20} style={{ color: colors.primary }} />
                         <span>{item.label}</span>
-                      </button>
+                      </div>
                     </div>
                   );
                 })}
@@ -505,104 +510,114 @@ export default function Navigation() {
                 <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
                   {!isAuthenticated ? (
                     <>
-                      <button
-                        onClick={() => {
-                          console.log("Mobile login clicked");
-                          openLogin();
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsOpen(false);
+                          setAuthMode("login");
+                          setIsAuthModalOpen(true);
                         }}
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                         style={{ 
                           color: colors.text,
                           border: `1px solid ${colors.primary}`,
-                          backgroundColor: 'transparent',
-                          cursor: 'pointer'
+                          backgroundColor: 'transparent'
                         }}
-                        onMouseEnter={(e) => {
+                        onTouchStart={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary + '20';
                           e.currentTarget.style.color = 'white';
                         }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = colors.text;
+                        onTouchEnd={(e) => {
+                          setTimeout(() => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = colors.text;
+                          }, 100);
                         }}
                       >
                         <User size={20} style={{ color: colors.primary }} />
                         <span>LOGIN</span>
-                      </button>
+                      </div>
                       
-                      <button
-                        onClick={() => {
-                          console.log("Mobile signup clicked");
-                          openSignUp();
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsOpen(false);
+                          setAuthMode("register");
+                          setIsAuthModalOpen(true);
                         }}
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                         style={{ 
                           backgroundColor: colors.primary,
                           color: 'white',
-                          border: `1px solid ${colors.primary}`,
-                          cursor: 'pointer'
+                          border: `1px solid ${colors.primary}`
                         }}
-                        onMouseEnter={(e) => {
+                        onTouchStart={(e) => {
                           e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
                         }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary;
+                        onTouchEnd={(e) => {
+                          setTimeout(() => {
+                            e.currentTarget.style.backgroundColor = colors.primary;
+                          }, 100);
                         }}
                       >
                         <UserPlus size={20} style={{ color: 'white' }} />
                         <span>SIGN UP</span>
-                      </button>
+                      </div>
                     </>
                   ) : (
                     <>
-                      <button
-                        onClick={() => {
-                          console.log("Mobile profile clicked");
-                          goToProfile();
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsOpen(false);
+                          setLocation("/profile");
                         }}
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                         style={{
                           color: colors.text,
-                          backgroundColor: colors.primary + '20',
-                          cursor: 'pointer'
+                          backgroundColor: colors.primary + '20'
                         }}
-                        onMouseEnter={(e) => {
+                        onTouchStart={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary + '30';
                           e.currentTarget.style.color = 'white';
                         }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary + '20';
-                          e.currentTarget.style.color = colors.text;
+                        onTouchEnd={(e) => {
+                          setTimeout(() => {
+                            e.currentTarget.style.backgroundColor = colors.primary + '20';
+                            e.currentTarget.style.color = colors.text;
+                          }, 100);
                         }}
                       >
                         <User size={16} style={{ color: colors.primary }} />
                         <span>PROFILE</span>
-                      </button>
+                      </div>
                       
-                      <button
-                        onClick={() => {
-                          console.log("Mobile logout clicked");
-                          handleLogout();
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setIsOpen(false);
+                          logout();
                         }}
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
                         style={{
                           color: colors.primary,
                           backgroundColor: 'transparent',
-                          border: `1px solid ${colors.primary}`,
-                          cursor: 'pointer'
+                          border: `1px solid ${colors.primary}`
                         }}
-                        onMouseEnter={(e) => {
+                        onTouchStart={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary + '20';
                           e.currentTarget.style.color = 'white';
                         }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = colors.primary;
+                        onTouchEnd={(e) => {
+                          setTimeout(() => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = colors.primary;
+                          }, 100);
                         }}
                       >
                         <LogOut size={16} style={{ color: colors.primary }} />
                         <span>SIGN OUT</span>
-                      </button>
+                      </div>
                     </>
                   )}
                 </div>
