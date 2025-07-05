@@ -432,15 +432,37 @@ export default function FullWidthGlobeMap() {
               border-radius: 12px;
               padding: 16px;
               box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-              border: 2px solid ${colors.primary}40;
+              border: 2px solid ${colors.primary};
               min-width: 200px;
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              position: relative;
             ">
+              <button onclick="google.maps.event.trigger(arguments[0], 'closeclick')" style="
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                background: transparent;
+                border: none;
+                color: ${isDarkMode ? '#9ca3af' : '#6b7280'};
+                cursor: pointer;
+                font-size: 18px;
+                font-weight: bold;
+                line-height: 1;
+                padding: 4px;
+                border-radius: 4px;
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+              " onmouseover="this.style.background='${isDarkMode ? '#374151' : '#f3f4f6'}'" onmouseout="this.style.background='transparent'">×</button>
               <div style="
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 margin-bottom: 8px;
+                padding-right: 24px;
               ">
                 <div style="
                   width: 12px;
@@ -474,10 +496,36 @@ export default function FullWidthGlobeMap() {
               </div>
             </div>
           `,
+          disableAutoPan: false,
+          pixelOffset: new google.maps.Size(0, -10),
         });
 
         marker.addListener("click", () => {
           infoWindow.open(mapInstance, marker);
+          
+          // Hide default InfoWindow styling after it opens
+          setTimeout(() => {
+            const infoWindowElements = document.querySelectorAll('.gm-style-iw');
+            infoWindowElements.forEach(element => {
+              const parent = element.parentElement;
+              if (parent) {
+                parent.style.background = 'transparent';
+                parent.style.boxShadow = 'none';
+                parent.style.border = 'none';
+              }
+              element.style.background = 'transparent';
+              element.style.boxShadow = 'none';
+              element.style.border = 'none';
+              element.style.padding = '0';
+              element.style.margin = '0';
+            });
+            
+            // Hide the default close button
+            const closeButtons = document.querySelectorAll('.gm-ui-hover-effect');
+            closeButtons.forEach(button => {
+              (button as HTMLElement).style.display = 'none';
+            });
+          }, 100);
         });
       });
     };
@@ -546,18 +594,18 @@ export default function FullWidthGlobeMap() {
                       {weather.location}
                     </span>
                   </div>
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center justify-center gap-3">
+                    <img
+                      src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
+                      alt={weather.description}
+                      className="w-10 h-10 flex-shrink-0"
+                    />
                     <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
                       {Math.round(weather.temperature)}°F
                     </span>
                     <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                       {weather.description}
                     </span>
-                    <img
-                      src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
-                      alt={weather.description}
-                      className="w-10 h-10"
-                    />
                   </div>
                 </div>
               )}
@@ -578,13 +626,50 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Map Container */}
-        <div className={`relative ${isFullscreen ? "h-[calc(100vh-80px)]" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
+        <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-5 pb-5" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
+          {/* Fullscreen Header */}
+          {isFullscreen && (
+            <div className="absolute top-5 left-0 right-0 z-10 px-5">
+              <div className="text-center mb-4">
+                <h2 className={`font-orbitron font-black text-2xl md:text-3xl mb-2 ${isDarkMode ? "text-white" : "text-black"}`}>
+                  Live Interactive Map
+                </h2>
+                
+                {/* Weather Display in Fullscreen */}
+                {weather && (
+                  <div className="mb-4">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <MapPin className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                      <span className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                        {weather.location}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-center gap-3">
+                      <img
+                        src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
+                        alt={weather.description}
+                        className="w-8 h-8 flex-shrink-0"
+                      />
+                      <span className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                        {Math.round(weather.temperature)}°F
+                      </span>
+                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                        {weather.description}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
           <div
             ref={mapRef}
-            className={`w-full h-full ${isFullscreen ? "rounded-lg" : "rounded-lg"} map-container`}
+            className={`w-full h-full ${isFullscreen ? "rounded-lg mx-5 mt-32" : "rounded-lg"} map-container`}
             style={{ 
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+              height: isFullscreen ? "calc(100vh - 200px)" : "100%",
             }}
           />
           
@@ -663,27 +748,31 @@ export default function FullWidthGlobeMap() {
           </Button>
         </div>
 
-        {/* Listener Stats - Hide in fullscreen mode */}
+        {/* Statistics Layout - Hide in fullscreen mode */}
         {!isFullscreen && (
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Live Statistics - Left Side */}
             <Card
               className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
               style={{ borderColor: `${colors.primary}40` }}
             >
               <CardContent className="p-6">
                 <h3
-                  className="font-black text-xl mb-3"
+                  className="font-black text-xl mb-4"
                   style={{ color: colors.primary }}
                 >
                   Live Statistics
                 </h3>
                 <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span
-                      className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
-                    >
-                      Active Listeners
-                    </span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5" style={{ color: colors.primary }} />
+                      <span
+                        className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
+                      >
+                        Active Listeners
+                      </span>
+                    </div>
                     <span
                       className="font-black text-lg"
                       style={{ color: colors.primary }}
@@ -691,12 +780,15 @@ export default function FullWidthGlobeMap() {
                       {totalListeners}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span
-                      className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
-                    >
-                      Countries
-                    </span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <img src={CountriesIconPath} alt="Countries" className="h-5 w-5" />
+                      <span
+                        className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
+                      >
+                        Countries
+                      </span>
+                    </div>
                     <span
                       className="font-black text-lg"
                       style={{ color: colors.primary }}
@@ -704,12 +796,15 @@ export default function FullWidthGlobeMap() {
                       {countriesWithListeners}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span
-                      className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
-                    >
-                      Total Listeners
-                    </span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <img src={LiveNowIconPath} alt="Total Listeners" className="h-5 w-5" />
+                      <span
+                        className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
+                      >
+                        Total Listeners
+                      </span>
+                    </div>
                     <span
                       className="font-black text-lg"
                       style={{ color: colors.primary }}
@@ -721,54 +816,112 @@ export default function FullWidthGlobeMap() {
               </CardContent>
             </Card>
 
-            <Card
-              className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
-              style={{ borderColor: `${colors.primary}40` }}
-            >
-              <CardContent className="p-6">
-                <h3
-                  className="font-black text-xl mb-3"
-                  style={{ color: colors.primary }}
-                >
-                  Active Locations
-                </h3>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {top10Listeners
-                    .filter((l) => l.isActive)
-                    .map((listener) => (
-                      <div
-                        key={listener.id}
-                        className={`flex items-center justify-between p-2 rounded transition-colors duration-200 cursor-pointer hover:bg-opacity-10`}
-                        style={{
-                          backgroundColor: 'transparent',
-                        }}
-                      >
-                        <div className="flex items-center">
-                          <MapPin className="h-4 w-4 mr-2" style={{ color: colors.primary }} />
-                          <div>
-                            <div
-                              className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+            {/* Active Locations - Right Side (2 columns) */}
+            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Locations 1-5 */}
+              <Card
+                className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
+                style={{ borderColor: `${colors.primary}40` }}
+              >
+                <CardContent className="p-6">
+                  <h3
+                    className="font-black text-lg mb-4"
+                    style={{ color: colors.primary }}
+                  >
+                    Active Locations (1-5)
+                  </h3>
+                  <div className="space-y-2">
+                    {top10Listeners
+                      .filter((l) => l.isActive)
+                      .slice(0, 5)
+                      .map((listener, index) => (
+                        <div
+                          key={listener.id}
+                          className="flex items-center justify-between p-2 rounded transition-colors duration-200 hover:bg-opacity-10"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="font-black text-sm w-6 text-center"
+                              style={{ color: colors.primary }}
                             >
-                              {listener.city}
-                            </div>
-                            <div
-                              className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                            >
-                              {listener.country}
+                              #{index + 1}
+                            </span>
+                            <MapPin className="h-4 w-4" style={{ color: colors.primary }} />
+                            <div>
+                              <div
+                                className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                              >
+                                {listener.city}
+                              </div>
+                              <div
+                                className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                              >
+                                {listener.country}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex items-center">
                           <div
                             className="w-2 h-2 rounded-full animate-pulse"
                             style={{ backgroundColor: colors.primary }}
                           />
                         </div>
-                      </div>
-                    ))}
-                </div>
-              </CardContent>
-            </Card>
+                      ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Locations 6-10 */}
+              <Card
+                className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
+                style={{ borderColor: `${colors.primary}40` }}
+              >
+                <CardContent className="p-6">
+                  <h3
+                    className="font-black text-lg mb-4"
+                    style={{ color: colors.primary }}
+                  >
+                    Active Locations (6-10)
+                  </h3>
+                  <div className="space-y-2">
+                    {top10Listeners
+                      .filter((l) => l.isActive)
+                      .slice(5, 10)
+                      .map((listener, index) => (
+                        <div
+                          key={listener.id}
+                          className="flex items-center justify-between p-2 rounded transition-colors duration-200 hover:bg-opacity-10"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span
+                              className="font-black text-sm w-6 text-center"
+                              style={{ color: colors.primary }}
+                            >
+                              #{index + 6}
+                            </span>
+                            <MapPin className="h-4 w-4" style={{ color: colors.primary }} />
+                            <div>
+                              <div
+                                className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                              >
+                                {listener.city}
+                              </div>
+                              <div
+                                className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                              >
+                                {listener.country}
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className="w-2 h-2 rounded-full animate-pulse"
+                            style={{ backgroundColor: colors.primary }}
+                          />
+                        </div>
+                      ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
       </div>
