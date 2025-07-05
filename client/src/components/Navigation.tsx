@@ -128,7 +128,7 @@ export default function Navigation() {
     // Close any open menus
     setIsOpen(false);
     setIsDropdownOpen(false);
-    
+
     // If not on home page, navigate to home first
     if (window.location.pathname !== "/") {
       window.location.href = `/#${sectionId}`;
@@ -502,33 +502,33 @@ export default function Navigation() {
                 {menuItems.map((item) => {
                   const IconComponent = item.icon;
                   return (
-                    <Tooltip key={item.id}>
-                      <TooltipTrigger asChild>
-                        <button
-                          onClick={() => {
-                            setIsOpen(false);
-                            item.action();
-                          }}
-                          type="button"
-                          className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                          style={{ color: colors.text }}
-                          onMouseEnter={(e) => {
-                            e.currentTarget.style.backgroundColor = colors.primary + '20';
-                            e.currentTarget.style.color = 'white';
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor = 'transparent';
-                            e.currentTarget.style.color = colors.text;
-                          }}
-                          role="menuitem"
-                          aria-label={`Navigate to ${item.label.toLowerCase()}`}
-                        >
-                          <IconComponent size={20} style={{ color: colors.primary }} />
-                          <span>{item.label}</span>
-                        </button>
-                      </TooltipTrigger>
-                      <TooltipContent side="right">{item.tooltip}</TooltipContent>
-                    </Tooltip>
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        console.log(`Mobile dropdown clicked: ${item.label}`);
+                        setIsOpen(false);
+                        item.action();
+                      }}
+                      type="button"
+                      className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
+                      style={{ 
+                        color: colors.text,
+                        backgroundColor: 'transparent'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = colors.primary + '20';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.color = colors.text;
+                      }}
+                      role="menuitem"
+                      aria-label={`Navigate to ${item.label.toLowerCase()}`}
+                    >
+                      <IconComponent size={20} style={{ color: colors.primary }} />
+                      <span>{item.label}</span>
+                    </button>
                   );
                 })}
 
