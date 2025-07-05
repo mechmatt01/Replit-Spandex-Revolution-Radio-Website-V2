@@ -35,6 +35,7 @@ export default function Navigation() {
 
   const menuRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileDropdownRef = useRef<HTMLDivElement>(null);
   const brandTextRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const [navPosition, setNavPosition] = useState<number>(0);
@@ -42,17 +43,26 @@ export default function Navigation() {
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      // Check if click is outside mobile menu button AND mobile dropdown
+      if (isOpen && 
+          menuRef.current && 
+          !menuRef.current.contains(event.target as Node) &&
+          mobileDropdownRef.current && 
+          !mobileDropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      // Check if click is outside desktop dropdown
+      if (isDropdownOpen && 
+          dropdownRef.current && 
+          !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     };
 
     if (isOpen || isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      // Use 'click' instead of 'mousedown' to allow links to work
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
     }
   }, [isOpen, isDropdownOpen]);
 
@@ -458,6 +468,7 @@ export default function Navigation() {
           {/* Mobile Navigation Dropdown - Clean Rewrite */}
           {isOpen && (
             <div 
+              ref={mobileDropdownRef}
               className="xl:hidden absolute top-full right-4 bg-black/90 backdrop-blur-md border rounded-xl animate-in slide-in-from-top-2 duration-300 shadow-xl" 
               style={{ 
                 borderColor: colors.primary + '40',
@@ -467,37 +478,166 @@ export default function Navigation() {
               }}
             >
               <div className="p-4 space-y-2">
-                {/* Navigation Links */}
-                {menuItems.map((item) => {
-                  const IconComponent = item.icon;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        // Call the same action as desktop navigation
-                        item.action();
-                        // Close the dropdown after action
-                        setIsOpen(false);
-                      }}
-                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full text-left hover:bg-opacity-20"
-                      style={{ 
-                        color: colors.text,
-                        backgroundColor: 'transparent'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
-                      }}
-                    >
-                      <IconComponent size={20} style={{ color: colors.primary }} />
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })}
+                {/* Music Link */}
+                <a
+                  href="/music"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Music size={20} style={{ color: colors.primary }} />
+                  <span>MUSIC</span>
+                </a>
+
+                {/* Schedule Link */}
+                <a
+                  href="/#schedule"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Calendar size={20} style={{ color: colors.primary }} />
+                  <span>SCHEDULE</span>
+                </a>
+
+                {/* Support Us Link */}
+                <a
+                  href="/#subscribe"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Heart size={20} style={{ color: colors.primary }} />
+                  <span>SUPPORT US</span>
+                </a>
+
+                {/* Submissions Link */}
+                <a
+                  href="/#submissions"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Send size={20} style={{ color: colors.primary }} />
+                  <span>SUBMISSIONS</span>
+                </a>
+
+                {/* Contact Link */}
+                <a
+                  href="/#contact"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Phone size={20} style={{ color: colors.primary }} />
+                  <span>CONTACT</span>
+                </a>
+
+                {/* Listen Map Link */}
+                <a
+                  href="/#map"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <MapPin size={20} style={{ color: colors.primary }} />
+                  <span>LISTEN MAP</span>
+                </a>
+
+                {/* Features Link */}
+                <a
+                  href="/#features"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Heart size={20} style={{ color: colors.primary }} />
+                  <span>FEATURES</span>
+                </a>
 
                 {/* Divider */}
                 <div className="border-t my-3" style={{ borderColor: colors.primary + '40' }} />
@@ -505,12 +645,15 @@ export default function Navigation() {
                 {/* Authentication Buttons */}
                 {!isAuthenticated ? (
                   <>
-                    <button
+                    <div
                       onClick={() => {
-                        openLogin();
+                        setTimeout(() => {
+                          setAuthMode("login");
+                          setIsAuthModalOpen(true);
+                        }, 100);
                         setIsOpen(false);
                       }}
-                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full"
+                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full cursor-pointer"
                       style={{ 
                         color: colors.text,
                         border: `1px solid ${colors.primary}`,
@@ -527,14 +670,17 @@ export default function Navigation() {
                     >
                       <User size={20} style={{ color: colors.primary }} />
                       <span>LOGIN</span>
-                    </button>
+                    </div>
                     
-                    <button
+                    <div
                       onClick={() => {
-                        openSignUp();
+                        setTimeout(() => {
+                          setAuthMode("register");
+                          setIsAuthModalOpen(true);
+                        }, 100);
                         setIsOpen(false);
                       }}
-                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full"
+                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full cursor-pointer"
                       style={{ 
                         backgroundColor: colors.primary,
                         color: 'white',
@@ -549,19 +695,18 @@ export default function Navigation() {
                     >
                       <UserPlus size={20} style={{ color: 'white' }} />
                       <span>SIGN UP</span>
-                    </button>
+                    </div>
                   </>
                 ) : (
                   <>
-                    <button
-                      onClick={() => {
-                        goToProfile();
-                        setIsOpen(false);
-                      }}
-                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full"
+                    <a
+                      href="/profile"
+                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full no-underline"
                       style={{
                         color: colors.text,
-                        backgroundColor: colors.primary + '20'
+                        backgroundColor: colors.primary + '20',
+                        display: 'flex',
+                        textDecoration: 'none'
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = colors.primary + '30';
@@ -574,18 +719,17 @@ export default function Navigation() {
                     >
                       <User size={16} style={{ color: colors.primary }} />
                       <span>PROFILE</span>
-                    </button>
+                    </a>
                     
-                    <button
-                      onClick={() => {
-                        handleLogout();
-                        setIsOpen(false);
-                      }}
-                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full"
+                    <a
+                      href="/api/logout"
+                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full no-underline"
                       style={{
                         color: colors.primary,
                         backgroundColor: 'transparent',
-                        border: `1px solid ${colors.primary}`
+                        border: `1px solid ${colors.primary}`,
+                        display: 'flex',
+                        textDecoration: 'none'
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = colors.primary + '20';
@@ -598,7 +742,7 @@ export default function Navigation() {
                     >
                       <LogOut size={16} style={{ color: colors.primary }} />
                       <span>SIGN OUT</span>
-                    </button>
+                    </a>
                   </>
                 )}
               </div>
