@@ -111,10 +111,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       res.json({
         googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || "",
+        openWeatherApiKey: process.env.OPENWEATHER_API_KEY || "",
       });
     } catch (error) {
       console.error("Error fetching config:", error);
       res.status(500).json({ error: "Failed to fetch configuration" });
+    }
+  });
+
+  // Weather API endpoint
+  app.get("/api/weather", async (req: Request, res: Response) => {
+    try {
+      const { lat, lon } = req.query;
+      
+      if (!lat || !lon) {
+        return res.status(400).json({ error: "Latitude and longitude are required" });
+      }
+
+      const apiKey = process.env.OPENWEATHER_API_KEY;
+      if (!apiKey) {
+        return res.status(500).json({ error: "OpenWeatherMap API key not configured" });
+      }
+
+      // Get current weather data
+      const weatherResponse = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`
+      );
+
+      if (!weatherResponse.ok) {
+        throw new Error(`Weather API error: ${weatherResponse.status}`);
+      }
+
+      const weatherData = await weatherResponse.json();
+
+      // Get location name from reverse geocoding
+      const geoResponse = await fetch(
+        `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`
+      );
+
+      let locationName = "Unknown Location";
+      if (geoResponse.ok) {
+        const geoData = await geoResponse.json();
+        if (geoData.length > 0) {
+          const location = geoData[0];
+          locationName = location.state 
+            ? `${location.name}, ${location.state}`
+            : `${location.name}, ${location.country}`;
+        }
+      }
+
+      const weatherInfo = {
+        location: locationName,
+        temperature: Math.round(weatherData.main.temp),
+        description: weatherData.weather[0].description,
+        icon: weatherData.weather[0].icon,
+        humidity: weatherData.main.humidity,
+        windSpeed: weatherData.wind?.speed || 0,
+        feelsLike: Math.round(weatherData.main.feels_like),
+      };
+
+      res.json(weatherInfo);
+    } catch (error) {
+      console.error("Error fetching weather:", error);
+      res.status(500).json({ error: "Failed to fetch weather data" });
     }
   });
 

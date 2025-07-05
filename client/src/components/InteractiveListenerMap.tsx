@@ -8,6 +8,13 @@ import {
   Minimize2,
   Activity,
   Loader2,
+  Cloud,
+  Sun,
+  CloudRain,
+  CloudSnow,
+  CloudDrizzle,
+  CloudLightning,
+  Thermometer,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,6 +30,16 @@ interface ActiveListener {
   isActiveListening: boolean;
   lastSeen: Date;
   userId: string;
+}
+
+interface WeatherData {
+  location: string;
+  temperature: number;
+  description: string;
+  icon: string;
+  humidity: number;
+  windSpeed: number;
+  feelsLike: number;
 }
 
 // Generate realistic active listeners with Firebase-style data
@@ -295,11 +312,42 @@ const GoogleMapWithListeners = ({
   return <div ref={mapRef} className="w-full h-full" />;
 };
 
+// Weather Icon Component
+const WeatherIcon = ({ iconCode, className = "w-6 h-6" }: { iconCode: string; className?: string }) => {
+  // Map OpenWeather icon codes to Lucide icons
+  const iconMap: { [key: string]: any } = {
+    "01d": Sun, // clear sky day
+    "01n": Sun, // clear sky night
+    "02d": Cloud, // few clouds day
+    "02n": Cloud, // few clouds night
+    "03d": Cloud, // scattered clouds day
+    "03n": Cloud, // scattered clouds night
+    "04d": Cloud, // broken clouds day
+    "04n": Cloud, // broken clouds night
+    "09d": CloudDrizzle, // shower rain day
+    "09n": CloudDrizzle, // shower rain night
+    "10d": CloudRain, // rain day
+    "10n": CloudRain, // rain night
+    "11d": CloudLightning, // thunderstorm day
+    "11n": CloudLightning, // thunderstorm night
+    "13d": CloudSnow, // snow day
+    "13n": CloudSnow, // snow night
+    "50d": Cloud, // mist day
+    "50n": Cloud, // mist night
+  };
+
+  const IconComponent = iconMap[iconCode] || Cloud;
+  
+  return <IconComponent className={className} />;
+};
+
 export default function InteractiveListenerMap() {
   const [activeListeners, setActiveListeners] = useState<ActiveListener[]>([]);
   const [selectedListener, setSelectedListener] = useState<ActiveListener | null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
 
   const { colors, isDarkMode } = useTheme();
 
@@ -308,9 +356,17 @@ export default function InteractiveListenerMap() {
   });
 
   // Fetch Google Maps API key
-  const { data: config } = useQuery<{ googleMapsApiKey: string }>({
+  const { data: config } = useQuery<{ googleMapsApiKey: string; openWeatherApiKey: string }>({
     queryKey: ["/api/config"],
     staleTime: Infinity,
+  });
+
+  // Fetch weather data when user location is available
+  const { data: weather } = useQuery<WeatherData>({
+    queryKey: ["/api/weather", userLocation?.lat, userLocation?.lng],
+    enabled: !!userLocation,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 10 * 60 * 1000, // 10 minutes
   });
 
   useEffect(() => {
@@ -323,6 +379,34 @@ export default function InteractiveListenerMap() {
     }, 800);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  // Get user's current location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.warn("Geolocation error:", error);
+          // Fallback to a default location (New York)
+          setUserLocation({
+            lat: 40.7128,
+            lng: -74.006,
+          });
+        }
+      );
+    } else {
+      // Fallback to a default location (New York)
+      setUserLocation({
+        lat: 40.7128,
+        lng: -74.006,
+      });
+    }
   }, []);
 
   // Real-time updates
@@ -386,8 +470,31 @@ export default function InteractiveListenerMap() {
           <h2
             className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
           >
-            GLOBAL METALHEADS
+            LIVE INTERACTIVE MAP
           </h2>
+          
+          {/* Weather Information */}
+          {weather && (
+            <div className="mb-4">
+              <p
+                className={`text-lg font-semibold mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+              >
+                {weather.location}
+              </p>
+              <div className="flex items-center justify-center gap-2">
+                <WeatherIcon 
+                  iconCode={weather.icon} 
+                  className={`w-6 h-6 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`} 
+                />
+                <span
+                  className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
+                >
+                  {weather.temperature}°F
+                </span>
+              </div>
+            </div>
+          )}
+          
           <p
             className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
           >
