@@ -549,72 +549,80 @@ export default function Navigation() {
                 <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
                   {!isAuthenticated ? (
                     <>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              console.log('Mobile login clicked');
-                              setAuthMode("login");
-                              setIsAuthModalOpen(true);
-                              setIsOpen(false);
-                            }}
-                            type="button"
-                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
-                            style={{ color: colors.text }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary + '20';
-                              e.currentTarget.style.color = 'white';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
-                              e.currentTarget.style.color = colors.text;
-                            }}
-                            role="menuitem"
-                            aria-label="Login"
-                          >
-                            <User size={20} style={{ color: colors.primary }} />
-                            <span>LOGIN</span>
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          Sign in to your account
-                        </TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              console.log('Mobile signup clicked');
-                              setAuthMode("register");
-                              setIsAuthModalOpen(true);
-                              setIsOpen(false);
-                            }}
-                            type="button"
-                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
-                            style={{ color: colors.text }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary + '20';
-                              e.currentTarget.style.color = 'white';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
-                              e.currentTarget.style.color = colors.text;
-                            }}
-                            role="menuitem"
-                            aria-label="Sign up"
-                          >
-                            <UserPlus size={20} style={{ color: colors.primary }} />
-                            <span>SIGN UP</span>
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          Create a new account
-                        </TooltipContent>
-                      </Tooltip>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log('Mobile login clicked');
+                          setAuthMode("login");
+                          setIsAuthModalOpen(true);
+                          setIsOpen(false);
+                        }}
+                        onTouchEnd={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log('Mobile login touched');
+                          setAuthMode("login");
+                          setIsAuthModalOpen(true);
+                          setIsOpen(false);
+                        }}
+                        type="button"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
+                        style={{ 
+                          color: colors.text,
+                          border: `1px solid ${colors.primary}`,
+                          backgroundColor: 'transparent'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary + '20';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = colors.text;
+                        }}
+                        role="menuitem"
+                        aria-label="Login"
+                      >
+                        <User size={20} style={{ color: colors.primary }} />
+                        <span>LOGIN</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log('Mobile signup clicked');
+                          setAuthMode("register");
+                          setIsAuthModalOpen(true);
+                          setIsOpen(false);
+                        }}
+                        onTouchEnd={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log('Mobile signup touched');
+                          setAuthMode("register");
+                          setIsAuthModalOpen(true);
+                          setIsOpen(false);
+                        }}
+                        type="button"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
+                        style={{ 
+                          backgroundColor: colors.primary,
+                          color: 'white',
+                          border: `1px solid ${colors.primary}`
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.secondary;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary;
+                        }}
+                        role="menuitem"
+                        aria-label="Sign up"
+                      >
+                        <UserPlus size={20} style={{ color: 'white' }} />
+                        <span>SIGN UP</span>
+                      </button>
 
 
 
