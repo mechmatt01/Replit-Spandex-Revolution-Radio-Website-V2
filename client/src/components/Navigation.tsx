@@ -505,15 +505,9 @@ export default function Navigation() {
                     <Tooltip key={item.id}>
                       <TooltipTrigger asChild>
                         <button
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            console.log(`Mobile dropdown clicked: ${item.label}`);
-                            try {
-                              item.action();
-                            } catch (error) {
-                              console.error('Navigation error:', error);
-                            }
+                          onClick={() => {
+                            setIsOpen(false);
+                            item.action();
                           }}
                           type="button"
                           className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
