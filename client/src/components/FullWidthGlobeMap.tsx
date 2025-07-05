@@ -19,6 +19,58 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import type { StreamStats } from "@shared/schema";
 
+// Animated weather icons
+import clearDayIcon from "@assets/animated_weather_icons/clear-day.svg";
+import clearNightIcon from "@assets/animated_weather_icons/clear-night.svg";
+import cloudy1DayIcon from "@assets/animated_weather_icons/cloudy-1-day.svg";
+import cloudy1NightIcon from "@assets/animated_weather_icons/cloudy-1-night.svg";
+import cloudy2DayIcon from "@assets/animated_weather_icons/cloudy-2-day.svg";
+import cloudy2NightIcon from "@assets/animated_weather_icons/cloudy-2-night.svg";
+import cloudy3DayIcon from "@assets/animated_weather_icons/cloudy-3-day.svg";
+import cloudy3NightIcon from "@assets/animated_weather_icons/cloudy-3-night.svg";
+import cloudyIcon from "@assets/animated_weather_icons/cloudy.svg";
+import dustIcon from "@assets/animated_weather_icons/dust.svg";
+import fogDayIcon from "@assets/animated_weather_icons/fog-day.svg";
+import fogNightIcon from "@assets/animated_weather_icons/fog-night.svg";
+import fogIcon from "@assets/animated_weather_icons/fog.svg";
+import hailIcon from "@assets/animated_weather_icons/hail.svg";
+import hazeDayIcon from "@assets/animated_weather_icons/haze-day.svg";
+import hazeNightIcon from "@assets/animated_weather_icons/haze-night.svg";
+import hazeIcon from "@assets/animated_weather_icons/haze.svg";
+import hurricaneIcon from "@assets/animated_weather_icons/hurricane.svg";
+import isolatedThunderstormsDayIcon from "@assets/animated_weather_icons/isolated-thunderstorms-day.svg";
+import isolatedThunderstormsNightIcon from "@assets/animated_weather_icons/isolated-thunderstorms-night.svg";
+import isolatedThunderstormsIcon from "@assets/animated_weather_icons/isolated-thunderstorms.svg";
+import rainAndSleetMixIcon from "@assets/animated_weather_icons/rain-and-sleet-mix.svg";
+import rainAndSnowMixIcon from "@assets/animated_weather_icons/rain-and-snow-mix.svg";
+import rainy1DayIcon from "@assets/animated_weather_icons/rainy-1-day.svg";
+import rainy1NightIcon from "@assets/animated_weather_icons/rainy-1-night.svg";
+import rainy1Icon from "@assets/animated_weather_icons/rainy-1.svg";
+import rainy2DayIcon from "@assets/animated_weather_icons/rainy-2-day.svg";
+import rainy2NightIcon from "@assets/animated_weather_icons/rainy-2-night.svg";
+import rainy2Icon from "@assets/animated_weather_icons/rainy-2.svg";
+import rainy3DayIcon from "@assets/animated_weather_icons/rainy-3-day.svg";
+import rainy3NightIcon from "@assets/animated_weather_icons/rainy-3-night.svg";
+import rainy3Icon from "@assets/animated_weather_icons/rainy-3.svg";
+import scatteredThunderstormsDayIcon from "@assets/animated_weather_icons/scattered-thunderstorms-day.svg";
+import scatteredThunderstormsNightIcon from "@assets/animated_weather_icons/scattered-thunderstorms-night.svg";
+import scatteredThunderstormsIcon from "@assets/animated_weather_icons/scattered-thunderstorms.svg";
+import severeThunderstormIcon from "@assets/animated_weather_icons/severe-thunderstorm.svg";
+import snowAndSleetMixIcon from "@assets/animated_weather_icons/snow-and-sleet-mix.svg";
+import snowy1DayIcon from "@assets/animated_weather_icons/snowy-1-day.svg";
+import snowy1NightIcon from "@assets/animated_weather_icons/snowy-1-night.svg";
+import snowy1Icon from "@assets/animated_weather_icons/snowy-1.svg";
+import snowy2DayIcon from "@assets/animated_weather_icons/snowy-2-day.svg";
+import snowy2NightIcon from "@assets/animated_weather_icons/snowy-2-night.svg";
+import snowy2Icon from "@assets/animated_weather_icons/snowy-2.svg";
+import snowy3DayIcon from "@assets/animated_weather_icons/snowy-3-day.svg";
+import snowy3NightIcon from "@assets/animated_weather_icons/snowy-3-night.svg";
+import snowy3Icon from "@assets/animated_weather_icons/snowy-3.svg";
+import thunderstormsIcon from "@assets/animated_weather_icons/thunderstorms.svg";
+import tornadoIcon from "@assets/animated_weather_icons/tornado.svg";
+import tropicalStormIcon from "@assets/animated_weather_icons/tropical-storm.svg";
+import windIcon from "@assets/animated_weather_icons/wind.svg";
+
 interface ListenerData {
   id: string;
   city: string;
@@ -30,306 +82,384 @@ interface ListenerData {
   username?: string;
 }
 
-// Convert latitude/longitude to 3D sphere coordinates
-const latLngToSphere = (lat: number, lng: number, radius: number) => {
-  const phi = (90 - lat) * (Math.PI / 180);
-  const theta = (lng + 180) * (Math.PI / 180);
-
-  return {
-    x: -(radius * Math.sin(phi) * Math.cos(theta)),
-    y: radius * Math.cos(phi),
-    z: radius * Math.sin(phi) * Math.sin(theta),
+interface WeatherData {
+  location: {
+    city: string;
+    state: string;
+    country: string;
   };
+  current: {
+    temp_f: number;
+    condition: {
+      text: string;
+      code: number;
+    };
+    wind_mph: number;
+    humidity: number;
+    feelslike_f: number;
+    vis_miles: number;
+    pressure_in: number;
+    dewpoint_f: number;
+    is_day: number;
+  };
+}
+
+// Weather condition mapping to animated icons
+const getWeatherIcon = (condition: string, isDay: boolean) => {
+  const conditionLower = condition.toLowerCase();
+  
+  // Clear conditions
+  if (conditionLower.includes('clear') || conditionLower.includes('sunny')) {
+    return isDay ? clearDayIcon : clearNightIcon;
+  }
+  
+  // Cloudy conditions
+  if (conditionLower.includes('partly cloudy') || conditionLower.includes('few clouds')) {
+    return isDay ? cloudy1DayIcon : cloudy1NightIcon;
+  }
+  if (conditionLower.includes('scattered clouds') || conditionLower.includes('broken clouds')) {
+    return isDay ? cloudy2DayIcon : cloudy2NightIcon;
+  }
+  if (conditionLower.includes('overcast') || conditionLower.includes('cloudy')) {
+    return isDay ? cloudy3DayIcon : cloudy3NightIcon;
+  }
+  
+  // Rain conditions
+  if (conditionLower.includes('light rain') || conditionLower.includes('drizzle')) {
+    return isDay ? rainy1DayIcon : rainy1NightIcon;
+  }
+  if (conditionLower.includes('moderate rain') || conditionLower.includes('rain')) {
+    return isDay ? rainy2DayIcon : rainy2NightIcon;
+  }
+  if (conditionLower.includes('heavy rain') || conditionLower.includes('downpour')) {
+    return isDay ? rainy3DayIcon : rainy3NightIcon;
+  }
+  
+  // Snow conditions
+  if (conditionLower.includes('light snow')) {
+    return isDay ? snowy1DayIcon : snowy1NightIcon;
+  }
+  if (conditionLower.includes('moderate snow') || conditionLower.includes('snow')) {
+    return isDay ? snowy2DayIcon : snowy2NightIcon;
+  }
+  if (conditionLower.includes('heavy snow') || conditionLower.includes('blizzard')) {
+    return isDay ? snowy3DayIcon : snowy3NightIcon;
+  }
+  
+  // Thunderstorm conditions
+  if (conditionLower.includes('thunderstorm') || conditionLower.includes('thunder')) {
+    if (conditionLower.includes('severe')) return severeThunderstormIcon;
+    if (conditionLower.includes('isolated')) return isDay ? isolatedThunderstormsDayIcon : isolatedThunderstormsNightIcon;
+    if (conditionLower.includes('scattered')) return isDay ? scatteredThunderstormsDayIcon : scatteredThunderstormsNightIcon;
+    return thunderstormsIcon;
+  }
+  
+  // Fog conditions
+  if (conditionLower.includes('fog') || conditionLower.includes('mist')) {
+    return isDay ? fogDayIcon : fogNightIcon;
+  }
+  
+  // Haze conditions
+  if (conditionLower.includes('haze')) {
+    return isDay ? hazeDayIcon : hazeNightIcon;
+  }
+  
+  // Dust conditions
+  if (conditionLower.includes('dust') || conditionLower.includes('sand')) {
+    return dustIcon;
+  }
+  
+  // Wind conditions
+  if (conditionLower.includes('wind')) {
+    return windIcon;
+  }
+  
+  // Extreme conditions
+  if (conditionLower.includes('tornado')) return tornadoIcon;
+  if (conditionLower.includes('hurricane')) return hurricaneIcon;
+  if (conditionLower.includes('tropical storm')) return tropicalStormIcon;
+  if (conditionLower.includes('hail')) return hailIcon;
+  if (conditionLower.includes('frost')) return isDay ? frostDayIcon : frostNightIcon;
+  
+  // Mixed conditions
+  if (conditionLower.includes('rain') && conditionLower.includes('snow')) return rainAndSnowMixIcon;
+  if (conditionLower.includes('rain') && conditionLower.includes('sleet')) return rainAndSleetMixIcon;
+  if (conditionLower.includes('snow') && conditionLower.includes('sleet')) return snowAndSleetMixIcon;
+  
+  // Default fallback
+  return isDay ? clearDayIcon : clearNightIcon;
 };
 
 export default function FullWidthGlobeMap() {
-  const [rotation, setRotation] = useState({ x: 0, y: 0 });
-  const [isRotating, setIsRotating] = useState(true);
-  const [zoom, setZoom] = useState(1);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [hoveredListener, setHoveredListener] = useState<ListenerData | null>(
-    null,
-  );
-  const [isLoading, setIsLoading] = useState(true);
-
-  const globeRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number>();
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
   const { colors, isDarkMode } = useTheme();
-  
-  // Add intersection observers for fade-in animations
-  const { ref: statsRef, isVisible: statsVisible } = useIntersectionObserver();
-  const { ref: locationsRef, isVisible: locationsVisible } = useIntersectionObserver();
 
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
   });
 
-  // Extended sample listener data - 15 locations for the top 10 display
-  const [liveListeners, setLiveListeners] = useState<ListenerData[]>([
-    {
-      id: "1",
-      city: "New York",
-      country: "USA",
-      lat: 40.7128,
-      lng: -74.006,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "MetalHead92",
-    },
-    {
-      id: "2",
-      city: "London",
-      country: "UK",
-      lat: 51.5074,
-      lng: -0.1278,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "RockLover",
-    },
-    {
-      id: "3",
-      city: "Tokyo",
-      country: "Japan",
-      lat: 35.6762,
-      lng: 139.6503,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "MetalSamurai",
-    },
-    {
-      id: "4",
-      city: "Sydney",
-      country: "Australia",
-      lat: -33.8688,
-      lng: 151.2093,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "OzMetalFan",
-    },
-    {
-      id: "5",
-      city: "Berlin",
-      country: "Germany",
-      lat: 52.52,
-      lng: 13.405,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "TeutonRocker",
-    },
-    {
-      id: "6",
-      city: "São Paulo",
-      country: "Brazil",
-      lat: -23.5558,
-      lng: -46.6396,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "BrazilMetal",
-    },
-    {
-      id: "7",
-      city: "Mumbai",
-      country: "India",
-      lat: 19.076,
-      lng: 72.8777,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "IndianRocker",
-    },
-    {
-      id: "8",
-      city: "Moscow",
-      country: "Russia",
-      lat: 55.7558,
-      lng: 37.6173,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "RussianMetal",
-    },
-    {
-      id: "9",
-      city: "Toronto",
-      country: "Canada",
-      lat: 43.6532,
-      lng: -79.3832,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "CanadianRocker",
-    },
-    {
-      id: "10",
-      city: "Stockholm",
-      country: "Sweden",
-      lat: 59.3293,
-      lng: 18.0686,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "NordicMetal",
-    },
-    {
-      id: "11",
-      city: "Mexico City",
-      country: "Mexico",
-      lat: 19.4326,
-      lng: -99.1332,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "MexicanMetal",
-    },
-    {
-      id: "12",
-      city: "Cape Town",
-      country: "South Africa",
-      lat: -33.9249,
-      lng: 18.4241,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "AfricanRock",
-    },
-    {
-      id: "13",
-      city: "Paris",
-      country: "France",
-      lat: 48.8566,
-      lng: 2.3522,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "FrenchMetal",
-    },
-    {
-      id: "14",
-      city: "Buenos Aires",
-      country: "Argentina",
-      lat: -34.6118,
-      lng: -58.396,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "ArgentinaMetal",
-    },
-    {
-      id: "15",
-      city: "Amsterdam",
-      country: "Netherlands",
-      lat: 52.3676,
-      lng: 4.9041,
-      isActive: true,
-      lastSeen: new Date(),
-      username: "DutchRocker",
-    },
-  ]);
+  // Fetch Google Maps API key and config
+  const { data: config } = useQuery<{ 
+    googleMapsApiKey: string; 
+    googleMapsSigningSecret: string;
+    openWeatherApiKey: string; 
+  }>({
+    queryKey: ["/api/config"],
+    staleTime: Infinity,
+  });
 
-  // Auto-rotation animation
+  // Get user's location
   useEffect(() => {
-    if (isRotating && !isDragging) {
-      const animate = () => {
-        setRotation((prev) => ({
-          ...prev,
-          y: prev.y + 0.5,
-        }));
-        animationRef.current = requestAnimationFrame(animate);
-      };
-      animationRef.current = requestAnimationFrame(animate);
-    }
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [isRotating, isDragging]);
-
-  // Simulate loading and dynamic listener updates with smooth animations
-  useEffect(() => {
-    console.log("Globe loading started...");
-    setIsLoading(true);
-
-    const timer = setTimeout(() => {
-      console.log("Globe loading complete!");
-      setIsLoading(false);
-    }, 2000);
-
-    // Simulate listeners coming online/offline with smoother transitions
-    const interval = setInterval(() => {
-      setLiveListeners((prev) => {
-        const updated = prev.map((listener) => ({
-          ...listener,
-          isActive: Math.random() > 0.15, // 85% chance to stay active
-          lastSeen: listener.isActive ? new Date() : listener.lastSeen,
-        }));
-
-        // Sort by activity and last seen time for consistent ordering
-        return updated.sort((a, b) => {
-          if (a.isActive !== b.isActive) return b.isActive ? 1 : -1;
-          return b.lastSeen.getTime() - a.lastSeen.getTime();
-        });
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          // Fallback to New York
+          setUserLocation({
+            lat: 40.7128,
+            lng: -74.0060,
+          });
+        }
+      );
+    } else {
+      // Fallback to New York
+      setUserLocation({
+        lat: 40.7128,
+        lng: -74.0060,
       });
-    }, 5000);
-
-    return () => {
-      clearTimeout(timer);
-      clearInterval(interval);
-    };
+    }
   }, []);
 
-  // Mouse interaction handlers
-  const handleMouseDown = (e: React.MouseEvent) => {
-    setIsDragging(true);
-    setIsRotating(false);
-    setDragStart({ x: e.clientX, y: e.clientY });
-  };
+  // Fetch weather data when user location is available
+  const { data: weather, error: weatherError, isLoading: weatherLoading } = useQuery<WeatherData>({
+    queryKey: ["/api/weather", userLocation?.lat, userLocation?.lng],
+    enabled: !!userLocation,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchInterval: 10 * 60 * 1000, // 10 minutes
+    retry: 3,
+  });
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging) return;
+  // Initialize Google Maps when API key is available
+  useEffect(() => {
+    if (!config?.googleMapsApiKey || !mapRef.current || !userLocation) return;
 
-    const deltaX = e.clientX - dragStart.x;
-    const deltaY = e.clientY - dragStart.y;
+    const initializeMap = () => {
+      const mapInstance = new google.maps.Map(mapRef.current!, {
+        zoom: 2,
+        center: userLocation,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        styles: isDarkMode ? [
+          {
+            "elementType": "geometry",
+            "stylers": [{"color": "#212121"}]
+          },
+          {
+            "elementType": "labels.icon",
+            "stylers": [{"visibility": "off"}]
+          },
+          {
+            "elementType": "labels.text.fill",
+            "stylers": [{"color": "#757575"}]
+          },
+          {
+            "elementType": "labels.text.stroke",
+            "stylers": [{"color": "#212121"}]
+          },
+          {
+            "featureType": "administrative",
+            "elementType": "geometry",
+            "stylers": [{"color": "#757575"}]
+          },
+          {
+            "featureType": "administrative.country",
+            "elementType": "labels.text.fill",
+            "stylers": [{"color": "#9e9e9e"}]
+          },
+          {
+            "featureType": "administrative.land_parcel",
+            "stylers": [{"visibility": "off"}]
+          },
+          {
+            "featureType": "administrative.locality",
+            "elementType": "labels.text.fill",
+            "stylers": [{"color": "#bdbdbd"}]
+          },
+          {
+            "featureType": "poi",
+            "elementType": "labels.text.fill",
+            "stylers": [{"color": "#757575"}]
+          },
+          {
+            "featureType": "poi.park",
+            "elementType": "geometry",
+            "stylers": [{"color": "#181818"}]
+          },
+          {
+            "featureType": "poi.park",
+            "elementType": "labels.text.fill",
+            "stylers": [{"color": "#616161"}]
+          },
+          {
+            "featureType": "poi.park",
+            "elementType": "labels.text.stroke",
+            "stylers": [{"color": "#1b1b1b"}]
+          },
+          {
+            "featureType": "road",
+            "elementType": "geometry.fill",
+            "stylers": [{"color": "#2c2c2c"}]
+          },
+          {
+            "featureType": "road",
+            "elementType": "labels.text.fill",
+            "stylers": [{"color": "#8a8a8a"}]
+          },
+          {
+            "featureType": "road.arterial",
+            "elementType": "geometry",
+            "stylers": [{"color": "#373737"}]
+          },
+          {
+            "featureType": "road.highway",
+            "elementType": "geometry",
+            "stylers": [{"color": "#3c3c3c"}]
+          },
+          {
+            "featureType": "road.highway.controlled_access",
+            "elementType": "geometry",
+            "stylers": [{"color": "#4e4e4e"}]
+          },
+          {
+            "featureType": "road.local",
+            "elementType": "labels.text.fill",
+            "stylers": [{"color": "#616161"}]
+          },
+          {
+            "featureType": "transit",
+            "elementType": "labels.text.fill",
+            "stylers": [{"color": "#757575"}]
+          },
+          {
+            "featureType": "water",
+            "elementType": "geometry",
+            "stylers": [{"color": "#000000"}]
+          },
+          {
+            "featureType": "water",
+            "elementType": "labels.text.fill",
+            "stylers": [{"color": "#3d3d3d"}]
+          }
+        ] : [],
+        fullscreenControl: false,
+        mapTypeControl: false,
+        streetViewControl: false,
+        zoomControl: true,
+        gestureHandling: "cooperative",
+      });
 
-    setRotation((prev) => ({
-      x: Math.max(-90, Math.min(90, prev.x + deltaY * 0.5)),
-      y: prev.y + deltaX * 0.5,
-    }));
+      setMap(mapInstance);
 
-    setDragStart({ x: e.clientX, y: e.clientY });
-  };
+      // Add mock listener markers
+      const mockListeners = [
+        { lat: 40.7128, lng: -74.0060, city: "New York", country: "USA" },
+        { lat: 34.0522, lng: -118.2437, city: "Los Angeles", country: "USA" },
+        { lat: 51.5074, lng: -0.1278, city: "London", country: "UK" },
+        { lat: 48.8566, lng: 2.3522, city: "Paris", country: "France" },
+        { lat: 35.6762, lng: 139.6503, city: "Tokyo", country: "Japan" },
+        { lat: -33.8688, lng: 151.2093, city: "Sydney", country: "Australia" },
+        { lat: 55.7558, lng: 37.6173, city: "Moscow", country: "Russia" },
+        { lat: 39.9042, lng: 116.4074, city: "Beijing", country: "China" },
+        { lat: 19.0760, lng: 72.8777, city: "Mumbai", country: "India" },
+        { lat: -23.5505, lng: -46.6333, city: "São Paulo", country: "Brazil" },
+      ];
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+      mockListeners.forEach((listener) => {
+        const marker = new google.maps.Marker({
+          position: { lat: listener.lat, lng: listener.lng },
+          map: mapInstance,
+          title: `${listener.city}, ${listener.country}`,
+          icon: {
+            url: LiveNowIconPath,
+            scaledSize: new google.maps.Size(20, 20),
+          },
+        });
 
-  const handleZoomIn = () => setZoom((prev) => Math.min(3, prev + 0.2));
-  const handleZoomOut = () => setZoom((prev) => Math.max(0.5, prev - 0.2));
-  const handleReset = () => {
-    setRotation({ x: 0, y: 0 });
-    setZoom(1);
-    setIsRotating(true);
-  };
-  const toggleFullscreen = () => setIsFullscreen((prev) => !prev);
-  const toggleRotation = () => setIsRotating((prev) => !prev);
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div style="color: black; font-weight: bold;">
+              <h3>${listener.city}, ${listener.country}</h3>
+              <p>🎵 Currently listening to metal!</p>
+            </div>
+          `,
+        });
 
-  const activeListeners = liveListeners.filter((l) => l.isActive);
-  const countriesWithListeners = new Set(activeListeners.map((l) => l.country))
-    .size;
+        marker.addListener("click", () => {
+          infoWindow.open(mapInstance, marker);
+        });
+      });
+    };
+
+    // Load Google Maps API if not already loaded
+    if (typeof google === "undefined" || !google.maps) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=geometry`;
+      script.async = true;
+      script.onload = initializeMap;
+      document.head.appendChild(script);
+    } else {
+      initializeMap();
+    }
+  }, [config, userLocation, isDarkMode]);
+
+  // Generate mock listener data
+  const activeListeners: ListenerData[] = [
+    { id: "1", city: "New York", country: "USA", lat: 40.7128, lng: -74.0060, isActive: true, lastSeen: new Date() },
+    { id: "2", city: "Los Angeles", country: "USA", lat: 34.0522, lng: -118.2437, isActive: true, lastSeen: new Date() },
+    { id: "3", city: "London", country: "UK", lat: 51.5074, lng: -0.1278, isActive: true, lastSeen: new Date() },
+    { id: "4", city: "Paris", country: "France", lat: 48.8566, lng: 2.3522, isActive: true, lastSeen: new Date() },
+    { id: "5", city: "Tokyo", country: "Japan", lat: 35.6762, lng: 139.6503, isActive: true, lastSeen: new Date() },
+    { id: "6", city: "Sydney", country: "Australia", lat: -33.8688, lng: 151.2093, isActive: true, lastSeen: new Date() },
+    { id: "7", city: "Moscow", country: "Russia", lat: 55.7558, lng: 37.6173, isActive: true, lastSeen: new Date() },
+    { id: "8", city: "Beijing", country: "China", lat: 39.9042, lng: 116.4074, isActive: true, lastSeen: new Date() },
+    { id: "9", city: "Mumbai", country: "India", lat: 19.0760, lng: 72.8777, isActive: true, lastSeen: new Date() },
+    { id: "10", city: "São Paulo", country: "Brazil", lat: -23.5505, lng: -46.6333, isActive: true, lastSeen: new Date() },
+  ];
+
+  const totalListeners = activeListeners.length;
+  const countriesWithListeners = new Set(activeListeners.map((l) => l.country)).size;
   const top10Listeners = activeListeners.slice(0, 10);
 
   return (
     <section
       id="map"
-      className={`${isFullscreen ? "fixed z-40" : "py-20"} ${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out`}
+      className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out`}
       style={{
-        ...(isFullscreen && {
+        ...(isFullscreen ? {
           position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          top: "0px",
+          left: "0px",
+          right: "0px",
+          bottom: "0px",
           height: "100vh",
           width: "100vw",
-          margin: 0,
-          padding: 0,
+          margin: "0px",
+          padding: "0px",
+          paddingTop: "0px",
           paddingBottom: "120px", // Space for floating player only
           zIndex: 40,
+          transform: "none",
+        } : {
+          paddingTop: "80px",
+          paddingBottom: "80px",
         }),
       }}
     >
@@ -349,457 +479,157 @@ export default function FullWidthGlobeMap() {
           </p>
           
           {/* Weather Information Display */}
-          <div className="mb-4">
-            <div className="flex items-center justify-center gap-2">
-              <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-              <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                New York County, New York
-              </span>
-              <img
-                src="https://openweathermap.org/img/wn/01d@2x.png"
-                alt="Clear Sky"
-                className="w-8 h-8 ml-2"
-              />
-              <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"} ml-1`}>
-                71°F
-              </span>
-              <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"} ml-1`}>
-                Clear Sky
-              </span>
+          {weather && (
+            <div className="mb-4">
+              <div className="flex items-center justify-center gap-2">
+                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  {weather.location.city}, {weather.location.state}
+                </span>
+                <img
+                  src={getWeatherIcon(weather.current.condition.text, weather.current.is_day === 1)}
+                  alt={weather.current.condition.text}
+                  className="w-8 h-8 ml-2"
+                />
+                <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"} ml-1`}>
+                  {Math.round(weather.current.temp_f)}°F
+                </span>
+                <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"} ml-1`}>
+                  {weather.current.condition.text}
+                </span>
+              </div>
             </div>
-          </div>
+          )}
+          
+          {/* Loading state for weather */}
+          {weatherLoading && (
+            <div className="mb-4">
+              <div className="flex items-center justify-center gap-2">
+                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  Loading weather...
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Full Width Globe Map */}
-        <div className={`${isFullscreen ? "h-full" : ""}`}>
-          <Card
-            className={`w-full mb-8 ${isDarkMode ? "bg-black/50" : "bg-white/90"} backdrop-blur-md border-0 ${isFullscreen ? "h-full" : ""}`}
+        {/* Map Container */}
+        <div className={`relative ${isFullscreen ? "h-full" : "h-[600px]"} mb-16`}>
+          <div
+            ref={mapRef}
+            className={`w-full h-full rounded-lg ${isDarkMode ? "bg-gray-900" : "bg-gray-100"}`}
+            style={{ minHeight: "400px" }}
+          />
+          
+          {/* Fullscreen Toggle */}
+          <Button
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            className={`absolute top-4 right-4 z-10 ${
+              isDarkMode ? "bg-black/80 hover:bg-black/90" : "bg-white/80 hover:bg-white/90"
+            } backdrop-blur-md border-0`}
+            size="sm"
           >
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <CardTitle
-                  className="text-2xl font-black"
-                  style={{ color: colors.primary }}
-                >
-                  Live Listener Map
-                </CardTitle>
-                <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
-                    onClick={toggleRotation}
-                  >
-                    {isRotating ? (
-                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                        <rect x="6" y="4" width="4" height="16" rx="2" />
-                        <rect x="14" y="4" width="4" height="16" rx="2" />
-                      </svg>
-                    ) : (
-                      <Play className="h-4 w-4" />
-                    )}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
-                    onClick={handleZoomOut}
-                  >
-                    <ZoomOut className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
-                    onClick={handleZoomIn}
-                  >
-                    <ZoomIn className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
-                    onClick={handleReset}
-                  >
-                    <RotateCcw className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={`${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
-                    onClick={toggleFullscreen}
-                  >
-                    {isFullscreen ? (
-                      <Minimize2 className="h-4 w-4" />
-                    ) : (
-                      <Maximize2 className="h-4 w-4" />
-                    )}
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {/* 3D Globe Container */}
-              <div
-                className={`relative h-96 ${isFullscreen ? "h-[calc(100vh-280px)]" : ""} overflow-hidden rounded-lg`}
-                style={{
-                  background: isDarkMode
-                    ? "radial-gradient(circle at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%)"
-                    : "radial-gradient(circle at center, #87ceeb 0%, #4682b4 50%, #191970 100%)",
-                  ...(isFullscreen && {
-                    height: "calc(100vh - 280px)", // Full height minus header and footer space
-                    minHeight: "600px",
-                  }),
-                }}
-              >
-                {/* Stars background */}
-                <div className="absolute inset-0">
-                  {[...Array(100)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="absolute w-1 h-1 bg-white rounded-full opacity-60"
-                      style={{
-                        left: `${Math.random() * 100}%`,
-                        top: `${Math.random() * 100}%`,
-                        animationDelay: `${Math.random() * 3}s`,
-                      }}
-                    />
-                  ))}
-                </div>
-
-                {/* 3D Globe */}
-                <div
-                  ref={globeRef}
-                  className="absolute inset-0 flex items-center justify-center perspective-1000"
-                  onMouseDown={handleMouseDown}
-                  onMouseMove={handleMouseMove}
-                  onMouseUp={handleMouseUp}
-                  onMouseLeave={handleMouseUp}
-                  style={{ cursor: isDragging ? "grabbing" : "grab" }}
-                >
-                  <div
-                    className="relative preserve-3d"
-                    style={{
-                      transform: `scale(${zoom}) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-                      transition: isDragging
-                        ? "none"
-                        : "transform 0.1s ease-out",
-                    }}
-                  >
-                    {/* Globe sphere */}
-                    <div
-                      className="relative w-80 h-80 rounded-full border-2"
-                      style={{
-                        background: isDarkMode
-                          ? "radial-gradient(circle at 30% 30%, #2d5a3d, #1e3a2e, #0f1f17)"
-                          : "radial-gradient(circle at 30% 30%, #4a9b5e, #2d5a3d, #1e3a2e)",
-                        borderColor: isDarkMode ? "#444" : "#666",
-                        boxShadow: isDarkMode
-                          ? "inset -20px -20px 50px rgba(0,0,0,0.5), 20px 20px 50px rgba(0,0,0,0.3)"
-                          : "inset -20px -20px 50px rgba(0,0,0,0.3), 20px 20px 50px rgba(0,0,0,0.2)",
-                      }}
-                    >
-                      {/* Continent outlines - larger for bigger globe */}
-                      <div className="absolute inset-0 rounded-full overflow-hidden">
-                        <div className="absolute w-12 h-16 bg-green-600 rounded-full opacity-70 top-20 left-16" />{" "}
-                        {/* North America */}
-                        <div className="absolute w-8 h-12 bg-green-600 rounded-full opacity-70 top-32 left-24" />{" "}
-                        {/* South America */}
-                        <div className="absolute w-14 h-12 bg-green-600 rounded-full opacity-70 top-16 left-40" />{" "}
-                        {/* Europe/Africa */}
-                        <div className="absolute w-16 h-14 bg-green-600 rounded-full opacity-70 top-24 left-56" />{" "}
-                        {/* Asia */}
-                        <div className="absolute w-8 h-8 bg-green-600 rounded-full opacity-70 top-52 left-60" />{" "}
-                        {/* Australia */}
-                      </div>
-
-                      {/* Loading state */}
-                      {isLoading ? (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="animate-spin w-12 h-12 border-2 border-white border-t-transparent rounded-full" />
-                        </div>
-                      ) : null}
-
-                      {/* Listener dots */}
-                      {!isLoading &&
-                        activeListeners.map((listener) => {
-                          const spherePos = latLngToSphere(
-                            listener.lat,
-                            listener.lng,
-                            160,
-                          );
-                          const isVisible = spherePos.z > 0; // Only show dots on the visible hemisphere
-
-                          if (!isVisible) return null;
-
-                          return (
-                            <div
-                              key={listener.id}
-                              className="absolute transform -translate-x-1/2 -translate-y-1/2 pointer-events-auto"
-                              style={{
-                                left: `${50 + (spherePos.x / 160) * 50}%`,
-                                top: `${50 - (spherePos.y / 160) * 50}%`,
-                                zIndex: Math.round(spherePos.z),
-                              }}
-                              onMouseEnter={() => setHoveredListener(listener)}
-                              onMouseLeave={() => setHoveredListener(null)}
-                            >
-                              <div
-                                className="w-4 h-4 rounded-full animate-pulse cursor-pointer"
-                                style={{
-                                  backgroundColor: colors.primary,
-                                  boxShadow: `0 0 15px ${colors.primary}`,
-                                  animation: "pulse 2s infinite",
-                                }}
-                              />
-
-                              {/* Tooltip */}
-                              {hoveredListener?.id === listener.id && (
-                                <div
-                                  className={`absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 rounded-lg text-xs whitespace-nowrap z-50 ${
-                                    isDarkMode
-                                      ? "bg-black/90 text-white"
-                                      : "bg-white/90 text-black"
-                                  }`}
-                                  style={{ backdropFilter: "blur(10px)" }}
-                                >
-                                  <div className="font-semibold">
-                                    {listener.username || "Anonymous"}
-                                  </div>
-                                  <div>
-                                    {listener.city}, {listener.country}
-                                  </div>
-                                  <div className="text-xs opacity-75">
-                                    Last seen:{" "}
-                                    {listener.lastSeen.toLocaleTimeString()}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          </Button>
         </div>
 
-        {/* Statistics and Active Locations Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          {/* Live Statistics - 33% width */}
-          <div className="lg:col-span-1" ref={statsRef}>
-            <Card
-              className={`h-full ${isDarkMode ? "bg-black/50" : "bg-white/90"} backdrop-blur-md border-0 transition-all duration-600 ${
-                statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-              }`}
-            >
-              <CardHeader>
-                <CardTitle
-                  className="text-xl font-black text-center"
-                  style={{ color: colors.primary }}
-                >
+        {/* Statistics Cards */}
+        {!isFullscreen && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {/* Live Statistics */}
+            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
+              <CardHeader className="pb-3">
+                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
                   Live Statistics
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-3 lg:grid-cols-1 gap-4 lg:gap-6">
-                  <div
-                  className={`p-4 rounded-lg ${isDarkMode ? "bg-white/5" : "bg-black/5"} backdrop-blur-sm`}
-                >
-                  <div className="text-center">
-                    <div
-                      className="text-3xl font-black"
-                      style={{ color: colors.primary }}
-                    >
-                      {stats?.currentListeners || activeListeners.length}
-                    </div>
-                    <div
-                      className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
-                    >
-                      Live Now
-                    </div>
-                    <div className="flex justify-center mt-2">
-                      <img
-                        src={LiveNowIconPath}
-                        alt="Live Now"
-                        className="h-7 w-7"
-                        style={{
-                          filter: `brightness(0) saturate(100%) invert(47%) sepia(97%) saturate(1352%) hue-rotate(346deg) brightness(100%) contrast(91%)`,
-                        }}
-                        onLoad={() => console.log("LiveNow icon loaded")}
-                        onError={(e) =>
-                          console.error("LiveNow icon failed to load:", e)
-                        }
-                      />
-                    </div>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <img src={LiveNowIconPath} alt="Live" className="w-5 h-5" />
+                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      Active Listeners
+                    </span>
                   </div>
+                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                    {totalListeners}
+                  </span>
                 </div>
-                <div
-                  className={`p-4 rounded-lg ${isDarkMode ? "bg-white/5" : "bg-black/5"} backdrop-blur-sm`}
-                >
-                  <div className="text-center">
-                    <div
-                      className="text-3xl font-black"
-                      style={{ color: colors.primary }}
-                    >
-                      {countriesWithListeners}
-                    </div>
-                    <div
-                      className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
-                    >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <img src={CountriesIconPath} alt="Countries" className="w-5 h-5" />
+                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                       Countries
-                    </div>
-                    <div className="flex justify-center mt-2">
-                      <img
-                        src={CountriesIconPath}
-                        alt="Countries"
-                        className="h-7 w-7"
-                        style={{
-                          filter: `brightness(0) saturate(100%) invert(47%) sepia(97%) saturate(1352%) hue-rotate(346deg) brightness(100%) contrast(91%)`,
-                        }}
-                      />
-                    </div>
+                    </span>
                   </div>
-                </div>
-                <div
-                  className={`p-4 rounded-lg ${isDarkMode ? "bg-white/5" : "bg-black/5"} backdrop-blur-sm`}
-                >
-                  <div className="text-center">
-                    <div
-                      className="text-3xl font-black"
-                      style={{ color: colors.primary }}
-                    >
-                      {stats?.totalListeners || 1847}
-                    </div>
-                    <div
-                      className={`text-sm font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
-                    >
-                      Total Listeners
-                    </div>
-                    <div className="flex justify-center mt-2">
-                      <TrendingUp
-                        className="h-7 w-7"
-                        style={{ color: colors.primary }}
-                      />
-                    </div>
-                  </div>
-                </div>
+                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                    {countriesWithListeners}
+                  </span>
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          {/* Active Locations - 67% width in two columns */}
-          <div className="lg:col-span-2" ref={locationsRef}>
-            <Card
-              className={`h-full ${isDarkMode ? "bg-black/50" : "bg-white/90"} backdrop-blur-md border-0 transition-all duration-600 ${
-                locationsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'
-              }`}
-            >
-              <CardHeader>
-                <CardTitle
-                  className="text-xl font-black text-center"
-                  style={{ color: colors.primary }}
-                >
+            {/* Active Locations */}
+            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
+              <CardHeader className="pb-3">
+                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
                   Active Locations
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* First Column - #1-#5 */}
-                  <div className="space-y-3">
-                    {top10Listeners.slice(0, 5).map((listener, index) => (
-                      <div
-                        key={listener.id}
-                        className={`flex items-center p-3 rounded-lg ${isDarkMode ? "bg-white/5" : "bg-black/5"} backdrop-blur-sm hover:bg-opacity-20 transition-all duration-500 transform hover:scale-105`}
-                        style={{
-                          animationDelay: `${index * 100}ms`,
-                        }}
-                      >
-                        <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3 transition-all duration-300 flex-shrink-0"
-                          style={{
-                            backgroundColor: colors.primary,
-                            color: "white",
-                          }}
-                        >
-                          #{index + 1}
-                        </div>
-                        <MapPin
-                          className="w-4 h-4 mr-2 flex-shrink-0"
-                          style={{ color: colors.primary }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div
-                            className={`font-semibold text-sm truncate ${isDarkMode ? "text-white" : "text-black"}`}
-                          >
-                            {listener.city}, {listener.country}
-                          </div>
-                          <div
-                            className={`text-xs truncate ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                          >
-                            {listener.username} •{" "}
-                            {listener.lastSeen.toLocaleTimeString()}
-                          </div>
-                        </div>
-                        <div
-                          className="w-2 h-2 rounded-full animate-pulse flex-shrink-0 ml-2"
-                          style={{ backgroundColor: colors.primary }}
-                        />
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {top10Listeners.map((listener) => (
+                    <div key={listener.id} className="flex items-center justify-between">
+                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                        {listener.city}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                        <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+                          Live
+                        </span>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
-                  {/* Second Column - #6-#10 */}
-                  <div className="space-y-3">
-                    {top10Listeners.slice(5, 10).map((listener, index) => (
-                      <div
-                        key={listener.id}
-                        className={`flex items-center p-3 rounded-lg ${isDarkMode ? "bg-white/5" : "bg-black/5"} backdrop-blur-sm hover:bg-opacity-20 transition-all duration-500 transform hover:scale-105`}
-                        style={{
-                          animationDelay: `${(index + 5) * 100}ms`,
-                        }}
-                      >
-                        <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-black mr-3 transition-all duration-300 flex-shrink-0"
-                          style={{
-                            backgroundColor: colors.primary,
-                            color: "white",
-                          }}
-                        >
-                          #{index + 6}
-                        </div>
-                        <MapPin
-                          className="w-4 h-4 mr-2 flex-shrink-0"
-                          style={{ color: colors.primary }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div
-                            className={`font-semibold text-sm truncate ${isDarkMode ? "text-white" : "text-black"}`}
-                          >
-                            {listener.city}, {listener.country}
-                          </div>
-                          <div
-                            className={`text-xs truncate ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                          >
-                            {listener.username} •{" "}
-                            {listener.lastSeen.toLocaleTimeString()}
-                          </div>
-                        </div>
-                        <div
-                          className="w-2 h-2 rounded-full animate-pulse flex-shrink-0 ml-2"
-                          style={{ backgroundColor: colors.primary }}
-                        />
-                      </div>
-                    ))}
+            {/* Engagement Metrics */}
+            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
+              <CardHeader className="pb-3">
+                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
+                  Engagement
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      Peak Hours
+                    </span>
                   </div>
+                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                    8-10 PM
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Play className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      Avg. Session
+                    </span>
+                  </div>
+                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                    2.5 hrs
+                  </span>
                 </div>
               </CardContent>
             </Card>
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
