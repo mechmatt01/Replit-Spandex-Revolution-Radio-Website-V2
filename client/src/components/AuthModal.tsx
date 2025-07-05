@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -45,13 +45,26 @@ export default function AuthModal({
   const [loading, setLoading] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, signInWithGoogle } = useAuth();
   const { getColors } = useTheme();
   const { toast } = useToast();
   const colors = getColors();
 
-  const handleGoogleAuth = () => {
-    window.location.href = "/api/login";
+  const handleGoogleAuth = async () => {
+    try {
+      setLoading(true);
+      await signInWithGoogle();
+      // The redirect will happen automatically
+      onClose();
+    } catch (error: any) {
+      toast({
+        title: "Sign In Failed",
+        description: error.message || "Failed to sign in with Google.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Phone number formatting

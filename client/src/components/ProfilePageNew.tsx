@@ -69,7 +69,7 @@ const premiumAvatars = [
 ];
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, logout, refreshUser } = useAuth();
+  const { user, firebaseUser, firebaseProfile, isAuthenticated, logout, refreshUser, updateProfile, uploadProfileImage } = useAuth();
   const [, setLocation] = useLocation();
   const { colors, isDarkMode } = useTheme();
   const { toast } = useToast();
@@ -107,9 +107,18 @@ export default function ProfilePage() {
     }
   }, [isAuthenticated, setLocation]);
 
-  // Load user data
+  // Load user data from Firebase profile or fallback to regular user
   useEffect(() => {
-    if (user) {
+    if (firebaseProfile) {
+      // Use Firebase profile data (preferred)
+      setProfileData({
+        displayName: `${firebaseProfile.FirstName} ${firebaseProfile.LastName}`.trim() || firebaseProfile.EmailAddress?.split('@')[0] || "",
+        phoneNumber: firebaseProfile.PhoneNumber || "",
+        email: firebaseProfile.EmailAddress || "",
+        profileImageUrl: firebaseProfile.UserProfileImage || "",
+      });
+    } else if (user) {
+      // Fallback to regular user data
       setProfileData({
         displayName: (user as any).firstName || (user as any).email?.split('@')[0] || "",
         phoneNumber: (user as any).phoneNumber || "",
@@ -117,7 +126,7 @@ export default function ProfilePage() {
         profileImageUrl: (user as any).profileImageUrl || "",
       });
     }
-  }, [user]);
+  }, [user, firebaseProfile]);
 
   // Load submissions
   useEffect(() => {
@@ -143,22 +152,21 @@ export default function ProfilePage() {
   const handleSaveProfile = async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/user/update-profile", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          firstName: profileData.displayName,
-          phoneNumber: profileData.phoneNumber,
-          profileImageUrl: profileData.profileImageUrl,
-        }),
+      // Parse display name into first and last name
+      const nameParts = profileData.displayName.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      // Use Firebase update profile function
+      const success = await updateProfile({
+        FirstName: firstName,
+        LastName: lastName,
+        PhoneNumber: profileData.phoneNumber,
+        UserProfileImage: profileData.profileImageUrl,
       });
       
-      if (!response.ok) throw new Error("Failed to update profile");
+      if (!success) throw new Error("Failed to update profile");
       
-      await refreshUser();
       toast({
         title: "Profile Updated",
         description: "Your profile has been saved successfully.",
@@ -174,26 +182,59 @@ export default function ProfilePage() {
     }
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
     
     setUploadingImage(true);
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setProfileData(prev => ({ 
-        ...prev, 
-        profileImageUrl: e.target?.result as string 
-      }));
+    try {
+      // Upload to Firebase Storage
+      const success = await uploadProfileImage(file);
+      if (success) {
+        toast({
+          title: "Image Uploaded",
+          description: "Your profile image has been updated successfully.",
+        });
+      } else {
+        throw new Error("Failed to upload image");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Upload Failed",
+        description: error.message || "Failed to upload image.",
+        variant: "destructive",
+      });
+    } finally {
       setUploadingImage(false);
       setShowChangeImageDropdown(false);
-    };
-    reader.readAsDataURL(file);
+    }
   };
 
-  const handleAvatarSelect = (avatarUrl: string) => {
-    setProfileData(prev => ({ ...prev, profileImageUrl: avatarUrl }));
-    setShowAvatarSelector(false);
+  const handleAvatarSelect = async (avatarUrl: string) => {
+    try {
+      // Update profile with new avatar URL in Firebase
+      const success = await updateProfile({
+        UserProfileImage: avatarUrl,
+      });
+      
+      if (success) {
+        setProfileData(prev => ({ ...prev, profileImageUrl: avatarUrl }));
+        toast({
+          title: "Avatar Updated",
+          description: "Your profile avatar has been updated successfully.",
+        });
+      } else {
+        throw new Error("Failed to update avatar");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Update Failed",
+        description: error.message || "Failed to update avatar.",
+        variant: "destructive",
+      });
+    } finally {
+      setShowAvatarSelector(false);
+    }
   };
 
   const handleCancelSubscription = async () => {

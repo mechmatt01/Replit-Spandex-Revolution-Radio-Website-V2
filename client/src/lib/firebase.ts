@@ -1,17 +1,7 @@
 import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  collection,
-  query,
-  where,
-  getDocs,
-} from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc } from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -21,125 +11,202 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const auth = getAuth(app);
 
-export interface FirebaseUser {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-  profileImageUrl?: string;
-  showVerifiedBadge?: boolean;
-  subscriptionStatus?: string;
-  subscriptionTier?: string;
-  stripeCustomerId?: string;
-  stripeSubscriptionId?: string;
-  isEmailVerified?: boolean;
-  isAdmin?: boolean;
-  accountDeletionScheduled?: boolean;
-  accountDeletionDate?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+// Initialize Firebase services
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
+
+// Configure Google Auth Provider
+const provider = new GoogleAuthProvider();
+provider.addScope('profile');
+provider.addScope('email');
+
+// Generate 10-character alphanumeric user ID
+export function generateUserID(): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < 10; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
 }
 
-// User operations
-export const createUser = async (
-  userData: Omit<FirebaseUser, "createdAt" | "updatedAt">,
-): Promise<FirebaseUser> => {
-  const now = new Date();
-  const user: FirebaseUser = {
-    ...userData,
-    createdAt: now,
-    updatedAt: now,
-  };
-
-  await setDoc(doc(db, "users", userData.id), user);
-  return user;
-};
-
-export const getUser = async (userId: string): Promise<FirebaseUser | null> => {
-  const userDoc = await getDoc(doc(db, "users", userId));
-  if (userDoc.exists()) {
-    const data = userDoc.data();
-    return {
-      ...data,
-      createdAt: data.createdAt?.toDate() || new Date(),
-      updatedAt: data.updatedAt?.toDate() || new Date(),
-      accountDeletionDate: data.accountDeletionDate?.toDate(),
-    } as FirebaseUser;
-  }
-  return null;
-};
-
-export const updateUser = async (
-  userId: string,
-  updates: Partial<FirebaseUser>,
-): Promise<FirebaseUser | null> => {
-  const userRef = doc(db, "users", userId);
-  const updatedData = {
-    ...updates,
-    updatedAt: new Date(),
-  };
-
-  await updateDoc(userRef, updatedData);
-  return await getUser(userId);
-};
-
-export const getUserByEmail = async (
-  email: string,
-): Promise<FirebaseUser | null> => {
-  const q = query(collection(db, "users"), where("email", "==", email));
-  const querySnapshot = await getDocs(q);
-
-  if (!querySnapshot.empty) {
-    const doc = querySnapshot.docs[0];
-    const data = doc.data();
-    return {
-      ...data,
-      createdAt: data.createdAt?.toDate() || new Date(),
-      updatedAt: data.updatedAt?.toDate() || new Date(),
-      accountDeletionDate: data.accountDeletionDate?.toDate(),
-    } as FirebaseUser;
-  }
-  return null;
-};
-
-export const scheduleAccountDeletion = async (
-  userId: string,
-  deletionDate: Date,
-): Promise<void> => {
-  await updateUser(userId, {
-    accountDeletionScheduled: true,
-    accountDeletionDate: deletionDate,
+// Get user's location
+export async function getUserLocation(): Promise<{ lat: number; lng: number } | null> {
+  return new Promise((resolve) => {
+    if (!navigator.geolocation) {
+      resolve(null);
+      return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      () => {
+        resolve(null);
+      }
+    );
   });
-};
+}
 
-export const deleteUser = async (userId: string): Promise<void> => {
-  await deleteDoc(doc(db, "users", userId));
-};
+// Create user profile in Firebase
+export async function createUserProfile(authUser: any, customUserID?: string) {
+  try {
+    const userID = customUserID || generateUserID();
+    const location = await getUserLocation();
+    
+    const userProfile = {
+      FirstName: authUser.displayName?.split(' ')[0] || '',
+      LastName: authUser.displayName?.split(' ').slice(1).join(' ') || '',
+      UserProfileImage: authUser.photoURL || '',
+      EmailAddress: authUser.email || '',
+      PhoneNumber: authUser.phoneNumber || '',
+      Location: location ? { lat: location.lat, lng: location.lng } : null,
+      IsActiveListening: false,
+      ActiveSubscription: false,
+      RenewalDate: null,
+      UserID: userID,
+      GoogleUID: authUser.uid,
+      CreatedAt: new Date().toISOString(),
+      UpdatedAt: new Date().toISOString(),
+    };
 
-// Get users scheduled for deletion
-export const getUsersScheduledForDeletion = async (): Promise<
-  FirebaseUser[]
-> => {
-  const now = new Date();
-  const q = query(
-    collection(db, "users"),
-    where("accountDeletionScheduled", "==", true),
-    where("accountDeletionDate", "<=", now),
-  );
+    // Save to Firebase Firestore
+    await setDoc(doc(db, 'Users', `User: ${userID}`), userProfile);
+    
+    console.log('User profile created successfully:', userID);
+    return { success: true, userID, profile: userProfile };
+  } catch (error) {
+    console.error('Error creating user profile:', error);
+    return { success: false, error };
+  }
+}
 
-  const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      ...data,
-      createdAt: data.createdAt?.toDate() || new Date(),
-      updatedAt: data.updatedAt?.toDate() || new Date(),
-      accountDeletionDate: data.accountDeletionDate?.toDate(),
-    } as FirebaseUser;
-  });
-};
+// Get user profile from Firebase
+export async function getUserProfile(userID: string) {
+  try {
+    const docRef = doc(db, 'Users', `User: ${userID}`);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return { success: true, profile: docSnap.data() };
+    } else {
+      return { success: false, error: 'Profile not found' };
+    }
+  } catch (error) {
+    console.error('Error getting user profile:', error);
+    return { success: false, error };
+  }
+}
+
+// Update user profile in Firebase
+export async function updateUserProfile(userID: string, updates: any) {
+  try {
+    const docRef = doc(db, 'Users', `User: ${userID}`);
+    const updateData = {
+      ...updates,
+      UpdatedAt: new Date().toISOString(),
+    };
+    
+    await updateDoc(docRef, updateData);
+    console.log('User profile updated successfully');
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    return { success: false, error };
+  }
+}
+
+// Upload profile image to Firebase Storage
+export async function uploadProfileImage(userID: string, file: File) {
+  try {
+    const storageRef = ref(storage, `User: ${userID}/profile-image`);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    
+    // Update profile with new image URL
+    await updateUserProfile(userID, { UserProfileImage: downloadURL });
+    
+    return { success: true, url: downloadURL };
+  } catch (error) {
+    console.error('Error uploading profile image:', error);
+    return { success: false, error };
+  }
+}
+
+// Update listening status
+export async function updateListeningStatus(userID: string, isListening: boolean) {
+  try {
+    await updateUserProfile(userID, { IsActiveListening: isListening });
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating listening status:', error);
+    return { success: false, error };
+  }
+}
+
+// Update location
+export async function updateUserLocation(userID: string) {
+  try {
+    const location = await getUserLocation();
+    if (location) {
+      await updateUserProfile(userID, { Location: location });
+      return { success: true };
+    }
+    return { success: false, error: 'Location not available' };
+  } catch (error) {
+    console.error('Error updating location:', error);
+    return { success: false, error };
+  }
+}
+
+// Find user by Google UID
+export async function findUserByGoogleUID(googleUID: string) {
+  try {
+    // Since we can't query by field directly in this simple setup,
+    // we'll need to maintain this lookup in our backend
+    console.log('Looking up user by Google UID:', googleUID);
+    return { success: false, error: 'User lookup not implemented' };
+  } catch (error) {
+    console.error('Error finding user by Google UID:', error);
+    return { success: false, error };
+  }
+}
+
+// Google Sign In
+export async function signInWithGoogle() {
+  try {
+    await signInWithRedirect(auth, provider);
+  } catch (error) {
+    console.error('Error signing in with Google:', error);
+    throw error;
+  }
+}
+
+// Handle redirect result
+export async function handleRedirectResult() {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result) {
+      const user = result.user;
+      console.log('Google sign-in successful:', user);
+      
+      // Create or update user profile
+      const profileResult = await createUserProfile(user);
+      return { success: true, user, profileResult };
+    }
+    return { success: false, error: 'No redirect result' };
+  } catch (error) {
+    console.error('Error handling redirect result:', error);
+    return { success: false, error };
+  }
+}
+
+export { provider };
