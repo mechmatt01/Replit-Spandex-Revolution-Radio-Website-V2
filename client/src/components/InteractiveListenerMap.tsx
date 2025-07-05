@@ -443,9 +443,11 @@ export default function InteractiveListenerMap() {
 
   useEffect(() => {
     // Initialize listeners
+    console.log('Initializing listeners...');
     setIsLoading(true);
     
     const timer = setTimeout(() => {
+      console.log('Setting active listeners and clearing loading...');
       setActiveListeners(generateActiveListeners());
       setIsLoading(false);
     }, 800);
@@ -529,12 +531,13 @@ export default function InteractiveListenerMap() {
     <section
       id="map"
       className={`py-20 ${isDarkMode ? "bg-black" : "bg-white"} ${
-        isFullscreen ? "fixed inset-0 z-40 pt-16" : ""
+        isFullscreen ? "fixed inset-0 z-40" : ""
       } transition-all duration-500 ease-in-out`}
       style={{
         ...(isFullscreen && {
-          paddingBottom: "140px", // Space for floating player
-          paddingTop: "60px",
+          paddingTop: "80px", // Keep header spacing
+          paddingBottom: "120px", // Space for floating player
+          height: "100vh", // Full viewport height
         }),
       }}
     >
@@ -545,6 +548,22 @@ export default function InteractiveListenerMap() {
           >
             LIVE INTERACTIVE MAP
           </h2>
+          
+          {/* Weather Information - Debug */}
+          {(() => {
+            console.log('Weather Display Debug:', {
+              weatherLoading,
+              weather,
+              userLocation,
+              weatherError,
+              hasWeather: !!weather,
+              hasUserLocation: !!userLocation,
+              shouldShowWeatherLoading: weatherLoading && userLocation,
+              shouldShowWeather: !!weather,
+              shouldShowLocationOnly: !weather && !weatherLoading && userLocation
+            });
+            return null;
+          })()}
           
           {/* Weather Information */}
           {weatherLoading && userLocation && (
@@ -640,6 +659,7 @@ export default function InteractiveListenerMap() {
                   } overflow-hidden transition-all duration-500 ease-in-out`}
                   style={{
                     ...(isFullscreen && {
+                      height: "calc(100vh - 200px)",
                       minHeight: "calc(100vh - 200px)",
                     }),
                   }}
@@ -676,6 +696,12 @@ export default function InteractiveListenerMap() {
                   {/* Google Maps or Fallback */}
                   {!isLoading && (
                     <>
+                      {(() => {
+                        console.log('Map render - isLoading:', isLoading);
+                        console.log('Map render - config:', config);
+                        console.log('Map render - googleMapsApiKey:', config?.googleMapsApiKey);
+                        return null;
+                      })()}
                       {config?.googleMapsApiKey ? (
                         <GoogleMapWithListeners
                           listeners={activeListeners}
@@ -693,7 +719,7 @@ export default function InteractiveListenerMap() {
                               Interactive map coming soon
                             </p>
                             <p className={`text-sm mt-2 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
-                              Global listener tracking enabled
+                              Google Maps API key missing
                             </p>
                           </div>
                         </div>
