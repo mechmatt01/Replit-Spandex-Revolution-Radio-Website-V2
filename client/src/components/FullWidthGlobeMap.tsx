@@ -76,82 +76,112 @@ const getWeatherIcon = (condition: string, isDay: boolean) => {
   const conditionLower = condition.toLowerCase();
 
   // Clear conditions
-  if (conditionLower.includes('clear') || conditionLower.includes('sunny')) {
+  if (conditionLower.includes("clear") || conditionLower.includes("sunny")) {
     return isDay ? clearDayIcon : clearNightIcon;
   }
 
   // Cloudy conditions
-  if (conditionLower.includes('partly cloudy') || conditionLower.includes('few clouds')) {
+  if (
+    conditionLower.includes("partly cloudy") ||
+    conditionLower.includes("few clouds")
+  ) {
     return isDay ? cloudy1DayIcon : cloudy1NightIcon;
   }
-  if (conditionLower.includes('scattered clouds') || conditionLower.includes('broken clouds')) {
+  if (
+    conditionLower.includes("scattered clouds") ||
+    conditionLower.includes("broken clouds")
+  ) {
     return isDay ? cloudy2DayIcon : cloudy2NightIcon;
   }
-  if (conditionLower.includes('overcast') || conditionLower.includes('cloudy')) {
+  if (
+    conditionLower.includes("overcast") ||
+    conditionLower.includes("cloudy")
+  ) {
     return isDay ? cloudy3DayIcon : cloudy3NightIcon;
   }
 
   // Rain conditions
-  if (conditionLower.includes('light rain') || conditionLower.includes('drizzle')) {
+  if (
+    conditionLower.includes("light rain") ||
+    conditionLower.includes("drizzle")
+  ) {
     return isDay ? rainy1DayIcon : rainy1NightIcon;
   }
-  if (conditionLower.includes('moderate rain') || conditionLower.includes('rain')) {
+  if (
+    conditionLower.includes("moderate rain") ||
+    conditionLower.includes("rain")
+  ) {
     return rainy2Icon;
   }
-  if (conditionLower.includes('heavy rain') || conditionLower.includes('downpour')) {
+  if (
+    conditionLower.includes("heavy rain") ||
+    conditionLower.includes("downpour")
+  ) {
     return rainy3Icon;
   }
 
   // Snow conditions
-  if (conditionLower.includes('light snow')) {
+  if (conditionLower.includes("light snow")) {
     return snowy1Icon;
   }
-  if (conditionLower.includes('moderate snow') || conditionLower.includes('snow')) {
+  if (
+    conditionLower.includes("moderate snow") ||
+    conditionLower.includes("snow")
+  ) {
     return snowy2Icon;
   }
-  if (conditionLower.includes('heavy snow') || conditionLower.includes('blizzard')) {
+  if (
+    conditionLower.includes("heavy snow") ||
+    conditionLower.includes("blizzard")
+  ) {
     return snowy3Icon;
   }
 
   // Thunderstorm conditions
-  if (conditionLower.includes('thunderstorm') || conditionLower.includes('thunder')) {
-    if (conditionLower.includes('severe')) return severeThunderstormIcon;
-    if (conditionLower.includes('isolated')) return isolatedThunderstormsIcon;
-    if (conditionLower.includes('scattered')) return scatteredThunderstormsIcon;
+  if (
+    conditionLower.includes("thunderstorm") ||
+    conditionLower.includes("thunder")
+  ) {
+    if (conditionLower.includes("severe")) return severeThunderstormIcon;
+    if (conditionLower.includes("isolated")) return isolatedThunderstormsIcon;
+    if (conditionLower.includes("scattered")) return scatteredThunderstormsIcon;
     return isolatedThunderstormsIcon;
   }
 
   // Fog conditions
-  if (conditionLower.includes('fog') || conditionLower.includes('mist')) {
+  if (conditionLower.includes("fog") || conditionLower.includes("mist")) {
     return fogIcon;
   }
 
   // Haze conditions
-  if (conditionLower.includes('haze')) {
+  if (conditionLower.includes("haze")) {
     return hazeIcon;
   }
 
   // Dust conditions
-  if (conditionLower.includes('dust') || conditionLower.includes('sand')) {
+  if (conditionLower.includes("dust") || conditionLower.includes("sand")) {
     return cloudyIcon;
   }
 
   // Wind conditions
-  if (conditionLower.includes('wind')) {
+  if (conditionLower.includes("wind")) {
     return windIcon;
   }
 
   // Extreme conditions
-  if (conditionLower.includes('tornado')) return tornadoIcon;
-  if (conditionLower.includes('hurricane')) return hurricaneIcon;
-  if (conditionLower.includes('tropical storm')) return tropicalStormIcon;
-  if (conditionLower.includes('hail')) return cloudyIcon;
-  if (conditionLower.includes('frost')) return cloudyIcon;
+  if (conditionLower.includes("tornado")) return tornadoIcon;
+  if (conditionLower.includes("hurricane")) return hurricaneIcon;
+  if (conditionLower.includes("tropical storm")) return tropicalStormIcon;
+  if (conditionLower.includes("hail")) return cloudyIcon;
+  if (conditionLower.includes("frost")) return cloudyIcon;
 
   // Mixed conditions
-  if (conditionLower.includes('rain') && conditionLower.includes('snow')) return rainAndSnowMixIcon;
-  if (conditionLower.includes('rain') && conditionLower.includes('sleet')) return rainAndSleetMixIcon;
-  if (conditionLower.includes('snow') && conditionLower.includes('sleet')) return snowAndSleetMixIcon;
+  if (conditionLower.includes("rain") && conditionLower.includes("snow"))
+    return rainAndSnowMixIcon;
+  if (conditionLower.includes("rain") && conditionLower.includes("sleet"))
+    return rainAndSleetMixIcon;
+  if (conditionLower.includes("snow") && conditionLower.includes("sleet"))
+    return snowAndSleetMixIcon;
 
   // Default fallback
   return isDay ? clearDayIcon : clearNightIcon;
@@ -160,7 +190,10 @@ const getWeatherIcon = (condition: string, isDay: boolean) => {
 export default function FullWidthGlobeMap() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const currentInfoWindow = useRef<any>(null);
   const { colors, isDarkMode } = useTheme();
@@ -170,10 +203,10 @@ export default function FullWidthGlobeMap() {
   });
 
   // Fetch Google Maps API key and config
-  const { data: config } = useQuery<{ 
-    googleMapsApiKey: string; 
+  const { data: config } = useQuery<{
+    googleMapsApiKey: string;
     googleMapsSigningSecret: string;
-    openWeatherApiKey: string; 
+    openWeatherApiKey: string;
   }>({
     queryKey: ["/api/config"],
     staleTime: Infinity,
@@ -194,25 +227,31 @@ export default function FullWidthGlobeMap() {
           // Fallback to New York
           setUserLocation({
             lat: 40.7128,
-            lng: -74.0060,
+            lng: -74.006,
           });
-        }
+        },
       );
     } else {
       // Fallback to New York
       setUserLocation({
         lat: 40.7128,
-        lng: -74.0060,
+        lng: -74.006,
       });
     }
   }, []);
 
   // Fetch weather data when user location is available
-  const { data: weather, error: weatherError, isLoading: weatherLoading } = useQuery<WeatherData>({
+  const {
+    data: weather,
+    error: weatherError,
+    isLoading: weatherLoading,
+  } = useQuery<WeatherData>({
     queryKey: ["/api/weather", userLocation?.lat, userLocation?.lng],
     queryFn: async () => {
       if (!userLocation) throw new Error("No location available");
-      const response = await fetch(`/api/weather?lat=${userLocation.lat}&lon=${userLocation.lng}`);
+      const response = await fetch(
+        `/api/weather?lat=${userLocation.lat}&lon=${userLocation.lng}`,
+      );
       if (!response.ok) {
         throw new Error(`Weather API error: ${response.status}`);
       }
@@ -248,108 +287,110 @@ export default function FullWidthGlobeMap() {
         zoom: 2,
         center: userLocation,
         mapTypeId: google.maps.MapTypeId.ROADMAP,
-        styles: isDarkMode ? [
-          {
-            "elementType": "geometry",
-            "stylers": [{"color": "#212121"}]
-          },
-          {
-            "elementType": "labels.icon",
-            "stylers": [{"visibility": "off"}]
-          },
-          {
-            "elementType": "labels.text.fill",
-            "stylers": [{"color": "#757575"}]
-          },
-          {
-            "elementType": "labels.text.stroke",
-            "stylers": [{"color": "#212121"}]
-          },
-          {
-            "featureType": "administrative",
-            "elementType": "geometry",
-            "stylers": [{"color": "#757575"}]
-          },
-          {
-            "featureType": "administrative.country",
-            "elementType": "labels.text.fill",
-            "stylers": [{"color": "#9e9e9e"}]
-          },
-          {
-            "featureType": "administrative.land_parcel",
-            "stylers": [{"visibility": "off"}]
-          },
-          {
-            "featureType": "administrative.locality",
-            "elementType": "labels.text.fill",
-            "stylers": [{"color": "#bdbdbd"}]
-          },
-          {
-            "featureType": "poi",
-            "elementType": "labels.text.fill",
-            "stylers": [{"color": "#757575"}]
-          },
-          {
-            "featureType": "poi.park",
-            "elementType": "geometry",
-            "stylers": [{"color": "#181818"}]
-          },
-          {
-            "featureType": "poi.park",
-            "elementType": "labels.text.fill",
-            "stylers": [{"color": "#616161"}]
-          },
-          {
-            "featureType": "poi.park",
-            "elementType": "labels.text.stroke",
-            "stylers": [{"color": "#1b1b1b"}]
-          },
-          {
-            "featureType": "road",
-            "elementType": "geometry.fill",
-            "stylers": [{"color": "#2c2c2c"}]
-          },
-          {
-            "featureType": "road",
-            "elementType": "labels.text.fill",
-            "stylers": [{"color": "#8a8a8a"}]
-          },
-          {
-            "featureType": "road.arterial",
-            "elementType": "geometry",
-            "stylers": [{"color": "#373737"}]
-          },
-          {
-            "featureType": "road.highway",
-            "elementType": "geometry",
-            "stylers": [{"color": "#3c3c3c"}]
-          },
-          {
-            "featureType": "road.highway.controlled_access",
-            "elementType": "geometry",
-            "stylers": [{"color": "#4e4e4e"}]
-          },
-          {
-            "featureType": "road.local",
-            "elementType": "labels.text.fill",
-            "stylers": [{"color": "#616161"}]
-          },
-          {
-            "featureType": "transit",
-            "elementType": "labels.text.fill",
-            "stylers": [{"color": "#757575"}]
-          },
-          {
-            "featureType": "water",
-            "elementType": "geometry",
-            "stylers": [{"color": "#000000"}]
-          },
-          {
-            "featureType": "water",
-            "elementType": "labels.text.fill",
-            "stylers": [{"color": "#3d3d3d"}]
-          }
-        ] : [],
+        styles: isDarkMode
+          ? [
+              {
+                elementType: "geometry",
+                stylers: [{ color: "#212121" }],
+              },
+              {
+                elementType: "labels.icon",
+                stylers: [{ visibility: "off" }],
+              },
+              {
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+              },
+              {
+                elementType: "labels.text.stroke",
+                stylers: [{ color: "#212121" }],
+              },
+              {
+                featureType: "administrative",
+                elementType: "geometry",
+                stylers: [{ color: "#757575" }],
+              },
+              {
+                featureType: "administrative.country",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#9e9e9e" }],
+              },
+              {
+                featureType: "administrative.land_parcel",
+                stylers: [{ visibility: "off" }],
+              },
+              {
+                featureType: "administrative.locality",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#bdbdbd" }],
+              },
+              {
+                featureType: "poi",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+              },
+              {
+                featureType: "poi.park",
+                elementType: "geometry",
+                stylers: [{ color: "#181818" }],
+              },
+              {
+                featureType: "poi.park",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#616161" }],
+              },
+              {
+                featureType: "poi.park",
+                elementType: "labels.text.stroke",
+                stylers: [{ color: "#1b1b1b" }],
+              },
+              {
+                featureType: "road",
+                elementType: "geometry.fill",
+                stylers: [{ color: "#2c2c2c" }],
+              },
+              {
+                featureType: "road",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#8a8a8a" }],
+              },
+              {
+                featureType: "road.arterial",
+                elementType: "geometry",
+                stylers: [{ color: "#373737" }],
+              },
+              {
+                featureType: "road.highway",
+                elementType: "geometry",
+                stylers: [{ color: "#3c3c3c" }],
+              },
+              {
+                featureType: "road.highway.controlled_access",
+                elementType: "geometry",
+                stylers: [{ color: "#4e4e4e" }],
+              },
+              {
+                featureType: "road.local",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#616161" }],
+              },
+              {
+                featureType: "transit",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+              },
+              {
+                featureType: "water",
+                elementType: "geometry",
+                stylers: [{ color: "#000000" }],
+              },
+              {
+                featureType: "water",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#3d3d3d" }],
+              },
+            ]
+          : [],
         fullscreenControl: false,
         mapTypeControl: false,
         streetViewControl: false,
@@ -364,7 +405,7 @@ export default function FullWidthGlobeMap() {
 
       // Add mock listener markers
       const mockListeners = [
-        { lat: 40.7128, lng: -74.0060, city: "New York", country: "USA" },
+        { lat: 40.7128, lng: -74.006, city: "New York", country: "USA" },
         { lat: 34.0522, lng: -118.2437, city: "Los Angeles", country: "USA" },
         { lat: 51.5074, lng: -0.1278, city: "London", country: "UK" },
         { lat: 48.8566, lng: 2.3522, city: "Paris", country: "France" },
@@ -372,7 +413,7 @@ export default function FullWidthGlobeMap() {
         { lat: -33.8688, lng: 151.2093, city: "Sydney", country: "Australia" },
         { lat: 55.7558, lng: 37.6173, city: "Moscow", country: "Russia" },
         { lat: 39.9042, lng: 116.4074, city: "Beijing", country: "China" },
-        { lat: 19.0760, lng: 72.8777, city: "Mumbai", country: "India" },
+        { lat: 19.076, lng: 72.8777, city: "Mumbai", country: "India" },
         { lat: -23.5505, lng: -46.6333, city: "São Paulo", country: "Brazil" },
       ];
 
@@ -408,7 +449,11 @@ export default function FullWidthGlobeMap() {
           private div?: HTMLDivElement;
           private listener: ListenerData;
 
-          constructor(position: google.maps.LatLng, content: string, listener: ListenerData) {
+          constructor(
+            position: google.maps.LatLng,
+            content: string,
+            listener: ListenerData,
+          ) {
             super();
             this.position = position;
             this.content = content;
@@ -416,7 +461,7 @@ export default function FullWidthGlobeMap() {
           }
 
           onAdd() {
-            const div = document.createElement('div');
+            const div = document.createElement("div");
             div.style.cssText = `
               position: absolute;
               background: #1f2937;
@@ -433,7 +478,7 @@ export default function FullWidthGlobeMap() {
               transform: translateY(10px);
               transition: opacity 0.3s ease, transform 0.3s ease;
             `;
-            
+
             div.innerHTML = `
               <button class="close-overlay" style="
                 position: absolute;
@@ -497,14 +542,16 @@ export default function FullWidthGlobeMap() {
             this.div = div;
 
             // Add close button functionality
-            const closeButton = div.querySelector('.close-overlay') as HTMLButtonElement;
-            closeButton.addEventListener('mouseenter', () => {
-              closeButton.style.background = 'transparent';
+            const closeButton = div.querySelector(
+              ".close-overlay",
+            ) as HTMLButtonElement;
+            closeButton.addEventListener("mouseenter", () => {
+              closeButton.style.background = "transparent";
             });
-            closeButton.addEventListener('mouseleave', () => {
-              closeButton.style.background = 'transparent';
+            closeButton.addEventListener("mouseleave", () => {
+              closeButton.style.background = "transparent";
             });
-            closeButton.addEventListener('click', (e) => {
+            closeButton.addEventListener("click", (e) => {
               e.preventDefault();
               e.stopPropagation();
               this.setMap(null);
@@ -514,7 +561,7 @@ export default function FullWidthGlobeMap() {
             });
 
             // Add pulse animation style
-            const pulseStyle = document.createElement('style');
+            const pulseStyle = document.createElement("style");
             pulseStyle.innerHTML = `
               @keyframes pulse {
                 0% { transform: scale(1); opacity: 1; }
@@ -532,8 +579,8 @@ export default function FullWidthGlobeMap() {
 
             // Animate in
             setTimeout(() => {
-              div.style.opacity = '1';
-              div.style.transform = 'translateY(0)';
+              div.style.opacity = "1";
+              div.style.transform = "translateY(0)";
             }, 10);
           }
 
@@ -541,10 +588,12 @@ export default function FullWidthGlobeMap() {
             if (this.div) {
               const overlayProjection = this.getProjection();
               if (overlayProjection) {
-                const position = overlayProjection.fromLatLngToDivPixel(this.position);
+                const position = overlayProjection.fromLatLngToDivPixel(
+                  this.position,
+                );
                 if (position) {
-                  this.div.style.left = (position.x - 100) + 'px';
-                  this.div.style.top = (position.y - 120) + 'px';
+                  this.div.style.left = position.x - 100 + "px";
+                  this.div.style.top = position.y - 120 + "px";
                 }
               }
             }
@@ -563,17 +612,17 @@ export default function FullWidthGlobeMap() {
           if (currentInfoWindow.current) {
             currentInfoWindow.current.setMap(null);
           }
-          
+
           // Create and open new overlay
           const overlay = new CustomOverlay(
             new google.maps.LatLng(listener.lat, listener.lng),
-            '',
+            "",
             {
               ...listener,
               id: listener.id || `listener-${Date.now()}`,
               isActive: listener.isActive || true,
-              lastSeen: listener.lastSeen || new Date()
-            }
+              lastSeen: listener.lastSeen || new Date(),
+            },
           );
           overlay.setMap(mapInstance);
           currentInfoWindow.current = overlay;
@@ -595,30 +644,115 @@ export default function FullWidthGlobeMap() {
 
   // Generate mock listener data
   const activeListeners: ListenerData[] = [
-    { id: "1", city: "New York", country: "USA", lat: 40.7128, lng: -74.0060, isActive: true, lastSeen: new Date() },
-    { id: "2", city: "Los Angeles", country: "USA", lat: 34.0522, lng: -118.2437, isActive: true, lastSeen: new Date() },
-    { id: "3", city: "London", country: "UK", lat: 51.5074, lng: -0.1278, isActive: true, lastSeen: new Date() },
-    { id: "4", city: "Paris", country: "France", lat: 48.8566, lng: 2.3522, isActive: true, lastSeen: new Date() },
-    { id: "5", city: "Tokyo", country: "Japan", lat: 35.6762, lng: 139.6503, isActive: true, lastSeen: new Date() },
-    { id: "6", city: "Sydney", country: "Australia", lat: -33.8688, lng: 151.2093, isActive: true, lastSeen: new Date() },
-    { id: "7", city: "Moscow", country: "Russia", lat: 55.7558, lng: 37.6173, isActive: true, lastSeen: new Date() },
-    { id: "8", city: "Beijing", country: "China", lat: 39.9042, lng: 116.4074, isActive: true, lastSeen: new Date() },
-    { id: "9", city: "Mumbai", country: "India", lat: 19.0760, lng: 72.8777, isActive: true, lastSeen: new Date() },
-    { id: "10", city: "São Paulo", country: "Brazil", lat: -23.5505, lng: -46.6333, isActive: true, lastSeen: new Date() },
+    {
+      id: "1",
+      city: "New York",
+      country: "USA",
+      lat: 40.7128,
+      lng: -74.006,
+      isActive: true,
+      lastSeen: new Date(),
+    },
+    {
+      id: "2",
+      city: "Los Angeles",
+      country: "USA",
+      lat: 34.0522,
+      lng: -118.2437,
+      isActive: true,
+      lastSeen: new Date(),
+    },
+    {
+      id: "3",
+      city: "London",
+      country: "UK",
+      lat: 51.5074,
+      lng: -0.1278,
+      isActive: true,
+      lastSeen: new Date(),
+    },
+    {
+      id: "4",
+      city: "Paris",
+      country: "France",
+      lat: 48.8566,
+      lng: 2.3522,
+      isActive: true,
+      lastSeen: new Date(),
+    },
+    {
+      id: "5",
+      city: "Tokyo",
+      country: "Japan",
+      lat: 35.6762,
+      lng: 139.6503,
+      isActive: true,
+      lastSeen: new Date(),
+    },
+    {
+      id: "6",
+      city: "Sydney",
+      country: "Australia",
+      lat: -33.8688,
+      lng: 151.2093,
+      isActive: true,
+      lastSeen: new Date(),
+    },
+    {
+      id: "7",
+      city: "Moscow",
+      country: "Russia",
+      lat: 55.7558,
+      lng: 37.6173,
+      isActive: true,
+      lastSeen: new Date(),
+    },
+    {
+      id: "8",
+      city: "Beijing",
+      country: "China",
+      lat: 39.9042,
+      lng: 116.4074,
+      isActive: true,
+      lastSeen: new Date(),
+    },
+    {
+      id: "9",
+      city: "Mumbai",
+      country: "India",
+      lat: 19.076,
+      lng: 72.8777,
+      isActive: true,
+      lastSeen: new Date(),
+    },
+    {
+      id: "10",
+      city: "São Paulo",
+      country: "Brazil",
+      lat: -23.5505,
+      lng: -46.6333,
+      isActive: true,
+      lastSeen: new Date(),
+    },
   ];
 
   const totalListeners = activeListeners.length;
-  const countriesWithListeners = new Set(activeListeners.map((l) => l.country)).size;
+  const countriesWithListeners = new Set(activeListeners.map((l) => l.country))
+    .size;
   const top10Listeners = activeListeners.slice(0, 10);
 
   return (
     <section
       id="map"
       className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out ${
-        isFullscreen ? "fixed inset-0 z-50 bg-black/80 backdrop-blur-md" : "py-20"
+        isFullscreen
+          ? "fixed inset-0 z-50 bg-black/80 backdrop-blur-md"
+          : "py-20"
       }`}
     >
-      <div className={`${isFullscreen ? "h-full p-[5px]" : "max-w-full mx-auto px-4 sm:px-6 lg:px-8"}`}>
+      <div
+        className={`${isFullscreen ? "h-full p-[5px]" : "max-w-full mx-auto px-4 sm:px-6 lg:px-8"}`}
+      >
         {/* Header for non-fullscreen */}
         {!isFullscreen && (
           <div className="text-center mb-16">
@@ -638,22 +772,33 @@ export default function FullWidthGlobeMap() {
             {weather && (
               <div className="mb-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                  <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  <MapPin
+                    className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  />
+                  <span
+                    className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     {weather.location}
                   </span>
                 </div>
                 <div className="flex items-center justify-center gap-1.5">
                   <img
-                    src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
+                    src={getWeatherIcon(
+                      weather.description,
+                      weather.icon.includes("d"),
+                    )}
                     alt={weather.description}
                     className="w-12 h-12 flex-shrink-0"
-                    style={{ width: '48px', height: '48px' }}
+                    style={{ width: "48px", height: "48px" }}
                   />
-                  <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  <span
+                    className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
+                  >
                     {Math.round(weather.temperature)}°F
                   </span>
-                  <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  <span
+                    className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  >
                     {weather.description}
                   </span>
                 </div>
@@ -664,8 +809,12 @@ export default function FullWidthGlobeMap() {
             {weatherLoading && (
               <div className="mb-4">
                 <div className="flex items-center justify-center gap-2">
-                  <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                  <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  <MapPin
+                    className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  />
+                  <span
+                    className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     Loading weather...
                   </span>
                 </div>
@@ -682,31 +831,42 @@ export default function FullWidthGlobeMap() {
             >
               GLOBAL LISTENERS
             </h2>
-            
+
             {/* Weather Display Above Map in Fullscreen */}
             {weather && (
               <div className="mb-6">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <MapPin className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                  <span className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  <MapPin
+                    className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  />
+                  <span
+                    className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
                     {weather.location}
                   </span>
                 </div>
                 <div className="flex items-center justify-center gap-1.5">
                   <img
-                    src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
+                    src={getWeatherIcon(
+                      weather.description,
+                      weather.icon.includes("d"),
+                    )}
                     alt={weather.description}
                     className="flex-shrink-0"
-                    style={{ 
-                      width: '48px', 
-                      height: '48px',
-                      objectFit: 'contain'
+                    style={{
+                      width: "48px",
+                      height: "48px",
+                      objectFit: "contain",
                     }}
                   />
-                  <span className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  <span
+                    className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}
+                  >
                     {Math.round(weather.temperature)}°F
                   </span>
-                  <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  <span
+                    className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  >
                     {weather.description}
                   </span>
                 </div>
@@ -716,16 +876,17 @@ export default function FullWidthGlobeMap() {
         )}
 
         {/* Map Container */}
-        <div className={`relative ${isFullscreen ? "fixed inset-0 z-50" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
-
+        <div
+          className={`relative ${isFullscreen ? "fixed inset-0 z-50" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}
+        >
           <div
             ref={mapRef}
             className={`w-full ${isFullscreen ? "rounded-lg mx-8" : "rounded-lg"} map-container`}
-            style={{ 
+            style={{
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "calc(100vh - 30px)" : "100%",
-              marginTop: isFullscreen ? "30px" : "0",
+              height: isFullscreen ? "calc(100vh - 10px)" : "100%",
+              marginTop: isFullscreen ? "10px" : "0",
             }}
           />
 
@@ -742,9 +903,9 @@ export default function FullWidthGlobeMap() {
               }}
               size="sm"
               className={`p-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-700 text-white" : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`}
-              style={{ 
+              style={{
                 backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                color: isDarkMode ? "#ffffff" : "#000000"
+                color: isDarkMode ? "#ffffff" : "#000000",
               }}
             >
               <ZoomIn className="w-4 h-4" />
@@ -760,9 +921,9 @@ export default function FullWidthGlobeMap() {
               }}
               size="sm"
               className={`p-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-700 text-white" : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`}
-              style={{ 
+              style={{
                 backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                color: isDarkMode ? "#ffffff" : "#000000"
+                color: isDarkMode ? "#ffffff" : "#000000",
               }}
             >
               <ZoomOut className="w-4 h-4" />
@@ -772,16 +933,16 @@ export default function FullWidthGlobeMap() {
                 if (window.google && mapRef.current) {
                   const map = mapRef.current.firstChild as any;
                   if (map && map.panTo) {
-                    map.panTo({ lat: 40.7128, lng: -74.0060 });
+                    map.panTo({ lat: 40.7128, lng: -74.006 });
                     map.setZoom(2);
                   }
                 }
               }}
               size="sm"
               className={`p-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-700 text-white" : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`}
-              style={{ 
+              style={{
                 backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                color: isDarkMode ? "#ffffff" : "#000000"
+                color: isDarkMode ? "#ffffff" : "#000000",
               }}
             >
               <RotateCcw className="w-4 h-4" />
@@ -792,15 +953,21 @@ export default function FullWidthGlobeMap() {
           <Button
             onClick={() => setIsFullscreen(!isFullscreen)}
             className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg ${
-              isDarkMode ? "bg-gray-800 hover:bg-gray-700 text-white" : "bg-white hover:bg-gray-50 text-black"
+              isDarkMode
+                ? "bg-gray-800 hover:bg-gray-700 text-white"
+                : "bg-white hover:bg-gray-50 text-black"
             }`}
-            style={{ 
+            style={{
               backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-              color: isDarkMode ? "#ffffff" : "#000000"
+              color: isDarkMode ? "#ffffff" : "#000000",
             }}
             size="sm"
           >
-            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            {isFullscreen ? (
+              <Minimize2 className="w-4 h-4" />
+            ) : (
+              <Maximize2 className="w-4 h-4" />
+            )}
           </Button>
         </div>
 
@@ -828,7 +995,10 @@ export default function FullWidthGlobeMap() {
                     >
                       {totalListeners}
                     </span>
-                    <TrendingUp className="h-7 w-7" style={{ color: colors.primary }} />
+                    <TrendingUp
+                      className="h-7 w-7"
+                      style={{ color: colors.primary }}
+                    />
                     <span
                       className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
                     >
@@ -844,11 +1014,13 @@ export default function FullWidthGlobeMap() {
                     >
                       {countriesWithListeners}
                     </span>
-                    <img 
-                      src={CountriesIconPath} 
-                      alt="Countries" 
-                      className="h-7 w-7" 
-                      style={{ filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)` }}
+                    <img
+                      src={CountriesIconPath}
+                      alt="Countries"
+                      className="h-7 w-7"
+                      style={{
+                        filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
+                      }}
                     />
                     <span
                       className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
@@ -865,11 +1037,13 @@ export default function FullWidthGlobeMap() {
                     >
                       {stats?.currentListeners || 42}
                     </span>
-                    <img 
-                      src={LiveNowIconPath} 
-                      alt="Total Listeners" 
-                      className="h-7 w-7" 
-                      style={{ filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)` }}
+                    <img
+                      src={LiveNowIconPath}
+                      alt="Total Listeners"
+                      className="h-7 w-7"
+                      style={{
+                        filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
+                      }}
                     />
                     <span
                       className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
@@ -912,7 +1086,10 @@ export default function FullWidthGlobeMap() {
                               >
                                 #{index + 1}
                               </span>
-                              <MapPin className="h-6 w-6" style={{ color: colors.primary }} />
+                              <MapPin
+                                className="h-6 w-6"
+                                style={{ color: colors.primary }}
+                              />
                               <div className="flex-1">
                                 <div
                                   className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
@@ -933,7 +1110,7 @@ export default function FullWidthGlobeMap() {
                           </div>
                         ))}
                     </div>
-                    
+
                     {/* Second Column (6-10) */}
                     <div className="space-y-3 transform scale-115">
                       {top10Listeners
@@ -951,7 +1128,10 @@ export default function FullWidthGlobeMap() {
                               >
                                 #{index + 6}
                               </span>
-                              <MapPin className="h-6 w-6" style={{ color: colors.primary }} />
+                              <MapPin
+                                className="h-6 w-6"
+                                style={{ color: colors.primary }}
+                              />
                               <div className="flex-1">
                                 <div
                                   className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
