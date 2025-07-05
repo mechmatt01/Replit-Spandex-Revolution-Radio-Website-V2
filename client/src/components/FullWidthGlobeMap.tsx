@@ -316,15 +316,39 @@ export default function FullWidthGlobeMap() {
   return (
     <section
       id="map"
-      className={`py-20 ${isDarkMode ? "bg-black" : "bg-white"}`}
+      className={`py-20 ${isDarkMode ? "bg-black" : "bg-white"} ${isFullscreen ? "fixed inset-0 z-40" : ""} transition-all duration-500 ease-in-out`}
+      style={{
+        ...(isFullscreen && {
+          paddingTop: "80px", // Keep header spacing
+          paddingBottom: "120px", // Space for floating player
+          height: "100vh", // Full viewport height
+        }),
+      }}
     >
-      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+      <div className={`max-w-full mx-auto px-4 sm:px-6 lg:px-8 ${isFullscreen ? "h-full" : ""}`}>
         <div className="text-center mb-16">
           <h2
             className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
           >
-            GLOBAL METALHEADS
+            LIVE INTERACTIVE MAP
           </h2>
+          
+          {/* Weather Information Display */}
+          <div className="mb-4">
+            <div className="flex items-center justify-center gap-2">
+              <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+              <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                New York County, New York
+              </span>
+              <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"} ml-2`}>
+                71°F
+              </span>
+              <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"} ml-1`}>
+                Clear Sky
+              </span>
+            </div>
+          </div>
+          
           <p
             className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
           >
@@ -334,9 +358,9 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Full Width Globe Map */}
-        <div className={`${isFullscreen ? "fixed inset-0 z-50" : ""}`}>
+        <div className={`${isFullscreen ? "h-full" : ""}`}>
           <Card
-            className={`w-full mb-8 ${isDarkMode ? "bg-black/50" : "bg-white/90"} backdrop-blur-md border-0`}
+            className={`w-full mb-8 ${isDarkMode ? "bg-black/50" : "bg-white/90"} backdrop-blur-md border-0 ${isFullscreen ? "h-full" : ""}`}
           >
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
@@ -404,11 +428,15 @@ export default function FullWidthGlobeMap() {
             <CardContent>
               {/* 3D Globe Container */}
               <div
-                className={`relative h-96 ${isFullscreen ? "h-screen" : ""} overflow-hidden rounded-lg`}
+                className={`relative h-96 ${isFullscreen ? "h-[calc(100vh-280px)]" : ""} overflow-hidden rounded-lg`}
                 style={{
                   background: isDarkMode
                     ? "radial-gradient(circle at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%)"
                     : "radial-gradient(circle at center, #87ceeb 0%, #4682b4 50%, #191970 100%)",
+                  ...(isFullscreen && {
+                    height: "calc(100vh - 280px)", // Full height minus header and footer space
+                    minHeight: "600px",
+                  }),
                 }}
               >
                 {/* Stars background */}
@@ -675,7 +703,6 @@ export default function FullWidthGlobeMap() {
                         className={`flex items-center p-3 rounded-lg ${isDarkMode ? "bg-white/5" : "bg-black/5"} backdrop-blur-sm hover:bg-opacity-20 transition-all duration-500 transform hover:scale-105`}
                         style={{
                           animationDelay: `${index * 100}ms`,
-                          animation: "slideInFromLeft 0.5s ease-out forwards",
                         }}
                       >
                         <div
@@ -720,7 +747,6 @@ export default function FullWidthGlobeMap() {
                         className={`flex items-center p-3 rounded-lg ${isDarkMode ? "bg-white/5" : "bg-black/5"} backdrop-blur-sm hover:bg-opacity-20 transition-all duration-500 transform hover:scale-105`}
                         style={{
                           animationDelay: `${(index + 5) * 100}ms`,
-                          animation: "slideInFromRight 0.5s ease-out forwards",
                         }}
                       >
                         <div

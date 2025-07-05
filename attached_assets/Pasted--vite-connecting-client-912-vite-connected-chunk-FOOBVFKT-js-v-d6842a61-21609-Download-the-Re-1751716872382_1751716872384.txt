@@ -1,0 +1,160 @@
+[vite] connecting...
+client:912 [vite] connected.
+chunk-FOOBVFKT.js?v=d6842a61:21609 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+FullWidthGlobeMap.tsx:245 Globe loading started...
+/api/auth/user:1 
+        
+        
+       Failed to load resource: the server responded with a status of 401 (Unauthorized)
+/api/auth/user:1 
+        
+        
+       Failed to load resource: the server responded with a status of 401 (Unauthorized)
+FullWidthGlobeMap.tsx:590 LiveNow icon loaded
+RadioContext.tsx:137 Attempting to play stream 1/2: /api/radio-stream
+FullWidthGlobeMap.tsx:249 Globe loading complete!
+RadioContext.tsx:168 Stream 1 working successfully
+31chunk-FOOBVFKT.js?v=d6842a61:521 Warning: Updating a style property during rerender (animationDelay) when a conflicting property is set (animation) can lead to styling bugs. To avoid this, don't mix shorthand and non-shorthand properties for the same value; instead, replace the shorthand with separate values.
+    at div
+    at div
+    at div
+    at div
+    at _c9 (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at div
+    at section
+    at FullWidthGlobeMap (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/FullWidthGlobeMap.tsx:47:35)
+    at div
+    at HomePage (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/pages/HomePage.tsx:34:55)
+    at Route (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/wouter.js?v=d6842a61:206:16)
+    at Switch (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/wouter.js?v=d6842a61:262:17)
+    at Router
+    at Provider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/chunk-2HQHRK7N.js?v=d6842a61:38:15)
+    at TooltipProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=d6842a61:64:5)
+    at AdminProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/AdminContext.tsx:20:33)
+    at RadioProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/RadioContext.tsx:37:33)
+    at ThemeProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/ThemeContext.tsx:316:33)
+    at AuthProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/AuthContext.tsx:36:32)
+    at QueryClientProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=d6842a61:2933:3)
+    at App
+printWarning @ chunk-FOOBVFKT.js?v=d6842a61:521
+Show 1 more frame
+Show less
+30chunk-FOOBVFKT.js?v=d6842a61:521 Warning: Updating a style property during rerender (animationDelay) when a conflicting property is set (animation) can lead to styling bugs. To avoid this, don't mix shorthand and non-shorthand properties for the same value; instead, replace the shorthand with separate values.
+    at div
+    at div
+    at div
+    at div
+    at _c9 (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at div
+    at section
+    at FullWidthGlobeMap (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/FullWidthGlobeMap.tsx:47:35)
+    at div
+    at HomePage (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/pages/HomePage.tsx:34:55)
+    at Route (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/wouter.js?v=d6842a61:206:16)
+    at Switch (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/wouter.js?v=d6842a61:262:17)
+    at Router
+    at Provider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/chunk-2HQHRK7N.js?v=d6842a61:38:15)
+    at TooltipProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=d6842a61:64:5)
+    at AdminProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/AdminContext.tsx:20:33)
+    at RadioProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/RadioContext.tsx:37:33)
+    at ThemeProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/ThemeContext.tsx:316:33)
+    at AuthProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/AuthContext.tsx:36:32)
+    at QueryClientProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=d6842a61:2933:3)
+    at App
+printWarning @ chunk-FOOBVFKT.js?v=d6842a61:521
+error @ chunk-FOOBVFKT.js?v=d6842a61:505
+validateShorthandPropertyCollisionInDev @ chunk-FOOBVFKT.js?v=d6842a61:2657
+diffProperties @ chunk-FOOBVFKT.js?v=d6842a61:7779
+prepareUpdate @ chunk-FOOBVFKT.js?v=d6842a61:8414
+updateHostComponent$1 @ chunk-FOOBVFKT.js?v=d6842a61:16095
+completeWork @ chunk-FOOBVFKT.js?v=d6842a61:16319
+completeUnitOfWork @ chunk-FOOBVFKT.js?v=d6842a61:19277
+performUnitOfWork @ chunk-FOOBVFKT.js?v=d6842a61:19259
+workLoopSync @ chunk-FOOBVFKT.js?v=d6842a61:19190
+renderRootSync @ chunk-FOOBVFKT.js?v=d6842a61:19169
+performConcurrentWorkOnRoot @ chunk-FOOBVFKT.js?v=d6842a61:18728
+workLoop @ chunk-FOOBVFKT.js?v=d6842a61:197
+flushWork @ chunk-FOOBVFKT.js?v=d6842a61:176
+performWorkUntilDeadline @ chunk-FOOBVFKT.js?v=d6842a61:384
+Show 15 more frames
+Show less
+3chunk-FOOBVFKT.js?v=d6842a61:521 Warning: Updating a style property during rerender (animationDelay) when a conflicting property is set (animation) can lead to styling bugs. To avoid this, don't mix shorthand and non-shorthand properties for the same value; instead, replace the shorthand with separate values.
+    at div
+    at div
+    at div
+    at div
+    at _c9 (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at div
+    at section
+    at FullWidthGlobeMap (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/FullWidthGlobeMap.tsx:47:35)
+    at div
+    at HomePage (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/pages/HomePage.tsx:34:55)
+    at Route (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/wouter.js?v=d6842a61:206:16)
+    at Switch (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/wouter.js?v=d6842a61:262:17)
+    at Router
+    at Provider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/chunk-2HQHRK7N.js?v=d6842a61:38:15)
+    at TooltipProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=d6842a61:64:5)
+    at AdminProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/AdminContext.tsx:20:33)
+    at RadioProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/RadioContext.tsx:37:33)
+    at ThemeProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/ThemeContext.tsx:316:33)
+    at AuthProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/AuthContext.tsx:36:32)
+    at QueryClientProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=d6842a61:2933:3)
+    at App
+printWarning @ chunk-FOOBVFKT.js?v=d6842a61:521
+Show 1 more frame
+Show less
+10chunk-FOOBVFKT.js?v=d6842a61:521 Warning: Updating a style property during rerender (animationDelay) when a conflicting property is set (animation) can lead to styling bugs. To avoid this, don't mix shorthand and non-shorthand properties for the same value; instead, replace the shorthand with separate values.
+    at div
+    at div
+    at div
+    at div
+    at _c9 (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/ui/card.tsx:106:12)
+    at div
+    at _c (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/ui/card.tsx:20:11)
+    at div
+    at div
+    at div
+    at section
+    at FullWidthGlobeMap (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/components/FullWidthGlobeMap.tsx:47:35)
+    at div
+    at HomePage (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/pages/HomePage.tsx:34:55)
+    at Route (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/wouter.js?v=d6842a61:206:16)
+    at Switch (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/wouter.js?v=d6842a61:262:17)
+    at Router
+    at Provider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/chunk-2HQHRK7N.js?v=d6842a61:38:15)
+    at TooltipProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=d6842a61:64:5)
+    at AdminProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/AdminContext.tsx:20:33)
+    at RadioProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/RadioContext.tsx:37:33)
+    at ThemeProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/ThemeContext.tsx:316:33)
+    at AuthProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/src/contexts/AuthContext.tsx:36:32)
+    at QueryClientProvider (https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/node_modules/.vite/deps/@tanstack_react-query.js?v=d6842a61:2933:3)
+    at App
+printWarning @ chunk-FOOBVFKT.js?v=d6842a61:521
+error @ chunk-FOOBVFKT.js?v=d6842a61:505
+validateShorthandPropertyCollisionInDev @ chunk-FOOBVFKT.js?v=d6842a61:2657
+diffProperties @ chunk-FOOBVFKT.js?v=d6842a61:7779
+prepareUpdate @ chunk-FOOBVFKT.js?v=d6842a61:8414
+updateHostComponent$1 @ chunk-FOOBVFKT.js?v=d6842a61:16095
+completeWork @ chunk-FOOBVFKT.js?v=d6842a61:16319
+completeUnitOfWork @ chunk-FOOBVFKT.js?v=d6842a61:19277
+performUnitOfWork @ chunk-FOOBVFKT.js?v=d6842a61:19259
+workLoopSync @ chunk-FOOBVFKT.js?v=d6842a61:19190
+renderRootSync @ chunk-FOOBVFKT.js?v=d6842a61:19169
+performConcurrentWorkOnRoot @ chunk-FOOBVFKT.js?v=d6842a61:18728
+workLoop @ chunk-FOOBVFKT.js?v=d6842a61:197
+flushWork @ chunk-FOOBVFKT.js?v=d6842a61:176
+performWorkUntilDeadline @ chunk-FOOBVFKT.js?v=d6842a61:384
+Show 15 more frames
+Show less
