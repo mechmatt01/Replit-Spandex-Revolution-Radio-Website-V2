@@ -22,54 +22,30 @@ import type { StreamStats } from "@shared/schema";
 // Animated weather icons
 import clearDayIcon from "@assets/animated_weather_icons/clear-day.svg";
 import clearNightIcon from "@assets/animated_weather_icons/clear-night.svg";
-import cloudy1DayIcon from "@assets/animated_weather_icons/cloudy-1-day.svg";
-import cloudy1NightIcon from "@assets/animated_weather_icons/cloudy-1-night.svg";
-import cloudy2DayIcon from "@assets/animated_weather_icons/cloudy-2-day.svg";
-import cloudy2NightIcon from "@assets/animated_weather_icons/cloudy-2-night.svg";
-import cloudy3DayIcon from "@assets/animated_weather_icons/cloudy-3-day.svg";
-import cloudy3NightIcon from "@assets/animated_weather_icons/cloudy-3-night.svg";
+import cloudy1DayIcon from "@assets/animated_weather_icons/cloudy-day-1.svg";
+import cloudy1NightIcon from "@assets/animated_weather_icons/cloudy-night-1.svg";
+import cloudy2DayIcon from "@assets/animated_weather_icons/cloudy-day-2.svg";
+import cloudy2NightIcon from "@assets/animated_weather_icons/cloudy-night-2.svg";
+import cloudy3DayIcon from "@assets/animated_weather_icons/cloudy-day-3.svg";
+import cloudy3NightIcon from "@assets/animated_weather_icons/cloudy-night-3.svg";
 import cloudyIcon from "@assets/animated_weather_icons/cloudy.svg";
-import dustIcon from "@assets/animated_weather_icons/dust.svg";
-import fogDayIcon from "@assets/animated_weather_icons/fog-day.svg";
-import fogNightIcon from "@assets/animated_weather_icons/fog-night.svg";
 import fogIcon from "@assets/animated_weather_icons/fog.svg";
-import frostDayIcon from "@assets/animated_weather_icons/frost-day.svg";
-import frostNightIcon from "@assets/animated_weather_icons/frost-night.svg";
-import frostIcon from "@assets/animated_weather_icons/frost.svg";
-import hailIcon from "@assets/animated_weather_icons/hail.svg";
-import hazeDayIcon from "@assets/animated_weather_icons/haze-day.svg";
-import hazeNightIcon from "@assets/animated_weather_icons/haze-night.svg";
 import hazeIcon from "@assets/animated_weather_icons/haze.svg";
 import hurricaneIcon from "@assets/animated_weather_icons/hurricane.svg";
-import isolatedThunderstormsDayIcon from "@assets/animated_weather_icons/isolated-thunderstorms-day.svg";
-import isolatedThunderstormsNightIcon from "@assets/animated_weather_icons/isolated-thunderstorms-night.svg";
 import isolatedThunderstormsIcon from "@assets/animated_weather_icons/isolated-thunderstorms.svg";
 import rainAndSleetMixIcon from "@assets/animated_weather_icons/rain-and-sleet-mix.svg";
 import rainAndSnowMixIcon from "@assets/animated_weather_icons/rain-and-snow-mix.svg";
 import rainy1DayIcon from "@assets/animated_weather_icons/rainy-1-day.svg";
 import rainy1NightIcon from "@assets/animated_weather_icons/rainy-1-night.svg";
 import rainy1Icon from "@assets/animated_weather_icons/rainy-1.svg";
-import rainy2DayIcon from "@assets/animated_weather_icons/rainy-2-day.svg";
-import rainy2NightIcon from "@assets/animated_weather_icons/rainy-2-night.svg";
 import rainy2Icon from "@assets/animated_weather_icons/rainy-2.svg";
-import rainy3DayIcon from "@assets/animated_weather_icons/rainy-3-day.svg";
-import rainy3NightIcon from "@assets/animated_weather_icons/rainy-3.svg";
 import rainy3Icon from "@assets/animated_weather_icons/rainy-3.svg";
-import scatteredThunderstormsDayIcon from "@assets/animated_weather_icons/scattered-thunderstorms-day.svg";
-import scatteredThunderstormsNightIcon from "@assets/animated_weather_icons/scattered-thunderstorms-night.svg";
 import scatteredThunderstormsIcon from "@assets/animated_weather_icons/scattered-thunderstorms.svg";
 import severeThunderstormIcon from "@assets/animated_weather_icons/severe-thunderstorm.svg";
 import snowAndSleetMixIcon from "@assets/animated_weather_icons/snow-and-sleet-mix.svg";
-import snowy1DayIcon from "@assets/animated_weather_icons/snowy-1-day.svg";
-import snowy1NightIcon from "@assets/animated_weather_icons/snowy-1-night.svg";
 import snowy1Icon from "@assets/animated_weather_icons/snowy-1.svg";
-import snowy2DayIcon from "@assets/animated_weather_icons/snowy-2-day.svg";
-import snowy2NightIcon from "@assets/animated_weather_icons/snowy-2-night.svg";
 import snowy2Icon from "@assets/animated_weather_icons/snowy-2.svg";
-import snowy3DayIcon from "@assets/animated_weather_icons/snowy-3-day.svg";
-import snowy3NightIcon from "@assets/animated_weather_icons/snowy-3.svg";
 import snowy3Icon from "@assets/animated_weather_icons/snowy-3.svg";
-import thunderstormsIcon from "@assets/animated_weather_icons/thunderstorms.svg";
 import tornadoIcon from "@assets/animated_weather_icons/tornado.svg";
 import tropicalStormIcon from "@assets/animated_weather_icons/tropical-storm.svg";
 import windIcon from "@assets/animated_weather_icons/wind.svg";
@@ -120,44 +96,44 @@ const getWeatherIcon = (condition: string, isDay: boolean) => {
     return isDay ? rainy1DayIcon : rainy1NightIcon;
   }
   if (conditionLower.includes('moderate rain') || conditionLower.includes('rain')) {
-    return isDay ? rainy2DayIcon : rainy2NightIcon;
+    return rainy2Icon;
   }
   if (conditionLower.includes('heavy rain') || conditionLower.includes('downpour')) {
-    return isDay ? rainy3DayIcon : rainy3NightIcon;
+    return rainy3Icon;
   }
 
   // Snow conditions
   if (conditionLower.includes('light snow')) {
-    return isDay ? snowy1DayIcon : snowy1NightIcon;
+    return snowy1Icon;
   }
   if (conditionLower.includes('moderate snow') || conditionLower.includes('snow')) {
-    return isDay ? snowy2DayIcon : snowy2NightIcon;
+    return snowy2Icon;
   }
   if (conditionLower.includes('heavy snow') || conditionLower.includes('blizzard')) {
-    return isDay ? snowy3DayIcon : snowy3NightIcon;
+    return snowy3Icon;
   }
 
   // Thunderstorm conditions
   if (conditionLower.includes('thunderstorm') || conditionLower.includes('thunder')) {
     if (conditionLower.includes('severe')) return severeThunderstormIcon;
-    if (conditionLower.includes('isolated')) return isDay ? isolatedThunderstormsDayIcon : isolatedThunderstormsNightIcon;
-    if (conditionLower.includes('scattered')) return isDay ? scatteredThunderstormsDayIcon : scatteredThunderstormsNightIcon;
-    return thunderstormsIcon;
+    if (conditionLower.includes('isolated')) return isolatedThunderstormsIcon;
+    if (conditionLower.includes('scattered')) return scatteredThunderstormsIcon;
+    return isolatedThunderstormsIcon;
   }
 
   // Fog conditions
   if (conditionLower.includes('fog') || conditionLower.includes('mist')) {
-    return isDay ? fogDayIcon : fogNightIcon;
+    return fogIcon;
   }
 
   // Haze conditions
   if (conditionLower.includes('haze')) {
-    return isDay ? hazeDayIcon : hazeNightIcon;
+    return hazeIcon;
   }
 
   // Dust conditions
   if (conditionLower.includes('dust') || conditionLower.includes('sand')) {
-    return dustIcon;
+    return cloudyIcon;
   }
 
   // Wind conditions
@@ -169,8 +145,8 @@ const getWeatherIcon = (condition: string, isDay: boolean) => {
   if (conditionLower.includes('tornado')) return tornadoIcon;
   if (conditionLower.includes('hurricane')) return hurricaneIcon;
   if (conditionLower.includes('tropical storm')) return tropicalStormIcon;
-  if (conditionLower.includes('hail')) return hailIcon;
-  if (conditionLower.includes('frost')) return isDay ? frostDayIcon : frostNightIcon;
+  if (conditionLower.includes('hail')) return cloudyIcon;
+  if (conditionLower.includes('frost')) return cloudyIcon;
 
   // Mixed conditions
   if (conditionLower.includes('rain') && conditionLower.includes('snow')) return rainAndSnowMixIcon;
@@ -428,12 +404,12 @@ export default function FullWidthGlobeMap() {
         const infoWindow = new google.maps.InfoWindow({
           content: `
             <div id="custom-info-window" style="
-              background: ${isDarkMode ? '#1f2937' : '#ffffff'};
-              color: ${isDarkMode ? '#ffffff' : '#000000'};
+              background: #1f2937;
+              color: #ffffff;
               border-radius: 12px;
               padding: 16px;
               box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-              border: 2px solid ${colors.primary};
+              border: 2px solid #ff6b35;
               min-width: 200px;
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
               position: relative;
@@ -444,7 +420,7 @@ export default function FullWidthGlobeMap() {
                 right: 4px;
                 background: transparent;
                 border: none;
-                color: ${isDarkMode ? '#9ca3af' : '#6b7280'};
+                color: #9ca3af;
                 cursor: pointer;
                 font-size: 14px;
                 font-weight: bold;
@@ -457,7 +433,7 @@ export default function FullWidthGlobeMap() {
                 align-items: center;
                 justify-content: center;
                 transition: all 0.2s ease;
-              " onmouseover="this.style.background='${isDarkMode ? '#374151' : '#f3f4f6'}'" onmouseout="this.style.background='transparent'">×</button>
+              " onmouseover="this.style.background='#374151'" onmouseout="this.style.background='transparent'">×</button>
               <div style="
                 display: flex;
                 align-items: center;
@@ -469,29 +445,29 @@ export default function FullWidthGlobeMap() {
                   width: 12px;
                   height: 12px;
                   border-radius: 50%;
-                  background: ${colors.primary};
+                  background: #ff6b35;
                   animation: pulse 2s infinite;
                 "></div>
                 <h3 style="
                   margin: 0;
                   font-size: 16px;
                   font-weight: 700;
-                  color: ${colors.primary};
+                  color: #ff6b35;
                 ">${listener.city}, ${listener.country}</h3>
               </div>
               <p style="
                 margin: 0;
                 font-size: 14px;
-                color: ${isDarkMode ? '#e5e5e5' : '#4b5563'};
+                color: #e5e5e5;
                 font-weight: 500;
               ">🎵 Currently listening to metal!</p>
               <div style="
                 margin-top: 12px;
                 padding: 8px;
-                background: ${isDarkMode ? '#374151' : '#f3f4f6'};
+                background: #374151;
                 border-radius: 8px;
                 font-size: 12px;
-                color: ${isDarkMode ? '#d1d5db' : '#6b7280'};
+                color: #d1d5db;
               ">
                 Live listener • Active now
               </div>
@@ -688,12 +664,12 @@ export default function FullWidthGlobeMap() {
                       {weather.location}
                     </span>
                   </div>
-                  <div className="flex items-center justify-center gap-1.5">
+                  <div className="flex items-center justify-center gap-3">
                     <img
                       src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
                       alt={weather.description}
                       className="w-12 h-12 flex-shrink-0"
-                      style={{ marginTop: '4px' }}
+                      style={{ width: '48px', height: '48px' }}
                     />
                     <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
                       {Math.round(weather.temperature)}°F
@@ -721,11 +697,11 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Map Container */}
-        <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-8 pb-8" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
+        <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-16 pb-8" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
           {/* Fullscreen Weather Header */}
           {isFullscreen && (
-            <div className="absolute top-8 left-0 right-0 z-10 px-16">
-              <div className="text-center mb-8">
+            <div className="absolute top-16 left-0 right-0 z-10 px-24">
+              <div className="text-center mb-12">
                 {/* Weather Display in Fullscreen */}
                 {weather && (
                   <div className="mb-6">
@@ -735,12 +711,16 @@ export default function FullWidthGlobeMap() {
                         {weather.location}
                       </span>
                     </div>
-                    <div className="flex items-center justify-center gap-1">
+                    <div className="flex items-center justify-center gap-3">
                       <img
                         src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
                         alt={weather.description}
-                        className="w-12 h-12 flex-shrink-0"
-                        style={{ marginTop: '6px' }}
+                        className="flex-shrink-0"
+                        style={{ 
+                          width: '48px', 
+                          height: '48px',
+                          objectFit: 'contain'
+                        }}
                       />
                       <span className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
                         {Math.round(weather.temperature)}°F

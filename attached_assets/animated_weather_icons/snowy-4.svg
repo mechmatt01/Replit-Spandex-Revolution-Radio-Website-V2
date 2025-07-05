@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- (c) ammap.com | SVG weather icons -->
-<!-- Mix of Rain and Snow | Contributed by hsoJ95 on GitHub: https://github.com/hsoj95 -->
 <svg
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
@@ -75,60 +74,6 @@
           animation-iteration-count: infinite;
 }
 
-/*
-** RAIN
-*/
-@keyframes am-weather-rain {
-  0% {
-    stroke-dashoffset: 0;
-  }
-
-  100% {
-    stroke-dashoffset: -100;
-  }
-}
-
-.am-weather-rain-1 {
-  -webkit-animation-name: am-weather-rain;
-     -moz-animation-name: am-weather-rain;
-      -ms-animation-name: am-weather-rain;
-          animation-name: am-weather-rain;
-  -webkit-animation-duration: 8s;
-     -moz-animation-duration: 8s;
-      -ms-animation-duration: 8s;
-          animation-duration: 8s;
-  -webkit-animation-timing-function: linear;
-     -moz-animation-timing-function: linear;
-      -ms-animation-timing-function: linear;
-          animation-timing-function: linear;
-  -webkit-animation-iteration-count: infinite;
-     -moz-animation-iteration-count: infinite;
-      -ms-animation-iteration-count: infinite;
-          animation-iteration-count: infinite;
-}
-
-.am-weather-rain-2 {
-  -webkit-animation-name: am-weather-rain;
-     -moz-animation-name: am-weather-rain;
-      -ms-animation-name: am-weather-rain;
-          animation-name: am-weather-rain;
-  -webkit-animation-delay: 0.25s;
-     -moz-animation-delay: 0.25s;
-      -ms-animation-delay: 0.25s;
-          animation-delay: 0.25s;
-  -webkit-animation-duration: 8s;
-     -moz-animation-duration: 8s;
-      -ms-animation-duration: 8s;
-          animation-duration: 8s;
-  -webkit-animation-timing-function: linear;
-     -moz-animation-timing-function: linear;
-      -ms-animation-timing-function: linear;
-          animation-timing-function: linear;
-  -webkit-animation-iteration-count: infinite;
-     -moz-animation-iteration-count: infinite;
-      -ms-animation-iteration-count: infinite;
-          animation-iteration-count: infinite;
-}
         ]]></style>
     </defs>
     <g filter="url(#blur)" id="snowy-4">
@@ -144,10 +89,6 @@
                     <line fill="none" stroke="#57A0EE" stroke-linecap="round" stroke-width="1" transform="translate(0,9), rotate(135)" x1="0" x2="0" y1="-2.5" y2="2.5" />
                 </g>
             </g>
-            <g transform="translate(14,36), rotate(10)">
-            <line class="am-weather-rain-1" fill="none" stroke="#91C0F8" stroke-dasharray="4,7" stroke-linecap="round" stroke-width="2" transform="translate(-10,1)" x1="0" x2="0" y1="0" y2="8" />
-            <line class="am-weather-rain-2" fill="none" stroke="#91C0F8" stroke-dasharray="4,7" stroke-linecap="round" stroke-width="2" transform="translate(5,-1)" x1="0" x2="0" y1="0" y2="8" />
-        </g>
         </g>
     </g>
 </svg>

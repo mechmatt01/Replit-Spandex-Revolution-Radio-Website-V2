@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- (c) ammap.com | SVG weather icons -->
-<!-- Mix of Rain and Sleet | Contributed by hsoJ95 on GitHub: https://github.com/hsoj95 -->
 <svg
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
@@ -21,7 +20,6 @@
             </feMerge>
         </filter>
         <style type="text/css"><![CDATA[
-
 /*
 ** RAIN
 */
@@ -86,12 +84,8 @@
         </g>
         <g transform="translate(31,46), rotate(10)">
             <line class="am-weather-rain-1" fill="none" stroke="#91C0F8" stroke-dasharray="0.1,7" stroke-linecap="round" stroke-width="3" transform="translate(-5,1)" x1="0" x2="0" y1="0" y2="8" />
-            <line class="am-weather-rain-1" fill="none" stroke="#91C0F8" stroke-dasharray="4,7" stroke-linecap="round" stroke-width="2" transform="translate(0,0)" x1="0" x2="0" y1="0" y2="8" />
+            <line class="am-weather-rain-2" fill="none" stroke="#91C0F8" stroke-dasharray="0.1,7" stroke-linecap="round" stroke-width="3" transform="translate(0,-1)" x1="0" x2="0" y1="0" y2="8" />
             <line class="am-weather-rain-1" fill="none" stroke="#91C0F8" stroke-dasharray="0.1,7" stroke-linecap="round" stroke-width="3" transform="translate(5,0)" x1="0" x2="0" y1="0" y2="8" />
-        </g>
-        <g transform="translate(34,46), rotate(10)">
-            <line class="am-weather-rain-1" fill="none" stroke="#91C0F8" stroke-dasharray="4,7" stroke-linecap="round" stroke-width="2" transform="translate(-13,1)" x1="0" x2="0" y1="0" y2="8" />
-            <line class="am-weather-rain-2" fill="none" stroke="#91C0F8" stroke-dasharray="4,7" stroke-linecap="round" stroke-width="2" transform="translate(7,-1)" x1="0" x2="0" y1="0" y2="8" />
         </g>
     </g>
 </svg>
