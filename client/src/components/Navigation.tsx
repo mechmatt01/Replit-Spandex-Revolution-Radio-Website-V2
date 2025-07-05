@@ -5,9 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useLocation } from "wouter";
 import MetalThemeSwitcher from "./MetalThemeSwitcher";
-
 import AuthModal from "./AuthModal";
-
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "@/hooks/useAuth";
 import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
@@ -34,6 +32,7 @@ export default function Navigation() {
   const logout = () => {
     window.location.href = "/api/logout";
   };
+
   const menuRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const brandTextRef = useRef<HTMLDivElement>(null);
@@ -88,20 +87,17 @@ export default function Navigation() {
 
   const [location, setLocation] = useLocation();
 
-  // Unified navigation function that works for both desktop and mobile
-  const handleNavigation = (sectionId: string, route?: string) => {
-    console.log(`Navigation triggered: ${sectionId}, route: ${route}`);
+  // Simple navigation function that works reliably
+  const navigateToSection = (sectionId: string, route?: string) => {
+    console.log(`Navigation: ${sectionId}, route: ${route}`);
     
-    // Close all menus first
+    // Close menus
     setIsOpen(false);
     setIsDropdownOpen(false);
 
-    // Handle route-based navigation (like /music)
+    // Handle route navigation
     if (route && route !== location) {
-      console.log(`Navigating to route: ${route}`);
       setLocation(route);
-      
-      // If there's a section to scroll to after route change
       if (sectionId && sectionId !== route.replace('/', '')) {
         setTimeout(() => {
           const element = document.getElementById(sectionId);
@@ -115,112 +111,96 @@ export default function Navigation() {
 
     // Handle section scrolling
     if (sectionId) {
-      // If not on home page, navigate to home first
       if (location !== "/") {
-        console.log(`Navigating to home with section: ${sectionId}`);
         window.location.href = `/#${sectionId}`;
         return;
       }
 
-      // Already on home page, just scroll to section
-      console.log(`Scrolling to section: ${sectionId}`);
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
-        } else {
-          // If element not found, try again after a short delay
-          setTimeout(() => {
-            const el = document.getElementById(sectionId);
-            if (el) {
-              el.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-          }, 300);
         }
       }, 50);
     }
   };
 
-  // Unified authentication handlers
-  const handleLogin = () => {
-    console.log("Login button clicked");
+  // Authentication handlers
+  const openLogin = () => {
     setIsOpen(false);
     setIsDropdownOpen(false);
     setAuthMode("login");
     setIsAuthModalOpen(true);
   };
 
-  const handleSignUp = () => {
-    console.log("Sign up button clicked");
+  const openSignUp = () => {
     setIsOpen(false);
     setIsDropdownOpen(false);
     setAuthMode("register");
     setIsAuthModalOpen(true);
   };
 
-  const handleProfile = () => {
-    console.log("Profile button clicked");
+  const goToProfile = () => {
     setIsOpen(false);
     setIsDropdownOpen(false);
     setLocation("/profile");
   };
 
   const handleLogout = () => {
-    console.log("Logout button clicked");
     setIsOpen(false);
     setIsDropdownOpen(false);
     logout();
   };
 
-  // Menu items with unified action handlers
+  // Menu items configuration
   const menuItems = [
     { 
       id: 1, 
       label: "MUSIC", 
       icon: Music, 
-      action: () => handleNavigation("music", "/music"), 
+      action: () => navigateToSection("music", "/music"), 
       tooltip: "Listen to live radio and music" 
     },
     { 
       id: 2, 
       label: "SCHEDULE", 
       icon: Calendar, 
-      action: () => handleNavigation("schedule"), 
+      action: () => navigateToSection("schedule"), 
       tooltip: "View show schedule and programming" 
     },
     { 
       id: 3, 
       label: "SUPPORT US", 
       icon: Heart, 
-      action: () => handleNavigation("subscribe"), 
+      action: () => navigateToSection("subscribe"), 
       tooltip: "Support the station with premium subscriptions" 
     },
     { 
       id: 4, 
       label: "SUBMISSIONS", 
       icon: Send, 
-      action: () => handleNavigation("submissions"), 
+      action: () => navigateToSection("submissions"), 
       tooltip: "Submit song requests and feedback" 
     },
     { 
       id: 5, 
       label: "CONTACT", 
       icon: Phone, 
-      action: () => handleNavigation("contact"), 
+      action: () => navigateToSection("contact"), 
       tooltip: "Get in touch with the station" 
     },
     { 
       id: 6, 
       label: "LISTEN MAP", 
       icon: MapPin, 
-      action: () => handleNavigation("map"), 
+      action: () => navigateToSection("map"), 
       tooltip: "View live listener map worldwide" 
     },
     { 
       id: 7, 
       label: "FEATURES", 
       icon: Heart, 
-      action: () => handleNavigation("features"), 
+      action: () => navigateToSection("features"), 
       tooltip: "Explore premium features and subscription tiers" 
     },
   ];
@@ -230,6 +210,7 @@ export default function Navigation() {
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300">
         <div className="w-full relative">
           <div className="xl:relative flex justify-between items-center h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
+            
             {/* Logo & Brand - Left side */}
             <div className="flex items-center space-x-4">
               <div 
@@ -255,7 +236,7 @@ export default function Navigation() {
               </div>
             </div>
 
-            {/* Desktop Navigation - Absolutely positioned at true screen center */}
+            {/* Desktop Navigation - Centered */}
             <div 
               ref={navRef}
               className="hidden xl:flex items-center space-x-4 absolute"
@@ -283,7 +264,6 @@ export default function Navigation() {
                           e.currentTarget.style.backgroundColor = 'transparent';
                           e.currentTarget.style.color = colors.text;
                         }}
-                        aria-label={`Navigate to ${item.label.toLowerCase()}`}
                       >
                         <IconComponent size={16} style={{ color: colors.primary }} />
                         <span>{item.label}</span>
@@ -296,7 +276,7 @@ export default function Navigation() {
                 );
               })}
 
-              {/* More Menu Dropdown */}
+              {/* Desktop More Menu Dropdown */}
               <div className="relative" ref={dropdownRef}>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -319,8 +299,6 @@ export default function Navigation() {
                           e.currentTarget.style.color = isDropdownOpen ? 'white' : colors.text;
                         }
                       }}
-                      aria-label="More navigation options"
-                      aria-expanded={isDropdownOpen}
                     >
                       <Menu size={16} style={{ color: isDropdownOpen ? 'white' : colors.primary, marginLeft: '2px' }} />
                       <span>MORE</span>
@@ -350,7 +328,6 @@ export default function Navigation() {
                       minWidth: 'max-content',
                       zIndex: 50
                     }}
-                    onClick={(e) => e.stopPropagation()}
                   >
                     {menuItems.slice(3).map((item) => {
                       const IconComponent = item.icon;
@@ -371,8 +348,6 @@ export default function Navigation() {
                                 e.currentTarget.style.backgroundColor = 'transparent';
                                 e.currentTarget.style.color = colors.text;
                               }}
-                              role="menuitem"
-                              aria-label={`Navigate to ${item.label.toLowerCase()}`}
                             >
                               <IconComponent size={16} style={{ color: colors.primary }} />
                               <span>{item.label}</span>
@@ -389,16 +364,14 @@ export default function Navigation() {
               </div>
             </div>
 
-            {/* Right side controls - Fixed to far right */}
-            <div className="flex items-center space-x-1 absolute right-4 top-1/2 transform -translate-y-1/2 hidden xl:flex">
-              {/* Theme toggle */}
+            {/* Desktop Right Side Controls */}
+            <div className="hidden xl:flex items-center space-x-1 absolute right-4 top-1/2 transform -translate-y-1/2">
               <MetalThemeSwitcher />
 
-              {/* Authentication buttons */}
               {!isAuthenticated ? (
                 <div className="flex items-center space-x-3">
                   <button
-                    onClick={handleLogin}
+                    onClick={openLogin}
                     className="px-2 py-1 text-sm font-semibold rounded-md transition-all duration-200 hover:scale-105"
                     style={{
                       color: colors.text,
@@ -411,7 +384,7 @@ export default function Navigation() {
                     LOGIN
                   </button>
                   <button
-                    onClick={handleSignUp}
+                    onClick={openSignUp}
                     className="px-2 py-1 text-sm font-semibold rounded-md transition-all duration-200 hover:scale-105 whitespace-nowrap"
                     style={{
                       backgroundColor: colors.primary,
@@ -429,7 +402,7 @@ export default function Navigation() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
-                        onClick={handleProfile}
+                        onClick={goToProfile}
                         className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
                         style={{
                           backgroundColor: 'transparent',
@@ -465,12 +438,9 @@ export default function Navigation() {
               )}
             </div>
 
-            {/* Mobile controls - Right side on mobile only */}
+            {/* Mobile Controls */}
             <div className="xl:hidden flex items-center space-x-3">
-              {/* Theme toggle - always visible in mobile */}
               <MetalThemeSwitcher />
-
-              {/* Mobile menu button */}
               <button
                 ref={menuRef}
                 onClick={() => setIsOpen(!isOpen)}
@@ -479,75 +449,41 @@ export default function Navigation() {
                   backgroundColor: isOpen ? colors.primary : 'transparent',
                   color: isOpen ? 'white' : colors.primary 
                 }}
-                aria-label="Toggle mobile menu"
-                aria-expanded={isOpen}
               >
                 <Menu size={24} />
               </button>
             </div>
           </div>
 
-          {/* Mobile Navigation */}
+          {/* Mobile Navigation Dropdown */}
           {isOpen && (
-            <div className="xl:hidden absolute top-full right-4 bg-black/90 backdrop-blur-md border rounded-xl animate-in slide-in-from-top-2 duration-300 shadow-xl" style={{ 
-              borderColor: colors.primary + '40',
-              width: 'auto',
-              minWidth: 'max-content',
-              maxWidth: 'calc(100vw - 2rem)',
-              zIndex: 40
-            }}>
+            <div 
+              className="xl:hidden absolute top-full right-4 bg-black/90 backdrop-blur-md border rounded-xl animate-in slide-in-from-top-2 duration-300 shadow-xl" 
+              style={{ 
+                borderColor: colors.primary + '40',
+                width: 'auto',
+                minWidth: 'max-content',
+                maxWidth: 'calc(100vw - 2rem)',
+                zIndex: 40
+              }}
+            >
               <div className="px-4 py-6 space-y-3">
-                {/* Render all menu items in mobile with consistent navigation */}
+                {/* All Menu Items */}
                 {menuItems.map((item) => {
                   const IconComponent = item.icon;
                   return (
-                    <button
-                      key={item.id}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log(`Mobile menu item clicked: ${item.label}`);
-                        item.action();
-                      }}
-                      type="button"
-                      className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
-                      style={{ 
-                        color: colors.text,
-                        backgroundColor: 'transparent'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
-                      }}
-                      role="menuitem"
-                      aria-label={`Navigate to ${item.label.toLowerCase()}`}
-                    >
-                      <IconComponent size={20} style={{ color: colors.primary }} />
-                      <span>{item.label}</span>
-                    </button>
-                  );
-                })}
-
-                <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
-                  {!isAuthenticated ? (
-                    <>
+                    <div key={item.id}>
                       <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log("Mobile login button clicked");
-                          handleLogin();
+                        onClick={() => {
+                          console.log(`Mobile nav: ${item.label}`);
+                          item.action();
                         }}
-                        type="button"
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
+                        className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
                         style={{ 
                           color: colors.text,
-                          border: `1px solid ${colors.primary}`,
-                          backgroundColor: 'transparent'
+                          backgroundColor: 'transparent',
+                          border: 'none',
+                          cursor: 'pointer'
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary + '20';
@@ -557,53 +493,78 @@ export default function Navigation() {
                           e.currentTarget.style.backgroundColor = 'transparent';
                           e.currentTarget.style.color = colors.text;
                         }}
-                        role="menuitem"
-                        aria-label="Login"
+                      >
+                        <IconComponent size={20} style={{ color: colors.primary }} />
+                        <span>{item.label}</span>
+                      </button>
+                    </div>
+                  );
+                })}
+
+                {/* Authentication Section */}
+                <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
+                  {!isAuthenticated ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          console.log("Mobile login clicked");
+                          openLogin();
+                        }}
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                        style={{ 
+                          color: colors.text,
+                          border: `1px solid ${colors.primary}`,
+                          backgroundColor: 'transparent',
+                          cursor: 'pointer'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary + '20';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = colors.text;
+                        }}
                       >
                         <User size={20} style={{ color: colors.primary }} />
                         <span>LOGIN</span>
                       </button>
+                      
                       <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log("Mobile sign up button clicked");
-                          handleSignUp();
+                        onClick={() => {
+                          console.log("Mobile signup clicked");
+                          openSignUp();
                         }}
-                        type="button"
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
                         style={{ 
                           backgroundColor: colors.primary,
                           color: 'white',
-                          border: `1px solid ${colors.primary}`
+                          border: `1px solid ${colors.primary}`,
+                          cursor: 'pointer'
                         }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.secondary;
+                          e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary;
                         }}
-                        role="menuitem"
-                        aria-label="Sign up"
                       >
                         <UserPlus size={20} style={{ color: 'white' }} />
                         <span>SIGN UP</span>
                       </button>
                     </>
                   ) : (
-                    <div className="space-y-3">
+                    <>
                       <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log("Mobile profile button clicked");
-                          handleProfile();
+                        onClick={() => {
+                          console.log("Mobile profile clicked");
+                          goToProfile();
                         }}
-                        type="button"
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
                         style={{
                           color: colors.text,
-                          backgroundColor: colors.primary + '20'
+                          backgroundColor: colors.primary + '20',
+                          cursor: 'pointer'
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary + '30';
@@ -617,19 +578,18 @@ export default function Navigation() {
                         <User size={16} style={{ color: colors.primary }} />
                         <span>PROFILE</span>
                       </button>
+                      
                       <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log("Mobile logout button clicked");
+                        onClick={() => {
+                          console.log("Mobile logout clicked");
                           handleLogout();
                         }}
-                        type="button"
-                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
                         style={{
                           color: colors.primary,
                           backgroundColor: 'transparent',
-                          border: `1px solid ${colors.primary}`
+                          border: `1px solid ${colors.primary}`,
+                          cursor: 'pointer'
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary + '20';
@@ -643,7 +603,7 @@ export default function Navigation() {
                         <LogOut size={16} style={{ color: colors.primary }} />
                         <span>SIGN OUT</span>
                       </button>
-                    </div>
+                    </>
                   )}
                 </div>
               </div>
