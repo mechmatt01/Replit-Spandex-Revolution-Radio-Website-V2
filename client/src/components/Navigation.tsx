@@ -503,7 +503,8 @@ export default function Navigation() {
               borderColor: colors.primary + '40',
               width: 'auto',
               minWidth: 'max-content',
-              maxWidth: 'calc(100vw - 2rem)'
+              maxWidth: 'calc(100vw - 2rem)',
+              zIndex: 40
             }}>
               <div className="px-4 py-6 space-y-3">
                 {/* Render all menu items in mobile */}
@@ -550,18 +551,7 @@ export default function Navigation() {
                   {!isAuthenticated ? (
                     <>
                       <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log('Mobile login clicked');
-                          setAuthMode("login");
-                          setIsAuthModalOpen(true);
-                          setIsOpen(false);
-                        }}
-                        onTouchEnd={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log('Mobile login touched');
+                        onClick={() => {
                           setAuthMode("login");
                           setIsAuthModalOpen(true);
                           setIsOpen(false);
@@ -588,18 +578,7 @@ export default function Navigation() {
                         <span>LOGIN</span>
                       </button>
                       <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log('Mobile signup clicked');
-                          setAuthMode("register");
-                          setIsAuthModalOpen(true);
-                          setIsOpen(false);
-                        }}
-                        onTouchEnd={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          console.log('Mobile signup touched');
+                        onClick={() => {
                           setAuthMode("register");
                           setIsAuthModalOpen(true);
                           setIsOpen(false);

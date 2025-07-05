@@ -45,7 +45,7 @@ export default function AuthModal({
   const [loading, setLoading] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
-  const { login, register } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { getColors } = useTheme();
   const { toast } = useToast();
   const colors = getColors();
@@ -77,11 +77,27 @@ export default function AuthModal({
 
     try {
       if (mode === "login") {
-        await login(email, password);
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || "Login failed");
+        }
+
         toast({
           title: "Welcome back!",
           description: "You've successfully logged in.",
         });
+        
+        // Refresh the page to update authentication state
+        window.location.reload();
       } else {
         const response = await fetch("/api/auth/register", {
           method: "POST",
@@ -105,6 +121,9 @@ export default function AuthModal({
           title: "Account created!",
           description: "Welcome to Spandex Salvation Radio.",
         });
+        
+        // Refresh the page to update authentication state
+        window.location.reload();
       }
       onClose();
       resetForm();
