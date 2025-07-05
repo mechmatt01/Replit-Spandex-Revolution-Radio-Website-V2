@@ -254,8 +254,14 @@ export default function AuthModal({
                         className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
                         style={{
                           color: colors.text,
-                          borderColor: colors.primary,
+                          borderColor: "#374151",
                         }}
+                        onFocus={(e) =>
+                          (e.currentTarget.style.borderColor = colors.primary)
+                        }
+                        onBlur={(e) =>
+                          (e.currentTarget.style.borderColor = "#374151")
+                        }
                         placeholder="John"
                         required
                       />
@@ -274,8 +280,14 @@ export default function AuthModal({
                         className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
                         style={{
                           color: colors.text,
-                          borderColor: colors.primary,
+                          borderColor: "#374151",
                         }}
+                        onFocus={(e) =>
+                          (e.currentTarget.style.borderColor = colors.primary)
+                        }
+                        onBlur={(e) =>
+                          (e.currentTarget.style.borderColor = "#374151")
+                        }
                         placeholder="Doe"
                         required
                       />
