@@ -399,6 +399,17 @@ export default function FullWidthGlobeMap() {
         disableDefaultUI: false,
         keyboardShortcuts: false,
         clickableIcons: false,
+        restriction: {
+          latLngBounds: {
+            north: 85,
+            south: -85,
+            west: -180,
+            east: 180,
+          },
+          strictBounds: true,
+        },
+        minZoom: 2,
+        maxZoom: 18,
       });
 
       setMap(mapInstance);
