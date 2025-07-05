@@ -354,15 +354,9 @@ export default function Navigation() {
                         <Tooltip key={item.id}>
                           <TooltipTrigger asChild>
                             <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                console.log(`Desktop dropdown clicked: ${item.label}`);
-                                try {
-                                  item.action();
-                                } catch (error) {
-                                  console.error('Navigation error:', error);
-                                }
+                              onClick={() => {
+                                item.action();
+                                setIsDropdownOpen(false);
                               }}
                               className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg w-full"
                               style={{ 
