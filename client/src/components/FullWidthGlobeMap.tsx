@@ -437,19 +437,19 @@ export default function FullWidthGlobeMap() {
             div.innerHTML = `
               <button class="close-overlay" style="
                 position: absolute;
-                top: 4px;
-                right: 4px;
-                background: transparent;
+                top: -2px;
+                right: -2px;
+                background: rgba(55, 65, 81, 0.8);
                 border: none;
                 color: #9ca3af;
                 cursor: pointer;
-                font-size: 14px;
+                font-size: 12px;
                 font-weight: bold;
                 line-height: 1;
                 padding: 2px;
-                border-radius: 2px;
-                width: 12px;
-                height: 12px;
+                border-radius: 4px;
+                width: 16px;
+                height: 16px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -499,10 +499,10 @@ export default function FullWidthGlobeMap() {
             // Add close button functionality
             const closeButton = div.querySelector('.close-overlay') as HTMLButtonElement;
             closeButton.addEventListener('mouseenter', () => {
-              closeButton.style.background = '#374151';
+              closeButton.style.background = 'rgba(75, 85, 99, 0.9)';
             });
             closeButton.addEventListener('mouseleave', () => {
-              closeButton.style.background = 'transparent';
+              closeButton.style.background = 'rgba(55, 65, 81, 0.8)';
             });
             closeButton.addEventListener('click', (e) => {
               e.preventDefault();
@@ -716,16 +716,16 @@ export default function FullWidthGlobeMap() {
         )}
 
         {/* Map Container */}
-        <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-16 pb-8" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
-
+        <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-16 pb-4" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
 
           <div
             ref={mapRef}
-            className={`w-full h-full ${isFullscreen ? "rounded-xl mx-16" : "rounded-lg"} map-container`}
+            className={`w-full h-full ${isFullscreen ? "rounded-lg mx-8" : "rounded-lg"} map-container`}
             style={{ 
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "calc(100vh - 300px)" : "100%",
+              height: isFullscreen ? "calc(100vh - 200px)" : "100%",
+              marginTop: isFullscreen ? "180px" : "0",
             }}
           />
 
@@ -812,23 +812,23 @@ export default function FullWidthGlobeMap() {
               className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
               style={{ borderColor: `${colors.primary}40` }}
             >
-              <CardContent className="p-6">
+              <CardContent className="p-6 h-full flex flex-col">
                 <h3
                   className="font-black text-xl mb-6 text-center"
                   style={{ color: colors.primary }}
                 >
                   Live Statistics
                 </h3>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-4 flex-1 items-center">
                   {/* Active Listeners */}
-                  <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="flex flex-col items-center text-center space-y-2 transform scale-115">
                     <span
                       className="font-black text-2xl"
                       style={{ color: colors.primary }}
                     >
                       {totalListeners}
                     </span>
-                    <TrendingUp className="h-6 w-6" style={{ color: colors.primary }} />
+                    <TrendingUp className="h-7 w-7" style={{ color: colors.primary }} />
                     <span
                       className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
                     >
@@ -837,7 +837,7 @@ export default function FullWidthGlobeMap() {
                   </div>
 
                   {/* Countries */}
-                  <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="flex flex-col items-center text-center space-y-2 transform scale-115">
                     <span
                       className="font-black text-2xl"
                       style={{ color: colors.primary }}
@@ -847,7 +847,7 @@ export default function FullWidthGlobeMap() {
                     <img 
                       src={CountriesIconPath} 
                       alt="Countries" 
-                      className="h-6 w-6" 
+                      className="h-7 w-7" 
                       style={{ filter: `brightness(0) saturate(100%) invert(65%) sepia(100%) saturate(1000%) hue-rotate(3deg) brightness(110%) contrast(95%)` }}
                     />
                     <span
@@ -858,7 +858,7 @@ export default function FullWidthGlobeMap() {
                   </div>
 
                   {/* Total Listeners */}
-                  <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="flex flex-col items-center text-center space-y-2 transform scale-115">
                     <span
                       className="font-black text-2xl"
                       style={{ color: colors.primary }}
@@ -868,7 +868,7 @@ export default function FullWidthGlobeMap() {
                     <img 
                       src={LiveNowIconPath} 
                       alt="Total Listeners" 
-                      className="h-6 w-6" 
+                      className="h-7 w-7" 
                       style={{ filter: `brightness(0) saturate(100%) invert(65%) sepia(100%) saturate(1000%) hue-rotate(3deg) brightness(110%) contrast(95%)` }}
                     />
                     <span
@@ -894,9 +894,9 @@ export default function FullWidthGlobeMap() {
                   >
                     Active Locations
                   </h3>
-                  <div className="grid grid-cols-2 gap-5 flex-1">
+                  <div className="grid grid-cols-2 gap-5 flex-1 items-center">
                     {/* First Column (1-5) */}
-                    <div className="space-y-3">
+                    <div className="space-y-3 transform scale-115">
                       {top10Listeners
                         .filter((l) => l.isActive)
                         .slice(0, 5)
@@ -912,7 +912,7 @@ export default function FullWidthGlobeMap() {
                               >
                                 #{index + 1}
                               </span>
-                              <MapPin className="h-5 w-5" style={{ color: colors.primary }} />
+                              <MapPin className="h-6 w-6" style={{ color: colors.primary }} />
                               <div className="flex-1">
                                 <div
                                   className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
@@ -927,7 +927,7 @@ export default function FullWidthGlobeMap() {
                               </div>
                             </div>
                             <div
-                              className="w-3 h-3 rounded-full animate-pulse ml-2"
+                              className="w-4 h-4 rounded-full animate-pulse ml-2"
                               style={{ backgroundColor: colors.primary }}
                             />
                           </div>
@@ -935,7 +935,7 @@ export default function FullWidthGlobeMap() {
                     </div>
                     
                     {/* Second Column (6-10) */}
-                    <div className="space-y-3">
+                    <div className="space-y-3 transform scale-115">
                       {top10Listeners
                         .filter((l) => l.isActive)
                         .slice(5, 10)
@@ -951,7 +951,7 @@ export default function FullWidthGlobeMap() {
                               >
                                 #{index + 6}
                               </span>
-                              <MapPin className="h-5 w-5" style={{ color: colors.primary }} />
+                              <MapPin className="h-6 w-6" style={{ color: colors.primary }} />
                               <div className="flex-1">
                                 <div
                                   className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
@@ -966,7 +966,7 @@ export default function FullWidthGlobeMap() {
                               </div>
                             </div>
                             <div
-                              className="w-3 h-3 rounded-full animate-pulse ml-2"
+                              className="w-4 h-4 rounded-full animate-pulse ml-2"
                               style={{ backgroundColor: colors.primary }}
                             />
                           </div>
