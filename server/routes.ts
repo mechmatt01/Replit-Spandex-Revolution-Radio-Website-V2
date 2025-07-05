@@ -133,31 +133,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: "OpenWeatherMap API key not configured" });
       }
 
+      console.log(`Fetching weather for lat: ${lat}, lon: ${lon} with API key: ${apiKey.substring(0, 8)}...`);
+
       // Get current weather data
-      const weatherResponse = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`
-      );
+      const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`;
+      console.log('Weather API URL:', weatherUrl.replace(apiKey, 'HIDDEN'));
+      
+      const weatherResponse = await fetch(weatherUrl);
 
       if (!weatherResponse.ok) {
-        throw new Error(`Weather API error: ${weatherResponse.status}`);
+        const errorText = await weatherResponse.text();
+        console.error(`Weather API error ${weatherResponse.status}:`, errorText);
+        throw new Error(`Weather API error: ${weatherResponse.status} - ${errorText}`);
       }
 
       const weatherData = await weatherResponse.json();
+      console.log('Weather data received:', weatherData);
 
       // Get location name from reverse geocoding
-      const geoResponse = await fetch(
-        `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`
-      );
+      const geoUrl = `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`;
+      const geoResponse = await fetch(geoUrl);
 
       let locationName = "Unknown Location";
       if (geoResponse.ok) {
         const geoData = await geoResponse.json();
+        console.log('Geo data received:', geoData);
         if (geoData.length > 0) {
           const location = geoData[0];
           locationName = location.state 
             ? `${location.name}, ${location.state}`
             : `${location.name}, ${location.country}`;
         }
+      } else {
+        console.warn('Geo API failed, using default location name');
+        locationName = `Lat: ${parseFloat(lat as string).toFixed(2)}, Lon: ${parseFloat(lon as string).toFixed(2)}`;
       }
 
       const weatherInfo = {
@@ -170,10 +179,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         feelsLike: Math.round(weatherData.main.feels_like),
       };
 
+      console.log('Sending weather info:', weatherInfo);
       res.json(weatherInfo);
     } catch (error) {
       console.error("Error fetching weather:", error);
-      res.status(500).json({ error: "Failed to fetch weather data" });
+      res.status(500).json({ error: `Failed to fetch weather data: ${error.message}` });
     }
   });
 

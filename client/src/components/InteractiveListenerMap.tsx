@@ -218,29 +218,52 @@ const GoogleMapWithListeners = ({
 
   useEffect(() => {
     const loadGoogleMaps = async () => {
-      if (!mapRef.current || !apiKey) return;
+      if (!mapRef.current) {
+        console.log('Map ref not available');
+        return;
+      }
+      
+      if (!apiKey) {
+        console.log('Google Maps API key not available');
+        setMapError('Google Maps API key not configured');
+        return;
+      }
 
       try {
-        // Load Google Maps script
+        console.log('Loading Google Maps with API key:', apiKey.substring(0, 10) + '...');
+        
+        // Load Google Maps script if not already loaded
         if (!window.google) {
+          console.log('Loading Google Maps script...');
           const script = document.createElement('script');
-          script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry`;
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker`;
           script.async = true;
           script.defer = true;
           
           await new Promise((resolve, reject) => {
-            script.onload = resolve;
-            script.onerror = reject;
+            script.onload = () => {
+              console.log('Google Maps script loaded successfully');
+              resolve(true);
+            };
+            script.onerror = (error) => {
+              console.error('Google Maps script failed to load:', error);
+              reject(error);
+            };
             document.head.appendChild(script);
           });
         }
 
-        // Create map
+        console.log('Creating Google Map...');
+        
+        // Create map styles based on theme
         const mapStyles = isDarkMode ? [
           { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
           { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
           { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
           { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+          { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
+          { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
+          { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
         ] : [];
 
         const map = new window.google.maps.Map(mapRef.current, {
@@ -250,39 +273,48 @@ const GoogleMapWithListeners = ({
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false,
+          zoomControl: true,
+          gestureHandling: 'cooperative',
         });
 
-        // Add markers for listeners
-        listeners
-          .filter(listener => listener.isActiveListening)
-          .forEach(listener => {
-            const marker = new window.google.maps.Marker({
-              position: { lat: listener.lat, lng: listener.lng },
-              map: map,
-              title: `${listener.city}, ${listener.country}`,
-              icon: {
-                path: window.google.maps.SymbolPath.CIRCLE,
-                scale: 8,
-                fillColor: colors.primary,
-                fillOpacity: 1,
-                strokeColor: isDarkMode ? "#ffffff" : "#000000",
-                strokeWeight: 2,
-              },
-            });
+        console.log('Map created, adding markers...');
 
-            marker.addListener("click", () => {
-              onListenerClick(listener);
-            });
+        // Add markers for active listeners
+        const activeListeners = listeners.filter(listener => listener.isActiveListening);
+        console.log(`Adding ${activeListeners.length} markers`);
+        
+        activeListeners.forEach((listener, index) => {
+          const marker = new window.google.maps.Marker({
+            position: { lat: listener.lat, lng: listener.lng },
+            map: map,
+            title: `${listener.city}, ${listener.country}`,
+            icon: {
+              path: window.google.maps.SymbolPath.CIRCLE,
+              scale: 8,
+              fillColor: colors.primary,
+              fillOpacity: 1,
+              strokeColor: isDarkMode ? "#ffffff" : "#000000",
+              strokeWeight: 2,
+            },
           });
 
+          marker.addListener("click", () => {
+            console.log('Marker clicked:', listener.city);
+            onListenerClick(listener);
+          });
+        });
+
+        console.log('Google Map loaded successfully with', activeListeners.length, 'markers');
         setIsMapLoaded(true);
       } catch (error) {
         console.error('Error loading Google Maps:', error);
-        setMapError('Failed to load Google Maps');
+        setMapError(`Failed to load Google Maps: ${error.message}`);
       }
     };
 
-    loadGoogleMaps();
+    // Add a small delay to ensure the component is fully mounted
+    const timer = setTimeout(loadGoogleMaps, 100);
+    return () => clearTimeout(timer);
   }, [apiKey, listeners, colors, isDarkMode, onListenerClick]);
 
   if (mapError) {
@@ -362,12 +394,49 @@ export default function InteractiveListenerMap() {
   });
 
   // Fetch weather data when user location is available
-  const { data: weather } = useQuery<WeatherData>({
+  const { data: weather, error: weatherError, isLoading: weatherLoading } = useQuery<WeatherData>({
     queryKey: ["/api/weather", userLocation?.lat, userLocation?.lng],
     enabled: !!userLocation,
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchInterval: 10 * 60 * 1000, // 10 minutes
+    retry: 3,
   });
+
+  // Debug weather error
+  useEffect(() => {
+    if (weatherError) {
+      console.error('Weather API error:', weatherError);
+    }
+    if (weather) {
+      console.log('Weather data received:', weather);
+    }
+  }, [weather, weatherError]);
+
+  // Get location name from coordinates for fallback display
+  const getLocationName = (lat: number, lng: number) => {
+    // For now, we'll use a simple fallback
+    // In production, this could use reverse geocoding
+    const cities = [
+      { name: "New York, NY", lat: 40.7128, lng: -74.0060 },
+      { name: "Los Angeles, CA", lat: 34.0522, lng: -118.2437 },
+      { name: "Chicago, IL", lat: 41.8781, lng: -87.6298 },
+      { name: "Houston, TX", lat: 29.7604, lng: -95.3698 },
+      { name: "Phoenix, AZ", lat: 33.4484, lng: -112.0740 },
+      { name: "Philadelphia, PA", lat: 39.9526, lng: -75.1652 },
+      { name: "San Antonio, TX", lat: 29.4241, lng: -98.4936 },
+      { name: "San Diego, CA", lat: 32.7157, lng: -117.1611 },
+      { name: "Dallas, TX", lat: 32.7767, lng: -96.7970 },
+      { name: "San Jose, CA", lat: 37.3382, lng: -121.8863 },
+    ];
+    
+    const closest = cities.reduce((prev, curr) => {
+      const prevDistance = Math.sqrt(Math.pow(lat - prev.lat, 2) + Math.pow(lng - prev.lng, 2));
+      const currDistance = Math.sqrt(Math.pow(lat - curr.lat, 2) + Math.pow(lng - curr.lng, 2));
+      return currDistance < prevDistance ? curr : prev;
+    });
+    
+    return closest.name;
+  };
 
   useEffect(() => {
     // Initialize listeners
@@ -457,11 +526,12 @@ export default function InteractiveListenerMap() {
     <section
       id="map"
       className={`py-20 ${isDarkMode ? "bg-black" : "bg-white"} ${
-        isFullscreen ? "fixed inset-0 z-40 pt-24" : ""
-      }`}
+        isFullscreen ? "fixed inset-0 z-40 pt-16" : ""
+      } transition-all duration-500 ease-in-out`}
       style={{
         ...(isFullscreen && {
-          paddingBottom: "120px", // Space for floating player
+          paddingBottom: "140px", // Space for floating player
+          paddingTop: "60px",
         }),
       }}
     >
@@ -474,6 +544,17 @@ export default function InteractiveListenerMap() {
           </h2>
           
           {/* Weather Information */}
+          {weatherLoading && userLocation && (
+            <div className="mb-4">
+              <div className="flex items-center justify-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  Loading weather...
+                </span>
+              </div>
+            </div>
+          )}
+          
           {weather && (
             <div className="mb-4">
               <p
@@ -490,6 +571,23 @@ export default function InteractiveListenerMap() {
                   className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
                 >
                   {weather.temperature}°F
+                </span>
+              </div>
+            </div>
+          )}
+          
+          {/* Show location only when weather API is not available */}
+          {!weather && !weatherLoading && userLocation && (
+            <div className="mb-4">
+              <p
+                className={`text-lg font-semibold mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+              >
+                {getLocationName(userLocation.lat, userLocation.lng)}
+              </p>
+              <div className="flex items-center justify-center gap-2">
+                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                <span className={`text-sm ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+                  Weather service connecting...
                 </span>
               </div>
             </div>
@@ -535,8 +633,13 @@ export default function InteractiveListenerMap() {
 
                 <div
                   className={`relative ${isDarkMode ? "bg-gray-800" : "bg-gray-200"} rounded-lg ${
-                    isFullscreen ? "h-[calc(100vh-240px)]" : "h-96"
-                  } overflow-hidden`}
+                    isFullscreen ? "h-[calc(100vh-200px)]" : "h-96"
+                  } overflow-hidden transition-all duration-500 ease-in-out`}
+                  style={{
+                    ...(isFullscreen && {
+                      minHeight: "calc(100vh - 200px)",
+                    }),
+                  }}
                 >
                   {/* Loading State */}
                   {isLoading && (
