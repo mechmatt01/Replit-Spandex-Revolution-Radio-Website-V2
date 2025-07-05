@@ -468,38 +468,204 @@ export default function Navigation() {
               }}
             >
               <div className="px-4 py-6 space-y-3">
-                {/* All Menu Items */}
-                {menuItems.map((item) => {
-                  const IconComponent = item.icon;
-                  return (
-                    <div key={item.id}>
-                      <button
-                        onClick={() => {
-                          console.log(`Mobile nav: ${item.label}`);
-                          item.action();
-                        }}
-                        className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
-                        style={{ 
-                          color: colors.text,
-                          backgroundColor: 'transparent',
-                          border: 'none',
-                          cursor: 'pointer'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary + '20';
-                          e.currentTarget.style.color = 'white';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = colors.text;
-                        }}
-                      >
-                        <IconComponent size={20} style={{ color: colors.primary }} />
-                        <span>{item.label}</span>
-                      </button>
-                    </div>
-                  );
-                })}
+                {/* Music Link */}
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    window.location.href = "/music";
+                  }}
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Music size={20} style={{ color: colors.primary }} />
+                  <span>MUSIC</span>
+                </button>
+                
+                {/* Schedule Link */}
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (window.location.pathname !== "/") {
+                      window.location.href = "/#schedule";
+                    } else {
+                      document.getElementById("schedule")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                  }}
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Calendar size={20} style={{ color: colors.primary }} />
+                  <span>SCHEDULE</span>
+                </button>
+                
+                {/* Support Us Link */}
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (window.location.pathname !== "/") {
+                      window.location.href = "/#subscribe";
+                    } else {
+                      document.getElementById("subscribe")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                  }}
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Heart size={20} style={{ color: colors.primary }} />
+                  <span>SUPPORT US</span>
+                </button>
+                
+                {/* Submissions Link */}
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (window.location.pathname !== "/") {
+                      window.location.href = "/#submissions";
+                    } else {
+                      document.getElementById("submissions")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                  }}
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Send size={20} style={{ color: colors.primary }} />
+                  <span>SUBMISSIONS</span>
+                </button>
+                
+                {/* Contact Link */}
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (window.location.pathname !== "/") {
+                      window.location.href = "/#contact";
+                    } else {
+                      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                  }}
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Phone size={20} style={{ color: colors.primary }} />
+                  <span>CONTACT</span>
+                </button>
+                
+                {/* Listen Map Link */}
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (window.location.pathname !== "/") {
+                      window.location.href = "/#map";
+                    } else {
+                      document.getElementById("map")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                  }}
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <MapPin size={20} style={{ color: colors.primary }} />
+                  <span>LISTEN MAP</span>
+                </button>
+                
+                {/* Features Link */}
+                <button
+                  onClick={() => {
+                    setIsOpen(false);
+                    if (window.location.pathname !== "/") {
+                      window.location.href = "/#features";
+                    } else {
+                      document.getElementById("features")?.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                  }}
+                  className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full"
+                  style={{ 
+                    color: colors.text,
+                    backgroundColor: 'transparent',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = colors.text;
+                  }}
+                >
+                  <Heart size={20} style={{ color: colors.primary }} />
+                  <span>FEATURES</span>
+                </button>
 
                 {/* Authentication Section */}
                 <div className="pt-4 mt-4 border-t space-y-3" style={{ borderColor: colors.primary + '40' }}>
