@@ -511,51 +511,84 @@ export default function FullWidthGlobeMap() {
           infoWindow.open(mapInstance, marker);
           currentInfoWindow.current = infoWindow;
 
-          // Hide default InfoWindow styling and add close button functionality
+          // Complete removal of Google Maps default styling
           setTimeout(() => {
-            // Remove all Google Maps default styling
-            const infoWindowElements = document.querySelectorAll('.gm-style-iw');
-            infoWindowElements.forEach(element => {
-              const parentElement = element.parentElement;
-              if (parentElement) {
-                parentElement.style.background = 'transparent !important';
-                parentElement.style.boxShadow = 'none !important';
-                parentElement.style.border = 'none !important';
-              }
-              (element as HTMLElement).style.background = 'transparent !important';
-              (element as HTMLElement).style.boxShadow = 'none !important';
-              (element as HTMLElement).style.border = 'none !important';
-              (element as HTMLElement).style.padding = '0 !important';
-              (element as HTMLElement).style.margin = '0 !important';
-            });
+            // Remove all Google Maps default styling - comprehensive approach
+            const removeGoogleMapsStyling = () => {
+              // Target all possible InfoWindow elements
+              const selectors = [
+                '.gm-style-iw',
+                '.gm-style-iw-d',
+                '.gm-style-iw-c', 
+                '.gm-style-iw-tc',
+                '.gm-style-iw-t',
+                '[class*="gm-style-iw"]'
+              ];
+              
+              selectors.forEach(selector => {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                  const htmlElement = element as HTMLElement;
+                  htmlElement.style.setProperty('background', 'transparent', 'important');
+                  htmlElement.style.setProperty('border', 'none', 'important');
+                  htmlElement.style.setProperty('box-shadow', 'none', 'important');
+                  htmlElement.style.setProperty('padding', '0', 'important');
+                  htmlElement.style.setProperty('margin', '0', 'important');
+                  htmlElement.style.setProperty('overflow', 'visible', 'important');
+                  
+                  // Also hide parent containers
+                  if (htmlElement.parentElement) {
+                    const parent = htmlElement.parentElement;
+                    parent.style.setProperty('background', 'transparent', 'important');
+                    parent.style.setProperty('border', 'none', 'important');
+                    parent.style.setProperty('box-shadow', 'none', 'important');
+                  }
+                });
+              });
 
-            // Hide all default close buttons
-            const closeButtons = document.querySelectorAll('.gm-ui-hover-effect');
-            closeButtons.forEach(button => {
-              (button as HTMLElement).style.display = 'none !important';
-            });
-            
-            // Hide all default background containers
-            const allContainers = document.querySelectorAll('.gm-style-iw-d, .gm-style-iw-c, .gm-style-iw-tc');
-            allContainers.forEach(container => {
-              (container as HTMLElement).style.background = 'transparent !important';
-              (container as HTMLElement).style.border = 'none !important';
-              (container as HTMLElement).style.boxShadow = 'none !important';
-              (container as HTMLElement).style.overflow = 'visible !important';
-            });
-            
-            // Hide the tail/pointer and arrow elements
-            const tailElements = document.querySelectorAll('.gm-style-iw-t, .gm-style-iw-t::after, .gm-style-iw-t::before');
-            tailElements.forEach(tail => {
-              (tail as HTMLElement).style.display = 'none !important';
-            });
+              // Hide all Google Maps close buttons and UI elements
+              const gmUIElements = document.querySelectorAll('.gm-ui-hover-effect, [title="Close"], button[title="Close"]');
+              gmUIElements.forEach(element => {
+                (element as HTMLElement).style.setProperty('display', 'none', 'important');
+              });
 
-            // Add functionality to custom close button with event delegation
+              // Hide tails and pointers
+              const tailElements = document.querySelectorAll('.gm-style-iw-t');
+              tailElements.forEach(tail => {
+                (tail as HTMLElement).style.setProperty('display', 'none', 'important');
+              });
+
+              // Add custom CSS to override any remaining styles
+              const styleEl = document.createElement('style');
+              styleEl.innerHTML = `
+                .gm-style-iw, 
+                .gm-style-iw-d, 
+                .gm-style-iw-c, 
+                .gm-style-iw-tc,
+                .gm-style-iw-t,
+                .gm-style-iw div {
+                  background: transparent !important;
+                  border: none !important;
+                  box-shadow: none !important;
+                  padding: 0 !important;
+                  margin: 0 !important;
+                }
+                .gm-style-iw-t {
+                  display: none !important;
+                }
+                .gm-ui-hover-effect {
+                  display: none !important;
+                }
+              `;
+              document.head.appendChild(styleEl);
+            };
+
+            removeGoogleMapsStyling();
+
+            // Add functionality to custom close button
             const customCloseButton = document.getElementById('close-info-window');
             if (customCloseButton) {
-              // Remove any existing listeners
               customCloseButton.onclick = null;
-              // Add new listener
               customCloseButton.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -563,19 +596,30 @@ export default function FullWidthGlobeMap() {
                 currentInfoWindow.current = null;
               });
             }
-          }, 150);
+          }, 100);
 
-          // Additional cleanup after 300ms to catch any delayed elements
+          // Additional cleanup passes
           setTimeout(() => {
-            const allGmElements = document.querySelectorAll('[class*="gm-style-iw"]');
+            const allGmElements = document.querySelectorAll('[class*="gm-style"]');
             allGmElements.forEach(element => {
-              if (element.className.includes('gm-style-iw') && !element.id) {
-                (element as HTMLElement).style.background = 'transparent !important';
-                (element as HTMLElement).style.border = 'none !important';
-                (element as HTMLElement).style.boxShadow = 'none !important';
+              if (element.className.includes('gm-style-iw')) {
+                (element as HTMLElement).style.setProperty('background', 'transparent', 'important');
+                (element as HTMLElement).style.setProperty('border', 'none', 'important');
+                (element as HTMLElement).style.setProperty('box-shadow', 'none', 'important');
               }
             });
-          }, 300);
+          }, 250);
+
+          setTimeout(() => {
+            const allGmElements = document.querySelectorAll('[class*="gm-style"]');
+            allGmElements.forEach(element => {
+              if (element.className.includes('gm-style-iw')) {
+                (element as HTMLElement).style.setProperty('background', 'transparent', 'important');
+                (element as HTMLElement).style.setProperty('border', 'none', 'important');
+                (element as HTMLElement).style.setProperty('box-shadow', 'none', 'important');
+              }
+            });
+          }, 500);
         });
       });
     };
@@ -677,14 +721,14 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Map Container */}
-        <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-5 pb-5" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
+        <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-8 pb-8" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
           {/* Fullscreen Weather Header */}
           {isFullscreen && (
-            <div className="absolute top-5 left-0 right-0 z-10 px-12">
-              <div className="text-center mb-6">
+            <div className="absolute top-8 left-0 right-0 z-10 px-16">
+              <div className="text-center mb-8">
                 {/* Weather Display in Fullscreen */}
                 {weather && (
-                  <div className="mb-4">
+                  <div className="mb-6">
                     <div className="flex items-center justify-center gap-2 mb-2">
                       <MapPin className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
                       <span className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
@@ -713,11 +757,11 @@ export default function FullWidthGlobeMap() {
 
           <div
             ref={mapRef}
-            className={`w-full h-full ${isFullscreen ? "rounded-xl mx-12 mt-28" : "rounded-lg"} map-container`}
+            className={`w-full h-full ${isFullscreen ? "rounded-xl mx-16 mt-40" : "rounded-lg"} map-container`}
             style={{ 
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "calc(100vh - 180px)" : "100%",
+              height: isFullscreen ? "calc(100vh - 220px)" : "100%",
             }}
           />
 
