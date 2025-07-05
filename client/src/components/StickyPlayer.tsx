@@ -53,7 +53,7 @@ export default function StickyPlayer() {
 
   return (
     <div
-      className={`fixed bottom-2 left-4 bg-card/95 backdrop-blur-sm z-40 transition-all duration-500 rounded-2xl shadow-lg ${
+      className={`fixed bottom-2 left-4 bg-card/95 backdrop-blur-sm z-50 transition-all duration-500 rounded-2xl shadow-lg ${
         isVisible
           ? "transform translate-y-0 opacity-100"
           : "transform translate-y-full opacity-0"

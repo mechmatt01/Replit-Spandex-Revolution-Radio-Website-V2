@@ -402,7 +402,7 @@ export default function InteractiveListenerMap() {
     retry: 3,
   });
 
-  // Debug weather error
+  // Debug weather error and user location
   useEffect(() => {
     if (weatherError) {
       console.error('Weather API error:', weatherError);
@@ -410,7 +410,10 @@ export default function InteractiveListenerMap() {
     if (weather) {
       console.log('Weather data received:', weather);
     }
-  }, [weather, weatherError]);
+    console.log('User location:', userLocation);
+    console.log('Weather loading:', weatherLoading);
+    console.log('Weather data:', weather);
+  }, [weather, weatherError, userLocation, weatherLoading]);
 
   // Get location name from coordinates for fallback display
   const getLocationName = (lat: number, lng: number) => {
