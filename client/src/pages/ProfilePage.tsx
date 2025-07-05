@@ -1,12 +1,5 @@
-import Profile from "@/components/Profile";
-import { useLocation } from "wouter";
+import ProfilePage from "@/components/ProfilePage";
 
-export default function ProfilePage() {
-  const [, navigate] = useLocation();
-
-  const handleNavigateToSubscribe = () => {
-    navigate("/subscribe");
-  };
-
-  return <Profile onNavigateToSubscribe={handleNavigateToSubscribe} />;
+export default function ProfilePageWrapper() {
+  return <ProfilePage />;
 }
