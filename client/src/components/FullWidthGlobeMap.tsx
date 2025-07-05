@@ -628,14 +628,10 @@ export default function FullWidthGlobeMap() {
 
         {/* Map Container */}
         <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-5 pb-5" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
-          {/* Fullscreen Header */}
+          {/* Fullscreen Weather Header */}
           {isFullscreen && (
-            <div className="absolute top-5 left-0 right-0 z-10 px-5">
-              <div className="text-center mb-4">
-                <h2 className={`font-orbitron font-black text-2xl md:text-3xl mb-2 ${isDarkMode ? "text-white" : "text-black"}`}>
-                  Live Interactive Map
-                </h2>
-                
+            <div className="absolute top-5 left-0 right-0 z-10 px-8">
+              <div className="text-center mb-6">
                 {/* Weather Display in Fullscreen */}
                 {weather && (
                   <div className="mb-4">
@@ -645,11 +641,12 @@ export default function FullWidthGlobeMap() {
                         {weather.location}
                       </span>
                     </div>
-                    <div className="flex items-center justify-center gap-3">
+                    <div className="flex items-center justify-center gap-1.5">
                       <img
                         src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
                         alt={weather.description}
-                        className="w-8 h-8 flex-shrink-0"
+                        className="w-10 h-10 flex-shrink-0"
+                        style={{ marginTop: '4px' }}
                       />
                       <span className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
                         {Math.round(weather.temperature)}°F
@@ -666,11 +663,12 @@ export default function FullWidthGlobeMap() {
           
           <div
             ref={mapRef}
-            className={`w-full h-full ${isFullscreen ? "rounded-lg mx-5 mt-32" : "rounded-lg"} map-container`}
+            className={`w-full h-full ${isFullscreen ? "rounded-xl mx-8 mt-24" : "rounded-lg"} map-container`}
             style={{ 
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "calc(100vh - 200px)" : "100%",
+              height: isFullscreen ? "calc(100vh - 160px)" : "100%",
+              border: isFullscreen ? `2px solid ${colors.primary}40` : "none",
             }}
           />
           
