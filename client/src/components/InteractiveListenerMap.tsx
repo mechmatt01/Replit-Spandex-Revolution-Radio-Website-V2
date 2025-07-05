@@ -8,6 +8,8 @@ import {
   ZoomOut,
   Maximize2,
   Minimize2,
+  Navigation,
+  Activity,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -179,139 +181,116 @@ const generateActiveListeners = (): ActiveListener[] => [
   },
 ];
 
-// Detailed world map SVG with better visibility
-const WorldMapSVG = ({
-  className,
-  fill,
-  stroke,
+// Interactive world map component
+const WorldMapDisplay = ({
+  listeners,
+  colors,
+  isDarkMode,
+  onListenerClick,
+  selectedListener,
+  zoomLevel,
+  panOffset,
 }: {
-  className?: string;
-  fill?: string;
-  stroke?: string;
-}) => (
-  <svg
-    className={className}
-    viewBox="0 0 1000 500"
-    preserveAspectRatio="xMidYMid meet"
-  >
-    {/* Grid lines for reference */}
-    <defs>
-      <pattern id="grid" width="50" height="25" patternUnits="userSpaceOnUse">
-        <path d="M 50 0 L 0 0 0 25" fill="none" stroke={stroke} strokeWidth="0.5" opacity="0.2"/>
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#grid)" />
-    
-    {/* North America - More detailed */}
-    <path
-      d="M80 80 L120 60 L180 70 L220 80 L280 90 L320 100 L350 110 L380 130 L390 150 L385 180 L370 200 L340 210 L300 220 L250 210 L200 200 L150 180 L120 160 L100 140 L85 120 L80 100 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-    
-    {/* Greenland */}
-    <path
-      d="M320 40 L350 35 L370 45 L375 65 L365 80 L340 85 L320 75 L315 55 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
+  listeners: ActiveListener[];
+  colors: any;
+  isDarkMode: boolean;
+  onListenerClick: (listener: ActiveListener) => void;
+  selectedListener: ActiveListener | null;
+  zoomLevel: number;
+  panOffset: { x: number; y: number };
+}) => {
+  const getScreenPosition = (lat: number, lng: number) => {
+    // Convert lat/lng to screen coordinates
+    const x = ((lng + 180) / 360) * 100;
+    const y = ((90 - lat) / 180) * 100;
+    return { x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) };
+  };
 
-    {/* South America - More detailed */}
-    <path
-      d="M220 280 L250 270 L280 275 L300 290 L310 320 L315 350 L320 380 L315 410 L300 430 L280 440 L250 435 L230 420 L215 400 L210 380 L205 360 L210 340 L215 320 L220 300 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-
-    {/* Europe - More detailed */}
-    <path
-      d="M460 100 L480 95 L510 100 L540 105 L570 110 L580 130 L575 150 L565 165 L550 170 L530 168 L510 165 L490 160 L470 150 L455 135 L450 120 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-    
-    {/* Scandinavia */}
-    <path
-      d="M490 70 L510 65 L525 70 L530 85 L525 100 L515 105 L500 100 L485 90 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-
-    {/* Africa - More detailed */}
-    <path
-      d="M460 180 L490 175 L520 180 L540 190 L550 210 L555 240 L560 270 L555 300 L550 330 L540 360 L530 380 L510 390 L490 385 L470 380 L450 370 L440 350 L435 330 L430 300 L435 270 L440 240 L445 210 L450 190 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-
-    {/* Asia - More detailed */}
-    <path
-      d="M580 90 L620 85 L660 90 L700 95 L740 100 L780 105 L820 110 L850 115 L880 125 L885 150 L880 175 L870 200 L850 220 L820 235 L780 240 L740 235 L700 230 L660 225 L620 220 L590 210 L575 190 L570 170 L575 150 L580 130 L585 110 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-    
-    {/* China/Eastern Asia */}
-    <path
-      d="M700 150 L740 145 L770 150 L800 155 L820 170 L815 190 L800 200 L780 205 L750 200 L720 195 L700 185 L695 170 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-    
-    {/* India */}
-    <path
-      d="M650 200 L680 195 L700 205 L705 225 L700 245 L690 260 L675 265 L660 260 L650 245 L645 225 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-
-    {/* Australia - More detailed */}
-    <path
-      d="M720 340 L760 335 L800 340 L830 345 L850 355 L855 375 L850 390 L830 400 L800 395 L760 390 L720 385 L700 375 L695 360 L700 345 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-    
-    {/* New Zealand */}
-    <path
-      d="M870 390 L885 385 L890 400 L885 415 L875 420 L865 415 L860 400 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-    
-    {/* Japan */}
-    <path
-      d="M850 180 L865 175 L875 185 L870 200 L860 205 L850 200 L845 190 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-    
-    {/* UK */}
-    <path
-      d="M450 120 L465 115 L470 125 L465 135 L455 140 L445 135 L445 125 Z"
-      fill={fill}
-      stroke={stroke}
-      strokeWidth="2"
-    />
-  </svg>
-);
+  return (
+    <div className="relative w-full h-full overflow-hidden">
+      {/* World Map Background */}
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
+        style={{
+          backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 500'%3e%3cpath d='M80 80 L120 60 L180 70 L220 80 L280 90 L320 100 L350 110 L380 130 L390 150 L385 180 L370 200 L340 210 L300 220 L250 210 L200 200 L150 180 L120 160 L100 140 L85 120 L80 100 Z' fill='${isDarkMode ? '%23374151' : '%23d1d5db'}' stroke='${isDarkMode ? '%23ffffff' : '%23000000'}' stroke-width='1'/%3e%3cpath d='M220 280 L250 270 L280 275 L300 290 L310 320 L315 350 L320 380 L315 410 L300 430 L280 440 L250 435 L230 420 L215 400 L210 380 L205 360 L210 340 L215 320 L220 300 Z' fill='${isDarkMode ? '%23374151' : '%23d1d5db'}' stroke='${isDarkMode ? '%23ffffff' : '%23000000'}' stroke-width='1'/%3e%3cpath d='M460 100 L480 95 L510 100 L540 105 L570 110 L580 130 L575 150 L565 165 L550 170 L530 168 L510 165 L490 160 L470 150 L455 135 L450 120 Z' fill='${isDarkMode ? '%23374151' : '%23d1d5db'}' stroke='${isDarkMode ? '%23ffffff' : '%23000000'}' stroke-width='1'/%3e%3cpath d='M460 180 L490 175 L520 180 L540 190 L550 210 L555 240 L560 270 L555 300 L550 330 L540 360 L530 380 L510 390 L490 385 L470 380 L450 370 L440 350 L435 330 L430 300 L435 270 L440 240 L445 210 L450 190 Z' fill='${isDarkMode ? '%23374151' : '%23d1d5db'}' stroke='${isDarkMode ? '%23ffffff' : '%23000000'}' stroke-width='1'/%3e%3cpath d='M580 90 L620 85 L660 90 L700 95 L740 100 L780 105 L820 110 L850 115 L880 125 L885 150 L880 175 L870 200 L850 220 L820 235 L780 240 L740 235 L700 230 L660 225 L620 220 L590 210 L575 190 L570 170 L575 150 L580 130 L585 110 Z' fill='${isDarkMode ? '%23374151' : '%23d1d5db'}' stroke='${isDarkMode ? '%23ffffff' : '%23000000'}' stroke-width='1'/%3e%3cpath d='M720 340 L760 335 L800 340 L830 345 L850 355 L855 375 L850 390 L830 400 L800 395 L760 390 L720 385 L700 375 L695 360 L700 345 Z' fill='${isDarkMode ? '%23374151' : '%23d1d5db'}' stroke='${isDarkMode ? '%23ffffff' : '%23000000'}' stroke-width='1'/%3e%3c/svg%3e")`,
+          transform: `scale(${zoomLevel}) translate(${panOffset.x}px, ${panOffset.y}px)`,
+        }}
+      />
+      
+      {/* Listener Markers */}
+      {listeners
+        .filter((listener) => listener.isActiveListening)
+        .map((listener) => {
+          const { x, y } = getScreenPosition(listener.lat, listener.lng);
+          const isSelected = selectedListener?.id === listener.id;
+          
+          return (
+            <div
+              key={listener.id}
+              className="absolute cursor-pointer transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300"
+              style={{
+                left: `${x}%`,
+                top: `${y}%`,
+                transform: `scale(${zoomLevel}) translate(${panOffset.x}px, ${panOffset.y}px) translate(-50%, -50%)`,
+                zIndex: isSelected ? 20 : 10,
+              }}
+              onClick={() => onListenerClick(listener)}
+            >
+              {/* Pulse Animation */}
+              <div
+                className="absolute inset-0 rounded-full animate-ping"
+                style={{
+                  backgroundColor: colors.primary,
+                  opacity: 0.3,
+                  width: '24px',
+                  height: '24px',
+                  transform: 'translate(-50%, -50%)',
+                }}
+              />
+              
+              {/* Main Marker */}
+              <div
+                className={`relative w-6 h-6 rounded-full border-2 transition-all duration-300 ${
+                  isSelected ? 'scale-150' : 'hover:scale-125'
+                }`}
+                style={{
+                  backgroundColor: colors.primary,
+                  borderColor: isDarkMode ? '#ffffff' : '#000000',
+                  boxShadow: `0 0 ${isSelected ? '20px' : '10px'} ${colors.primary}66`,
+                }}
+              >
+                <Activity className="w-3 h-3 text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+              </div>
+              
+              {/* Tooltip */}
+              {isSelected && (
+                <div
+                  className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap z-30"
+                  style={{
+                    backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
+                    color: isDarkMode ? '#ffffff' : '#000000',
+                    border: `1px solid ${colors.primary}`,
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <div className="font-bold">{listener.city}</div>
+                  <div className="text-xs opacity-75">{listener.country}</div>
+                  <div
+                    className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent"
+                    style={{ borderTopColor: colors.primary }}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
+    </div>
+  );
+};
 
 export default function InteractiveListenerMap() {
   const [activeListeners, setActiveListeners] = useState<ActiveListener[]>([]);
-  const [selectedListener, setSelectedListener] =
-    useState<ActiveListener | null>(null);
+  const [selectedListener, setSelectedListener] = useState<ActiveListener | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -327,38 +306,32 @@ export default function InteractiveListenerMap() {
   });
 
   useEffect(() => {
-    // Simulate initial loading with error handling
+    // Initialize listeners
     setIsLoading(true);
     
     try {
-      // Generate initial listeners immediately
       const initialListeners = generateActiveListeners();
       
-      // Short delay to show loading state, then set listeners
       const timer = setTimeout(() => {
         setActiveListeners(initialListeners);
         setIsLoading(false);
-        console.log('Map loaded with listeners:', initialListeners.length);
       }, 800);
 
-      // Cleanup timer
       return () => clearTimeout(timer);
     } catch (error) {
       console.error('Error loading map:', error);
       setIsLoading(false);
-      // Set fallback listeners even on error
       setActiveListeners(generateActiveListeners());
     }
   }, []);
 
-  // Separate effect for real-time updates
+  // Real-time updates
   useEffect(() => {
-    if (isLoading) return; // Don't start updates until loaded
+    if (isLoading) return;
 
     const interval = setInterval(() => {
       setActiveListeners((prev) => {
         const updated = prev.map((listener) => {
-          // 90% chance to stay active, 10% chance to go offline
           const shouldStayActive = Math.random() > 0.1;
           return {
             ...listener,
@@ -367,14 +340,14 @@ export default function InteractiveListenerMap() {
           };
         });
 
-        // Occasionally add new listeners
+        // Add new listeners occasionally
         if (Math.random() > 0.7 && updated.length < 20) {
           const newListener: ActiveListener = {
             id: `listener_${Date.now()}`,
             country: "Random Country",
             city: "Random City",
-            lat: (Math.random() - 0.5) * 160, // -80 to 80
-            lng: (Math.random() - 0.5) * 360, // -180 to 180
+            lat: (Math.random() - 0.5) * 160,
+            lng: (Math.random() - 0.5) * 360,
             isActiveListening: true,
             lastSeen: new Date(),
             userId: `user_${Date.now()}`,
@@ -384,7 +357,7 @@ export default function InteractiveListenerMap() {
 
         return updated;
       });
-    }, 5000); // Increased interval for better performance
+    }, 5000);
 
     return () => clearInterval(interval);
   }, [isLoading]);
@@ -419,19 +392,6 @@ export default function InteractiveListenerMap() {
     setPanOffset({ x: 0, y: 0 });
   };
 
-  // Convert lat/lng to screen coordinates with better projection
-  const getScreenPosition = (lat: number, lng: number) => {
-    // Clamp values to valid ranges
-    const clampedLat = Math.max(-85, Math.min(85, lat));
-    const clampedLng = Math.max(-180, Math.min(180, lng));
-    
-    // Convert to screen coordinates with proper scaling
-    const x = ((clampedLng + 180) / 360) * 100;
-    const y = ((90 - clampedLat) / 180) * 100;
-    
-    return { x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) };
-  };
-
   const activeListenerCount = activeListeners.filter(
     (l) => l.isActiveListening,
   ).length;
@@ -454,8 +414,7 @@ export default function InteractiveListenerMap() {
           <p
             className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
           >
-            See where metal fans are tuning in from around the world in
-            real-time.
+            See where metal fans are tuning in from around the world in real-time.
           </p>
         </div>
 
@@ -551,119 +510,27 @@ export default function InteractiveListenerMap() {
                     </div>
                   )}
 
-                  {/* World Map - Always render, but show loading overlay */}
-                  <div className={`absolute inset-0 transition-opacity duration-500 ${isLoading ? 'opacity-30' : 'opacity-100'}`}>
-                    <div
-                      className="absolute inset-0 transition-transform duration-200"
-                      style={{
-                        transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomLevel})`,
-                        transformOrigin: "center center",
-                      }}
-                    >
-                      {/* Map Background */}
-                      <div className="w-full h-full flex items-center justify-center">
-                        <WorldMapSVG
-                          className="w-full h-full max-w-4xl"
-                          fill={isDarkMode ? "#374151" : "#d1d5db"}
-                          stroke={isDarkMode ? "#6b7280" : "#9ca3af"}
-                        />
-                      </div>
-
-                      {/* Debug info - remove in production */}
-                      <div className="absolute top-2 left-2 text-xs opacity-50">
-                        <p className={isDarkMode ? "text-white" : "text-black"}>
-                          Listeners: {activeListeners.length} | Active: {activeListeners.filter(l => l.isActiveListening).length}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Active Listener Dots Container */}
+                  {/* World Map with Interactive Listeners */}
                   {!isLoading && (
-                    <div
-                      className="absolute inset-0 transition-transform duration-200"
-                      style={{
-                        transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomLevel})`,
-                        transformOrigin: "center center",
-                      }}
-                    >
-                      {/* Map Background */}
-                      <div className="w-full h-full flex items-center justify-center">
-                        <WorldMapSVG
-                          className="w-full h-full max-w-4xl"
-                          fill={isDarkMode ? "#374151" : "#d1d5db"}
-                          stroke={isDarkMode ? "#4b5563" : "#9ca3af"}
-                        />
-                      </div>
+                    <WorldMapDisplay
+                      listeners={activeListeners}
+                      colors={colors}
+                      isDarkMode={isDarkMode}
+                      onListenerClick={setSelectedListener}
+                      selectedListener={selectedListener}
+                      zoomLevel={zoomLevel}
+                      panOffset={panOffset}
+                    />
+                  )}
 
-                      <div
-                      className="absolute inset-0 transition-transform duration-200"
-                      style={{
-                        transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomLevel})`,
-                        transformOrigin: "center center",
-                      }}
-                    >
-                      {/* Active Listener Dots */}
-                      <div className="absolute inset-0">
-                        {activeListeners
-                          .filter((listener) => listener.isActiveListening)
-                          .map((listener) => {
-                            const position = getScreenPosition(
-                              listener.lat,
-                              listener.lng,
-                            );
-                            return (
-                              <div
-                                key={listener.id}
-                                className="absolute cursor-pointer transition-all duration-500 ease-in-out"
-                                style={{
-                                  left: `${position.x}%`,
-                                  top: `${position.y}%`,
-                                  transform: "translate(-50%, -50%)",
-                                  opacity: listener.isActiveListening ? 1 : 0,
-                                  zIndex: 10,
-                                }}
-                                onClick={() => setSelectedListener(listener)}
-                              >
-                                <div className="relative">
-                                  {/* Main dot */}
-                                  <div
-                                    className="w-3 h-3 rounded-full animate-pulse transition-all duration-300 hover:scale-150"
-                                    style={{
-                                      backgroundColor: colors.primary,
-                                      boxShadow: `0 0 15px ${colors.primary}80`,
-                                    }}
-                                  />
-                                  {/* Pulsing ring */}
-                                  <div
-                                    className="absolute -top-1 -left-1 w-5 h-5 rounded-full animate-ping opacity-30"
-                                    style={{
-                                      border: `2px solid ${colors.primary}`,
-                                    }}
-                                  />
-                                  {/* Larger outer ring */}
-                                  <div
-                                    className="absolute -top-2 -left-2 w-7 h-7 rounded-full animate-pulse opacity-20"
-                                    style={{
-                                      border: `1px solid ${colors.primary}`,
-                                      animationDelay: "0.5s",
-                                      animationDuration: "2s",
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            );
-                          })}
-                      </div>
-                    </div>
-
-                      )}
-
-                  {/* Listener Info Popup */}
+                  {/* Selected Listener Info */}
                   {selectedListener && (
                     <div
-                      className={`absolute top-4 left-4 ${isDarkMode ? "bg-gray-900/90" : "bg-white/90"} backdrop-blur-sm rounded-lg p-4 min-w-48 shadow-xl border z-20`}
-                      style={{ borderColor: `${colors.primary}40` }}
+                      className="absolute bottom-4 left-4 p-4 rounded-lg shadow-lg border z-20"
+                      style={{
+                        backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                        borderColor: colors.primary,
+                      }}
                     >
                       <button
                         onClick={() => setSelectedListener(null)}
@@ -691,8 +558,7 @@ export default function InteractiveListenerMap() {
                       <p
                         className={`text-xs mt-2 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}
                       >
-                        Last seen:{" "}
-                        {selectedListener.lastSeen.toLocaleTimeString()}
+                        Last seen: {selectedListener.lastSeen.toLocaleTimeString()}
                       </p>
                     </div>
                   )}
@@ -714,7 +580,7 @@ export default function InteractiveListenerMap() {
                 >
                   Live Statistics
                 </h3>
-                <div className="space-y-2 flex-1">
+                <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span
                       className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}
@@ -751,7 +617,7 @@ export default function InteractiveListenerMap() {
                       className="font-black text-lg"
                       style={{ color: colors.primary }}
                     >
-                      {stats?.totalListeners || 1847}
+                      {stats?.currentListeners || 42}
                     </span>
                   </div>
                 </div>
@@ -764,44 +630,50 @@ export default function InteractiveListenerMap() {
             >
               <CardContent className="p-6">
                 <h3
-                  className="font-black text-xl mb-4"
+                  className="font-black text-xl mb-3"
                   style={{ color: colors.primary }}
                 >
                   Active Locations
                 </h3>
-                <div className="space-y-3 max-h-64 overflow-y-auto">
+                <div className="space-y-2 max-h-64 overflow-y-auto">
                   {activeListeners
-                    .filter((listener) => listener.isActiveListening)
-                    .slice(0, 8)
-                    .map((listener, index) => (
+                    .filter((l) => l.isActiveListening)
+                    .map((listener) => (
                       <div
                         key={listener.id}
-                        className="flex items-center justify-between"
+                        className={`flex items-center justify-between p-2 rounded transition-colors duration-200 cursor-pointer ${
+                          selectedListener?.id === listener.id
+                            ? "bg-opacity-20"
+                            : "hover:bg-opacity-10"
+                        }`}
+                        style={{
+                          backgroundColor: selectedListener?.id === listener.id 
+                            ? colors.primary 
+                            : 'transparent',
+                        }}
+                        onClick={() => setSelectedListener(listener)}
                       >
                         <div className="flex items-center">
-                          <span
-                            className="font-bold mr-3"
-                            style={{ color: colors.primary }}
-                          >
-                            #{index + 1}
-                          </span>
+                          <MapPin className="h-4 w-4 mr-2" style={{ color: colors.primary }} />
                           <div>
-                            <p
+                            <div
                               className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
                             >
                               {listener.city}
-                            </p>
-                            <p
+                            </div>
+                            <div
                               className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
                             >
                               {listener.country}
-                            </p>
+                            </div>
                           </div>
                         </div>
-                        <div
-                          className="w-2 h-2 rounded-full animate-pulse"
-                          style={{ backgroundColor: colors.primary }}
-                        />
+                        <div className="flex items-center">
+                          <div
+                            className="w-2 h-2 rounded-full animate-pulse"
+                            style={{ backgroundColor: colors.primary }}
+                          />
+                        </div>
                       </div>
                     ))}
                 </div>
