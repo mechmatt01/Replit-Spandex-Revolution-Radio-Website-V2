@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { Menu, ChevronDown, User, Calendar, Music, Send, Phone, MapPin, Heart, UserPlus, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,10 +17,6 @@ export default function Navigation() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
-
-
-
-
 
   useEffect(() => {
     const handleOpenAuthModal = (event: CustomEvent) => {
@@ -42,6 +39,7 @@ export default function Navigation() {
   const brandTextRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const [navPosition, setNavPosition] = useState<number>(0);
+  
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -73,7 +71,6 @@ export default function Navigation() {
         const leftPosition = centerX - (navWidth / 2);
 
         setNavPosition(leftPosition);
-
       }
     };
 
@@ -91,131 +88,142 @@ export default function Navigation() {
 
   const [location, setLocation] = useLocation();
 
-  const navigateToSection = (sectionId: string, route?: string) => {
+  // Unified navigation function that works for both desktop and mobile
+  const handleNavigation = (sectionId: string, route?: string) => {
+    console.log(`Navigation triggered: ${sectionId}, route: ${route}`);
+    
     // Close all menus first
     setIsOpen(false);
     setIsDropdownOpen(false);
 
-    // If we need to go to a different route
+    // Handle route-based navigation (like /music)
     if (route && route !== location) {
+      console.log(`Navigating to route: ${route}`);
       setLocation(route);
-      // Wait for page to load then scroll to section
+      
+      // If there's a section to scroll to after route change
+      if (sectionId && sectionId !== route.replace('/', '')) {
+        setTimeout(() => {
+          const element = document.getElementById(sectionId);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 200);
+      }
+      return;
+    }
+
+    // Handle section scrolling
+    if (sectionId) {
+      // If not on home page, navigate to home first
+      if (location !== "/") {
+        console.log(`Navigating to home with section: ${sectionId}`);
+        window.location.href = `/#${sectionId}`;
+        return;
+      }
+
+      // Already on home page, just scroll to section
+      console.log(`Scrolling to section: ${sectionId}`);
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-      }, 200);
-    } else {
-      // Same page, just scroll to section
-      setTimeout(() => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else {
+          // If element not found, try again after a short delay
+          setTimeout(() => {
+            const el = document.getElementById(sectionId);
+            if (el) {
+              el.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          }, 300);
         }
       }, 50);
     }
   };
 
-  // Direct navigation functions for clarity
-  const goToMusic = () => {
+  // Unified authentication handlers
+  const handleLogin = () => {
+    console.log("Login button clicked");
     setIsOpen(false);
     setIsDropdownOpen(false);
-    window.location.href = "/music";
+    setAuthMode("login");
+    setIsAuthModalOpen(true);
   };
 
-  const goToHomeSection = (sectionId: string) => {
-    // Close any open menus
+  const handleSignUp = () => {
+    console.log("Sign up button clicked");
     setIsOpen(false);
     setIsDropdownOpen(false);
-
-    // If not on home page, navigate to home first
-    if (window.location.pathname !== "/") {
-      window.location.href = `/#${sectionId}`;
-    } else {
-      // Already on home page, just scroll
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "start" });
-      } else {
-        // If element not found, try again after a short delay
-        setTimeout(() => {
-          const el = document.getElementById(sectionId);
-          if (el) {
-            el.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        }, 300);
-      }
-    }
+    setAuthMode("register");
+    setIsAuthModalOpen(true);
   };
 
+  const handleProfile = () => {
+    console.log("Profile button clicked");
+    setIsOpen(false);
+    setIsDropdownOpen(false);
+    setLocation("/profile");
+  };
+
+  const handleLogout = () => {
+    console.log("Logout button clicked");
+    setIsOpen(false);
+    setIsDropdownOpen(false);
+    logout();
+  };
+
+  // Menu items with unified action handlers
   const menuItems = [
     { 
       id: 1, 
       label: "MUSIC", 
       icon: Music, 
-      action: () => {
-        goToMusic();
-      }, 
+      action: () => handleNavigation("music", "/music"), 
       tooltip: "Listen to live radio and music" 
     },
     { 
       id: 2, 
       label: "SCHEDULE", 
       icon: Calendar, 
-      action: () => {
-        goToHomeSection("schedule");
-      }, 
+      action: () => handleNavigation("schedule"), 
       tooltip: "View show schedule and programming" 
     },
     { 
       id: 3, 
       label: "SUPPORT US", 
       icon: Heart, 
-      action: () => {
-        goToHomeSection("subscribe");
-      }, 
+      action: () => handleNavigation("subscribe"), 
       tooltip: "Support the station with premium subscriptions" 
     },
     { 
       id: 4, 
       label: "SUBMISSIONS", 
       icon: Send, 
-      action: () => {
-        goToHomeSection("submissions");
-      }, 
+      action: () => handleNavigation("submissions"), 
       tooltip: "Submit song requests and feedback" 
     },
     { 
       id: 5, 
       label: "CONTACT", 
       icon: Phone, 
-      action: () => {
-        goToHomeSection("contact");
-      }, 
+      action: () => handleNavigation("contact"), 
       tooltip: "Get in touch with the station" 
     },
     { 
       id: 6, 
       label: "LISTEN MAP", 
       icon: MapPin, 
-      action: () => {
-        goToHomeSection("map");
-      }, 
+      action: () => handleNavigation("map"), 
       tooltip: "View live listener map worldwide" 
     },
     { 
       id: 7, 
       label: "FEATURES", 
       icon: Heart, 
-      action: () => {
-        goToHomeSection("features");
-      }, 
+      action: () => handleNavigation("features"), 
       tooltip: "Explore premium features and subscription tiers" 
     },
   ];
-
-
 
   return (
     <TooltipProvider>
@@ -331,7 +339,7 @@ export default function Navigation() {
                   </TooltipContent>
                 </Tooltip>
 
-                {/* Dropdown Menu */}
+                {/* Desktop Dropdown Menu */}
                 {isDropdownOpen && (
                   <div 
                     className="absolute left-1/2 transform -translate-x-1/2 mt-2 py-2 rounded-xl shadow-xl border animate-in fade-in-0 slide-in-from-top-2 duration-200 backdrop-blur-md"
@@ -350,10 +358,7 @@ export default function Navigation() {
                         <Tooltip key={item.id}>
                           <TooltipTrigger asChild>
                             <button
-                              onClick={() => {
-                                setIsDropdownOpen(false);
-                                item.action();
-                              }}
+                              onClick={item.action}
                               className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg w-full"
                               style={{ 
                                 color: colors.text
@@ -393,10 +398,7 @@ export default function Navigation() {
               {!isAuthenticated ? (
                 <div className="flex items-center space-x-3">
                   <button
-                    onClick={() => {
-                      setAuthMode("login");
-                      setIsAuthModalOpen(true);
-                    }}
+                    onClick={handleLogin}
                     className="px-2 py-1 text-sm font-semibold rounded-md transition-all duration-200 hover:scale-105"
                     style={{
                       color: colors.text,
@@ -409,10 +411,7 @@ export default function Navigation() {
                     LOGIN
                   </button>
                   <button
-                    onClick={() => {
-                      setAuthMode("register");
-                      setIsAuthModalOpen(true);
-                    }}
+                    onClick={handleSignUp}
                     className="px-2 py-1 text-sm font-semibold rounded-md transition-all duration-200 hover:scale-105 whitespace-nowrap"
                     style={{
                       backgroundColor: colors.primary,
@@ -430,7 +429,7 @@ export default function Navigation() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
-                        onClick={() => setLocation("/profile")}
+                        onClick={handleProfile}
                         className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
                         style={{
                           backgroundColor: 'transparent',
@@ -448,7 +447,7 @@ export default function Navigation() {
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <button
-                        onClick={() => logout()}
+                        onClick={handleLogout}
                         className="p-2 rounded-lg transition-all duration-200 hover:scale-105"
                         style={{
                           backgroundColor: 'transparent',
@@ -498,18 +497,17 @@ export default function Navigation() {
               zIndex: 40
             }}>
               <div className="px-4 py-6 space-y-3">
-                {/* Render all menu items in mobile */}
+                {/* Render all menu items in mobile with consistent navigation */}
                 {menuItems.map((item) => {
                   const IconComponent = item.icon;
                   return (
                     <button
                       key={item.id}
-                      onClick={() => {
-                        setIsOpen(false);
-                        // Execute action after dropdown closes
-                        setTimeout(() => {
-                          item.action();
-                        }, 100);
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log(`Mobile menu item clicked: ${item.label}`);
+                        item.action();
                       }}
                       type="button"
                       className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
@@ -538,12 +536,11 @@ export default function Navigation() {
                   {!isAuthenticated ? (
                     <>
                       <button
-                        onClick={() => {
-                          setAuthMode("login");
-                          setIsOpen(false);
-                          setTimeout(() => {
-                            setIsAuthModalOpen(true);
-                          }, 100);
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log("Mobile login button clicked");
+                          handleLogin();
                         }}
                         type="button"
                         className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
@@ -567,12 +564,11 @@ export default function Navigation() {
                         <span>LOGIN</span>
                       </button>
                       <button
-                        onClick={() => {
-                          setAuthMode("register");
-                          setIsOpen(false);
-                          setTimeout(() => {
-                            setIsAuthModalOpen(true);
-                          }, 100);
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log("Mobile sign up button clicked");
+                          handleSignUp();
                         }}
                         type="button"
                         className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
@@ -593,73 +589,60 @@ export default function Navigation() {
                         <UserPlus size={20} style={{ color: 'white' }} />
                         <span>SIGN UP</span>
                       </button>
-
-
-
                     </>
                   ) : (
                     <div className="space-y-3">
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => {
-                              setLocation('/profile');
-                              setIsOpen(false);
-                            }}
-                            type="button"
-                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
-                            style={{
-                              color: colors.text,
-                              backgroundColor: colors.primary + '20'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary + '30';
-                              e.currentTarget.style.color = 'white';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary + '20';
-                              e.currentTarget.style.color = colors.text;
-                            }}
-                          >
-                            <User size={16} style={{ color: colors.primary }} />
-                            <span>PROFILE</span>
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          View profile and settings
-                        </TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => {
-                              logout();
-                              setIsOpen(false);
-                            }}
-                            type="button"
-                            className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
-                            style={{
-                              color: colors.primary,
-                              backgroundColor: 'transparent',
-                              border: `1px solid ${colors.primary}`
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = colors.primary + '20';
-                              e.currentTarget.style.color = 'white';
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
-                              e.currentTarget.style.color = colors.primary;
-                            }}
-                          >
-                            <LogOut size={16} style={{ color: colors.primary }} />
-                            <span>SIGN OUT</span>
-                          </button>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">
-                          Sign out of your account
-                        </TooltipContent>
-                      </Tooltip>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log("Mobile profile button clicked");
+                          handleProfile();
+                        }}
+                        type="button"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
+                        style={{
+                          color: colors.text,
+                          backgroundColor: colors.primary + '20'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary + '30';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary + '20';
+                          e.currentTarget.style.color = colors.text;
+                        }}
+                      >
+                        <User size={16} style={{ color: colors.primary }} />
+                        <span>PROFILE</span>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          console.log("Mobile logout button clicked");
+                          handleLogout();
+                        }}
+                        type="button"
+                        className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full"
+                        style={{
+                          color: colors.primary,
+                          backgroundColor: 'transparent',
+                          border: `1px solid ${colors.primary}`
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary + '20';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = colors.primary;
+                        }}
+                      >
+                        <LogOut size={16} style={{ color: colors.primary }} />
+                        <span>SIGN OUT</span>
+                      </button>
                     </div>
                   )}
                 </div>
@@ -675,8 +658,6 @@ export default function Navigation() {
         onClose={() => setIsAuthModalOpen(false)}
         initialMode={authMode}
       />
-
-
     </TooltipProvider>
   );
 }
