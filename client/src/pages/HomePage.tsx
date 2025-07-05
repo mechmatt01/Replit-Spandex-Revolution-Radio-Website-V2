@@ -4,7 +4,7 @@ import Features from "@/components/Features";
 import About from "@/components/About";
 import Schedule from "@/components/Schedule";
 import Submissions from "@/components/Submissions";
-import FullWidthGlobeMap from "@/components/FullWidthGlobeMap";
+import InteractiveListenerMap from "@/components/InteractiveListenerMap";
 import Contact from "@/components/Contact";
 import SubscriptionCarousel from "@/components/SubscriptionCarousel";
 import ShopifyEcommerce from "@/components/ShopifyEcommerce";
@@ -62,7 +62,7 @@ export default function HomePage() {
         </div>
       </section>
       <Submissions />
-      <FullWidthGlobeMap />
+      <InteractiveListenerMap />
       <Contact />
       <ShopifyEcommerce />
       <Footer />
