@@ -251,6 +251,21 @@ export default function FullWidthGlobeMap() {
   useEffect(() => {
     if (!config?.googleMapsApiKey || !mapRef.current || !userLocation) return;
 
+    // Add CSS to hide Google attribution
+    const style = document.createElement("style");
+    style.textContent = `
+      .gm-style-cc,
+      .gmnoprint,
+      .gm-style-mtc,
+      a[href*="maps.google.com"],
+      a[href*="google.com/maps"],
+      .gm-svpc,
+      .gm-fullscreen-control {
+        display: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+
     const initializeMap = () => {
       const mapInstance = new google.maps.Map(mapRef.current!, {
         zoom: 2,
@@ -449,7 +464,7 @@ export default function FullWidthGlobeMap() {
     >
       <div className={`${isFullscreen ? "h-full p-[5px]" : "max-w-full mx-auto px-4 sm:px-6 lg:px-8"}`}>
         {/* Header */}
-        <div className={`text-center ${isFullscreen ? "mb-4" : "mb-16"}`}>
+        <div className={`text-center ${isFullscreen ? "mb-4 pt-[10px]" : "mb-16"}`}>
           <h2
             className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
           >
@@ -468,22 +483,22 @@ export default function FullWidthGlobeMap() {
               {/* Weather Information Display */}
               {weather && (
                 <div className="mb-4">
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center justify-center gap-1">
                     <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
                     <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                       {weather.location}
                     </span>
+                    <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"} mx-1`}>
+                      {Math.round(weather.temperature)}°F
+                    </span>
+                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      {weather.description}
+                    </span>
                     <img
                       src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
                       alt={weather.description}
-                      className="w-8 h-8 ml-2"
+                      className="w-10 h-10 ml-1"
                     />
-                    <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"} ml-1`}>
-                      {Math.round(weather.temperature)}°F
-                    </span>
-                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"} ml-1`}>
-                      {weather.description}
-                    </span>
                   </div>
                 </div>
               )}
@@ -504,57 +519,98 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Map Container */}
-        <div className={`relative ${isFullscreen ? "h-[calc(100vh-140px)]" : "h-[600px]"} ${isFullscreen ? "mb-[120px]" : "mb-16"}`}>
+        <div className={`relative ${isFullscreen ? "h-[calc(100vh-80px)]" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
           <div
             ref={mapRef}
-            className={`w-full h-full ${isFullscreen ? "rounded-none" : "rounded-lg"} ${isDarkMode ? "bg-gray-900" : "bg-gray-100"} map-container`}
+            className={`w-full h-full ${isFullscreen ? "rounded-lg" : "rounded-lg"} map-container`}
             style={{ 
               minHeight: "400px",
+              backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
             }}
           />
           
-          {/* CSS to hide Google attribution */}
-          <style jsx>{`
-            .map-container .gm-style-cc,
-            .map-container .gmnoprint,
-            .map-container .gm-style-mtc,
-            .map-container a[href*="maps.google.com"],
-            .map-container a[href*="google.com/maps"],
-            .map-container .gm-svpc,
-            .map-container .gm-fullscreen-control {
-              display: none !important;
-            }
-          `}</style>
+          {/* Custom Map Controls */}
+          <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+            <Button
+              onClick={() => {
+                if (window.google && mapRef.current) {
+                  const map = mapRef.current.firstChild as any;
+                  if (map && map.getZoom) {
+                    map.setZoom(map.getZoom() + 1);
+                  }
+                }
+              }}
+              size="sm"
+              className={`p-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-700 text-white" : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`}
+              style={{ 
+                backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                color: isDarkMode ? "#ffffff" : "#000000"
+              }}
+            >
+              <ZoomIn className="w-4 h-4" />
+            </Button>
+            <Button
+              onClick={() => {
+                if (window.google && mapRef.current) {
+                  const map = mapRef.current.firstChild as any;
+                  if (map && map.getZoom) {
+                    map.setZoom(map.getZoom() - 1);
+                  }
+                }
+              }}
+              size="sm"
+              className={`p-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-700 text-white" : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`}
+              style={{ 
+                backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                color: isDarkMode ? "#ffffff" : "#000000"
+              }}
+            >
+              <ZoomOut className="w-4 h-4" />
+            </Button>
+            <Button
+              onClick={() => {
+                if (window.google && mapRef.current) {
+                  const map = mapRef.current.firstChild as any;
+                  if (map && map.panTo) {
+                    map.panTo({ lat: 40.7128, lng: -74.0060 });
+                    map.setZoom(2);
+                  }
+                }
+              }}
+              size="sm"
+              className={`p-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-700 text-white" : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`}
+              style={{ 
+                backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                color: isDarkMode ? "#ffffff" : "#000000"
+              }}
+            >
+              <RotateCcw className="w-4 h-4" />
+            </Button>
+          </div>
           
           {/* Fullscreen Toggle */}
           <Button
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className={`absolute top-4 right-4 z-10 ${
-              isDarkMode ? "bg-black/80 hover:bg-black/90" : "bg-white/80 hover:bg-white/90"
-            } backdrop-blur-md border-0`}
+            className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg ${
+              isDarkMode ? "bg-gray-800 hover:bg-gray-700 text-white" : "bg-white hover:bg-gray-50 text-black"
+            }`}
+            style={{ 
+              backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+              color: isDarkMode ? "#ffffff" : "#000000"
+            }}
             size="sm"
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
           </Button>
         </div>
 
-        {/* Statistics Cards */}
+        {/* Statistics Cards - Original 3-Column Layout */}
         {!isFullscreen && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {/* Live Statistics */}
-            <Card 
-              className={`backdrop-blur-md border-0 ${
-                isDarkMode 
-                  ? `bg-gray-900/50 ${colors.primary === 'orange' ? 'hover:bg-orange-900/20' : `hover:bg-${colors.primary}-900/20`}`
-                  : `bg-white/50 ${colors.primary === 'orange' ? 'hover:bg-orange-50/50' : `hover:bg-${colors.primary}-50/50`}`
-              } transition-all duration-300`}
-            >
+            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
               <CardHeader className="pb-3">
-                <CardTitle 
-                  className={`font-orbitron font-black text-lg ${
-                    isDarkMode ? "text-white" : "text-black"
-                  }`}
-                >
+                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
                   Live Statistics
                 </CardTitle>
               </CardHeader>
@@ -566,11 +622,7 @@ export default function FullWidthGlobeMap() {
                       Active Listeners
                     </span>
                   </div>
-                  <span 
-                    className={`font-bold ${
-                      colors.primary === 'orange' ? 'text-orange-500' : `text-${colors.primary}-500`
-                    }`}
-                  >
+                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
                     {totalListeners}
                   </span>
                 </div>
@@ -581,14 +633,47 @@ export default function FullWidthGlobeMap() {
                       Countries
                     </span>
                   </div>
-                  <span 
-                    className={`font-bold ${
-                      colors.primary === 'orange' ? 'text-orange-500' : `text-${colors.primary}-500`
-                    }`}
-                  >
+                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
                     {countriesWithListeners}
                   </span>
                 </div>
+              </CardContent>
+            </Card>
+
+            {/* Active Locations */}
+            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
+              <CardHeader className="pb-3">
+                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
+                  Active Locations
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 max-h-32 overflow-y-auto">
+                  {top10Listeners.map((listener) => (
+                    <div key={listener.id} className="flex items-center justify-between">
+                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                        {listener.city}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                        <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+                          Live
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Engagement Metrics */}
+            <Card className={`${isDarkMode ? "bg-gray-900/50 border-gray-800" : "bg-white/50 border-gray-200"} backdrop-blur-md`}>
+              <CardHeader className="pb-3">
+                <CardTitle className={`font-orbitron font-black text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
+                  Engagement
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <TrendingUp className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
@@ -596,11 +681,7 @@ export default function FullWidthGlobeMap() {
                       Peak Hours
                     </span>
                   </div>
-                  <span 
-                    className={`font-bold ${
-                      colors.primary === 'orange' ? 'text-orange-500' : `text-${colors.primary}-500`
-                    }`}
-                  >
+                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
                     8-10 PM
                   </span>
                 </div>
@@ -611,62 +692,9 @@ export default function FullWidthGlobeMap() {
                       Avg. Session
                     </span>
                   </div>
-                  <span 
-                    className={`font-bold ${
-                      colors.primary === 'orange' ? 'text-orange-500' : `text-${colors.primary}-500`
-                    }`}
-                  >
+                  <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
                     2.5 hrs
                   </span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Top 10 Listeners - Original Layout */}
-            <Card 
-              className={`backdrop-blur-md border-0 ${
-                isDarkMode 
-                  ? `bg-gray-900/50 ${colors.primary === 'orange' ? 'hover:bg-orange-900/20' : `hover:bg-${colors.primary}-900/20`}`
-                  : `bg-white/50 ${colors.primary === 'orange' ? 'hover:bg-orange-50/50' : `hover:bg-${colors.primary}-50/50`}`
-              } transition-all duration-300`}
-            >
-              <CardHeader className="pb-3">
-                <CardTitle 
-                  className={`font-orbitron font-black text-lg ${
-                    isDarkMode ? "text-white" : "text-black"
-                  }`}
-                >
-                  Top Locations
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 max-h-40 overflow-y-auto">
-                  {top10Listeners.map((listener, index) => (
-                    <div key={listener.id} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span 
-                          className={`text-xs font-bold ${
-                            colors.primary === 'orange' ? 'text-orange-500' : `text-${colors.primary}-500`
-                          } w-6 text-center`}
-                        >
-                          #{index + 1}
-                        </span>
-                        <span className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                          {listener.city}, {listener.country}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className={`w-2 h-2 rounded-full animate-pulse ${
-                            colors.primary === 'orange' ? 'bg-orange-500' : `bg-${colors.primary}-500`
-                          }`} 
-                        />
-                        <span className={`text-xs ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
-                          Live
-                        </span>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </CardContent>
             </Card>
