@@ -53,7 +53,7 @@ import rainy2DayIcon from "@assets/animated_weather_icons/rainy-2-day.svg";
 import rainy2NightIcon from "@assets/animated_weather_icons/rainy-2-night.svg";
 import rainy2Icon from "@assets/animated_weather_icons/rainy-2.svg";
 import rainy3DayIcon from "@assets/animated_weather_icons/rainy-3-day.svg";
-import rainy3NightIcon from "@assets/animated_weather_icons/rainy-3-night.svg";
+import rainy3NightIcon from "@assets/animated_weather_icons/rainy-3.svg";
 import rainy3Icon from "@assets/animated_weather_icons/rainy-3.svg";
 import scatteredThunderstormsDayIcon from "@assets/animated_weather_icons/scattered-thunderstorms-day.svg";
 import scatteredThunderstormsNightIcon from "@assets/animated_weather_icons/scattered-thunderstorms-night.svg";
@@ -67,7 +67,7 @@ import snowy2DayIcon from "@assets/animated_weather_icons/snowy-2-day.svg";
 import snowy2NightIcon from "@assets/animated_weather_icons/snowy-2-night.svg";
 import snowy2Icon from "@assets/animated_weather_icons/snowy-2.svg";
 import snowy3DayIcon from "@assets/animated_weather_icons/snowy-3-day.svg";
-import snowy3NightIcon from "@assets/animated_weather_icons/snowy-3-night.svg";
+import snowy3NightIcon from "@assets/animated_weather_icons/snowy-3.svg";
 import snowy3Icon from "@assets/animated_weather_icons/snowy-3.svg";
 import thunderstormsIcon from "@assets/animated_weather_icons/thunderstorms.svg";
 import tornadoIcon from "@assets/animated_weather_icons/tornado.svg";
@@ -98,12 +98,12 @@ interface WeatherData {
 // Weather condition mapping to animated icons
 const getWeatherIcon = (condition: string, isDay: boolean) => {
   const conditionLower = condition.toLowerCase();
-  
+
   // Clear conditions
   if (conditionLower.includes('clear') || conditionLower.includes('sunny')) {
     return isDay ? clearDayIcon : clearNightIcon;
   }
-  
+
   // Cloudy conditions
   if (conditionLower.includes('partly cloudy') || conditionLower.includes('few clouds')) {
     return isDay ? cloudy1DayIcon : cloudy1NightIcon;
@@ -114,7 +114,7 @@ const getWeatherIcon = (condition: string, isDay: boolean) => {
   if (conditionLower.includes('overcast') || conditionLower.includes('cloudy')) {
     return isDay ? cloudy3DayIcon : cloudy3NightIcon;
   }
-  
+
   // Rain conditions
   if (conditionLower.includes('light rain') || conditionLower.includes('drizzle')) {
     return isDay ? rainy1DayIcon : rainy1NightIcon;
@@ -125,7 +125,7 @@ const getWeatherIcon = (condition: string, isDay: boolean) => {
   if (conditionLower.includes('heavy rain') || conditionLower.includes('downpour')) {
     return isDay ? rainy3DayIcon : rainy3NightIcon;
   }
-  
+
   // Snow conditions
   if (conditionLower.includes('light snow')) {
     return isDay ? snowy1DayIcon : snowy1NightIcon;
@@ -136,7 +136,7 @@ const getWeatherIcon = (condition: string, isDay: boolean) => {
   if (conditionLower.includes('heavy snow') || conditionLower.includes('blizzard')) {
     return isDay ? snowy3DayIcon : snowy3NightIcon;
   }
-  
+
   // Thunderstorm conditions
   if (conditionLower.includes('thunderstorm') || conditionLower.includes('thunder')) {
     if (conditionLower.includes('severe')) return severeThunderstormIcon;
@@ -144,39 +144,39 @@ const getWeatherIcon = (condition: string, isDay: boolean) => {
     if (conditionLower.includes('scattered')) return isDay ? scatteredThunderstormsDayIcon : scatteredThunderstormsNightIcon;
     return thunderstormsIcon;
   }
-  
+
   // Fog conditions
   if (conditionLower.includes('fog') || conditionLower.includes('mist')) {
     return isDay ? fogDayIcon : fogNightIcon;
   }
-  
+
   // Haze conditions
   if (conditionLower.includes('haze')) {
     return isDay ? hazeDayIcon : hazeNightIcon;
   }
-  
+
   // Dust conditions
   if (conditionLower.includes('dust') || conditionLower.includes('sand')) {
     return dustIcon;
   }
-  
+
   // Wind conditions
   if (conditionLower.includes('wind')) {
     return windIcon;
   }
-  
+
   // Extreme conditions
   if (conditionLower.includes('tornado')) return tornadoIcon;
   if (conditionLower.includes('hurricane')) return hurricaneIcon;
   if (conditionLower.includes('tropical storm')) return tropicalStormIcon;
   if (conditionLower.includes('hail')) return hailIcon;
   if (conditionLower.includes('frost')) return isDay ? frostDayIcon : frostNightIcon;
-  
+
   // Mixed conditions
   if (conditionLower.includes('rain') && conditionLower.includes('snow')) return rainAndSnowMixIcon;
   if (conditionLower.includes('rain') && conditionLower.includes('sleet')) return rainAndSleetMixIcon;
   if (conditionLower.includes('snow') && conditionLower.includes('sleet')) return snowAndSleetMixIcon;
-  
+
   // Default fallback
   return isDay ? clearDayIcon : clearNightIcon;
 };
@@ -412,7 +412,7 @@ export default function FullWidthGlobeMap() {
             </circle>
           </svg>
         `;
-        
+
         const marker = new google.maps.Marker({
           position: { lat: listener.lat, lng: listener.lng },
           map: mapInstance,
@@ -502,7 +502,7 @@ export default function FullWidthGlobeMap() {
 
         marker.addListener("click", () => {
           infoWindow.open(mapInstance, marker);
-          
+
           // Hide default InfoWindow styling after it opens
           setTimeout(() => {
             const infoWindowElements = document.querySelectorAll('.gm-style-iw');
@@ -519,7 +519,7 @@ export default function FullWidthGlobeMap() {
               element.style.padding = '0';
               element.style.margin = '0';
             });
-            
+
             // Hide the default close button
             const closeButtons = document.querySelectorAll('.gm-ui-hover-effect');
             closeButtons.forEach(button => {
@@ -573,9 +573,9 @@ export default function FullWidthGlobeMap() {
           <h2
             className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
           >
-            LIVE INTERACTIVE MAP
+            GLOBAL LISTENERS
           </h2>
-          
+
           {!isFullscreen && (
             <>
               <p
@@ -584,7 +584,7 @@ export default function FullWidthGlobeMap() {
                 See where metal fans are tuning in from around the world in
                 real-time.
               </p>
-              
+
               {/* Weather Information Display */}
               {weather && (
                 <div className="mb-4">
@@ -610,7 +610,7 @@ export default function FullWidthGlobeMap() {
                   </div>
                 </div>
               )}
-              
+
               {/* Loading state for weather */}
               {weatherLoading && (
                 <div className="mb-4">
@@ -632,6 +632,9 @@ export default function FullWidthGlobeMap() {
           {isFullscreen && (
             <div className="absolute top-5 left-0 right-0 z-10 px-8">
               <div className="text-center mb-6">
+                 <h2 className={`font-orbitron font-black text-2xl md:text-3xl mb-2 ${isDarkMode ? "text-white" : "text-black"}`}>
+                  Global Listeners
+                </h2>
                 {/* Weather Display in Fullscreen */}
                 {weather && (
                   <div className="mb-4">
@@ -660,7 +663,7 @@ export default function FullWidthGlobeMap() {
               </div>
             </div>
           )}
-          
+
           <div
             ref={mapRef}
             className={`w-full h-full ${isFullscreen ? "rounded-xl mx-8 mt-24" : "rounded-lg"} map-container`}
@@ -671,7 +674,7 @@ export default function FullWidthGlobeMap() {
               border: isFullscreen ? `2px solid ${colors.primary}40` : "none",
             }}
           />
-          
+
           {/* Custom Map Controls */}
           <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
             <Button
@@ -730,7 +733,7 @@ export default function FullWidthGlobeMap() {
               <RotateCcw className="w-4 h-4" />
             </Button>
           </div>
-          
+
           {/* Fullscreen Toggle */}
           <Button
             onClick={() => setIsFullscreen(!isFullscreen)}
@@ -778,7 +781,7 @@ export default function FullWidthGlobeMap() {
                       Active Listeners
                     </span>
                   </div>
-                  
+
                   {/* Countries */}
                   <div className="flex flex-col items-center text-center space-y-2">
                     <span
@@ -799,7 +802,7 @@ export default function FullWidthGlobeMap() {
                       Countries
                     </span>
                   </div>
-                  
+
                   {/* Total Listeners */}
                   <div className="flex flex-col items-center text-center space-y-2">
                     <span

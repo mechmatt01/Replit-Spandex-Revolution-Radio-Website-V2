@@ -546,7 +546,7 @@ export default function InteractiveListenerMap() {
           <h2
             className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
           >
-            LIVE INTERACTIVE MAP
+            GLOBAL LISTENERS
           </h2>
           
           {/* Weather Information - Debug */}
