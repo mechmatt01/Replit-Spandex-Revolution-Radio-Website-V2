@@ -186,6 +186,7 @@ export default function FullWidthGlobeMap() {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const currentInfoWindow = useRef<google.maps.InfoWindow | null>(null);
   const { colors, isDarkMode } = useTheme();
 
   const { data: stats } = useQuery<StreamStats>({
@@ -426,7 +427,7 @@ export default function FullWidthGlobeMap() {
 
         const infoWindow = new google.maps.InfoWindow({
           content: `
-            <div style="
+            <div id="custom-info-window" style="
               background: ${isDarkMode ? '#1f2937' : '#ffffff'};
               color: ${isDarkMode ? '#ffffff' : '#000000'};
               border-radius: 12px;
@@ -437,21 +438,21 @@ export default function FullWidthGlobeMap() {
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
               position: relative;
             ">
-              <button onclick="google.maps.event.trigger(arguments[0], 'closeclick')" style="
+              <button id="close-info-window" style="
                 position: absolute;
-                top: 8px;
-                right: 8px;
+                top: 4px;
+                right: 4px;
                 background: transparent;
                 border: none;
                 color: ${isDarkMode ? '#9ca3af' : '#6b7280'};
                 cursor: pointer;
-                font-size: 18px;
+                font-size: 14px;
                 font-weight: bold;
                 line-height: 1;
-                padding: 4px;
-                border-radius: 4px;
-                width: 24px;
-                height: 24px;
+                padding: 2px;
+                border-radius: 2px;
+                width: 12px;
+                height: 12px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -462,7 +463,7 @@ export default function FullWidthGlobeMap() {
                 align-items: center;
                 gap: 8px;
                 margin-bottom: 8px;
-                padding-right: 24px;
+                padding-right: 16px;
               ">
                 <div style="
                   width: 12px;
@@ -501,9 +502,16 @@ export default function FullWidthGlobeMap() {
         });
 
         marker.addListener("click", () => {
+          // Close any existing InfoWindow
+          if (currentInfoWindow.current) {
+            currentInfoWindow.current.close();
+          }
+          
+          // Open new InfoWindow
           infoWindow.open(mapInstance, marker);
+          currentInfoWindow.current = infoWindow;
 
-          // Hide default InfoWindow styling after it opens
+          // Hide default InfoWindow styling and add close button functionality
           setTimeout(() => {
             const infoWindowElements = document.querySelectorAll('.gm-style-iw');
             infoWindowElements.forEach(element => {
@@ -520,11 +528,34 @@ export default function FullWidthGlobeMap() {
               element.style.margin = '0';
             });
 
-            // Hide the default close button
+            // Hide the default close button and all other default elements
             const closeButtons = document.querySelectorAll('.gm-ui-hover-effect');
             closeButtons.forEach(button => {
               (button as HTMLElement).style.display = 'none';
             });
+            
+            // Hide the default white background containers
+            const gmStyleIwContainers = document.querySelectorAll('.gm-style-iw-d');
+            gmStyleIwContainers.forEach(container => {
+              (container as HTMLElement).style.background = 'transparent';
+              (container as HTMLElement).style.border = 'none';
+              (container as HTMLElement).style.boxShadow = 'none';
+            });
+            
+            // Hide the tail/pointer background
+            const gmStyleIwTails = document.querySelectorAll('.gm-style-iw-t');
+            gmStyleIwTails.forEach(tail => {
+              (tail as HTMLElement).style.display = 'none';
+            });
+
+            // Add functionality to custom close button
+            const customCloseButton = document.getElementById('close-info-window');
+            if (customCloseButton) {
+              customCloseButton.onclick = () => {
+                infoWindow.close();
+                currentInfoWindow.current = null;
+              };
+            }
           }, 100);
         });
       });
