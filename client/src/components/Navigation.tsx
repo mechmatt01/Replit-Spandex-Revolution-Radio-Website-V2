@@ -505,9 +505,11 @@ export default function Navigation() {
                     <button
                       key={item.id}
                       onClick={() => {
-                        console.log(`Mobile dropdown clicked: ${item.label}`);
                         setIsOpen(false);
-                        item.action();
+                        // Execute action after dropdown closes
+                        setTimeout(() => {
+                          item.action();
+                        }, 100);
                       }}
                       type="button"
                       className="flex items-center space-x-3 px-4 py-3 text-left text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap w-full cursor-pointer"
@@ -536,11 +538,12 @@ export default function Navigation() {
                   {!isAuthenticated ? (
                     <>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           setAuthMode("login");
-                          setIsAuthModalOpen(true);
                           setIsOpen(false);
+                          setTimeout(() => {
+                            setIsAuthModalOpen(true);
+                          }, 100);
                         }}
                         type="button"
                         className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
@@ -564,11 +567,12 @@ export default function Navigation() {
                         <span>LOGIN</span>
                       </button>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           setAuthMode("register");
-                          setIsAuthModalOpen(true);
                           setIsOpen(false);
+                          setTimeout(() => {
+                            setIsAuthModalOpen(true);
+                          }, 100);
                         }}
                         type="button"
                         className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
