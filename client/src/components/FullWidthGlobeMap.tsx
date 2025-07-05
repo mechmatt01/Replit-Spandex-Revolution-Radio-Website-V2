@@ -162,7 +162,7 @@ export default function FullWidthGlobeMap() {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
-  const currentInfoWindow = useRef<google.maps.InfoWindow | null>(null);
+  const currentInfoWindow = useRef<any>(null);
   const { colors, isDarkMode } = useTheme();
 
   const { data: stats } = useQuery<StreamStats>({
@@ -401,9 +401,24 @@ export default function FullWidthGlobeMap() {
           },
         });
 
-        const infoWindow = new google.maps.InfoWindow({
-          content: `
-            <div id="custom-info-window" style="
+        // Create custom overlay instead of InfoWindow
+        class CustomOverlay extends google.maps.OverlayView {
+          private position: google.maps.LatLng;
+          private content: string;
+          private div?: HTMLDivElement;
+          private listener: ListenerData;
+
+          constructor(position: google.maps.LatLng, content: string, listener: ListenerData) {
+            super();
+            this.position = position;
+            this.content = content;
+            this.listener = listener;
+          }
+
+          onAdd() {
+            const div = document.createElement('div');
+            div.style.cssText = `
+              position: absolute;
               background: #1f2937;
               color: #ffffff;
               border-radius: 12px;
@@ -412,9 +427,15 @@ export default function FullWidthGlobeMap() {
               border: 2px solid #ff6b35;
               min-width: 200px;
               font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              position: relative;
-            ">
-              <button id="close-info-window" style="
+              z-index: 1000;
+              pointer-events: auto;
+              opacity: 0;
+              transform: translateY(10px);
+              transition: opacity 0.3s ease, transform 0.3s ease;
+            `;
+            
+            div.innerHTML = `
+              <button class="close-overlay" style="
                 position: absolute;
                 top: 4px;
                 right: 4px;
@@ -433,7 +454,7 @@ export default function FullWidthGlobeMap() {
                 align-items: center;
                 justify-content: center;
                 transition: all 0.2s ease;
-              " onmouseover="this.style.background='#374151'" onmouseout="this.style.background='transparent'">×</button>
+              ">×</button>
               <div style="
                 display: flex;
                 align-items: center;
@@ -453,7 +474,7 @@ export default function FullWidthGlobeMap() {
                   font-size: 16px;
                   font-weight: 700;
                   color: #ff6b35;
-                ">${listener.city}, ${listener.country}</h3>
+                ">${this.listener.city}, ${this.listener.country}</h3>
               </div>
               <p style="
                 margin: 0;
@@ -471,131 +492,91 @@ export default function FullWidthGlobeMap() {
               ">
                 Live listener • Active now
               </div>
-            </div>
-          `,
-          disableAutoPan: false,
-          pixelOffset: new google.maps.Size(0, -10),
-        });
+            `;
+
+            this.div = div;
+
+            // Add close button functionality
+            const closeButton = div.querySelector('.close-overlay') as HTMLButtonElement;
+            closeButton.addEventListener('mouseenter', () => {
+              closeButton.style.background = '#374151';
+            });
+            closeButton.addEventListener('mouseleave', () => {
+              closeButton.style.background = 'transparent';
+            });
+            closeButton.addEventListener('click', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              this.setMap(null);
+              if (currentInfoWindow.current === this) {
+                currentInfoWindow.current = null;
+              }
+            });
+
+            // Add pulse animation style
+            const pulseStyle = document.createElement('style');
+            pulseStyle.innerHTML = `
+              @keyframes pulse {
+                0% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.2); opacity: 0.8; }
+                100% { transform: scale(1); opacity: 1; }
+              }
+            `;
+            document.head.appendChild(pulseStyle);
+
+            // Add to map
+            const panes = this.getPanes();
+            if (panes) {
+              panes.overlayMouseTarget.appendChild(div);
+            }
+
+            // Animate in
+            setTimeout(() => {
+              div.style.opacity = '1';
+              div.style.transform = 'translateY(0)';
+            }, 10);
+          }
+
+          draw() {
+            if (this.div) {
+              const overlayProjection = this.getProjection();
+              if (overlayProjection) {
+                const position = overlayProjection.fromLatLngToDivPixel(this.position);
+                if (position) {
+                  this.div.style.left = (position.x - 100) + 'px';
+                  this.div.style.top = (position.y - 120) + 'px';
+                }
+              }
+            }
+          }
+
+          onRemove() {
+            if (this.div && this.div.parentNode) {
+              this.div.parentNode.removeChild(this.div);
+              this.div = undefined;
+            }
+          }
+        }
 
         marker.addListener("click", () => {
-          // Close any existing InfoWindow
+          // Close any existing overlay
           if (currentInfoWindow.current) {
-            currentInfoWindow.current.close();
+            currentInfoWindow.current.setMap(null);
           }
           
-          // Open new InfoWindow
-          infoWindow.open(mapInstance, marker);
-          currentInfoWindow.current = infoWindow;
-
-          // Complete removal of Google Maps default styling
-          setTimeout(() => {
-            // Remove all Google Maps default styling - comprehensive approach
-            const removeGoogleMapsStyling = () => {
-              // Target all possible InfoWindow elements
-              const selectors = [
-                '.gm-style-iw',
-                '.gm-style-iw-d',
-                '.gm-style-iw-c', 
-                '.gm-style-iw-tc',
-                '.gm-style-iw-t',
-                '[class*="gm-style-iw"]'
-              ];
-              
-              selectors.forEach(selector => {
-                const elements = document.querySelectorAll(selector);
-                elements.forEach(element => {
-                  const htmlElement = element as HTMLElement;
-                  htmlElement.style.setProperty('background', 'transparent', 'important');
-                  htmlElement.style.setProperty('border', 'none', 'important');
-                  htmlElement.style.setProperty('box-shadow', 'none', 'important');
-                  htmlElement.style.setProperty('padding', '0', 'important');
-                  htmlElement.style.setProperty('margin', '0', 'important');
-                  htmlElement.style.setProperty('overflow', 'visible', 'important');
-                  
-                  // Also hide parent containers
-                  if (htmlElement.parentElement) {
-                    const parent = htmlElement.parentElement;
-                    parent.style.setProperty('background', 'transparent', 'important');
-                    parent.style.setProperty('border', 'none', 'important');
-                    parent.style.setProperty('box-shadow', 'none', 'important');
-                  }
-                });
-              });
-
-              // Hide all Google Maps close buttons and UI elements
-              const gmUIElements = document.querySelectorAll('.gm-ui-hover-effect, [title="Close"], button[title="Close"]');
-              gmUIElements.forEach(element => {
-                (element as HTMLElement).style.setProperty('display', 'none', 'important');
-              });
-
-              // Hide tails and pointers
-              const tailElements = document.querySelectorAll('.gm-style-iw-t');
-              tailElements.forEach(tail => {
-                (tail as HTMLElement).style.setProperty('display', 'none', 'important');
-              });
-
-              // Add custom CSS to override any remaining styles
-              const styleEl = document.createElement('style');
-              styleEl.innerHTML = `
-                .gm-style-iw, 
-                .gm-style-iw-d, 
-                .gm-style-iw-c, 
-                .gm-style-iw-tc,
-                .gm-style-iw-t,
-                .gm-style-iw div {
-                  background: transparent !important;
-                  border: none !important;
-                  box-shadow: none !important;
-                  padding: 0 !important;
-                  margin: 0 !important;
-                }
-                .gm-style-iw-t {
-                  display: none !important;
-                }
-                .gm-ui-hover-effect {
-                  display: none !important;
-                }
-              `;
-              document.head.appendChild(styleEl);
-            };
-
-            removeGoogleMapsStyling();
-
-            // Add functionality to custom close button
-            const customCloseButton = document.getElementById('close-info-window');
-            if (customCloseButton) {
-              customCloseButton.onclick = null;
-              customCloseButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                infoWindow.close();
-                currentInfoWindow.current = null;
-              });
+          // Create and open new overlay
+          const overlay = new CustomOverlay(
+            new google.maps.LatLng(listener.lat, listener.lng),
+            '',
+            {
+              ...listener,
+              id: listener.id || `listener-${Date.now()}`,
+              isActive: listener.isActive || true,
+              lastSeen: listener.lastSeen || new Date()
             }
-          }, 100);
-
-          // Additional cleanup passes
-          setTimeout(() => {
-            const allGmElements = document.querySelectorAll('[class*="gm-style"]');
-            allGmElements.forEach(element => {
-              if (element.className.includes('gm-style-iw')) {
-                (element as HTMLElement).style.setProperty('background', 'transparent', 'important');
-                (element as HTMLElement).style.setProperty('border', 'none', 'important');
-                (element as HTMLElement).style.setProperty('box-shadow', 'none', 'important');
-              }
-            });
-          }, 250);
-
-          setTimeout(() => {
-            const allGmElements = document.querySelectorAll('[class*="gm-style"]');
-            allGmElements.forEach(element => {
-              if (element.className.includes('gm-style-iw')) {
-                (element as HTMLElement).style.setProperty('background', 'transparent', 'important');
-                (element as HTMLElement).style.setProperty('border', 'none', 'important');
-                (element as HTMLElement).style.setProperty('box-shadow', 'none', 'important');
-              }
-            });
-          }, 500);
+          );
+          overlay.setMap(mapInstance);
+          currentInfoWindow.current = overlay;
         });
       });
     };
@@ -638,110 +619,113 @@ export default function FullWidthGlobeMap() {
       }`}
     >
       <div className={`${isFullscreen ? "h-full p-[5px]" : "max-w-full mx-auto px-4 sm:px-6 lg:px-8"}`}>
-        {/* Header */}
-        <div className={`text-center ${isFullscreen ? "mb-4 pt-[10px]" : "mb-16"}`}>
-          <h2
-            className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
-          >
-            GLOBAL LISTENERS
-          </h2>
+        {/* Header for non-fullscreen */}
+        {!isFullscreen && (
+          <div className="text-center mb-16">
+            <h2
+              className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
+            >
+              GLOBAL LISTENERS
+            </h2>
+            <p
+              className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
+            >
+              See where metal fans are tuning in from around the world in
+              real-time.
+            </p>
 
-          {!isFullscreen && (
-            <>
-              <p
-                className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
-              >
-                See where metal fans are tuning in from around the world in
-                real-time.
-              </p>
-
-              {/* Weather Information Display */}
-              {weather && (
-                <div className="mb-4">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                    <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                      {weather.location}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-center gap-3">
-                    <img
-                      src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
-                      alt={weather.description}
-                      className="w-12 h-12 flex-shrink-0"
-                      style={{ width: '48px', height: '48px' }}
-                    />
-                    <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                      {Math.round(weather.temperature)}°F
-                    </span>
-                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                      {weather.description}
-                    </span>
-                  </div>
+            {/* Weather Information Display */}
+            {weather && (
+              <div className="mb-4">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                  <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    {weather.location}
+                  </span>
                 </div>
-              )}
-
-              {/* Loading state for weather */}
-              {weatherLoading && (
-                <div className="mb-4">
-                  <div className="flex items-center justify-center gap-2">
-                    <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                    <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                      Loading weather...
-                    </span>
-                  </div>
+                <div className="flex items-center justify-center gap-1.5">
+                  <img
+                    src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
+                    alt={weather.description}
+                    className="w-12 h-12 flex-shrink-0"
+                    style={{ width: '48px', height: '48px' }}
+                  />
+                  <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                    {Math.round(weather.temperature)}°F
+                  </span>
+                  <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    {weather.description}
+                  </span>
                 </div>
-              )}
-            </>
-          )}
-        </div>
+              </div>
+            )}
+
+            {/* Loading state for weather */}
+            {weatherLoading && (
+              <div className="mb-4">
+                <div className="flex items-center justify-center gap-2">
+                  <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                  <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    Loading weather...
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Fullscreen Header Above Map */}
+        {isFullscreen && (
+          <div className="text-center mb-6 pt-4">
+            <h2
+              className={`font-orbitron font-black text-3xl md:text-4xl mb-6 ${isDarkMode ? "text-white" : "text-black"}`}
+            >
+              GLOBAL LISTENERS
+            </h2>
+            
+            {/* Weather Display Above Map in Fullscreen */}
+            {weather && (
+              <div className="mb-6">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <MapPin className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                  <span className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                    {weather.location}
+                  </span>
+                </div>
+                <div className="flex items-center justify-center gap-1.5">
+                  <img
+                    src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
+                    alt={weather.description}
+                    className="flex-shrink-0"
+                    style={{ 
+                      width: '48px', 
+                      height: '48px',
+                      objectFit: 'contain'
+                    }}
+                  />
+                  <span className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                    {Math.round(weather.temperature)}°F
+                  </span>
+                  <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    {weather.description}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Map Container */}
         <div className={`relative ${isFullscreen ? "fixed inset-0 z-50 pt-16 pb-8" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}>
-          {/* Fullscreen Weather Header */}
-          {isFullscreen && (
-            <div className="absolute top-16 left-0 right-0 z-10 px-24">
-              <div className="text-center mb-12">
-                {/* Weather Display in Fullscreen */}
-                {weather && (
-                  <div className="mb-6">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <MapPin className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                      <span className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                        {weather.location}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-center gap-3">
-                      <img
-                        src={getWeatherIcon(weather.description, weather.icon.includes('d'))}
-                        alt={weather.description}
-                        className="flex-shrink-0"
-                        style={{ 
-                          width: '48px', 
-                          height: '48px',
-                          objectFit: 'contain'
-                        }}
-                      />
-                      <span className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                        {Math.round(weather.temperature)}°F
-                      </span>
-                      <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                        {weather.description}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+
 
           <div
             ref={mapRef}
-            className={`w-full h-full ${isFullscreen ? "rounded-xl mx-16 mt-40" : "rounded-lg"} map-container`}
+            className={`w-full h-full ${isFullscreen ? "rounded-xl mx-16" : "rounded-lg"} map-container`}
             style={{ 
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "calc(100vh - 220px)" : "100%",
+              height: isFullscreen ? "calc(100vh - 300px)" : "100%",
             }}
           />
 
@@ -864,7 +848,7 @@ export default function FullWidthGlobeMap() {
                       src={CountriesIconPath} 
                       alt="Countries" 
                       className="h-6 w-6" 
-                      style={{ filter: `brightness(0) saturate(100%) invert(65%) sepia(91%) saturate(2154%) hue-rotate(3deg) brightness(103%) contrast(101%)` }}
+                      style={{ filter: `brightness(0) saturate(100%) invert(65%) sepia(100%) saturate(1000%) hue-rotate(3deg) brightness(110%) contrast(95%)` }}
                     />
                     <span
                       className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
@@ -885,7 +869,7 @@ export default function FullWidthGlobeMap() {
                       src={LiveNowIconPath} 
                       alt="Total Listeners" 
                       className="h-6 w-6" 
-                      style={{ filter: `brightness(0) saturate(100%) invert(65%) sepia(91%) saturate(2154%) hue-rotate(3deg) brightness(103%) contrast(101%)` }}
+                      style={{ filter: `brightness(0) saturate(100%) invert(65%) sepia(100%) saturate(1000%) hue-rotate(3deg) brightness(110%) contrast(95%)` }}
                     />
                     <span
                       className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
@@ -910,40 +894,40 @@ export default function FullWidthGlobeMap() {
                   >
                     Active Locations
                   </h3>
-                  <div className="grid grid-cols-2 gap-4 flex-1">
+                  <div className="grid grid-cols-2 gap-5 flex-1">
                     {/* First Column (1-5) */}
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {top10Listeners
                         .filter((l) => l.isActive)
                         .slice(0, 5)
                         .map((listener, index) => (
                           <div
                             key={listener.id}
-                            className="flex items-center justify-between p-2 rounded transition-colors duration-200 hover:bg-opacity-10"
+                            className="flex items-center p-3 rounded transition-colors duration-200 hover:bg-opacity-10"
                           >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-1">
                               <span
-                                className="font-black text-sm w-6 text-center"
+                                className="font-black text-base w-7 text-center"
                                 style={{ color: colors.primary }}
                               >
                                 #{index + 1}
                               </span>
-                              <MapPin className="h-4 w-4" style={{ color: colors.primary }} />
-                              <div>
+                              <MapPin className="h-5 w-5" style={{ color: colors.primary }} />
+                              <div className="flex-1">
                                 <div
-                                  className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                                  className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
                                 >
                                   {listener.city}
                                 </div>
                                 <div
-                                  className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                                  className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
                                 >
                                   {listener.country}
                                 </div>
                               </div>
                             </div>
                             <div
-                              className="w-2 h-2 rounded-full animate-pulse"
+                              className="w-3 h-3 rounded-full animate-pulse ml-2"
                               style={{ backgroundColor: colors.primary }}
                             />
                           </div>
@@ -951,38 +935,38 @@ export default function FullWidthGlobeMap() {
                     </div>
                     
                     {/* Second Column (6-10) */}
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {top10Listeners
                         .filter((l) => l.isActive)
                         .slice(5, 10)
                         .map((listener, index) => (
                           <div
                             key={listener.id}
-                            className="flex items-center justify-between p-2 rounded transition-colors duration-200 hover:bg-opacity-10"
+                            className="flex items-center p-3 rounded transition-colors duration-200 hover:bg-opacity-10"
                           >
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 flex-1">
                               <span
-                                className="font-black text-sm w-6 text-center"
+                                className="font-black text-base w-7 text-center"
                                 style={{ color: colors.primary }}
                               >
                                 #{index + 6}
                               </span>
-                              <MapPin className="h-4 w-4" style={{ color: colors.primary }} />
-                              <div>
+                              <MapPin className="h-5 w-5" style={{ color: colors.primary }} />
+                              <div className="flex-1">
                                 <div
-                                  className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                                  className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
                                 >
                                   {listener.city}
                                 </div>
                                 <div
-                                  className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                                  className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
                                 >
                                   {listener.country}
                                 </div>
                               </div>
                             </div>
                             <div
-                              className="w-2 h-2 rounded-full animate-pulse"
+                              className="w-3 h-3 rounded-full animate-pulse ml-2"
                               style={{ backgroundColor: colors.primary }}
                             />
                           </div>
