@@ -551,10 +551,13 @@ export default function Navigation() {
                   {!isAuthenticated ? (
                     <>
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          console.log('Mobile LOGIN clicked');
                           setAuthMode("login");
                           setIsAuthModalOpen(true);
                           setIsOpen(false);
+                          console.log('State should be: authMode=login, isAuthModalOpen=true');
                         }}
                         type="button"
                         className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
@@ -578,10 +581,13 @@ export default function Navigation() {
                         <span>LOGIN</span>
                       </button>
                       <button
-                        onClick={() => {
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          console.log('Mobile SIGN UP clicked');
                           setAuthMode("register");
                           setIsAuthModalOpen(true);
                           setIsOpen(false);
+                          console.log('State should be: authMode=register, isAuthModalOpen=true');
                         }}
                         type="button"
                         className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 whitespace-nowrap cursor-pointer w-full hover:scale-105"
