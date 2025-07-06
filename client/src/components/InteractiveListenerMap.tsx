@@ -885,9 +885,9 @@ export default function InteractiveListenerMap() {
                             </div>
                           </div>
                           <div className="flex items-center">
-                            <div
-                              className="w-2 h-2 rounded-full animate-pulse"
-                              style={{ backgroundColor: colors.primary }}
+                            <MapPin 
+                              className="w-4 h-4"
+                              style={{ color: colors.primary }}
                             />
                           </div>
                         </div>

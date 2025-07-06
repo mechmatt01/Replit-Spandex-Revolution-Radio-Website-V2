@@ -156,7 +156,7 @@ export default function Features() {
                   className="w-3 h-3 rounded-full mr-3 animate-pulse"
                   style={{ backgroundColor: colors.primary }}
                 ></div>
-                <span>{stats?.currentListeners || 1247} listeners online</span>
+                <span>{stats?.currentListeners || 42} listeners online</span>
               </div>
             </CardContent>
           </Card>
@@ -204,7 +204,7 @@ export default function Features() {
                 style={{ color: colors.primary }}
               >
                 <div
-                  className="w-3 h-3 rounded-full mr-3"
+                  className="w-3 h-3 rounded-full mr-3 animate-pulse"
                   style={{ backgroundColor: colors.primary }}
                 ></div>
                 <span>200+ hours of content</span>

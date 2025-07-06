@@ -113,7 +113,7 @@ export default function Schedule() {
                   className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
                   style={{
                     backgroundColor: colors.background,
-                    borderColor: `${colors.primary}40`,
+                    borderColor: `${colors.primary}80`,
                     boxShadow: `0 8px 32px ${colors.primary}20`,
                     height: "160px",
                   }}
@@ -122,7 +122,7 @@ export default function Schedule() {
                     e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = `${colors.primary}40`;
+                    e.currentTarget.style.borderColor = `${colors.primary}80`;
                     e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
                   }}
                   onClick={() => setSelectedWeeklyShow(show)}
@@ -177,16 +177,16 @@ export default function Schedule() {
                     className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
                     style={{
                       backgroundColor: colors.background,
-                      borderColor: `${colors.primary}40`,
+                      borderColor: `${colors.primary}80`,
                       boxShadow: `0 8px 32px ${colors.primary}20`,
-                      height: "200px",
+                      height: "160px",
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = colors.primary;
                       e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = `${colors.primary}40`;
+                      e.currentTarget.style.borderColor = `${colors.primary}80`;
                       e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
                     }}
                     onClick={() => handlePastShowSelect(show)}
@@ -208,41 +208,48 @@ export default function Schedule() {
                         </h4>
                         <p 
                           className="text-sm font-semibold mt-1"
-                          style={{ color: colors.text }}
+                          style={{ color: colors.primary }}
                         >
-                          {formatLongDate(show.date)}
+                          Duration: {show.duration ? formatDuration(show.duration) : "N/A"}
                         </p>
                       </div>
                       <p 
-                        className="text-sm font-semibold mb-2 text-center flex-1 text-gray-400"
+                        className="text-sm font-semibold mb-1 text-center flex-1 text-gray-400"
                       >
                         {show.description || "Past episode archive"}
                       </p>
-                      <div className="text-center mb-2">
-                        <span 
-                          className="text-sm font-bold"
-                          style={{ color: colors.primary }}
-                        >
-                          {show.duration
-                            ? formatDuration(show.duration)
-                            : "N/A"}
-                        </span>
-                      </div>
-                      <div
-                        className="flex items-center justify-center"
-                        style={{ marginTop: "auto", paddingTop: "8px" }}
+                      <Button
+                        className="mb-2 mx-auto px-4 py-2 text-xs font-bold rounded-lg transition-all duration-300 hover:scale-105"
+                        style={{
+                          backgroundColor: colors.primary,
+                          color: "white",
+                          border: "none",
+                          maxWidth: "120px",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
+                          e.currentTarget.style.transform = "scale(1.05)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.primary;
+                          e.currentTarget.style.transform = "scale(1)";
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePastShowSelect(show);
+                        }}
                       >
-                        <div className="flex items-center space-x-2">
-                          <Play 
-                            className="h-4 w-4"
-                            style={{ color: colors.primary }}
-                          />
-                          <span 
-                            className="text-xs font-bold text-gray-400"
-                          >
-                            Click to Play
-                          </span>
-                        </div>
+                        <Play className="h-3 w-3 mr-1" />
+                        Play Show
+                      </Button>
+                      <div
+                        className="flex items-center justify-center space-x-2"
+                        style={{ marginTop: "auto", paddingTop: "4px" }}
+                      >
+                        <Calendar className="text-gray-500 h-3 w-3" />
+                        <span className="text-gray-500 text-xs font-bold">
+                          {formatDate(show.date)}
+                        </span>
                       </div>
                     </CardContent>
                   </Card>
