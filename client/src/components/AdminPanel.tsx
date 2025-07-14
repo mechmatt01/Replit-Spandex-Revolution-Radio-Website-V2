@@ -194,13 +194,15 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             >
               <X className="w-4 h-4" />
             </Button>
-            <CardTitle className={`text-center ${isDarkMode ? "text-white" : "text-black"}`}>
-              Admin Access Login
-            </CardTitle>
+            <div className="text-center">
+              <Lock className="w-12 h-12 mx-auto mb-4" style={{ color: colors.primary }} />
+              <CardTitle className={`text-center ${isDarkMode ? "text-white" : "text-black"}`}>
+                Admin Access Login
+              </CardTitle>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
-              <Lock className="w-12 h-12 mx-auto mb-4" style={{ color: colors.primary }} />
               <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                 Enter admin password below to access administrative site settings
               </p>

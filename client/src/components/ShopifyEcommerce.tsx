@@ -222,6 +222,26 @@ export default function ShopifyEcommerce() {
     });
   };
 
+  const handleBuyNow = (product: Product, variant: ProductVariant) => {
+    // For direct checkout, we create a temporary checkout session
+    // In a real implementation, this would integrate with Shopify's Checkout API
+    toast({
+      title: "Redirecting to Checkout",
+      description: `Taking you to secure checkout for ${product.title}...`,
+    });
+    
+    // Simulate direct checkout process
+    setTimeout(() => {
+      // Generate a mock order ID for demo purposes
+      const orderId = `SS${Date.now().toString().slice(-6)}`;
+      
+      // In a real implementation, this would redirect to Shopify checkout
+      // For demo purposes, we'll redirect to our custom confirmation page
+      const confirmationUrl = `/order-confirmation?order_id=${orderId}&product_id=${product.id}&variant_id=${variant.id}`;
+      window.location.href = confirmationUrl;
+    }, 1000);
+  };
+
   const getCartTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
@@ -407,11 +427,11 @@ function ProductCard({
         </div>
 
         <h4 className="font-black text-white mb-2">{product.title}</h4>
-        <p className="text-gray-400 text-sm font-semibold mb-3 line-clamp-2 flex-grow">
+        <p className="text-gray-400 text-sm font-semibold line-clamp-2 flex-grow">
           {product.description}
         </p>
 
-        <div className="flex flex-col items-center mb-3">
+        <div className="flex flex-col items-center mb-3 mt-3">
           <div className="flex items-center">
             {[...Array(5)].map((_, i) => (
               <Star
@@ -427,7 +447,7 @@ function ProductCard({
               ({product.reviewCount})
             </span>
           </div>
-          <div className="mt-2">
+          <div className="mt-2 mb-3">
             <span className="text-xl font-black text-metal-orange">
               ${product.price}
             </span>
@@ -486,7 +506,7 @@ function ProductCard({
           )}
 
           <Button
-            onClick={() => onAddToCart(selectedVariant, 1)}
+            onClick={() => handleBuyNow(product, selectedVariant)}
             disabled={!product.inStock || !selectedVariant.available}
             className="w-full font-bold transition-all duration-300"
             style={{
@@ -504,7 +524,7 @@ function ProductCard({
             }}
           >
             <ShoppingCart className="mr-2 h-4 w-4" />
-            Add to Cart
+            Buy Now
           </Button>
         </div>
       </CardContent>
@@ -625,14 +645,14 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
 
               <Button
                 onClick={() => {
-                  onAddToCart(selectedVariant, quantity);
+                  handleBuyNow(product, selectedVariant);
                   onClose();
                 }}
                 disabled={!product.inStock || !selectedVariant.available}
                 className="w-full bg-metal-orange hover:bg-orange-600 text-white font-bold"
               >
                 <ShoppingCart className="mr-2 h-4 w-4" />
-                Add to Cart - ${(selectedVariant.price * quantity).toFixed(2)}
+                Buy Now - ${(selectedVariant.price * quantity).toFixed(2)}
               </Button>
             </div>
           </div>

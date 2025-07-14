@@ -17,6 +17,7 @@ import LoginPage from "@/pages/LoginPage";
 import SubscribePage from "@/pages/SubscribePage";
 import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import OrderConfirmation from "@/components/OrderConfirmation";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "./hooks/useAuth";
 
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/subscribe" component={SubscribePage} />
       <Route path="/terms" component={TermsOfService} />
       <Route path="/privacy" component={PrivacyPolicy} />
+      <Route path="/order-confirmation" component={OrderConfirmation} />
       <Route component={NotFound} />
     </Switch>
   );
