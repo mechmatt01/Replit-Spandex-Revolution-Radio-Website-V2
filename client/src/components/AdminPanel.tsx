@@ -1,529 +1,622 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  LogOut,
-  Calendar,
-  Music,
-  List,
-  Users,
-  Pause,
-  RefreshCw,
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useAdmin } from "@/contexts/AdminContext";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import type { StreamStats, Submission, InsertNowPlaying } from "@shared/schema";
+import { 
+  Settings, 
+  Music, 
+  Calendar, 
+  ShoppingBag, 
+  Users, 
+  TrendingUp, 
+  Edit,
+  Save,
+  Trash2,
+  Plus,
+  X,
+  Lock
+} from "lucide-react";
 
-export default function AdminPanel() {
-  const { user, isAdmin, logout } = useAdmin();
-  const [loginForm, setLoginForm] = useState({ username: "", password: "" });
-  const [nowPlayingForm, setNowPlayingForm] = useState<InsertNowPlaying>({
-    title: "",
-    artist: "",
-    album: "",
-    duration: 0,
-    currentTime: 0,
-  });
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isNowPlayingOpen, setIsNowPlayingOpen] = useState(false);
+interface AdminPanelProps {
+  onClose: () => void;
+}
 
+interface MerchItem {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  image: string;
+  category: string;
+  stock: number;
+  featured: boolean;
+}
+
+interface ShowScheduleItem {
+  id: number;
+  title: string;
+  description: string;
+  host: string;
+  dayOfWeek: string;
+  time: string;
+  duration: string;
+}
+
+export default function AdminPanel({ onClose }: AdminPanelProps) {
+  const [activeSection, setActiveSection] = useState("overview");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [editingMerch, setEditingMerch] = useState<MerchItem | null>(null);
+  const [editingShow, setEditingShow] = useState<ShowScheduleItem | null>(null);
+  const [newMerchItem, setNewMerchItem] = useState<Partial<MerchItem>>({});
+  const [newShowItem, setNewShowItem] = useState<Partial<ShowScheduleItem>>({});
+  
+  const { colors, isDarkMode } = useTheme();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: stats } = useQuery<StreamStats>({
-    queryKey: ["/api/stream-stats"],
-    enabled: isAdmin,
+  // Fetch show schedules
+  const { data: showSchedules } = useQuery<ShowScheduleItem[]>({
+    queryKey: ["/api/schedules"],
+    enabled: isAuthenticated,
   });
 
-  const { data: submissions = [] } = useQuery<Submission[]>({
-    queryKey: ["/api/submissions"],
-    enabled: isAdmin,
-  });
+  // Mock merch data for now
+  const mockMerch: MerchItem[] = [
+    {
+      id: "1",
+      name: "Spandex Salvation T-Shirt",
+      price: 25.99,
+      description: "Official radio station t-shirt",
+      image: "/api/placeholder/300/300",
+      category: "clothing",
+      stock: 50,
+      featured: true,
+    },
+    {
+      id: "2",
+      name: "Metal Horns Mug",
+      price: 15.99,
+      description: "Start your day with metal",
+      image: "/api/placeholder/300/300",
+      category: "accessories",
+      stock: 30,
+      featured: false,
+    },
+  ];
 
-  const { login } = useAdmin();
-
-  const updateNowPlayingMutation = useMutation({
-    mutationFn: async (data: InsertNowPlaying) => {
-      const response = await apiRequest("POST", "/api/now-playing", data);
-      return response.json();
-    },
-    onSuccess: () => {
+  // Admin authentication
+  const handleAdminLogin = () => {
+    // In production, this would be a proper authentication check
+    if (adminPassword === "metaladmin123") {
+      setIsAuthenticated(true);
       toast({
-        title: "Now Playing Updated",
-        description: "The current track has been updated successfully.",
-      });
-      setNowPlayingForm({
-        title: "",
-        artist: "",
-        album: "",
-        duration: 0,
-        currentTime: 0,
-      });
-      setIsNowPlayingOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["/api/now-playing"] });
-    },
-    onError: () => {
-      toast({
-        title: "Update Failed",
-        description: "Failed to update now playing information.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const updateSubmissionStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: number; status: string }) => {
-      const response = await apiRequest(
-        "PATCH",
-        `/api/submissions/${id}/status`,
-        { status },
-      );
-      return response.json();
-    },
-    onSuccess: () => {
-      toast({
-        title: "Status Updated",
-        description: "Submission status has been updated.",
-      });
-      queryClient.invalidateQueries({ queryKey: ["/api/submissions"] });
-    },
-    onError: () => {
-      toast({
-        title: "Update Failed",
-        description: "Failed to update submission status.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const success = await login(loginForm.username, loginForm.password);
-    if (success) {
-      setIsLoginOpen(false);
-      setLoginForm({ username: "", password: "" });
-      toast({
-        title: "Login Successful",
-        description: "Welcome to the admin panel.",
+        title: "Admin Access Granted",
+        description: "Welcome to the admin panel",
+        variant: "default",
       });
     } else {
       toast({
-        title: "Login Failed",
-        description: "Invalid credentials. Please try again.",
+        title: "Access Denied",
+        description: "Invalid admin password",
         variant: "destructive",
       });
     }
   };
 
-  const handleNowPlayingSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateNowPlayingMutation.mutate(nowPlayingForm);
-  };
+  // Update show schedule
+  const updateShowMutation = useMutation({
+    mutationFn: async (showData: Partial<ShowScheduleItem>) => {
+      return apiRequest(`/api/schedules/${showData.id}`, {
+        method: "PUT",
+        body: JSON.stringify(showData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/schedules"] });
+      setEditingShow(null);
+      toast({
+        title: "Show Updated",
+        description: "Show schedule has been updated successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Update Failed",
+        description: "Failed to update show schedule",
+        variant: "destructive",
+      });
+    },
+  });
 
-  const handleUpdateSubmissionStatus = (id: number, status: string) => {
-    updateSubmissionStatusMutation.mutate({ id, status });
-  };
+  // Create new show
+  const createShowMutation = useMutation({
+    mutationFn: async (showData: Partial<ShowScheduleItem>) => {
+      return apiRequest("/api/schedules", {
+        method: "POST",
+        body: JSON.stringify(showData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/schedules"] });
+      setNewShowItem({});
+      toast({
+        title: "Show Created",
+        description: "New show has been added to the schedule",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Creation Failed",
+        description: "Failed to create new show",
+        variant: "destructive",
+      });
+    },
+  });
 
-  if (!isAdmin) {
+  if (!isAuthenticated) {
     return (
-      <section className="py-20 bg-dark-surface border-t border-dark-border">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-orbitron font-bold text-2xl text-white mb-4">
-            Admin Access Required
-          </h2>
-          <p className="text-gray-400 mb-6">
-            Please log in to access the admin panel.
-          </p>
-
-          <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
-            <DialogTrigger asChild>
-              <Button className="bg-metal-orange hover:bg-orange-600 text-white">
-                Admin Login
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="bg-dark-surface border-dark-border">
-              <DialogHeader>
-                <DialogTitle className="text-white">Admin Login</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div>
-                  <Label htmlFor="username" className="text-gray-300">
-                    Username
-                  </Label>
-                  <Input
-                    id="username"
-                    value={loginForm.username}
-                    onChange={(e) =>
-                      setLoginForm((prev) => ({
-                        ...prev,
-                        username: e.target.value,
-                      }))
-                    }
-                    className="bg-dark-bg border-dark-border text-white"
-                    required
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="password" className="text-gray-300">
-                    Password
-                  </Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={loginForm.password}
-                    onChange={(e) =>
-                      setLoginForm((prev) => ({
-                        ...prev,
-                        password: e.target.value,
-                      }))
-                    }
-                    className="bg-dark-bg border-dark-border text-white"
-                    required
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-metal-orange hover:bg-orange-600 text-white"
-                >
-                  Login
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section className="py-20 bg-dark-surface border-t border-dark-border">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-orbitron font-bold text-2xl text-white">
-                ADMIN PANEL
-              </h2>
-              <p className="text-gray-400">Welcome back, {user?.username}</p>
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+        <Card className={`w-full max-w-md ${isDarkMode ? "bg-gray-900" : "bg-white"}`}>
+          <CardHeader>
+            <CardTitle className={`text-center ${isDarkMode ? "text-white" : "text-black"}`}>
+              Admin Panel Access
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center">
+              <Lock className="w-12 h-12 mx-auto mb-4" style={{ color: colors.primary }} />
+              <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                Enter admin password to access the control panel
+              </p>
             </div>
-            <Button
-              onClick={logout}
-              variant="destructive"
-              className="bg-metal-red hover:bg-red-600"
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Quick Stats */}
-          <Card className="bg-dark-bg border-dark-border">
-            <CardContent className="p-6">
-              <h3 className="font-bold text-lg mb-4 text-metal-orange">
-                Quick Stats
-              </h3>
-              <div className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Active Listeners</span>
-                  <span className="font-semibold text-white">
-                    {stats?.currentListeners || 0}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Song Requests</span>
-                  <span className="font-semibold">
-                    {submissions.filter((s) => s.status === "pending").length}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Total Submissions</span>
-                  <span className="font-semibold">{submissions.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Stream Uptime</span>
-                  <span className="font-semibold text-green-400">
-                    {stats?.uptime || "99.9%"}
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Content Management */}
-          <Card className="bg-dark-bg border-dark-border">
-            <CardContent className="p-6">
-              <h3 className="font-bold text-lg mb-4 text-metal-orange">
-                Content Management
-              </h3>
-              <div className="space-y-3">
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start bg-dark-surface border border-dark-border hover:border-metal-orange"
-                >
-                  <Calendar className="mr-3 h-4 w-4 text-metal-orange" />
-                  Update Schedule
-                </Button>
-
-                <Dialog
-                  open={isNowPlayingOpen}
-                  onOpenChange={setIsNowPlayingOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-start bg-dark-surface border border-dark-border hover:border-metal-orange"
-                    >
-                      <Music className="mr-3 h-4 w-4 text-metal-orange" />
-                      Now Playing Control
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="bg-dark-surface border-dark-border">
-                    <DialogHeader>
-                      <DialogTitle className="text-white">
-                        Update Now Playing
-                      </DialogTitle>
-                    </DialogHeader>
-                    <form
-                      onSubmit={handleNowPlayingSubmit}
-                      className="space-y-4"
-                    >
-                      <div>
-                        <Label htmlFor="title" className="text-gray-300">
-                          Song Title
-                        </Label>
-                        <Input
-                          id="title"
-                          value={nowPlayingForm.title || ""}
-                          onChange={(e) =>
-                            setNowPlayingForm((prev) => ({
-                              ...prev,
-                              title: e.target.value,
-                            }))
-                          }
-                          className="bg-dark-bg border-dark-border text-white"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="artist" className="text-gray-300">
-                          Artist
-                        </Label>
-                        <Input
-                          id="artist"
-                          value={nowPlayingForm.artist}
-                          onChange={(e) =>
-                            setNowPlayingForm((prev) => ({
-                              ...prev,
-                              artist: e.target.value,
-                            }))
-                          }
-                          className="bg-dark-bg border-dark-border text-white"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="album" className="text-gray-300">
-                          Album
-                        </Label>
-                        <Input
-                          id="album"
-                          value={nowPlayingForm.album || ""}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setNowPlayingForm((prev) => ({
-                              ...prev,
-                              album: e.target.value,
-                            }))
-                          }
-                          className="bg-dark-bg border-dark-border text-white"
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="duration" className="text-gray-300">
-                            Duration (seconds)
-                          </Label>
-                          <Input
-                            id="duration"
-                            type="number"
-                            value={nowPlayingForm.duration}
-                            onChange={(e) =>
-                              setNowPlayingForm((prev) => ({
-                                ...prev,
-                                duration: parseInt(e.target.value) || 0,
-                              }))
-                            }
-                            className="bg-dark-bg border-dark-border text-white"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <Label
-                            htmlFor="currentTime"
-                            className="text-gray-300"
-                          >
-                            Current Time (seconds)
-                          </Label>
-                          <Input
-                            id="currentTime"
-                            type="number"
-                            value={nowPlayingForm.currentTime || 0}
-                            onChange={(e) =>
-                              setNowPlayingForm((prev) => ({
-                                ...prev,
-                                currentTime: parseInt(e.target.value) || 0,
-                              }))
-                            }
-                            className="bg-dark-bg border-dark-border text-white"
-                            required
-                          />
-                        </div>
-                      </div>
-                      <Button
-                        type="submit"
-                        disabled={updateNowPlayingMutation.isPending}
-                        className="w-full bg-metal-orange hover:bg-orange-600 text-white"
-                      >
-                        {updateNowPlayingMutation.isPending
-                          ? "Updating..."
-                          : "Update Now Playing"}
-                      </Button>
-                    </form>
-                  </DialogContent>
-                </Dialog>
-
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start bg-dark-surface border border-dark-border hover:border-metal-orange"
-                >
-                  <List className="mr-3 h-4 w-4 text-metal-orange" />
-                  Review Submissions
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start bg-dark-surface border border-dark-border hover:border-metal-orange"
-                >
-                  <Users className="mr-3 h-4 w-4 text-metal-orange" />
-                  Manage Subscribers
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Stream Control */}
-          <Card className="bg-dark-bg border-dark-border">
-            <CardContent className="p-6">
-              <h3 className="font-bold text-lg mb-4 text-metal-orange">
-                Stream Control
-              </h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-gray-400">Stream Status</span>
-                  <span className="flex items-center text-green-400">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2"></div>
-                    Live
-                  </span>
-                </div>
-                <Button className="w-full bg-metal-orange hover:bg-orange-600 text-white mb-3">
-                  <Pause className="mr-2 h-4 w-4" />
-                  Pause Stream
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full border-dark-border hover:border-metal-orange text-white"
-                >
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  Switch to Backup
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Submissions Management */}
-        <Card className="bg-dark-bg border-dark-border mt-8">
-          <CardContent className="p-6">
-            <h3 className="font-bold text-lg mb-4 text-metal-orange">
-              Recent Submissions
-            </h3>
-            <div className="space-y-4">
-              {submissions.slice(0, 5).map((submission) => (
-                <div
-                  key={submission.id}
-                  className="flex items-center justify-between p-4 bg-dark-surface rounded-lg"
-                >
-                  <div>
-                    <h4 className="font-semibold">{submission.songTitle}</h4>
-                    <p className="text-gray-400 text-sm">
-                      {submission.artistName}
-                    </p>
-                    <p className="text-gray-500 text-xs">
-                      {submission.submitterName
-                        ? `by ${submission.submitterName}`
-                        : "Anonymous"}
-                    </p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span
-                      className={`px-2 py-1 rounded text-xs ${
-                        submission.status === "approved"
-                          ? "bg-green-500/20 text-green-400"
-                          : submission.status === "rejected"
-                            ? "bg-red-500/20 text-red-400"
-                            : "bg-yellow-500/20 text-yellow-400"
-                      }`}
-                    >
-                      {submission.status}
-                    </span>
-                    {submission.status === "pending" && (
-                      <div className="flex space-x-1">
-                        <Button
-                          size="sm"
-                          onClick={() =>
-                            handleUpdateSubmissionStatus(
-                              submission.id,
-                              "approved",
-                            )
-                          }
-                          className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 text-xs"
-                          disabled={updateSubmissionStatusMutation.isPending}
-                        >
-                          Approve
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() =>
-                            handleUpdateSubmissionStatus(
-                              submission.id,
-                              "rejected",
-                            )
-                          }
-                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 text-xs"
-                          disabled={updateSubmissionStatusMutation.isPending}
-                        >
-                          Reject
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+            <div className="space-y-2">
+              <Label htmlFor="admin-password">Admin Password</Label>
+              <Input
+                id="admin-password"
+                type="password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                placeholder="Enter password"
+                onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleAdminLogin}
+                className="flex-1"
+                style={{ backgroundColor: colors.primary }}
+              >
+                Login
+              </Button>
+              <Button
+                variant="outline"
+                onClick={onClose}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
             </div>
           </CardContent>
         </Card>
       </div>
-    </section>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <Card className={`w-full max-w-7xl h-[90vh] ${isDarkMode ? "bg-gray-900" : "bg-white"}`}>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>
+            Admin Control Panel
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className={`${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </CardHeader>
+        <CardContent className="p-0 h-full">
+          <div className="flex h-full">
+            {/* Sidebar */}
+            <div className={`w-64 ${isDarkMode ? "bg-gray-800" : "bg-gray-100"} p-4 space-y-2`}>
+              <Button
+                variant={activeSection === "overview" ? "default" : "ghost"}
+                onClick={() => setActiveSection("overview")}
+                className="w-full justify-start"
+              >
+                <TrendingUp className="w-4 h-4 mr-2" />
+                Overview
+              </Button>
+              <Button
+                variant={activeSection === "shows" ? "default" : "ghost"}
+                onClick={() => setActiveSection("shows")}
+                className="w-full justify-start"
+              >
+                <Calendar className="w-4 h-4 mr-2" />
+                Show Management
+              </Button>
+              <Button
+                variant={activeSection === "merch" ? "default" : "ghost"}
+                onClick={() => setActiveSection("merch")}
+                className="w-full justify-start"
+              >
+                <ShoppingBag className="w-4 h-4 mr-2" />
+                Merchandise
+              </Button>
+              <Button
+                variant={activeSection === "users" ? "default" : "ghost"}
+                onClick={() => setActiveSection("users")}
+                className="w-full justify-start"
+              >
+                <Users className="w-4 h-4 mr-2" />
+                User Management
+              </Button>
+              <Button
+                variant={activeSection === "settings" ? "default" : "ghost"}
+                onClick={() => setActiveSection("settings")}
+                className="w-full justify-start"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Settings
+              </Button>
+            </div>
+
+            {/* Main Content */}
+            <div className="flex-1 p-6 overflow-y-auto">
+              {activeSection === "overview" && (
+                <div className="space-y-6">
+                  <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                    Dashboard Overview
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Card className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              Total Shows
+                            </p>
+                            <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                              {showSchedules?.length || 0}
+                            </p>
+                          </div>
+                          <Calendar className="w-8 h-8" style={{ color: colors.primary }} />
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              Merch Items
+                            </p>
+                            <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                              {mockMerch.length}
+                            </p>
+                          </div>
+                          <ShoppingBag className="w-8 h-8" style={{ color: colors.primary }} />
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              Active Users
+                            </p>
+                            <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                              42
+                            </p>
+                          </div>
+                          <Users className="w-8 h-8" style={{ color: colors.primary }} />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "shows" && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                      Show Management
+                    </h2>
+                    <Button
+                      onClick={() => setNewShowItem({ title: "", description: "", host: "", dayOfWeek: "", time: "", duration: "" })}
+                      style={{ backgroundColor: colors.primary }}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Show
+                    </Button>
+                  </div>
+
+                  {/* New Show Form */}
+                  {Object.keys(newShowItem).length > 0 && (
+                    <Card className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
+                      <CardHeader>
+                        <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>
+                          Add New Show
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="show-title">Show Title</Label>
+                            <Input
+                              id="show-title"
+                              value={newShowItem.title || ""}
+                              onChange={(e) => setNewShowItem({ ...newShowItem, title: e.target.value })}
+                              placeholder="Enter show title"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="show-host">Host</Label>
+                            <Input
+                              id="show-host"
+                              value={newShowItem.host || ""}
+                              onChange={(e) => setNewShowItem({ ...newShowItem, host: e.target.value })}
+                              placeholder="Enter host name"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="show-day">Day of Week</Label>
+                            <Select
+                              value={newShowItem.dayOfWeek || ""}
+                              onValueChange={(value) => setNewShowItem({ ...newShowItem, dayOfWeek: value })}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select day" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Monday">Monday</SelectItem>
+                                <SelectItem value="Tuesday">Tuesday</SelectItem>
+                                <SelectItem value="Wednesday">Wednesday</SelectItem>
+                                <SelectItem value="Thursday">Thursday</SelectItem>
+                                <SelectItem value="Friday">Friday</SelectItem>
+                                <SelectItem value="Saturday">Saturday</SelectItem>
+                                <SelectItem value="Sunday">Sunday</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="show-time">Time</Label>
+                            <Input
+                              id="show-time"
+                              value={newShowItem.time || ""}
+                              onChange={(e) => setNewShowItem({ ...newShowItem, time: e.target.value })}
+                              placeholder="e.g., 7:00 PM"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="show-duration">Duration</Label>
+                            <Input
+                              id="show-duration"
+                              value={newShowItem.duration || ""}
+                              onChange={(e) => setNewShowItem({ ...newShowItem, duration: e.target.value })}
+                              placeholder="e.g., 2 hours"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <Label htmlFor="show-description">Description</Label>
+                          <Textarea
+                            id="show-description"
+                            value={newShowItem.description || ""}
+                            onChange={(e) => setNewShowItem({ ...newShowItem, description: e.target.value })}
+                            placeholder="Enter show description"
+                            rows={3}
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => createShowMutation.mutate(newShowItem)}
+                            disabled={createShowMutation.isPending}
+                            style={{ backgroundColor: colors.primary }}
+                          >
+                            <Save className="w-4 h-4 mr-2" />
+                            Create Show
+                          </Button>
+                          <Button
+                            variant="outline"
+                            onClick={() => setNewShowItem({})}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Show List */}
+                  <div className="space-y-4">
+                    {showSchedules?.map((show) => (
+                      <Card key={show.id} className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
+                        <CardContent className="p-4">
+                          {editingShow?.id === show.id ? (
+                            <div className="space-y-4">
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <Label>Show Title</Label>
+                                  <Input
+                                    value={editingShow.title}
+                                    onChange={(e) => setEditingShow({ ...editingShow, title: e.target.value })}
+                                  />
+                                </div>
+                                <div>
+                                  <Label>Host</Label>
+                                  <Input
+                                    value={editingShow.host}
+                                    onChange={(e) => setEditingShow({ ...editingShow, host: e.target.value })}
+                                  />
+                                </div>
+                                <div>
+                                  <Label>Day</Label>
+                                  <Input
+                                    value={editingShow.dayOfWeek}
+                                    onChange={(e) => setEditingShow({ ...editingShow, dayOfWeek: e.target.value })}
+                                  />
+                                </div>
+                                <div>
+                                  <Label>Time</Label>
+                                  <Input
+                                    value={editingShow.time}
+                                    onChange={(e) => setEditingShow({ ...editingShow, time: e.target.value })}
+                                  />
+                                </div>
+                              </div>
+                              <div>
+                                <Label>Description</Label>
+                                <Textarea
+                                  value={editingShow.description}
+                                  onChange={(e) => setEditingShow({ ...editingShow, description: e.target.value })}
+                                  rows={3}
+                                />
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  onClick={() => updateShowMutation.mutate(editingShow)}
+                                  disabled={updateShowMutation.isPending}
+                                  style={{ backgroundColor: colors.primary }}
+                                >
+                                  <Save className="w-4 h-4 mr-2" />
+                                  Save
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setEditingShow(null)}
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <h3 className={`font-bold text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
+                                  {show.title}
+                                </h3>
+                                <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                  {show.host} • {show.dayOfWeek} {show.time} • {show.duration}
+                                </p>
+                                <p className={`text-sm mt-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                  {show.description}
+                                </p>
+                              </div>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setEditingShow(show)}
+                              >
+                                <Edit className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "merch" && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                      Merchandise Management
+                    </h2>
+                    <Button
+                      onClick={() => setNewMerchItem({ name: "", price: 0, description: "", category: "", stock: 0 })}
+                      style={{ backgroundColor: colors.primary }}
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Product
+                    </Button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {mockMerch.map((item) => (
+                      <Card key={item.id} className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
+                        <CardContent className="p-4">
+                          <div className="aspect-square bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
+                            <ShoppingBag className="w-16 h-16 text-gray-400" />
+                          </div>
+                          <h3 className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                            {item.name}
+                          </h3>
+                          <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                            {item.description}
+                          </p>
+                          <div className="flex justify-between items-center mt-2">
+                            <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                              ${item.price}
+                            </span>
+                            <Badge variant={item.featured ? "default" : "outline"}>
+                              {item.featured ? "Featured" : "Standard"}
+                            </Badge>
+                          </div>
+                          <div className="flex gap-2 mt-4">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setEditingMerch(item)}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-500"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {activeSection === "users" && (
+                <div className="space-y-6">
+                  <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                    User Management
+                  </h2>
+                  <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    User management features coming soon...
+                  </p>
+                </div>
+              )}
+
+              {activeSection === "settings" && (
+                <div className="space-y-6">
+                  <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                    System Settings
+                  </h2>
+                  <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    System settings and configuration options coming soon...
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

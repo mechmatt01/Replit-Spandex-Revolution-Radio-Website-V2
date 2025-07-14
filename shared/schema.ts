@@ -134,13 +134,22 @@ export const subscriptions = pgTable("subscriptions", {
 });
 
 // Insert schemas
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  email: true,
-  firstName: true,
-  lastName: true,
-  phoneNumber: true,
-  emailVerificationToken: true,
+export const insertUserSchema = z.object({
+  username: z.string().optional(),
+  email: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  profileImageUrl: z.string().optional(),
+  phoneNumber: z.string().optional(),
+  location: z.any().optional(),
+  isActiveListening: z.boolean().optional(),
+  activeSubscription: z.boolean().optional(),
+  isPhoneVerified: z.boolean().optional(),
+  isEmailVerified: z.boolean().optional(),
+  emailVerificationToken: z.string().optional(),
+  stripeCustomerId: z.string().optional(),
+  stripeSubscriptionId: z.string().optional(),
+  accountDeletionScheduled: z.boolean().optional(),
 });
 
 export const registerUserSchema = z
@@ -166,12 +175,12 @@ export const loginUserSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-export const upsertUserSchema = createInsertSchema(users).pick({
-  id: true,
-  email: true,
-  firstName: true,
-  lastName: true,
-  profileImageUrl: true,
+export const upsertUserSchema = z.object({
+  id: z.string(),
+  email: z.string().optional(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  profileImageUrl: z.string().optional(),
 });
 
 export const updateLocationSchema = z.object({
@@ -186,43 +195,49 @@ export const updateListeningStatusSchema = z.object({
   isActiveListening: z.boolean(),
 });
 
-export const insertSubmissionSchema = createInsertSchema(submissions).pick({
-  songTitle: true,
-  artistName: true,
-  albumTitle: true,
-  releaseYear: true,
-  submitterName: true,
-  message: true,
+export const insertSubmissionSchema = z.object({
+  userId: z.string().optional(),
+  songTitle: z.string(),
+  artistName: z.string(),
+  albumTitle: z.string().optional(),
+  releaseYear: z.number().optional(),
+  submitterName: z.string().optional(),
+  message: z.string().optional(),
+  status: z.string().optional(),
 });
 
-export const insertContactSchema = createInsertSchema(contacts).pick({
-  firstName: true,
-  lastName: true,
-  email: true,
-  subject: true,
-  message: true,
+export const insertContactSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string(),
+  subject: z.string(),
+  message: z.string(),
 });
 
-export const insertShowScheduleSchema = createInsertSchema(showSchedules).pick({
-  title: true,
-  description: true,
-  host: true,
-  dayOfWeek: true,
-  time: true,
-  duration: true,
+export const insertShowScheduleSchema = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+  host: z.string().optional(),
+  dayOfWeek: z.string(),
+  time: z.string(),
+  duration: z.string().optional(),
 });
 
-export const insertNowPlayingSchema = createInsertSchema(nowPlaying).pick({
-  title: true,
-  artist: true,
-  album: true,
-  duration: true,
-  currentTime: true,
+export const insertNowPlayingSchema = z.object({
+  title: z.string(),
+  artist: z.string(),
+  album: z.string().optional(),
+  artwork: z.string().optional(),
+  isAd: z.boolean().optional(),
+  duration: z.number().optional(),
+  currentTime: z.number().optional(),
+  isLive: z.boolean().optional(),
 });
 
-export const insertSubscriptionSchema = createInsertSchema(subscriptions).pick({
-  email: true,
-  plan: true,
+export const insertSubscriptionSchema = z.object({
+  email: z.string(),
+  plan: z.string(),
+  status: z.string().optional(),
 });
 
 // Types

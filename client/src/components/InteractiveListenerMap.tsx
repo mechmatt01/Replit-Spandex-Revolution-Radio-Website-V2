@@ -204,6 +204,7 @@ const GoogleMapWithListeners = ({
   onListenerClick,
   selectedListener,
   apiKey,
+  userLocation,
 }: {
   listeners: ActiveListener[];
   colors: any;
@@ -211,6 +212,7 @@ const GoogleMapWithListeners = ({
   onListenerClick: (listener: ActiveListener) => void;
   selectedListener: ActiveListener | null;
   apiKey: string;
+  userLocation?: { lat: number; lng: number };
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -311,9 +313,56 @@ const GoogleMapWithListeners = ({
 
           marker.addListener("click", () => {
             console.log('Marker clicked:', listener.city);
+            
+            // Zoom in and center on the clicked location
+            if (map) {
+              map.panTo({ lat: listener.lat, lng: listener.lng });
+              map.setZoom(8); // Zoom level 8 for a good city view
+            }
+            
             onListenerClick(listener);
           });
         });
+
+        // Add user location marker if available
+        if (userLocation) {
+          const userMarker = new window.google.maps.Marker({
+            position: { lat: userLocation.lat, lng: userLocation.lng },
+            map: map,
+            title: "This is you!",
+            icon: {
+              path: window.google.maps.SymbolPath.CIRCLE,
+              scale: 10,
+              fillColor: "#3B82F6", // Light blue color
+              fillOpacity: 1,
+              strokeColor: "#FFFFFF",
+              strokeWeight: 2,
+              animation: window.google.maps.Animation.BOUNCE, // Blinking effect
+            },
+            zIndex: 1000, // Ensure it's above other markers
+          });
+
+          // Create info window for user location
+          const userInfoWindow = new window.google.maps.InfoWindow({
+            content: `
+              <div style="padding: 8px; color: #1F2937; font-size: 14px; font-weight: 600;">
+                This is you!
+              </div>
+            `,
+          });
+
+          userMarker.addListener("click", () => {
+            userInfoWindow.open(map, userMarker);
+          });
+
+          // Auto-open the info window briefly to show the user
+          setTimeout(() => {
+            userInfoWindow.open(map, userMarker);
+            setTimeout(() => {
+              userInfoWindow.close();
+            }, 3000); // Close after 3 seconds
+          }, 1000);
+        }
 
         console.log('Google Map loaded successfully with', activeListeners.length, 'markers');
         setIsMapLoaded(true);
@@ -721,6 +770,7 @@ export default function InteractiveListenerMap() {
                           onListenerClick={setSelectedListener}
                           selectedListener={selectedListener}
                           apiKey={config.googleMapsApiKey}
+                          userLocation={userLocation || undefined}
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full">

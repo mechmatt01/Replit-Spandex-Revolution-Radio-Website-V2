@@ -174,12 +174,12 @@ export default function Schedule() {
                 {pastShows.slice(0, 3).map((show) => (
                   <Card
                     key={show.id}
-                    className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
+                    className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-6"
                     style={{
                       backgroundColor: colors.background,
                       borderColor: `${colors.primary}80`,
                       boxShadow: `0 8px 32px ${colors.primary}20`,
-                      height: "160px",
+                      minHeight: "fit-content",
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = colors.primary;
@@ -194,32 +194,44 @@ export default function Schedule() {
                     <CardContent
                       className="p-0"
                       style={{
-                        height: "100%",
                         display: "flex",
                         flexDirection: "column",
+                        gap: "12px",
                       }}
                     >
-                      <div className="text-center mb-2">
+                      {/* Title */}
+                      <div className="text-center">
                         <h4 
                           className="font-black text-lg"
                           style={{ color: colors.text }}
                         >
                           {show.title}
                         </h4>
-                        <p 
-                          className="text-sm font-semibold mt-1"
-                          style={{ color: colors.primary }}
-                        >
-                          Duration: {show.duration ? formatDuration(show.duration) : "N/A"}
-                        </p>
                       </div>
+                      
+                      {/* Description */}
                       <p 
-                        className="text-sm font-semibold mb-1 text-center flex-1 text-gray-400"
+                        className="text-sm font-semibold text-center text-gray-400"
+                        style={{ 
+                          minHeight: "40px", 
+                          display: "flex", 
+                          alignItems: "center", 
+                          justifyContent: "center" 
+                        }}
                       >
                         {show.description || "Past episode archive"}
                       </p>
+                      
+                      {/* Duration */}
+                      <p 
+                        className="text-sm font-semibold text-center"
+                        style={{ color: colors.primary }}
+                      >
+                        Duration: {show.duration ? formatDuration(show.duration) : "N/A"}
+                      </p>
+                      {/* Play Button */}
                       <Button
-                        className="mb-2 mx-auto px-4 py-2 text-xs font-bold rounded-lg transition-all duration-300 hover:scale-105"
+                        className="mx-auto px-4 py-2 text-xs font-bold rounded-lg transition-all duration-300 hover:scale-105"
                         style={{
                           backgroundColor: colors.primary,
                           color: "white",
@@ -242,9 +254,11 @@ export default function Schedule() {
                         <Play className="h-3 w-3 mr-1" />
                         Play Show
                       </Button>
+                      
+                      {/* Date */}
                       <div
                         className="flex items-center justify-center space-x-2"
-                        style={{ marginTop: "auto", paddingTop: "4px" }}
+                        style={{ marginTop: "8px" }}
                       >
                         <Calendar className="text-gray-500 h-3 w-3" />
                         <span className="text-gray-500 text-xs font-bold">

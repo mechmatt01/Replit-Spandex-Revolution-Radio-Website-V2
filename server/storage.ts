@@ -110,10 +110,7 @@ export class DatabaseStorage implements IStorage {
       .values(userData)
       .onConflictDoUpdate({
         target: users.id,
-        set: {
-          ...userData,
-          updatedAt: new Date(),
-        },
+        set: userData,
       })
       .returning();
     return user;
@@ -139,7 +136,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ isActiveListening, updatedAt: new Date() })
+      .set({ isActiveListening })
       .where(eq(users.id, id))
       .returning();
     return user;
@@ -161,7 +158,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ ...updates, updatedAt: new Date() })
+      .set(updates)
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
@@ -175,7 +172,6 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({
         location,
-        updatedAt: new Date(),
       })
       .where(eq(users.id, id))
       .returning();
@@ -200,7 +196,6 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({
         isPhoneVerified: true,
-        updatedAt: new Date(),
       })
       .where(eq(users.id, userId))
       .returning();
@@ -223,7 +218,6 @@ export class DatabaseStorage implements IStorage {
       .set({
         isEmailVerified: true,
         emailVerificationToken: null,
-        updatedAt: new Date(),
       })
       .where(eq(users.id, user.id))
       .returning();
@@ -237,9 +231,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({
-        updatedAt: new Date(),
-      })
+      .set({})
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
@@ -255,7 +247,6 @@ export class DatabaseStorage implements IStorage {
       .set({
         stripeCustomerId,
         stripeSubscriptionId,
-        updatedAt: new Date(),
       })
       .where(eq(users.id, id))
       .returning();

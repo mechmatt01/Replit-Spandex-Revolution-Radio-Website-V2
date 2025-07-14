@@ -1,9 +1,13 @@
 import { Radio } from "lucide-react";
+import { useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
+import AdminPanel from "./AdminPanel";
 
 export default function Footer() {
   const { colors, gradient } = useTheme();
+  const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
+  
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -199,23 +203,21 @@ export default function Footer() {
               >
                 Cookies
               </a>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  const event = new CustomEvent("openAuthModal", {
-                    detail: { mode: "admin" },
-                  });
-                  window.dispatchEvent(event);
-                }}
+              <button
+                onClick={() => setIsAdminPanelOpen(true)}
                 className="font-semibold hover:text-metal-orange transition-colors"
               >
                 Admin
-              </a>
+              </button>
             </div>
           </div>
         </div>
       </div>
+      
+      {/* Admin Panel */}
+      {isAdminPanelOpen && (
+        <AdminPanel onClose={() => setIsAdminPanelOpen(false)} />
+      )}
     </footer>
   );
 }
