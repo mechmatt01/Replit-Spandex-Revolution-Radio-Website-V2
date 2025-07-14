@@ -289,17 +289,6 @@ export default function Schedule() {
                         {show.description || "Past episode archive"}
                       </p>
                       
-                      {/* Date with Duration */}
-                      <div
-                        className="flex items-center justify-center space-x-2"
-                        style={{ marginTop: "2px" }}
-                      >
-                        <Calendar className="text-gray-500 h-3 w-3" />
-                        <span className="text-gray-500 text-xs font-bold">
-                          {formatDateWithDuration(show.date, show.duration)}
-                        </span>
-                      </div>
-                      
                       {/* Circular Play Button */}
                       <Button
                         className="mx-auto rounded-full transition-all duration-300 hover:scale-110"
@@ -314,7 +303,7 @@ export default function Schedule() {
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
-                          marginTop: "14px",
+                          marginTop: "2px",
                           padding: "0",
                         }}
                         onMouseEnter={(e) => {
@@ -332,6 +321,17 @@ export default function Schedule() {
                       >
                         <Play className="h-5 w-5" style={{ strokeLinecap: "round", strokeLinejoin: "round" }} />
                       </Button>
+                      
+                      {/* Date with Duration */}
+                      <div
+                        className="flex items-center justify-center space-x-2"
+                        style={{ marginTop: "14px" }}
+                      >
+                        <Calendar className="text-gray-500 h-3 w-3" />
+                        <span className="text-gray-500 text-xs font-bold">
+                          {formatDateWithDuration(show.date, show.duration)}
+                        </span>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
