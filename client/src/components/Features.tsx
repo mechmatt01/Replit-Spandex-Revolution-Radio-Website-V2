@@ -250,28 +250,34 @@ export default function Features() {
                 Submit your favorite metal tracks and artist suggestions to be
                 featured on air.
               </p>
-              <Button
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto w-full justify-start"
-                style={{
-                  color: colors.primary,
-                  backgroundColor: "transparent",
-                  border: "none",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.primary;
-                  e.currentTarget.style.color = colors.primaryText || "white";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = colors.primary;
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrollToSection("submissions");
-                }}
-              >
-                Submit Request →
-              </Button>
+              <div className="flex justify-start">
+                <Button
+                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center"
+                  style={{
+                    color: colors.primary,
+                    backgroundColor: "transparent",
+                    border: "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary;
+                    e.currentTarget.style.color = colors.primaryText || "white";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = colors.primary;
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    scrollToSection("submissions");
+                  }}
+                >
+                  <div
+                    className="w-3 h-3 rounded-full mr-3 animate-pulse"
+                    style={{ backgroundColor: colors.primary }}
+                  ></div>
+                  Submit Request →
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
@@ -313,28 +319,34 @@ export default function Features() {
                 Join our premium membership for exclusive content, early access,
                 and special perks.
               </p>
-              <Button
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto w-full justify-start"
-                style={{
-                  color: colors.primary,
-                  backgroundColor: "transparent",
-                  border: "none",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.primary;
-                  e.currentTarget.style.color = colors.primaryText || "white";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = colors.primary;
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrollToSection("subscribe");
-                }}
-              >
-                Learn More →
-              </Button>
+              <div className="flex justify-start">
+                <Button
+                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center"
+                  style={{
+                    color: colors.primary,
+                    backgroundColor: "transparent",
+                    border: "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary;
+                    e.currentTarget.style.color = colors.primaryText || "white";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = colors.primary;
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    scrollToSection("subscribe");
+                  }}
+                >
+                  <div
+                    className="w-3 h-3 rounded-full mr-3 animate-pulse"
+                    style={{ backgroundColor: colors.primary }}
+                  ></div>
+                  Learn More →
+                </Button>
+              </div>
             </CardContent>
           </Card>
 
@@ -376,28 +388,34 @@ export default function Features() {
                 Show your metal pride with official Spandex Salvation Radio
                 merchandise and apparel.
               </p>
-              <Button
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto w-full justify-start"
-                style={{
-                  color: colors.primary,
-                  backgroundColor: "transparent",
-                  border: "none",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = colors.primary;
-                  e.currentTarget.style.color = colors.primaryText || "white";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.color = colors.primary;
-                }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrollToSection("merch");
-                }}
-              >
-                Shop Now →
-              </Button>
+              <div className="flex justify-start">
+                <Button
+                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center"
+                  style={{
+                    color: colors.primary,
+                    backgroundColor: "transparent",
+                    border: "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary;
+                    e.currentTarget.style.color = colors.primaryText || "white";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.color = colors.primary;
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    scrollToSection("merch");
+                  }}
+                >
+                  <div
+                    className="w-3 h-3 rounded-full mr-3 animate-pulse"
+                    style={{ backgroundColor: colors.primary }}
+                  ></div>
+                  Shop Now →
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

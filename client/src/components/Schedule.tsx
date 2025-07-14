@@ -50,6 +50,28 @@ export default function Schedule() {
     }
   };
 
+  const formatDateWithDuration = (date: string | Date, duration?: number) => {
+    const formattedDate = new Date(date).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    
+    if (duration) {
+      const hours = Math.floor(duration / 60);
+      const mins = duration % 60;
+      if (hours === 0) {
+        return `${formattedDate}, ${mins} min`;
+      } else if (mins === 0) {
+        return `${formattedDate}, ${hours} hr`;
+      } else {
+        return `${formattedDate}, ${hours} hr ${mins} min`;
+      }
+    }
+    
+    return formattedDate;
+  };
+
   const formatTime = (timeString: string) => {
     try {
       // Parse the time string (assuming format like "14:00" or "14:00:00")
@@ -222,13 +244,6 @@ export default function Schedule() {
                         {show.description || "Past episode archive"}
                       </p>
                       
-                      {/* Duration */}
-                      <p 
-                        className="text-sm font-semibold text-center"
-                        style={{ color: colors.primary }}
-                      >
-                        Duration: {show.duration ? formatDuration(show.duration) : "N/A"}
-                      </p>
                       {/* Play Button */}
                       <Button
                         className="mx-auto px-4 py-2 text-xs font-bold rounded-lg transition-all duration-300 hover:scale-105"
@@ -255,14 +270,14 @@ export default function Schedule() {
                         Play Show
                       </Button>
                       
-                      {/* Date */}
+                      {/* Date with Duration */}
                       <div
                         className="flex items-center justify-center space-x-2"
                         style={{ marginTop: "8px" }}
                       >
                         <Calendar className="text-gray-500 h-3 w-3" />
                         <span className="text-gray-500 text-xs font-bold">
-                          {formatDate(show.date)}
+                          {formatDateWithDuration(show.date, show.duration)}
                         </span>
                       </div>
                     </CardContent>
