@@ -32,7 +32,7 @@ export default function About() {
             <div className="flex items-center space-x-6 mb-8">
               <div className="text-center">
                 <div
-                  className="text-2xl font-black"
+                  className="text-2xl font-black text-left"
                   style={{ color: colors.primary }}
                 >
                   24/7
@@ -43,7 +43,7 @@ export default function About() {
               </div>
               <div className="text-center">
                 <div
-                  className="text-2xl font-black"
+                  className="text-2xl font-black text-left"
                   style={{ color: colors.primary }}
                 >
                   1000+
@@ -54,7 +54,7 @@ export default function About() {
               </div>
               <div className="text-center">
                 <div
-                  className="text-2xl font-black"
+                  className="text-2xl font-black text-left"
                   style={{ color: colors.primary }}
                 >
                   50+
