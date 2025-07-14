@@ -314,11 +314,19 @@ const GoogleMapWithListeners = ({
           marker.addListener("click", () => {
             console.log('Marker clicked:', listener.city);
             
-            // Zoom in and center on the clicked location
+            // Smooth zoom animation to the clicked location
             if (map) {
               map.panTo({ lat: listener.lat, lng: listener.lng });
-              map.setZoom(8); // Zoom level 8 for a good city view
+              const currentZoom = map.getZoom();
+              if (currentZoom < 8) {
+                map.setZoom(8); // Zoom level 8 for a good city view
+              } else if (currentZoom < 12) {
+                map.setZoom(12); // Zoom closer if already at city level
+              }
             }
+            
+            // Reset user location selection when clicking on another listener
+            setIsUserLocationSelected(false);
             
             onListenerClick(listener);
           });
@@ -326,33 +334,125 @@ const GoogleMapWithListeners = ({
 
         // Add user location marker if available
         if (userLocation) {
+          // Create a flashing blue dot for user location
+          const userMarkerCircle = new window.google.maps.Circle({
+            center: { lat: userLocation.lat, lng: userLocation.lng },
+            radius: 50000, // 50km radius
+            map: map,
+            strokeColor: "#3B82F6",
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: "#3B82F6",
+            fillOpacity: 0.35,
+            clickable: true,
+            zIndex: 1000,
+          });
+
+          // Create a pulsing marker for user location
           const userMarker = new window.google.maps.Marker({
             position: { lat: userLocation.lat, lng: userLocation.lng },
             map: map,
             title: "This is you!",
             icon: {
               path: window.google.maps.SymbolPath.CIRCLE,
-              scale: 10,
-              fillColor: "#3B82F6", // Light blue color
+              scale: 12,
+              fillColor: "#60A5FA", // Light blue color
               fillOpacity: 1,
               strokeColor: "#FFFFFF",
-              strokeWeight: 2,
-              animation: window.google.maps.Animation.BOUNCE, // Blinking effect
+              strokeWeight: 3,
             },
-            zIndex: 1000, // Ensure it's above other markers
+            zIndex: 1001,
           });
+
+          // Create CSS animation for pulsing effect
+          const pulseAnimation = document.createElement('style');
+          pulseAnimation.textContent = `
+            @keyframes pulse {
+              0% { transform: scale(1); opacity: 1; }
+              50% { transform: scale(1.2); opacity: 0.7; }
+              100% { transform: scale(1); opacity: 1; }
+            }
+          `;
+          document.head.appendChild(pulseAnimation);
+
+          // Apply pulsing animation to the marker
+          const markerElement = userMarker.getIcon();
+          setTimeout(() => {
+            const markerDiv = document.querySelector(`div[title="This is you!"]`);
+            if (markerDiv) {
+              markerDiv.style.animation = 'pulse 2s infinite';
+            }
+          }, 100);
 
           // Create info window for user location
           const userInfoWindow = new window.google.maps.InfoWindow({
             content: `
-              <div style="padding: 8px; color: #1F2937; font-size: 14px; font-weight: 600;">
-                This is you!
+              <div id="custom-info-window" style="
+                background: ${isDarkMode ? '#1f2937' : '#ffffff'};
+                color: ${isDarkMode ? '#ffffff' : '#1f2937'};
+                padding: 12px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 600;
+                border: 2px solid ${colors.primary};
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                min-width: 120px;
+                text-align: center;
+              ">
+                <div style="margin-bottom: 4px;">📍 This is you!</div>
+                <div style="font-size: 12px; color: ${isDarkMode ? '#9ca3af' : '#6b7280'};">
+                  Your current location
+                </div>
               </div>
             `,
           });
 
           userMarker.addListener("click", () => {
+            console.log('User location clicked - zooming in');
+            // Zoom in and center on user location
+            map.panTo({ lat: userLocation.lat, lng: userLocation.lng });
+            map.setZoom(12);
             userInfoWindow.open(map, userMarker);
+            
+            // Create a dummy listener object for the user's location
+            const userAsListener: ActiveListener = {
+              id: "user-location",
+              country: "Your Location",
+              city: "Current Position",
+              lat: userLocation.lat,
+              lng: userLocation.lng,
+              isActiveListening: true,
+              lastSeen: new Date(),
+              userId: "current-user"
+            };
+            
+            // Set as selected and mark as user location
+            setSelectedListener(userAsListener);
+            setIsUserLocationSelected(true);
+          });
+
+          // Circle click event
+          userMarkerCircle.addListener("click", () => {
+            console.log('User location circle clicked - zooming in');
+            map.panTo({ lat: userLocation.lat, lng: userLocation.lng });
+            map.setZoom(12);
+            userInfoWindow.open(map, userMarker);
+            
+            // Create a dummy listener object for the user's location
+            const userAsListener: ActiveListener = {
+              id: "user-location",
+              country: "Your Location",
+              city: "Current Position",
+              lat: userLocation.lat,
+              lng: userLocation.lng,
+              isActiveListening: true,
+              lastSeen: new Date(),
+              userId: "current-user"
+            };
+            
+            // Set as selected and mark as user location
+            setSelectedListener(userAsListener);
+            setIsUserLocationSelected(true);
           });
 
           // Auto-open the info window briefly to show the user
@@ -360,7 +460,7 @@ const GoogleMapWithListeners = ({
             userInfoWindow.open(map, userMarker);
             setTimeout(() => {
               userInfoWindow.close();
-            }, 3000); // Close after 3 seconds
+            }, 3000);
           }, 1000);
         }
 
@@ -440,6 +540,8 @@ export default function InteractiveListenerMap() {
   const [isLoading, setIsLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
+  const [locationPermissionDenied, setLocationPermissionDenied] = useState(false);
+  const [isUserLocationSelected, setIsUserLocationSelected] = useState(false);
 
   const { colors, isDarkMode } = useTheme();
 
@@ -520,26 +622,28 @@ export default function InteractiveListenerMap() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          console.log("User location found:", position.coords);
           setUserLocation({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
+          setLocationPermissionDenied(false);
         },
         (error) => {
-          console.warn("Geolocation error:", error);
-          // Fallback to a default location (New York)
-          setUserLocation({
-            lat: 40.7128,
-            lng: -74.006,
-          });
+          console.warn("Geolocation error:", error.message);
+          setLocationPermissionDenied(true);
+          setUserLocation(null);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 300000 // 5 minutes
         }
       );
     } else {
-      // Fallback to a default location (New York)
-      setUserLocation({
-        lat: 40.7128,
-        lng: -74.006,
-      });
+      console.warn("Geolocation not supported by this browser");
+      setLocationPermissionDenied(true);
+      setUserLocation(null);
     }
   }, []);
 
@@ -625,53 +729,68 @@ export default function InteractiveListenerMap() {
             return null;
           })()}
           
-          {/* Weather Information */}
-          {weatherLoading && userLocation && (
-            <div className="mb-4">
-              <div className="flex items-center justify-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                  Loading weather...
-                </span>
-              </div>
-            </div>
+          {/* Weather Information - Only show if location is available */}
+          {!locationPermissionDenied && (
+            <>
+              {weatherLoading && userLocation && (
+                <div className="mb-4">
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      Loading weather...
+                    </span>
+                  </div>
+                </div>
+              )}
+              
+              {weather && (
+                <div className="mb-4">
+                  <p
+                    className={`text-lg font-semibold mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
+                    {weather.location}
+                  </p>
+                  <div className="flex items-center justify-center gap-2">
+                    <WeatherIcon 
+                      iconCode={weather.icon} 
+                      className={`w-6 h-6 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`} 
+                    />
+                    <span
+                      className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
+                    >
+                      {weather.temperature}°F
+                    </span>
+                  </div>
+                </div>
+              )}
+              
+              {/* Show location only when weather API is not available */}
+              {!weather && !weatherLoading && userLocation && (
+                <div className="mb-4">
+                  <p
+                    className={`text-lg font-semibold mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
+                    {getLocationName(userLocation.lat, userLocation.lng)}
+                  </p>
+                  <div className="flex items-center justify-center gap-2">
+                    <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                    <span className={`text-sm ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+                      Weather service connecting...
+                    </span>
+                  </div>
+                </div>
+              )}
+            </>
           )}
           
-          {weather && (
+          {/* Location Permission Denied Message */}
+          {locationPermissionDenied && (
             <div className="mb-4">
               <p
-                className={`text-lg font-semibold mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                className={`text-sm ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}
               >
-                {weather.location}
+                Enable location access to see weather and your position on the map
               </p>
-              <div className="flex items-center justify-center gap-2">
-                <WeatherIcon 
-                  iconCode={weather.icon} 
-                  className={`w-6 h-6 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`} 
-                />
-                <span
-                  className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
-                >
-                  {weather.temperature}°F
-                </span>
-              </div>
-            </div>
-          )}
-          
-          {/* Show location only when weather API is not available */}
-          {!weather && !weatherLoading && userLocation && (
-            <div className="mb-4">
-              <p
-                className={`text-lg font-semibold mb-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
-              >
-                {getLocationName(userLocation.lat, userLocation.lng)}
-              </p>
-              <div className="flex items-center justify-center gap-2">
-                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                <span className={`text-sm ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
-                  Weather service connecting...
-                </span>
-              </div>
             </div>
           )}
           
@@ -818,12 +937,17 @@ export default function InteractiveListenerMap() {
                         style={{ color: colors.primary }}
                       >
                         <Users className="h-4 w-4 mr-1" />
-                        <span className="font-bold">Active Listener</span>
+                        <span className="font-bold">
+                          {isUserLocationSelected ? "This is you!" : "Active Listener"}
+                        </span>
                       </div>
                       <p
                         className={`text-xs mt-2 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}
                       >
-                        Last seen: {selectedListener.lastSeen.toLocaleTimeString()}
+                        {isUserLocationSelected 
+                          ? "Your current location" 
+                          : `Last seen: ${selectedListener.lastSeen.toLocaleTimeString()}`
+                        }
                       </p>
                     </div>
                   )}
@@ -890,61 +1014,67 @@ export default function InteractiveListenerMap() {
                 </CardContent>
               </Card>
 
-              <Card
-                className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
-                style={{ borderColor: `${colors.primary}40` }}
-              >
-                <CardContent className="p-6">
-                  <h3
-                    className="font-black text-xl mb-3"
-                    style={{ color: colors.primary }}
-                  >
-                    Active Locations
-                  </h3>
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {activeListeners
-                      .filter((l) => l.isActiveListening)
-                      .map((listener) => (
-                        <div
-                          key={listener.id}
-                          className={`flex items-center justify-between p-2 rounded transition-colors duration-200 cursor-pointer ${
-                            selectedListener?.id === listener.id
-                              ? "bg-opacity-20"
-                              : "hover:bg-opacity-10"
-                          }`}
-                          style={{
-                            backgroundColor: selectedListener?.id === listener.id 
-                              ? colors.primary 
-                              : 'transparent',
-                          }}
-                          onClick={() => setSelectedListener(listener)}
-                        >
-                          <div className="flex items-center">
-                            <MapPin className="h-4 w-4 mr-2" style={{ color: colors.primary }} />
-                            <div>
-                              <div
-                                className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
-                              >
-                                {listener.city}
-                              </div>
-                              <div
-                                className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                              >
-                                {listener.country}
+              {/* Only show Active Locations when location permission is not denied */}
+              {!locationPermissionDenied && (
+                <Card
+                  className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
+                  style={{ borderColor: `${colors.primary}40` }}
+                >
+                  <CardContent className="p-6">
+                    <h3
+                      className="font-black text-xl mb-3"
+                      style={{ color: colors.primary }}
+                    >
+                      Active Locations
+                    </h3>
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {activeListeners
+                        .filter((l) => l.isActiveListening)
+                        .map((listener) => (
+                          <div
+                            key={listener.id}
+                            className={`flex items-center justify-between p-2 rounded transition-colors duration-200 cursor-pointer ${
+                              selectedListener?.id === listener.id
+                                ? "bg-opacity-20"
+                                : "hover:bg-opacity-10"
+                            }`}
+                            style={{
+                              backgroundColor: selectedListener?.id === listener.id 
+                                ? colors.primary 
+                                : 'transparent',
+                            }}
+                            onClick={() => {
+                              setSelectedListener(listener);
+                              setIsUserLocationSelected(false);
+                            }}
+                          >
+                            <div className="flex items-center">
+                              <MapPin className="h-4 w-4 mr-2" style={{ color: colors.primary }} />
+                              <div>
+                                <div
+                                  className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                                >
+                                  {listener.city}
+                                </div>
+                                <div
+                                  className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                                >
+                                  {listener.country}
+                                </div>
                               </div>
                             </div>
+                            <div className="flex items-center">
+                              <MapPin 
+                                className="w-4 h-4"
+                                style={{ color: colors.primary }}
+                              />
+                            </div>
                           </div>
-                          <div className="flex items-center">
-                            <MapPin 
-                              className="w-4 h-4"
-                              style={{ color: colors.primary }}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </CardContent>
-              </Card>
+                        ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           )}
         </div>
