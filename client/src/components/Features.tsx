@@ -61,7 +61,7 @@ export default function Features() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* Feature 1: Live Streaming */}
           <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
               borderColor: `${colors.primary}40`,
@@ -77,7 +77,7 @@ export default function Features() {
             }}
             onClick={scrollToRadioPlayer}
           >
-            <CardContent className="p-0">
+            <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
                 style={{ backgroundColor: colors.primary }}
@@ -85,20 +85,20 @@ export default function Features() {
                 <Radio className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4"
+                className="font-black text-2xl mb-4 h-16 flex items-center"
                 style={{ color: colors.text }}
               >
                 24/7 Live Streaming
               </h3>
               <p
-                className="font-semibold text-lg leading-relaxed mb-6"
-                style={{ color: colors.textMuted, minHeight: "3.5rem" }}
+                className="font-semibold text-lg leading-relaxed mb-6 flex-grow"
+                style={{ color: colors.textMuted, minHeight: "4.5rem" }}
               >
                 Non-stop old-school metal streaming with high-quality audio and
                 minimal buffering.
               </p>
               <div
-                className="flex items-center text-sm font-bold"
+                className="flex items-center text-sm font-bold mt-auto"
                 style={{ color: colors.primary }}
               >
                 <div
@@ -112,7 +112,7 @@ export default function Features() {
 
           {/* Feature 2: Global Listener Map */}
           <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
               borderColor: `${colors.primary}40`,
@@ -128,7 +128,7 @@ export default function Features() {
             }}
             onClick={() => scrollToSection("map")}
           >
-            <CardContent className="p-0">
+            <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
                 style={{ backgroundColor: colors.primary }}
@@ -136,20 +136,20 @@ export default function Features() {
                 <Globe className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4"
+                className="font-black text-2xl mb-4 h-16 flex items-center"
                 style={{ color: colors.text }}
               >
                 Global Listener Map
               </h3>
               <p
-                className="font-semibold text-lg leading-relaxed mb-6"
-                style={{ color: colors.textMuted, minHeight: "3.5rem" }}
+                className="font-semibold text-lg leading-relaxed mb-6 flex-grow"
+                style={{ color: colors.textMuted, minHeight: "4.5rem" }}
               >
                 See where metalheads around the world are tuning in from in
                 real-time.
               </p>
               <div
-                className="flex items-center text-sm font-bold"
+                className="flex items-center text-sm font-bold mt-auto"
                 style={{ color: colors.primary }}
               >
                 <div
@@ -163,7 +163,7 @@ export default function Features() {
 
           {/* Feature 3: Show Archives */}
           <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
               borderColor: `${colors.primary}40`,
@@ -179,7 +179,7 @@ export default function Features() {
             }}
             onClick={() => scrollToSection("schedule")}
           >
-            <CardContent className="p-0">
+            <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
                 style={{ backgroundColor: colors.primary }}
@@ -187,20 +187,20 @@ export default function Features() {
                 <Archive className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4"
+                className="font-black text-2xl mb-4 h-16 flex items-center"
                 style={{ color: colors.text }}
               >
                 Show Archives
               </h3>
               <p
-                className="font-semibold text-lg leading-relaxed mb-6"
-                style={{ color: colors.textMuted, minHeight: "3.5rem" }}
+                className="font-semibold text-lg leading-relaxed mb-6 flex-grow"
+                style={{ color: colors.textMuted, minHeight: "4.5rem" }}
               >
                 Access past shows, special episodes, and exclusive metal content
                 on-demand.
               </p>
               <div
-                className="flex items-center text-sm font-bold"
+                className="flex items-center text-sm font-bold mt-auto"
                 style={{ color: colors.primary }}
               >
                 <div
@@ -214,7 +214,7 @@ export default function Features() {
 
           {/* Feature 4: Song Requests */}
           <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
               borderColor: `${colors.primary}40`,
@@ -230,7 +230,7 @@ export default function Features() {
             }}
             onClick={() => scrollToSection("submissions")}
           >
-            <CardContent className="p-0">
+            <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
                 style={{ backgroundColor: colors.primary }}
@@ -238,20 +238,20 @@ export default function Features() {
                 <Music className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4"
+                className="font-black text-2xl mb-4 h-16 flex items-center"
                 style={{ color: colors.text }}
               >
                 Song Requests
               </h3>
               <p
-                className="font-semibold mb-6 text-lg leading-relaxed"
+                className="font-semibold mb-6 text-lg leading-relaxed flex-grow"
                 style={{ color: colors.textMuted }}
               >
                 Submit your favorite metal tracks and artist suggestions to be
                 featured on air.
               </p>
               <Button
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0"
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto"
                 style={{
                   color: colors.primary,
                   backgroundColor: "transparent",
@@ -277,7 +277,7 @@ export default function Features() {
 
           {/* Feature 5: Subscription */}
           <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
               borderColor: `${colors.primary}40`,
@@ -293,7 +293,7 @@ export default function Features() {
             }}
             onClick={() => scrollToSection("subscribe")}
           >
-            <CardContent className="p-0">
+            <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
                 style={{ backgroundColor: colors.primary }}
@@ -301,20 +301,20 @@ export default function Features() {
                 <Crown className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4"
+                className="font-black text-2xl mb-4 h-16 flex items-center"
                 style={{ color: colors.text }}
               >
                 Hairspray Rebellion
               </h3>
               <p
-                className="font-semibold mb-6 text-lg leading-relaxed"
+                className="font-semibold mb-6 text-lg leading-relaxed flex-grow"
                 style={{ color: colors.textMuted }}
               >
                 Join our premium membership for exclusive content, early access,
                 and special perks.
               </p>
               <Button
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0"
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto"
                 style={{
                   color: colors.primary,
                   backgroundColor: "transparent",
@@ -340,7 +340,7 @@ export default function Features() {
 
           {/* Feature 6: Merch Store */}
           <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8"
+            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
               borderColor: `${colors.primary}40`,
@@ -356,7 +356,7 @@ export default function Features() {
             }}
             onClick={() => scrollToSection("merch")}
           >
-            <CardContent className="p-0">
+            <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
                 style={{ backgroundColor: colors.primary }}
@@ -364,20 +364,20 @@ export default function Features() {
                 <Shirt className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4"
+                className="font-black text-2xl mb-4 h-16 flex items-center"
                 style={{ color: colors.text }}
               >
                 Official Merch
               </h3>
               <p
-                className="font-semibold mb-6 text-lg leading-relaxed"
+                className="font-semibold mb-6 text-lg leading-relaxed flex-grow"
                 style={{ color: colors.textMuted }}
               >
                 Show your metal pride with official Spandex Salvation Radio
                 merchandise and apparel.
               </p>
               <Button
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0"
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto"
                 style={{
                   color: colors.primary,
                   backgroundColor: "transparent",

@@ -15,6 +15,8 @@ export default function StickyPlayer() {
     togglePlayback,
     setVolume,
     isLoading,
+    isMuted,
+    toggleMute,
   } = useRadio();
   const { getGradient, getColors } = useTheme();
   const colors = getColors();
@@ -24,6 +26,9 @@ export default function StickyPlayer() {
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newVolume = parseInt(e.target.value) / 100;
     setVolume(newVolume);
+    if (isMuted && newVolume > 0) {
+      toggleMute();
+    }
   };
 
   useEffect(() => {
@@ -98,12 +103,15 @@ export default function StickyPlayer() {
               {/* Volume Controls - Centered between LIVE and play button */}
               <div className="hidden sm:flex items-center justify-center flex-1 mx-2">
                 <div className="flex items-center space-x-2">
-                  <Volume2 className="text-gray-400 h-3 w-3" />
+                  <Volume2 
+                    className="text-gray-400 h-3 w-3 cursor-pointer hover:text-gray-300 transition-colors" 
+                    onClick={toggleMute}
+                  />
                   <div className="w-16 h-1 bg-gray-700 rounded-full relative">
                     <div
                       className="h-1 rounded-full transition-all duration-150"
                       style={{
-                        width: `${volume * 100}%`,
+                        width: `${(isMuted ? 0 : volume) * 100}%`,
                         background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
                       }}
                     ></div>
@@ -111,13 +119,13 @@ export default function StickyPlayer() {
                       type="range"
                       min="0"
                       max="100"
-                      value={volume * 100}
+                      value={(isMuted ? 0 : volume) * 100}
                       onChange={handleVolumeChange}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                   </div>
                   <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center">
-                    {Math.round(volume * 100)}%
+                    {Math.round((isMuted ? 0 : volume) * 100)}%
                   </span>
                 </div>
               </div>
