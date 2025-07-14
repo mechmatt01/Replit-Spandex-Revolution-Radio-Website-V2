@@ -271,10 +271,6 @@ export default function Features() {
                     scrollToSection("submissions");
                   }}
                 >
-                  <div
-                    className="w-3 h-3 rounded-full mr-3 animate-pulse"
-                    style={{ backgroundColor: colors.primary }}
-                  ></div>
                   Submit Request →
                 </Button>
               </div>
@@ -340,10 +336,6 @@ export default function Features() {
                     scrollToSection("subscribe");
                   }}
                 >
-                  <div
-                    className="w-3 h-3 rounded-full mr-3 animate-pulse"
-                    style={{ backgroundColor: colors.primary }}
-                  ></div>
                   Learn More →
                 </Button>
               </div>
