@@ -22,6 +22,51 @@ export default function Schedule() {
     queryKey: ["/api/past-shows"],
   });
 
+  // Filter shows for the next 7 days
+  const getNext7DaysShows = (shows: ShowSchedule[]) => {
+    const today = new Date();
+    const next7Days = [];
+    
+    // Get current day of week (0 = Sunday, 1 = Monday, etc.)
+    const todayDayOfWeek = today.getDay();
+    
+    // Create array of next 7 days with their day names
+    const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    
+    for (let i = 0; i < 7; i++) {
+      const dayIndex = (todayDayOfWeek + i) % 7;
+      const dayName = dayNames[dayIndex];
+      
+      // Find shows for this day
+      const dayShows = shows.filter(show => show.dayOfWeek === dayName);
+      
+      if (i === 0) {
+        // For today, only show shows that haven't aired yet
+        const currentTime = today.getHours() * 60 + today.getMinutes();
+        const futureShows = dayShows.filter(show => {
+          const [time, period] = show.time.split(' ');
+          const [hours, minutes] = time.split(':').map(Number);
+          let showTime = hours * 60 + minutes;
+          
+          if (period === 'PM' && hours !== 12) {
+            showTime += 12 * 60;
+          } else if (period === 'AM' && hours === 12) {
+            showTime = minutes;
+          }
+          
+          return showTime > currentTime;
+        });
+        next7Days.push(...futureShows);
+      } else {
+        next7Days.push(...dayShows);
+      }
+    }
+    
+    return next7Days;
+  };
+
+  const filteredWeeklyShows = getNext7DaysShows(weeklyShows);
+
   const formatDate = (date: string | Date) => {
     return new Date(date).toLocaleDateString("en-US", {
       month: "long",
@@ -129,7 +174,7 @@ export default function Schedule() {
               This Week's Lineup
             </h3>
             <div className="space-y-4">
-              {weeklyShows.map((show) => (
+              {filteredWeeklyShows.map((show) => (
                 <Card
                   key={show.id}
                   className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
@@ -244,6 +289,17 @@ export default function Schedule() {
                         {show.description || "Past episode archive"}
                       </p>
                       
+                      {/* Date with Duration */}
+                      <div
+                        className="flex items-center justify-center space-x-2"
+                        style={{ marginTop: "8px" }}
+                      >
+                        <Calendar className="text-gray-500 h-3 w-3" />
+                        <span className="text-gray-500 text-xs font-bold">
+                          {formatDateWithDuration(show.date, show.duration)}
+                        </span>
+                      </div>
+                      
                       {/* Play Button */}
                       <Button
                         className="mx-auto px-4 py-2 text-xs font-bold rounded-lg transition-all duration-300 hover:scale-105"
@@ -251,7 +307,13 @@ export default function Schedule() {
                           backgroundColor: colors.primary,
                           color: "white",
                           border: "none",
+                          width: "120px",
+                          height: "36px",
+                          minWidth: "120px",
                           maxWidth: "120px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
@@ -269,17 +331,6 @@ export default function Schedule() {
                         <Play className="h-3 w-3 mr-1" />
                         Play Show
                       </Button>
-                      
-                      {/* Date with Duration */}
-                      <div
-                        className="flex items-center justify-center space-x-2"
-                        style={{ marginTop: "8px" }}
-                      >
-                        <Calendar className="text-gray-500 h-3 w-3" />
-                        <span className="text-gray-500 text-xs font-bold">
-                          {formatDateWithDuration(show.date, show.duration)}
-                        </span>
-                      </div>
                     </CardContent>
                   </Card>
                 ))}
