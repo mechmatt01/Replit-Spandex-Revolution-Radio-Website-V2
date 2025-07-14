@@ -160,6 +160,7 @@ Required redirect URIs in Google Cloud Console:
 
 ## Changelog
 
+- July 14, 2025: CIRCULAR PLAY BUTTONS FOR PAST SHOWS - Replaced rectangular "Play Show" buttons with circular play buttons (48px diameter) featuring rounded play icons. Enhanced hover effects with 10% scale animation. Buttons now integrate seamlessly with main site streaming player system for Past Shows playback.
 - July 14, 2025: PAST SHOWS LAYOUT STANDARDIZATION - Standardized all Past Shows play buttons to consistent 120px width × 36px height dimensions. Reordered layout elements with date above play button and play button positioned at bottom. All play buttons now have identical styling and positioning for improved visual consistency across all past show cards.
 - July 14, 2025: THIS WEEK'S LINEUP 7-DAY FILTERING - Implemented intelligent date filtering for "This Week's Lineup" section to show only next 7 days of shows. Added getNext7DaysShows() function that filters shows based on current date and time, excluding past shows from today. All scheduled shows are loaded but only upcoming shows within 7 days are displayed for focused user experience.
 - July 14, 2025: REFINED "ROCK THE AIRWAVES" BUTTONS - Removed animated icon dots from Submit Request and Learn More buttons specifically, maintaining left-aligned text positioning as requested. Preserved clean button design while eliminating animated pulse effects for improved visual consistency.

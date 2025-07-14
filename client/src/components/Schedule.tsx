@@ -300,25 +300,26 @@ export default function Schedule() {
                         </span>
                       </div>
                       
-                      {/* Play Button */}
+                      {/* Circular Play Button */}
                       <Button
-                        className="mx-auto px-4 py-2 text-xs font-bold rounded-lg transition-all duration-300 hover:scale-105"
+                        className="mx-auto rounded-full transition-all duration-300 hover:scale-110"
                         style={{
                           backgroundColor: colors.primary,
                           color: "white",
                           border: "none",
-                          width: "120px",
-                          height: "36px",
-                          minWidth: "120px",
-                          maxWidth: "120px",
+                          width: "48px",
+                          height: "48px",
+                          minWidth: "48px",
+                          maxWidth: "48px",
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
                           marginTop: "14px",
+                          padding: "0",
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
-                          e.currentTarget.style.transform = "scale(1.05)";
+                          e.currentTarget.style.transform = "scale(1.1)";
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary;
@@ -329,8 +330,7 @@ export default function Schedule() {
                           handlePastShowSelect(show);
                         }}
                       >
-                        <Play className="h-3 w-3 mr-1" />
-                        Play Show
+                        <Play className="h-5 w-5" style={{ strokeLinecap: "round", strokeLinejoin: "round" }} />
                       </Button>
                     </CardContent>
                   </Card>
