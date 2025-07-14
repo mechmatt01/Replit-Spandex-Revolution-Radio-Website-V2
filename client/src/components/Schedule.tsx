@@ -292,7 +292,7 @@ export default function Schedule() {
                       {/* Date with Duration */}
                       <div
                         className="flex items-center justify-center space-x-2"
-                        style={{ marginTop: "8px" }}
+                        style={{ marginTop: "2px" }}
                       >
                         <Calendar className="text-gray-500 h-3 w-3" />
                         <span className="text-gray-500 text-xs font-bold">
@@ -314,6 +314,7 @@ export default function Schedule() {
                           display: "flex",
                           alignItems: "center",
                           justifyContent: "center",
+                          marginTop: "14px",
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
