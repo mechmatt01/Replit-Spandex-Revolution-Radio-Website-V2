@@ -85,20 +85,20 @@ export default function Features() {
                 <Radio className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center"
+                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
                 style={{ color: colors.text }}
               >
                 24/7 Live Streaming
               </h3>
               <p
-                className="font-semibold text-lg leading-relaxed mb-6 flex-grow"
+                className="font-semibold text-lg leading-relaxed mb-6 flex-grow text-left"
                 style={{ color: colors.textMuted, minHeight: "4.5rem" }}
               >
                 Non-stop old-school metal streaming with high-quality audio and
                 minimal buffering.
               </p>
               <div
-                className="flex items-center text-sm font-bold mt-auto"
+                className="flex items-center text-sm font-bold mt-auto text-left"
                 style={{ color: colors.primary }}
               >
                 <div
@@ -136,20 +136,20 @@ export default function Features() {
                 <Globe className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center"
+                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
                 style={{ color: colors.text }}
               >
                 Global Listener Map
               </h3>
               <p
-                className="font-semibold text-lg leading-relaxed mb-6 flex-grow"
+                className="font-semibold text-lg leading-relaxed mb-6 flex-grow text-left"
                 style={{ color: colors.textMuted, minHeight: "4.5rem" }}
               >
                 See where metalheads around the world are tuning in from in
                 real-time.
               </p>
               <div
-                className="flex items-center text-sm font-bold mt-auto"
+                className="flex items-center text-sm font-bold mt-auto text-left"
                 style={{ color: colors.primary }}
               >
                 <div
@@ -187,20 +187,20 @@ export default function Features() {
                 <Archive className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center"
+                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
                 style={{ color: colors.text }}
               >
                 Show Archives
               </h3>
               <p
-                className="font-semibold text-lg leading-relaxed mb-6 flex-grow"
+                className="font-semibold text-lg leading-relaxed mb-6 flex-grow text-left"
                 style={{ color: colors.textMuted, minHeight: "4.5rem" }}
               >
                 Access past shows, special episodes, and exclusive metal content
                 on-demand.
               </p>
               <div
-                className="flex items-center text-sm font-bold mt-auto"
+                className="flex items-center text-sm font-bold mt-auto text-left"
                 style={{ color: colors.primary }}
               >
                 <div
@@ -238,20 +238,20 @@ export default function Features() {
                 <Music className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center"
+                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
                 style={{ color: colors.text }}
               >
                 Song Requests
               </h3>
               <p
-                className="font-semibold mb-6 text-lg leading-relaxed flex-grow"
+                className="font-semibold mb-6 text-lg leading-relaxed flex-grow text-left"
                 style={{ color: colors.textMuted }}
               >
                 Submit your favorite metal tracks and artist suggestions to be
                 featured on air.
               </p>
               <Button
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto"
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto w-full justify-start"
                 style={{
                   color: colors.primary,
                   backgroundColor: "transparent",
@@ -301,20 +301,20 @@ export default function Features() {
                 <Crown className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center"
+                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
                 style={{ color: colors.text }}
               >
                 Hairspray Rebellion
               </h3>
               <p
-                className="font-semibold mb-6 text-lg leading-relaxed flex-grow"
+                className="font-semibold mb-6 text-lg leading-relaxed flex-grow text-left"
                 style={{ color: colors.textMuted }}
               >
                 Join our premium membership for exclusive content, early access,
                 and special perks.
               </p>
               <Button
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto"
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto w-full justify-start"
                 style={{
                   color: colors.primary,
                   backgroundColor: "transparent",
@@ -364,20 +364,20 @@ export default function Features() {
                 <Shirt className="text-white h-8 w-8" />
               </div>
               <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center"
+                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
                 style={{ color: colors.text }}
               >
                 Official Merch
               </h3>
               <p
-                className="font-semibold mb-6 text-lg leading-relaxed flex-grow"
+                className="font-semibold mb-6 text-lg leading-relaxed flex-grow text-left"
                 style={{ color: colors.textMuted }}
               >
                 Show your metal pride with official Spandex Salvation Radio
                 merchandise and apparel.
               </p>
               <Button
-                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto"
+                className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 mt-auto w-full justify-start"
                 style={{
                   color: colors.primary,
                   backgroundColor: "transparent",

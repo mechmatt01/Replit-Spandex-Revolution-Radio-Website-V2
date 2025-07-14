@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -52,6 +52,7 @@ interface ShowScheduleItem {
 
 export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [activeSection, setActiveSection] = useState("overview");
+  const [adminUsername, setAdminUsername] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [editingMerch, setEditingMerch] = useState<MerchItem | null>(null);
@@ -62,6 +63,21 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const { colors, isDarkMode } = useTheme();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside modal
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+
+    if (!isAuthenticated) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [isAuthenticated, onClose]);
 
   // Fetch show schedules
   const { data: showSchedules } = useQuery<ShowScheduleItem[]>({
@@ -96,7 +112,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   // Admin authentication
   const handleAdminLogin = () => {
     // In production, this would be a proper authentication check
-    if (adminPassword === "metaladmin123") {
+    if (adminUsername === "admin" && adminPassword === "metaladmin123") {
       setIsAuthenticated(true);
       toast({
         title: "Admin Access Granted",
@@ -106,7 +122,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     } else {
       toast({
         title: "Access Denied",
-        description: "Invalid admin password",
+        description: "Invalid admin credentials",
         variant: "destructive",
       });
     }
@@ -165,44 +181,67 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   if (!isAuthenticated) {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
-        <Card className={`w-full max-w-md ${isDarkMode ? "bg-gray-900" : "bg-white"}`}>
-          <CardHeader>
+        <Card 
+          ref={modalRef}
+          className={`w-full max-w-md relative ${isDarkMode ? "bg-gray-900" : "bg-white"}`}
+        >
+          <CardHeader className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className={`absolute right-2 top-2 ${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
+            >
+              <X className="w-4 h-4" />
+            </Button>
             <CardTitle className={`text-center ${isDarkMode ? "text-white" : "text-black"}`}>
-              Admin Panel Access
+              Admin Access Login
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="text-center">
               <Lock className="w-12 h-12 mx-auto mb-4" style={{ color: colors.primary }} />
               <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                Enter admin password to access the control panel
+                Enter admin password below to access administrative site settings
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="admin-password">Admin Password</Label>
+              <Label htmlFor="admin-username">Username</Label>
+              <Input
+                id="admin-username"
+                type="text"
+                value={adminUsername}
+                onChange={(e) => setAdminUsername(e.target.value)}
+                placeholder="Username"
+                className={`${isDarkMode ? "placeholder:text-gray-400" : "placeholder:text-gray-400"} placeholder:opacity-50`}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="admin-password">Password</Label>
               <Input
                 id="admin-password"
                 type="password"
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
-                placeholder="Enter password"
+                placeholder="Password"
+                className={`${isDarkMode ? "placeholder:text-gray-400" : "placeholder:text-gray-400"} placeholder:opacity-50`}
                 onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
               />
             </div>
             <div className="flex gap-2">
               <Button
+                variant="outline"
+                onClick={onClose}
+                className="flex-1 transition-all duration-300 hover:bg-red-500/10 hover:border-red-500 hover:text-red-500"
+              >
+                Cancel
+              </Button>
+              <Button
                 onClick={handleAdminLogin}
-                className="flex-1"
+                className="flex-1 transition-all duration-300 hover:scale-105"
                 style={{ backgroundColor: colors.primary }}
               >
                 Login
-              </Button>
-              <Button
-                variant="outline"
-                onClick={onClose}
-                className="flex-1"
-              >
-                Cancel
               </Button>
             </div>
           </CardContent>
