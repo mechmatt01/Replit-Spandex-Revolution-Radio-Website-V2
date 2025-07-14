@@ -1114,9 +1114,12 @@ export default function FullWidthGlobeMap() {
                                 </div>
                               </div>
                             </div>
-                            <MapPin
-                              className="w-4 h-4 ml-2"
-                              style={{ color: colors.primary }}
+                            <div
+                              className="w-2 h-2 rounded-full animate-pulse ml-2"
+                              style={{ 
+                                backgroundColor: colors.primary,
+                                animation: 'pulse 2s ease-in-out infinite'
+                              }}
                             />
                           </div>
                         ))}
@@ -1156,9 +1159,12 @@ export default function FullWidthGlobeMap() {
                                 </div>
                               </div>
                             </div>
-                            <MapPin
-                              className="w-4 h-4 ml-2"
-                              style={{ color: colors.primary }}
+                            <div
+                              className="w-2 h-2 rounded-full animate-pulse ml-2"
+                              style={{ 
+                                backgroundColor: colors.primary,
+                                animation: 'pulse 2s ease-in-out infinite'
+                              }}
                             />
                           </div>
                         ))}

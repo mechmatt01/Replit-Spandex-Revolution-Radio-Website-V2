@@ -133,6 +133,26 @@ export const subscriptions = pgTable("subscriptions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Countdown settings table
+export const countdownSettings = pgTable("countdown_settings", {
+  id: serial("id").primaryKey(),
+  countdownText: text("countdown_text").notNull().default("LIVE IN"),
+  countdownDate: timestamp("countdown_date").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Countdown history table for undo/redo functionality
+export const countdownHistory = pgTable("countdown_history", {
+  id: serial("id").primaryKey(),
+  countdownText: text("countdown_text").notNull(),
+  countdownDate: timestamp("countdown_date").notNull(),
+  changedBy: text("changed_by").notNull().default("admin"),
+  changeReason: text("change_reason"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = z.object({
   username: z.string().optional(),
@@ -238,6 +258,19 @@ export const insertSubscriptionSchema = z.object({
   email: z.string(),
   plan: z.string(),
   status: z.string().optional(),
+});
+
+export const insertCountdownSettingsSchema = z.object({
+  countdownText: z.string(),
+  countdownDate: z.date(),
+  isActive: z.boolean().optional(),
+});
+
+export const insertCountdownHistorySchema = z.object({
+  countdownText: z.string(),
+  countdownDate: z.date(),
+  changedBy: z.string().optional(),
+  changeReason: z.string().optional(),
 });
 
 // Types

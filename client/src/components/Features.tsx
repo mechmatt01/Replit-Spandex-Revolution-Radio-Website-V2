@@ -401,10 +401,6 @@ export default function Features() {
                     scrollToSection("merch");
                   }}
                 >
-                  <div
-                    className="w-3 h-3 rounded-full mr-3 animate-pulse"
-                    style={{ backgroundColor: colors.primary }}
-                  ></div>
                   Shop Now →
                 </Button>
               </div>
