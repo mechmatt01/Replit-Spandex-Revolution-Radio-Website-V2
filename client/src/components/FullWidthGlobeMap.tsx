@@ -230,6 +230,11 @@ export default function FullWidthGlobeMap() {
             lng: -74.006,
           });
         },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 600000 // 10 minutes
+        }
       );
     } else {
       // Fallback to New York
@@ -413,6 +418,35 @@ export default function FullWidthGlobeMap() {
       });
 
       setMap(mapInstance);
+
+      // Add current location marker with blue animated dot
+      const currentLocationSvg = `
+        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="8" fill="#4285f4" opacity="0.3">
+            <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.3;0.1;0.3" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="12" cy="12" r="6" fill="#4285f4" opacity="0.5">
+            <animate attributeName="r" values="6;9;6" dur="1.5s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.5;0.2;0.5" dur="1.5s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="12" cy="12" r="4" fill="#4285f4">
+            <animate attributeName="opacity" values="1;0.7;1" dur="1s" repeatCount="indefinite"/>
+          </circle>
+        </svg>
+      `;
+
+      const currentLocationMarker = new google.maps.Marker({
+        position: userLocation,
+        map: mapInstance,
+        title: "Your Current Location",
+        icon: {
+          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(currentLocationSvg)}`,
+          scaledSize: new google.maps.Size(24, 24),
+          anchor: new google.maps.Point(12, 12),
+        },
+        zIndex: 1000, // Higher z-index to appear above other markers
+      });
 
       // Add mock listener markers
       const mockListeners = [
@@ -928,11 +962,8 @@ export default function FullWidthGlobeMap() {
           <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
             <Button
               onClick={() => {
-                if (window.google && mapRef.current) {
-                  const map = mapRef.current.firstChild as any;
-                  if (map && map.getZoom) {
-                    map.setZoom(map.getZoom() + 1);
-                  }
+                if (map) {
+                  map.setZoom(map.getZoom() + 1);
                 }
               }}
               size="sm"
@@ -946,11 +977,8 @@ export default function FullWidthGlobeMap() {
             </Button>
             <Button
               onClick={() => {
-                if (window.google && mapRef.current) {
-                  const map = mapRef.current.firstChild as any;
-                  if (map && map.getZoom) {
-                    map.setZoom(map.getZoom() - 1);
-                  }
+                if (map) {
+                  map.setZoom(map.getZoom() - 1);
                 }
               }}
               size="sm"
@@ -964,12 +992,25 @@ export default function FullWidthGlobeMap() {
             </Button>
             <Button
               onClick={() => {
-                if (window.google && mapRef.current) {
-                  const map = mapRef.current.firstChild as any;
-                  if (map && map.panTo) {
-                    map.panTo({ lat: 40.7128, lng: -74.006 });
-                    map.setZoom(2);
-                  }
+                if (map && userLocation) {
+                  map.panTo(userLocation);
+                  map.setZoom(12);
+                }
+              }}
+              size="sm"
+              className={`p-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-700 text-white" : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`}
+              style={{
+                backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                color: isDarkMode ? "#ffffff" : "#000000",
+              }}
+            >
+              <MapPin className="w-4 h-4" />
+            </Button>
+            <Button
+              onClick={() => {
+                if (map) {
+                  map.panTo({ lat: 40.7128, lng: -74.006 });
+                  map.setZoom(2);
                 }
               }}
               size="sm"
