@@ -629,20 +629,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const artist = artistMatch[1];
           const artwork = await fetchiTunesArtwork(artist, title);
 
+          // Check for advertisement using comprehensive detection
+          const { analyzeStreamMetadata } = await import("./adDetection");
+          const adAnalysis = analyzeStreamMetadata({ title, artist });
+          
+          let isAd = adAnalysis.isAd;
+          let finalTitle = title;
+          let finalArtist = artist;
+          let finalArtwork = artwork;
+          
+          if (isAd) {
+            const { extractCompanyName, getClearbitLogo } = await import("./radioCoConfig");
+            const companyName = extractCompanyName({ title, artist });
+            
+            finalTitle = companyName !== "Advertisement" ? `${companyName} Commercial` : "Advertisement";
+            finalArtist = "95.5 The Beat";
+            finalArtwork = getClearbitLogo(companyName) || "advertisement";
+          }
+
           const nowPlayingData = {
             id: 1,
-            title,
-            artist,
-            album: "95.5 The Beat",
+            title: finalTitle,
+            artist: finalArtist,
+            album: isAd ? "Commercial Break" : "95.5 The Beat",
             duration: null,
-            artwork,
-            isAd: false,
+            artwork: finalArtwork,
+            isAd,
             createdAt: new Date(),
             updatedAt: new Date(),
           };
 
           await storage.updateNowPlaying(nowPlayingData);
-          console.log(`Now playing: "${title}" by ${artist}`);
+          console.log(`Now playing: "${finalTitle}" by ${finalArtist}${isAd ? ' (Advertisement)' : ''}`);
+          if (isAd) {
+            console.log(`Advertisement detected: ${adAnalysis.reason || 'Various indicators'}`);
+          }
           return res.json(nowPlayingData);
         }
       }
@@ -691,20 +712,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const artist = nowPlaying.artist || "Hot 97";
             const artwork = await fetchiTunesArtwork(artist, title);
 
+            // Check for advertisement using comprehensive detection
+            const { analyzeStreamMetadata } = await import("./adDetection");
+            const adAnalysis = analyzeStreamMetadata({ title, artist });
+            
+            let isAd = adAnalysis.isAd;
+            let finalTitle = title;
+            let finalArtist = artist;
+            let finalArtwork = artwork;
+            
+            if (isAd) {
+              const { extractCompanyName, getClearbitLogo } = await import("./radioCoConfig");
+              const companyName = extractCompanyName({ title, artist });
+              
+              finalTitle = companyName !== "Advertisement" ? `${companyName} Commercial` : "Advertisement";
+              finalArtist = "Hot 97";
+              finalArtwork = getClearbitLogo(companyName) || "advertisement";
+            }
+
             const nowPlayingData = {
               id: 1,
-              title,
-              artist,
-              album: "Hot 97 FM",
+              title: finalTitle,
+              artist: finalArtist,
+              album: isAd ? "Commercial Break" : "Hot 97 FM",
               duration: null,
-              artwork,
-              isAd: false,
+              artwork: finalArtwork,
+              isAd,
               createdAt: new Date(),
               updatedAt: new Date(),
             };
 
             await storage.updateNowPlaying(nowPlayingData);
-            console.log(`Now playing: "${title}" by ${artist}`);
+            console.log(`Now playing: "${finalTitle}" by ${finalArtist}${isAd ? ' (Advertisement)' : ''}`);
+            if (isAd) {
+              console.log(`Advertisement detected: ${adAnalysis.reason || 'Various indicators'}`);
+            }
             return res.json(nowPlayingData);
           }
         } else {
@@ -1457,6 +1499,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error in advanced ad detection:", error);
       res.status(500).json({ error: "Failed to detect ad content" });
+    }
+  });
+
+  // Test endpoint for advertisement detection
+  app.post("/api/test-ad-detection", async (req, res) => {
+    try {
+      const { analyzeStreamMetadata } = await import("./adDetection");
+      const testMetadata = req.body || {
+        title: "Capital One Commercial",
+        artist: "Advertisement"
+      };
+      
+      const adAnalysis = analyzeStreamMetadata(testMetadata);
+      
+      console.log("Test ad detection:", testMetadata);
+      console.log("Analysis result:", adAnalysis);
+      
+      res.json({
+        input: testMetadata,
+        result: adAnalysis
+      });
+    } catch (error) {
+      console.error("Error in test ad detection:", error);
+      res.status(500).json({ error: "Failed to test ad detection" });
     }
   });
 

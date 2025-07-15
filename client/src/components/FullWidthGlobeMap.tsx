@@ -214,35 +214,55 @@ export default function FullWidthGlobeMap() {
 
   // Get user's location
   useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
+    const getLocation = async () => {
+      if ("geolocation" in navigator) {
+        try {
+          // Request permission first
+          const permission = await navigator.permissions.query({name: 'geolocation'});
+          console.log('Geolocation permission:', permission.state);
+          
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              console.log('Got location:', position.coords.latitude, position.coords.longitude);
+              setUserLocation({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              });
+            },
+            (error) => {
+              console.error("Error getting location:", error);
+              console.log("Error code:", error.code, "Message:", error.message);
+              // Fallback to New York
+              setUserLocation({
+                lat: 40.7128,
+                lng: -74.006,
+              });
+            },
+            {
+              enableHighAccuracy: true,
+              timeout: 15000,
+              maximumAge: 300000 // 5 minutes (reduced from 10 minutes)
+            }
+          );
+        } catch (error) {
+          console.error("Permission error:", error);
           // Fallback to New York
           setUserLocation({
             lat: 40.7128,
             lng: -74.006,
           });
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 600000 // 10 minutes
         }
-      );
-    } else {
-      // Fallback to New York
-      setUserLocation({
-        lat: 40.7128,
-        lng: -74.006,
-      });
-    }
+      } else {
+        console.log("Geolocation not supported");
+        // Fallback to New York
+        setUserLocation({
+          lat: 40.7128,
+          lng: -74.006,
+        });
+      }
+    };
+    
+    getLocation();
   }, []);
 
   // Fetch weather data when user location is available
