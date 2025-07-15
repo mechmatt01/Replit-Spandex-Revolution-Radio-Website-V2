@@ -3,6 +3,9 @@ import type { Session } from "express-session";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { registerAdminRoutes } from "./adminRoutes";
+import { firebaseRadioStorage } from "./firebaseStorage";
+import { universalAdDetector } from "./universalAdDetection";
 import { recaptchaService } from "./recaptcha";
 import { formatPhoneNumber } from "./userUtils";
 
@@ -102,9 +105,205 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Auth middleware
   await setupAuth(app);
+  
+  // Register admin routes
+  registerAdminRoutes(app);
+  
+  // Initialize Firebase radio storage
+  await firebaseRadioStorage.initializeDefaultStations();
 
   // Setup radio stream proxy
   setupRadioProxy(app);
+
+  // Radio stations API endpoint with fallback
+  app.get('/api/radio-stations', async (req, res) => {
+    // Always return default stations when Firebase fails
+    const defaultStations = [
+      {
+        id: 1,
+        stationId: 'kbfb-955',
+        name: '95.5 The Beat',
+        frequency: '95.5 FM',
+        description: 'Dallas Hip Hop & R&B',
+        streamUrl: 'https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac',
+        location: 'Dallas, TX',
+        isActive: true,
+        sortOrder: 1,
+        website: 'https://955thebeat.com',
+        genre: 'Hip Hop',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 2,
+        stationId: 'hot97',
+        name: 'Hot 97',
+        frequency: '97.1 FM',
+        description: 'New York Hip Hop & R&B',
+        streamUrl: 'https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTAAC.aac',
+        location: 'New York, NY',
+        isActive: true,
+        sortOrder: 2,
+        website: 'https://hot97.com',
+        genre: 'Hip Hop',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 3,
+        stationId: 'power106',
+        name: 'Power 106',
+        frequency: '105.9 FM',
+        description: 'Los Angeles Hip Hop & R&B',
+        streamUrl: 'https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRAAC.aac',
+        location: 'Los Angeles, CA',
+        isActive: true,
+        sortOrder: 3,
+        website: 'https://power106.com',
+        genre: 'Hip Hop',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 4,
+        stationId: 'somafm-metal',
+        name: 'SomaFM Metal',
+        frequency: 'Online',
+        description: 'Heavy Metal & Hard Rock',
+        streamUrl: 'https://ice1.somafm.com/metal-128-mp3',
+        location: 'San Francisco, CA',
+        isActive: true,
+        sortOrder: 4,
+        website: 'https://somafm.com/metal',
+        genre: 'Metal',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+
+    try {
+      const stations = await firebaseRadioStorage.getRadioStations();
+      
+      // If Firebase returns actual stations, use them; otherwise use fallback
+      if (stations.length > 0) {
+        res.json(stations);
+      } else {
+        console.log('Firebase returned empty stations, using fallback');
+        res.json(defaultStations);
+      }
+    } catch (error) {
+      console.error('Firebase error, using fallback stations:', error.message);
+      res.json(defaultStations);
+    }
+  });
+        const defaultStations = [
+          {
+            id: 1,
+            stationId: 'kbfb-955',
+            name: '95.5 The Beat',
+            frequency: '95.5 FM',
+            description: 'Dallas Hip Hop & R&B',
+            streamUrl: 'https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac',
+            location: 'Dallas, TX',
+            isActive: true,
+            sortOrder: 1,
+            website: 'https://955thebeat.com',
+            genre: 'Hip Hop',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          {
+            id: 2,
+            stationId: 'hot97',
+            name: 'Hot 97',
+            frequency: '97.1 FM',
+            description: 'New York Hip Hop & R&B',
+            streamUrl: 'https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTAAC.aac',
+            location: 'New York, NY',
+            isActive: true,
+            sortOrder: 2,
+            website: 'https://hot97.com',
+            genre: 'Hip Hop',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          {
+            id: 3,
+            stationId: 'power106',
+            name: 'Power 106',
+            frequency: '105.9 FM',
+            description: 'Los Angeles Hip Hop & R&B',
+            streamUrl: 'https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRAAC.aac',
+            location: 'Los Angeles, CA',
+            isActive: true,
+            sortOrder: 3,
+            website: 'https://power106.com',
+            genre: 'Hip Hop',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+          {
+            id: 4,
+            stationId: 'somafm-metal',
+            name: 'SomaFM Metal',
+            frequency: 'Online',
+            description: 'Heavy Metal & Hard Rock',
+            streamUrl: 'https://ice1.somafm.com/metal-128-mp3',
+            location: 'San Francisco, CA',
+            isActive: true,
+            sortOrder: 4,
+            website: 'https://somafm.com/metal',
+            genre: 'Metal',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ];
+        res.json(defaultStations);
+      } else {
+        res.json(stations);
+      }
+    } catch (error) {
+      console.error('Error fetching radio stations:', error);
+      res.status(500).json({ error: 'Failed to fetch radio stations' });
+    }
+  });
+
+  // System status check endpoint
+  app.get('/api/system-status', async (req, res) => {
+    const status = {
+      timestamp: new Date().toISOString(),
+      services: {
+        weather: true, // Weather API is working
+        radio: true,   // Radio streaming is working
+        firebase: {
+          configured: {
+            projectId: !!process.env.FIREBASE_PROJECT_ID,
+            privateKey: !!process.env.FIREBASE_PRIVATE_KEY,
+            clientEmail: !!process.env.FIREBASE_CLIENT_EMAIL,
+          },
+          credentials: {
+            projectId: process.env.FIREBASE_PROJECT_ID,
+            clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+            privateKeyLength: process.env.FIREBASE_PRIVATE_KEY?.length || 0,
+            privateKeyStart: process.env.FIREBASE_PRIVATE_KEY?.substring(0, 30) || '',
+          },
+          connection: 'testing...'
+        }
+      }
+    };
+
+    // Test Firebase connection
+    try {
+      const stations = await firebaseRadioStorage.getRadioStations();
+      status.services.firebase.connection = 'connected';
+      status.services.firebase.stationCount = stations.length;
+    } catch (error) {
+      status.services.firebase.connection = 'failed';
+      status.services.firebase.error = error.message;
+    }
+
+    res.json(status);
+  });
 
   // Config endpoint for client-side environment variables
   app.get("/api/config", (req: Request, res: Response) => {

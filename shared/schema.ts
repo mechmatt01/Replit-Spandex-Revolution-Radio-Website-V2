@@ -133,6 +133,25 @@ export const subscriptions = pgTable("subscriptions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const radioStations = pgTable("radio_stations", {
+  id: serial("id").primaryKey(),
+  name: varchar("name").notNull(),
+  description: text("description"),
+  streamUrl: text("stream_url").notNull(),
+  apiUrl: text("api_url"), // For metadata fetching
+  apiType: varchar("api_type").notNull(), // 'triton', 'streamtheworld', 'somafm', 'custom'
+  stationId: varchar("station_id").notNull().unique(), // Internal ID for selection
+  frequency: varchar("frequency"), // e.g., "95.5 FM", "Hot 97"
+  location: varchar("location"), // e.g., "Dallas", "New York"
+  genre: varchar("genre"), // e.g., "Hip Hop", "Metal"
+  website: varchar("website"),
+  logo: text("logo"), // URL to station logo
+  isActive: boolean("is_active").default(true).notNull(),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Countdown settings table
 export const countdownSettings = pgTable("countdown_settings", {
   id: serial("id").primaryKey(),
@@ -298,3 +317,22 @@ export type StreamStats = typeof streamStats.$inferSelect;
 
 export type Subscription = typeof subscriptions.$inferSelect;
 export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
+
+export const insertRadioStationSchema = z.object({
+  name: z.string().min(1, "Station name is required"),
+  description: z.string().optional(),
+  streamUrl: z.string().url("Valid stream URL required"),
+  apiUrl: z.string().optional(),
+  apiType: z.enum(["triton", "streamtheworld", "somafm", "custom", "auto"]).default("auto"),
+  stationId: z.string().min(1, "Station ID is required"),
+  frequency: z.string().optional(),
+  location: z.string().optional(),
+  genre: z.string().optional(),
+  website: z.string().optional(),
+  logo: z.string().optional(),
+  isActive: z.boolean().default(true),
+  sortOrder: z.number().default(0),
+});
+
+export type RadioStation = typeof radioStations.$inferSelect;
+export type InsertRadioStation = z.infer<typeof insertRadioStationSchema>;

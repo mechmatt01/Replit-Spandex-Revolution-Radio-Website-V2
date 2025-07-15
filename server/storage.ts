@@ -7,6 +7,7 @@ import {
   nowPlaying,
   streamStats,
   subscriptions,
+  radioStations,
   type User,
   type UpsertUser,
   type RegisterUser,
@@ -22,6 +23,8 @@ import {
   type StreamStats,
   type Subscription,
   type InsertSubscription,
+  type RadioStation,
+  type InsertRadioStation,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -93,6 +96,16 @@ export interface IStorage {
   // Account deletion
   scheduleUserDeletion(id: string): Promise<User | undefined>;
   deleteUserAccount(id: string): Promise<void>;
+
+  // Radio stations
+  getRadioStations(): Promise<RadioStation[]>;
+  getActiveRadioStations(): Promise<RadioStation[]>;
+  getRadioStationById(id: number): Promise<RadioStation | undefined>;
+  getRadioStationByStationId(stationId: string): Promise<RadioStation | undefined>;
+  createRadioStation(station: InsertRadioStation): Promise<RadioStation>;
+  updateRadioStation(id: number, updates: Partial<InsertRadioStation>): Promise<RadioStation | undefined>;
+  deleteRadioStation(id: number): Promise<void>;
+  updateStationSortOrder(id: number, sortOrder: number): Promise<RadioStation | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -433,6 +446,56 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUserAccount(id: string): Promise<void> {
     await db.delete(users).where(eq(users.id, id));
+  }
+
+  // Radio stations
+  async getRadioStations(): Promise<RadioStation[]> {
+    return await db.select().from(radioStations).orderBy(radioStations.sortOrder);
+  }
+
+  async getActiveRadioStations(): Promise<RadioStation[]> {
+    return await db.select().from(radioStations).where(eq(radioStations.isActive, true)).orderBy(radioStations.sortOrder);
+  }
+
+  async getRadioStationById(id: number): Promise<RadioStation | undefined> {
+    const [station] = await db.select().from(radioStations).where(eq(radioStations.id, id));
+    return station;
+  }
+
+  async getRadioStationByStationId(stationId: string): Promise<RadioStation | undefined> {
+    const [station] = await db.select().from(radioStations).where(eq(radioStations.stationId, stationId));
+    return station;
+  }
+
+  async createRadioStation(insertStation: InsertRadioStation): Promise<RadioStation> {
+    const [station] = await db.insert(radioStations).values(insertStation).returning();
+    return station;
+  }
+
+  async updateRadioStation(id: number, updates: Partial<InsertRadioStation>): Promise<RadioStation | undefined> {
+    const [station] = await db.update(radioStations)
+      .set({
+        ...updates,
+        updatedAt: new Date(),
+      })
+      .where(eq(radioStations.id, id))
+      .returning();
+    return station;
+  }
+
+  async deleteRadioStation(id: number): Promise<void> {
+    await db.delete(radioStations).where(eq(radioStations.id, id));
+  }
+
+  async updateStationSortOrder(id: number, sortOrder: number): Promise<RadioStation | undefined> {
+    const [station] = await db.update(radioStations)
+      .set({
+        sortOrder,
+        updatedAt: new Date(),
+      })
+      .where(eq(radioStations.id, id))
+      .returning();
+    return station;
   }
 }
 
