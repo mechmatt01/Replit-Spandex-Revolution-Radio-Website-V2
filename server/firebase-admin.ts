@@ -5,9 +5,8 @@ const require = createRequire(import.meta.url);
 // Simplified server-side Firebase operations
 export const syncUserToFirebase = async (userData: any) => {
   try {
-    // In a real implementation, you would use Firebase Admin SDK here
-    // For now, we'll skip Firebase sync on the server side
-    console.log("User data would be synced to Firebase:", userData.id);
+    // Firebase sync implementation would go here
+    // Currently disabled for production deployment
   } catch (error) {
     console.error("Firebase sync error:", error);
   }

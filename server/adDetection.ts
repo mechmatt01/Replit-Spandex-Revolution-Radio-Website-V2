@@ -96,7 +96,6 @@ async function captureAudioSample(
 // Transcribe audio using OpenAI Whisper
 async function transcribeAudio(audioBuffer: Buffer): Promise<string> {
   if (!openai) {
-    console.warn("OpenAI API key not available, skipping transcription");
     return "";
   }
 
@@ -130,7 +129,6 @@ async function analyzeForAdvertisement(transcription: string): Promise<{
   }
 
   if (!openai) {
-    console.warn("OpenAI API key not available, using keyword detection only");
     return { isAd: quickAdDetection(transcription), confidence: 0.5 };
   }
 

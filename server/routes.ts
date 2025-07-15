@@ -111,8 +111,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       res.json({
         googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || "",
-        googleMapsSigningSecret: "xUMvkKZN7YbwACexIGzpV2o5Fms=", // URL signing secret for enhanced security
-        openWeatherApiKey: "bc23ce0746d4fc5c04d1d765589dadc5", // Working API key
+        googleMapsSigningSecret: process.env.GOOGLE_MAPS_SIGNING_SECRET || "",
+        openWeatherApiKey: process.env.OPENWEATHER_API_KEY || ""
       });
     } catch (error) {
       console.error("Error fetching config:", error);
@@ -129,7 +129,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Latitude and longitude are required" });
       }
 
-      const apiKey = "bc23ce0746d4fc5c04d1d765589dadc5"; // Using working API key
+      const apiKey = process.env.OPENWEATHER_API_KEY;
       if (!apiKey) {
         return res.status(500).json({ error: "OpenWeatherMap API key not configured" });
       }
