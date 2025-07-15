@@ -15,8 +15,7 @@ export function useLocation() {
   const { isAuthenticated } = useAuth();
 
   const requestLocation = async () => {
-    if (!isAuthenticated) return;
-
+    // Allow location detection even for unauthenticated users
     setLoading(true);
     setError(null);
 
@@ -29,8 +28,8 @@ export function useLocation() {
         (resolve, reject) => {
           navigator.geolocation.getCurrentPosition(resolve, reject, {
             enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 300000, // 5 minutes
+            timeout: 15000, // Increased timeout
+            maximumAge: 60000, // Reduced cache time for more frequent updates
           });
         },
       );
@@ -57,10 +56,16 @@ export function useLocation() {
 
       setLocation(locationData);
 
-      // Update location on server
-      await apiRequest("POST", "/api/user/location", {
-        location: locationData,
-      });
+      // Update location on server only if authenticated
+      if (isAuthenticated) {
+        try {
+          await apiRequest("POST", "/api/user/location", {
+            location: locationData,
+          });
+        } catch (apiError) {
+          console.warn("Could not update location on server:", apiError);
+        }
+      }
 
       return locationData;
     } catch (err: any) {

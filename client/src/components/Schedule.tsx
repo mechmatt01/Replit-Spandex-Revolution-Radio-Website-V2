@@ -22,7 +22,7 @@ export default function Schedule() {
     queryKey: ["/api/past-shows"],
   });
 
-  // Filter shows for the next 7 days
+  // Filter shows for the next 7 days with proper chronological ordering
   const getNext7DaysShows = (shows: ShowSchedule[]) => {
     const today = new Date();
     const next7Days = [];
@@ -56,13 +56,43 @@ export default function Schedule() {
           
           return showTime > currentTime;
         });
+        
+        // Sort today's future shows by time
+        futureShows.sort((a, b) => {
+          const timeA = parseTimeToMinutes(a.time);
+          const timeB = parseTimeToMinutes(b.time);
+          return timeA - timeB;
+        });
+        
         next7Days.push(...futureShows);
       } else {
-        next7Days.push(...dayShows);
+        // For future days, sort shows by time
+        const sortedDayShows = dayShows.sort((a, b) => {
+          const timeA = parseTimeToMinutes(a.time);
+          const timeB = parseTimeToMinutes(b.time);
+          return timeA - timeB;
+        });
+        
+        next7Days.push(...sortedDayShows);
       }
     }
     
     return next7Days;
+  };
+
+  // Helper function to parse time string to minutes
+  const parseTimeToMinutes = (timeStr: string): number => {
+    const [time, period] = timeStr.split(' ');
+    const [hours, minutes] = time.split(':').map(Number);
+    let totalMinutes = hours * 60 + minutes;
+    
+    if (period === 'PM' && hours !== 12) {
+      totalMinutes += 12 * 60;
+    } else if (period === 'AM' && hours === 12) {
+      totalMinutes = minutes;
+    }
+    
+    return totalMinutes;
   };
 
   const filteredWeeklyShows = getNext7DaysShows(weeklyShows);
@@ -319,7 +349,7 @@ export default function Schedule() {
                           handlePastShowSelect(show);
                         }}
                       >
-                        <Play className="h-5 w-5" style={{ strokeLinecap: "round", strokeLinejoin: "round" }} />
+                        <Play className="h-5 w-5" style={{ strokeLinecap: "round", strokeLinejoin: "round" }} fill="currentColor" />
                       </Button>
                       
                       {/* Date with Duration */}

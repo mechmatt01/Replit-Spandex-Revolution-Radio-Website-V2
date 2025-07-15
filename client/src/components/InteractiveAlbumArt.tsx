@@ -69,6 +69,7 @@ export default function InteractiveAlbumArt({
 
   const handleImageError = () => {
     setImageLoaded(false);
+    console.warn(`Failed to load artwork for "${title}" by ${artist}. Falling back to themed music logo.`);
   };
 
   return (
@@ -115,7 +116,7 @@ export default function InteractiveAlbumArt({
         </div>
       </div>
 
-      {/* Album Artwork */}
+      {/* Album Artwork with Verification */}
       {artwork && artwork.trim() && artwork !== "advertisement" && (
         <div
           className="absolute inset-0 transition-all duration-500"
@@ -130,6 +131,8 @@ export default function InteractiveAlbumArt({
             className="w-full h-full object-cover"
             onLoad={handleImageLoad}
             onError={handleImageError}
+            referrerPolicy="no-referrer"
+            crossOrigin="anonymous"
           />
 
           {/* Gradient overlay on hover */}

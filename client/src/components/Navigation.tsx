@@ -578,7 +578,7 @@ export default function Navigation() {
               <button
                 ref={menuRef}
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 rounded-lg transition-colors duration-200"
+                className="p-2 rounded-lg transition-colors duration-200 flex items-center justify-center"
                 style={{ 
                   backgroundColor: isOpen ? colors.primary : 'transparent',
                   color: isOpen ? 'white' : colors.primary 
@@ -777,22 +777,23 @@ export default function Navigation() {
                         }, 100);
                         setIsOpen(false);
                       }}
-                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full cursor-pointer"
+                      className="flex items-center justify-center space-x-3 px-6 py-3 text-sm font-bold rounded-full transition-all duration-300 w-full cursor-pointer shadow-lg"
                       style={{ 
-                        color: colors.text,
-                        border: `1px solid ${colors.primary}`,
-                        backgroundColor: 'transparent'
+                        color: 'white',
+                        background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary || colors.primary})`,
+                        border: 'none',
+                        transform: 'scale(1)'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary + '20';
-                        e.currentTarget.style.color = 'white';
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                        e.currentTarget.style.boxShadow = `0 8px 25px -8px ${colors.primary}60`;
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'transparent';
-                        e.currentTarget.style.color = colors.text;
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.boxShadow = '0 4px 15px -4px rgba(0,0,0,0.2)';
                       }}
                     >
-                      <User size={20} style={{ color: colors.primary }} />
+                      <User size={18} style={{ color: 'white' }} />
                       <span>LOGIN</span>
                     </div>
                     
@@ -804,20 +805,26 @@ export default function Navigation() {
                         }, 100);
                         setIsOpen(false);
                       }}
-                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full cursor-pointer"
+                      className="flex items-center justify-center space-x-3 px-6 py-3 text-sm font-bold rounded-full transition-all duration-300 w-full cursor-pointer shadow-lg"
                       style={{ 
-                        backgroundColor: colors.primary,
-                        color: 'white',
-                        border: `1px solid ${colors.primary}`
+                        color: colors.primary,
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: `2px solid ${colors.primary}`,
+                        backdropFilter: 'blur(10px)',
+                        transform: 'scale(1)'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                        e.currentTarget.style.background = `${colors.primary}15`;
+                        e.currentTarget.style.boxShadow = `0 8px 25px -8px ${colors.primary}40`;
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = colors.primary;
+                        e.currentTarget.style.transform = 'scale(1)';
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                        e.currentTarget.style.boxShadow = '0 4px 15px -4px rgba(0,0,0,0.2)';
                       }}
                     >
-                      <UserPlus size={20} style={{ color: 'white' }} />
+                      <UserPlus size={18} style={{ color: colors.primary }} />
                       <span>SIGN UP</span>
                     </div>
                   </>

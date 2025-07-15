@@ -617,34 +617,40 @@ export default function InteractiveListenerMap() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Get user's current location
+  // Get user's current location with improved detection
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log("User location found:", position.coords);
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-          setLocationPermissionDenied(false);
-        },
-        (error) => {
-          console.warn("Geolocation error:", error.message);
-          setLocationPermissionDenied(true);
-          setUserLocation(null);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 300000 // 5 minutes
-        }
-      );
-    } else {
-      console.warn("Geolocation not supported by this browser");
-      setLocationPermissionDenied(true);
-      setUserLocation(null);
-    }
+    const getUserLocation = async () => {
+      if (!navigator.geolocation) {
+        console.warn("Geolocation is not supported by this browser");
+        setLocationPermissionDenied(true);
+        return;
+      }
+
+      try {
+        const position = await new Promise<GeolocationPosition>(
+          (resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 15000, // Increased timeout
+              maximumAge: 60000, // Reduced cache time for more frequent updates
+            });
+          }
+        );
+
+        console.log("User location found:", position.coords);
+        setUserLocation({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        setLocationPermissionDenied(false);
+      } catch (error) {
+        console.warn("Geolocation error:", error.message);
+        setLocationPermissionDenied(true);
+        setUserLocation(null);
+      }
+    };
+
+    getUserLocation();
   }, []);
 
   // Real-time updates
