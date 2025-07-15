@@ -107,7 +107,7 @@ export default function InteractiveAlbumArt({
           title.toLowerCase().includes("commercial") ||
           title.toLowerCase().includes("advertisement") ||
           title.toLowerCase().includes("commercial break") ? (
-            <div className="text-white font-black text-xl bg-red-600 px-3 py-1 rounded">
+            <div className="text-white font-black text-xs bg-red-600 px-2 py-1 rounded m-1">
               AD
             </div>
           ) : (

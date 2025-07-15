@@ -64,6 +64,9 @@ export default function StickyPlayer() {
           : "transform translate-y-full opacity-0"
       }`}
       style={{ width: "320px", maxWidth: "calc(100vw - 32px)" }}
+      role="region"
+      aria-label="Floating audio player"
+      aria-live="polite"
     >
       <div className="w-full px-3 py-2 relative">
         {/* Compact floating player layout */}

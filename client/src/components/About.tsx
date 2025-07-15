@@ -12,7 +12,7 @@ export default function About() {
   };
 
   return (
-    <section id="about" className="py-20 bg-black">
+    <section id="about" className="py-20 bg-black" aria-label="About Spandex Salvation Radio">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-12 items-center">
           <div className="lg:w-3/5">
@@ -32,34 +32,34 @@ export default function About() {
             <div className="flex items-center space-x-6 mb-8">
               <div className="text-center">
                 <div
-                  className="text-2xl font-black text-left"
+                  className="text-2xl font-black text-center"
                   style={{ color: colors.primary }}
                 >
                   24/7
                 </div>
-                <div className="text-sm font-semibold text-gray-500">
+                <div className="text-sm font-semibold text-gray-500 text-center">
                   Live Streaming
                 </div>
               </div>
               <div className="text-center">
                 <div
-                  className="text-2xl font-black text-left"
+                  className="text-2xl font-black text-center"
                   style={{ color: colors.primary }}
                 >
                   1000+
                 </div>
-                <div className="text-sm font-semibold text-gray-500">
+                <div className="text-sm font-semibold text-gray-500 text-center">
                   Metal Tracks
                 </div>
               </div>
               <div className="text-center">
                 <div
-                  className="text-2xl font-black text-left"
+                  className="text-2xl font-black text-center"
                   style={{ color: colors.primary }}
                 >
                   50+
                 </div>
-                <div className="text-sm font-semibold text-gray-500">
+                <div className="text-sm font-semibold text-gray-500 text-center">
                   Countries
                 </div>
               </div>

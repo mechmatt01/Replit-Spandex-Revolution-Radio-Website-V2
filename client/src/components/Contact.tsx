@@ -228,8 +228,8 @@ export default function Contact() {
                             handleInputChange("subject", value)
                           }
                         >
-                          <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange [&>span]:text-gray-400 [&>span]:opacity-60">
-                            <SelectValue placeholder="Select a subject" />
+                          <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange [&>span]:text-gray-400 [&>span]:opacity-60" aria-label="Select message subject">
+                            <SelectValue placeholder="Select a subject" className="text-gray-400 opacity-60" />
                           </SelectTrigger>
                           <SelectContent className="bg-black border-dark-border">
                             <SelectItem value="general">

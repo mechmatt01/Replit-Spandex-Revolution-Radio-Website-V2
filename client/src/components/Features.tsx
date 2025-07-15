@@ -40,6 +40,7 @@ export default function Features() {
       id="features"
       className="py-20 transition-colors duration-300"
       style={{ backgroundColor: colors.background }}
+      aria-label="Platform features"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
@@ -271,7 +272,8 @@ export default function Features() {
                     scrollToSection("submissions");
                   }}
                 >
-                  Submit Request →
+                  <Music className="w-4 h-4 mr-2" />
+                  Submit Request
                 </Button>
               </div>
             </CardContent>
@@ -336,7 +338,8 @@ export default function Features() {
                     scrollToSection("subscribe");
                   }}
                 >
-                  Learn More →
+                  <Crown className="w-4 h-4 mr-2" />
+                  Learn More
                 </Button>
               </div>
             </CardContent>
@@ -401,7 +404,8 @@ export default function Features() {
                     scrollToSection("merch");
                   }}
                 >
-                  Shop Now →
+                  <Shirt className="w-4 h-4 mr-2" />
+                  Shop Now
                 </Button>
               </div>
             </CardContent>

@@ -101,14 +101,22 @@ export default function Hero() {
         </div>
 
         {/* Countdown Timer */}
-        <div className="mb-8">
-          <div className="flex flex-col items-center mb-2">
-            {/* Animated dot above LIVE IN text */}
-            <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse opacity-90 mb-1"></div>
-            {/* LIVE IN text centered */}
-            <span className="text-red-500 opacity-90 text-lg font-bold">
-              LIVE IN
-            </span>
+        <div className="mb-8" role="timer" aria-label="Live broadcast countdown">
+          <div className="flex flex-col items-center mb-4">
+            {/* Modern launch indicator */}
+            <div className="relative mb-3" aria-hidden="true">
+              <div className="w-4 h-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-full animate-pulse shadow-lg"></div>
+              <div className="absolute inset-0 w-4 h-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-full animate-ping opacity-75"></div>
+            </div>
+            {/* Modern LIVE IN text */}
+            <div className="text-center">
+              <span className="text-transparent bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-xl font-black tracking-wider">
+                LIVE IN
+              </span>
+              <p className="text-gray-400 text-sm font-semibold mt-1 opacity-80">
+                First broadcast countdown
+              </p>
+            </div>
           </div>
           <div className="flex justify-center space-x-4 text-center">
             <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
