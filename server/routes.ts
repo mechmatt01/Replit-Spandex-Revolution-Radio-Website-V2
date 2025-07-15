@@ -257,11 +257,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             createdAt: new Date(),
             updatedAt: new Date(),
           },
-        ];
-        res.json(defaultStations);
-      } else {
-        res.json(stations);
-      }
     } catch (error) {
       console.error('Error fetching radio stations:', error);
       res.status(500).json({ error: 'Failed to fetch radio stations' });
