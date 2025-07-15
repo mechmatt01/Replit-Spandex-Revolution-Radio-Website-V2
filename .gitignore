@@ -55,6 +55,11 @@ temp/
 *.sqlite
 *.db
 
+# Backup files
+*_backup.*
+*.backup.*
+**/backup/**
+
 # Replit specific
 .replit
 replit.nix

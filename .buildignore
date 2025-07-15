@@ -1,0 +1,9 @@
+# Build ignore file - exclude backup and test files from production builds
+*_backup.tsx
+*_backup.ts
+*_backup.js
+*_backup.jsx
+*.backup.*
+**/backup/**
+**/test/**
+**/__tests__/**
