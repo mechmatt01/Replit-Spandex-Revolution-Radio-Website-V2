@@ -490,72 +490,95 @@ export default function FullWidthGlobeMap() {
               transition: opacity 0.3s ease, transform 0.3s ease;
             `;
 
-            div.innerHTML = `
-              <button class="close-overlay" style="
-                position: absolute;
-                top: -2px;
-                right: -2px;
-                background: transparent;
-                border: none;
-                color: white;
-                cursor: pointer;
-                font-size: 20px;
-                font-weight: bold;
-                line-height: 1;
-                padding: 0;
-                border-radius: 0;
-                width: 24px;
-                height: 24px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.2s ease;
-              ">×</button>
-              <div style="
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                margin-bottom: 8px;
-                padding-right: 16px;
-              ">
-                <div style="
-                  width: 12px;
-                  height: 12px;
-                  border-radius: 50%;
-                  background: #ff6b35;
-                  animation: pulse 2s infinite;
-                "></div>
-                <h3 style="
-                  margin: 0;
-                  font-size: 16px;
-                  font-weight: 700;
-                  color: #ff6b35;
-                ">${this.listener.city}, ${this.listener.country}</h3>
-              </div>
-              <p style="
-                margin: 0;
-                font-size: 14px;
-                color: #e5e5e5;
-                font-weight: 500;
-              ">🎵 Currently listening to metal!</p>
-              <div style="
-                margin-top: 12px;
-                padding: 8px;
-                background: #374151;
-                border-radius: 8px;
-                font-size: 12px;
-                color: #d1d5db;
-              ">
-                Live listener • Active now
-              </div>
+            // Create close button
+            const closeButton = document.createElement("button");
+            closeButton.className = "close-overlay";
+            closeButton.style.cssText = `
+              position: absolute;
+              top: -2px;
+              right: -2px;
+              background: transparent;
+              border: none;
+              color: white;
+              cursor: pointer;
+              font-size: 20px;
+              font-weight: bold;
+              line-height: 1;
+              padding: 0;
+              border-radius: 0;
+              width: 24px;
+              height: 24px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.2s ease;
             `;
+            closeButton.textContent = "×";
+            
+            // Create header container
+            const headerContainer = document.createElement("div");
+            headerContainer.style.cssText = `
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              margin-bottom: 8px;
+              padding-right: 16px;
+            `;
+            
+            // Create pulse indicator
+            const pulseIndicator = document.createElement("div");
+            pulseIndicator.style.cssText = `
+              width: 12px;
+              height: 12px;
+              border-radius: 50%;
+              background: #ff6b35;
+              animation: pulse 2s infinite;
+            `;
+            
+            // Create title (safely escape user data)
+            const title = document.createElement("h3");
+            title.style.cssText = `
+              margin: 0;
+              font-size: 16px;
+              font-weight: 700;
+              color: #ff6b35;
+            `;
+            title.textContent = `${this.listener.city}, ${this.listener.country}`;
+            
+            // Create description paragraph
+            const description = document.createElement("p");
+            description.style.cssText = `
+              margin: 0;
+              font-size: 14px;
+              color: #e5e5e5;
+              font-weight: 500;
+            `;
+            description.textContent = "🎵 Currently listening to metal!";
+            
+            // Create status container
+            const statusContainer = document.createElement("div");
+            statusContainer.style.cssText = `
+              margin-top: 12px;
+              padding: 8px;
+              background: #374151;
+              border-radius: 8px;
+              font-size: 12px;
+              color: #d1d5db;
+            `;
+            statusContainer.textContent = "Live listener • Active now";
+            
+            // Assemble the structure
+            headerContainer.appendChild(pulseIndicator);
+            headerContainer.appendChild(title);
+            
+            div.appendChild(closeButton);
+            div.appendChild(headerContainer);
+            div.appendChild(description);
+            div.appendChild(statusContainer);
 
             this.div = div;
 
             // Add close button functionality
-            const closeButton = div.querySelector(
-              ".close-overlay",
-            ) as HTMLButtonElement;
             closeButton.addEventListener("mouseenter", () => {
               closeButton.style.background = "transparent";
             });
@@ -573,7 +596,7 @@ export default function FullWidthGlobeMap() {
 
             // Add pulse animation style
             const pulseStyle = document.createElement("style");
-            pulseStyle.innerHTML = `
+            pulseStyle.textContent = `
               @keyframes pulse {
                 0% { transform: scale(1); opacity: 1; }
                 50% { transform: scale(1.2); opacity: 0.8; }
