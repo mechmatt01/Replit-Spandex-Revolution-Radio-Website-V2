@@ -252,6 +252,31 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       // Preload the new stream
       audio.load();
 
+      // Wait for the stream to be ready
+      await new Promise<void>((resolve) => {
+        const onCanPlay = () => {
+          audio.removeEventListener('canplay', onCanPlay);
+          audio.removeEventListener('error', onError);
+          resolve();
+        };
+        
+        const onError = () => {
+          audio.removeEventListener('canplay', onCanPlay);
+          audio.removeEventListener('error', onError);
+          resolve(); // Still resolve to continue with track info fetching
+        };
+        
+        audio.addEventListener('canplay', onCanPlay);
+        audio.addEventListener('error', onError);
+        
+        // Timeout fallback
+        setTimeout(() => {
+          audio.removeEventListener('canplay', onCanPlay);
+          audio.removeEventListener('error', onError);
+          resolve();
+        }, 2000);
+      });
+
       // Immediately fetch track info for the new station
       try {
         const response = await fetch(`/api/now-playing?station=${station.id}`);

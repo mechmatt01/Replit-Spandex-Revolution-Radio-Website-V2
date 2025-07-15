@@ -170,12 +170,11 @@ export default function RadioCoPlayer() {
       await changeStation(station);
       console.log(`Successfully changed to station: ${station.name}`);
 
-      // Auto-play the new station after switching
-      if (!isPlaying) {
-        setTimeout(() => {
-          togglePlayback();
-        }, 500);
-      }
+      // Always auto-play the new station after switching
+      // Wait for the station to be fully loaded before starting playback
+      setTimeout(() => {
+        togglePlayback();
+      }, 300);
     } catch (err) {
       console.error("Failed to switch station:", err);
     }
@@ -466,7 +465,7 @@ export default function RadioCoPlayer() {
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
-            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center mx-auto"
+            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center mx-auto relative"
             style={{
               background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
               color: "white",
