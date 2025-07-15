@@ -4,7 +4,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { registerAdminRoutes } from "./adminRoutes";
-import { firebaseRadioStorage } from "./firebaseStorage";
+import { firebaseRadioStorage, firebaseLiveStatsStorage } from "./firebaseStorage";
 import { universalAdDetector } from "./universalAdDetection";
 import { recaptchaService } from "./recaptcha";
 import { formatPhoneNumber } from "./userUtils";
@@ -1699,6 +1699,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(stats);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch stream stats" });
+    }
+  });
+
+  // Firebase Live Statistics API
+  app.get("/api/live-stats", async (req, res) => {
+    try {
+      const stats = await firebaseLiveStatsStorage.getLiveStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching live stats:", error);
+      res.status(500).json({ error: "Failed to fetch live statistics" });
     }
   });
 

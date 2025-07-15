@@ -63,3 +63,16 @@ temp/
 # Replit specific
 .replit
 replit.nix
+
+# Firebase service account keys and sensitive credentials
+firebase-service-account.json
+firebase-adminsdk-*.json
+*firebase-adminsdk*.json
+service-account-key.json
+attached_assets/*firebase-adminsdk*.json
+
+# Any other sensitive files that might contain keys
+*.key
+*.pem
+*.p12
+*.pfx

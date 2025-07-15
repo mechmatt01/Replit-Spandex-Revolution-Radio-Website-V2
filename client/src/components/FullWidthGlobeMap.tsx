@@ -18,6 +18,7 @@ import LiveNowIconPath from "@assets/LiveNowIcon.png";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import type { StreamStats } from "@shared/schema";
+import AnimatedCounter from "./AnimatedCounter";
 
 // Animated weather icons
 import clearDayIcon from "@assets/animated_weather_icons/clear-day.svg";
@@ -200,6 +201,17 @@ export default function FullWidthGlobeMap() {
 
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
+  });
+
+  // Firebase Live Statistics with 5-second refresh
+  const { data: liveStats } = useQuery<{
+    activeListeners: number;
+    countries: number;
+    totalListeners: number;
+  }>({
+    queryKey: ["/api/live-stats"],
+    refetchInterval: 5000, // Update every 5 seconds
+    refetchIntervalInBackground: true,
   });
 
   // Fetch Google Maps API key and config
@@ -1083,65 +1095,80 @@ export default function FullWidthGlobeMap() {
                 </h3>
                 <div className="grid grid-cols-3 gap-4 flex-1 items-center">
                   {/* Active Listeners */}
-                  <div className="flex flex-col items-center text-center space-y-2 transform scale-115">
-                    <span
-                      className="font-black text-2xl"
-                      style={{ color: colors.primary }}
-                    >
-                      {totalListeners}
-                    </span>
+                  <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
+                    <div className="relative">
+                      <AnimatedCounter
+                        value={liveStats?.activeListeners || totalListeners}
+                        className="font-black text-4xl tracking-tight"
+                        style={{ color: colors.primary }}
+                      />
+                      <div 
+                        className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
+                        style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
+                      />
+                    </div>
                     <TrendingUp
-                      className="h-7 w-7"
+                      className="h-8 w-8 drop-shadow-md"
                       style={{ color: colors.primary }}
                     />
                     <span
-                      className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                      className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
                     >
                       Active Listeners
                     </span>
                   </div>
 
                   {/* Countries */}
-                  <div className="flex flex-col items-center text-center space-y-2 transform scale-115">
-                    <span
-                      className="font-black text-2xl"
-                      style={{ color: colors.primary }}
-                    >
-                      {countriesWithListeners}
-                    </span>
+                  <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
+                    <div className="relative">
+                      <AnimatedCounter
+                        value={liveStats?.countries || countriesWithListeners}
+                        className="font-black text-4xl tracking-tight"
+                        style={{ color: colors.primary }}
+                      />
+                      <div 
+                        className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
+                        style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
+                      />
+                    </div>
                     <img
                       src={CountriesIconPath}
                       alt="Countries"
-                      className="h-7 w-7"
+                      className="h-8 w-8 drop-shadow-md"
                       style={{
                         filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
                       }}
                     />
                     <span
-                      className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                      className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
                     >
                       Countries
                     </span>
                   </div>
 
                   {/* Total Listeners */}
-                  <div className="flex flex-col items-center text-center space-y-2 transform scale-115">
-                    <span
-                      className="font-black text-2xl"
-                      style={{ color: colors.primary }}
-                    >
-                      {stats?.currentListeners || 42}
-                    </span>
+                  <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
+                    <div className="relative">
+                      <AnimatedCounter
+                        value={liveStats?.totalListeners || stats?.currentListeners || 1247}
+                        className="font-black text-4xl tracking-tight"
+                        style={{ color: colors.primary }}
+                      />
+                      <div 
+                        className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
+                        style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
+                      />
+                    </div>
                     <img
                       src={LiveNowIconPath}
                       alt="Total Listeners"
-                      className="h-7 w-7"
+                      className="h-8 w-8 drop-shadow-md"
                       style={{
                         filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
                       }}
                     />
                     <span
-                      className={`font-semibold text-sm ${isDarkMode ? "text-white" : "text-black"}`}
+                      className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
                     >
                       Total Listeners
                     </span>
