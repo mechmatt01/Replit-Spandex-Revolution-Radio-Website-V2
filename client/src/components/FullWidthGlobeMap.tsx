@@ -442,7 +442,103 @@ export default function FullWidthGlobeMap() {
                 stylers: [{ color: "#3d3d3d" }],
               },
             ]
-          : [],
+          : [
+              {
+                elementType: "geometry",
+                stylers: [{ color: "#f5f5f5" }],
+              },
+              {
+                elementType: "labels.icon",
+                stylers: [{ visibility: "off" }],
+              },
+              {
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#616161" }],
+              },
+              {
+                elementType: "labels.text.stroke",
+                stylers: [{ color: "#f5f5f5" }],
+              },
+              {
+                featureType: "administrative",
+                elementType: "geometry",
+                stylers: [{ color: "#fefefe" }],
+              },
+              {
+                featureType: "administrative.country",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#424242" }],
+              },
+              {
+                featureType: "administrative.land_parcel",
+                stylers: [{ visibility: "off" }],
+              },
+              {
+                featureType: "administrative.locality",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+              },
+              {
+                featureType: "poi",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+              },
+              {
+                featureType: "poi.park",
+                elementType: "geometry",
+                stylers: [{ color: "#c5e1a5" }],
+              },
+              {
+                featureType: "poi.park",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#616161" }],
+              },
+              {
+                featureType: "road",
+                elementType: "geometry.fill",
+                stylers: [{ color: "#ffffff" }],
+              },
+              {
+                featureType: "road",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+              },
+              {
+                featureType: "road.arterial",
+                elementType: "geometry",
+                stylers: [{ color: "#ffffff" }],
+              },
+              {
+                featureType: "road.highway",
+                elementType: "geometry",
+                stylers: [{ color: "#dadada" }],
+              },
+              {
+                featureType: "road.highway.controlled_access",
+                elementType: "geometry",
+                stylers: [{ color: "#e98d58" }],
+              },
+              {
+                featureType: "road.local",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#9e9e9e" }],
+              },
+              {
+                featureType: "transit",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+              },
+              {
+                featureType: "water",
+                elementType: "geometry",
+                stylers: [{ color: "#c9c9c9" }],
+              },
+              {
+                featureType: "water",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#9e9e9e" }],
+              },
+            ],
         fullscreenControl: false,
         mapTypeControl: false,
         streetViewControl: false,
@@ -988,8 +1084,8 @@ export default function FullWidthGlobeMap() {
                 }}
               />
               
-              {/* Fullscreen Controls */}
-              <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+              {/* Fullscreen Controls - Moved down to avoid navigation bar */}
+              <div className="absolute top-20 right-4 z-10 flex flex-col gap-2">
                 <Button
                   onClick={() => {
                     if (map) {
@@ -1038,7 +1134,7 @@ export default function FullWidthGlobeMap() {
                 </Button>
               </div>
 
-              {/* Fullscreen Toggle */}
+              {/* Fullscreen Toggle - Moved down to avoid navigation bar */}
               <Button
                 onClick={() => {
                   setIsFullscreen(false);
@@ -1049,7 +1145,7 @@ export default function FullWidthGlobeMap() {
                     }
                   }, 100);
                 }}
-                className="absolute top-4 left-4 z-10 p-2 border-0 shadow-lg bg-gray-800 hover:bg-gray-700 text-white"
+                className="absolute top-20 left-4 z-10 p-2 border-0 shadow-lg bg-gray-800 hover:bg-gray-700 text-white"
                 size="sm"
               >
                 <Minimize2 className="w-4 h-4" />
