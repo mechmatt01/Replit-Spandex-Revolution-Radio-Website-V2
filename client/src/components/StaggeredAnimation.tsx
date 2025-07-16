@@ -19,14 +19,17 @@ export default function StaggeredAnimation({
   staggerDelay = 100,
   className = '',
   direction = 'up',
-  threshold = 0.1
+  threshold = 0.05
 }: StaggeredAnimationProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
   const [adaptiveDuration, setAdaptiveDuration] = useState(600);
   const [adaptiveStaggerDelay, setAdaptiveStaggerDelay] = useState(staggerDelay);
   const [elementId] = useState(() => `stagger-${++staggerCounter}`);
-  const isVisible = useIntersectionObserver(ref, { threshold });
+  const isVisible = useIntersectionObserver(ref, { 
+    threshold, 
+    rootMargin: '200px 0px -50px 0px' // Start animation 200px before element comes into view
+  });
   const { velocity } = useScrollVelocity();
 
   useEffect(() => {

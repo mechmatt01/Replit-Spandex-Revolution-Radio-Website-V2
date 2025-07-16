@@ -17,7 +17,7 @@ let animationCounter = 0;
 
 export default function FadeInView({
   children,
-  threshold = 0.1,
+  threshold = 0.05,
   delay = 0,
   duration = 600,
   className = '',
@@ -27,7 +27,10 @@ export default function FadeInView({
   const [hasAnimated, setHasAnimated] = useState(false);
   const [adaptiveDuration, setAdaptiveDuration] = useState(duration);
   const [elementId] = useState(() => `fade-${++animationCounter}`);
-  const isVisible = useIntersectionObserver(ref, { threshold });
+  const isVisible = useIntersectionObserver(ref, { 
+    threshold, 
+    rootMargin: '200px 0px -50px 0px' // Start animation 200px before element comes into view
+  });
   const { velocity } = useScrollVelocity();
 
   useEffect(() => {
