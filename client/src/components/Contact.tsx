@@ -29,6 +29,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useTheme } from "@/contexts/ThemeContext";
 import type { InsertContact } from "@shared/schema";
+import FadeInView from "./FadeInView";
+import StaggeredAnimation from "./StaggeredAnimation";
 
 export default function Contact() {
   const [formData, setFormData] = useState<InsertContact>({

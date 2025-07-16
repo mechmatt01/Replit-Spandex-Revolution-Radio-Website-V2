@@ -5,6 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useTheme } from "@/contexts/ThemeContext";
 import type { StreamStats } from "@shared/schema";
 import { Calendar, MapPin, ShoppingBag, Users } from "lucide-react";
+import StaggeredAnimation from "./StaggeredAnimation";
+import SkeletonLoader from "./SkeletonLoader";
 
 export default function Features() {
   const { data: stats } = useQuery<StreamStats>({
@@ -59,7 +61,11 @@ export default function Features() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <StaggeredAnimation 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          staggerDelay={150}
+          direction="up"
+        >
           {/* Feature 1: Live Streaming */}
           <Card
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
@@ -410,7 +416,7 @@ export default function Features() {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </StaggeredAnimation>
       </div>
     </section>
   );

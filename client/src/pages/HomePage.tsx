@@ -8,6 +8,8 @@ import FullWidthGlobeMap from "@/components/FullWidthGlobeMap";
 import Contact from "@/components/Contact";
 import SubscriptionCarousel from "@/components/SubscriptionCarousel";
 import ShopifyEcommerce from "@/components/ShopifyEcommerce";
+import FadeInView from "@/components/FadeInView";
+import StaggeredAnimation from "@/components/StaggeredAnimation";
 
 import { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
@@ -45,27 +47,55 @@ export default function HomePage() {
     <div className="min-h-screen bg-black dark:bg-black text-white dark:text-white transition-colors duration-300">
       <Navigation />
       <Hero />
-      <Features />
-      <About />
-      <Schedule />
-      <section id="subscribe" className="py-20 bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-white">
-              Supporters Enjoy More
-            </h2>
-            <p className="text-gray-400 text-lg font-semibold">
-              Support our growth and enjoy exclusive content.
-            </p>
+      
+      <FadeInView direction="up" delay={200}>
+        <Features />
+      </FadeInView>
+      
+      <FadeInView direction="up" delay={300}>
+        <About />
+      </FadeInView>
+      
+      <FadeInView direction="up" delay={400}>
+        <Schedule />
+      </FadeInView>
+      
+      <FadeInView direction="up" delay={500}>
+        <section id="subscribe" className="py-20 bg-black">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-white">
+                Supporters Enjoy More
+              </h2>
+              <p className="text-gray-400 text-lg font-semibold">
+                Support our growth and enjoy exclusive content.
+              </p>
+            </div>
+            <SubscriptionCarousel />
           </div>
-          <SubscriptionCarousel />
-        </div>
-      </section>
-      <Submissions />
-      <FullWidthGlobeMap />
-      <Contact />
-      <ShopifyEcommerce />
-      <Footer />
+        </section>
+      </FadeInView>
+      
+      <FadeInView direction="up" delay={600}>
+        <Submissions />
+      </FadeInView>
+      
+      <FadeInView direction="up" delay={700}>
+        <FullWidthGlobeMap />
+      </FadeInView>
+      
+      <FadeInView direction="up" delay={800}>
+        <Contact />
+      </FadeInView>
+      
+      <FadeInView direction="up" delay={900}>
+        <ShopifyEcommerce />
+      </FadeInView>
+      
+      <FadeInView direction="up" delay={1000}>
+        <Footer />
+      </FadeInView>
+      
       <StickyPlayer />
       <ChatButton />
     </div>

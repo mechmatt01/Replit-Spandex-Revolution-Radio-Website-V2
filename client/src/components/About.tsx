@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
+import FadeInView from "./FadeInView";
+import StaggeredAnimation from "./StaggeredAnimation";
 
 export default function About() {
   const { colors } = useTheme();
@@ -29,7 +31,11 @@ export default function About() {
               of bands like Skid Row, Twisted Sister, Mötley Crüe, and countless
               other metal pioneers who defined a generation.
             </p>
-            <div className="flex items-center space-x-6 mb-8">
+            <StaggeredAnimation
+              className="flex items-center space-x-6 mb-8"
+              staggerDelay={200}
+              direction="up"
+            >
               <div className="text-center">
                 <div
                   className="text-2xl font-black text-center"
@@ -63,26 +69,28 @@ export default function About() {
                   Countries
                 </div>
               </div>
-            </div>
-            <Button
-              onClick={scrollToSubscribe}
-              className="px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
-              style={{
-                backgroundColor: colors.primary,
-                color: colors.primaryText || "white",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor =
-                  colors.primaryDark || colors.primary;
-                e.currentTarget.style.transform = "scale(1.05)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = colors.primary;
-                e.currentTarget.style.transform = "scale(1)";
-              }}
-            >
-              Join the Revolution
-            </Button>
+            </StaggeredAnimation>
+            <FadeInView direction="up" delay={600}>
+              <Button
+                onClick={scrollToSubscribe}
+                className="px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
+                style={{
+                  backgroundColor: colors.primary,
+                  color: colors.primaryText || "white",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor =
+                    colors.primaryDark || colors.primary;
+                  e.currentTarget.style.transform = "scale(1.05)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = colors.primary;
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              >
+                Join the Revolution
+              </Button>
+            </FadeInView>
           </div>
           <div className="relative hidden lg:block lg:w-2/5">
             <img

@@ -68,24 +68,33 @@ export default function AnimatedCounter({
   };
 
   return (
-    <div className={`relative overflow-hidden ${className}`} style={style}>
+    <div className={`relative overflow-hidden ${className}`} style={{
+      ...style,
+      transition: 'color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+      willChange: 'color'
+    }}>
       <div
-        className={`transition-all duration-200 ${
-          isAnimating ? "transform scale-110" : "transform scale-100"
+        className={`transition-all duration-300 ${
+          isAnimating ? "transform scale-105" : "transform scale-100"
         }`}
+        style={{
+          transition: 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          willChange: 'transform'
+        }}
       >
         <span className="inline-block tabular-nums font-black">
           {formatNumber(currentValue)}
         </span>
       </div>
       
-      {/* Subtle glow effect during animation */}
+      {/* Improved glow effect with better color transitions */}
       {isAnimating && (
         <div 
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-current to-transparent opacity-20 animate-pulse"
+          className="absolute inset-0 opacity-30 animate-pulse"
           style={{ 
-            background: `linear-gradient(90deg, transparent, ${style.color || '#f97316'}, transparent)`,
-            opacity: 0.3
+            background: `radial-gradient(circle, ${style.color || '#f97316'}40, transparent 70%)`,
+            filter: 'blur(2px)',
+            transition: 'opacity 0.4s ease-out'
           }}
         />
       )}

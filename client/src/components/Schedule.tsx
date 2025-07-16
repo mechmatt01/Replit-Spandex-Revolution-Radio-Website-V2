@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useRadio } from "@/contexts/RadioContext";
 import type { ShowSchedule, PastShow } from "@shared/schema";
+import SkeletonLoader from "./SkeletonLoader";
+import FadeInView from "./FadeInView";
 
 export default function Schedule() {
   const { getColors } = useTheme();
@@ -14,11 +16,11 @@ export default function Schedule() {
   const [selectedPastShow, setSelectedPastShow] = useState<PastShow | null>(null);
   const [selectedWeeklyShow, setSelectedWeeklyShow] = useState<ShowSchedule | null>(null);
 
-  const { data: weeklyShows = [] } = useQuery<ShowSchedule[]>({
+  const { data: weeklyShows = [], isLoading: isLoadingShows } = useQuery<ShowSchedule[]>({
     queryKey: ["/api/schedules"],
   });
 
-  const { data: pastShows = [] } = useQuery<PastShow[]>({
+  const { data: pastShows = [], isLoading: isLoadingPast } = useQuery<PastShow[]>({
     queryKey: ["/api/past-shows"],
   });
 
@@ -204,7 +206,21 @@ export default function Schedule() {
               This Week's Lineup
             </h3>
             <div className="space-y-4">
-              {filteredWeeklyShows.map((show) => (
+              {isLoadingShows ? (
+                // Show skeleton loading cards
+                Array.from({ length: 6 }).map((_, index) => (
+                  <Card key={index} className="p-6" style={{ backgroundColor: colors.card }}>
+                    <div className="flex items-center justify-between mb-4">
+                      <SkeletonLoader width="60%" height="20px" />
+                      <SkeletonLoader width="40px" height="20px" />
+                    </div>
+                    <SkeletonLoader width="100%" height="16px" className="mb-2" />
+                    <SkeletonLoader width="80%" height="16px" className="mb-4" />
+                    <SkeletonLoader width="100%" height="40px" />
+                  </Card>
+                ))
+              ) : (
+                filteredWeeklyShows.map((show) => (
                 <Card
                   key={show.id}
                   className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
@@ -254,7 +270,8 @@ export default function Schedule() {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                ))
+              )}
             </div>
           </div>
 
@@ -268,7 +285,21 @@ export default function Schedule() {
                 Past Shows
               </h3>
               <div className="space-y-4">
-                {pastShows.slice(0, 3).map((show) => (
+                {isLoadingPast ? (
+                  // Show skeleton loading cards for past shows
+                  Array.from({ length: 3 }).map((_, index) => (
+                    <Card key={index} className="p-6" style={{ backgroundColor: colors.card }}>
+                      <div className="flex items-center justify-between mb-4">
+                        <SkeletonLoader width="70%" height="20px" />
+                        <SkeletonLoader width="60px" height="30px" />
+                      </div>
+                      <SkeletonLoader width="100%" height="16px" className="mb-2" />
+                      <SkeletonLoader width="85%" height="16px" className="mb-4" />
+                      <SkeletonLoader width="50%" height="16px" />
+                    </Card>
+                  ))
+                ) : (
+                  pastShows.slice(0, 3).map((show) => (
                   <Card
                     key={show.id}
                     className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-6"
@@ -364,7 +395,8 @@ export default function Schedule() {
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           )}
