@@ -33,6 +33,7 @@ export const users = pgTable("users", {
   profileImageUrl: varchar("profile_image_url"),
   username: varchar("username").unique(),
   phoneNumber: varchar("phone_number"),
+  googleId: varchar("google_id").unique(), // Google OAuth ID
   location: jsonb("location"), // { lat: number, lng: number, address?: string }
   isActiveListening: boolean("is_active_listening").default(false),
   activeSubscription: boolean("active_subscription").default(false),
@@ -180,6 +181,7 @@ export const insertUserSchema = z.object({
   lastName: z.string().optional(),
   profileImageUrl: z.string().optional(),
   phoneNumber: z.string().optional(),
+  googleId: z.string().optional(),
   location: z.any().optional(),
   isActiveListening: z.boolean().optional(),
   activeSubscription: z.boolean().optional(),
@@ -220,6 +222,7 @@ export const upsertUserSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   profileImageUrl: z.string().optional(),
+  googleId: z.string().optional(),
 });
 
 export const updateLocationSchema = z.object({
