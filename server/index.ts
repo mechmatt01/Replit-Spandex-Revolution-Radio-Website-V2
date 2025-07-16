@@ -3,6 +3,10 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 // Force refresh for weather API
 
+// Load environment variables
+import * as dotenv from "dotenv";
+dotenv.config();
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

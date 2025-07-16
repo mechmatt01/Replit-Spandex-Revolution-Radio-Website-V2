@@ -240,9 +240,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/config", (req: Request, res: Response) => {
     try {
       res.json({
-        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || "",
-        googleMapsSigningSecret: process.env.GOOGLE_MAPS_SIGNING_SECRET || "",
-        openWeatherApiKey: process.env.OPENWEATHER_API_KEY || ""
+        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY || "AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk",
+        googleMapsSigningSecret: process.env.GOOGLE_MAPS_SIGNING_SECRET || "xUMvkKZN7YbwACexIGzpV2o5Fms=",
+        openWeatherApiKey: process.env.OPENWEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5"
       });
     } catch (error) {
       console.error("Error fetching config:", error);
