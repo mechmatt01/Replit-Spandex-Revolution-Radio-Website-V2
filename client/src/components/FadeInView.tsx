@@ -1,6 +1,5 @@
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-import { useScrollVelocity } from "@/hooks/use-scroll-velocity";
-import { useRef, ReactNode } from "react";
+import { useRef, ReactNode, useEffect, useState } from "react";
 
 interface FadeInViewProps {
   children: ReactNode;
@@ -11,6 +10,10 @@ interface FadeInViewProps {
   direction?: 'up' | 'down' | 'left' | 'right' | 'none';
 }
 
+// Global state to track animated elements and ensure one-time animations
+const animatedElements = new Set<string>();
+let animationCounter = 0;
+
 export default function FadeInView({
   children,
   threshold = 0.1,
@@ -20,20 +23,34 @@ export default function FadeInView({
   direction = 'up'
 }: FadeInViewProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [elementId] = useState(() => `fade-${++animationCounter}`);
   const isVisible = useIntersectionObserver(ref, { threshold });
-  const { durationMultiplier } = useScrollVelocity();
-  
-  const adaptiveDuration = duration * durationMultiplier;
-  const adaptiveDelay = delay * durationMultiplier;
 
-  const getTransformStyle = (direction: string, isVisible: boolean) => {
+  useEffect(() => {
+    if (isVisible && !hasAnimated && !animatedElements.has(elementId)) {
+      // Add base 0.2s delay plus staggered delay based on element order
+      const baseDelay = 200; // 0.2 seconds
+      const staggerDelay = (animationCounter - 1) * 100; // 100ms between elements
+      const totalDelay = baseDelay + staggerDelay + delay;
+      
+      setTimeout(() => {
+        if (!animatedElements.has(elementId)) {
+          animatedElements.add(elementId);
+          setHasAnimated(true);
+        }
+      }, totalDelay);
+    }
+  }, [isVisible, hasAnimated, elementId, delay]);
+
+  const getTransformStyle = (direction: string, hasAnimated: boolean) => {
     if (direction === 'none') return '';
     
     const transforms = {
-      up: isVisible ? 'translateY(0)' : 'translateY(30px)',
-      down: isVisible ? 'translateY(0)' : 'translateY(-30px)',
-      left: isVisible ? 'translateX(0)' : 'translateX(30px)',
-      right: isVisible ? 'translateX(0)' : 'translateX(-30px)'
+      up: hasAnimated ? 'translateY(0)' : 'translateY(30px)',
+      down: hasAnimated ? 'translateY(0)' : 'translateY(-30px)',
+      left: hasAnimated ? 'translateX(0)' : 'translateX(30px)',
+      right: hasAnimated ? 'translateX(0)' : 'translateX(-30px)'
     };
     
     return transforms[direction as keyof typeof transforms] || transforms.up;
@@ -44,10 +61,10 @@ export default function FadeInView({
       ref={ref}
       className={`transition-all ease-out ${className}`}
       style={{
-        opacity: isVisible ? 1 : 0,
-        transform: getTransformStyle(direction, isVisible),
-        transitionDuration: `${adaptiveDuration}ms`,
-        transitionDelay: `${adaptiveDelay}ms`,
+        opacity: hasAnimated ? 1 : 0,
+        transform: getTransformStyle(direction, hasAnimated),
+        transitionDuration: `${duration}ms`,
+        transitionDelay: '0ms', // No CSS delay, handled by setTimeout
         willChange: 'opacity, transform'
       }}
     >

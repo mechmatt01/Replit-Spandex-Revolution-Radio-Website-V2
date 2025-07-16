@@ -1,6 +1,5 @@
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-import { useScrollVelocity } from "@/hooks/use-scroll-velocity";
-import { useRef, ReactNode, Children, cloneElement, ReactElement } from "react";
+import { useRef, ReactNode, Children, cloneElement, ReactElement, useEffect, useState } from "react";
 
 interface StaggeredAnimationProps {
   children: ReactNode;
@@ -10,6 +9,10 @@ interface StaggeredAnimationProps {
   threshold?: number;
 }
 
+// Global state to track animated elements and ensure one-time animations
+const animatedStaggeredElements = new Set<string>();
+let staggerCounter = 0;
+
 export default function StaggeredAnimation({
   children,
   staggerDelay = 100,
@@ -18,18 +21,32 @@ export default function StaggeredAnimation({
   threshold = 0.1
 }: StaggeredAnimationProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const [elementId] = useState(() => `stagger-${++staggerCounter}`);
   const isVisible = useIntersectionObserver(ref, { threshold });
-  const { durationMultiplier } = useScrollVelocity();
-  
-  const adaptiveStaggerDelay = staggerDelay * durationMultiplier;
-  const adaptiveDuration = 600 * durationMultiplier;
 
-  const getTransformStyle = (direction: string, isVisible: boolean) => {
+  useEffect(() => {
+    if (isVisible && !hasAnimated && !animatedStaggeredElements.has(elementId)) {
+      // Add base 0.2s delay plus staggered delay based on element order
+      const baseDelay = 200; // 0.2 seconds
+      const groupDelay = (staggerCounter - 1) * 50; // 50ms between groups
+      const totalDelay = baseDelay + groupDelay;
+      
+      setTimeout(() => {
+        if (!animatedStaggeredElements.has(elementId)) {
+          animatedStaggeredElements.add(elementId);
+          setHasAnimated(true);
+        }
+      }, totalDelay);
+    }
+  }, [isVisible, hasAnimated, elementId]);
+
+  const getTransformStyle = (direction: string, hasAnimated: boolean) => {
     const transforms = {
-      up: isVisible ? 'translateY(0)' : 'translateY(30px)',
-      down: isVisible ? 'translateY(0)' : 'translateY(-30px)',
-      left: isVisible ? 'translateX(0)' : 'translateX(30px)',
-      right: isVisible ? 'translateX(0)' : 'translateX(-30px)'
+      up: hasAnimated ? 'translateY(0)' : 'translateY(30px)',
+      down: hasAnimated ? 'translateY(0)' : 'translateY(-30px)',
+      left: hasAnimated ? 'translateX(0)' : 'translateX(30px)',
+      right: hasAnimated ? 'translateX(0)' : 'translateX(-30px)'
     };
     
     return transforms[direction as keyof typeof transforms] || transforms.up;
@@ -49,10 +66,10 @@ export default function StaggeredAnimation({
           key: element.key || index,
           style: {
             ...element.props.style,
-            opacity: isVisible ? 1 : 0,
-            transform: getTransformStyle(direction, isVisible),
-            transition: `all ${adaptiveDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
-            transitionDelay: `${index * adaptiveStaggerDelay}ms`,
+            opacity: hasAnimated ? 1 : 0,
+            transform: getTransformStyle(direction, hasAnimated),
+            transition: `all 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
+            transitionDelay: hasAnimated ? `${index * staggerDelay}ms` : '0ms',
             willChange: 'opacity, transform'
           }
         });
