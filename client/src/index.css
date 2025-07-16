@@ -72,6 +72,18 @@
   opacity: 0.6 !important;
 }
 
+/* More specific selector for Select placeholder text */
+[data-radix-select-trigger] span[data-radix-select-value] {
+  color: rgb(156 163 175 / 0.6) !important;
+  opacity: 0.6 !important;
+}
+
+/* Target the specific placeholder state */
+[data-radix-select-trigger][data-placeholder] span {
+  color: rgb(156 163 175 / 0.6) !important;
+  opacity: 0.6 !important;
+}
+
 /* Easter Egg: Site Logo Spin Animation */
 @keyframes logoSpinFastToSlow {
   0% {

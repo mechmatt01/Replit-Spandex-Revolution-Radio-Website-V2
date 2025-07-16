@@ -249,14 +249,8 @@ export default function Navigation() {
                 }}
                 onMouseEnter={(e) => {
                   const imgElement = e.currentTarget.querySelector('img');
-                  if (imgElement) {
+                  if (imgElement && !imgElement.classList.contains('logo-spin-easter-egg')) {
                     imgElement.classList.add('logo-spin-easter-egg');
-                  }
-                }}
-                onAnimationEnd={(e) => {
-                  const imgElement = e.currentTarget.querySelector('img');
-                  if (imgElement) {
-                    imgElement.classList.remove('logo-spin-easter-egg');
                   }
                 }}
               >
@@ -264,6 +258,9 @@ export default function Navigation() {
                   src={MusicLogoPath} 
                   alt="Music Logo" 
                   className="w-full h-full object-contain"
+                  onAnimationEnd={(e) => {
+                    e.currentTarget.classList.remove('logo-spin-easter-egg');
+                  }}
                 />
               </div>
               <div className="flex flex-col" id="brand-text" ref={brandTextRef}>
