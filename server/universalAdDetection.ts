@@ -326,7 +326,7 @@ export class UniversalAdDetector {
         const metadata = await this.fetchStationMetadata(tempStation);
         if (metadata) {
           // Update station with detected API type
-          await storage.updateRadioStation(station.id, { apiType });
+          await storage.updateRadioStation(station.id, { apiType: apiType as "custom" | "triton" | "streamtheworld" | "somafm" | "auto" });
           return metadata;
         }
       } catch (error) {

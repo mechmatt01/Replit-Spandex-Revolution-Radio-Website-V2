@@ -131,10 +131,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   // Update show schedule
   const updateShowMutation = useMutation({
     mutationFn: async (showData: Partial<ShowScheduleItem>) => {
-      return apiRequest(`/api/schedules/${showData.id}`, {
-        method: "PUT",
-        body: JSON.stringify(showData),
-      });
+      return apiRequest("PUT", `/api/schedules/${showData.id}`, showData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/schedules"] });
@@ -156,10 +153,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   // Create new show
   const createShowMutation = useMutation({
     mutationFn: async (showData: Partial<ShowScheduleItem>) => {
-      return apiRequest("/api/schedules", {
-        method: "POST",
-        body: JSON.stringify(showData),
-      });
+      return apiRequest("POST", "/api/schedules", showData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/schedules"] });
