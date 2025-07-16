@@ -440,7 +440,7 @@ export default function FullWidthGlobeMap() {
         fullscreenControl: false,
         mapTypeControl: false,
         streetViewControl: false,
-        zoomControl: true,
+        zoomControl: false,
         gestureHandling: "cooperative",
         disableDefaultUI: false,
         keyboardShortcuts: false,

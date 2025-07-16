@@ -280,7 +280,7 @@ const GoogleMapWithListeners = ({
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false,
-          zoomControl: true,
+          zoomControl: false,
           gestureHandling: 'cooperative',
           restriction: {
             latLngBounds: {
