@@ -259,7 +259,7 @@ export default function Features() {
               </p>
               <div className="flex justify-start">
                 <Button
-                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center justify-between w-full"
+                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center"
                   style={{
                     color: colors.primary,
                     backgroundColor: "transparent",
@@ -325,7 +325,7 @@ export default function Features() {
               </p>
               <div className="flex justify-start">
                 <Button
-                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center justify-between w-full"
+                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center"
                   style={{
                     color: colors.primary,
                     backgroundColor: "transparent",
@@ -391,7 +391,7 @@ export default function Features() {
               </p>
               <div className="flex justify-start">
                 <Button
-                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center justify-between w-full"
+                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center"
                   style={{
                     color: colors.primary,
                     backgroundColor: "transparent",
