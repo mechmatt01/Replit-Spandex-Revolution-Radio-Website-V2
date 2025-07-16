@@ -1067,119 +1067,102 @@ export default function FullWidthGlobeMap() {
     <>
       {/* Fullscreen Overlay */}
       {isFullscreen && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md transition-all duration-500 ease-in-out">
-          <div className="h-full p-4 flex flex-col">
-            {/* Fullscreen Header */}
-            <div className="text-center mb-4">
-              <h2 className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-white"}`}>
-                GLOBAL LISTENERS
-              </h2>
-              
-              {/* Weather Display in Fullscreen */}
-              {weather && (
-                <div className="mb-4">
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <MapPin className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm font-semibold text-gray-300">
-                      {weather.location}
-                    </span>
+        <div className="fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm transition-all duration-300 ease-in-out">
+          {/* Full Screen Header Bar */}
+          <div className="absolute top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-700">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-4">
+                <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
+                {weather && (
+                  <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
+                    <div className="w-8 h-8">
+                      <img
+                        src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
+                        alt={weather.description}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="text-sm">
+                      <span className="text-white font-medium">{weather.location}</span>
+                      <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-center gap-1.5">
-                    <img
-                      src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
-                      alt={weather.description}
-                      className="flex-shrink-0"
-                      style={{ width: "36px", height: "36px" }}
-                    />
-                    <span className="text-base font-bold text-white">
-                      {Math.round(weather.temperature)}°F
-                    </span>
-                    <span className="text-sm text-gray-400">
-                      {weather.description}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Fullscreen Map Container */}
-            <div className="relative flex-1 rounded-lg overflow-hidden">
-              <div
-                ref={fullscreenMapRef}
-                className="w-full h-full map-container"
-                style={{
-                  backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-                  minHeight: "400px",
-                }}
-              />
-              
-              {/* Fullscreen Controls - Moved down to avoid navigation bar */}
-              <div className="absolute top-20 right-4 z-10 flex flex-col gap-2">
+                )}
+              </div>
+              <div className="flex items-center gap-2">
                 <Button
                   onClick={() => {
-                    if (map) {
-                      map.setZoom(map.getZoom() + 1);
+                    if (userLocation) {
+                      if (map) {
+                        map.panTo(userLocation);
+                        map.setZoom(12);
+                      }
+                    } else {
+                      // Request location if not available
+                      if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                          (position) => {
+                            const newLocation = {
+                              lat: position.coords.latitude,
+                              lng: position.coords.longitude,
+                            };
+                            setUserLocation(newLocation);
+                            if (map) {
+                              map.panTo(newLocation);
+                              map.setZoom(12);
+                            }
+                          },
+                          (error) => {
+                            console.error("Error getting location:", error);
+                          }
+                        );
+                      }
                     }
                   }}
+                  className="p-2 border-0 shadow-lg bg-gray-800 hover:bg-gray-700 text-white"
                   size="sm"
-                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-                >
-                  <ZoomIn className="w-4 h-4" />
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (map) {
-                      map.setZoom(map.getZoom() - 1);
-                    }
-                  }}
-                  size="sm"
-                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-                >
-                  <ZoomOut className="w-4 h-4" />
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (map && userLocation) {
-                      map.panTo(userLocation);
-                      map.setZoom(12);
-                    }
-                  }}
-                  size="sm"
-                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
                 >
                   <MapPin className="w-4 h-4" />
                 </Button>
                 <Button
                   onClick={() => {
                     if (map) {
-                      map.panTo({ lat: 40.7128, lng: -74.006 });
-                      map.setZoom(2);
+                      google.maps.event.trigger(map, 'resize');
                     }
                   }}
+                  className="p-2 border-0 shadow-lg bg-gray-800 hover:bg-gray-700 text-white"
                   size="sm"
-                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
                 >
                   <RotateCcw className="w-4 h-4" />
                 </Button>
+                <Button
+                  onClick={() => {
+                    setIsFullscreen(false);
+                    // Small delay to ensure DOM update before map reinitializes
+                    setTimeout(() => {
+                      if (map) {
+                        google.maps.event.trigger(map, 'resize');
+                      }
+                    }, 100);
+                  }}
+                  className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white"
+                  size="sm"
+                >
+                  <Minimize2 className="w-4 h-4" />
+                </Button>
               </div>
-
-              {/* Fullscreen Toggle - Moved down to avoid navigation bar */}
-              <Button
-                onClick={() => {
-                  setIsFullscreen(false);
-                  // Small delay to ensure DOM update before map reinitializes
-                  setTimeout(() => {
-                    if (map) {
-                      google.maps.event.trigger(map, 'resize');
-                    }
-                  }, 100);
-                }}
-                className="absolute top-20 left-4 z-10 p-2 border-0 shadow-lg bg-gray-800 hover:bg-gray-700 text-white"
-                size="sm"
-              >
-                <Minimize2 className="w-4 h-4" />
-              </Button>
             </div>
+          </div>
+
+          {/* Full Screen Map Container */}
+          <div className="absolute inset-0 top-16">
+            <div
+              ref={fullscreenMapRef}
+              className="w-full h-full map-container"
+              style={{
+                backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+              }}
+            />
           </div>
         </div>
       )}
