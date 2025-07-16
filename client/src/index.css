@@ -858,3 +858,22 @@ audio::-webkit-media-controls-panel {
   border-radius: 8px;
   z-index: -1;
 }
+
+/* Select placeholder styling to match other form fields */
+[data-radix-select-trigger] {
+  color: white !important;
+}
+
+[data-radix-select-trigger] span[data-radix-select-value] {
+  color: rgb(156 163 175 / 0.6) !important;
+}
+
+[data-radix-select-trigger]:not([data-state="open"]) span[data-radix-select-value]:empty::before {
+  content: attr(data-placeholder);
+  color: rgb(156 163 175 / 0.6) !important;
+}
+
+[data-radix-select-trigger][data-state="closed"] span[data-radix-select-value]:empty::before {
+  content: "Select a subject";
+  color: rgb(156 163 175 / 0.6) !important;
+}

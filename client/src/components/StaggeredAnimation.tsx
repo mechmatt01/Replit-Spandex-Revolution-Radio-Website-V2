@@ -1,4 +1,5 @@
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useScrollVelocity } from "@/hooks/use-scroll-velocity";
 import { useRef, ReactNode, Children, cloneElement, ReactElement } from "react";
 
 interface StaggeredAnimationProps {
@@ -18,6 +19,10 @@ export default function StaggeredAnimation({
 }: StaggeredAnimationProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(ref, { threshold });
+  const { durationMultiplier } = useScrollVelocity();
+  
+  const adaptiveStaggerDelay = staggerDelay * durationMultiplier;
+  const adaptiveDuration = 600 * durationMultiplier;
 
   const getTransformStyle = (direction: string, isVisible: boolean) => {
     const transforms = {
@@ -46,8 +51,8 @@ export default function StaggeredAnimation({
             ...element.props.style,
             opacity: isVisible ? 1 : 0,
             transform: getTransformStyle(direction, isVisible),
-            transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            transitionDelay: `${index * staggerDelay}ms`,
+            transition: `all ${adaptiveDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
+            transitionDelay: `${index * adaptiveStaggerDelay}ms`,
             willChange: 'opacity, transform'
           }
         });

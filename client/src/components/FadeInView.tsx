@@ -1,4 +1,5 @@
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useScrollVelocity } from "@/hooks/use-scroll-velocity";
 import { useRef, ReactNode } from "react";
 
 interface FadeInViewProps {
@@ -20,6 +21,10 @@ export default function FadeInView({
 }: FadeInViewProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isVisible = useIntersectionObserver(ref, { threshold });
+  const { durationMultiplier } = useScrollVelocity();
+  
+  const adaptiveDuration = duration * durationMultiplier;
+  const adaptiveDelay = delay * durationMultiplier;
 
   const getTransformStyle = (direction: string, isVisible: boolean) => {
     if (direction === 'none') return '';
@@ -41,8 +46,8 @@ export default function FadeInView({
       style={{
         opacity: isVisible ? 1 : 0,
         transform: getTransformStyle(direction, isVisible),
-        transitionDuration: `${duration}ms`,
-        transitionDelay: `${delay}ms`,
+        transitionDuration: `${adaptiveDuration}ms`,
+        transitionDelay: `${adaptiveDelay}ms`,
         willChange: 'opacity, transform'
       }}
     >
