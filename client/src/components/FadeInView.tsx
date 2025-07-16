@@ -1,4 +1,5 @@
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useScrollVelocity, getAdaptiveAnimationDuration } from "@/hooks/use-scroll-velocity";
 import { useRef, ReactNode, useEffect, useState } from "react";
 
 interface FadeInViewProps {
@@ -24,11 +25,17 @@ export default function FadeInView({
 }: FadeInViewProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [adaptiveDuration, setAdaptiveDuration] = useState(duration);
   const [elementId] = useState(() => `fade-${++animationCounter}`);
   const isVisible = useIntersectionObserver(ref, { threshold });
+  const { velocity } = useScrollVelocity();
 
   useEffect(() => {
     if (isVisible && !hasAnimated && !animatedElements.has(elementId)) {
+      // Calculate adaptive duration based on scroll velocity
+      const newDuration = getAdaptiveAnimationDuration(duration, velocity, 300, 800);
+      setAdaptiveDuration(newDuration);
+      
       // Add base 0.2s delay plus staggered delay based on element order
       const baseDelay = 200; // 0.2 seconds
       const staggerDelay = (animationCounter - 1) * 100; // 100ms between elements
@@ -41,7 +48,7 @@ export default function FadeInView({
         }
       }, totalDelay);
     }
-  }, [isVisible, hasAnimated, elementId, delay]);
+  }, [isVisible, hasAnimated, elementId, delay, velocity, duration]);
 
   const getTransformStyle = (direction: string, hasAnimated: boolean) => {
     if (direction === 'none') return '';
@@ -63,7 +70,7 @@ export default function FadeInView({
       style={{
         opacity: hasAnimated ? 1 : 0,
         transform: getTransformStyle(direction, hasAnimated),
-        transitionDuration: `${duration}ms`,
+        transitionDuration: `${adaptiveDuration}ms`,
         transitionDelay: '0ms', // No CSS delay, handled by setTimeout
         willChange: 'opacity, transform'
       }}

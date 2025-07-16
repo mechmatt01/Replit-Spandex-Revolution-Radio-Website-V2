@@ -1,4 +1,5 @@
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { useScrollVelocity, getAdaptiveAnimationDuration } from "@/hooks/use-scroll-velocity";
 import { useRef, ReactNode, Children, cloneElement, ReactElement, useEffect, useState } from "react";
 
 interface StaggeredAnimationProps {
@@ -22,11 +23,21 @@ export default function StaggeredAnimation({
 }: StaggeredAnimationProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [adaptiveDuration, setAdaptiveDuration] = useState(600);
+  const [adaptiveStaggerDelay, setAdaptiveStaggerDelay] = useState(staggerDelay);
   const [elementId] = useState(() => `stagger-${++staggerCounter}`);
   const isVisible = useIntersectionObserver(ref, { threshold });
+  const { velocity } = useScrollVelocity();
 
   useEffect(() => {
     if (isVisible && !hasAnimated && !animatedStaggeredElements.has(elementId)) {
+      // Calculate adaptive duration and stagger delay based on scroll velocity
+      const newDuration = getAdaptiveAnimationDuration(600, velocity, 300, 800);
+      const newStaggerDelay = getAdaptiveAnimationDuration(staggerDelay, velocity, 50, 150);
+      
+      setAdaptiveDuration(newDuration);
+      setAdaptiveStaggerDelay(newStaggerDelay);
+      
       // Add base 0.2s delay plus staggered delay based on element order
       const baseDelay = 200; // 0.2 seconds
       const groupDelay = (staggerCounter - 1) * 50; // 50ms between groups
@@ -39,7 +50,7 @@ export default function StaggeredAnimation({
         }
       }, totalDelay);
     }
-  }, [isVisible, hasAnimated, elementId]);
+  }, [isVisible, hasAnimated, elementId, velocity, staggerDelay]);
 
   const getTransformStyle = (direction: string, hasAnimated: boolean) => {
     const transforms = {
@@ -68,8 +79,8 @@ export default function StaggeredAnimation({
             ...element.props.style,
             opacity: hasAnimated ? 1 : 0,
             transform: getTransformStyle(direction, hasAnimated),
-            transition: `all 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
-            transitionDelay: hasAnimated ? `${index * staggerDelay}ms` : '0ms',
+            transition: `all ${adaptiveDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
+            transitionDelay: hasAnimated ? `${index * adaptiveStaggerDelay}ms` : '0ms',
             willChange: 'opacity, transform'
           }
         });
