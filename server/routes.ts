@@ -93,13 +93,15 @@ const stripe = process.env.STRIPE_SECRET_KEY
   : null;
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Security headers middleware
+  // Enhanced security headers middleware
   app.use((req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' wss: https:; media-src 'self' https:; frame-src 'self' https:;");
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     next();
   });
 
@@ -1355,8 +1357,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Failed to fetch now playing:", error);
       res.status(500).json({ error: "Failed to fetch now playing" });
     }
+  });
 
-    // Try Hot 97 StreamTheWorld API (same source as the actual stream)
+  // Try Hot 97 StreamTheWorld API (same source as the actual stream)
+  app.get("/api/radio-track", async (req, res) => {
     try {
       const streamResponse = await fetch(
         "https://playerservices.streamtheworld.com/api/livestream?version=1.9&mount=WQHTFMAAC&lang=en",

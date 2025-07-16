@@ -1,5 +1,5 @@
 // Radio.co API configuration for live metadata
-export const RADIO_CO_STATION_ID = "s4d4c2d4-1234-5678-9abc-def012345678"; // Replace with actual station ID
+export const RADIO_CO_STATION_ID = process.env.RADIO_CO_STATION_ID || "s4d4c2d4-1234-5678-9abc-def012345678"; // Replace with actual station ID
 
 // If you have a real Radio.co station, replace the station ID above
 // The API endpoint will be: https://public.radio.co/stations/{STATION_ID}/now

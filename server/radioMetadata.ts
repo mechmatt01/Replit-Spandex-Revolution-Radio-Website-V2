@@ -136,7 +136,7 @@ export async function getTrackFromLastFM(
   try {
     // Last.fm public API (requires API key for production)
     const response = await fetch(
-      `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=demo&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(title)}&format=json`,
+      `https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=${process.env.LASTFM_API_KEY || 'demo'}&artist=${encodeURIComponent(artist)}&track=${encodeURIComponent(title)}&format=json`,
     );
 
     if (response.ok) {
