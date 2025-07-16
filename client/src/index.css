@@ -54,6 +54,24 @@
   line-height: inherit !important;
 }
 
+/* Fix Select dropdown placeholder styling */
+[data-radix-select-trigger] [data-placeholder] {
+  color: rgb(156 163 175 / 0.6) !important;
+  opacity: 0.6 !important;
+}
+
+/* Additional fallback for Select component placeholder */
+[data-radix-select-trigger] span[data-placeholder] {
+  color: rgb(156 163 175 / 0.6) !important;
+  opacity: 0.6 !important;
+}
+
+/* Ensure SelectValue placeholder styling */
+[data-radix-select-value] {
+  color: rgb(156 163 175 / 0.6) !important;
+  opacity: 0.6 !important;
+}
+
 /* Smooth floating animation for package icons */
 @keyframes float {
   0%, 100% {

@@ -597,12 +597,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/contacts", async (req, res) => {
     try {
       const validatedData = insertContactSchema.parse(req.body);
+      
+      // Store in PostgreSQL database
       const contact = await storage.createContact(validatedData);
+      
+      // Store in Firebase Firestore
+      try {
+        const { db } = await import("firebase-admin/firestore");
+        const firestore = db();
+        
+        // Create the message document with timestamp
+        const messageData = {
+          timestamp: new Date().toISOString(),
+          firstName: validatedData.firstName,
+          lastName: validatedData.lastName,
+          email: validatedData.email,
+          subject: validatedData.subject,
+          message: validatedData.message,
+          createdAt: new Date(),
+        };
+        
+        // Store in Forms > Messages collection
+        await firestore
+          .collection("Forms")
+          .doc("Messages")
+          .collection("submissions")
+          .add(messageData);
+        
+        console.log("Contact form submitted to Firebase:", {
+          name: `${validatedData.firstName} ${validatedData.lastName}`,
+          email: validatedData.email,
+          subject: validatedData.subject,
+        });
+      } catch (firebaseError) {
+        console.error("Firebase storage failed:", firebaseError);
+        // Don't fail the request if Firebase fails, just log it
+      }
+      
       res.status(201).json(contact);
     } catch (error) {
       if (error instanceof z.ZodError) {
         res.status(400).json({ error: error.errors });
       } else {
+        console.error("Contact creation error:", error);
         res.status(500).json({ error: "Failed to create contact" });
       }
     }

@@ -81,7 +81,7 @@ export default function Contact() {
     if (!formData.firstName.trim()) errors.push("First Name");
     if (!formData.lastName.trim()) errors.push("Last Name");
     if (!formData.email.trim()) errors.push("Email Address");
-    if (!formData.subject.trim()) errors.push("Subject");
+    if (!formData.subject.trim() || formData.subject === "Select a subject") errors.push("Subject");
     if (!formData.message.trim()) errors.push("Message");
 
     // Validate email format
