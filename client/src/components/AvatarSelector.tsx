@@ -144,7 +144,7 @@ export default function AvatarSelector({
       <DialogContent
         className="sm:max-w-2xl max-h-[80vh] overflow-y-auto"
         style={{
-          backgroundColor: colors.card,
+          backgroundColor: colors.cardBackground,
           borderColor: colors.primary,
           color: colors.text,
         }}
