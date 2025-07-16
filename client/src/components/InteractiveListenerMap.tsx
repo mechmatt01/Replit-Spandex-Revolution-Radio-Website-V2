@@ -277,10 +277,8 @@ const GoogleMapWithListeners = ({
           zoom: 2,
           center: { lat: 20, lng: 0 },
           styles: mapStyles,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false,
-          zoomControl: false,
+          disableDefaultUI: true,
+          zoomControl: true,
           gestureHandling: 'cooperative',
           restriction: {
             latLngBounds: {

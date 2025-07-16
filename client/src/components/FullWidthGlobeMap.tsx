@@ -319,7 +319,7 @@ export default function FullWidthGlobeMap() {
     const currentContainer = isFullscreen ? fullscreenMapRef.current : mapRef.current;
     if (!currentContainer) return;
 
-    // Add CSS to hide Google attribution
+    // Add CSS to hide Google attribution and keyboard shortcuts overlay
     const style = document.createElement("style");
     style.textContent = `
       .gm-style-cc,
@@ -328,8 +328,35 @@ export default function FullWidthGlobeMap() {
       a[href*="maps.google.com"],
       a[href*="google.com/maps"],
       .gm-svpc,
-      .gm-fullscreen-control {
+      .gm-fullscreen-control,
+      .gm-ui-hover-effect,
+      .gm-control-active,
+      .gm-style-iw,
+      .gm-style-iw-c,
+      .gm-style-iw-d,
+      .gm-style-iw-chr,
+      .gm-compass,
+      .gm-zoom-control,
+      .gm-rotate-control,
+      .gm-scale-control,
+      .gm-style-pbc,
+      .gm-keyboard-shortcuts,
+      .gm-style-cc:not(.gm-style-cc-hide),
+      div[data-control-width],
+      div[data-control-height],
+      button[data-value="keyboard_shortcuts"],
+      button[title*="Keyboard shortcuts"],
+      button[jsaction*="keyboard"],
+      [jsaction*="keyboard.open"],
+      [data-value="keyboard_shortcuts"],
+      .gm-style .gm-style-cc > div,
+      .gm-style .gm-style-cc a,
+      .gm-style .gm-style-cc span,
+      .gm-bundled-control,
+      .gm-bundled-control-on-bottom {
         display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
       }
     `;
     document.head.appendChild(style);
@@ -539,14 +566,9 @@ export default function FullWidthGlobeMap() {
                 stylers: [{ color: "#9e9e9e" }],
               },
             ],
-        fullscreenControl: false,
-        mapTypeControl: false,
-        streetViewControl: false,
-        zoomControl: false,
+        disableDefaultUI: true,
+        zoomControl: true,
         gestureHandling: "cooperative",
-        disableDefaultUI: false,
-        keyboardShortcuts: false,
-        clickableIcons: false,
         restriction: {
           latLngBounds: {
             north: 85,
@@ -670,28 +692,35 @@ export default function FullWidthGlobeMap() {
           // Apply selection animation
           marker.setIcon(selectedIcon);
           
-          // Smooth zoom animation to the clicked location with smooth transition
-          mapInstance.panTo({ lat: listener.lat, lng: listener.lng });
+          // Center the map on the clicked location and zoom to show the popup above the point
+          const targetZoom = Math.max(8, Math.min(12, mapInstance.getZoom() + 2));
+          
+          // Pan to position the point in the lower center to show popup above
+          const projection = mapInstance.getProjection();
+          if (projection) {
+            const bounds = mapInstance.getBounds();
+            if (bounds) {
+              const center = mapInstance.getCenter();
+              // Calculate offset to position point lower on screen to show popup above
+              const offsetLat = (bounds.getNorthEast().lat() - bounds.getSouthWest().lat()) * 0.15;
+              const adjustedCenter = {
+                lat: listener.lat - offsetLat,
+                lng: listener.lng
+              };
+              mapInstance.panTo(adjustedCenter);
+            }
+          }
           
           // Smooth zoom transition
           const currentZoom = mapInstance.getZoom();
-          let targetZoom = 8;
-          if (currentZoom < 8) {
-            targetZoom = 8; // Zoom level 8 for a good city view
-          } else if (currentZoom < 12) {
-            targetZoom = 12; // Zoom closer if already at city level
-          }
+          const zoomDiff = targetZoom - currentZoom;
           
-          // Animate zoom with smooth transition
           const zoomAnimation = () => {
-            const startZoom = mapInstance.getZoom();
-            const zoomDiff = targetZoom - startZoom;
             let progress = 0;
-            
             const animateZoom = () => {
               progress += 0.1;
               if (progress <= 1) {
-                const currentZoomLevel = startZoom + (zoomDiff * progress);
+                const currentZoomLevel = currentZoom + (zoomDiff * progress);
                 mapInstance.setZoom(currentZoomLevel);
                 requestAnimationFrame(animateZoom);
               } else {
