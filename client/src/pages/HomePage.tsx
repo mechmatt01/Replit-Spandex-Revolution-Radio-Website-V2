@@ -48,19 +48,19 @@ export default function HomePage() {
       <Navigation />
       <Hero />
       
-      <FadeInView direction="up" delay={200}>
+      <FadeInView direction="up" delay={0}>
         <Features />
       </FadeInView>
       
-      <FadeInView direction="up" delay={300}>
+      <FadeInView direction="up" delay={0}>
         <About />
       </FadeInView>
       
-      <FadeInView direction="up" delay={400}>
+      <FadeInView direction="up" delay={0}>
         <Schedule />
       </FadeInView>
       
-      <FadeInView direction="up" delay={500}>
+      <FadeInView direction="up" delay={0}>
         <section id="subscribe" className="py-20 bg-black">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
@@ -76,19 +76,19 @@ export default function HomePage() {
         </section>
       </FadeInView>
       
-      <FadeInView direction="up" delay={600}>
+      <FadeInView direction="up" delay={0}>
         <Submissions />
       </FadeInView>
       
-      <FadeInView direction="up" delay={700}>
+      <FadeInView direction="up" delay={0}>
         <FullWidthGlobeMap />
       </FadeInView>
       
-      <FadeInView direction="up" delay={800}>
+      <FadeInView direction="up" delay={0}>
         <Contact />
       </FadeInView>
       
-      <FadeInView direction="up" delay={900}>
+      <FadeInView direction="up" delay={0}>
         <ShopifyEcommerce />
       </FadeInView>
       

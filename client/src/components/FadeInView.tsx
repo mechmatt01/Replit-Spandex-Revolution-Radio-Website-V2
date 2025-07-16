@@ -19,7 +19,7 @@ export default function FadeInView({
   children,
   threshold = 0.05,
   delay = 0,
-  duration = 600,
+  duration = 300,
   className = '',
   direction = 'up'
 }: FadeInViewProps) {
@@ -29,7 +29,7 @@ export default function FadeInView({
   const [elementId] = useState(() => `fade-${++animationCounter}`);
   const isVisible = useIntersectionObserver(ref, { 
     threshold, 
-    rootMargin: '200px 0px -50px 0px' // Start animation 200px before element comes into view
+    rootMargin: '400px 0px -100px 0px' // Start animation 400px before element comes into view
   });
   const { velocity } = useScrollVelocity();
 
@@ -39,9 +39,9 @@ export default function FadeInView({
       const newDuration = getAdaptiveAnimationDuration(duration, velocity, 300, 800);
       setAdaptiveDuration(newDuration);
       
-      // Add base 0.2s delay plus staggered delay based on element order
-      const baseDelay = 200; // 0.2 seconds
-      const staggerDelay = (animationCounter - 1) * 100; // 100ms between elements
+      // Add minimal base delay plus reduced staggered delay based on element order
+      const baseDelay = 50; // 0.05 seconds
+      const staggerDelay = (animationCounter - 1) * 25; // 25ms between elements
       const totalDelay = baseDelay + staggerDelay + delay;
       
       setTimeout(() => {

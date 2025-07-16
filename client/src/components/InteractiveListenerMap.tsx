@@ -319,19 +319,66 @@ const GoogleMapWithListeners = ({
           marker.addListener("click", () => {
             console.log('Marker clicked:', listener.city);
             
+            // Animate marker selection with pulsing effect
+            const originalIcon = marker.getIcon();
+            const selectedIcon = {
+              path: window.google.maps.SymbolPath.CIRCLE,
+              scale: 12,
+              fillColor: colors.primary,
+              fillOpacity: 1,
+              strokeColor: isDarkMode ? "#ffffff" : "#000000",
+              strokeWeight: 3,
+              animation: window.google.maps.Animation.BOUNCE,
+            };
+            
+            // Apply bounce animation
+            marker.setIcon(selectedIcon);
+            
             // Smooth zoom animation to the clicked location
             if (map) {
               map.panTo({ lat: listener.lat, lng: listener.lng });
+              
+              // Smooth zoom transition
               const currentZoom = map.getZoom();
+              let targetZoom = 8;
               if (currentZoom < 8) {
-                map.setZoom(8); // Zoom level 8 for a good city view
+                targetZoom = 8; // Zoom level 8 for a good city view
               } else if (currentZoom < 12) {
-                map.setZoom(12); // Zoom closer if already at city level
+                targetZoom = 12; // Zoom closer if already at city level
               }
+              
+              // Animate zoom with smooth transition
+              const zoomAnimation = () => {
+                const startZoom = map.getZoom();
+                const zoomDiff = targetZoom - startZoom;
+                let progress = 0;
+                
+                const animateZoom = () => {
+                  progress += 0.1;
+                  if (progress <= 1) {
+                    const currentZoomLevel = startZoom + (zoomDiff * progress);
+                    map.setZoom(currentZoomLevel);
+                    requestAnimationFrame(animateZoom);
+                  } else {
+                    map.setZoom(targetZoom);
+                  }
+                };
+                
+                if (Math.abs(zoomDiff) > 0.1) {
+                  requestAnimationFrame(animateZoom);
+                }
+              };
+              
+              setTimeout(zoomAnimation, 300); // Start zoom after pan animation
             }
             
             // Reset user location selection when clicking on another listener
             setIsUserLocationSelected(false);
+            
+            // Restore original icon after animation
+            setTimeout(() => {
+              marker.setIcon(originalIcon);
+            }, 2000);
             
             onListenerClick(listener);
           });

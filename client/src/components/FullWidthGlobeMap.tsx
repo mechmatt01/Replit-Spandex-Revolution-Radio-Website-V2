@@ -542,16 +542,72 @@ export default function FullWidthGlobeMap() {
         marker.addListener("click", () => {
           console.log('Marker clicked:', listener.city);
           
-          // Smooth zoom animation to the clicked location
-          mapInstance.panTo({ lat: listener.lat, lng: listener.lng });
-          const currentZoom = mapInstance.getZoom();
+          // Animate marker selection with pulsing effect
+          const originalIcon = marker.getIcon();
+          const selectedIcon = {
+            ...originalIcon,
+            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+              <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="16" cy="16" r="14" fill="${colors.primary}" opacity="0.3">
+                  <animate attributeName="r" values="14;18;14" dur="0.6s" repeatCount="3"/>
+                  <animate attributeName="opacity" values="0.3;0.1;0.3" dur="0.6s" repeatCount="3"/>
+                </circle>
+                <circle cx="16" cy="16" r="10" fill="${colors.primary}" opacity="0.6">
+                  <animate attributeName="r" values="10;14;10" dur="0.8s" repeatCount="3"/>
+                  <animate attributeName="opacity" values="0.6;0.2;0.6" dur="0.8s" repeatCount="3"/>
+                </circle>
+                <circle cx="16" cy="16" r="6" fill="${colors.primary}">
+                  <animate attributeName="opacity" values="1;0.7;1" dur="1s" repeatCount="3"/>
+                </circle>
+              </svg>
+            `)}`,
+            scaledSize: new google.maps.Size(32, 32),
+            anchor: new google.maps.Point(16, 16),
+          };
           
-          // Zoom to city level for better detail
+          // Apply selection animation
+          marker.setIcon(selectedIcon);
+          
+          // Smooth zoom animation to the clicked location with smooth transition
+          mapInstance.panTo({ lat: listener.lat, lng: listener.lng });
+          
+          // Smooth zoom transition
+          const currentZoom = mapInstance.getZoom();
+          let targetZoom = 8;
           if (currentZoom < 8) {
-            mapInstance.setZoom(8); // Zoom level 8 for a good city view
+            targetZoom = 8; // Zoom level 8 for a good city view
           } else if (currentZoom < 12) {
-            mapInstance.setZoom(12); // Zoom closer if already at city level
+            targetZoom = 12; // Zoom closer if already at city level
           }
+          
+          // Animate zoom with smooth transition
+          const zoomAnimation = () => {
+            const startZoom = mapInstance.getZoom();
+            const zoomDiff = targetZoom - startZoom;
+            let progress = 0;
+            
+            const animateZoom = () => {
+              progress += 0.1;
+              if (progress <= 1) {
+                const currentZoomLevel = startZoom + (zoomDiff * progress);
+                mapInstance.setZoom(currentZoomLevel);
+                requestAnimationFrame(animateZoom);
+              } else {
+                mapInstance.setZoom(targetZoom);
+              }
+            };
+            
+            if (Math.abs(zoomDiff) > 0.1) {
+              requestAnimationFrame(animateZoom);
+            }
+          };
+          
+          setTimeout(zoomAnimation, 300); // Start zoom after pan animation
+          
+          // Restore original icon after animation
+          setTimeout(() => {
+            marker.setIcon(originalIcon);
+          }, 2000);
         });
 
         // Create custom overlay instead of InfoWindow

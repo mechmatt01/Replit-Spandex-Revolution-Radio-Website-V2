@@ -77,12 +77,12 @@ export function useScrollVelocity(): ScrollVelocityData {
 export function getAdaptiveAnimationDuration(
   baselineDuration: number,
   velocity: number,
-  minDuration: number = 300,
+  minDuration: number = 150,
   maxDuration?: number
 ): number {
   // Define velocity thresholds
-  const slowVelocity = 0.5;   // Slow scrolling
-  const fastVelocity = 2.0;   // Fast scrolling
+  const slowVelocity = 0.3;   // Slow scrolling
+  const fastVelocity = 1.5;   // Fast scrolling
   
   let adaptiveDuration = baselineDuration;
   
