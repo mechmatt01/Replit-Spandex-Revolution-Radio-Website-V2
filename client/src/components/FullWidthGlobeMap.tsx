@@ -12,6 +12,8 @@ import {
   Pause,
   MapPin,
   TrendingUp,
+  Globe,
+  Radio,
 } from "lucide-react";
 import CountriesIconPath from "@assets/CountriesIcon.png";
 import LiveNowIconPath from "@assets/LiveNowIcon.png";
@@ -320,10 +322,12 @@ export default function FullWidthGlobeMap() {
     document.head.appendChild(style);
 
     const initializeMap = () => {
-      const mapInstance = new google.maps.Map(mapRef.current!, {
-        zoom: 2,
-        center: userLocation,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
+      try {
+        console.log('Initializing Google Maps...');
+        const mapInstance = new google.maps.Map(mapRef.current!, {
+          zoom: 2,
+          center: userLocation,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
         styles: isDarkMode
           ? [
               {
@@ -448,8 +452,6 @@ export default function FullWidthGlobeMap() {
         minZoom: 2,
         maxZoom: 18,
       });
-
-      setMap(mapInstance);
 
       // Add current location marker with blue animated dot
       const currentLocationSvg = `
@@ -738,6 +740,23 @@ export default function FullWidthGlobeMap() {
           currentInfoWindow.current = overlay;
         });
       });
+
+      setMap(mapInstance);
+      console.log('Google Maps initialized successfully');
+    } catch (error) {
+      console.error('Error initializing Google Maps:', error);
+      // Show fallback message
+      if (mapRef.current) {
+        mapRef.current.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: ${isDarkMode ? '#1f2937' : '#f9fafb'}; color: ${isDarkMode ? '#e5e7eb' : '#374151'}; font-size: 16px; font-weight: 500;">
+            <div style="text-align: center;">
+              <p>Map is temporarily unavailable</p>
+              <p style="font-size: 14px; margin-top: 8px; opacity: 0.7;">Please refresh the page to try again</p>
+            </div>
+          </div>
+        `;
+      }
+    }
     };
 
     // Load Google Maps API if not already loaded
@@ -745,9 +764,28 @@ export default function FullWidthGlobeMap() {
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=geometry`;
       script.async = true;
-      script.onload = initializeMap;
+      script.onload = () => {
+        console.log('Google Maps API loaded successfully');
+        initializeMap();
+      };
+      script.onerror = (error) => {
+        console.error('Failed to load Google Maps API:', error);
+        console.error('API Key:', config.googleMapsApiKey ? 'Present' : 'Missing');
+        // Show fallback message
+        if (mapRef.current) {
+          mapRef.current.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: ${isDarkMode ? '#1f2937' : '#f9fafb'}; color: ${isDarkMode ? '#e5e7eb' : '#374151'}; font-size: 16px; font-weight: 500;">
+              <div style="text-align: center;">
+                <p>Google Maps is temporarily unavailable</p>
+                <p style="font-size: 14px; margin-top: 8px; opacity: 0.7;">Please check your internet connection</p>
+              </div>
+            </div>
+          `;
+        }
+      };
       document.head.appendChild(script);
     } else {
+      console.log('Google Maps API already loaded');
       initializeMap();
     }
   }, [config, userLocation, isDarkMode]);
@@ -1143,13 +1181,9 @@ export default function FullWidthGlobeMap() {
                         style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
                       />
                     </div>
-                    <img
-                      src={CountriesIconPath}
-                      alt="Countries"
+                    <Globe
                       className="h-8 w-8 drop-shadow-md"
-                      style={{
-                        filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
-                      }}
+                      style={{ color: colors.primary }}
                     />
                     <span
                       className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
@@ -1172,13 +1206,9 @@ export default function FullWidthGlobeMap() {
                         style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
                       />
                     </div>
-                    <img
-                      src={LiveNowIconPath}
-                      alt="Total Listeners"
+                    <Radio
                       className="h-8 w-8 drop-shadow-md"
-                      style={{
-                        filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
-                      }}
+                      style={{ color: colors.primary }}
                     />
                     <span
                       className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
