@@ -196,6 +196,7 @@ export default function FullWidthGlobeMap() {
     lng: number;
   } | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const fullscreenMapRef = useRef<HTMLDivElement>(null);
   const currentInfoWindow = useRef<any>(null);
   const { colors, isDarkMode } = useTheme();
 
@@ -307,11 +308,16 @@ export default function FullWidthGlobeMap() {
     console.log('API key available:', !!config?.googleMapsApiKey);
     console.log('API key value:', config?.googleMapsApiKey?.substring(0, 15) + '...');
     console.log('Map ref current:', !!mapRef.current);
+    console.log('Fullscreen map ref current:', !!fullscreenMapRef.current);
     console.log('User location available:', !!userLocation);
     console.log('User location value:', userLocation);
+    console.log('Is fullscreen:', isFullscreen);
     
-    // Temporarily remove user location dependency to test map loading
-    if (!config?.googleMapsApiKey || !mapRef.current) return;
+    if (!config?.googleMapsApiKey) return;
+    
+    // Determine which container to use
+    const currentContainer = isFullscreen ? fullscreenMapRef.current : mapRef.current;
+    if (!currentContainer) return;
 
     // Add CSS to hide Google attribution
     const style = document.createElement("style");
@@ -329,7 +335,7 @@ export default function FullWidthGlobeMap() {
     document.head.appendChild(style);
 
     const initializeMap = () => {
-      const mapInstance = new google.maps.Map(mapRef.current!, {
+      const mapInstance = new google.maps.Map(currentContainer, {
         zoom: 2,
         center: userLocation || { lat: 40.7128, lng: -74.0060 }, // Default to NYC
         mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -831,7 +837,7 @@ export default function FullWidthGlobeMap() {
     } else {
       initializeMap();
     }
-  }, [config, userLocation, isDarkMode]);
+  }, [config, userLocation, isDarkMode, isFullscreen]);
 
   // Generate mock listener data
   const activeListeners: ListenerData[] = [
@@ -933,155 +939,216 @@ export default function FullWidthGlobeMap() {
   const top10Listeners = activeListeners.slice(0, 10);
 
   return (
-    <section
-      id="map"
-      className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out ${
-        isFullscreen
-          ? "fixed inset-0 z-50 bg-black/80 backdrop-blur-md"
-          : "py-20"
-      }`}
-    >
-      <div
-        className={`${isFullscreen ? "h-full p-[5px]" : "max-w-full mx-auto px-4 sm:px-6 lg:px-8"}`}
+    <>
+      {/* Fullscreen Overlay */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md transition-all duration-500 ease-in-out">
+          <div className="h-full p-4 flex flex-col">
+            {/* Fullscreen Header */}
+            <div className="text-center mb-4">
+              <h2 className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-white"}`}>
+                GLOBAL LISTENERS
+              </h2>
+              
+              {/* Weather Display in Fullscreen */}
+              {weather && (
+                <div className="mb-4">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <MapPin className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm font-semibold text-gray-300">
+                      {weather.location}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center gap-1.5">
+                    <img
+                      src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
+                      alt={weather.description}
+                      className="flex-shrink-0"
+                      style={{ width: "36px", height: "36px" }}
+                    />
+                    <span className="text-base font-bold text-white">
+                      {Math.round(weather.temperature)}°F
+                    </span>
+                    <span className="text-sm text-gray-400">
+                      {weather.description}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Fullscreen Map Container */}
+            <div className="relative flex-1 rounded-lg overflow-hidden">
+              <div
+                ref={fullscreenMapRef}
+                className="w-full h-full map-container"
+                style={{
+                  backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+                  minHeight: "400px",
+                }}
+              />
+              
+              {/* Fullscreen Controls */}
+              <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+                <Button
+                  onClick={() => {
+                    if (map) {
+                      map.setZoom(map.getZoom() + 1);
+                    }
+                  }}
+                  size="sm"
+                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+                >
+                  <ZoomIn className="w-4 h-4" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (map) {
+                      map.setZoom(map.getZoom() - 1);
+                    }
+                  }}
+                  size="sm"
+                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+                >
+                  <ZoomOut className="w-4 h-4" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (map && userLocation) {
+                      map.panTo(userLocation);
+                      map.setZoom(12);
+                    }
+                  }}
+                  size="sm"
+                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+                >
+                  <MapPin className="w-4 h-4" />
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (map) {
+                      map.panTo({ lat: 40.7128, lng: -74.006 });
+                      map.setZoom(2);
+                    }
+                  }}
+                  size="sm"
+                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </Button>
+              </div>
+
+              {/* Fullscreen Toggle */}
+              <Button
+                onClick={() => {
+                  setIsFullscreen(false);
+                  // Small delay to ensure DOM update before map reinitializes
+                  setTimeout(() => {
+                    if (map) {
+                      google.maps.event.trigger(map, 'resize');
+                    }
+                  }, 100);
+                }}
+                className="absolute top-4 left-4 z-10 p-2 border-0 shadow-lg bg-gray-800 hover:bg-gray-700 text-white"
+                size="sm"
+              >
+                <Minimize2 className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Normal View */}
+      <section
+        id="map"
+        className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
       >
-        {/* Header for non-fullscreen */}
-        {!isFullscreen && (
-          <div className="text-center mb-16">
-            <h2
-              className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
-            >
-              GLOBAL LISTENERS
-            </h2>
-            <p
-              className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
-            >
-              See where metal fans are tuning in from around the world in
-              real-time.
-            </p>
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header for normal view */}
+        <div className="text-center mb-16">
+          <h2
+            className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
+          >
+            GLOBAL LISTENERS
+          </h2>
+          <p
+            className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
+          >
+            See where metal fans are tuning in from around the world in
+            real-time.
+          </p>
 
-            {/* Weather Information Display */}
-            {weather && (
-              <div className="mb-4">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <MapPin
-                    className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                  />
-                  <span
-                    className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
-                  >
-                    {weather.location}
-                  </span>
-                </div>
-                <div className="flex items-center justify-center gap-1.5">
-                  <img
-                    src={getWeatherIcon(
-                      weather.description,
-                      weather.icon.includes("d"),
-                    )}
-                    alt={weather.description}
-                    className="w-12 h-12 flex-shrink-0"
-                    style={{ width: "48px", height: "48px" }}
-                  />
-                  <span
-                    className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
-                  >
-                    {Math.round(weather.temperature)}°F
-                  </span>
-                  <span
-                    className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                  >
-                    {weather.description}
-                  </span>
-                </div>
+          {/* Weather Information Display */}
+          {weather && (
+            <div className="mb-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <MapPin
+                  className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                />
+                <span
+                  className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                >
+                  {weather.location}
+                </span>
               </div>
-            )}
-
-            {/* Loading state for weather */}
-            {weatherLoading && (
-              <div className="mb-4">
-                <div className="flex items-center justify-center gap-2">
-                  <MapPin
-                    className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                  />
-                  <span
-                    className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
-                  >
-                    Loading weather...
-                  </span>
-                </div>
+              <div className="flex items-center justify-center gap-1.5">
+                <img
+                  src={getWeatherIcon(
+                    weather.description,
+                    weather.icon.includes("d"),
+                  )}
+                  alt={weather.description}
+                  className="w-12 h-12 flex-shrink-0"
+                  style={{ width: "48px", height: "48px" }}
+                />
+                <span
+                  className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
+                >
+                  {Math.round(weather.temperature)}°F
+                </span>
+                <span
+                  className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                >
+                  {weather.description}
+                </span>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
 
-        {/* Fullscreen Header Above Map */}
-        {isFullscreen && (
-          <div className="text-center mb-6 pt-4">
-            <h2
-              className={`font-orbitron font-black text-3xl md:text-4xl mb-6 ${isDarkMode ? "text-white" : "text-black"}`}
-            >
-              GLOBAL LISTENERS
-            </h2>
-
-            {/* Weather Display Above Map in Fullscreen */}
-            {weather && (
-              <div className="mb-6">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <MapPin
-                    className={`w-4 h-4 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                  />
-                  <span
-                    className={`text-sm font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
-                  >
-                    {weather.location}
-                  </span>
-                </div>
-                <div className="flex items-center justify-center gap-1.5">
-                  <img
-                    src={getWeatherIcon(
-                      weather.description,
-                      weather.icon.includes("d"),
-                    )}
-                    alt={weather.description}
-                    className="flex-shrink-0"
-                    style={{
-                      width: "48px",
-                      height: "48px",
-                      objectFit: "contain",
-                    }}
-                  />
-                  <span
-                    className={`text-base font-bold ${isDarkMode ? "text-white" : "text-black"}`}
-                  >
-                    {Math.round(weather.temperature)}°F
-                  </span>
-                  <span
-                    className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                  >
-                    {weather.description}
-                  </span>
-                </div>
+          {/* Loading state for weather */}
+          {weatherLoading && (
+            <div className="mb-4">
+              <div className="flex items-center justify-center gap-2">
+                <MapPin
+                  className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                />
+                <span
+                  className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                >
+                  Loading weather...
+                </span>
               </div>
-            )}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
 
         {/* Map Container */}
         <div
-          className={`relative ${isFullscreen ? "fixed inset-0 z-50" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}
+          className={`relative ${isFullscreen ? "h-screen" : "h-[600px]"} ${isFullscreen ? "mb-0" : "mb-16"}`}
         >
           <div
             ref={mapRef}
-            className={`w-full ${isFullscreen ? "rounded-lg mx-8" : "rounded-lg"} map-container`}
+            className={`w-full rounded-lg map-container transition-all duration-500 ease-in-out ${isFullscreen ? "h-full" : "h-full"}`}
             style={{
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "calc(100vh - 10px)" : "100%",
-              marginTop: isFullscreen ? "10px" : "0",
+              height: isFullscreen ? "calc(100vh - 200px)" : "100%",
+              marginTop: isFullscreen ? "0" : "0",
             }}
           />
 
-          {/* Custom Map Controls */}
+          {/* Normal View Controls */}
           <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
             <Button
               onClick={() => {
@@ -1149,7 +1216,15 @@ export default function FullWidthGlobeMap() {
 
           {/* Fullscreen Toggle */}
           <Button
-            onClick={() => setIsFullscreen(!isFullscreen)}
+            onClick={() => {
+              setIsFullscreen(true);
+              // Small delay to ensure DOM update before map reinitializes
+              setTimeout(() => {
+                if (map) {
+                  google.maps.event.trigger(map, 'resize');
+                }
+              }, 100);
+            }}
             className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg ${
               isDarkMode
                 ? "bg-gray-800 hover:bg-gray-700 text-white"
@@ -1161,17 +1236,12 @@ export default function FullWidthGlobeMap() {
             }}
             size="sm"
           >
-            {isFullscreen ? (
-              <Minimize2 className="w-4 h-4" />
-            ) : (
-              <Maximize2 className="w-4 h-4" />
-            )}
+            <Maximize2 className="w-4 h-4" />
           </Button>
         </div>
 
-        {/* Statistics Layout - Hide in fullscreen mode */}
-        {!isFullscreen && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Statistics Layout - Always visible in normal mode */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Live Statistics - Left Side with Vertical Layout */}
             <Card
               className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
@@ -1376,8 +1446,8 @@ export default function FullWidthGlobeMap() {
               </Card>
             </div>
           </div>
-        )}
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }
