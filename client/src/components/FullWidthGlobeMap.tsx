@@ -1109,6 +1109,7 @@ export default function FullWidthGlobeMap() {
                     <div className="relative">
                       <AnimatedCounter
                         value={liveStats?.activeListeners || totalListeners}
+                        duration={800}
                         className="font-black text-4xl tracking-tight"
                         style={{ color: colors.primary }}
                       />
@@ -1133,6 +1134,7 @@ export default function FullWidthGlobeMap() {
                     <div className="relative">
                       <AnimatedCounter
                         value={liveStats?.countries || countriesWithListeners}
+                        duration={800}
                         className="font-black text-4xl tracking-tight"
                         style={{ color: colors.primary }}
                       />
@@ -1161,6 +1163,7 @@ export default function FullWidthGlobeMap() {
                     <div className="relative">
                       <AnimatedCounter
                         value={liveStats?.totalListeners || stats?.currentListeners || 1247}
+                        duration={800}
                         className="font-black text-4xl tracking-tight"
                         style={{ color: colors.primary }}
                       />
