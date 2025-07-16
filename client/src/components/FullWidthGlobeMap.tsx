@@ -538,6 +538,22 @@ export default function FullWidthGlobeMap() {
           },
         });
 
+        // Add click listener to zoom and center on the marker
+        marker.addListener("click", () => {
+          console.log('Marker clicked:', listener.city);
+          
+          // Smooth zoom animation to the clicked location
+          mapInstance.panTo({ lat: listener.lat, lng: listener.lng });
+          const currentZoom = mapInstance.getZoom();
+          
+          // Zoom to city level for better detail
+          if (currentZoom < 8) {
+            mapInstance.setZoom(8); // Zoom level 8 for a good city view
+          } else if (currentZoom < 12) {
+            mapInstance.setZoom(12); // Zoom closer if already at city level
+          }
+        });
+
         // Create custom overlay instead of InfoWindow
         class CustomOverlay extends google.maps.OverlayView {
           private position: google.maps.LatLng;
