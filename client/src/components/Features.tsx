@@ -259,7 +259,7 @@ export default function Features() {
               </p>
               <div className="flex justify-start">
                 <Button
-                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center"
+                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center justify-between w-full"
                   style={{
                     color: colors.primary,
                     backgroundColor: "transparent",
@@ -278,8 +278,8 @@ export default function Features() {
                     scrollToSection("submissions");
                   }}
                 >
-                  <Music className="w-4 h-4 mr-2" />
-                  Submit Request
+                  <span className="text-left">Submit Request</span>
+                  <Music className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </CardContent>
@@ -325,7 +325,7 @@ export default function Features() {
               </p>
               <div className="flex justify-start">
                 <Button
-                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center"
+                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center justify-between w-full"
                   style={{
                     color: colors.primary,
                     backgroundColor: "transparent",
@@ -344,8 +344,8 @@ export default function Features() {
                     scrollToSection("subscribe");
                   }}
                 >
-                  <Crown className="w-4 h-4 mr-2" />
-                  Learn More
+                  <span className="text-left">Learn More</span>
+                  <Crown className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </CardContent>
@@ -391,7 +391,7 @@ export default function Features() {
               </p>
               <div className="flex justify-start">
                 <Button
-                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center"
+                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center justify-between w-full"
                   style={{
                     color: colors.primary,
                     backgroundColor: "transparent",
@@ -410,8 +410,8 @@ export default function Features() {
                     scrollToSection("merch");
                   }}
                 >
-                  <Shirt className="w-4 h-4 mr-2" />
-                  Shop Now
+                  <span className="text-left">Shop Now</span>
+                  <Shirt className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </CardContent>

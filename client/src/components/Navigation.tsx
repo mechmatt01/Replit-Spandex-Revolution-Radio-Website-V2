@@ -153,6 +153,20 @@ export default function Navigation() {
     }
   };
 
+  // Logo click handler
+  const handleLogoClick = () => {
+    if (location === '/') {
+      // If on home page, scroll to top
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } else {
+      // If on another page, navigate to home
+      setLocation('/');
+    }
+  };
+
   // Authentication handlers
   const openLogin = () => {
     setIsOpen(false);
@@ -242,11 +256,12 @@ export default function Navigation() {
             {/* Logo & Brand - Left side */}
             <div className="flex items-center space-x-4">
               <div 
-                className="flex items-center justify-center w-8 h-8 rounded-full cursor-pointer"
+                className="flex items-center justify-center w-8 h-8 rounded-full cursor-pointer logo-container"
                 style={{ 
                   background: gradient,
                   padding: '5px'
                 }}
+                onClick={handleLogoClick}
                 onMouseEnter={(e) => {
                   const imgElement = e.currentTarget.querySelector('img');
                   if (imgElement && !imgElement.classList.contains('logo-spin-easter-egg')) {
