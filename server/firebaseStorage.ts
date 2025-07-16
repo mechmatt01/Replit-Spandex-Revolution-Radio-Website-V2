@@ -1,42 +1,56 @@
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import type { RadioStation, InsertRadioStation } from '@shared/schema';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Initialize Firebase Admin with proper error handling
-let firebaseApp;
+let firebaseApp: any;
+let isFirebaseAvailable = false;
+
 try {
   // Check if app already exists
   const apps = getApps();
   if (apps.length > 0) {
     firebaseApp = apps[0];
+    isFirebaseAvailable = true;
     console.log('Using existing Firebase app');
   } else {
-    // Debug credentials
-    console.log('Firebase credentials check:');
-    console.log('- Project ID:', process.env.FIREBASE_PROJECT_ID || 'Missing');
-    console.log('- Client Email:', process.env.FIREBASE_CLIENT_EMAIL || 'Missing');
-    console.log('- Private Key length:', process.env.FIREBASE_PRIVATE_KEY?.length || 0);
-    console.log('- Private Key starts with:', process.env.FIREBASE_PRIVATE_KEY?.substring(0, 27) || 'Missing');
+    // Try to load service account from file first
+    let serviceAccount;
+    const serviceAccountPath = path.join(process.cwd(), 'firebase-service-account.json');
     
-    // Initialize new app
-    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
-    console.log('- Processed Private Key starts with:', privateKey?.substring(0, 27) || 'Missing');
-    
-    firebaseApp = initializeApp({
-      credential: cert({
+    if (fs.existsSync(serviceAccountPath)) {
+      serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+      console.log('Loaded Firebase service account from file');
+    } else if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
+      // Fall back to environment variables
+      serviceAccount = {
         projectId: process.env.FIREBASE_PROJECT_ID,
-        privateKey: privateKey,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      }),
-    });
-    console.log('Firebase app initialized successfully');
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      };
+      console.log('Loaded Firebase service account from environment variables');
+    } else {
+      console.log('Firebase service account not found - using mock data');
+      isFirebaseAvailable = false;
+    }
+
+    if (serviceAccount) {
+      firebaseApp = initializeApp({
+        credential: cert(serviceAccount),
+        projectId: serviceAccount.projectId || serviceAccount.project_id,
+      });
+      isFirebaseAvailable = true;
+      console.log('Firebase app initialized successfully');
+    }
   }
 } catch (error) {
   console.error('Firebase initialization error:', error);
-  throw error;
+  isFirebaseAvailable = false;
 }
 
-const db = getFirestore(firebaseApp);
+const db = isFirebaseAvailable ? getFirestore(firebaseApp) : null;
 
 /**
  * Firebase-based Live Statistics Storage
@@ -55,6 +69,11 @@ export class FirebaseLiveStatsStorage {
     totalListeners: number;
   }> {
     try {
+      // Check if Firebase is available
+      if (!isFirebaseAvailable || !db) {
+        throw new Error('Firebase not available');
+      }
+      
       // Get active listeners from users collection
       const activeListenersSnapshot = await db.collection(this.usersCollection)
         .where('isActiveListening', '==', true)
@@ -104,6 +123,11 @@ export class FirebaseLiveStatsStorage {
     totalListeners?: number;
   }): Promise<void> {
     try {
+      if (!isFirebaseAvailable || !db) {
+        console.log('Firebase not available - skipping live stats update');
+        return;
+      }
+      
       await db.collection(this.collection).doc('current').set({
         ...stats,
         updatedAt: Timestamp.now()
@@ -118,6 +142,11 @@ export class FirebaseLiveStatsStorage {
    */
   async incrementTotalListeners(stationId: string, userId: string): Promise<void> {
     try {
+      if (!isFirebaseAvailable || !db) {
+        console.log('Firebase not available - skipping listener increment');
+        return;
+      }
+      
       const stationStatsRef = db.collection(this.collection).doc(`station_${stationId}`);
       const stationDoc = await stationStatsRef.get();
       
