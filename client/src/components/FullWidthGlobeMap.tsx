@@ -494,7 +494,17 @@ export default function FullWidthGlobeMap() {
         { lat: -23.5505, lng: -46.6333, city: "São Paulo", country: "Brazil" },
       ];
 
-      mockListeners.forEach((listener) => {
+      // Filter out mock listeners that are too close to user's current location
+      const filteredListeners = mockListeners.filter((listener) => {
+        const distance = Math.sqrt(
+          Math.pow(listener.lat - userLocation.lat, 2) +
+          Math.pow(listener.lng - userLocation.lng, 2)
+        );
+        // If distance is less than 0.1 degrees (roughly 11km), exclude it
+        return distance > 0.1;
+      });
+
+      filteredListeners.forEach((listener) => {
         // Create animated theme-colored dot SVG
         const animatedDotSvg = `
           <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
