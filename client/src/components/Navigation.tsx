@@ -242,10 +242,22 @@ export default function Navigation() {
             {/* Logo & Brand - Left side */}
             <div className="flex items-center space-x-4">
               <div 
-                className="flex items-center justify-center w-8 h-8 rounded-full"
+                className="flex items-center justify-center w-8 h-8 rounded-full cursor-pointer"
                 style={{ 
                   background: gradient,
                   padding: '5px'
+                }}
+                onMouseEnter={(e) => {
+                  const imgElement = e.currentTarget.querySelector('img');
+                  if (imgElement) {
+                    imgElement.classList.add('logo-spin-easter-egg');
+                  }
+                }}
+                onAnimationEnd={(e) => {
+                  const imgElement = e.currentTarget.querySelector('img');
+                  if (imgElement) {
+                    imgElement.classList.remove('logo-spin-easter-egg');
+                  }
                 }}
               >
                 <img 
