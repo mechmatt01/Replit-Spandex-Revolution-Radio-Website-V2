@@ -302,7 +302,16 @@ export default function FullWidthGlobeMap() {
 
   // Initialize Google Maps when API key is available
   useEffect(() => {
-    if (!config?.googleMapsApiKey || !mapRef.current || !userLocation) return;
+    console.log('=== FullWidthGlobeMap Debug ===');
+    console.log('Config available:', !!config);
+    console.log('API key available:', !!config?.googleMapsApiKey);
+    console.log('API key value:', config?.googleMapsApiKey?.substring(0, 15) + '...');
+    console.log('Map ref current:', !!mapRef.current);
+    console.log('User location available:', !!userLocation);
+    console.log('User location value:', userLocation);
+    
+    // Temporarily remove user location dependency to test map loading
+    if (!config?.googleMapsApiKey || !mapRef.current) return;
 
     // Add CSS to hide Google attribution
     const style = document.createElement("style");
@@ -322,7 +331,7 @@ export default function FullWidthGlobeMap() {
     const initializeMap = () => {
       const mapInstance = new google.maps.Map(mapRef.current!, {
         zoom: 2,
-        center: userLocation,
+        center: userLocation || { lat: 40.7128, lng: -74.0060 }, // Default to NYC
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         styles: isDarkMode
           ? [

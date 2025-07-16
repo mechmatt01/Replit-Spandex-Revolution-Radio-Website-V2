@@ -220,6 +220,11 @@ const GoogleMapWithListeners = ({
 
   useEffect(() => {
     const loadGoogleMaps = async () => {
+      console.log('=== Google Maps Loading Debug ===');
+      console.log('Map ref current:', !!mapRef.current);
+      console.log('API key available:', !!apiKey);
+      console.log('API key value:', apiKey?.substring(0, 15) + '...');
+      
       if (!mapRef.current) {
         console.log('Map ref not available');
         return;
