@@ -182,7 +182,7 @@ export class UniversalAdDetector {
 
     try {
       const response = await fetch(station.apiUrl, {
-        timeout: 5000,
+        signal: AbortSignal.timeout(5000),
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
@@ -218,7 +218,7 @@ export class UniversalAdDetector {
 
     try {
       const response = await fetch(station.apiUrl, {
-        timeout: 5000,
+        signal: AbortSignal.timeout(5000),
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }
@@ -253,7 +253,7 @@ export class UniversalAdDetector {
   private async fetchSomaFMMetadata(station: RadioStation): Promise<StreamMetadata | null> {
     try {
       const response = await fetch(`https://somafm.com/songs/${station.stationId}.json`, {
-        timeout: 5000
+        signal: AbortSignal.timeout(5000)
       });
 
       if (!response.ok) return null;
@@ -284,7 +284,7 @@ export class UniversalAdDetector {
 
     try {
       const response = await fetch(station.apiUrl, {
-        timeout: 5000,
+        signal: AbortSignal.timeout(5000),
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
         }

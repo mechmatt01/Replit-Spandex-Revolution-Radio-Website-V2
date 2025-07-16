@@ -678,7 +678,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const response = await fetch(
         `https://itunes.apple.com/search?term=${searchQuery}&entity=song&limit=1`,
         {
-          timeout: 2000,
+          signal: AbortSignal.timeout(2000),
         },
       );
 
@@ -704,7 +704,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const response = await fetch(
         "https://yield-op-idsync.live.streamtheworld.com/idsync.js?stn=WQHTFM",
         {
-          timeout: 3000,
+          signal: AbortSignal.timeout(3000),
           headers: {
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -1203,7 +1203,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const tuneInResponse = await fetch(
           "https://opml.radiotime.com/Describe.ashx?c=nowplaying&id=s22162&partnerId=RadioTime&serial=",
           {
-            timeout: 3000,
+            signal: AbortSignal.timeout(3000),
             headers: {
               "User-Agent":
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
