@@ -7,7 +7,6 @@ import {
   ReactNode,
   useCallback,
 } from "react";
-import { useFirebaseAuth } from "./FirebaseAuthContext";
 // Radio station interface
 interface RadioStation {
   id: string;
@@ -72,7 +71,6 @@ function getDefaultArtwork(title: string, artist: string): string {
 }
 
 export function RadioProvider({ children }: { children: ReactNode }) {
-  const { setListeningStatus } = useFirebaseAuth();
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(() => {
     // Load volume from localStorage or default to 0.7
@@ -325,23 +323,11 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     setIsPlaying(true);
     setIsLoading(false);
     setError(null);
-    // Update Firebase listening status
-    try {
-      setListeningStatus(true);
-    } catch (error) {
-      console.warn('Failed to update listening status:', error);
-    }
   };
 
   const handlePause = () => {
     setIsPlaying(false);
     setIsLoading(false);
-    // Update Firebase listening status
-    try {
-      setListeningStatus(false);
-    } catch (error) {
-      console.warn('Failed to update listening status:', error);
-    }
   };
 
   const handleLoadStart = () => {
@@ -357,12 +343,6 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     console.error("Audio error:", e);
     setIsLoading(false);
     setIsPlaying(false);
-    // Update Firebase listening status
-    try {
-      setListeningStatus(false);
-    } catch (error) {
-      console.warn('Failed to update listening status:', error);
-    }
     const audio = audioRef.current;
     if (audio && audio.src && !audio.paused) {
       setError("Unable to connect to radio stream");

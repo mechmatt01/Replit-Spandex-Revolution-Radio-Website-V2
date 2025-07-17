@@ -134,13 +134,13 @@ export default function Contact() {
         <div className="flex justify-center items-center min-h-[500px]">
           <div className="w-full max-w-lg">
             <Card
-              className="bg-card/50 hover:bg-card/70 transition-all duration-300 mx-auto"
+              className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 mx-auto"
               style={{ borderColor: colors.primary }}
             >
               <CardContent className="p-8">
                 {!showSuccess && !showError && (
                   <>
-                    <h3 className="font-black text-xl mb-6 text-center text-primary">
+                    <h3 className="font-black text-xl mb-6 text-center text-metal-orange">
                       Send us a Message
                     </h3>
 
@@ -174,7 +174,7 @@ export default function Contact() {
                             }
                             placeholder="John"
                             required
-                            className="bg-card border-border text-foreground placeholder:text-gray-400 placeholder:opacity-60 focus:border-primary"
+                            className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
                           />
                         </div>
                         <div>
@@ -192,7 +192,7 @@ export default function Contact() {
                             }
                             placeholder="Doe"
                             required
-                            className="bg-card border-border text-foreground placeholder:text-gray-400 placeholder:opacity-60 focus:border-primary"
+                            className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
                           />
                         </div>
                       </div>
@@ -213,7 +213,7 @@ export default function Contact() {
                           }
                           placeholder="john@example.com"
                           required
-                          className="bg-card border-border text-foreground placeholder:text-gray-400 placeholder:opacity-60 focus:border-primary"
+                          className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
                         />
                       </div>
 
@@ -230,10 +230,10 @@ export default function Contact() {
                             handleInputChange("subject", value)
                           }
                         >
-                          <SelectTrigger className="bg-card border-border text-foreground focus:border-primary" aria-label="Select message subject">
+                          <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange" aria-label="Select message subject">
                             <SelectValue placeholder="Select a subject" />
                           </SelectTrigger>
-                          <SelectContent className="bg-popover border-border">
+                          <SelectContent className="bg-black border-dark-border">
                             <SelectItem value="general">
                               General Inquiry
                             </SelectItem>
@@ -265,7 +265,7 @@ export default function Contact() {
                           placeholder="Tell us what's on your mind..."
                           rows={5}
                           required
-                          className="bg-card border-border text-foreground placeholder:text-gray-400 placeholder:opacity-60 focus:border-primary resize-none"
+                          className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange resize-none"
                         />
                       </div>
 

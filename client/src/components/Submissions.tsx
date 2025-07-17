@@ -199,7 +199,7 @@ export default function Submissions() {
             </div>
           </div>
         ) : (
-          <Card className="bg-card border-border mb-12">
+          <Card className="bg-dark-surface border-dark-border mb-12">
             <CardContent className="p-8">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -218,7 +218,7 @@ export default function Submissions() {
                       }
                       placeholder="Enter song title"
                       required
-                      className="bg-background border-border text-white placeholder-gray-500 focus:border-primary"
+                      className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
                     />
                   </div>
                   <div>
@@ -236,7 +236,7 @@ export default function Submissions() {
                       }
                       placeholder="Enter artist name"
                       required
-                      className="bg-background border-border text-white placeholder-gray-500 focus:border-primary"
+                      className="bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange"
                     />
                   </div>
                 </div>
@@ -255,7 +255,7 @@ export default function Submissions() {
                       handleInputChange("submitterName", e.target.value)
                     }
                     placeholder="Enter your name (optional)"
-                    className="bg-background border-border text-white placeholder-gray-400/60 focus:border-primary"
+                    className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange"
                   />
                 </div>
 
@@ -274,7 +274,7 @@ export default function Submissions() {
                     }
                     placeholder="Tell us why this song rocks or share any additional details..."
                     rows={4}
-                    className="bg-background border-border text-white placeholder-gray-400/60 focus:border-primary resize-none"
+                    className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-metal-orange resize-none"
                   />
                 </div>
 
@@ -283,7 +283,7 @@ export default function Submissions() {
                     id="terms"
                     checked={agreedToTerms}
                     onCheckedChange={setAgreedToTerms}
-                    className="border-border"
+                    className="border-dark-border"
                   />
                   <Label htmlFor="terms" className="text-gray-400 text-sm">
                     I agree that this submission follows metal music guidelines
@@ -294,7 +294,7 @@ export default function Submissions() {
                 <Button
                   type="submit"
                   disabled={submitMutation.isPending}
-                  className="w-full md:w-auto bg-primary hover:bg-primary/80 text-white px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 animate-glow"
+                  className="w-full md:w-auto bg-metal-orange hover:bg-orange-600 text-white px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 animate-glow"
                 >
                   <Send className="mr-2 h-4 w-4" />
                   {submitMutation.isPending
@@ -321,7 +321,7 @@ export default function Submissions() {
                 {recentSubmissions.slice(0, 4).map((submission) => (
                   <Card
                     key={submission.id}
-                    className="bg-card border-border"
+                    className="bg-dark-surface border-dark-border"
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between mb-2">
@@ -336,7 +336,7 @@ export default function Submissions() {
                         <span
                           className={`text-xs px-2 py-1 rounded ${
                             submission.status === "approved"
-                              ? "text-primary bg-primary/20"
+                              ? "text-metal-orange bg-metal-orange/20"
                               : submission.status === "rejected"
                                 ? "text-metal-red bg-metal-red/20"
                                 : "text-metal-gold bg-metal-gold/20"

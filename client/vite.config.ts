@@ -12,7 +12,7 @@ export default defineConfig({
     },
   },
   css: {
-    postcss: path.resolve(__dirname, './postcss.config.js'),
+    postcss: path.resolve(__dirname, '../postcss.config.js'),
   },
   build: {
     outDir: 'dist',

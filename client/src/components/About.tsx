@@ -98,7 +98,7 @@ export default function About() {
               alt="Metal concert with band performing on stage under dramatic lighting"
               className="rounded-xl shadow-2xl w-full h-auto"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/50 to-transparent rounded-xl"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-dark-bg/50 to-transparent rounded-xl"></div>
           </div>
         </div>
       </div>

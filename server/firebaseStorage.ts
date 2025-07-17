@@ -393,102 +393,60 @@ export class FirebaseStorage implements IStorage {
 
   // Now Playing methods
   async getCurrentTrack(): Promise<NowPlaying | undefined> {
-    try {
-      const snapshot = await db.collection("nowPlaying")
-        .orderBy("createdAt", "desc")
-        .limit(1)
-        .get();
-      
-      if (!snapshot.empty) {
-        const doc = snapshot.docs[0];
-        return { id: doc.id, ...doc.data() } as NowPlaying;
-      }
-      return undefined;
-    } catch (error) {
-      console.error('Error getting current track:', error);
-      return undefined;
+    const snapshot = await db.collection("nowPlaying")
+      .orderBy("createdAt", "desc")
+      .limit(1)
+      .get();
+    
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      return { id: doc.id, ...doc.data() } as NowPlaying;
     }
+    return undefined;
   }
 
   async updateNowPlaying(track: InsertNowPlaying): Promise<NowPlaying> {
-    try {
-      const trackData = {
-        ...track,
-        createdAt: Timestamp.now(),
-      };
-      const docRef = await db.collection("nowPlaying").add(trackData);
-      const doc = await docRef.get();
-      return { id: doc.id, ...doc.data() } as NowPlaying;
-    } catch (error) {
-      console.error('Error updating now playing:', error);
-      // Return fallback data instead of crashing
-      return {
-        id: Date.now().toString(),
-        title: track.title || 'Live Stream',
-        artist: track.artist || 'Spandex Salvation Radio',
-        album: track.album || '',
-        artwork: track.artwork || '',
-        isAd: track.isAd || false,
-        adBrand: track.adBrand || null,
-        timestamp: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-    }
+    const trackData = {
+      ...track,
+      createdAt: Timestamp.now(),
+    };
+    const docRef = await db.collection("nowPlaying").add(trackData);
+    const doc = await docRef.get();
+    return { id: doc.id, ...doc.data() } as NowPlaying;
   }
 
   // Stream Stats methods
   async getStreamStats(): Promise<StreamStats | undefined> {
-    try {
-      const snapshot = await db.collection("streamStats")
-        .orderBy("createdAt", "desc")
-        .limit(1)
-        .get();
-      
-      if (!snapshot.empty) {
-        const doc = snapshot.docs[0];
-        return { id: doc.id, ...doc.data() } as StreamStats;
-      }
-      return undefined;
-    } catch (error) {
-      console.error('Error getting stream stats:', error);
-      return undefined;
+    const snapshot = await db.collection("streamStats")
+      .orderBy("createdAt", "desc")
+      .limit(1)
+      .get();
+    
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      return { id: doc.id, ...doc.data() } as StreamStats;
     }
+    return undefined;
   }
 
   async updateStreamStats(stats: Partial<StreamStats>): Promise<StreamStats> {
-    try {
-      const currentStats = await this.getStreamStats();
-      
-      if (currentStats && currentStats.id) {
-        await db.collection("streamStats").doc(currentStats.id).update({
-          ...stats,
-          updatedAt: Timestamp.now(),
-        });
-        const doc = await db.collection("streamStats").doc(currentStats.id).get();
-        return { id: doc.id, ...doc.data() } as StreamStats;
-      } else {
-        const docRef = await db.collection("streamStats").add({
-          ...stats,
-          createdAt: Timestamp.now(),
-          updatedAt: Timestamp.now(),
-        });
-        const doc = await docRef.get();
-        return { id: doc.id, ...doc.data() } as StreamStats;
-      }
-    } catch (error) {
-      console.error('Error updating stream stats:', error);
-      // Return fallback data instead of crashing
-      return {
-        id: Date.now().toString(),
-        currentListeners: 0,
-        totalListeners: 0,
-        peakListeners: 0,
-        averageListeners: 0,
+    const currentStats = await this.getStreamStats();
+    
+    if (currentStats && currentStats.id) {
+      await db.collection("streamStats").doc(currentStats.id).update({
         ...stats,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
+        updatedAt: Timestamp.now(),
+      });
+      const doc = await db.collection("streamStats").doc(currentStats.id).get();
+      return { id: doc.id, ...doc.data() } as StreamStats;
+    } else {
+      const docRef = await db.collection("streamStats").add({
+        ...stats,
+        createdAt: Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+      const doc = await docRef.get();
+      return { id: doc.id, ...doc.data() } as StreamStats;
     }
   }
 
@@ -635,22 +593,15 @@ export class FirebaseStorage implements IStorage {
       },
     ];
 
-    try {
-      // Check if stations already exist
-      const existingStations = await this.getRadioStations();
-      
-      if (existingStations.length === 0) {
-        // Initialize with default stations
-        for (const station of defaultStations) {
-          await this.createRadioStation(station);
-        }
-        console.log('Default radio stations initialized in Firebase');
-      } else {
-        console.log(`Found ${existingStations.length} existing radio stations in Firebase`);
+    // Check if stations already exist
+    const existingStations = await this.getRadioStations();
+    
+    if (existingStations.length === 0) {
+      // Initialize with default stations
+      for (const station of defaultStations) {
+        await this.createRadioStation(station);
       }
-    } catch (error) {
-      console.error('Error initializing radio stations:', error);
-      throw error;
+      console.log('Default radio stations initialized');
     }
   }
 }

@@ -263,13 +263,13 @@ export default function ShopifyEcommerce() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
+        <div className="animate-spin w-8 h-8 border-4 border-metal-orange border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   return (
-    <section id="merch" className="py-20 bg-background">
+    <section id="merch" className="py-20 bg-dark-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-white">
@@ -284,23 +284,23 @@ export default function ShopifyEcommerce() {
         {/* Cart Summary */}
         {cart.length > 0 && (
           <div className="mb-8">
-            <Card className="bg-card/50 hover:bg-card/70 transition-all duration-300">
+            <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <ShoppingCart className="text-primary h-5 w-5 mr-2" />
+                    <ShoppingCart className="text-metal-orange h-5 w-5 mr-2" />
                     <span className="font-black text-white">
                       {cart.reduce((total, item) => total + item.quantity, 0)}{" "}
                       items in cart
                     </span>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <span className="font-black text-xl text-primary">
+                    <span className="font-black text-xl text-metal-orange">
                       ${getCartTotal().toFixed(2)}
                     </span>
                     <Button
                       onClick={handleCheckout}
-                      className="bg-primary hover:bg-primary/80 text-white px-6 py-2 rounded-full font-bold"
+                      className="bg-metal-orange hover:bg-orange-600 text-white px-6 py-2 rounded-full font-bold"
                     >
                       Checkout
                     </Button>
@@ -371,7 +371,7 @@ function ProductCard({
 
   return (
     <Card
-      className="bg-card/50 hover:bg-card/70 transition-all duration-300 group h-full flex flex-col"
+      className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 group h-full flex flex-col"
       style={{ borderColor: colors.primary }}
     >
       <CardContent className="p-4 flex flex-col h-full">
@@ -449,7 +449,7 @@ function ProductCard({
             </span>
           </div>
           <div className="mt-2 mb-3">
-            <span className="text-xl font-black text-primary">
+            <span className="text-xl font-black text-metal-orange">
               ${product.price}
             </span>
             {product.compareAtPrice && (
@@ -475,7 +475,7 @@ function ProductCard({
                     product.variants.find((v) => v.id === e.target.value)!,
                   )
                 }
-                className="w-full p-2 bg-background/50 text-white rounded appearance-none pr-8"
+                className="w-full p-2 bg-dark-bg/50 text-white rounded appearance-none pr-8"
                 style={{ borderColor: colors.primary }}
               >
                 {product.variants.map((variant) => (
@@ -547,7 +547,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <Card className="bg-background max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <Card className="bg-dark-bg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-6">
             <h3 className="font-black text-2xl text-white">{product.title}</h3>
@@ -593,7 +593,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
               </div>
 
               <div className="mb-4">
-                <span className="text-2xl font-black text-primary">
+                <span className="text-2xl font-black text-metal-orange">
                   ${selectedVariant.price}
                 </span>
                 {product.compareAtPrice && (
@@ -615,7 +615,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                         product.variants.find((v) => v.id === e.target.value)!,
                       )
                     }
-                    className="w-full p-2 bg-background border-border text-white placeholder-gray-500 focus:border-primary rounded"
+                    className="w-full p-2 bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange rounded"
                   >
                     {product.variants.map((variant) => (
                       <option
@@ -640,7 +640,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                   max="10"
                   value={quantity}
                   onChange={(e) => setQuantity(parseInt(e.target.value))}
-                  className="w-20 p-2 bg-background/50 text-white rounded"
+                  className="w-20 p-2 bg-dark-bg/50 text-white rounded"
                 />
               </div>
 
@@ -650,7 +650,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                   onClose();
                 }}
                 disabled={!product.inStock || !selectedVariant.available}
-                className="w-full bg-primary hover:bg-primary/80 text-white font-bold"
+                className="w-full bg-metal-orange hover:bg-orange-600 text-white font-bold"
               >
                 <ShoppingCart className="mr-2 h-4 w-4" />
                 Buy Now - ${(selectedVariant.price * quantity).toFixed(2)}
