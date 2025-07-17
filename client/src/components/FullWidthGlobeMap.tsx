@@ -222,9 +222,10 @@ export default function FullWidthGlobeMap() {
   }>({
     queryKey: ["/api/config"],
     staleTime: 0, // Don't cache config data
-    cacheTime: 0, // Don't cache config data
+    gcTime: 0, // Don't cache config data (TanStack Query v5 uses gcTime)
     retry: 3,
     retryDelay: 1000,
+    refetchOnMount: 'always', // Always refetch on mount
   });
 
   // Debug config loading

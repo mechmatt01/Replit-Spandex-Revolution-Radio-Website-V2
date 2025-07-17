@@ -1,0 +1,52 @@
+Config available: false
+FullWidthGlobeMap.tsx:315 API key available: false
+FullWidthGlobeMap.tsx:316 API key value: undefined...
+FullWidthGlobeMap.tsx:317 Map ref current: true
+FullWidthGlobeMap.tsx:318 User location available: false
+FullWidthGlobeMap.tsx:319 User location value: null
+FullWidthGlobeMap.tsx:320 Is fullscreen: false
+/api/auth/user:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+FullWidthGlobeMap.tsx:242 Geolocation permission: granted
+/api/auth/user:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+hook.js:608 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+overrideMethod @ hook.js:608Understand this warning
+FullWidthGlobeMap.tsx:998 Google Maps API callback triggered
+FullWidthGlobeMap.tsx:246 Got location: 41.91969879364164 -88.29138918267904
+maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENTUnderstand this error
+RadioContext.tsx:137 Attempting to play stream 1/2: /api/radio-stream
+FullWidthGlobeMap.tsx:313 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:314 Config available: false
+FullWidthGlobeMap.tsx:315 API key available: false
+FullWidthGlobeMap.tsx:316 API key value: undefined...
+FullWidthGlobeMap.tsx:317 Map ref current: true
+FullWidthGlobeMap.tsx:318 User location available: true
+FullWidthGlobeMap.tsx:319 User location value: Object
+FullWidthGlobeMap.tsx:320 Is fullscreen: false
+FullWidthGlobeMap.tsx:232 Config loading status: Object
+FullWidthGlobeMap.tsx:313 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:314 Config available: true
+FullWidthGlobeMap.tsx:315 API key available: true
+FullWidthGlobeMap.tsx:316 API key value: AIzaSyBfRJS8dGD...
+FullWidthGlobeMap.tsx:317 Map ref current: true
+FullWidthGlobeMap.tsx:318 User location available: true
+FullWidthGlobeMap.tsx:319 User location value: Object
+FullWidthGlobeMap.tsx:320 Is fullscreen: false
+RadioContext.tsx:168 Stream 1 working successfully
+RadioContext.tsx:404 Fetch finished loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/now-playing?station=beat-955".
+fetchTrackInfo @ RadioContext.tsx:404
+(anonymous) @ RadioContext.tsx:470
+commitHookEffectListMount @ chunk-KQ564Z5K.js?v=b50fca6c:16963
+commitPassiveMountOnFiber @ chunk-KQ564Z5K.js?v=b50fca6c:18206
+commitPassiveMountEffects_complete @ chunk-KQ564Z5K.js?v=b50fca6c:18179
+commitPassiveMountEffects_begin @ chunk-KQ564Z5K.js?v=b50fca6c:18169
+commitPassiveMountEffects @ chunk-KQ564Z5K.js?v=b50fca6c:18159
+flushPassiveEffectsImpl @ chunk-KQ564Z5K.js?v=b50fca6c:19543
+flushPassiveEffects @ chunk-KQ564Z5K.js?v=b50fca6c:19500
+commitRootImpl @ chunk-KQ564Z5K.js?v=b50fca6c:19469
+commitRoot @ chunk-KQ564Z5K.js?v=b50fca6c:19330
+performSyncWorkOnRoot @ chunk-KQ564Z5K.js?v=b50fca6c:18948
+flushSyncCallbacks @ chunk-KQ564Z5K.js?v=b50fca6c:9166
+(anonymous) @ chunk-KQ564Z5K.js?v=b50fca6c:18677
+play
+togglePlayback @ RadioContext.tsx:164
+queryClient.ts:32 Fetch finished loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/live-stats".
