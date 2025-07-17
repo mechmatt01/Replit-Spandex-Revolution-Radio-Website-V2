@@ -140,7 +140,7 @@ export default function Contact() {
               <CardContent className="p-8">
                 {!showSuccess && !showError && (
                   <>
-                    <h3 className="font-black text-xl mb-6 text-center text-metal-orange">
+                    <h3 className="font-black text-xl mb-6 text-center text-primary">
                       Send us a Message
                     </h3>
 
@@ -174,7 +174,7 @@ export default function Contact() {
                             }
                             placeholder="John"
                             required
-                            className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
+                            className="bg-card border-border text-foreground placeholder:text-gray-400 placeholder:opacity-60 focus:border-primary"
                           />
                         </div>
                         <div>
@@ -192,7 +192,7 @@ export default function Contact() {
                             }
                             placeholder="Doe"
                             required
-                            className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
+                            className="bg-card border-border text-foreground placeholder:text-gray-400 placeholder:opacity-60 focus:border-primary"
                           />
                         </div>
                       </div>
@@ -213,7 +213,7 @@ export default function Contact() {
                           }
                           placeholder="john@example.com"
                           required
-                          className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
+                          className="bg-card border-border text-foreground placeholder:text-gray-400 placeholder:opacity-60 focus:border-primary"
                         />
                       </div>
 
@@ -230,7 +230,7 @@ export default function Contact() {
                             handleInputChange("subject", value)
                           }
                         >
-                          <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange" aria-label="Select message subject">
+                          <SelectTrigger className="bg-card border-border text-foreground focus:border-primary" aria-label="Select message subject">
                             <SelectValue placeholder="Select a subject" />
                           </SelectTrigger>
                           <SelectContent className="bg-black border-dark-border">
@@ -265,7 +265,7 @@ export default function Contact() {
                           placeholder="Tell us what's on your mind..."
                           rows={5}
                           required
-                          className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange resize-none"
+                          className="bg-card border-border text-foreground placeholder:text-gray-400 placeholder:opacity-60 focus:border-primary resize-none"
                         />
                       </div>
 

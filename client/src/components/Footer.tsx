@@ -57,7 +57,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("hero")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-primary transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Home
                 </button>
@@ -65,7 +65,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("schedule")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-primary transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Schedule
                 </button>
@@ -73,7 +73,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-primary transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Submissions
                 </button>
@@ -81,7 +81,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-primary transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Contact
                 </button>
@@ -89,7 +89,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("subscribe")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-primary transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Subscribe
                 </button>
@@ -104,7 +104,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => window.location.href = "/help"}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-primary transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Help Center
                 </button>
@@ -112,7 +112,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-primary transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Technical Support
                 </button>
@@ -120,7 +120,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-primary transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Submit Songs
                 </button>
@@ -128,7 +128,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => window.location.href = "/guidelines"}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-primary transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Community Guidelines
                 </button>
@@ -136,7 +136,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => window.location.href = "/privacy"}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="text-muted-foreground hover:text-primary transition-colors text-left block p-0 m-0 bg-transparent border-0"
                 >
                   Privacy Policy
                 </button>
@@ -187,25 +187,25 @@ export default function Footer() {
             <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
               <a
                 href="/terms"
-                className="font-semibold hover:text-metal-orange transition-colors"
+                className="font-semibold hover:text-primary transition-colors"
               >
                 Terms of Service
               </a>
               <a
                 href="/privacy"
-                className="font-semibold hover:text-metal-orange transition-colors"
+                className="font-semibold hover:text-primary transition-colors"
               >
                 Privacy Policy
               </a>
               <a
                 href="/cookies"
-                className="font-semibold hover:text-metal-orange transition-colors"
+                className="font-semibold hover:text-primary transition-colors"
               >
                 Cookies
               </a>
               <button
                 onClick={() => setIsAdminPanelOpen(true)}
-                className="font-semibold hover:text-metal-orange transition-colors"
+                className="font-semibold hover:text-primary transition-colors"
               >
                 Admin
               </button>

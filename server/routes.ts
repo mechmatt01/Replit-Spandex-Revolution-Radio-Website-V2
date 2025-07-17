@@ -261,6 +261,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Google Maps API key endpoint (legacy support)
+  app.get("/api/google-maps-api-key", (req: Request, res: Response) => {
+    try {
+      const googleMapsApiKey = "AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk";
+      res.json({ apiKey: googleMapsApiKey });
+    } catch (error) {
+      console.error("Error fetching Google Maps API key:", error);
+      res.status(500).json({ error: "Failed to fetch Google Maps API key" });
+    }
+  });
+
   // Weather API endpoint
   app.get("/api/weather", async (req: Request, res: Response) => {
     try {

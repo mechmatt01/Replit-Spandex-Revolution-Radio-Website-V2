@@ -952,12 +952,35 @@ export default function FullWidthGlobeMap() {
 
     // Load Google Maps API if not already loaded
     if (typeof google === "undefined" || !google.maps) {
+      console.log('Loading Google Maps script...');
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=geometry`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=geometry&callback=initMap`;
       script.async = true;
-      script.onload = initializeMap;
+      script.defer = true;
+      
+      // Add callback to window
+      (window as any).initMap = () => {
+        console.log('Google Maps loaded successfully');
+        delete (window as any).initMap;
+        initializeMap();
+      };
+      
+      script.onerror = (error) => {
+        console.error('Failed to load Google Maps script:', error);
+        // Try to get more specific error info
+        const mapDiv = document.querySelector('.gm-err-title');
+        if (mapDiv) {
+          console.error('Google Maps error title:', mapDiv.textContent);
+        }
+        const errMessage = document.querySelector('.gm-err-message');
+        if (errMessage) {
+          console.error('Google Maps error message:', errMessage.textContent);
+        }
+      };
+      
       document.head.appendChild(script);
     } else {
+      console.log('Google Maps already loaded');
       initializeMap();
     }
   }, [config, userLocation, isDarkMode]);
