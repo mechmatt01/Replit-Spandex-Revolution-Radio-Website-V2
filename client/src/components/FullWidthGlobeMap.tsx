@@ -204,25 +204,21 @@ export default function FullWidthGlobeMap() {
 
   // Intelligent theme detection for Google Maps
   const shouldUseDarkMap = () => {
-    // Force dark map for classic metal theme (check lowercase)
-    if (currentTheme.toLowerCase().includes('classic') && currentTheme.toLowerCase().includes('metal')) {
+    // Force dark map for classic metal theme
+    if (currentTheme === 'Classic Metal') {
       return true;
     }
     
     // Force dark map for other dark themes
-    if (currentTheme.toLowerCase().includes('black') || 
-        currentTheme.toLowerCase().includes('death') || 
-        currentTheme.toLowerCase().includes('doom') || 
-        currentTheme.toLowerCase().includes('thrash') || 
-        currentTheme.toLowerCase().includes('gothic') || 
-        currentTheme.toLowerCase().includes('dark') ||
-        currentTheme.toLowerCase().includes('glassmorphism')) {
+    if (currentTheme === 'Black Metal' || currentTheme === 'Death Metal' || 
+        currentTheme === 'Doom Metal' || currentTheme === 'Thrash Metal' || 
+        currentTheme === 'Gothic Metal' || currentTheme === 'Dark Mode' ||
+        currentTheme === 'Glassmorphism Premium') {
       return true;
     }
     
     // Use light map for light themes
-    if (currentTheme.toLowerCase().includes('light') || 
-        currentTheme.toLowerCase().includes('power')) {
+    if (currentTheme === 'Light Mode' || currentTheme === 'Power Metal') {
       return false;
     }
     
@@ -547,8 +543,6 @@ export default function FullWidthGlobeMap() {
     console.log('User location available:', !!userLocation);
     console.log('User location value:', userLocation);
     console.log('Is fullscreen:', isFullscreen);
-    console.log('Current theme:', currentTheme);
-    console.log('Should use dark map:', isMapDark);
     
     // Use hardcoded API key if config is not available
     const apiKey = config?.googleMapsApiKey || "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
@@ -561,6 +555,13 @@ export default function FullWidthGlobeMap() {
     
     console.log('Initializing Google Maps with API key:', apiKey.substring(0, 20) + '...');
     console.log('Using Map ID:', mapId);
+    console.log('Theme detection:', {
+      currentTheme: theme.name,
+      isDarkMode,
+      backgroundColor: theme.colors[isDarkMode ? 'dark' : 'light'].background,
+      isMapDark,
+      shouldUseDarkStyles: theme.name === 'Classic Metal' || isMapDark
+    });
     
     // Use the correct map container based on fullscreen state
     const currentContainer = isFullscreen ? fullscreenMapRef.current : mapRef.current;
@@ -1145,65 +1146,248 @@ export default function FullWidthGlobeMap() {
     .size;
   const top10Listeners = activeListeners.slice(0, 10);
 
-  return (
-    <>
-      {/* Fullscreen Map View */}
-      {isFullscreen && (
-        <div className="fixed inset-0 z-[9999] bg-black">
-          {/* Fullscreen header bar */}
-          <div className="absolute top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-700">
-            <div className="flex items-center justify-between px-6 py-4">
-              <div className="flex items-center gap-4">
-                <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
-                {weather && (
-                  <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
-                    <div className="w-8 h-8">
-                      <img
-                        src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
-                        alt={weather.description}
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="text-sm">
-                      <span className="text-white font-medium">{weather.location}</span>
-                      <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
-                    </div>
+  if (isFullscreen) {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-black">
+        {/* Fullscreen header bar */}
+        <div className="absolute top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-700">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-4">
+              <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
+              {weather && (
+                <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
+                  <div className="w-8 h-8">
+                    <img
+                      src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
+                      alt={weather.description}
+                      className="w-full h-full object-contain"
+                    />
                   </div>
-                )}
-              </div>
-              <Button
-                onClick={() => {
-                  setIsFullscreen(false);
-                  // Trigger map resize after fullscreen exit
+                  <div className="text-sm">
+                    <span className="text-white font-medium">{weather.location}</span>
+                    <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
+                  </div>
+                </div>
+              )}
+            </div>
+            <Button
+              onClick={() => {
+                setIsFullscreen(false);
+                // Use requestAnimationFrame to ensure smooth transition
+                requestAnimationFrame(() => {
                   setTimeout(() => {
                     if (map) {
                       google.maps.event.trigger(map, 'resize');
                       map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
+                      updateMapStyles(map);
                     }
                   }, 100);
-                }}
-                className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
-                size="sm"
-              >
-                <Minimize2 className="w-4 h-4" />
-              </Button>
-            </div>
+                });
+              }}
+              className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
+              size="sm"
+            >
+              <Minimize2 className="w-4 h-4" />
+            </Button>
           </div>
+        </div>
 
-          <div
-            ref={fullscreenMapRef}
-            className="w-full h-full"
+        <div
+          ref={fullscreenMapRef}
+          className="w-full h-full map-container"
+          style={{
+            minHeight: "100vh",
+            backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+            position: "absolute",
+            top: "80px",
+            left: "0",
+            right: "0",
+            bottom: "0"
+          }}
+        />
+
+        {/* Map Controls for fullscreen */}
+        <div className="absolute top-20 right-8 z-10 flex flex-col gap-2">
+          <Button
+            onClick={() => {
+              if (map) {
+                map.setZoom(map.getZoom() + 1);
+              }
+            }}
+            size="sm"
+            className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
             style={{
-              position: "absolute",
-              top: "80px",
-              left: "0",
-              right: "0",
-              bottom: "0"
+              backgroundColor: "#1f2937",
+              color: "#ffffff",
+            }}
+          >
+            <ZoomIn className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={() => {
+              if (map) {
+                map.setZoom(map.getZoom() - 1);
+              }
+            }}
+            size="sm"
+            className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+            style={{
+              backgroundColor: "#1f2937",
+              color: "#ffffff",
+            }}
+          >
+            <ZoomOut className="w-4 h-4" />
+          </Button>
+        </div>
+
+        {/* Left-side controls for fullscreen mode */}
+        <div className="absolute top-20 left-8 z-10 flex flex-col gap-2">
+          <Button
+            onClick={() => {
+              if (userLocation) {
+                if (map) {
+                  map.panTo(userLocation);
+                  map.setZoom(12);
+                }
+              } else {
+                // Request location if not available
+                if (navigator.geolocation) {
+                  navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                      const newLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                      };
+                      setUserLocation(newLocation);
+                      if (map) {
+                        map.panTo(newLocation);
+                        map.setZoom(12);
+                      }
+                    },
+                    (error) => {
+                      console.error("Error getting location:", error);
+                    }
+                  );
+                }
+              }
+            }}
+            size="sm"
+            className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+            style={{
+              backgroundColor: "#1f2937",
+              color: "#ffffff",
+            }}
+          >
+            <MapPin className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={() => {
+              if (map) {
+                map.panTo({ lat: 40.7128, lng: -74.006 });
+                map.setZoom(2);
+              }
+            }}
+            size="sm"
+            className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+            style={{
+              backgroundColor: "#1f2937",
+              color: "#ffffff",
+            }}
+          >
+            <RotateCcw className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <section
+      id="map"
+      className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
+    >
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header for normal view */}
+        <div className="text-center mb-16">
+          <h2
+            className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
+          >
+            GLOBAL LISTENERS
+          </h2>
+          <p
+            className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
+          >
+            See where metal fans are tuning in from around the world in
+            real-time.
+          </p>
+
+          {/* Weather Information Display */}
+          {weather && (
+            <div className="mb-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <MapPin
+                  className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                />
+                <span
+                  className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                >
+                  {weather.location}
+                </span>
+              </div>
+              <div className="flex items-center justify-center gap-1.5">
+                <img
+                  src={getWeatherIcon(
+                    weather.description,
+                    weather.icon.includes("d"),
+                  )}
+                  alt={weather.description}
+                  className="w-12 h-12 flex-shrink-0"
+                  style={{ width: "48px", height: "48px" }}
+                />
+                <span
+                  className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
+                >
+                  {Math.round(weather.temperature)}°F
+                </span>
+                <span
+                  className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                >
+                  {weather.description}
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Loading state for weather */}
+          {weatherLoading && (
+            <div className="mb-4">
+              <div className="flex items-center justify-center gap-2">
+                <MapPin
+                  className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                />
+                <span
+                  className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                >
+                  Loading weather...
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Map Container */}
+        <div className="relative h-[600px] mb-16">
+          <div
+            ref={mapRef}
+            className="w-full h-full map-container rounded-lg"
+            style={{
+              minHeight: "400px",
+              backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
             }}
           />
 
-          {/* Map Controls for Fullscreen */}
-          <div className="absolute top-20 right-8 z-10 flex flex-col gap-2">
+          {/* Map Controls */}
+          <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
             <Button
               onClick={() => {
                 if (map) {
@@ -1211,7 +1395,15 @@ export default function FullWidthGlobeMap() {
                 }
               }}
               size="sm"
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+              className={`p-2 ${
+                isDarkMode 
+                  ? "bg-gray-800 hover:bg-gray-700 text-white" 
+                  : "bg-white hover:bg-gray-50 text-black"
+              } border-0 shadow-lg`}
+              style={{
+                backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                color: isDarkMode ? "#ffffff" : "#000000",
+              }}
             >
               <ZoomIn className="w-4 h-4" />
             </Button>
@@ -1222,13 +1414,18 @@ export default function FullWidthGlobeMap() {
                 }
               }}
               size="sm"
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+              className={`p-2 ${
+                isDarkMode 
+                  ? "bg-gray-800 hover:bg-gray-700 text-white" 
+                  : "bg-white hover:bg-gray-50 text-black"
+              } border-0 shadow-lg`}
+              style={{
+                backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                color: isDarkMode ? "#ffffff" : "#000000",
+              }}
             >
               <ZoomOut className="w-4 h-4" />
             </Button>
-          </div>
-
-          <div className="absolute top-20 left-8 z-10 flex flex-col gap-2">
             <Button
               onClick={() => {
                 if (userLocation) {
@@ -1259,7 +1456,15 @@ export default function FullWidthGlobeMap() {
                 }
               }}
               size="sm"
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+              className={`p-2 ${
+                isDarkMode 
+                  ? "bg-gray-800 hover:bg-gray-700 text-white" 
+                  : "bg-white hover:bg-gray-50 text-black"
+              } border-0 shadow-lg`}
+              style={{
+                backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                color: isDarkMode ? "#ffffff" : "#000000",
+              }}
             >
               <MapPin className="w-4 h-4" />
             </Button>
@@ -1271,237 +1476,155 @@ export default function FullWidthGlobeMap() {
                 }
               }}
               size="sm"
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Normal View */}
-      <section
-        id="map"
-        className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
-      >
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header for normal view */}
-          <div className="text-center mb-16">
-            <h2
-              className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
-            >
-              GLOBAL LISTENERS
-            </h2>
-            <p
-              className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
-            >
-              See where metal fans are tuning in from around the world in
-              real-time.
-            </p>
-
-            {/* Weather Information Display */}
-            {weather && (
-              <div className="mb-4">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <MapPin
-                    className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                  />
-                  <span
-                    className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
-                  >
-                    {weather.location}
-                  </span>
-                </div>
-                <div className="flex items-center justify-center gap-1.5">
-                  <img
-                    src={getWeatherIcon(
-                      weather.description,
-                      weather.icon.includes("d"),
-                    )}
-                    alt={weather.description}
-                    className="w-12 h-12 flex-shrink-0"
-                    style={{ width: "48px", height: "48px" }}
-                  />
-                  <span
-                    className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
-                  >
-                    {Math.round(weather.temperature)}°F
-                  </span>
-                  <span
-                    className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                  >
-                    {weather.description}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Loading state for weather */}
-            {weatherLoading && (
-              <div className="mb-4">
-                <div className="flex items-center justify-center gap-2">
-                  <MapPin
-                    className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                  />
-                  <span
-                    className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
-                  >
-                    Loading weather...
-                  </span>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Map Container */}
-          <div className="relative h-[600px] mb-16">
-            <div
-              ref={mapRef}
-              className="w-full h-full map-container transition-all duration-300 ease-in-out rounded-lg"
-              style={{
-                minHeight: "400px",
-                backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              }}
-            />
-
-            {/* Map Controls */}
-            <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
-              <Button
-                onClick={() => {
-                  if (map) {
-                    map.setZoom(map.getZoom() + 1);
-                  }
-                }}
-                size="sm"
-                className={`p-2 ${
-                  isDarkMode 
-                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                    : "bg-white hover:bg-gray-50 text-black"
-                } border-0 shadow-lg`}
-                style={{
-                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                  color: isDarkMode ? "#ffffff" : "#000000",
-                }}
-              >
-                <ZoomIn className="w-4 h-4" />
-              </Button>
-              <Button
-                onClick={() => {
-                  if (map) {
-                    map.setZoom(map.getZoom() - 1);
-                  }
-                }}
-                size="sm"
-                className={`p-2 ${
-                  isDarkMode 
-                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                    : "bg-white hover:bg-gray-50 text-black"
-                } border-0 shadow-lg`}
-                style={{
-                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                  color: isDarkMode ? "#ffffff" : "#000000",
-                }}
-              >
-                <ZoomOut className="w-4 h-4" />
-              </Button>
-              <Button
-                onClick={() => {
-                  if (userLocation) {
-                    if (map) {
-                      map.panTo(userLocation);
-                      map.setZoom(12);
-                    }
-                  } else {
-                    // Request location if not available
-                    if (navigator.geolocation) {
-                      navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                          const newLocation = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
-                          };
-                          setUserLocation(newLocation);
-                          if (map) {
-                            map.panTo(newLocation);
-                            map.setZoom(12);
-                          }
-                        },
-                        (error) => {
-                          console.error("Error getting location:", error);
-                        }
-                      );
-                    }
-                  }
-                }}
-                size="sm"
-                className={`p-2 ${
-                  isDarkMode 
-                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                    : "bg-white hover:bg-gray-50 text-black"
-                } border-0 shadow-lg`}
-                style={{
-                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                  color: isDarkMode ? "#ffffff" : "#000000",
-                }}
-              >
-                <MapPin className="w-4 h-4" />
-              </Button>
-              <Button
-                onClick={() => {
-                  if (map) {
-                    map.panTo({ lat: 40.7128, lng: -74.006 });
-                    map.setZoom(2);
-                  }
-                }}
-                size="sm"
-                className={`p-2 ${
-                  isDarkMode 
-                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                    : "bg-white hover:bg-gray-50 text-black"
-                } border-0 shadow-lg`}
-                style={{
-                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                  color: isDarkMode ? "#ffffff" : "#000000",
-                }}
-              >
-                <RotateCcw className="w-4 h-4" />
-              </Button>
-            </div>
-
-            {/* Fullscreen Toggle */}
-            <Button
-              onClick={() => {
-                setIsFullscreen(true);
-                // Initialize map in fullscreen container
-                setTimeout(() => {
-                  if (map && fullscreenMapRef.current) {
-                    // Transfer the map to the fullscreen container
-                    fullscreenMapRef.current.appendChild(mapRef.current.firstChild);
-                    google.maps.event.trigger(map, 'resize');
-                    map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
-                  }
-                }, 100);
-              }}
-              className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg transition-all duration-300 ${
-                isDarkMode
-                  ? "bg-gray-800 hover:bg-gray-700 text-white"
+              className={`p-2 ${
+                isDarkMode 
+                  ? "bg-gray-800 hover:bg-gray-700 text-white" 
                   : "bg-white hover:bg-gray-50 text-black"
-              }`}
+              } border-0 shadow-lg`}
               style={{
                 backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
                 color: isDarkMode ? "#ffffff" : "#000000",
               }}
-              size="sm"
             >
-              <Maximize2 className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4" />
             </Button>
           </div>
 
-          {/* Statistics Layout - Only shown in normal mode, positioned below map */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Live Statistics - Left Side with Vertical Layout */}
+          {/* Fullscreen Toggle */}
+          <Button
+            onClick={() => {
+              setIsFullscreen(true);
+              // Use requestAnimationFrame to ensure smooth transition
+              requestAnimationFrame(() => {
+                setTimeout(() => {
+                  if (map) {
+                    google.maps.event.trigger(map, 'resize');
+                    map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
+                    updateMapStyles(map);
+                  }
+                }, 100);
+              });
+            }}
+            className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg transition-all duration-300 ${
+              isDarkMode
+                ? "bg-gray-800 hover:bg-gray-700 text-white"
+                : "bg-white hover:bg-gray-50 text-black"
+            }`}
+            style={{
+              backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+              color: isDarkMode ? "#ffffff" : "#000000",
+            }}
+            size="sm"
+          >
+            <Maximize2 className="w-4 h-4" />
+          </Button>
+        </div>
+
+        {/* Statistics Layout - positioned below map */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Live Statistics - Left Side with Vertical Layout */}
+          <Card
+            className="transition-all duration-300 border-2 hover:shadow-lg"
+            style={{ 
+              backgroundColor: isDarkMode ? "#000000" : "#ffffff",
+              borderColor: colors.primary
+            }}
+          >
+            <CardContent className="p-6 h-full flex flex-col">
+              <h3
+                className="font-black text-xl mb-6 text-center"
+                style={{ color: colors.primary }}
+              >
+                Live Statistics
+              </h3>
+              <div className="grid grid-cols-3 gap-4 flex-1 items-center">
+                {/* Active Listeners */}
+                <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
+                  <div className="relative">
+                    <AnimatedCounter
+                      value={liveStats?.activeListeners || totalListeners}
+                      className="font-black text-4xl tracking-tight"
+                      style={{ color: colors.primary }}
+                    />
+                    <div 
+                      className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
+                      style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
+                    />
+                  </div>
+                  <TrendingUp
+                    className="h-8 w-8 drop-shadow-md"
+                    style={{ color: colors.primary }}
+                  />
+                  <span
+                    className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
+                  >
+                    Active Listeners
+                  </span>
+                </div>
+
+                {/* Countries */}
+                <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
+                  <div className="relative">
+                    <AnimatedCounter
+                      value={liveStats?.countries || countriesWithListeners}
+                      className="font-black text-4xl tracking-tight"
+                      style={{ color: colors.primary }}
+                    />
+                    <div 
+                      className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
+                      style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
+                    />
+                  </div>
+                  <img
+                    src={CountriesIconPath}
+                    alt="Countries"
+                    className="h-8 w-8 drop-shadow-md"
+                    style={{
+                      filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
+                    }}
+                  />
+                  <span
+                    className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
+                  >
+                    Countries
+                  </span>
+                </div>
+
+                {/* Total Listeners */}
+                <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
+                  <div className="relative">
+                    <AnimatedCounter
+                      value={liveStats?.totalListeners || stats?.currentListeners || 1247}
+                      className="font-black text-4xl tracking-tight"
+                      style={{ color: colors.primary }}
+                    />
+                    <div 
+                      className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
+                      style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
+                    />
+                  </div>
+                  <img
+                    src={LiveNowIconPath}
+                    alt="Total Listeners"
+                    className="h-8 w-8 drop-shadow-md"
+                    style={{
+                      filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
+                    }}
+                  />
+                  <span
+                    className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
+                  >
+                    Total Listeners
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Active Locations - Combined Single Box */}
+          <div className="lg:col-span-2">
             <Card
-              className="transition-all duration-300 border-2 hover:shadow-lg"
+              className="transition-all duration-300 border-2 h-full hover:shadow-lg"
               style={{ 
                 backgroundColor: isDarkMode ? "#000000" : "#ffffff",
                 borderColor: colors.primary
@@ -1512,205 +1635,104 @@ export default function FullWidthGlobeMap() {
                   className="font-black text-xl mb-6 text-center"
                   style={{ color: colors.primary }}
                 >
-                  Live Statistics
+                  Active Locations
                 </h3>
-                <div className="grid grid-cols-3 gap-4 flex-1 items-center">
-                  {/* Active Listeners */}
-                  <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
-                    <div className="relative">
-                      <AnimatedCounter
-                        value={liveStats?.activeListeners || totalListeners}
-                        className="font-black text-4xl tracking-tight"
-                        style={{ color: colors.primary }}
-                      />
-                      <div 
-                        className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
-                        style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
-                      />
-                    </div>
-                    <TrendingUp
-                      className="h-8 w-8 drop-shadow-md"
-                      style={{ color: colors.primary }}
-                    />
-                    <span
-                      className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
-                    >
-                      Active Listeners
-                    </span>
+                <div className="grid grid-cols-2 gap-5 flex-1 items-center">
+                  {/* First Column (1-5) */}
+                  <div className="space-y-3 transform scale-115">
+                    {top10Listeners
+                      .filter((l) => l.isActive)
+                      .slice(0, 5)
+                      .map((listener, index) => (
+                        <div
+                          key={listener.id}
+                          className="flex items-center p-3 rounded transition-colors duration-200 hover:bg-opacity-10"
+                        >
+                          <div className="flex items-center gap-2 flex-1">
+                            <span
+                              className="font-black text-base w-7 text-center"
+                              style={{ color: colors.primary }}
+                            >
+                              #{index + 1}
+                            </span>
+                            <MapPin
+                              className="h-6 w-6"
+                              style={{ color: colors.primary }}
+                            />
+                            <div className="flex-1">
+                              <div
+                                className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
+                              >
+                                {listener.city}
+                              </div>
+                              <div
+                                className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                              >
+                                {listener.country}
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className="w-2 h-2 rounded-full animate-pulse ml-2"
+                            style={{ 
+                              backgroundColor: colors.primary,
+                              animation: 'pulse 2s ease-in-out infinite'
+                            }}
+                          />
+                        </div>
+                      ))}
                   </div>
 
-                  {/* Countries */}
-                  <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
-                    <div className="relative">
-                      <AnimatedCounter
-                        value={liveStats?.countries || countriesWithListeners}
-                        className="font-black text-4xl tracking-tight"
-                        style={{ color: colors.primary }}
-                      />
-                      <div 
-                        className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
-                        style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
-                      />
-                    </div>
-                    <img
-                      src={CountriesIconPath}
-                      alt="Countries"
-                      className="h-8 w-8 drop-shadow-md"
-                      style={{
-                        filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
-                      }}
-                    />
-                    <span
-                      className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
-                    >
-                      Countries
-                    </span>
-                  </div>
-
-                  {/* Total Listeners */}
-                  <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
-                    <div className="relative">
-                      <AnimatedCounter
-                        value={liveStats?.totalListeners || stats?.currentListeners || 1247}
-                        className="font-black text-4xl tracking-tight"
-                        style={{ color: colors.primary }}
-                      />
-                      <div 
-                        className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
-                        style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
-                      />
-                    </div>
-                    <img
-                      src={LiveNowIconPath}
-                      alt="Total Listeners"
-                      className="h-8 w-8 drop-shadow-md"
-                      style={{
-                        filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
-                      }}
-                    />
-                    <span
-                      className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
-                    >
-                      Total Listeners
-                    </span>
+                  {/* Second Column (6-10) */}
+                  <div className="space-y-3 transform scale-115">
+                    {top10Listeners
+                      .filter((l) => l.isActive)
+                      .slice(5, 10)
+                      .map((listener, index) => (
+                        <div
+                          key={listener.id}
+                          className="flex items-center p-3 rounded transition-colors duration-200 hover:bg-opacity-10"
+                        >
+                          <div className="flex items-center gap-2 flex-1">
+                            <span
+                              className="font-black text-base w-7 text-center"
+                              style={{ color: colors.primary }}
+                            >
+                              #{index + 6}
+                            </span>
+                            <MapPin
+                              className="h-6 w-6"
+                              style={{ color: colors.primary }}
+                            />
+                            <div className="flex-1">
+                              <div
+                                className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
+                              >
+                                {listener.city}
+                              </div>
+                              <div
+                                className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                              >
+                                {listener.country}
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            className="w-2 h-2 rounded-full animate-pulse ml-2"
+                            style={{ 
+                              backgroundColor: colors.primary,
+                              animation: 'pulse 2s ease-in-out infinite'
+                            }}
+                          />
+                        </div>
+                      ))}
                   </div>
                 </div>
               </CardContent>
             </Card>
-
-            {/* Active Locations - Combined Single Box */}
-            <div className="lg:col-span-2">
-              <Card
-                className="transition-all duration-300 border-2 h-full hover:shadow-lg"
-                style={{ 
-                  backgroundColor: isDarkMode ? "#000000" : "#ffffff",
-                  borderColor: colors.primary
-                }}
-              >
-                <CardContent className="p-6 h-full flex flex-col">
-                  <h3
-                    className="font-black text-xl mb-6 text-center"
-                    style={{ color: colors.primary }}
-                  >
-                    Active Locations
-                  </h3>
-                  <div className="grid grid-cols-2 gap-5 flex-1 items-center">
-                    {/* First Column (1-5) */}
-                    <div className="space-y-3 transform scale-115">
-                      {top10Listeners
-                        .filter((l) => l.isActive)
-                        .slice(0, 5)
-                        .map((listener, index) => (
-                          <div
-                            key={listener.id}
-                            className="flex items-center p-3 rounded transition-colors duration-200 hover:bg-opacity-10"
-                          >
-                            <div className="flex items-center gap-2 flex-1">
-                              <span
-                                className="font-black text-base w-7 text-center"
-                                style={{ color: colors.primary }}
-                              >
-                                #{index + 1}
-                              </span>
-                              <MapPin
-                                className="h-6 w-6"
-                                style={{ color: colors.primary }}
-                              />
-                              <div className="flex-1">
-                                <div
-                                  className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
-                                >
-                                  {listener.city}
-                                </div>
-                                <div
-                                  className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                                >
-                                  {listener.country}
-                                </div>
-                              </div>
-                            </div>
-                            <div
-                              className="w-2 h-2 rounded-full animate-pulse ml-2"
-                              style={{ 
-                                backgroundColor: colors.primary,
-                                animation: 'pulse 2s ease-in-out infinite'
-                              }}
-                            />
-                          </div>
-                        ))}
-                    </div>
-
-                    {/* Second Column (6-10) */}
-                    <div className="space-y-3 transform scale-115">
-                      {top10Listeners
-                        .filter((l) => l.isActive)
-                        .slice(5, 10)
-                        .map((listener, index) => (
-                          <div
-                            key={listener.id}
-                            className="flex items-center p-3 rounded transition-colors duration-200 hover:bg-opacity-10"
-                          >
-                            <div className="flex items-center gap-2 flex-1">
-                              <span
-                                className="font-black text-base w-7 text-center"
-                                style={{ color: colors.primary }}
-                              >
-                                #{index + 6}
-                              </span>
-                              <MapPin
-                                className="h-6 w-6"
-                                style={{ color: colors.primary }}
-                              />
-                              <div className="flex-1">
-                                <div
-                                  className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
-                                >
-                                  {listener.city}
-                                </div>
-                                <div
-                                  className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                                >
-                                  {listener.country}
-                                </div>
-                              </div>
-                            </div>
-                            <div
-                              className="w-2 h-2 rounded-full animate-pulse ml-2"
-                              style={{ 
-                                backgroundColor: colors.primary,
-                                animation: 'pulse 2s ease-in-out infinite'
-                              }}
-                            />
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
