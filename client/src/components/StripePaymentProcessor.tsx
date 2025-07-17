@@ -167,7 +167,7 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
             }
             placeholder="John Doe"
             required
-            className="bg-dark-bg/50 text-white placeholder-gray-400/60 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
+            className="bg-background/50 text-white placeholder-gray-400/60 focus:ring-2 focus:ring-primary focus:ring-opacity-50"
           />
         </div>
         <div>
@@ -183,7 +183,7 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
             }
             placeholder="john@example.com"
             required
-            className="bg-dark-bg/50 text-white placeholder-gray-400/60 focus:ring-2 focus:ring-metal-orange focus:ring-opacity-50"
+            className="bg-background/50 text-white placeholder-gray-400/60 focus:ring-2 focus:ring-primary focus:ring-opacity-50"
           />
         </div>
       </div>
@@ -192,7 +192,7 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
         <Label className="text-gray-300 font-semibold">
           Payment Information *
         </Label>
-        <div className="mt-2 p-4 bg-dark-bg/50 rounded-lg">
+        <div className="mt-2 p-4 bg-background/50 rounded-lg">
           <CardElement
             options={{
               style: {
@@ -215,7 +215,7 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between p-4 bg-dark-surface/50 rounded-lg">
+      <div className="flex items-center justify-between p-4 bg-card/50 rounded-lg">
         <div>
           <p className="font-black text-white">
             Total: ${selectedTier.price}/month
@@ -233,7 +233,7 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
       <Button
         type="submit"
         disabled={!stripe || processing}
-        className="w-full bg-metal-orange hover:bg-orange-600 text-white px-6 py-3 rounded-full font-bold transition-all duration-300"
+        className="w-full bg-primary hover:bg-primary/80 text-white px-6 py-3 rounded-full font-bold transition-all duration-300"
       >
         <CreditCard className="mr-2 h-4 w-4" />
         {processing ? "Processing..." : `Subscribe to ${selectedTier.name}`}
@@ -261,7 +261,7 @@ export default function StripePaymentProcessor() {
   if (showPaymentForm && selectedTier) {
     return (
       <div className="max-w-2xl mx-auto">
-        <Card className="bg-dark-bg/50 hover:bg-dark-bg/70 transition-all duration-300">
+        <Card className="bg-background/50 hover:bg-background/70 transition-all duration-300">
           <CardContent className="p-8">
             <div className="text-center mb-8">
               <h3 className="font-black text-2xl text-white mb-2">
@@ -269,7 +269,7 @@ export default function StripePaymentProcessor() {
               </h3>
               <p className="text-gray-400 font-semibold">
                 You're subscribing to{" "}
-                <span className="text-metal-orange font-bold">
+                <span className="text-primary font-bold">
                   {selectedTier.name}
                 </span>{" "}
                 tier
@@ -357,7 +357,7 @@ export default function StripePaymentProcessor() {
                   </div>
 
                   <div className="mb-4">
-                    <span className="text-3xl font-black text-metal-orange">
+                    <span className="text-3xl font-black text-primary">
                       ${tier.price}
                     </span>
                     <span className="text-gray-400 font-semibold">/month</span>
@@ -368,7 +368,7 @@ export default function StripePaymentProcessor() {
                   {tier.features.map((feature, index) => (
                     <li key={index} className="flex items-start justify-center">
                       <div className="flex items-start max-w-xs">
-                        <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
+                        <Check className="text-primary h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
                         <span className="text-gray-300 font-semibold text-base leading-relaxed">
                           {feature}
                         </span>
@@ -508,7 +508,7 @@ export default function StripePaymentProcessor() {
                     </div>
 
                     <div className="mb-4">
-                      <span className="text-3xl font-black text-metal-orange">
+                      <span className="text-3xl font-black text-primary">
                         ${tier.price}
                       </span>
                       <span className="text-gray-400 font-semibold">/month</span>
@@ -518,7 +518,7 @@ export default function StripePaymentProcessor() {
                   <ul className="space-y-4 mb-12 flex-grow px-6">
                     {tier.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
-                        <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
+                        <Check className="text-primary h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
                         <span className="text-gray-300 font-semibold text-base leading-relaxed">
                           {feature}
                         </span>

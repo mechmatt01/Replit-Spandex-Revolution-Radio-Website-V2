@@ -134,7 +134,7 @@ export default function Contact() {
         <div className="flex justify-center items-center min-h-[500px]">
           <div className="w-full max-w-lg">
             <Card
-              className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 mx-auto"
+              className="bg-card/50 hover:bg-card/70 transition-all duration-300 mx-auto"
               style={{ borderColor: colors.primary }}
             >
               <CardContent className="p-8">
@@ -233,7 +233,7 @@ export default function Contact() {
                           <SelectTrigger className="bg-card border-border text-foreground focus:border-primary" aria-label="Select message subject">
                             <SelectValue placeholder="Select a subject" />
                           </SelectTrigger>
-                          <SelectContent className="bg-black border-dark-border">
+                          <SelectContent className="bg-popover border-border">
                             <SelectItem value="general">
                               General Inquiry
                             </SelectItem>

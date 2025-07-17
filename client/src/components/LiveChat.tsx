@@ -160,7 +160,7 @@ export default function LiveChat({
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 z-50 bg-orange-500 hover:bg-orange-600 text-white rounded-full p-4 shadow-lg"
+          className="fixed bottom-4 right-4 z-50 bg-orange-500 hover:bg-primary/80 text-white rounded-full p-4 shadow-lg"
         >
           <MessageCircle className="h-6 w-6" />
           <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5">
@@ -172,7 +172,7 @@ export default function LiveChat({
       {/* Chat Window */}
       {isOpen && (
         <div className="fixed bottom-20 right-4 w-80 h-96 z-50">
-          <Card className="h-full bg-dark-surface border-dark-border shadow-2xl">
+          <Card className="h-full bg-card border-border shadow-2xl">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -266,7 +266,7 @@ export default function LiveChat({
                   <Button
                     type="submit"
                     size="sm"
-                    className="bg-orange-500 hover:bg-orange-600 px-3"
+                    className="bg-orange-500 hover:bg-primary/80 px-3"
                     disabled={!message.trim()}
                   >
                     <Send className="h-4 w-4" />

@@ -150,7 +150,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <div className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-3 flex-shrink-0">
+                  <span className="text-primary mr-3 flex-shrink-0">
                     <Radio className="h-4 w-4" />
                   </span>
                   <span className="-ml-7">24/7 Live Stream</span>
@@ -158,19 +158,19 @@ export default function Footer() {
               </li>
               <li>
                 <div className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">♪</span>
+                  <span className="text-primary mr-3 flex-shrink-0 text-center w-4">♪</span>
                   <span className="-ml-7">320kbps Quality</span>
                 </div>
               </li>
               <li>
                 <div className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">🌍</span>
+                  <span className="text-primary mr-3 flex-shrink-0 text-center w-4">🌍</span>
                   <span className="-ml-7">Global Coverage</span>
                 </div>
               </li>
               <li>
                 <div className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">🛡️</span>
+                  <span className="text-primary mr-3 flex-shrink-0 text-center w-4">🛡️</span>
                   <span className="-ml-7">Secure & Reliable</span>
                 </div>
               </li>

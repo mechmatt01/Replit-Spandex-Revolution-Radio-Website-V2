@@ -21,7 +21,7 @@ const subscriptionTiers = [
   {
     name: "REBEL",
     price: "$5.99",
-    color: "metal-orange",
+    color: "primary",
     popular: false,
     features: [
       "Ad-free streaming experience",
@@ -112,7 +112,7 @@ export default function Subscription() {
   };
 
   return (
-    <section id="subscribe" className="py-20 bg-dark-surface">
+    <section id="subscribe" className="py-20 bg-card">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="font-orbitron font-bold text-3xl md:text-4xl mb-4 text-black dark:text-white">
@@ -177,7 +177,7 @@ export default function Subscription() {
                           ? "text-metal-gold"
                           : tier.color === "metal-red"
                             ? "text-metal-red"
-                            : "text-metal-orange"
+                            : "text-primary"
                       }`}
                     >
                       {tier.price}
@@ -191,7 +191,7 @@ export default function Subscription() {
                         key={featureIndex}
                         className="flex items-center justify-center text-gray-300"
                       >
-                        <Check className="w-5 h-5 text-metal-orange mr-3 flex-shrink-0" />
+                        <Check className="w-5 h-5 text-primary mr-3 flex-shrink-0" />
                         <span className="text-sm text-center">{feature}</span>
                       </li>
                     ))}
@@ -312,7 +312,7 @@ export default function Subscription() {
                           ? "text-metal-gold"
                           : tier.color === "metal-red"
                             ? "text-metal-red"
-                            : "text-metal-orange"
+                            : "text-primary"
                       }`}
                     >
                       {tier.price}
@@ -326,7 +326,7 @@ export default function Subscription() {
                         key={featureIndex}
                         className="flex items-start text-gray-300"
                       >
-                        <Check className="w-5 h-5 text-metal-orange mr-3 mt-0.5 flex-shrink-0" />
+                        <Check className="w-5 h-5 text-primary mr-3 mt-0.5 flex-shrink-0" />
                         <span className="text-sm">{feature}</span>
                       </li>
                     ))}
@@ -362,8 +362,8 @@ export default function Subscription() {
           <h3 className="font-bold text-2xl mb-8 text-white">Why Subscribe?</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-metal-orange/20 rounded-full flex items-center justify-center mb-4">
-                <VolumeX className="text-metal-orange h-8 w-8" />
+              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4">
+                <VolumeX className="text-primary h-8 w-8" />
               </div>
               <h4 className="font-semibold text-lg mb-2">
                 Premium Audio Quality
@@ -398,7 +398,7 @@ export default function Subscription() {
 
       {/* Subscription Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-dark-surface border-dark-border">
+        <DialogContent className="bg-card border-border">
           <DialogHeader>
             <DialogTitle className="text-white">
               Subscribe to {selectedPlan} Plan
@@ -415,7 +415,7 @@ export default function Subscription() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email"
-                className="bg-dark-bg border-dark-border text-white"
+                className="bg-background border-border text-white"
                 required
               />
             </div>

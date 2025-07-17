@@ -92,7 +92,7 @@ export default function OrderConfirmation() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: colors.primary }}></div>
           <p className="text-white font-semibold">Loading order details...</p>
@@ -103,7 +103,7 @@ export default function OrderConfirmation() {
 
   if (!orderDetails) {
     return (
-      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="bg-gray-900 border-gray-800 max-w-md w-full mx-4">
           <CardContent className="p-8 text-center">
             <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -134,7 +134,7 @@ export default function OrderConfirmation() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-bg py-12 px-4">
+    <div className="min-h-screen bg-background py-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Success Header */}
         <div className="text-center mb-8">
