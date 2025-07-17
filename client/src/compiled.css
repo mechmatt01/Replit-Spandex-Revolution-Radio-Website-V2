@@ -3558,31 +3558,49 @@ video {
   --color-border: #333333;
   --gradient-primary: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%);
   /* Shadcn variables using theme colors */
-  --background: var(--color-background);
-  --foreground: var(--color-text);
-  --muted: var(--color-surface);
-  --muted-foreground: var(--color-text-secondary);
-  --popover: var(--color-surface);
-  --popover-foreground: var(--color-text);
-  --card: var(--color-surface);
-  --card-foreground: var(--color-text);
-  --border: var(--color-border);
-  --input: var(--color-surface);
-  --primary: var(--color-primary);
-  --primary-foreground: var(--color-text);
-  --secondary: var(--color-secondary);
-  --secondary-foreground: var(--color-text);
-  --accent: var(--color-accent);
-  --accent-foreground: var(--color-text);
-  --destructive: hsl(0, 73%, 57%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: var(--color-accent);
+  --background: 0 0% 0%;
+  --foreground: 0 0% 100%;
+  --muted: 0 0% 4%;
+  --muted-foreground: 0 0% 80%;
+  --popover: 0 0% 4%;
+  --popover-foreground: 0 0% 100%;
+  --card: 0 0% 4%;
+  --card-foreground: 0 0% 100%;
+  --border: 0 0% 20%;
+  --input: 0 0% 4%;
+  --primary: 17 100% 60%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 3 88% 50%;
+  --secondary-foreground: 0 0% 100%;
+  --accent: 37 100% 50%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 0 73% 57%;
+  --destructive-foreground: 0 0% 98%;
+  --ring: 37 100% 50%;
   --radius: 0.75rem;
   /* Legacy metal theme colors for compatibility */
   --metal-orange: var(--color-primary);
   --metal-gold: var(--color-accent);
   --metal-red: var(--color-secondary);
   --metal-blue: hsl(210, 100%, 65%);
+}
+
+/* Logo spin easter egg animation */
+@keyframes logoSpinFastToSlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(720deg);
+  }
+  100% {
+    transform: rotate(1080deg);
+  }
+}
+
+.logo-spin-easter-egg {
+  animation: logoSpinFastToSlow 5s ease-out;
+  transform-origin: center;
 }
 
 @keyframes scroll {

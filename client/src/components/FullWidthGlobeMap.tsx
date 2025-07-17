@@ -1218,13 +1218,13 @@ export default function FullWidthGlobeMap() {
         <div
           className={`relative transition-all duration-700 ease-in-out ${
             isFullscreen 
-              ? "fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm animate-in fade-in zoom-in-95" 
-              : "h-[600px] mb-16 animate-in fade-in slide-in-from-bottom-4"
+              ? "fixed inset-0 z-[60] bg-black/95 backdrop-blur-sm" 
+              : "h-[600px] mb-16"
           }`}
           style={{
             animation: isFullscreen 
               ? "fadeIn 0.7s ease-in-out, zoomIn 0.7s ease-in-out" 
-              : "fadeIn 0.5s ease-in-out"
+              : "fadeIn 0.5s ease-in-out, slideInFromBottom 0.5s ease-in-out"
           }}
         >
           {/* Fullscreen header bar */}

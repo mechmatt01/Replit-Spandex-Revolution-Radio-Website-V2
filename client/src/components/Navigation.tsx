@@ -263,9 +263,9 @@ export default function Navigation() {
                 }}
                 onClick={handleLogoClick}
                 onMouseEnter={(e) => {
-                  const imgElement = e.currentTarget.querySelector('img');
-                  if (imgElement && !imgElement.classList.contains('logo-spin-easter-egg')) {
-                    imgElement.classList.add('logo-spin-easter-egg');
+                  const img = e.currentTarget.querySelector('img');
+                  if (img && !img.classList.contains('logo-spin-easter-egg')) {
+                    img.classList.add('logo-spin-easter-egg');
                   }
                 }}
               >
