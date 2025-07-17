@@ -28,9 +28,7 @@ interface ThemeColors {
   surface: string;
   text: string;
   textSecondary: string;
-  textMuted?: string;
   border: string;
-  card?: string;
 }
 
 interface MetalThemeConfig {
@@ -59,9 +57,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#1a1a1a",
         text: "#ffffff",
         textSecondary: "#cccccc",
-        textMuted: "#888888",
         border: "#333333",
-        card: "#1a1a1a",
       },
       light: {
         primary: "#d4510a",
@@ -73,9 +69,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#f5f5f5",
         text: "#000000",
         textSecondary: "#666666",
-        textMuted: "#999999",
         border: "#e0e0e0",
-        card: "#f5f5f5",
       },
     },
     gradient: "linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%)",
@@ -94,9 +88,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#1a1a1a",
         text: "#e0e0e0",
         textSecondary: "#b0b0b0",
-        textMuted: "#808080",
         border: "#333333",
-        card: "#1a1a1a",
       },
       light: {
         primary: "#666666",
@@ -108,9 +100,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#eeeeee",
         text: "#1a1a1a",
         textSecondary: "#555555",
-        textMuted: "#999999",
         border: "#cccccc",
-        card: "#eeeeee",
       },
     },
     gradient: "linear-gradient(135deg, #c0c0c0 0%, #8b8b8b 100%)",
@@ -127,9 +117,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#1a0505",
         text: "#ffcccc",
         textSecondary: "#ff9999",
-        textMuted: "#cc6666",
         border: "#4d1414",
-        card: "#1a0505",
       },
       light: {
         primary: "#c62828",
@@ -139,9 +127,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         surface: "#ffebee",
         text: "#1a0000",
         textSecondary: "#5d0000",
-        textMuted: "#aa0000",
         border: "#ffcdd2",
-        card: "#ffebee",
       },
     },
     gradient: "linear-gradient(135deg, #dc143c 0%, #b71c1c 100%)",
@@ -160,8 +146,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#f0f8ff",
         textSecondary: "#ddeeff",
         border: "#2a2a5a",
-        textMuted: "#aabbcc",
-        card: "#1a1a2e",
       },
       light: {
         primary: "#ffb300",
@@ -173,8 +157,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#0d1421",
         textSecondary: "#1a237e",
         border: "#bbdefb",
-        textMuted: "#5a86b3",
-        card: "#e3f2fd",
       },
     },
     gradient: "linear-gradient(135deg, #ffd700 0%, #4169e1 100%)",
@@ -192,8 +174,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#f0e68c",
         textSecondary: "#daa520",
         border: "#3e2723",
-        textMuted: "#b8860b",
-        card: "#1a1a0a",
       },
       light: {
         primary: "#6d4c41",
@@ -204,8 +184,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#2e2e2e",
         textSecondary: "#4e342e",
         border: "#c8e6c9",
-        textMuted: "#795548",
-        card: "#f1f8e9",
       },
     },
     gradient: "linear-gradient(135deg, #8b4513 0%, #2e7d32 100%)",
@@ -223,8 +201,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#fff9c4",
         textSecondary: "#f4ff81",
         border: "#4a148c",
-        textMuted: "#cddc39",
-        card: "#1a0a1a",
       },
       light: {
         primary: "#f57f17",
@@ -235,8 +211,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#1a1a00",
         textSecondary: "#4a0072",
         border: "#e1bee7",
-        textMuted: "#880e4f",
-        card: "#f3e5f5",
       },
     },
     gradient: "linear-gradient(135deg, #ffeb3b 0%, #9c27b0 100%)",
@@ -254,8 +228,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#f3e5f5",
         textSecondary: "#e1bee7",
         border: "#4a148c",
-        textMuted: "#ce93d8",
-        card: "#1a0a1a",
       },
       light: {
         primary: "#7b1fa2",
@@ -266,8 +238,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#1a0014",
         textSecondary: "#4a0e4e",
         border: "#f8bbd9",
-        textMuted: "#880e4f",
-        card: "#f3e5f5",
       },
     },
     gradient: "linear-gradient(135deg, #9c27b0 0%, #ad1457 100%)",
@@ -285,8 +255,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#0f172a",
         textSecondary: "#475569",
         border: "#e2e8f0",
-        textMuted: "#64748b",
-        card: "#f8fafc",
       },
       light: {
         primary: "#2563eb",
@@ -314,8 +282,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#f1f5f9",
         textSecondary: "#cbd5e1",
         border: "#334155",
-        textMuted: "#94a3b8",
-        card: "#1e293b",
       },
       light: {
         primary: "#60a5fa",
@@ -346,8 +312,6 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         text: "#ffffff",
         textSecondary: "#e0e0e0",
         border: "rgba(255, 255, 255, 0.18)",
-        textMuted: "#b0b0b0",
-        card: "rgba(255, 255, 255, 0.08)",
       },
       light: {
         primary: "#ff0080",
