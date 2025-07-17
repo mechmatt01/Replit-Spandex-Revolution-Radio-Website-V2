@@ -240,7 +240,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/config", (req: Request, res: Response) => {
     try {
       // Force the correct API key to override persistent environment variables
-      const googleMapsApiKey = "AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk";
+      const googleMapsApiKey = "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
       const googleMapsSigningSecret = "xUMvkKZN7YbwACexIGzpV2o5Fms=";
       const openWeatherApiKey = process.env.OPENWEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5";
       

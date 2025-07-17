@@ -319,7 +319,7 @@ export default function FullWidthGlobeMap() {
     console.log('Is fullscreen:', isFullscreen);
     
     // Use hardcoded API key if config is not available
-    const apiKey = config?.googleMapsApiKey || "AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk";
+    const apiKey = config?.googleMapsApiKey || "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
     
     if (!apiKey) return;
     
