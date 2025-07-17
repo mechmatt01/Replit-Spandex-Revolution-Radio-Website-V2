@@ -618,28 +618,8 @@ export default function InteractiveListenerMap() {
 
   const { colors, isDarkMode } = useTheme();
 
-  // Add fullscreen functionality
+  // Add CSS-based fullscreen functionality
   const toggleFullscreen = () => {
-    if (!isFullscreen) {
-      // Enter fullscreen
-      const element = document.documentElement;
-      if (element.requestFullscreen) {
-        element.requestFullscreen();
-      } else if (element.webkitRequestFullscreen) {
-        element.webkitRequestFullscreen();
-      } else if (element.msRequestFullscreen) {
-        element.msRequestFullscreen();
-      }
-    } else {
-      // Exit fullscreen
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
-    }
     setIsFullscreen(!isFullscreen);
   };
 
@@ -910,14 +890,95 @@ export default function InteractiveListenerMap() {
           </p>
         </div>
 
-        <div className={`${isFullscreen ? "fixed inset-0 z-50 bg-black flex flex-col" : "grid grid-cols-1 lg:grid-cols-3 gap-8"}`}>
+        {isFullscreen && (
+          <div className="fixed inset-0 z-50 bg-black flex flex-col">
+            {/* Fullscreen Header */}
+            <div className="bg-gray-900/80 backdrop-blur-md border-b border-gray-700 p-4 flex justify-between items-center">
+              <h3 className="font-black text-xl text-white">
+                Live Listener Map - Fullscreen
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleFullscreen}
+                className="text-white hover:bg-white/10"
+              >
+                <Minimize2 className="w-4 h-4" />
+              </Button>
+            </div>
+            
+            {/* Fullscreen Map Container */}
+            <div className="flex-1 p-4">
+              <div
+                className="relative bg-gray-800 rounded-lg h-full overflow-hidden"
+                style={{ minHeight: "calc(100vh - 120px)" }}
+              >
+                {/* Loading State */}
+                {isLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center z-10">
+                    <div className="text-center">
+                      <Globe className="text-gray-600 h-32 w-32 opacity-30 animate-pulse mx-auto mb-4" />
+                      <div className="flex justify-center space-x-2">
+                        {[0, 1, 2].map((i) => (
+                          <div
+                            key={i}
+                            className="w-3 h-3 rounded-full animate-pulse"
+                            style={{
+                              backgroundColor: colors.primary,
+                              animationDelay: `${i * 0.3}s`,
+                              animationDuration: "1.5s",
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <p className="text-white font-semibold mt-4">
+                        Loading Interactive Map...
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Google Maps or Fallback */}
+                {!isLoading && (
+                  <>
+                    {apiKey ? (
+                      <GoogleMapWithListeners
+                        listeners={activeListeners}
+                        colors={colors}
+                        isDarkMode={isDarkMode}
+                        onListenerClick={setSelectedListener}
+                        selectedListener={selectedListener}
+                        apiKey={apiKey}
+                        userLocation={userLocation || undefined}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-center">
+                          <Globe className="text-gray-600 h-16 w-16 mx-auto mb-4 opacity-50" />
+                          <p className="font-semibold text-gray-400">
+                            Interactive map coming soon
+                          </p>
+                          <p className="text-sm mt-2 text-gray-500">
+                            Google Maps API key missing
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className={`${isFullscreen ? "hidden" : "grid grid-cols-1 lg:grid-cols-3 gap-8"}`}>
           {/* Interactive Map */}
-          <div className={isFullscreen ? "flex-1 flex flex-col" : "lg:col-span-2"}>
+          <div className="lg:col-span-2">
             <Card
-              className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2 ${isFullscreen ? "h-full flex-1" : ""}`}
+              className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
               style={{ borderColor: colors.primary }}
             >
-              <CardContent className={`${isFullscreen ? "p-6 h-full flex flex-col" : "p-6"}`}>
+              <CardContent className="p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3
                     className="font-black text-xl"
@@ -932,25 +993,13 @@ export default function InteractiveListenerMap() {
                       onClick={toggleFullscreen}
                       className={`${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
                     >
-                      {isFullscreen ? (
-                        <Minimize2 className="w-4 h-4" />
-                      ) : (
-                        <Maximize2 className="w-4 h-4" />
-                      )}
+                      <Maximize2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>
 
                 <div
-                  className={`relative ${isDarkMode ? "bg-gray-800" : "bg-gray-200"} rounded-lg ${
-                    isFullscreen ? "flex-1" : "h-96"
-                  } overflow-hidden transition-all duration-500 ease-in-out`}
-                  style={{
-                    ...(isFullscreen && {
-                      height: "100%",
-                      minHeight: "60vh",
-                    }),
-                  }}
+                  className={`relative ${isDarkMode ? "bg-gray-800" : "bg-gray-200"} rounded-lg h-96 overflow-hidden transition-all duration-500 ease-in-out`}
                 >
                   {/* Loading State */}
                   {isLoading && (
