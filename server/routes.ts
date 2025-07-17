@@ -324,20 +324,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Auth routes
-  app.get(
-    "/api/auth/user",
-    isAuthenticated,
-    async (req: AuthenticatedRequest, res: Response) => {
-      try {
-        const userId = req.user.claims.sub;
-        const user = await storage.getUser(userId);
-        res.json(user);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        res.status(500).json({ message: "Failed to fetch user" });
+  app.get("/api/auth/user", async (req: Request, res: Response) => {
+    try {
+      // Check if user is authenticated
+      if (!req.isAuthenticated() || !req.user) {
+        return res.status(401).json({ message: "Unauthorized", authenticated: false });
       }
-    },
-  );
+      
+      const userId = (req.user as any).claims?.sub;
+      if (!userId) {
+        return res.status(401).json({ message: "Invalid user session", authenticated: false });
+      }
+      
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found", authenticated: false });
+      }
+      
+      res.json({ ...user, authenticated: true });
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user", authenticated: false });
+    }
+  });
 
   // Registration route
   app.post("/api/auth/register", rateLimit(5, 15 * 60 * 1000), async (req, res) => {

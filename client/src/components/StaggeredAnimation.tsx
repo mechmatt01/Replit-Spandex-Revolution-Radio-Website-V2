@@ -82,8 +82,7 @@ export default function StaggeredAnimation({
             ...element.props.style,
             opacity: hasAnimated ? 1 : 0,
             transform: getTransformStyle(direction, hasAnimated),
-            transition: `all ${adaptiveDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`,
-            transitionDelay: hasAnimated ? `${index * adaptiveStaggerDelay}ms` : '0ms',
+            transition: `all ${adaptiveDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${hasAnimated ? `${index * adaptiveStaggerDelay}ms` : '0ms'}`,
             willChange: 'opacity, transform'
           }
         });

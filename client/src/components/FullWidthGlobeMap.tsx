@@ -658,6 +658,7 @@ export default function FullWidthGlobeMap() {
 
       // Filter out mock listeners that are too close to user's current location
       const filteredListeners = mockListeners.filter((listener) => {
+        if (!userLocation?.lat || !userLocation?.lng) return true;
         const distance = Math.sqrt(
           Math.pow(listener.lat - userLocation.lat, 2) +
           Math.pow(listener.lng - userLocation.lng, 2)

@@ -1,0 +1,84 @@
+Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+FullWidthGlobeMap.tsx:241 Geolocation permission: granted
+hook.js:608 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+overrideMethod @ hook.js:608Understand this warning
+FullWidthGlobeMap.tsx:996 Google Maps API callback triggered
+/api/auth/user:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+FullWidthGlobeMap.tsx:662 Uncaught TypeError: Cannot read properties of null (reading 'lat')
+    at FullWidthGlobeMap.tsx:662:48
+    at Array.filter (<anonymous>)
+    at initializeMap (FullWidthGlobeMap.tsx:660:47)
+    at FullWidthGlobeMap.tsx:1000:11Understand this error
+maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENTUnderstand this error
+FullWidthGlobeMap.tsx:245 Got location: 41.91970796076289 -88.2914754610353
+FullWidthGlobeMap.tsx:312 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:313 Config available: false
+FullWidthGlobeMap.tsx:314 API key available: false
+FullWidthGlobeMap.tsx:315 API key value: undefined...
+FullWidthGlobeMap.tsx:316 Map ref current: true
+FullWidthGlobeMap.tsx:317 User location available: true
+FullWidthGlobeMap.tsx:318 User location value: Object
+FullWidthGlobeMap.tsx:319 Is fullscreen: false
+FullWidthGlobeMap.tsx:231 Config loading status: Object
+FullWidthGlobeMap.tsx:312 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:313 Config available: true
+FullWidthGlobeMap.tsx:314 API key available: true
+FullWidthGlobeMap.tsx:315 API key value: AIzaSyD684t68gy...
+FullWidthGlobeMap.tsx:316 Map ref current: true
+FullWidthGlobeMap.tsx:317 User location available: true
+FullWidthGlobeMap.tsx:318 User location value: Object
+FullWidthGlobeMap.tsx:319 Is fullscreen: false
+RadioContext.tsx:137 Attempting to play stream 1/2: /api/radio-stream
+3hook.js:608 Warning: Updating a style property during rerender (transition) when a conflicting property is set (transitionDelay) can lead to styling bugs. To avoid this, don't mix shorthand and non-shorthand properties for the same value; instead, replace the shorthand with separate values. Error Component Stack
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at StaggeredAnimation (StaggeredAnimation.tsx:18:3)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at section (<anonymous>)
+    at About (About.tsx:7:22)
+    at div (<anonymous>)
+    at FadeInView (FadeInView.tsx:19:3)
+    at div (<anonymous>)
+    at HomePage (HomePage.tsx:20:55)
+    at Route (wouter.js?v=b50fca6c:280:16)
+    at Switch (wouter.js?v=b50fca6c:336:17)
+    at Router (<anonymous>)
+    at Provider (chunk-VMTBKFOJ.js?v=b50fca6c:48:15)
+    at TooltipProvider (@radix-ui_react-tooltip.js?v=b50fca6c:62:5)
+    at AdminProvider (AdminContext.tsx:18:33)
+    at RadioProvider (RadioContext.tsx:73:33)
+    at ThemeProvider (ThemeContext.tsx:350:33)
+    at AuthProvider (AuthContext.tsx:50:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=b50fca6c:2934:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608Understand this error
+11hook.js:608 The map is initialized without a valid Map ID, which will prevent use of Advanced Markers.
+overrideMethod @ hook.js:608Understand this error
+hook.js:608 Google Maps JavaScript API error: InvalidAppCheckTokenMapError
+https://developers.google.com/maps/documentation/javascript/error-messages#invalid-app-check-token-map-error
+overrideMethod @ hook.js:608Understand this error
+RadioContext.tsx:168 Stream 1 working successfully
+hook.js:608 Warning: Received `true` for a non-boolean attribute `jsx`.
+
+If you want to write it to the DOM, pass a string instead: jsx="true" or jsx={value.toString()}. Error Component Stack
+    at style (<anonymous>)
+    at div (<anonymous>)
+    at ScrollingText (ScrollingText.tsx:14:3)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at StickyPlayer (StickyPlayer.tsx:20:7)
+    at div (<anonymous>)
+    at HomePage (HomePage.tsx:20:55)
+    at Route (wouter.js?v=b50fca6c:280:16)
+    at Switch (wouter.js?v=b50fca6c:336:17)
+    at Router (<anonymous>)
+    at Provider (chunk-VMTBKFOJ.js?v=b50fca6c:48:15)
+    at TooltipProvider (@radix-ui_react-tooltip.js?v=b50fca6c:62:5)
+    at AdminProvider (AdminContext.tsx:18:33)
+    at RadioProvider (RadioContext.tsx:73:33)
+    at ThemeProvider (ThemeContext.tsx:350

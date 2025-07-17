@@ -98,7 +98,7 @@ export default function ScrollingText({
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes scrollLeftToRight {
           0% {
             transform: translateX(0%);
