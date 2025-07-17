@@ -366,11 +366,8 @@ export default function FullWidthGlobeMap() {
         return;
       }
       
-      // Check if marker library is loaded
-      if (!window.google.maps.marker || !window.google.maps.marker.AdvancedMarkerElement) {
-        console.error('Google Maps marker library not loaded');
-        return;
-      }
+      // Use regular markers if advanced markers aren't available
+      const useAdvancedMarkers = window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
       
       const mapInstance = new google.maps.Map(currentContainer, {
         zoom: 2,
@@ -611,17 +608,29 @@ export default function FullWidthGlobeMap() {
         </svg>
       `;
 
-      const currentLocationMarker = new google.maps.marker.AdvancedMarkerElement({
-        position: userLocation,
-        map: mapInstance,
-        title: "Your Current Location",
-        content: (() => {
-          const div = document.createElement('div');
-          div.innerHTML = currentLocationSvg;
-          div.style.zIndex = '1000'; // Higher z-index to appear above other markers
-          return div;
-        })(),
-      });
+      const currentLocationMarker = useAdvancedMarkers 
+        ? new google.maps.marker.AdvancedMarkerElement({
+            position: userLocation,
+            map: mapInstance,
+            title: "Your Current Location",
+            content: (() => {
+              const div = document.createElement('div');
+              div.innerHTML = currentLocationSvg;
+              div.style.zIndex = '1000'; // Higher z-index to appear above other markers
+              return div;
+            })(),
+          })
+        : new google.maps.Marker({
+            position: userLocation,
+            map: mapInstance,
+            title: "Your Current Location",
+            icon: {
+              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(currentLocationSvg),
+              scaledSize: new google.maps.Size(24, 24),
+              anchor: new google.maps.Point(12, 12),
+            },
+            zIndex: 1000,
+          });
 
       // Add mock listener markers
       const mockListeners = [
@@ -661,16 +670,27 @@ export default function FullWidthGlobeMap() {
           </svg>
         `;
 
-        const marker = new google.maps.marker.AdvancedMarkerElement({
-          position: { lat: listener.lat, lng: listener.lng },
-          map: mapInstance,
-          title: `${listener.city}, ${listener.country}`,
-          content: (() => {
-            const div = document.createElement('div');
-            div.innerHTML = animatedDotSvg;
-            return div;
-          })(),
-        });
+        const marker = useAdvancedMarkers 
+          ? new google.maps.marker.AdvancedMarkerElement({
+              position: { lat: listener.lat, lng: listener.lng },
+              map: mapInstance,
+              title: `${listener.city}, ${listener.country}`,
+              content: (() => {
+                const div = document.createElement('div');
+                div.innerHTML = animatedDotSvg;
+                return div;
+              })(),
+            })
+          : new google.maps.Marker({
+              position: { lat: listener.lat, lng: listener.lng },
+              map: mapInstance,
+              title: `${listener.city}, ${listener.country}`,
+              icon: {
+                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(animatedDotSvg),
+                scaledSize: new google.maps.Size(20, 20),
+                anchor: new google.maps.Point(10, 10),
+              },
+            });
 
         // Add click listener to zoom and center on the marker
         marker.addListener("click", () => {
@@ -961,22 +981,25 @@ export default function FullWidthGlobeMap() {
       });
     };
 
+    // Define global callback function
+    window.initMapCallback = () => {
+      console.log('Google Maps API callback triggered');
+      // Give a moment for all libraries to fully initialize
+      setTimeout(() => {
+        if (window.google && window.google.maps && window.google.maps.Map && window.google.maps.MapTypeId) {
+          initializeMap();
+        } else {
+          console.error('Google Maps API not ready after callback');
+        }
+      }, 50);
+    };
+
     // Load Google Maps API if not already loaded
     if (typeof google === "undefined" || !google.maps) {
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=geometry,marker&loading=async`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=geometry,marker&callback=initMapCallback`;
       script.async = true;
       script.defer = true;
-      script.onload = () => {
-        // Wait a bit for all Google Maps modules to be fully loaded
-        setTimeout(() => {
-          if (window.google && window.google.maps && window.google.maps.Map && window.google.maps.MapTypeId && window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement) {
-            initializeMap();
-          } else {
-            console.error('Google Maps API modules not fully loaded after timeout');
-          }
-        }, 100);
-      };
       script.onerror = (error) => {
         console.error('Failed to load Google Maps API:', error);
       };
