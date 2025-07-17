@@ -1,5 +1,5 @@
-import ProfilePage from "@/components/ProfilePage";
+import Profile from "@/components/Profile";
 
-export default function ProfilePageWrapper() {
-  return <ProfilePage />;
+export default function ProfilePage() {
+  return <Profile />;
 }

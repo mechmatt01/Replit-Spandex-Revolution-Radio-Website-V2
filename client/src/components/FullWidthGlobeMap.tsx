@@ -228,7 +228,7 @@ export default function FullWidthGlobeMap() {
 
   // Function to update map styling when theme changes
   const updateMapStyles = (mapInstance: google.maps.Map) => {
-    const shouldUseDarkStyles = isDarkMode; // Use isDarkMode directly for theme detection
+    const shouldUseDarkStyles = theme.name !== "light"; // Use theme context properly
     const darkStyles = [
       {
         elementType: "geometry",
@@ -1034,7 +1034,15 @@ export default function FullWidthGlobeMap() {
     } else {
       initializeMap();
     }
-  }, [config, userLocation, isDarkMode, theme, isMapDark]);
+  }, [config, userLocation, isDarkMode, theme, isMapDark, theme.name]);
+
+  // Handle theme changes for existing map
+  useEffect(() => {
+    if (map) {
+      console.log('Theme changed, updating map styles:', theme.name);
+      updateMapStyles(map);
+    }
+  }, [theme.name, map]);
 
   // Generate mock listener data
   const activeListeners: ListenerData[] = [
@@ -1223,7 +1231,13 @@ export default function FullWidthGlobeMap() {
           style={{
             animation: isFullscreen 
               ? "fadeIn 0.7s ease-in-out, zoomIn 0.7s ease-in-out" 
-              : "fadeIn 0.5s ease-in-out, slideInFromBottom 0.5s ease-in-out"
+              : "fadeIn 0.5s ease-in-out, slideInFromBottom 0.5s ease-in-out",
+            position: isFullscreen ? "fixed" : "relative",
+            top: isFullscreen ? "0" : "auto",
+            left: isFullscreen ? "0" : "auto",
+            right: isFullscreen ? "0" : "auto",
+            bottom: isFullscreen ? "0" : "auto",
+            zIndex: isFullscreen ? 9999 : "auto",
           }}
         >
           {/* Fullscreen header bar */}
