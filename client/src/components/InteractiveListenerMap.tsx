@@ -270,8 +270,19 @@ const GoogleMapWithListeners = ({
 
         console.log('Creating Google Map...');
         
+        // Use theme-aware styling for Google Maps
+        const { theme } = useTheme();
+        const currentTheme = theme.name;
+        const shouldUseDarkMap = currentTheme === 'Classic Metal' || isDarkMode;
+        
+        console.log('InteractiveListenerMap theme detection:', {
+          currentTheme,
+          isDarkMode,
+          shouldUseDarkMap
+        });
+        
         // Create map styles based on theme
-        const mapStyles = isDarkMode ? [
+        const mapStyles = shouldUseDarkMap ? [
           { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
           { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
           { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
@@ -607,6 +618,31 @@ export default function InteractiveListenerMap() {
 
   const { colors, isDarkMode } = useTheme();
 
+  // Add fullscreen functionality
+  const toggleFullscreen = () => {
+    if (!isFullscreen) {
+      // Enter fullscreen
+      const element = document.documentElement;
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+      }
+    } else {
+      // Exit fullscreen
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+    setIsFullscreen(!isFullscreen);
+  };
+
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
   });
@@ -874,14 +910,14 @@ export default function InteractiveListenerMap() {
           </p>
         </div>
 
-        <div className={`grid ${isFullscreen ? "grid-cols-1" : "grid-cols-1 lg:grid-cols-3"} gap-8`}>
+        <div className={`${isFullscreen ? "fixed inset-0 z-50 bg-black flex flex-col" : "grid grid-cols-1 lg:grid-cols-3 gap-8"}`}>
           {/* Interactive Map */}
-          <div className={isFullscreen ? "col-span-1" : "lg:col-span-2"}>
+          <div className={isFullscreen ? "flex-1 flex flex-col" : "lg:col-span-2"}>
             <Card
-              className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
-              style={{ borderColor: `${colors.primary}40` }}
+              className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2 ${isFullscreen ? "h-full flex-1" : ""}`}
+              style={{ borderColor: colors.primary }}
             >
-              <CardContent className="p-6">
+              <CardContent className={`${isFullscreen ? "p-6 h-full flex flex-col" : "p-6"}`}>
                 <div className="flex justify-between items-center mb-4">
                   <h3
                     className="font-black text-xl"
@@ -893,7 +929,7 @@ export default function InteractiveListenerMap() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setIsFullscreen(!isFullscreen)}
+                      onClick={toggleFullscreen}
                       className={`${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
                     >
                       {isFullscreen ? (
@@ -907,12 +943,12 @@ export default function InteractiveListenerMap() {
 
                 <div
                   className={`relative ${isDarkMode ? "bg-gray-800" : "bg-gray-200"} rounded-lg ${
-                    isFullscreen ? "h-[calc(100vh-200px)]" : "h-96"
+                    isFullscreen ? "flex-1" : "h-96"
                   } overflow-hidden transition-all duration-500 ease-in-out`}
                   style={{
                     ...(isFullscreen && {
-                      height: "calc(100vh - 200px)",
-                      minHeight: "calc(100vh - 200px)",
+                      height: "100%",
+                      minHeight: "60vh",
                     }),
                   }}
                 >
@@ -1034,7 +1070,7 @@ export default function InteractiveListenerMap() {
             <div className="space-y-6">
               <Card
                 className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
-                style={{ borderColor: `${colors.primary}40` }}
+                style={{ borderColor: colors.primary }}
               >
                 <CardContent className="p-6">
                   <h3
@@ -1091,7 +1127,7 @@ export default function InteractiveListenerMap() {
               {!locationPermissionDenied && (
                 <Card
                   className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
-                  style={{ borderColor: `${colors.primary}40` }}
+                  style={{ borderColor: colors.primary }}
                 >
                   <CardContent className="p-6">
                     <h3

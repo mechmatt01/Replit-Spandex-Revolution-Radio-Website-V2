@@ -15,8 +15,8 @@ export default function Features() {
   const { getColors, isDarkMode } = useTheme();
   const colors = getColors();
   
-  // Ensure border color has a fallback with stronger defaults
-  const borderColor = colors.border || (isDarkMode ? '#ff6b35' : '#d4510a');
+  // Use primary color for borders to ensure theme consistency
+  const borderColor = colors.primary;
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);

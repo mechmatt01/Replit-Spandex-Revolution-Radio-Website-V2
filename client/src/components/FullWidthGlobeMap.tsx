@@ -206,6 +206,7 @@ export default function FullWidthGlobeMap() {
   const shouldUseDarkMap = () => {
     // Force dark map for classic metal theme
     if (currentTheme === 'Classic Metal') {
+      console.log('Classic Metal detected - using dark map');
       return true;
     }
     
@@ -214,15 +215,18 @@ export default function FullWidthGlobeMap() {
         currentTheme === 'Doom Metal' || currentTheme === 'Thrash Metal' || 
         currentTheme === 'Gothic Metal' || currentTheme === 'Dark Mode' ||
         currentTheme === 'Glassmorphism Premium') {
+      console.log('Dark theme detected - using dark map');
       return true;
     }
     
     // Use light map for light themes
     if (currentTheme === 'Light Mode' || currentTheme === 'Power Metal') {
+      console.log('Light theme detected - using light map');
       return false;
     }
     
     // Fallback to current mode
+    console.log('Using fallback to isDarkMode:', isDarkMode);
     return isDarkMode;
   };
   
