@@ -1,0 +1,506 @@
+User location available: false
+FullWidthGlobeMap.tsx:541 User location value: null
+FullWidthGlobeMap.tsx:542 Is fullscreen: false
+FullWidthGlobeMap.tsx:553 Initializing Google Maps with API key: AIzaSyBfRJS8dGDJqA4X...
+FullWidthGlobeMap.tsx:554 Using Map ID: DEMO_MAP_ID
+FullWidthGlobeMap.tsx:555 Theme detection: {currentTheme: 'Classic Metal', isDarkMode: true, backgroundColor: '#000000', isMapDark: true}
+chunk-JQY7AJT6.js?v=d376ad72:377 [Violation] 'message' handler took 318ms
+[Violation] Forced reflow while executing JavaScript took 123ms
+queryClient.ts:32  GET https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user 401 (Unauthorized)
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=d376ad72:881
+run @ @tanstack_react-query.js?v=d376ad72:513
+start @ @tanstack_react-query.js?v=d376ad72:555
+fetch @ @tanstack_react-query.js?v=d376ad72:969
+executeFetch_fn @ @tanstack_react-query.js?v=d376ad72:2279
+onSubscribe @ @tanstack_react-query.js?v=d376ad72:1983
+subscribe @ @tanstack_react-query.js?v=d376ad72:24
+(anonymous) @ @tanstack_react-query.js?v=d376ad72:3146
+subscribeToStore @ chunk-JQY7AJT6.js?v=d376ad72:12032
+commitHookEffectListMount @ chunk-JQY7AJT6.js?v=d376ad72:16963
+commitPassiveMountOnFiber @ chunk-JQY7AJT6.js?v=d376ad72:18206
+commitPassiveMountEffects_complete @ chunk-JQY7AJT6.js?v=d376ad72:18179
+commitPassiveMountEffects_begin @ chunk-JQY7AJT6.js?v=d376ad72:18169
+commitPassiveMountEffects @ chunk-JQY7AJT6.js?v=d376ad72:18159
+flushPassiveEffectsImpl @ chunk-JQY7AJT6.js?v=d376ad72:19543
+flushPassiveEffects @ chunk-JQY7AJT6.js?v=d376ad72:19500
+performSyncWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18921
+flushSyncCallbacks @ chunk-JQY7AJT6.js?v=d376ad72:9166
+commitRootImpl @ chunk-JQY7AJT6.js?v=d376ad72:19485
+commitRoot @ chunk-JQY7AJT6.js?v=d376ad72:19330
+finishConcurrentRender @ chunk-JQY7AJT6.js?v=d376ad72:18858
+performConcurrentWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18768
+workLoop @ chunk-JQY7AJT6.js?v=d376ad72:197
+flushWork @ chunk-JQY7AJT6.js?v=d376ad72:176
+performWorkUntilDeadline @ chunk-JQY7AJT6.js?v=d376ad72:384Understand this error
+FullWidthGlobeMap.tsx:464 Geolocation permission: granted
+FullWidthGlobeMap.tsx:466 [Violation] Only request geolocation information in response to a user gesture.
+getLocation @ FullWidthGlobeMap.tsx:466
+queryClient.ts:32 Fetch failed loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user".
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=d376ad72:881
+run @ @tanstack_react-query.js?v=d376ad72:513
+start @ @tanstack_react-query.js?v=d376ad72:555
+fetch @ @tanstack_react-query.js?v=d376ad72:969
+executeFetch_fn @ @tanstack_react-query.js?v=d376ad72:2279
+onSubscribe @ @tanstack_react-query.js?v=d376ad72:1983
+subscribe @ @tanstack_react-query.js?v=d376ad72:24
+(anonymous) @ @tanstack_react-query.js?v=d376ad72:3146
+subscribeToStore @ chunk-JQY7AJT6.js?v=d376ad72:12032
+commitHookEffectListMount @ chunk-JQY7AJT6.js?v=d376ad72:16963
+commitPassiveMountOnFiber @ chunk-JQY7AJT6.js?v=d376ad72:18206
+commitPassiveMountEffects_complete @ chunk-JQY7AJT6.js?v=d376ad72:18179
+commitPassiveMountEffects_begin @ chunk-JQY7AJT6.js?v=d376ad72:18169
+commitPassiveMountEffects @ chunk-JQY7AJT6.js?v=d376ad72:18159
+flushPassiveEffectsImpl @ chunk-JQY7AJT6.js?v=d376ad72:19543
+flushPassiveEffects @ chunk-JQY7AJT6.js?v=d376ad72:19500
+performSyncWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18921
+flushSyncCallbacks @ chunk-JQY7AJT6.js?v=d376ad72:9166
+commitRootImpl @ chunk-JQY7AJT6.js?v=d376ad72:19485
+commitRoot @ chunk-JQY7AJT6.js?v=d376ad72:19330
+finishConcurrentRender @ chunk-JQY7AJT6.js?v=d376ad72:18858
+performConcurrentWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18768
+workLoop @ chunk-JQY7AJT6.js?v=d376ad72:197
+flushWork @ chunk-JQY7AJT6.js?v=d376ad72:176
+performWorkUntilDeadline @ chunk-JQY7AJT6.js?v=d376ad72:384
+FullWidthGlobeMap.tsx:468 Got location: 41.919779646116986 -88.29128779317267
+AuthContext.tsx:74  GET https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user 401 (Unauthorized)
+refreshUser @ AuthContext.tsx:74
+(anonymous) @ AuthContext.tsx:221
+commitHookEffectListMount @ chunk-JQY7AJT6.js?v=d376ad72:16963
+commitPassiveMountOnFiber @ chunk-JQY7AJT6.js?v=d376ad72:18206
+commitPassiveMountEffects_complete @ chunk-JQY7AJT6.js?v=d376ad72:18179
+commitPassiveMountEffects_begin @ chunk-JQY7AJT6.js?v=d376ad72:18169
+commitPassiveMountEffects @ chunk-JQY7AJT6.js?v=d376ad72:18159
+flushPassiveEffectsImpl @ chunk-JQY7AJT6.js?v=d376ad72:19543
+flushPassiveEffects @ chunk-JQY7AJT6.js?v=d376ad72:19500
+performSyncWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18921
+flushSyncCallbacks @ chunk-JQY7AJT6.js?v=d376ad72:9166
+commitRootImpl @ chunk-JQY7AJT6.js?v=d376ad72:19485
+commitRoot @ chunk-JQY7AJT6.js?v=d376ad72:19330
+finishConcurrentRender @ chunk-JQY7AJT6.js?v=d376ad72:18858
+performConcurrentWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18768
+workLoop @ chunk-JQY7AJT6.js?v=d376ad72:197
+flushWork @ chunk-JQY7AJT6.js?v=d376ad72:176
+performWorkUntilDeadline @ chunk-JQY7AJT6.js?v=d376ad72:384Understand this error
+10Fetch finished loading: GET "<URL>".
+FullWidthGlobeMap.tsx:454 Config loading status: {configLoading: false, config: {…}, configError: null}
+FullWidthGlobeMap.tsx:535 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:536 Config available: true
+FullWidthGlobeMap.tsx:537 API key available: true
+FullWidthGlobeMap.tsx:538 API key value: AIzaSyBfRJS8dGD...
+FullWidthGlobeMap.tsx:539 Map ref current: true
+FullWidthGlobeMap.tsx:540 User location available: true
+FullWidthGlobeMap.tsx:541 User location value: {lat: 41.919779646116986, lng: -88.29128779317267}
+FullWidthGlobeMap.tsx:542 Is fullscreen: false
+FullWidthGlobeMap.tsx:553 Initializing Google Maps with API key: AIzaSyBfRJS8dGDJqA4X...
+FullWidthGlobeMap.tsx:554 Using Map ID: DEMO_MAP_ID
+FullWidthGlobeMap.tsx:555 Theme detection: {currentTheme: 'Classic Metal', isDarkMode: true, backgroundColor: '#000000', isMapDark: true}
+hook.js:608 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+overrideMethod @ hook.js:608
+bda @ VM414 js:1020
+google.maps.Load @ VM414 js:14
+(anonymous) @ VM414 js:1264
+(anonymous) @ VM414 js:1264Understand this warning
+FullWidthGlobeMap.tsx:1013 Google Maps API callback triggered
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933 Element with name "gmp-internal-google-attribution" already defined.
+overrideMethod @ hook.js:608
+_.Eo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1242
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933 Element with name "gmp-internal-dialog" already defined.
+overrideMethod @ hook.js:608
+_.Eo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1252
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933 Element with name "gmp-internal-element-support-verification" already defined.
+overrideMethod @ hook.js:608
+_.Eo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933
+Xca @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1028
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1020
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1028 You have included the Google Maps JavaScript API multiple times on this page. This may cause unexpected errors.
+overrideMethod @ hook.js:608
+Yca @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1028
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1020
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this error
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1020 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+overrideMethod @ hook.js:608
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1020
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933 Element with name "gmp-internal-pin" already defined.
+overrideMethod @ hook.js:608
+_.Eo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:736
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:895
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:897
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:895
+init @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1063
+init @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1062
+Lca @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1012
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1022
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933 Element with name "gmp-internal-use-am" already defined.
+overrideMethod @ hook.js:608
+_.Eo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:517
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:895
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:897
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:895
+Sk @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:896
+Tk @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:895
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:895
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:897
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:895
+Sk @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:896
+Tk @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:895
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:895
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:897
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:895
+init @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1063
+init @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1062
+Lca @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1012
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1022
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933 Element with name "gmp-map" already defined.
+overrideMethod @ hook.js:608
+_.Eo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1022
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933 Element with name "gmp-advanced-marker" already defined.
+overrideMethod @ hook.js:608
+_.Eo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:933
+connectForExplicitThirdPartyLoad @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:518
+js @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1009
+await in js
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1024
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+FullWidthGlobeMap.tsx:1013 Google Maps API callback triggered
+RadioContext.tsx:137 Attempting to play stream 1/2: /api/radio-stream
+AuthContext.tsx:74 Fetch failed loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user".
+refreshUser @ AuthContext.tsx:74
+(anonymous) @ AuthContext.tsx:221
+commitHookEffectListMount @ chunk-JQY7AJT6.js?v=d376ad72:16963
+commitPassiveMountOnFiber @ chunk-JQY7AJT6.js?v=d376ad72:18206
+commitPassiveMountEffects_complete @ chunk-JQY7AJT6.js?v=d376ad72:18179
+commitPassiveMountEffects_begin @ chunk-JQY7AJT6.js?v=d376ad72:18169
+commitPassiveMountEffects @ chunk-JQY7AJT6.js?v=d376ad72:18159
+flushPassiveEffectsImpl @ chunk-JQY7AJT6.js?v=d376ad72:19543
+flushPassiveEffects @ chunk-JQY7AJT6.js?v=d376ad72:19500
+performSyncWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18921
+flushSyncCallbacks @ chunk-JQY7AJT6.js?v=d376ad72:9166
+commitRootImpl @ chunk-JQY7AJT6.js?v=d376ad72:19485
+commitRoot @ chunk-JQY7AJT6.js?v=d376ad72:19330
+finishConcurrentRender @ chunk-JQY7AJT6.js?v=d376ad72:18858
+performConcurrentWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18768
+workLoop @ chunk-JQY7AJT6.js?v=d376ad72:197
+flushWork @ chunk-JQY7AJT6.js?v=d376ad72:176
+performWorkUntilDeadline @ chunk-JQY7AJT6.js?v=d376ad72:384
+VM414 js:1050  GET https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true net::ERR_BLOCKED_BY_CLIENT
+_.B.send @ VM414 js:1050
+$ca @ VM414 js:1029
+bda @ VM414 js:1021
+google.maps.Load @ VM414 js:14
+(anonymous) @ VM414 js:1264
+(anonymous) @ VM414 js:1264Understand this error
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1050  GET https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true net::ERR_BLOCKED_BY_CLIENT
+_.B.send @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1050
+$ca @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1029
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1021
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this error
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168 Google Maps JavaScript API: A Map's styles property cannot be set when a mapId is present. When a mapId is present, map styles are controlled via the cloud console. Please see documentation at https://developers.google.com/maps/documentation/javascript/styling#cloud_tooling
+overrideMethod @ hook.js:608
+styles_changed @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168
+cn @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:917
+_.an.bindTo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1079
+Gba @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:951
+_.Or @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:997
+initializeMap @ FullWidthGlobeMap.tsx:618
+(anonymous) @ FullWidthGlobeMap.tsx:1017
+setTimeout
+window.initMapCallback @ FullWidthGlobeMap.tsx:1015
+(anonymous) @ VM414 js:1025
+(anonymous) @ VM414 js:1024
+Promise.then
+bda @ VM414 js:1024
+google.maps.Load @ VM414 js:14
+(anonymous) @ VM414 js:1264
+(anonymous) @ VM414 js:1264Understand this warning
+VM414 js:1050 XHR failed loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ VM414 js:1050
+$ca @ VM414 js:1029
+bda @ VM414 js:1021
+google.maps.Load @ VM414 js:14
+(anonymous) @ VM414 js:1264
+(anonymous) @ VM414 js:1264
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1050 XHR failed loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1050
+$ca @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1029
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1021
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168 Google Maps JavaScript API: A Map's styles property cannot be set when a mapId is present. When a mapId is present, map styles are controlled via the cloud console. Please see documentation at https://developers.google.com/maps/documentation/javascript/styling#cloud_tooling
+overrideMethod @ hook.js:608
+styles_changed @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168
+cn @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:917
+cn @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:917
+_.an.set @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1077
+_.an.setValues @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1078
+updateMapStyles @ FullWidthGlobeMap.tsx:417
+initializeMap @ FullWidthGlobeMap.tsx:639
+(anonymous) @ FullWidthGlobeMap.tsx:1017
+setTimeout
+window.initMapCallback @ FullWidthGlobeMap.tsx:1015
+(anonymous) @ VM414 js:1025
+(anonymous) @ VM414 js:1024
+Promise.then
+bda @ VM414 js:1024
+google.maps.Load @ VM414 js:14
+(anonymous) @ VM414 js:1264
+(anonymous) @ VM414 js:1264Understand this warning
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:930 As of February 21st, 2024, google.maps.Marker is deprecated. Please use google.maps.marker.AdvancedMarkerElement instead. At this time, google.maps.Marker is not scheduled to be discontinued, but google.maps.marker.AdvancedMarkerElement is recommended over google.maps.Marker. While google.maps.Marker will continue to receive bug fixes for any major regressions, existing bugs in google.maps.Marker will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/deprecations for additional details and https://developers.google.com/maps/documentation/javascript/advanced-markers/migration for the migration guide.
+overrideMethod @ hook.js:608
+_.lo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:930
+initializeMap @ FullWidthGlobeMap.tsx:643
+(anonymous) @ FullWidthGlobeMap.tsx:1017
+setTimeout
+window.initMapCallback @ FullWidthGlobeMap.tsx:1015
+(anonymous) @ VM414 js:1025
+(anonymous) @ VM414 js:1024
+Promise.then
+bda @ VM414 js:1024
+google.maps.Load @ VM414 js:14
+(anonymous) @ VM414 js:1264
+(anonymous) @ VM414 js:1264Understand this warning
+FullWidthGlobeMap.tsx:1015 [Violation] 'setTimeout' handler took 99ms
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168 Google Maps JavaScript API: A Map's styles property cannot be set when a mapId is present. When a mapId is present, map styles are controlled via the cloud console. Please see documentation at https://developers.google.com/maps/documentation/javascript/styling#cloud_tooling
+overrideMethod @ hook.js:608
+styles_changed @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168
+cn @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:917
+_.an.bindTo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1079
+Gba @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:951
+_.Or @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:997
+initializeMap @ FullWidthGlobeMap.tsx:618
+(anonymous) @ FullWidthGlobeMap.tsx:1017
+setTimeout
+window.initMapCallback @ FullWidthGlobeMap.tsx:1015
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1025
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1024
+Promise.then
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1024
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168 Google Maps JavaScript API: A Map's styles property cannot be set when a mapId is present. When a mapId is present, map styles are controlled via the cloud console. Please see documentation at https://developers.google.com/maps/documentation/javascript/styling#cloud_tooling
+overrideMethod @ hook.js:608
+styles_changed @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168
+cn @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:917
+cn @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:917
+_.an.set @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1077
+_.an.setValues @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1078
+updateMapStyles @ FullWidthGlobeMap.tsx:417
+initializeMap @ FullWidthGlobeMap.tsx:639
+(anonymous) @ FullWidthGlobeMap.tsx:1017
+setTimeout
+window.initMapCallback @ FullWidthGlobeMap.tsx:1015
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1025
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1024
+Promise.then
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1024
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+FullWidthGlobeMap.tsx:1042 Theme changed, updating map styles: Classic Metal
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168 Google Maps JavaScript API: A Map's styles property cannot be set when a mapId is present. When a mapId is present, map styles are controlled via the cloud console. Please see documentation at https://developers.google.com/maps/documentation/javascript/styling#cloud_tooling Error Component Stack
+    at FullWidthGlobeMap (FullWidthGlobeMap.tsx:192:43)
+    at div (<anonymous>)
+    at FadeInView (FadeInView.tsx:19:3)
+    at div (<anonymous>)
+    at HomePage (HomePage.tsx:20:55)
+    at Route (wouter.js?v=d376ad72:280:16)
+    at Switch (wouter.js?v=d376ad72:336:17)
+    at Router (<anonymous>)
+    at Provider (chunk-XIB456GT.js?v=d376ad72:38:15)
+    at TooltipProvider (@radix-ui_react-tooltip.js?v=d376ad72:62:5)
+    at AdminProvider (AdminContext.tsx:18:33)
+    at RadioProvider (RadioContext.tsx:73:33)
+    at ThemeProvider (ThemeContext.tsx:414:33)
+    at AuthProvider (AuthContext.tsx:50:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=d376ad72:2933:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+styles_changed @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168
+cn @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:917
+cn @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:917
+_.an.set @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1077
+_.an.setValues @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1078
+updateMapStyles @ FullWidthGlobeMap.tsx:417
+(anonymous) @ FullWidthGlobeMap.tsx:1043
+commitHookEffectListMount @ chunk-JQY7AJT6.js?v=d376ad72:16963
+commitPassiveMountOnFiber @ chunk-JQY7AJT6.js?v=d376ad72:18206
+commitPassiveMountEffects_complete @ chunk-JQY7AJT6.js?v=d376ad72:18179
+commitPassiveMountEffects_begin @ chunk-JQY7AJT6.js?v=d376ad72:18169
+commitPassiveMountEffects @ chunk-JQY7AJT6.js?v=d376ad72:18159
+flushPassiveEffectsImpl @ chunk-JQY7AJT6.js?v=d376ad72:19543
+flushPassiveEffects @ chunk-JQY7AJT6.js?v=d376ad72:19500
+performSyncWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18921
+flushSyncCallbacks @ chunk-JQY7AJT6.js?v=d376ad72:9166
+(anonymous) @ chunk-JQY7AJT6.js?v=d376ad72:18677
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=d376ad72:565
+flush @ @tanstack_react-query.js?v=d376ad72:589
+batch @ @tanstack_react-query.js?v=d376ad72:607
+dispatch_fn @ @tanstack_react-query.js?v=d376ad72:1040
+setData @ @tanstack_react-query.js?v=d376ad72:718
+onSuccess @ @tanstack_react-query.js?v=d376ad72:940
+resolve @ @tanstack_react-query.js?v=d376ad72:475
+Promise.then
+run @ @tanstack_react-query.js?v=d376ad72:517
+start @ @tanstack_react-query.js?v=d376ad72:555
+fetch @ @tanstack_react-query.js?v=d376ad72:969
+executeFetch_fn @ @tanstack_react-query.js?v=d376ad72:2279
+onSubscribe @ @tanstack_react-query.js?v=d376ad72:1983
+subscribe @ @tanstack_react-query.js?v=d376ad72:24
+(anonymous) @ @tanstack_react-query.js?v=d376ad72:3146
+subscribeToStore @ chunk-JQY7AJT6.js?v=d376ad72:12032
+commitHookEffectListMount @ chunk-JQY7AJT6.js?v=d376ad72:16963
+commitPassiveMountOnFiber @ chunk-JQY7AJT6.js?v=d376ad72:18206
+commitPassiveMountEffects_complete @ chunk-JQY7AJT6.js?v=d376ad72:18179
+commitPassiveMountEffects_begin @ chunk-JQY7AJT6.js?v=d376ad72:18169
+commitPassiveMountEffects @ chunk-JQY7AJT6.js?v=d376ad72:18159
+flushPassiveEffectsImpl @ chunk-JQY7AJT6.js?v=d376ad72:19543
+flushPassiveEffects @ chunk-JQY7AJT6.js?v=d376ad72:19500
+performSyncWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18921
+flushSyncCallbacks @ chunk-JQY7AJT6.js?v=d376ad72:9166
+commitRootImpl @ chunk-JQY7AJT6.js?v=d376ad72:19485
+commitRoot @ chunk-JQY7AJT6.js?v=d376ad72:19330
+finishConcurrentRender @ chunk-JQY7AJT6.js?v=d376ad72:18858
+performConcurrentWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18768
+workLoop @ chunk-JQY7AJT6.js?v=d376ad72:197
+flushWork @ chunk-JQY7AJT6.js?v=d376ad72:176
+performWorkUntilDeadline @ chunk-JQY7AJT6.js?v=d376ad72:384Understand this warning
+client:883 [vite] hot updated: /src/index.css?v=4cnCYtPaW2CDQQypcJWJ3
+FullWidthGlobeMap.tsx:1042 Theme changed, updating map styles: Classic Metal
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168 Google Maps JavaScript API: A Map's styles property cannot be set when a mapId is present. When a mapId is present, map styles are controlled via the cloud console. Please see documentation at https://developers.google.com/maps/documentation/javascript/styling#cloud_tooling Error Component Stack
+    at FullWidthGlobeMap (FullWidthGlobeMap.tsx:192:43)
+    at div (<anonymous>)
+    at FadeInView (FadeInView.tsx:19:3)
+    at div (<anonymous>)
+    at HomePage (HomePage.tsx:20:55)
+    at Route (wouter.js?v=d376ad72:280:16)
+    at Switch (wouter.js?v=d376ad72:336:17)
+    at Router (<anonymous>)
+    at Provider (chunk-XIB456GT.js?v=d376ad72:38:15)
+    at TooltipProvider (@radix-ui_react-tooltip.js?v=d376ad72:62:5)
+    at AdminProvider (AdminContext.tsx:18:33)
+    at RadioProvider (RadioContext.tsx:73:33)
+    at ThemeProvider (ThemeContext.tsx:414:33)
+    at AuthProvider (AuthContext.tsx:50:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=d376ad72:2933:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+styles_changed @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1168
+cn @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:917
+cn @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:917
+_.an.set @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1077
+_.an.setValues @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1078
+updateMapStyles @ FullWidthGlobeMap.tsx:417
+(anonymous) @ FullWidthGlobeMap.tsx:1043
+commitHookEffectListMount @ chunk-JQY7AJT6.js?v=d376ad72:16963
+commitPassiveMountOnFiber @ chunk-JQY7AJT6.js?v=d376ad72:18206
+commitPassiveMountEffects_complete @ chunk-JQY7AJT6.js?v=d376ad72:18179
+commitPassiveMountEffects_begin @ chunk-JQY7AJT6.js?v=d376ad72:18169
+commitPassiveMountEffects @ chunk-JQY7AJT6.js?v=d376ad72:18159
+flushPassiveEffectsImpl @ chunk-JQY7AJT6.js?v=d376ad72:19543
+flushPassiveEffects @ chunk-JQY7AJT6.js?v=d376ad72:19500
+performSyncWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18921
+flushSyncCallbacks @ chunk-JQY7AJT6.js?v=d376ad72:9166
+(anonymous) @ chunk-JQY7AJT6.js?v=d376ad72:18677
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=d376ad72:565
+flush @ @tanstack_react-query.js?v=d376ad72:589
+batch @ @tanstack_react-query.js?v=d376ad72:607
+dispatch_fn @ @tanstack_react-query.js?v=d376ad72:1040
+setData @ @tanstack_react-query.js?v=d376ad72:718
+onSuccess @ @tanstack_react-query.js?v=d376ad72:940
+resolve @ @tanstack_react-query.js?v=d376ad72:475
+Promise.then
+run @ @tanstack_react-query.js?v=d376ad72:517
+start @ @tanstack_react-query.js?v=d376ad72:555
+fetch @ @tanstack_react-query.js?v=d376ad72:969
+executeFetch_fn @ @tanstack_react-query.js?v=d376ad72:2279
+setOptions @ @tanstack_react-query.js?v=d376ad72:2040
+(anonymous) @ @tanstack_react-query.js?v=d376ad72:3156
+commitHookEffectListMount @ chunk-JQY7AJT6.js?v=d376ad72:16963
+commitPassiveMountOnFiber @ chunk-JQY7AJT6.js?v=d376ad72:18206
+commitPassiveMountEffects_complete @ chunk-JQY7AJT6.js?v=d376ad72:18179
+commitPassiveMountEffects_begin @ chunk-JQY7AJT6.js?v=d376ad72:18169
+commitPassiveMountEffects @ chunk-JQY7AJT6.js?v=d376ad72:18159
+flushPassiveEffectsImpl @ chunk-JQY7AJT6.js?v=d376ad72:19543
+flushPassiveEffects @ chunk-JQY7AJT6.js?v=d376ad72:19500
+performSyncWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18921
+flushSyncCallbacks @ chunk-JQY7AJT6.js?v=d376ad72:9166
+(anonymous) @ chunk-JQY7AJT6.js?v=d376ad72:18677
+setTimeout
+defaultScheduler @ @tanstack_react-query.js?v=d376ad72:565
+flush @ @tanstack_react-query.js?v=d376ad72:589
+batch @ @tanstack_react-query.js?v=d376ad72:607
+dispatch_fn @ @tanstack_react-query.js?v=d376ad72:1040
+onError @ @tanstack_react-query.js?v=d376ad72:904
+reject @ @tanstack_react-query.js?v=d376ad72:484
+(anonymous) @ @tanstack_react-query.js?v=d376ad72:527
+Promise.catch
+run @ @tanstack_react-query.js?v=d376ad72:517
+start @ @tanstack_react-query.js?v=d376ad72:555
+fetch @ @tanstack_react-query.js?v=d376ad72:969
+executeFetch_fn @ @tanstack_react-query.js?v=d376ad72:2279
+onSubscribe @ @tanstack_react-query.js?v=d376ad72:1983
+subscribe @ @tanstack_react-query.js?v=d376ad72:24
+(anonymous) @ @tanstack_react-query.js?v=d376ad72:3146
+subscribeToStore @ chunk-JQY7AJT6.js?v=d376ad72:12032
+commitHookEffectListMount @ chunk-JQY7AJT6.js?v=d376ad72:16963
+commitPassiveMountOnFiber @ chunk-JQY7AJT6.js?v=d376ad72:18206
+commitPassiveMountEffects_complete @ chunk-JQY7AJT6.js?v=d376ad72:18179
+commitPassiveMountEffects_begin @ chunk-JQY7AJT6.js?v=d376ad72:18169
+commitPassiveMountEffects @ chunk-JQY7AJT6.js?v=d376ad72:18159
+flushPassiveEffectsImpl @ chunk-JQY7AJT6.js?v=d376ad72:19543
+flushPassiveEffects @ chunk-JQY7AJT6.js?v=d376ad72:19500
+performSyncWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18921
+flushSyncCallbacks @ chunk-JQY7AJT6.js?v=d376ad72:9166
+commitRootImpl @ chunk-JQY7AJT6.js?v=d376ad72:19485
+commitRoot @ chunk-JQY7AJT6.js?v=d376ad72:19330
+finishConcurrentRender @ chunk-JQY7AJT6.js?v=d376ad72:18858
+performConcurrentWorkOnRoot @ chunk-JQY7AJT6.js?v=d376ad72:18768
+workLoop @ chunk-JQY7AJT6.js?v=d376ad72:197
+flushWork @ chunk-JQY7AJT6.js?v=d376ad72:176
+performWorkUntilDeadline @ chunk-JQY7AJT6.js?v=d376ad72:384Understand this warning
+RadioContext.tsx:168 Stream 1 working successfully
+client:964 [vite] server connection lost. Polling for restart...
+client:1035 WebSocket connection to 'wss://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/' failed: 
+ping @ client:1035
+waitForSuccessfulPing @ client:1054
+handleMessage @ client:968Understand this error
+client:1035 WebSocket connection to 'wss://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/' failed: 
+ping @ client:1035
+waitForSuccessfulPing @ client:1060Understand this error
+client:1035 WebSocket connection to 'wss://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/' failed: 
+ping @ client:1035
+waitForSuccessfulPing @ client:1060Understand this error
+Navigated to https://70cda23f-d4b7-4758-b471-b3d

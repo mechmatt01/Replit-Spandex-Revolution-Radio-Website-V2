@@ -18,6 +18,6 @@ export default defineConfig({
     emptyOutDir: true,
   },
   css: {
-    postcss: "./client/postcss.config.js",
+    postcss: "./postcss.config.js",
   },
 });
