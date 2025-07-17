@@ -17,7 +17,4 @@ export default defineConfig({
     outDir: path.resolve(process.cwd(), "client/dist"),
     emptyOutDir: true,
   },
-  css: {
-    postcss: "./client/postcss.config.js",
-  },
 });
