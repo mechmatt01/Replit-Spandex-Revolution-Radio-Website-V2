@@ -226,6 +226,198 @@ export default function FullWidthGlobeMap() {
   
   const isMapDark = shouldUseDarkMap();
 
+  // Function to update map styling when theme changes
+  const updateMapStyles = (mapInstance: google.maps.Map) => {
+    const darkStyles = [
+      {
+        elementType: "geometry",
+        stylers: [{ color: "#212121" }],
+      },
+      {
+        elementType: "labels.icon",
+        stylers: [{ visibility: "off" }],
+      },
+      {
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#757575" }],
+      },
+      {
+        elementType: "labels.text.stroke",
+        stylers: [{ color: "#212121" }],
+      },
+      {
+        featureType: "administrative",
+        elementType: "geometry",
+        stylers: [{ color: "#757575" }],
+      },
+      {
+        featureType: "administrative.country",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#9e9e9e" }],
+      },
+      {
+        featureType: "administrative.land_parcel",
+        stylers: [{ visibility: "off" }],
+      },
+      {
+        featureType: "administrative.locality",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#bdbdbd" }],
+      },
+      {
+        featureType: "poi",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#757575" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "geometry",
+        stylers: [{ color: "#181818" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#616161" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "labels.text.stroke",
+        stylers: [{ color: "#1b1b1b" }],
+      },
+      {
+        featureType: "road",
+        elementType: "geometry.fill",
+        stylers: [{ color: "#2c2c2c" }],
+      },
+      {
+        featureType: "road",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#8a8a8a" }],
+      },
+      {
+        featureType: "road.arterial",
+        elementType: "geometry",
+        stylers: [{ color: "#373737" }],
+      },
+      {
+        featureType: "road.highway",
+        elementType: "geometry",
+        stylers: [{ color: "#3c3c3c" }],
+      },
+      {
+        featureType: "road.highway.controlled_access",
+        elementType: "geometry",
+        stylers: [{ color: "#4e4e4e" }],
+      },
+      {
+        featureType: "road.local",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#616161" }],
+      },
+      {
+        featureType: "transit",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#757575" }],
+      },
+      {
+        featureType: "water",
+        elementType: "geometry",
+        stylers: [{ color: "#000000" }],
+      },
+      {
+        featureType: "water",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#3d3d3d" }],
+      },
+    ];
+
+    const lightStyles = [
+      {
+        featureType: "administrative",
+        elementType: "geometry",
+        stylers: [{ color: "#e0e0e0" }],
+      },
+      {
+        featureType: "administrative.country",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#666666" }],
+      },
+      {
+        featureType: "administrative.land_parcel",
+        stylers: [{ visibility: "off" }],
+      },
+      {
+        featureType: "administrative.locality",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#333333" }],
+      },
+      {
+        featureType: "poi",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#757575" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "geometry",
+        stylers: [{ color: "#c5f0c5" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#9e9e9e" }],
+      },
+      {
+        featureType: "road",
+        elementType: "geometry.fill",
+        stylers: [{ color: "#ffffff" }],
+      },
+      {
+        featureType: "road",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#666666" }],
+      },
+      {
+        featureType: "road.arterial",
+        elementType: "geometry",
+        stylers: [{ color: "#fefefe" }],
+      },
+      {
+        featureType: "road.highway",
+        elementType: "geometry",
+        stylers: [{ color: "#f5f5f5" }],
+      },
+      {
+        featureType: "road.highway.controlled_access",
+        elementType: "geometry",
+        stylers: [{ color: "#e9e9e9" }],
+      },
+      {
+        featureType: "road.local",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#9e9e9e" }],
+      },
+      {
+        featureType: "transit",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#757575" }],
+      },
+      {
+        featureType: "water",
+        elementType: "geometry",
+        stylers: [{ color: "#c9c9c9" }],
+      },
+      {
+        featureType: "water",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#9e9e9e" }],
+      },
+    ];
+
+    mapInstance.setOptions({
+      styles: isMapDark ? darkStyles : lightStyles
+    });
+  };
+
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
   });
@@ -427,264 +619,45 @@ export default function FullWidthGlobeMap() {
         center: userLocation || { lat: 40.7128, lng: -74.0060 }, // Default to NYC
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         mapId: mapId, // Add Map ID to prevent advanced markers error
-        styles: isMapDark
-          ? [
-              {
-                elementType: "geometry",
-                stylers: [{ color: "#212121" }],
-              },
-              {
-                elementType: "labels.icon",
-                stylers: [{ visibility: "off" }],
-              },
-              {
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#757575" }],
-              },
-              {
-                elementType: "labels.text.stroke",
-                stylers: [{ color: "#212121" }],
-              },
-              {
-                featureType: "administrative",
-                elementType: "geometry",
-                stylers: [{ color: "#757575" }],
-              },
-              {
-                featureType: "administrative.country",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#9e9e9e" }],
-              },
-              {
-                featureType: "administrative.land_parcel",
-                stylers: [{ visibility: "off" }],
-              },
-              {
-                featureType: "administrative.locality",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#bdbdbd" }],
-              },
-              {
-                featureType: "poi",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#757575" }],
-              },
-              {
-                featureType: "poi.park",
-                elementType: "geometry",
-                stylers: [{ color: "#181818" }],
-              },
-              {
-                featureType: "poi.park",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#616161" }],
-              },
-              {
-                featureType: "poi.park",
-                elementType: "labels.text.stroke",
-                stylers: [{ color: "#1b1b1b" }],
-              },
-              {
-                featureType: "road",
-                elementType: "geometry.fill",
-                stylers: [{ color: "#2c2c2c" }],
-              },
-              {
-                featureType: "road",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#8a8a8a" }],
-              },
-              {
-                featureType: "road.arterial",
-                elementType: "geometry",
-                stylers: [{ color: "#373737" }],
-              },
-              {
-                featureType: "road.highway",
-                elementType: "geometry",
-                stylers: [{ color: "#3c3c3c" }],
-              },
-              {
-                featureType: "road.highway.controlled_access",
-                elementType: "geometry",
-                stylers: [{ color: "#4e4e4e" }],
-              },
-              {
-                featureType: "road.local",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#616161" }],
-              },
-              {
-                featureType: "transit",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#757575" }],
-              },
-              {
-                featureType: "water",
-                elementType: "geometry",
-                stylers: [{ color: "#000000" }],
-              },
-              {
-                featureType: "water",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#3d3d3d" }],
-              },
-            ]
-          : [
-              {
-                elementType: "geometry",
-                stylers: [{ color: "#f5f5f5" }],
-              },
-              {
-                elementType: "labels.icon",
-                stylers: [{ visibility: "off" }],
-              },
-              {
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#616161" }],
-              },
-              {
-                elementType: "labels.text.stroke",
-                stylers: [{ color: "#f5f5f5" }],
-              },
-              {
-                featureType: "administrative",
-                elementType: "geometry",
-                stylers: [{ color: "#fefefe" }],
-              },
-              {
-                featureType: "administrative.country",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#424242" }],
-              },
-              {
-                featureType: "administrative.land_parcel",
-                stylers: [{ visibility: "off" }],
-              },
-              {
-                featureType: "administrative.locality",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#757575" }],
-              },
-              {
-                featureType: "poi",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#757575" }],
-              },
-              {
-                featureType: "poi.park",
-                elementType: "geometry",
-                stylers: [{ color: "#c5e1a5" }],
-              },
-              {
-                featureType: "poi.park",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#616161" }],
-              },
-              {
-                featureType: "road",
-                elementType: "geometry.fill",
-                stylers: [{ color: "#ffffff" }],
-              },
-              {
-                featureType: "road",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#757575" }],
-              },
-              {
-                featureType: "road.arterial",
-                elementType: "geometry",
-                stylers: [{ color: "#ffffff" }],
-              },
-              {
-                featureType: "road.highway",
-                elementType: "geometry",
-                stylers: [{ color: "#dadada" }],
-              },
-              {
-                featureType: "road.highway.controlled_access",
-                elementType: "geometry",
-                stylers: [{ color: "#e98d58" }],
-              },
-              {
-                featureType: "road.local",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#9e9e9e" }],
-              },
-              {
-                featureType: "transit",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#757575" }],
-              },
-              {
-                featureType: "water",
-                elementType: "geometry",
-                stylers: [{ color: "#c9c9c9" }],
-              },
-              {
-                featureType: "water",
-                elementType: "labels.text.fill",
-                stylers: [{ color: "#9e9e9e" }],
-              },
-            ],
-        disableDefaultUI: true,
-        zoomControl: true,
+        styles: [], // Empty styles initially, will be set by updateMapStyles
+        // Map controls
+        zoomControl: false,
+        mapTypeControl: false,
+        scaleControl: false,
+        streetViewControl: false,
+        rotateControl: false,
+        fullscreenControl: false,
         gestureHandling: "cooperative",
-        restriction: {
-          latLngBounds: {
-            north: 85,
-            south: -85,
-            west: -180,
-            east: 180,
-          },
-          strictBounds: true,
-        },
-        minZoom: 2,
-        maxZoom: 18,
+        // Disable default UI
+        disableDefaultUI: true,
       });
 
       setMap(mapInstance);
 
-      // Add current location marker with blue animated dot
-      const currentLocationSvg = `
-        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="8" fill="#4285f4" opacity="0.3">
-            <animate attributeName="r" values="8;12;8" dur="2s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.3;0.1;0.3" dur="2s" repeatCount="indefinite"/>
-          </circle>
-          <circle cx="12" cy="12" r="6" fill="#4285f4" opacity="0.5">
-            <animate attributeName="r" values="6;9;6" dur="1.5s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.5;0.2;0.5" dur="1.5s" repeatCount="indefinite"/>
-          </circle>
-          <circle cx="12" cy="12" r="4" fill="#4285f4">
-            <animate attributeName="opacity" values="1;0.7;1" dur="1s" repeatCount="indefinite"/>
-          </circle>
-        </svg>
-      `;
+      // Apply theme styles immediately after map creation
+      setTimeout(() => {
+        updateMapStyles(mapInstance);
+      }, 100);
 
-      const currentLocationMarker = useAdvancedMarkers 
-        ? new google.maps.marker.AdvancedMarkerElement({
-            position: userLocation,
-            map: mapInstance,
-            title: "Your Current Location",
-            content: (() => {
-              const div = document.createElement('div');
-              div.innerHTML = currentLocationSvg;
-              div.style.zIndex = '1000'; // Higher z-index to appear above other markers
-              return div;
-            })(),
-          })
-        : new google.maps.Marker({
-            position: userLocation,
-            map: mapInstance,
-            title: "Your Current Location",
-            icon: {
-              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(currentLocationSvg),
-              scaledSize: new google.maps.Size(24, 24),
-              anchor: new google.maps.Point(12, 12),
-            },
-            zIndex: 1000,
-          });
+      // Add user location marker if available
+      if (userLocation) {
+        const userMarker = new google.maps.Marker({
+          position: userLocation,
+          map: mapInstance,
+          title: "Your Location",
+          icon: {
+            url: "data:image/svg+xml;base64," + btoa(`
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3" fill="#2563eb"/>
+                <circle cx="12" cy="12" r="10" fill="none" stroke="#2563eb" stroke-width="2" opacity="0.3"/>
+                <circle cx="12" cy="12" r="6" fill="none" stroke="#2563eb" stroke-width="1" opacity="0.5"/>
+              </svg>
+            `),
+            scaledSize: new google.maps.Size(24, 24),
+            anchor: new google.maps.Point(12, 12),
+          },
+        });
+      }
 
       // Add mock listener markers
       const mockListeners = [
@@ -1243,11 +1216,16 @@ export default function FullWidthGlobeMap() {
 
         {/* Map Container */}
         <div
-          className={`relative transition-all duration-500 ease-in-out ${
+          className={`relative transition-all duration-700 ease-in-out ${
             isFullscreen 
-              ? "fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm" 
-              : "h-[600px] mb-16"
+              ? "fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm animate-in fade-in zoom-in-95" 
+              : "h-[600px] mb-16 animate-in fade-in slide-in-from-bottom-4"
           }`}
+          style={{
+            animation: isFullscreen 
+              ? "fadeIn 0.7s ease-in-out, zoomIn 0.7s ease-in-out" 
+              : "fadeIn 0.5s ease-in-out"
+          }}
         >
           {/* Fullscreen header bar */}
           {isFullscreen && (
@@ -1274,13 +1252,20 @@ export default function FullWidthGlobeMap() {
                 <Button
                   onClick={() => {
                     setIsFullscreen(false);
-                    setTimeout(() => {
-                      if (map) {
-                        google.maps.event.trigger(map, 'resize');
-                      }
-                    }, 100);
+                    // Use requestAnimationFrame to ensure smooth transition
+                    requestAnimationFrame(() => {
+                      setTimeout(() => {
+                        if (map) {
+                          google.maps.event.trigger(map, 'resize');
+                          // Center the map after resize
+                          map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
+                          // Update map styles after exiting fullscreen
+                          updateMapStyles(map);
+                        }
+                      }, 300);
+                    });
                   }}
-                  className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white"
+                  className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
                   size="sm"
                 >
                   <Minimize2 className="w-4 h-4" />
@@ -1291,7 +1276,7 @@ export default function FullWidthGlobeMap() {
 
           <div
             ref={mapRef}
-            className={`w-full map-container transition-all duration-500 ease-in-out ${
+            className={`w-full map-container transition-all duration-700 ease-in-out ${
               isFullscreen ? "h-full" : "h-full rounded-lg"
             }`}
             style={{
@@ -1299,6 +1284,8 @@ export default function FullWidthGlobeMap() {
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
               height: isFullscreen ? "100vh" : "100%",
               marginTop: isFullscreen ? "64px" : "0",
+              borderRadius: isFullscreen ? "0" : "0.5rem",
+              overflow: "hidden"
             }}
           />
 
@@ -1483,14 +1470,21 @@ export default function FullWidthGlobeMap() {
             <Button
               onClick={() => {
                 setIsFullscreen(true);
-                // Small delay to ensure DOM update before map reinitializes
-                setTimeout(() => {
-                  if (map) {
-                    google.maps.event.trigger(map, 'resize');
-                  }
-                }, 100);
+                // Use requestAnimationFrame to ensure smooth transition
+                requestAnimationFrame(() => {
+                  // Small delay to ensure DOM update and animation frames
+                  setTimeout(() => {
+                    if (map) {
+                      google.maps.event.trigger(map, 'resize');
+                      // Center the map after resize
+                      map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
+                      // Update map styles after fullscreen
+                      updateMapStyles(map);
+                    }
+                  }, 300);
+                });
               }}
-              className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg ${
+              className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg transition-all duration-300 ${
                 isDarkMode
                   ? "bg-gray-800 hover:bg-gray-700 text-white"
                   : "bg-white hover:bg-gray-50 text-black"
