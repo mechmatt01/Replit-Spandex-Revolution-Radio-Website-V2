@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -196,27 +197,32 @@ export default function FullWidthGlobeMap() {
     lng: number;
   } | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const fullscreenMapRef = useRef<HTMLDivElement>(null);
   const currentInfoWindow = useRef<any>(null);
   const { colors, isDarkMode, theme } = useTheme();
   const currentTheme = theme.name;
 
   // Intelligent theme detection for Google Maps
   const shouldUseDarkMap = () => {
-    // Force dark map for classic metal theme
-    if (currentTheme === 'Classic Metal') {
+    // Force dark map for classic metal theme (check lowercase)
+    if (currentTheme.toLowerCase().includes('classic') && currentTheme.toLowerCase().includes('metal')) {
       return true;
     }
     
     // Force dark map for other dark themes
-    if (currentTheme === 'Black Metal' || currentTheme === 'Death Metal' || 
-        currentTheme === 'Doom Metal' || currentTheme === 'Thrash Metal' || 
-        currentTheme === 'Gothic Metal' || currentTheme === 'Dark Mode' ||
-        currentTheme === 'Glassmorphism Premium') {
+    if (currentTheme.toLowerCase().includes('black') || 
+        currentTheme.toLowerCase().includes('death') || 
+        currentTheme.toLowerCase().includes('doom') || 
+        currentTheme.toLowerCase().includes('thrash') || 
+        currentTheme.toLowerCase().includes('gothic') || 
+        currentTheme.toLowerCase().includes('dark') ||
+        currentTheme.toLowerCase().includes('glassmorphism')) {
       return true;
     }
     
     // Use light map for light themes
-    if (currentTheme === 'Light Mode' || currentTheme === 'Power Metal') {
+    if (currentTheme.toLowerCase().includes('light') || 
+        currentTheme.toLowerCase().includes('power')) {
       return false;
     }
     
@@ -541,6 +547,8 @@ export default function FullWidthGlobeMap() {
     console.log('User location available:', !!userLocation);
     console.log('User location value:', userLocation);
     console.log('Is fullscreen:', isFullscreen);
+    console.log('Current theme:', currentTheme);
+    console.log('Should use dark map:', isMapDark);
     
     // Use hardcoded API key if config is not available
     const apiKey = config?.googleMapsApiKey || "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
@@ -553,16 +561,9 @@ export default function FullWidthGlobeMap() {
     
     console.log('Initializing Google Maps with API key:', apiKey.substring(0, 20) + '...');
     console.log('Using Map ID:', mapId);
-    console.log('Theme detection:', {
-      currentTheme: theme.name,
-      isDarkMode,
-      backgroundColor: theme.colors[isDarkMode ? 'dark' : 'light'].background,
-      isMapDark,
-      shouldUseDarkStyles: theme.name === 'Classic Metal' || isMapDark
-    });
     
-    // Use the main map container
-    const currentContainer = mapRef.current;
+    // Use the correct map container based on fullscreen state
+    const currentContainer = isFullscreen ? fullscreenMapRef.current : mapRef.current;
     if (!currentContainer) return;
 
     // Add CSS to hide Google attribution and keyboard shortcuts overlay
@@ -1036,7 +1037,7 @@ export default function FullWidthGlobeMap() {
     } else {
       initializeMap();
     }
-  }, [config, userLocation, isDarkMode, theme, isMapDark]);
+  }, [config, userLocation, isDarkMode, theme, isMapDark, isFullscreen]);
 
   // Update map styles when theme changes
   useEffect(() => {
@@ -1146,216 +1147,63 @@ export default function FullWidthGlobeMap() {
 
   return (
     <>
-
-
-      {/* Normal View */}
-      <section
-        id="map"
-        className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
-      >
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header for normal view */}
-        <div className="text-center mb-16">
-          <h2
-            className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
-          >
-            GLOBAL LISTENERS
-          </h2>
-          <p
-            className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
-          >
-            See where metal fans are tuning in from around the world in
-            real-time.
-          </p>
-
-          {/* Weather Information Display */}
-          {weather && (
-            <div className="mb-4">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <MapPin
-                  className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                />
-                <span
-                  className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
-                >
-                  {weather.location}
-                </span>
-              </div>
-              <div className="flex items-center justify-center gap-1.5">
-                <img
-                  src={getWeatherIcon(
-                    weather.description,
-                    weather.icon.includes("d"),
-                  )}
-                  alt={weather.description}
-                  className="w-12 h-12 flex-shrink-0"
-                  style={{ width: "48px", height: "48px" }}
-                />
-                <span
-                  className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
-                >
-                  {Math.round(weather.temperature)}°F
-                </span>
-                <span
-                  className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                >
-                  {weather.description}
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Loading state for weather */}
-          {weatherLoading && (
-            <div className="mb-4">
-              <div className="flex items-center justify-center gap-2">
-                <MapPin
-                  className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                />
-                <span
-                  className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
-                >
-                  Loading weather...
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Map Container */}
-        <div
-          className={`relative transition-all duration-700 ease-in-out ${
-            isFullscreen 
-              ? "fixed inset-0 z-[9999] bg-black" 
-              : "h-[600px] mb-16"
-          }`}
-        >
+      {/* Fullscreen Map View */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-[9999] bg-black">
           {/* Fullscreen header bar */}
-          {isFullscreen && (
-            <div className="absolute top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-700">
-              <div className="flex items-center justify-between px-6 py-4">
-                <div className="flex items-center gap-4">
-                  <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
-                  {weather && (
-                    <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
-                      <div className="w-8 h-8">
-                        <img
-                          src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
-                          alt={weather.description}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      <div className="text-sm">
-                        <span className="text-white font-medium">{weather.location}</span>
-                        <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
-                      </div>
+          <div className="absolute top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-700">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-4">
+                <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
+                {weather && (
+                  <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
+                    <div className="w-8 h-8">
+                      <img
+                        src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
+                        alt={weather.description}
+                        className="w-full h-full object-contain"
+                      />
                     </div>
-                  )}
-                </div>
-                <Button
-                  onClick={() => {
-                    setIsFullscreen(false);
-                    // Use requestAnimationFrame to ensure smooth transition
-                    requestAnimationFrame(() => {
-                      setTimeout(() => {
-                        if (map) {
-                          google.maps.event.trigger(map, 'resize');
-                          map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
-                          updateMapStyles(map);
-                        }
-                      }, 100);
-                    });
-                  }}
-                  className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
-                  size="sm"
-                >
-                  <Minimize2 className="w-4 h-4" />
-                </Button>
+                    <div className="text-sm">
+                      <span className="text-white font-medium">{weather.location}</span>
+                      <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
+                    </div>
+                  </div>
+                )}
               </div>
+              <Button
+                onClick={() => {
+                  setIsFullscreen(false);
+                  // Trigger map resize after fullscreen exit
+                  setTimeout(() => {
+                    if (map) {
+                      google.maps.event.trigger(map, 'resize');
+                      map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
+                    }
+                  }, 100);
+                }}
+                className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
+                size="sm"
+              >
+                <Minimize2 className="w-4 h-4" />
+              </Button>
             </div>
-          )}
+          </div>
 
           <div
-            ref={mapRef}
-            className={`w-full h-full map-container transition-all duration-300 ease-in-out ${
-              isFullscreen ? "" : "rounded-lg"
-            }`}
+            ref={fullscreenMapRef}
+            className="w-full h-full"
             style={{
-              minHeight: "400px",
-              backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
               position: "absolute",
-              top: isFullscreen ? "80px" : "0",
+              top: "80px",
               left: "0",
               right: "0",
               bottom: "0"
             }}
           />
 
-          {/* Map Controls */}
-          <div className={`absolute z-10 flex flex-col gap-2 ${
-            isFullscreen 
-              ? "top-20 right-8" 
-              : "top-4 right-4"
-          }`}>
-            {/* Left-side controls for fullscreen mode */}
-            {isFullscreen && (
-              <div className="absolute top-0 left-[-40px] flex flex-col gap-2">
-                <Button
-                  onClick={() => {
-                    if (userLocation) {
-                      if (map) {
-                        map.panTo(userLocation);
-                        map.setZoom(12);
-                      }
-                    } else {
-                      // Request location if not available
-                      if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                          (position) => {
-                            const newLocation = {
-                              lat: position.coords.latitude,
-                              lng: position.coords.longitude,
-                            };
-                            setUserLocation(newLocation);
-                            if (map) {
-                              map.panTo(newLocation);
-                              map.setZoom(12);
-                            }
-                          },
-                          (error) => {
-                            console.error("Error getting location:", error);
-                          }
-                        );
-                      }
-                    }
-                  }}
-                  size="sm"
-                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-                  style={{
-                    backgroundColor: "#1f2937",
-                    color: "#ffffff",
-                  }}
-                >
-                  <MapPin className="w-4 h-4" />
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (map) {
-                      map.panTo({ lat: 40.7128, lng: -74.006 });
-                      map.setZoom(2);
-                    }
-                  }}
-                  size="sm"
-                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-                  style={{
-                    backgroundColor: "#1f2937",
-                    color: "#ffffff",
-                  }}
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </Button>
-              </div>
-            )}
+          {/* Map Controls for Fullscreen */}
+          <div className="absolute top-20 right-8 z-10 flex flex-col gap-2">
             <Button
               onClick={() => {
                 if (map) {
@@ -1363,17 +1211,7 @@ export default function FullWidthGlobeMap() {
                 }
               }}
               size="sm"
-              className={`p-2 ${
-                isFullscreen 
-                  ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                  : isDarkMode 
-                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                    : "bg-white hover:bg-gray-50 text-black"
-              } border-0 shadow-lg`}
-              style={{
-                backgroundColor: isFullscreen ? "#1f2937" : isDarkMode ? "#1f2937" : "#ffffff",
-                color: isFullscreen ? "#ffffff" : isDarkMode ? "#ffffff" : "#000000",
-              }}
+              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
             >
               <ZoomIn className="w-4 h-4" />
             </Button>
@@ -1384,104 +1222,265 @@ export default function FullWidthGlobeMap() {
                 }
               }}
               size="sm"
-              className={`p-2 ${
-                isFullscreen 
-                  ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                  : isDarkMode 
-                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                    : "bg-white hover:bg-gray-50 text-black"
-              } border-0 shadow-lg`}
-              style={{
-                backgroundColor: isFullscreen ? "#1f2937" : isDarkMode ? "#1f2937" : "#ffffff",
-                color: isFullscreen ? "#ffffff" : isDarkMode ? "#ffffff" : "#000000",
-              }}
+              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
             >
               <ZoomOut className="w-4 h-4" />
             </Button>
-            {/* Only show location/reset controls in normal mode */}
-            {!isFullscreen && (
-              <>
-                <Button
-                  onClick={() => {
-                    if (userLocation) {
-                      if (map) {
-                        map.panTo(userLocation);
-                        map.setZoom(12);
+          </div>
+
+          <div className="absolute top-20 left-8 z-10 flex flex-col gap-2">
+            <Button
+              onClick={() => {
+                if (userLocation) {
+                  if (map) {
+                    map.panTo(userLocation);
+                    map.setZoom(12);
+                  }
+                } else {
+                  // Request location if not available
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      (position) => {
+                        const newLocation = {
+                          lat: position.coords.latitude,
+                          lng: position.coords.longitude,
+                        };
+                        setUserLocation(newLocation);
+                        if (map) {
+                          map.panTo(newLocation);
+                          map.setZoom(12);
+                        }
+                      },
+                      (error) => {
+                        console.error("Error getting location:", error);
                       }
-                    } else {
-                      // Request location if not available
-                      if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                          (position) => {
-                            const newLocation = {
-                              lat: position.coords.latitude,
-                              lng: position.coords.longitude,
-                            };
-                            setUserLocation(newLocation);
-                            if (map) {
-                              map.panTo(newLocation);
-                              map.setZoom(12);
-                            }
-                          },
-                          (error) => {
-                            console.error("Error getting location:", error);
-                          }
-                        );
-                      }
-                    }
-                  }}
-                  size="sm"
-                  className={`p-2 ${
-                    isDarkMode 
-                      ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                      : "bg-white hover:bg-gray-50 text-black"
-                  } border-0 shadow-lg`}
-                  style={{
-                    backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }}
-                >
-                  <MapPin className="w-4 h-4" />
-                </Button>
-                <Button
-                  onClick={() => {
-                    if (map) {
-                      map.panTo({ lat: 40.7128, lng: -74.006 });
-                      map.setZoom(2);
-                    }
-                  }}
-                  size="sm"
-                  className={`p-2 ${
-                    isDarkMode 
-                      ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                      : "bg-white hover:bg-gray-50 text-black"
-                  } border-0 shadow-lg`}
-                  style={{
-                    backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                    color: isDarkMode ? "#ffffff" : "#000000",
-                  }}
-                >
-                  <RotateCcw className="w-4 h-4" />
-                </Button>
-              </>
+                    );
+                  }
+                }
+              }}
+              size="sm"
+              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+            >
+              <MapPin className="w-4 h-4" />
+            </Button>
+            <Button
+              onClick={() => {
+                if (map) {
+                  map.panTo({ lat: 40.7128, lng: -74.006 });
+                  map.setZoom(2);
+                }
+              }}
+              size="sm"
+              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Normal View */}
+      <section
+        id="map"
+        className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
+      >
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header for normal view */}
+          <div className="text-center mb-16">
+            <h2
+              className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}
+            >
+              GLOBAL LISTENERS
+            </h2>
+            <p
+              className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}
+            >
+              See where metal fans are tuning in from around the world in
+              real-time.
+            </p>
+
+            {/* Weather Information Display */}
+            {weather && (
+              <div className="mb-4">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <MapPin
+                    className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  />
+                  <span
+                    className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
+                    {weather.location}
+                  </span>
+                </div>
+                <div className="flex items-center justify-center gap-1.5">
+                  <img
+                    src={getWeatherIcon(
+                      weather.description,
+                      weather.icon.includes("d"),
+                    )}
+                    alt={weather.description}
+                    className="w-12 h-12 flex-shrink-0"
+                    style={{ width: "48px", height: "48px" }}
+                  />
+                  <span
+                    className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
+                  >
+                    {Math.round(weather.temperature)}°F
+                  </span>
+                  <span
+                    className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  >
+                    {weather.description}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Loading state for weather */}
+            {weatherLoading && (
+              <div className="mb-4">
+                <div className="flex items-center justify-center gap-2">
+                  <MapPin
+                    className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
+                  />
+                  <span
+                    className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}
+                  >
+                    Loading weather...
+                  </span>
+                </div>
+              </div>
             )}
           </div>
 
-          {/* Fullscreen Toggle */}
-          {!isFullscreen && (
+          {/* Map Container */}
+          <div className="relative h-[600px] mb-16">
+            <div
+              ref={mapRef}
+              className="w-full h-full map-container transition-all duration-300 ease-in-out rounded-lg"
+              style={{
+                minHeight: "400px",
+                backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+              }}
+            />
+
+            {/* Map Controls */}
+            <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+              <Button
+                onClick={() => {
+                  if (map) {
+                    map.setZoom(map.getZoom() + 1);
+                  }
+                }}
+                size="sm"
+                className={`p-2 ${
+                  isDarkMode 
+                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
+                    : "bg-white hover:bg-gray-50 text-black"
+                } border-0 shadow-lg`}
+                style={{
+                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                  color: isDarkMode ? "#ffffff" : "#000000",
+                }}
+              >
+                <ZoomIn className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={() => {
+                  if (map) {
+                    map.setZoom(map.getZoom() - 1);
+                  }
+                }}
+                size="sm"
+                className={`p-2 ${
+                  isDarkMode 
+                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
+                    : "bg-white hover:bg-gray-50 text-black"
+                } border-0 shadow-lg`}
+                style={{
+                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                  color: isDarkMode ? "#ffffff" : "#000000",
+                }}
+              >
+                <ZoomOut className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={() => {
+                  if (userLocation) {
+                    if (map) {
+                      map.panTo(userLocation);
+                      map.setZoom(12);
+                    }
+                  } else {
+                    // Request location if not available
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                          const newLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                          };
+                          setUserLocation(newLocation);
+                          if (map) {
+                            map.panTo(newLocation);
+                            map.setZoom(12);
+                          }
+                        },
+                        (error) => {
+                          console.error("Error getting location:", error);
+                        }
+                      );
+                    }
+                  }
+                }}
+                size="sm"
+                className={`p-2 ${
+                  isDarkMode 
+                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
+                    : "bg-white hover:bg-gray-50 text-black"
+                } border-0 shadow-lg`}
+                style={{
+                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                  color: isDarkMode ? "#ffffff" : "#000000",
+                }}
+              >
+                <MapPin className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={() => {
+                  if (map) {
+                    map.panTo({ lat: 40.7128, lng: -74.006 });
+                    map.setZoom(2);
+                  }
+                }}
+                size="sm"
+                className={`p-2 ${
+                  isDarkMode 
+                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
+                    : "bg-white hover:bg-gray-50 text-black"
+                } border-0 shadow-lg`}
+                style={{
+                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                  color: isDarkMode ? "#ffffff" : "#000000",
+                }}
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+            </div>
+
+            {/* Fullscreen Toggle */}
             <Button
               onClick={() => {
                 setIsFullscreen(true);
-                // Use requestAnimationFrame to ensure smooth transition
-                requestAnimationFrame(() => {
-                  setTimeout(() => {
-                    if (map) {
-                      google.maps.event.trigger(map, 'resize');
-                      map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
-                      updateMapStyles(map);
-                    }
-                  }, 100);
-                });
+                // Initialize map in fullscreen container
+                setTimeout(() => {
+                  if (map && fullscreenMapRef.current) {
+                    // Transfer the map to the fullscreen container
+                    fullscreenMapRef.current.appendChild(mapRef.current.firstChild);
+                    google.maps.event.trigger(map, 'resize');
+                    map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
+                  }
+                }, 100);
               }}
               className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg transition-all duration-300 ${
                 isDarkMode
@@ -1496,18 +1495,16 @@ export default function FullWidthGlobeMap() {
             >
               <Maximize2 className="w-4 h-4" />
             </Button>
-          )}
-        </div>
+          </div>
 
-        {/* Statistics Layout - Only shown in normal mode, positioned below map */}
-        {!isFullscreen && (
+          {/* Statistics Layout - Only shown in normal mode, positioned below map */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Live Statistics - Left Side with Vertical Layout */}
             <Card
               className="transition-all duration-300 border-2 hover:shadow-lg"
               style={{ 
                 backgroundColor: isDarkMode ? "#000000" : "#ffffff",
-                borderColor: colors.primary + "60"
+                borderColor: colors.primary
               }}
             >
               <CardContent className="p-6 h-full flex flex-col">
@@ -1607,7 +1604,7 @@ export default function FullWidthGlobeMap() {
                 className="transition-all duration-300 border-2 h-full hover:shadow-lg"
                 style={{ 
                   backgroundColor: isDarkMode ? "#000000" : "#ffffff",
-                  borderColor: colors.primary + "60"
+                  borderColor: colors.primary
                 }}
               >
                 <CardContent className="p-6 h-full flex flex-col">
@@ -1712,9 +1709,6 @@ export default function FullWidthGlobeMap() {
               </Card>
             </div>
           </div>
-        )}
-      </div>
-    </section>
         </div>
       </section>
     </>
