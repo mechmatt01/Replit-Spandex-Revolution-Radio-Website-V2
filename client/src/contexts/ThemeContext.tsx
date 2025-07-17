@@ -452,7 +452,41 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         root.style.setProperty("--color-background", colors.background);
       }
 
-      // Set CSS custom properties
+      // Helper function to convert hex to HSL
+      const hexToHsl = (hex: string): string => {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        if (!result) return "0 0% 0%";
+        
+        const r = parseInt(result[1], 16) / 255;
+        const g = parseInt(result[2], 16) / 255;
+        const b = parseInt(result[3], 16) / 255;
+        
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        let h: number, s: number, l: number = (max + min) / 2;
+        
+        if (max === min) {
+          h = s = 0;
+        } else {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+            default: h = 0;
+          }
+          h /= 6;
+        }
+        
+        h = Math.round(h * 360);
+        s = Math.round(s * 100);
+        l = Math.round(l * 100);
+        
+        return `${h} ${s}% ${l}%`;
+      };
+
+      // Set CSS custom properties for old system
       root.style.setProperty("--color-primary", colors.primary);
       root.style.setProperty("--color-secondary", colors.secondary);
       root.style.setProperty("--color-accent", colors.accent);
@@ -464,6 +498,27 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         "--gradient-primary",
         METAL_THEMES[currentTheme].gradient,
       );
+
+      // Set CSS custom properties for new Tailwind system (HSL values)
+      root.style.setProperty("--background", hexToHsl(colors.background));
+      root.style.setProperty("--foreground", hexToHsl(colors.text));
+      root.style.setProperty("--card", hexToHsl(colors.card || colors.surface));
+      root.style.setProperty("--card-foreground", hexToHsl(colors.text));
+      root.style.setProperty("--popover", hexToHsl(colors.surface));
+      root.style.setProperty("--popover-foreground", hexToHsl(colors.text));
+      root.style.setProperty("--primary", hexToHsl(colors.primary));
+      root.style.setProperty("--primary-foreground", hexToHsl(colors.primaryText || "#ffffff"));
+      root.style.setProperty("--secondary", hexToHsl(colors.secondary));
+      root.style.setProperty("--secondary-foreground", hexToHsl(colors.text));
+      root.style.setProperty("--muted", hexToHsl(colors.surface));
+      root.style.setProperty("--muted-foreground", hexToHsl(colors.textMuted || colors.textSecondary));
+      root.style.setProperty("--accent", hexToHsl(colors.accent));
+      root.style.setProperty("--accent-foreground", hexToHsl(colors.text));
+      root.style.setProperty("--destructive", "0 84.2% 60.2%");
+      root.style.setProperty("--destructive-foreground", hexToHsl(colors.text));
+      root.style.setProperty("--border", hexToHsl(colors.border));
+      root.style.setProperty("--input", hexToHsl(colors.border));
+      root.style.setProperty("--ring", hexToHsl(colors.primary));
 
       // Apply theme class
       root.classList.remove("light", "dark");

@@ -92,10 +92,10 @@ export default function Hero() {
         </p>
 
         <div className="mb-8 flex flex-col justify-center items-center">
-          <p className="font-orbitron font-black text-xl md:text-2xl text-metal-orange mb-1">
+          <p className="font-orbitron font-black text-xl md:text-2xl text-primary mb-1">
             Old School Metal
           </p>
-          <p className="font-orbitron font-black text-base md:text-lg text-metal-orange">
+          <p className="font-orbitron font-black text-base md:text-lg text-primary">
             24/7 Live Stream
           </p>
         </div>
