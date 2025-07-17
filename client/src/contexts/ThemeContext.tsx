@@ -488,6 +488,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.style.setProperty("--color-text", colors.text);
       root.style.setProperty("--color-text-secondary", colors.textSecondary);
       root.style.setProperty("--color-border", colors.border);
+      root.style.setProperty("--color-card", colors.card);
       root.style.setProperty(
         "--gradient-primary",
         METAL_THEMES[currentTheme].gradient,

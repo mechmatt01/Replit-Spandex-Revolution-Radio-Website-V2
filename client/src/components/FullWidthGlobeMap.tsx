@@ -228,8 +228,8 @@ export default function FullWidthGlobeMap() {
 
   // Function to update map styling when theme changes
   const updateMapStyles = (mapInstance: google.maps.Map) => {
-    // Use isMapDark which includes brightness detection
-    const shouldUseDarkStyles = isMapDark;
+    // Force dark mode for Classic Metal theme
+    const shouldUseDarkStyles = theme.name === 'Classic Metal' || isMapDark;
     const darkStyles = [
       {
         elementType: "geometry",
@@ -557,7 +557,8 @@ export default function FullWidthGlobeMap() {
       currentTheme: theme.name,
       isDarkMode,
       backgroundColor: theme.colors[isDarkMode ? 'dark' : 'light'].background,
-      isMapDark
+      isMapDark,
+      shouldUseDarkStyles: theme.name === 'Classic Metal' || isMapDark
     });
     
     // Use the main map container
@@ -1218,7 +1219,7 @@ export default function FullWidthGlobeMap() {
         <div
           className={`relative transition-all duration-700 ease-in-out ${
             isFullscreen 
-              ? "fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm" 
+              ? "fixed inset-0 z-[9999] bg-black" 
               : "h-[600px] mb-16"
           }`}
           style={{
@@ -1285,7 +1286,8 @@ export default function FullWidthGlobeMap() {
               height: isFullscreen ? "calc(100vh - 64px)" : "100%",
               marginTop: isFullscreen ? "64px" : "0",
               borderRadius: isFullscreen ? "0" : "0.5rem",
-              overflow: "hidden"
+              overflow: "hidden",
+              width: "100%"
             }}
           />
 
