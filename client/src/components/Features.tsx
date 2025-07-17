@@ -12,8 +12,11 @@ export default function Features() {
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
   });
-  const { getColors } = useTheme();
+  const { getColors, isDarkMode } = useTheme();
   const colors = getColors();
+  
+  // Ensure border color has a fallback
+  const borderColor = colors.border || (isDarkMode ? '#333333' : '#e0e0e0');
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -71,7 +74,7 @@ export default function Features() {
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
-              borderColor: colors.border,
+              borderColor: borderColor,
               boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
             }}
             onMouseEnter={(e) => {
@@ -79,7 +82,7 @@ export default function Features() {
               e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = colors.border;
+              e.currentTarget.style.borderColor = borderColor;
               e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
             }}
             onClick={scrollToRadioPlayer}
@@ -122,7 +125,7 @@ export default function Features() {
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
-              borderColor: colors.border,
+              borderColor: borderColor,
               boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
             }}
             onMouseEnter={(e) => {
@@ -130,7 +133,7 @@ export default function Features() {
               e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = colors.border;
+              e.currentTarget.style.borderColor = borderColor;
               e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
             }}
             onClick={() => scrollToSection("map")}
@@ -173,7 +176,7 @@ export default function Features() {
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
-              borderColor: colors.border,
+              borderColor: borderColor,
               boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
             }}
             onMouseEnter={(e) => {
@@ -181,7 +184,7 @@ export default function Features() {
               e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = colors.border;
+              e.currentTarget.style.borderColor = borderColor;
               e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
             }}
             onClick={() => scrollToSection("schedule")}
@@ -224,7 +227,7 @@ export default function Features() {
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
-              borderColor: colors.border,
+              borderColor: borderColor,
               boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
             }}
             onMouseEnter={(e) => {
@@ -232,7 +235,7 @@ export default function Features() {
               e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = colors.border;
+              e.currentTarget.style.borderColor = borderColor;
               e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
             }}
             onClick={() => scrollToSection("submissions")}
@@ -290,7 +293,7 @@ export default function Features() {
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
-              borderColor: colors.border,
+              borderColor: borderColor,
               boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
             }}
             onMouseEnter={(e) => {
@@ -298,7 +301,7 @@ export default function Features() {
               e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = colors.border;
+              e.currentTarget.style.borderColor = borderColor;
               e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
             }}
             onClick={() => scrollToSection("subscribe")}
@@ -356,7 +359,7 @@ export default function Features() {
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
               backgroundColor: colors.card,
-              borderColor: colors.border,
+              borderColor: borderColor,
               boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
             }}
             onMouseEnter={(e) => {
@@ -364,7 +367,7 @@ export default function Features() {
               e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = colors.border;
+              e.currentTarget.style.borderColor = borderColor;
               e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
             }}
             onClick={() => scrollToSection("merch")}

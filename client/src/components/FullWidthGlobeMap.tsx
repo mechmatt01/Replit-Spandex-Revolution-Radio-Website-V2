@@ -228,7 +228,8 @@ export default function FullWidthGlobeMap() {
 
   // Function to update map styling when theme changes
   const updateMapStyles = (mapInstance: google.maps.Map) => {
-    const shouldUseDarkStyles = isDarkMode; // Use isDarkMode directly for theme detection
+    // Use isMapDark which includes brightness detection
+    const shouldUseDarkStyles = isMapDark;
     const darkStyles = [
       {
         elementType: "geometry",
@@ -1281,7 +1282,7 @@ export default function FullWidthGlobeMap() {
             style={{
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "100vh" : "100%",
+              height: isFullscreen ? "calc(100vh - 64px)" : "100%",
               marginTop: isFullscreen ? "64px" : "0",
               borderRadius: isFullscreen ? "0" : "0.5rem",
               overflow: "hidden"
