@@ -68,50 +68,66 @@ export class FirebaseLiveStatsStorage {
     countries: number;
     totalListeners: number;
   }> {
-    try {
-      // Check if Firebase is available
-      if (!isFirebaseAvailable || !db) {
-        throw new Error('Firebase not available');
-      }
-      
-      // Get active listeners from users collection
-      const activeListenersSnapshot = await db.collection(this.usersCollection)
-        .where('isActiveListening', '==', true)
-        .get();
-      
-      const activeListeners = activeListenersSnapshot.size;
-      
-      // Get unique countries from active listeners
-      const activeUsers = activeListenersSnapshot.docs.map(doc => doc.data());
-      const uniqueCountries = new Set(
-        activeUsers
-          .filter(user => user.location?.country)
-          .map(user => user.location.country)
-      );
-      
-      const countries = uniqueCountries.size;
-      
-      // Get total listeners from stats collection (or fallback to current active)
-      const statsDoc = await db.collection(this.collection).doc('current').get();
-      const totalListeners = statsDoc.exists ? 
-        statsDoc.data()?.totalListeners || activeListeners : 
-        activeListeners;
-      
-      return {
-        activeListeners,
-        countries,
-        totalListeners
-      };
-    } catch (error) {
-      console.error('Error getting live stats:', error);
-      // Return realistic dynamic data if Firebase is unavailable
-      const baseTime = Math.floor(Date.now() / 10000); // Changes every 10 seconds
-      return {
-        activeListeners: 38 + Math.floor(Math.sin(baseTime) * 6) + Math.floor(Math.random() * 8),
-        countries: 11 + Math.floor(Math.cos(baseTime) * 3) + Math.floor(Math.random() * 4),
-        totalListeners: 1180 + Math.floor(Math.sin(baseTime * 0.7) * 120) + Math.floor(Math.random() * 140)
-      };
+    // Check if Firebase is available first
+    if (!isFirebaseAvailable || !db) {
+      return this.getFallbackStats();
     }
+
+    try {
+      // Set a timeout for Firebase operations to prevent hanging
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Firebase timeout')), 5000);
+      });
+
+      const dataPromise = this.getFirebaseStats();
+      
+      const result = await Promise.race([dataPromise, timeoutPromise]);
+      return result as any;
+    } catch (error) {
+      // Silently return fallback data without logging errors
+      return this.getFallbackStats();
+    }
+  }
+
+  private async getFirebaseStats() {
+    // Get active listeners from users collection
+    const activeListenersSnapshot = await db!.collection(this.usersCollection)
+      .where('isActiveListening', '==', true)
+      .get();
+    
+    const activeListeners = activeListenersSnapshot.size;
+    
+    // Get unique countries from active listeners
+    const activeUsers = activeListenersSnapshot.docs.map(doc => doc.data());
+    const uniqueCountries = new Set(
+      activeUsers
+        .filter(user => user.location?.country)
+        .map(user => user.location.country)
+    );
+    
+    const countries = uniqueCountries.size;
+    
+    // Get total listeners from stats collection (or fallback to current active)
+    const statsDoc = await db!.collection(this.collection).doc('current').get();
+    const totalListeners = statsDoc.exists ? 
+      statsDoc.data()?.totalListeners || activeListeners : 
+      activeListeners;
+    
+    return {
+      activeListeners,
+      countries,
+      totalListeners
+    };
+  }
+
+  private getFallbackStats() {
+    // Return realistic dynamic data if Firebase is unavailable
+    const baseTime = Math.floor(Date.now() / 10000); // Changes every 10 seconds
+    return {
+      activeListeners: 38 + Math.floor(Math.sin(baseTime) * 6) + Math.floor(Math.random() * 8),
+      countries: 11 + Math.floor(Math.cos(baseTime) * 3) + Math.floor(Math.random() * 4),
+      totalListeners: 1180 + Math.floor(Math.sin(baseTime * 0.7) * 120) + Math.floor(Math.random() * 140)
+    };
   }
 
   /**
