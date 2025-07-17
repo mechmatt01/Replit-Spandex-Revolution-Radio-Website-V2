@@ -3665,6 +3665,24 @@ video {
   --metal-blue: hsl(210, 100%, 65%);
 }
 
+/* Logo spin easter egg animation */
+@keyframes logoSpinFastToSlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(720deg);
+  }
+  100% {
+    transform: rotate(1080deg);
+  }
+}
+
+.logo-spin-easter-egg {
+  animation: logoSpinFastToSlow 5s ease-out;
+  transform-origin: center;
+}
+
 @keyframes scroll {
   0% {
     transform: translateX(0%);

@@ -228,6 +228,7 @@ export default function FullWidthGlobeMap() {
 
   // Function to update map styling when theme changes
   const updateMapStyles = (mapInstance: google.maps.Map) => {
+    const shouldUseDarkStyles = isDarkMode; // Use isDarkMode directly for theme detection
     const darkStyles = [
       {
         elementType: "geometry",
@@ -414,7 +415,7 @@ export default function FullWidthGlobeMap() {
     ];
 
     mapInstance.setOptions({
-      styles: isMapDark ? darkStyles : lightStyles
+      styles: shouldUseDarkStyles ? darkStyles : lightStyles
     });
   };
 
@@ -635,9 +636,7 @@ export default function FullWidthGlobeMap() {
       setMap(mapInstance);
 
       // Apply theme styles immediately after map creation
-      setTimeout(() => {
-        updateMapStyles(mapInstance);
-      }, 100);
+      updateMapStyles(mapInstance);
 
       // Add user location marker if available
       if (userLocation) {
@@ -1218,7 +1217,7 @@ export default function FullWidthGlobeMap() {
         <div
           className={`relative transition-all duration-700 ease-in-out ${
             isFullscreen 
-              ? "fixed inset-0 z-[60] bg-black/95 backdrop-blur-sm" 
+              ? "fixed inset-0 z-[9999] bg-black/95 backdrop-blur-sm" 
               : "h-[600px] mb-16"
           }`}
           style={{
