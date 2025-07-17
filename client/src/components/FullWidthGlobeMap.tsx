@@ -219,6 +219,7 @@ export default function FullWidthGlobeMap() {
     googleMapsApiKey: string;
     googleMapsSigningSecret: string;
     openWeatherApiKey: string;
+    googleMapsMapId: string;
   }>({
     queryKey: ["/api/config"],
     staleTime: 0, // Don't cache config data
@@ -322,8 +323,15 @@ export default function FullWidthGlobeMap() {
     
     // Use hardcoded API key if config is not available
     const apiKey = config?.googleMapsApiKey || "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
+    const mapId = config?.googleMapsMapId || "DEMO_MAP_ID";
     
-    if (!apiKey) return;
+    if (!apiKey) {
+      console.log('No API key available');
+      return;
+    }
+    
+    console.log('Initializing Google Maps with API key:', apiKey.substring(0, 20) + '...');
+    console.log('Using Map ID:', mapId);
     
     // Use the main map container
     const currentContainer = mapRef.current;
@@ -385,6 +393,7 @@ export default function FullWidthGlobeMap() {
         zoom: 2,
         center: userLocation || { lat: 40.7128, lng: -74.0060 }, // Default to NYC
         mapTypeId: google.maps.MapTypeId.ROADMAP,
+        mapId: mapId, // Add Map ID to prevent advanced markers error
         styles: isDarkMode
           ? [
               {

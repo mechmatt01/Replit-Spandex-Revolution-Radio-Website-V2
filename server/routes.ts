@@ -100,7 +100,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.setHeader('X-XSS-Protection', '1; mode=block');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)');
-    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com https://replit.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: https://maps.googleapis.com https://maps.gstatic.com; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' wss: https: https://maps.googleapis.com; media-src 'self' https:; frame-src 'self' https:;");
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com https://replit.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://maps.googleapis.com; img-src 'self' data: https: https://maps.googleapis.com https://maps.gstatic.com https://streetviewpixels-pa.googleapis.com https://lh3.googleusercontent.com; font-src 'self' data: https://fonts.gstatic.com https://maps.googleapis.com; connect-src 'self' wss: https: https://maps.googleapis.com https://maps.gstatic.com https://streetviewpixels-pa.googleapis.com; media-src 'self' https:; frame-src 'self' https:; child-src 'self' blob:;");
     res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     next();
   });
@@ -243,6 +243,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const googleMapsApiKey = "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
       const googleMapsSigningSecret = "xUMvkKZN7YbwACexIGzpV2o5Fms=";
       const openWeatherApiKey = process.env.OPENWEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5";
+      // Add Map ID for Google Maps
+      const googleMapsMapId = "DEMO_MAP_ID";
       
       // Disable caching for config endpoint to ensure new API key is loaded
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -252,7 +254,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         googleMapsApiKey,
         googleMapsSigningSecret,
-        openWeatherApiKey
+        openWeatherApiKey,
+        googleMapsMapId
       });
     } catch (error) {
       console.error("Error fetching config:", error);
