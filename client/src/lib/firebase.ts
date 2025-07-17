@@ -9,7 +9,8 @@ import {
   signOut,
   onAuthStateChanged,
   User,
-  sendPasswordResetEmail
+  sendPasswordResetEmail,
+  getRedirectResult
 } from "firebase/auth";
 import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
@@ -110,6 +111,26 @@ export async function getCurrentLocation(): Promise<{ latitude: number; longitud
       { timeout: 10000 }
     );
   });
+}
+
+// Sign in with Google
+export async function signInWithGoogle() {
+  if (!auth || !googleProvider) {
+    throw new Error("Firebase Auth not initialized");
+  }
+  return signInWithPopup(auth, googleProvider);
+}
+
+// Handle redirect result (for Google Sign-In)
+export async function handleRedirectResult() {
+  if (!auth) return null;
+  try {
+    const result = await getRedirectResult(auth);
+    return result;
+  } catch (error) {
+    console.error('Error handling redirect:', error);
+    return null;
+  }
 }
 
 // Create user profile in Firestore
