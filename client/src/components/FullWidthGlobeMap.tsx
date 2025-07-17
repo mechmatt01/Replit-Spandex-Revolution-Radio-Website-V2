@@ -1499,13 +1499,14 @@ export default function FullWidthGlobeMap() {
           )}
         </div>
 
-        {/* Statistics Layout - Always visible in normal mode */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Statistics Layout - Only shown in normal mode, positioned below map */}
+        {!isFullscreen && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Live Statistics - Left Side with Vertical Layout */}
             <Card
               className="transition-all duration-300 border-2 hover:shadow-lg"
               style={{ 
-                backgroundColor: colors.card,
+                backgroundColor: isDarkMode ? "#000000" : "#ffffff",
                 borderColor: colors.primary + "60"
               }}
             >
@@ -1605,7 +1606,7 @@ export default function FullWidthGlobeMap() {
               <Card
                 className="transition-all duration-300 border-2 h-full hover:shadow-lg"
                 style={{ 
-                  backgroundColor: colors.card,
+                  backgroundColor: isDarkMode ? "#000000" : "#ffffff",
                   borderColor: colors.primary + "60"
                 }}
               >
@@ -1711,6 +1712,9 @@ export default function FullWidthGlobeMap() {
               </Card>
             </div>
           </div>
+        )}
+      </div>
+    </section>
         </div>
       </section>
     </>
