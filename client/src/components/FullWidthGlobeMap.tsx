@@ -221,7 +221,8 @@ export default function FullWidthGlobeMap() {
     openWeatherApiKey: string;
   }>({
     queryKey: ["/api/config"],
-    staleTime: Infinity,
+    staleTime: 0, // Don't cache config data
+    cacheTime: 0, // Don't cache config data
     retry: 3,
     retryDelay: 1000,
   });

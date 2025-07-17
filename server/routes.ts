@@ -244,6 +244,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const googleMapsSigningSecret = "xUMvkKZN7YbwACexIGzpV2o5Fms=";
       const openWeatherApiKey = process.env.OPENWEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5";
       
+      // Disable caching for config endpoint to ensure new API key is loaded
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       res.json({
         googleMapsApiKey,
         googleMapsSigningSecret,
