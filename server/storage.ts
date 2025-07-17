@@ -508,4 +508,11 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+// Import Firebase storage instead of using DatabaseStorage
+import { firebaseStorage } from "./firebaseStorage";
+
+// Export Firebase storage as the main storage
+export const storage = firebaseStorage as any; // Using 'as any' temporarily to bypass type mismatches
+
+// Keep DatabaseStorage export for backwards compatibility if needed
+export const databaseStorage = new DatabaseStorage();

@@ -1,5 +1,5 @@
 import type { Express } from "express";
-import { firebaseRadioStorage } from "./firebaseStorage";
+import { firebaseStorage } from "./firebaseStorage";
 import { universalAdDetector } from "./universalAdDetection";
 import { isAuthenticated } from "./replitAuth";
 import { insertRadioStationSchema } from "@shared/schema";
@@ -36,7 +36,7 @@ export function registerAdminRoutes(app: Express): void {
   // Get all radio stations (admin only)
   app.get("/api/admin/radio-stations", isAuthenticated, requireAdmin, async (req, res) => {
     try {
-      const stations = await firebaseRadioStorage.getRadioStations();
+      const stations = await storage.getRadioStations();
       res.json(stations);
     } catch (error) {
       console.error("Failed to fetch radio stations:", error);
@@ -48,7 +48,7 @@ export function registerAdminRoutes(app: Express): void {
   app.get("/api/admin/radio-stations/:id", isAuthenticated, requireAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const station = await firebaseRadioStorage.getRadioStationById(id);
+      const station = await storage.getRadioStationById(id);
       
       if (!station) {
         return res.status(404).json({ error: "Radio station not found" });
@@ -67,12 +67,12 @@ export function registerAdminRoutes(app: Express): void {
       const validatedData = insertRadioStationSchema.parse(req.body);
       
       // Check if station ID already exists
-      const existingStation = await firebaseRadioStorage.getRadioStationByStationId(validatedData.stationId);
+      const existingStation = await storage.getRadioStationByStationId(validatedData.stationId);
       if (existingStation) {
         return res.status(409).json({ error: "Station ID already exists" });
       }
 
-      const station = await firebaseRadioStorage.createRadioStation(validatedData);
+      const station = await storage.createRadioStation(validatedData);
       
       // Test the station's metadata API
       const metadata = await universalAdDetector.fetchStationMetadata(station);
@@ -99,20 +99,20 @@ export function registerAdminRoutes(app: Express): void {
       const validatedData = insertRadioStationSchema.partial().parse(req.body);
       
       // Check if station exists
-      const existingStation = await firebaseRadioStorage.getRadioStationById(id);
+      const existingStation = await storage.getRadioStationById(id);
       if (!existingStation) {
         return res.status(404).json({ error: "Radio station not found" });
       }
 
       // Check if station ID is being changed and already exists
       if (validatedData.stationId && validatedData.stationId !== existingStation.stationId) {
-        const duplicateStation = await firebaseRadioStorage.getRadioStationByStationId(validatedData.stationId);
+        const duplicateStation = await storage.getRadioStationByStationId(validatedData.stationId);
         if (duplicateStation) {
           return res.status(409).json({ error: "Station ID already exists" });
         }
       }
 
-      const updatedStation = await firebaseRadioStorage.updateRadioStation(id, validatedData);
+      const updatedStation = await storage.updateRadioStation(id, validatedData);
       
       if (!updatedStation) {
         return res.status(500).json({ error: "Failed to update radio station" });
@@ -142,12 +142,12 @@ export function registerAdminRoutes(app: Express): void {
       const id = parseInt(req.params.id);
       
       // Check if station exists
-      const existingStation = await firebaseRadioStorage.getRadioStationById(id);
+      const existingStation = await storage.getRadioStationById(id);
       if (!existingStation) {
         return res.status(404).json({ error: "Radio station not found" });
       }
 
-      await firebaseRadioStorage.deleteRadioStation(id);
+      await storage.deleteRadioStation(id);
       
       res.json({ message: "Radio station deleted successfully" });
     } catch (error) {
@@ -166,7 +166,7 @@ export function registerAdminRoutes(app: Express): void {
         return res.status(400).json({ error: "Sort order must be a number" });
       }
 
-      const updatedStation = await firebaseRadioStorage.updateStationSortOrder(id, sortOrder);
+      const updatedStation = await storage.updateStationSortOrder(id, sortOrder);
       
       if (!updatedStation) {
         return res.status(404).json({ error: "Radio station not found" });
@@ -183,7 +183,7 @@ export function registerAdminRoutes(app: Express): void {
   app.post("/api/admin/radio-stations/:id/test", isAuthenticated, requireAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const station = await firebaseRadioStorage.getRadioStationById(id);
+      const station = await storage.getRadioStationById(id);
       
       if (!station) {
         return res.status(404).json({ error: "Radio station not found" });
@@ -212,7 +212,7 @@ export function registerAdminRoutes(app: Express): void {
   app.get("/api/admin/radio-stations/:id/ads", isAuthenticated, requireAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const station = await firebaseRadioStorage.getRadioStationById(id);
+      const station = await storage.getRadioStationById(id);
       
       if (!station) {
         return res.status(404).json({ error: "Radio station not found" });
@@ -237,8 +237,8 @@ export function registerAdminRoutes(app: Express): void {
   // Initialize default stations (admin only)
   app.post("/api/admin/radio-stations/initialize", isAuthenticated, requireAdmin, async (req, res) => {
     try {
-      await firebaseRadioStorage.initializeDefaultStations();
-      const stations = await firebaseRadioStorage.getRadioStations();
+      await storage.initializeDefaultStations();
+      const stations = await storage.getRadioStations();
       
       res.json({
         message: "Default stations initialized successfully",

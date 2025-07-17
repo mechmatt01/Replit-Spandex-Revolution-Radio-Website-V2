@@ -19,6 +19,7 @@ interface Product {
   reviewCount: number;
   inStock: boolean;
   featured?: boolean;
+  currency?: string;
 }
 
 interface ProductVariant {

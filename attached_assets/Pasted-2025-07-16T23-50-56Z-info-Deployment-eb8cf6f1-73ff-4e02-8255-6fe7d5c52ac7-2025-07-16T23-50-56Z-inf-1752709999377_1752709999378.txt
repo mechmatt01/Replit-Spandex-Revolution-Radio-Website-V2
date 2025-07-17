@@ -1,0 +1,51 @@
+2025-07-16T23:50:56Z info: Deployment: eb8cf6f1-73ff-4e02-8255-6fe7d5c52ac7
+2025-07-16T23:50:56Z info: Build: 698fa48d-f633-4b42-bf17-7be5c9a6d888
+2025-07-16T23:50:56Z info: Connecting to builder
+2025-07-16T23:50:57Z info: Builder connected
+2025-07-16T23:50:58Z info: Installing packages
+2025-07-16T23:50:59Z info: Starting Build
+
+> rest-express@1.0.0 build
+> cd client && npm run build && cd .. && tsc --project tsconfig.json
+
+
+
+> spandex-revolution-radio-client@1.0.0 build
+> vite build
+
+
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+vite v6.3.5 building for production...
+
+transforming...
+
+✓ 2124 modules transformed.
+
+rendering chunks...
+
+computing gzip size...
+
+dist/index.html                                     2.13 kB │ gzip:   0.91 kB
+
+dist/assets/cloudy-day-3-a1BleRsa.svg               6.53 kB │ gzip:   1.22 kB
+dist/assets/cloudy-day-2-C3uUcQex.svg               6.53 kB │ gzip:   1.22 kB
+
+✓ built in 9.43s
+
+client/src/components/AdminPanel.tsx(134,58): error TS2345: Argument of type '{ method: string; body: string; }' is not assignable to parameter of type 'string'.
+
+server/storage.ts(434,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(value: { email: string | SQL<unknown> | Placeholder<string, any>; plan: string | SQL<unknown> | Placeholder<string, any>; }): PgInsertBase<PgTableWithColumns<{ name: "subscriptions"; schema: undefined; columns: { ...; }; dialect: "pg"; }>, ... 4 more ..., never>', gave the following error.
+    Argument of type '{ status?: string; email?: string; plan?: string; }' is not assignable to parameter of type '{ email: string | SQL<unknown> | Placeholder<string, any>; plan: string | SQL<unknown> | Placeholder<string, any>; }'.
+      Property 'email' is optional in type '{ status?: string; email?: string; plan?: string; }' but required in type '{ email: string | SQL<unknown> | Placeholder<string, any>; plan: string | SQL<unknown> | Placeholder<string, any>; }'.
+  Overload 2 of 2, '(values: { email: string | SQL<unknown> | Placeholder<string, any>; plan: string | SQL<unknown> | Placeholder<string, any>; }[]): PgInsertBase<PgTableWithColumns<{ name: "subscriptions"; schema: undefined; columns: { ...; }; dialect: "pg"; }>, ... 4 more ..., never>', gave the following error.
+    Argument of type '{ status?: string; email?: string; plan?: string; }' is not assignable to parameter of type '{ email: string | SQL<unknown> | Placeholder<string, any>; plan: string | SQL<unknown> | Placeholder<string, any>; }[]'.
+      Type '{ status?: string; email?: string; plan?: string; }' is missing the following properties from type '{ email: string | SQL<unknown> | Placeholder<string, any>; plan: string | SQL<unknown> | Placeholder<string, any>; }[]': length, pop, push, concat, and 29 more.
+server/storage.ts(446,9): error TS2353: Object literal may only specify known properties, and 'accountDeletionScheduled' does not exist in type '{ id?: string | SQL<unknown> | PgColumn<ColumnBaseConfig<ColumnDataType, string>, {}, {}>; }'.
+server/storage.ts(480,61): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(value: { name: string | SQL<unknown> | Placeholder<string, any>; streamUrl: string | SQL<unknown> | Placeholder<string, any>; apiType: string | SQL<unknown> | Placeholder<...>; stationId: string | ... 1 more ... | Placeholder<...>; }): PgInsertBase<...>', gave the following error.
+    Argument of type '{ name?: string; location?: string; description?: string; frequency?: string; genre?: string; streamUrl?: string; isActive?: boolean; apiUrl?: string; apiType?: "custom" | "triton" | "streamtheworld" | "somafm" | "auto"; stationId?: string; website?: string; logo?: string; sortOrder?: number; }' is not assignable to parameter of type '{ name: string | SQL<unknown> | Placeholder<string, any>; streamUrl: string | SQL<unknown> | Placeholder<string, any>; apiType: string | SQL<unknown> | Placeholder<...>; stationId: string | ... 1 more ... | Placeholder<...>; }'.
+      Property 'name' is optional in type '{ name?: string; location?: string; description?: string; frequency?: string; genre?: string; streamUrl?: string; isActive?: boolean; apiUrl?: string; apiType?: "custom" | "triton" | "streamtheworld" | "somafm" | "auto"; stationId?: string; website?: string; logo?: string; sortOrder?: number; }' but required in type '{ name: string | SQL<unknown> | Placeholder<string, any>; streamUrl: string | SQL<unknown> | Placeholder<string, any>; apiType: string | SQL<unknown> | Placeholder<...>; stationId: string | ... 1 more ... | Placeholder<...>; }'.
+  Overload 2 of 2, '(values: { name: string | SQL<unknown> | Placeholder<string, any>; streamUrl: string | SQL<unknown> | Placeholder<string, any>; apiType: string | SQL<unknown> | Placeholder<...>; stationId: string | ... 1 more ... | Placeholder<...>; }[]): PgInsertBase<...>', gave the following error.
+    Argument of type '{ name?: string; location?: string; description?: string; frequency?: string; genre?: string; streamUrl?: string; isActive?: boolean; apiUrl?: string; apiType?: "custom" | "triton" | "streamtheworld" | "somafm" | "auto"; stationId?: string; website?: string; logo?: string; sortOrder?: number; 
