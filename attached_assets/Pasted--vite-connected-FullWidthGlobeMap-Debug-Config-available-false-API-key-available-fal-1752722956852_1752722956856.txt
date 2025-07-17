@@ -1,0 +1,340 @@
+ [vite] connected.
+ === FullWidthGlobeMap Debug ===
+ Config available: false
+ API key available: false
+ API key value: undefined...
+ Map ref current: true
+ User location available: false
+ User location value: null
+ Is fullscreen: false
+chunk-KQ564Z5K.js?v=b50fca6c:377 [Violation] 'message' handler took 242ms
+[Violation] Forced reflow while executing JavaScript took 56ms
+  GET https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user 401 (Unauthorized)
+(anonymous) @ queryClient.ts:19
+fetchFn @ @tanstack_react-query.js:881
+run @ @tanstack_react-query.js:513
+start @ @tanstack_react-query.js:555
+fetch @ @tanstack_react-query.js:969
+executeFetch_fn @ @tanstack_react-query.js:2280
+onSubscribe @ @tanstack_react-query.js:1983
+subscribe @ @tanstack_react-query.js:24
+(anonymous) @ @tanstack_react-query.js:3147
+subscribeToStore @ chunk-KQ564Z5K.js:12032
+commitHookEffectListMount @ chunk-KQ564Z5K.js:16963
+commitPassiveMountOnFiber @ chunk-KQ564Z5K.js:18206
+commitPassiveMountEffects_complete @ chunk-KQ564Z5K.js:18179
+commitPassiveMountEffects_begin @ chunk-KQ564Z5K.js:18169
+commitPassiveMountEffects @ chunk-KQ564Z5K.js:18159
+flushPassiveEffectsImpl @ chunk-KQ564Z5K.js:19543
+flushPassiveEffects @ chunk-KQ564Z5K.js:19500
+performSyncWorkOnRoot @ chunk-KQ564Z5K.js:18921
+flushSyncCallbacks @ chunk-KQ564Z5K.js:9166
+commitRootImpl @ chunk-KQ564Z5K.js:19485
+commitRoot @ chunk-KQ564Z5K.js:19330
+finishConcurrentRender @ chunk-KQ564Z5K.js:18858
+performConcurrentWorkOnRoot @ chunk-KQ564Z5K.js:18768
+workLoop @ chunk-KQ564Z5K.js:197
+flushWork @ chunk-KQ564Z5K.js:176
+performWorkUntilDeadline @ chunk-KQ564Z5K.js:384Understand this error
+ Geolocation permission: granted
+ [Violation] Only request geolocation information in response to a user gesture.
+getLocation @ FullWidthGlobeMap.tsx:153
+  GET https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user 401 (Unauthorized)
+refreshUser @ AuthContext.tsx:59
+(anonymous) @ AuthContext.tsx:177
+commitHookEffectListMount @ chunk-KQ564Z5K.js:16963
+commitPassiveMountOnFiber @ chunk-KQ564Z5K.js:18206
+commitPassiveMountEffects_complete @ chunk-KQ564Z5K.js:18179
+commitPassiveMountEffects_begin @ chunk-KQ564Z5K.js:18169
+commitPassiveMountEffects @ chunk-KQ564Z5K.js:18159
+flushPassiveEffectsImpl @ chunk-KQ564Z5K.js:19543
+flushPassiveEffects @ chunk-KQ564Z5K.js:19500
+performSyncWorkOnRoot @ chunk-KQ564Z5K.js:18921
+flushSyncCallbacks @ chunk-KQ564Z5K.js:9166
+commitRootImpl @ chunk-KQ564Z5K.js:19485
+commitRoot @ chunk-KQ564Z5K.js:19330
+finishConcurrentRender @ chunk-KQ564Z5K.js:18858
+performConcurrentWorkOnRoot @ chunk-KQ564Z5K.js:18768
+workLoop @ chunk-KQ564Z5K.js:197
+flushWork @ chunk-KQ564Z5K.js:176
+performWorkUntilDeadline @ chunk-KQ564Z5K.js:384Understand this error
+ Fetch failed loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user".
+(anonymous) @ queryClient.ts:19
+fetchFn @ @tanstack_react-query.js:881
+run @ @tanstack_react-query.js:513
+start @ @tanstack_react-query.js:555
+fetch @ @tanstack_react-query.js:969
+executeFetch_fn @ @tanstack_react-query.js:2280
+onSubscribe @ @tanstack_react-query.js:1983
+subscribe @ @tanstack_react-query.js:24
+(anonymous) @ @tanstack_react-query.js:3147
+subscribeToStore @ chunk-KQ564Z5K.js:12032
+commitHookEffectListMount @ chunk-KQ564Z5K.js:16963
+commitPassiveMountOnFiber @ chunk-KQ564Z5K.js:18206
+commitPassiveMountEffects_complete @ chunk-KQ564Z5K.js:18179
+commitPassiveMountEffects_begin @ chunk-KQ564Z5K.js:18169
+commitPassiveMountEffects @ chunk-KQ564Z5K.js:18159
+flushPassiveEffectsImpl @ chunk-KQ564Z5K.js:19543
+flushPassiveEffects @ chunk-KQ564Z5K.js:19500
+performSyncWorkOnRoot @ chunk-KQ564Z5K.js:18921
+flushSyncCallbacks @ chunk-KQ564Z5K.js:9166
+commitRootImpl @ chunk-KQ564Z5K.js:19485
+commitRoot @ chunk-KQ564Z5K.js:19330
+finishConcurrentRender @ chunk-KQ564Z5K.js:18858
+performConcurrentWorkOnRoot @ chunk-KQ564Z5K.js:18768
+workLoop @ chunk-KQ564Z5K.js:197
+flushWork @ chunk-KQ564Z5K.js:176
+performWorkUntilDeadline @ chunk-KQ564Z5K.js:384
+62Fetch finished loading: GET "<URL>".
+ Got location: 41.919812203883225 -88.29139671588813
+ === FullWidthGlobeMap Debug ===
+ Config available: false
+ API key available: false
+ API key value: undefined...
+ Map ref current: true
+ User location available: true
+ User location value: {lat: 41.919812203883225, lng: -88.29139671588813}
+ Is fullscreen: false
+ === FullWidthGlobeMap Debug ===
+ Config available: true
+ API key available: true
+ API key value: AIzaSyD684t68gy...
+ Map ref current: true
+ User location available: true
+ User location value: {lat: 41.919812203883225, lng: -88.29139671588813}
+ Is fullscreen: false
+ Fetch failed loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user".
+refreshUser @ AuthContext.tsx:59
+(anonymous) @ AuthContext.tsx:177
+commitHookEffectListMount @ chunk-KQ564Z5K.js:16963
+commitPassiveMountOnFiber @ chunk-KQ564Z5K.js:18206
+commitPassiveMountEffects_complete @ chunk-KQ564Z5K.js:18179
+commitPassiveMountEffects_begin @ chunk-KQ564Z5K.js:18169
+commitPassiveMountEffects @ chunk-KQ564Z5K.js:18159
+flushPassiveEffectsImpl @ chunk-KQ564Z5K.js:19543
+flushPassiveEffects @ chunk-KQ564Z5K.js:19500
+performSyncWorkOnRoot @ chunk-KQ564Z5K.js:18921
+flushSyncCallbacks @ chunk-KQ564Z5K.js:9166
+commitRootImpl @ chunk-KQ564Z5K.js:19485
+commitRoot @ chunk-KQ564Z5K.js:19330
+finishConcurrentRender @ chunk-KQ564Z5K.js:18858
+performConcurrentWorkOnRoot @ chunk-KQ564Z5K.js:18768
+workLoop @ chunk-KQ564Z5K.js:197
+flushWork @ chunk-KQ564Z5K.js:176
+performWorkUntilDeadline @ chunk-KQ564Z5K.js:384
+ Attempting to play stream 1/2: /api/radio-stream
+ Stream 1 working successfully
+ Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+overrideMethod @ installHook.js:1
+bda @ js:1020
+google.maps.Load @ js:14
+(anonymous) @ js:1264
+(anonymous) @ js:1264Understand this warning
+ Google Maps API callback triggered
+  GET https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true net::ERR_BLOCKED_BY_CLIENT
+_.B.send @ js:1050
+$ca @ js:1029
+bda @ js:1021
+google.maps.Load @ js:14
+(anonymous) @ js:1264
+(anonymous) @ js:1264Understand this error
+ XHR failed loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js:1050
+$ca @ js:1029
+bda @ js:1021
+google.maps.Load @ js:14
+(anonymous) @ js:1264
+(anonymous) @ js:1264
+FullWidthGlobeMap.tsx:988 [Violation] 'setTimeout' handler took 59ms
+Navigated to https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/
+client:789 [vite] connecting...
+client:912 [vite] connected.
+FullWidthGlobeMap.tsx:305 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:306 Config available: false
+FullWidthGlobeMap.tsx:307 API key available: false
+FullWidthGlobeMap.tsx:308 API key value: undefined...
+FullWidthGlobeMap.tsx:309 Map ref current: true
+FullWidthGlobeMap.tsx:310 User location available: false
+FullWidthGlobeMap.tsx:311 User location value: null
+FullWidthGlobeMap.tsx:312 Is fullscreen: false
+chunk-KQ564Z5K.js?v=b50fca6c:377 [Violation] 'message' handler took 423ms
+[Violation] Forced reflow while executing JavaScript took 80ms
+queryClient.ts:32  GET https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user 401 (Unauthorized)
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=b50fca6c:881
+run @ @tanstack_react-query.js?v=b50fca6c:513
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+onSubscribe @ @tanstack_react-query.js?v=b50fca6c:1983
+subscribe @ @tanstack_react-query.js?v=b50fca6c:24
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:3147
+subscribeToStore @ chunk-KQ564Z5K.js?v=b50fca6c:12032
+commitHookEffectListMount @ chunk-KQ564Z5K.js?v=b50fca6c:16963
+commitPassiveMountOnFiber @ chunk-KQ564Z5K.js?v=b50fca6c:18206
+commitPassiveMountEffects_complete @ chunk-KQ564Z5K.js?v=b50fca6c:18179
+commitPassiveMountEffects_begin @ chunk-KQ564Z5K.js?v=b50fca6c:18169
+commitPassiveMountEffects @ chunk-KQ564Z5K.js?v=b50fca6c:18159
+flushPassiveEffectsImpl @ chunk-KQ564Z5K.js?v=b50fca6c:19543
+flushPassiveEffects @ chunk-KQ564Z5K.js?v=b50fca6c:19500
+performSyncWorkOnRoot @ chunk-KQ564Z5K.js?v=b50fca6c:18921
+flushSyncCallbacks @ chunk-KQ564Z5K.js?v=b50fca6c:9166
+commitRootImpl @ chunk-KQ564Z5K.js?v=b50fca6c:19485
+commitRoot @ chunk-KQ564Z5K.js?v=b50fca6c:19330
+finishConcurrentRender @ chunk-KQ564Z5K.js?v=b50fca6c:18858
+performConcurrentWorkOnRoot @ chunk-KQ564Z5K.js?v=b50fca6c:18768
+workLoop @ chunk-KQ564Z5K.js?v=b50fca6c:197
+flushWork @ chunk-KQ564Z5K.js?v=b50fca6c:176
+performWorkUntilDeadline @ chunk-KQ564Z5K.js?v=b50fca6c:384Understand this error
+FullWidthGlobeMap.tsx:234 Geolocation permission: granted
+FullWidthGlobeMap.tsx:236 [Violation] Only request geolocation information in response to a user gesture.
+getLocation @ FullWidthGlobeMap.tsx:236
+AuthContext.tsx:74  GET https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user 401 (Unauthorized)
+refreshUser @ AuthContext.tsx:74
+(anonymous) @ AuthContext.tsx:221
+commitHookEffectListMount @ chunk-KQ564Z5K.js?v=b50fca6c:16963
+commitPassiveMountOnFiber @ chunk-KQ564Z5K.js?v=b50fca6c:18206
+commitPassiveMountEffects_complete @ chunk-KQ564Z5K.js?v=b50fca6c:18179
+commitPassiveMountEffects_begin @ chunk-KQ564Z5K.js?v=b50fca6c:18169
+commitPassiveMountEffects @ chunk-KQ564Z5K.js?v=b50fca6c:18159
+flushPassiveEffectsImpl @ chunk-KQ564Z5K.js?v=b50fca6c:19543
+flushPassiveEffects @ chunk-KQ564Z5K.js?v=b50fca6c:19500
+performSyncWorkOnRoot @ chunk-KQ564Z5K.js?v=b50fca6c:18921
+flushSyncCallbacks @ chunk-KQ564Z5K.js?v=b50fca6c:9166
+commitRootImpl @ chunk-KQ564Z5K.js?v=b50fca6c:19485
+commitRoot @ chunk-KQ564Z5K.js?v=b50fca6c:19330
+finishConcurrentRender @ chunk-KQ564Z5K.js?v=b50fca6c:18858
+performConcurrentWorkOnRoot @ chunk-KQ564Z5K.js?v=b50fca6c:18768
+workLoop @ chunk-KQ564Z5K.js?v=b50fca6c:197
+flushWork @ chunk-KQ564Z5K.js?v=b50fca6c:176
+performWorkUntilDeadline @ chunk-KQ564Z5K.js?v=b50fca6c:384Understand this error
+queryClient.ts:32 Fetch failed loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user".
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=b50fca6c:881
+run @ @tanstack_react-query.js?v=b50fca6c:513
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+onSubscribe @ @tanstack_react-query.js?v=b50fca6c:1983
+subscribe @ @tanstack_react-query.js?v=b50fca6c:24
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:3147
+subscribeToStore @ chunk-KQ564Z5K.js?v=b50fca6c:12032
+commitHookEffectListMount @ chunk-KQ564Z5K.js?v=b50fca6c:16963
+commitPassiveMountOnFiber @ chunk-KQ564Z5K.js?v=b50fca6c:18206
+commitPassiveMountEffects_complete @ chunk-KQ564Z5K.js?v=b50fca6c:18179
+commitPassiveMountEffects_begin @ chunk-KQ564Z5K.js?v=b50fca6c:18169
+commitPassiveMountEffects @ chunk-KQ564Z5K.js?v=b50fca6c:18159
+flushPassiveEffectsImpl @ chunk-KQ564Z5K.js?v=b50fca6c:19543
+flushPassiveEffects @ chunk-KQ564Z5K.js?v=b50fca6c:19500
+performSyncWorkOnRoot @ chunk-KQ564Z5K.js?v=b50fca6c:18921
+flushSyncCallbacks @ chunk-KQ564Z5K.js?v=b50fca6c:9166
+commitRootImpl @ chunk-KQ564Z5K.js?v=b50fca6c:19485
+commitRoot @ chunk-KQ564Z5K.js?v=b50fca6c:19330
+finishConcurrentRender @ chunk-KQ564Z5K.js?v=b50fca6c:18858
+performConcurrentWorkOnRoot @ chunk-KQ564Z5K.js?v=b50fca6c:18768
+workLoop @ chunk-KQ564Z5K.js?v=b50fca6c:197
+flushWork @ chunk-KQ564Z5K.js?v=b50fca6c:176
+performWorkUntilDeadline @ chunk-KQ564Z5K.js?v=b50fca6c:384
+13Fetch finished loading: GET "<URL>".
+FullWidthGlobeMap.tsx:238 Got location: 41.919624343596325 -88.29215998127484
+FullWidthGlobeMap.tsx:305 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:306 Config available: false
+FullWidthGlobeMap.tsx:307 API key available: false
+FullWidthGlobeMap.tsx:308 API key value: undefined...
+FullWidthGlobeMap.tsx:309 Map ref current: true
+FullWidthGlobeMap.tsx:310 User location available: true
+FullWidthGlobeMap.tsx:311 User location value: {lat: 41.919624343596325, lng: -88.29215998127484}
+FullWidthGlobeMap.tsx:312 Is fullscreen: false
+FullWidthGlobeMap.tsx:305 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:306 Config available: true
+FullWidthGlobeMap.tsx:307 API key available: true
+FullWidthGlobeMap.tsx:308 API key value: AIzaSyD684t68gy...
+FullWidthGlobeMap.tsx:309 Map ref current: true
+FullWidthGlobeMap.tsx:310 User location available: true
+FullWidthGlobeMap.tsx:311 User location value: {lat: 41.919624343596325, lng: -88.29215998127484}
+FullWidthGlobeMap.tsx:312 Is fullscreen: false
+AuthContext.tsx:74 Fetch failed loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user".
+refreshUser @ AuthContext.tsx:74
+(anonymous) @ AuthContext.tsx:221
+commitHookEffectListMount @ chunk-KQ564Z5K.js?v=b50fca6c:16963
+commitPassiveMountOnFiber @ chunk-KQ564Z5K.js?v=b50fca6c:18206
+commitPassiveMountEffects_complete @ chunk-KQ564Z5K.js?v=b50fca6c:18179
+commitPassiveMountEffects_begin @ chunk-KQ564Z5K.js?v=b50fca6c:18169
+commitPassiveMountEffects @ chunk-KQ564Z5K.js?v=b50fca6c:18159
+flushPassiveEffectsImpl @ chunk-KQ564Z5K.js?v=b50fca6c:19543
+flushPassiveEffects @ chunk-KQ564Z5K.js?v=b50fca6c:19500
+performSyncWorkOnRoot @ chunk-KQ564Z5K.js?v=b50fca6c:18921
+flushSyncCallbacks @ chunk-KQ564Z5K.js?v=b50fca6c:9166
+commitRootImpl @ chunk-KQ564Z5K.js?v=b50fca6c:19485
+commitRoot @ chunk-KQ564Z5K.js?v=b50fca6c:19330
+finishConcurrentRender @ chunk-KQ564Z5K.js?v=b50fca6c:18858
+performConcurrentWorkOnRoot @ chunk-KQ564Z5K.js?v=b50fca6c:18768
+workLoop @ chunk-KQ564Z5K.js?v=b50fca6c:197
+flushWork @ chunk-KQ564Z5K.js?v=b50fca6c:176
+performWorkUntilDeadline @ chunk-KQ564Z5K.js?v=b50fca6c:384
+js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1020 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+overrideMethod @ hook.js:608
+bda @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1020
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+FullWidthGlobeMap.tsx:986 Google Maps API callback triggered
+RadioContext.tsx:137 Attempting to play stream 1/2: /api/radio-stream
+js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1050  GET https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1050
+$ca @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1029
+bda @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1021
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1264Understand this error
+js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1050 XHR failed loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1050
+$ca @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1029
+bda @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1021
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk&libraries=geometry,marker&callback=initMapCallback:1264
+RadioContext.tsx:168 Stream 1 working successfully
+hook.js:608 Warning: Received `true` for a non-boolean attribute `jsx`.
+
+If you want to write it to the DOM, pass a string instead: jsx="true" or jsx={value.toString()}. Error Component Stack
+    at style (<anonymous>)
+    at div (<anonymous>)
+    at ScrollingText (ScrollingText.tsx:14:3)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at StickyPlayer (StickyPlayer.tsx:20:7)
+    at div (<anonymous>)
+    at HomePage (HomePage.tsx:20:55)
+    at Route (wouter.js?v=b50fca6c:280:16)
+    at Switch (wouter.js?v=b50fca6c:336:17)
+    at Router (<anonymous>)
+    at Provider (chunk-VMTBKFOJ.js?v=b50fca6c:48:15)
+    at TooltipProvider (@radix-ui_react-tooltip.js?v=b50fca6c:62:5)
+    at AdminProvider (AdminContext.tsx:18:33)
+    at RadioProvider (RadioContext.tsx:73:33)
+    at ThemeProvider (ThemeContext.tsx:350:33)
+    at AuthProvider (AuthContext.tsx:50:32)
+    at QueryClientProvider (@tanstack_react-query.js?v=b50fca6c:2934:3)
+    at App (<anonymous>)
+overrideMethod @ hook.js:608
+printWarning @ chunk-KQ564Z5K.js?v=b50fca6c:521
+error @ chunk-KQ564Z5K.js?v=b50fca6c:505
+validateProperty$1 @ chunk-KQ564Z5K.js?v=b50fca6c:3439
+warnUnknownProperties @ chunk-KQ564Z5K.js?v=b50fca6c:3465
+validateProperties$2 @ chunk-KQ564Z5K.js?v=b50fca6c:3484
+validatePropertiesInDevelopment @ chunk-KQ564Z5K.js?v=b50fca6c:7378
+setInitialProperties @ chunk-KQ564Z5K.js?v=b50fca6c:7567
+finalizeInitialChildren @ chunk-KQ564Z5K.js?v=b50fca6c:8392
+completeWork @ chunk-KQ564Z5K.js?v=b50fca6c:16341
+completeUnitOfWork @ chunk-KQ564Z5K.js?v=b50fca6c:19277
+performUnitOfWork @ chunk-KQ564Z5K.js?v=b50fca6c:19259
+workLoopSync @ chunk-KQ564Z5K.js?v=b50fca6c:19190
+renderRootSync @ chunk-KQ564Z5K.js?v=b50fca6c:19169
+performConcurrentWorkOnRoot @ chunk-KQ564Z5K.js?v=b50fca6c:18728
+workLoop @ chunk-KQ564Z5K.js?v=b50fca6c:197
+flushWork @ chunk-KQ564Z5K.js?v=b50fca6c:176
+performWorkUntilDeadline @ chunk-KQ564Z5K.js?v=b50fca6c:384Understand this error

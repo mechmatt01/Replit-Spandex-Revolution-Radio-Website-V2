@@ -615,7 +615,12 @@ export default function InteractiveListenerMap() {
   const { data: config } = useQuery<{ googleMapsApiKey: string; openWeatherApiKey: string }>({
     queryKey: ["/api/config"],
     staleTime: Infinity,
+    retry: 3,
+    retryDelay: 1000,
   });
+
+  // Use hardcoded API key if config is not available
+  const apiKey = config?.googleMapsApiKey || "AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk";
 
   // Fetch weather data when user location is available
   const { data: weather, error: weatherError, isLoading: weatherLoading } = useQuery<WeatherData>({
@@ -949,14 +954,14 @@ export default function InteractiveListenerMap() {
                         console.log('Map render - googleMapsApiKey:', config?.googleMapsApiKey);
                         return null;
                       })()}
-                      {config?.googleMapsApiKey ? (
+                      {apiKey ? (
                         <GoogleMapWithListeners
                           listeners={activeListeners}
                           colors={colors}
                           isDarkMode={isDarkMode}
                           onListenerClick={setSelectedListener}
                           selectedListener={selectedListener}
-                          apiKey={config.googleMapsApiKey}
+                          apiKey={apiKey}
                           userLocation={userLocation || undefined}
                         />
                       ) : (

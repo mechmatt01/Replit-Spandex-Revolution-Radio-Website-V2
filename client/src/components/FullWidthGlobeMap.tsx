@@ -215,14 +215,21 @@ export default function FullWidthGlobeMap() {
   });
 
   // Fetch Google Maps API key and config
-  const { data: config } = useQuery<{
+  const { data: config, error: configError, isLoading: configLoading } = useQuery<{
     googleMapsApiKey: string;
     googleMapsSigningSecret: string;
     openWeatherApiKey: string;
   }>({
     queryKey: ["/api/config"],
     staleTime: Infinity,
+    retry: 3,
+    retryDelay: 1000,
   });
+
+  // Debug config loading
+  useEffect(() => {
+    console.log('Config loading status:', { configLoading, config, configError });
+  }, [configLoading, config, configError]);
 
   // Get user's location
   useEffect(() => {
@@ -311,7 +318,10 @@ export default function FullWidthGlobeMap() {
     console.log('User location value:', userLocation);
     console.log('Is fullscreen:', isFullscreen);
     
-    if (!config?.googleMapsApiKey) return;
+    // Use hardcoded API key if config is not available
+    const apiKey = config?.googleMapsApiKey || "AIzaSyD684t68gySSzHi6MwBX2o9p3xK3XsMkUk";
+    
+    if (!apiKey) return;
     
     // Use the main map container
     const currentContainer = mapRef.current;
@@ -997,7 +1007,7 @@ export default function FullWidthGlobeMap() {
     // Load Google Maps API if not already loaded
     if (typeof google === "undefined" || !google.maps) {
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=geometry,marker&callback=initMapCallback`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry,marker&callback=initMapCallback`;
       script.async = true;
       script.defer = true;
       script.onerror = (error) => {
