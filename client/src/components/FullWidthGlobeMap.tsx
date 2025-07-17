@@ -197,7 +197,34 @@ export default function FullWidthGlobeMap() {
   } | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const currentInfoWindow = useRef<any>(null);
-  const { colors, isDarkMode } = useTheme();
+  const { colors, isDarkMode, theme } = useTheme();
+
+  // Intelligent theme detection for Google Maps
+  const shouldUseDarkMap = () => {
+    const currentColors = theme.colors[isDarkMode ? 'dark' : 'light'];
+    const backgroundColor = currentColors.background;
+    
+    // Convert hex color to RGB and calculate brightness
+    const hexToRgb = (hex: string) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    };
+    
+    const rgb = hexToRgb(backgroundColor);
+    if (!rgb) return isDarkMode; // Fallback to isDarkMode
+    
+    // Calculate relative luminance
+    const brightness = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
+    
+    // Use dark map if background brightness is below 0.5
+    return brightness < 0.5;
+  };
+  
+  const isMapDark = shouldUseDarkMap();
 
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
@@ -332,6 +359,12 @@ export default function FullWidthGlobeMap() {
     
     console.log('Initializing Google Maps with API key:', apiKey.substring(0, 20) + '...');
     console.log('Using Map ID:', mapId);
+    console.log('Theme detection:', {
+      currentTheme: theme.name,
+      isDarkMode,
+      backgroundColor: theme.colors[isDarkMode ? 'dark' : 'light'].background,
+      isMapDark
+    });
     
     // Use the main map container
     const currentContainer = mapRef.current;
@@ -394,7 +427,7 @@ export default function FullWidthGlobeMap() {
         center: userLocation || { lat: 40.7128, lng: -74.0060 }, // Default to NYC
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         mapId: mapId, // Add Map ID to prevent advanced markers error
-        styles: isDarkMode
+        styles: isMapDark
           ? [
               {
                 elementType: "geometry",
@@ -1029,7 +1062,7 @@ export default function FullWidthGlobeMap() {
     } else {
       initializeMap();
     }
-  }, [config, userLocation, isDarkMode]);
+  }, [config, userLocation, isDarkMode, theme, isMapDark]);
 
   // Generate mock listener data
   const activeListeners: ListenerData[] = [
