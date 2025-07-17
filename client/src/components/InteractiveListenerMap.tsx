@@ -243,7 +243,7 @@ const GoogleMapWithListeners = ({
         if (!window.google) {
           console.log('Loading Google Maps script...');
           const script = document.createElement('script');
-          script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker`;
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=marker&loading=async`;
           script.async = true;
           script.defer = true;
           
@@ -300,18 +300,22 @@ const GoogleMapWithListeners = ({
         console.log(`Adding ${activeListeners.length} markers`);
         
         activeListeners.forEach((listener, index) => {
-          const marker = new window.google.maps.Marker({
+          // Create SVG content for the marker
+          const markerSvg = `
+            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="8" fill="${colors.primary}" opacity="1" stroke="${isDarkMode ? "#ffffff" : "#000000"}" stroke-width="2"/>
+            </svg>
+          `;
+          
+          const marker = new window.google.maps.marker.AdvancedMarkerElement({
             position: { lat: listener.lat, lng: listener.lng },
             map: map,
             title: `${listener.city}, ${listener.country}`,
-            icon: {
-              path: window.google.maps.SymbolPath.CIRCLE,
-              scale: 8,
-              fillColor: colors.primary,
-              fillOpacity: 1,
-              strokeColor: isDarkMode ? "#ffffff" : "#000000",
-              strokeWeight: 2,
-            },
+            content: (() => {
+              const div = document.createElement('div');
+              div.innerHTML = markerSvg;
+              return div;
+            })(),
           });
 
           marker.addListener("click", () => {

@@ -599,16 +599,16 @@ export default function FullWidthGlobeMap() {
         </svg>
       `;
 
-      const currentLocationMarker = new google.maps.Marker({
+      const currentLocationMarker = new google.maps.marker.AdvancedMarkerElement({
         position: userLocation,
         map: mapInstance,
         title: "Your Current Location",
-        icon: {
-          url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(currentLocationSvg)}`,
-          scaledSize: new google.maps.Size(24, 24),
-          anchor: new google.maps.Point(12, 12),
-        },
-        zIndex: 1000, // Higher z-index to appear above other markers
+        content: (() => {
+          const div = document.createElement('div');
+          div.innerHTML = currentLocationSvg;
+          div.style.zIndex = '1000'; // Higher z-index to appear above other markers
+          return div;
+        })(),
       });
 
       // Add mock listener markers
@@ -649,15 +649,15 @@ export default function FullWidthGlobeMap() {
           </svg>
         `;
 
-        const marker = new google.maps.Marker({
+        const marker = new google.maps.marker.AdvancedMarkerElement({
           position: { lat: listener.lat, lng: listener.lng },
           map: mapInstance,
           title: `${listener.city}, ${listener.country}`,
-          icon: {
-            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(animatedDotSvg)}`,
-            scaledSize: new google.maps.Size(24, 24),
-            anchor: new google.maps.Point(12, 12),
-          },
+          content: (() => {
+            const div = document.createElement('div');
+            div.innerHTML = animatedDotSvg;
+            return div;
+          })(),
         });
 
         // Add click listener to zoom and center on the marker
@@ -665,10 +665,10 @@ export default function FullWidthGlobeMap() {
           console.log('Marker clicked:', listener.city);
           
           // Animate marker selection with pulsing effect
-          const originalIcon = marker.getIcon();
-          const selectedIcon = {
-            ...originalIcon,
-            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+          const originalContent = marker.content;
+          const selectedContent = (() => {
+            const div = document.createElement('div');
+            div.innerHTML = `
               <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="16" cy="16" r="14" fill="${colors.primary}" opacity="0.3">
                   <animate attributeName="r" values="14;18;14" dur="0.6s" repeatCount="3"/>
@@ -682,13 +682,12 @@ export default function FullWidthGlobeMap() {
                   <animate attributeName="opacity" values="1;0.7;1" dur="1s" repeatCount="3"/>
                 </circle>
               </svg>
-            `)}`,
-            scaledSize: new google.maps.Size(32, 32),
-            anchor: new google.maps.Point(16, 16),
-          };
+            `;
+            return div;
+          })();
           
           // Apply selection animation
-          marker.setIcon(selectedIcon);
+          marker.content = selectedContent;
           
           // Center the map on the clicked location and zoom to show the popup above the point
           const targetZoom = Math.max(8, Math.min(12, mapInstance.getZoom() + 2));
@@ -733,9 +732,9 @@ export default function FullWidthGlobeMap() {
           
           setTimeout(zoomAnimation, 300); // Start zoom after pan animation
           
-          // Restore original icon after animation
+          // Restore original content after animation
           setTimeout(() => {
-            marker.setIcon(originalIcon);
+            marker.content = originalContent;
           }, 2000);
         });
 
@@ -953,8 +952,9 @@ export default function FullWidthGlobeMap() {
     // Load Google Maps API if not already loaded
     if (typeof google === "undefined" || !google.maps) {
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=geometry`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=geometry,marker&loading=async`;
       script.async = true;
+      script.defer = true;
       script.onload = initializeMap;
       document.head.appendChild(script);
     } else {
