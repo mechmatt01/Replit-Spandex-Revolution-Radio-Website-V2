@@ -198,24 +198,25 @@ export default function FullWidthGlobeMap() {
   const mapRef = useRef<HTMLDivElement>(null);
   const currentInfoWindow = useRef<any>(null);
   const { colors, isDarkMode, theme } = useTheme();
+  const currentTheme = theme.name;
 
   // Intelligent theme detection for Google Maps
   const shouldUseDarkMap = () => {
     // Force dark map for classic metal theme
-    if (currentTheme === 'classic-metal') {
+    if (currentTheme === 'Classic Metal') {
       return true;
     }
     
     // Force dark map for other dark themes
-    if (currentTheme === 'black-metal' || currentTheme === 'death-metal' || 
-        currentTheme === 'doom-metal' || currentTheme === 'thrash-metal' || 
-        currentTheme === 'gothic-metal' || currentTheme === 'dark-mode' ||
-        currentTheme === 'glassmorphism-premium') {
+    if (currentTheme === 'Black Metal' || currentTheme === 'Death Metal' || 
+        currentTheme === 'Doom Metal' || currentTheme === 'Thrash Metal' || 
+        currentTheme === 'Gothic Metal' || currentTheme === 'Dark Mode' ||
+        currentTheme === 'Glassmorphism Premium') {
       return true;
     }
     
     // Use light map for light themes
-    if (currentTheme === 'light-mode' || currentTheme === 'power-metal') {
+    if (currentTheme === 'Light Mode' || currentTheme === 'Power Metal') {
       return false;
     }
     
@@ -1042,7 +1043,7 @@ export default function FullWidthGlobeMap() {
     if (map) {
       updateMapStyles(map);
     }
-  }, [currentTheme, isDarkMode, isMapDark]);
+  }, [map, currentTheme, isDarkMode, isMapDark]);
 
   // Generate mock listener data
   const activeListeners: ListenerData[] = [
@@ -1225,20 +1226,9 @@ export default function FullWidthGlobeMap() {
         <div
           className={`relative transition-all duration-700 ease-in-out ${
             isFullscreen 
-              ? "fixed inset-0 z-[9999]" 
+              ? "fixed inset-0 z-[9999] bg-black" 
               : "h-[600px] mb-16"
           }`}
-          style={{
-            backgroundColor: isFullscreen ? "#000000" : "transparent",
-            top: isFullscreen ? "0" : "auto",
-            left: isFullscreen ? "0" : "auto",
-            right: isFullscreen ? "0" : "auto",
-            bottom: isFullscreen ? "0" : "auto",
-            width: isFullscreen ? "100vw" : "100%",
-            height: isFullscreen ? "100vh" : "600px",
-            position: isFullscreen ? "fixed" : "relative",
-            zIndex: isFullscreen ? 9999 : "auto"
-          }}
         >
           {/* Fullscreen header bar */}
           {isFullscreen && (
@@ -1270,12 +1260,10 @@ export default function FullWidthGlobeMap() {
                       setTimeout(() => {
                         if (map) {
                           google.maps.event.trigger(map, 'resize');
-                          // Center the map after resize
                           map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
-                          // Update map styles after exiting fullscreen
                           updateMapStyles(map);
                         }
-                      }, 300);
+                      }, 100);
                     });
                   }}
                   className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
@@ -1289,19 +1277,14 @@ export default function FullWidthGlobeMap() {
 
           <div
             ref={mapRef}
-            className={`w-full map-container transition-all duration-700 ease-in-out ${
-              isFullscreen ? "h-full" : "h-full rounded-lg"
+            className={`w-full h-full map-container transition-all duration-300 ease-in-out ${
+              isFullscreen ? "" : "rounded-lg"
             }`}
             style={{
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "100vh" : "100%",
-              marginTop: isFullscreen ? "0" : "0",
-              borderRadius: isFullscreen ? "0" : "0.5rem",
-              overflow: "hidden",
-              width: "100%",
               position: "absolute",
-              top: "0",
+              top: isFullscreen ? "80px" : "0",
               left: "0",
               right: "0",
               bottom: "0"
@@ -1491,16 +1474,13 @@ export default function FullWidthGlobeMap() {
                 setIsFullscreen(true);
                 // Use requestAnimationFrame to ensure smooth transition
                 requestAnimationFrame(() => {
-                  // Small delay to ensure DOM update and animation frames
                   setTimeout(() => {
                     if (map) {
                       google.maps.event.trigger(map, 'resize');
-                      // Center the map after resize
                       map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
-                      // Update map styles after fullscreen
                       updateMapStyles(map);
                     }
-                  }, 300);
+                  }, 100);
                 });
               }}
               className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg transition-all duration-300 ${
@@ -1523,13 +1503,10 @@ export default function FullWidthGlobeMap() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Live Statistics - Left Side with Vertical Layout */}
             <Card
-              className="transition-all duration-300 border-2"
+              className="transition-all duration-300 border-2 hover:shadow-lg"
               style={{ 
                 backgroundColor: colors.card,
-                borderColor: `${colors.primary}40`,
-                '&:hover': {
-                  backgroundColor: colors.surface
-                }
+                borderColor: colors.primary + "60"
               }}
             >
               <CardContent className="p-6 h-full flex flex-col">
@@ -1626,10 +1603,10 @@ export default function FullWidthGlobeMap() {
             {/* Active Locations - Combined Single Box */}
             <div className="lg:col-span-2">
               <Card
-                className="transition-all duration-300 border-2 h-full"
+                className="transition-all duration-300 border-2 h-full hover:shadow-lg"
                 style={{ 
                   backgroundColor: colors.card,
-                  borderColor: `${colors.primary}40`
+                  borderColor: colors.primary + "60"
                 }}
               >
                 <CardContent className="p-6 h-full flex flex-col">
