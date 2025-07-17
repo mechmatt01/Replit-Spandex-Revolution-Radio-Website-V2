@@ -250,7 +250,15 @@ const GoogleMapWithListeners = ({
           await new Promise((resolve, reject) => {
             script.onload = () => {
               console.log('Google Maps script loaded successfully');
-              resolve(true);
+              // Wait a bit for all Google Maps modules to be fully loaded
+              setTimeout(() => {
+                if (window.google && window.google.maps && window.google.maps.Map && window.google.maps.MapTypeId && window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement) {
+                  resolve(true);
+                } else {
+                  console.error('Google Maps API modules not fully loaded after timeout');
+                  reject(new Error('Google Maps API modules not fully loaded'));
+                }
+              }, 100);
             };
             script.onerror = (error) => {
               console.error('Google Maps script failed to load:', error);

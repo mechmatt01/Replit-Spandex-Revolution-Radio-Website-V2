@@ -1,0 +1,171 @@
+Refused to load the script 'https://replit.com/public/js/replit-dev-banner.js' because it violates the following Content Security Policy directive: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://maps.googleapis.com https://maps.gstatic.com". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.
+Understand this error
+client:789 [vite] connecting...
+client:912 [vite] connected.
+FullWidthGlobeMap.tsx:305 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:306 Config available: false
+FullWidthGlobeMap.tsx:307 API key available: false
+FullWidthGlobeMap.tsx:308 API key value: undefined...
+FullWidthGlobeMap.tsx:309 Map ref current: true
+FullWidthGlobeMap.tsx:310 User location available: false
+FullWidthGlobeMap.tsx:311 User location value: null
+FullWidthGlobeMap.tsx:312 Is fullscreen: false
+/api/auth/user:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+FullWidthGlobeMap.tsx:234 Geolocation permission: granted
+/api/auth/user:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+FullWidthGlobeMap.tsx:238 Got location: 41.919778381881414 -88.29128454468497
+FullWidthGlobeMap.tsx:305 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:306 Config available: false
+FullWidthGlobeMap.tsx:307 API key available: false
+FullWidthGlobeMap.tsx:308 API key value: undefined...
+FullWidthGlobeMap.tsx:309 Map ref current: true
+FullWidthGlobeMap.tsx:310 User location available: true
+FullWidthGlobeMap.tsx:311 User location value: Object
+FullWidthGlobeMap.tsx:312 Is fullscreen: false
+FullWidthGlobeMap.tsx:305 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:306 Config available: true
+FullWidthGlobeMap.tsx:307 API key available: true
+FullWidthGlobeMap.tsx:308 API key value: AIzaSyD684t68gy...
+FullWidthGlobeMap.tsx:309 Map ref current: true
+FullWidthGlobeMap.tsx:310 User location available: true
+FullWidthGlobeMap.tsx:311 User location value: Object
+FullWidthGlobeMap.tsx:312 Is fullscreen: false
+FullWidthGlobeMap.tsx:366 Uncaught TypeError: Cannot read properties of undefined (reading 'ROADMAP')
+    at HTMLScriptElement.initializeMap (FullWidthGlobeMap.tsx:366:42)Understand this error
+maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENTUnderstand this error
+RadioContext.tsx:137 Attempting to play stream 1/2: /api/radio-stream
+RadioContext.tsx:168 Stream 1 working successfully
+queryClient.ts:32 Fetch finished loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/live-stats".
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=b50fca6c:881
+run @ @tanstack_react-query.js?v=b50fca6c:513
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:2314
+queryClient.ts:32 Fetch finished loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/live-stats".
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=b50fca6c:881
+run @ @tanstack_react-query.js?v=b50fca6c:513
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:2314
+setInterval
+updateRefetchInterval_fn @ @tanstack_react-query.js?v=b50fca6c:2312
+updateTimers_fn @ @tanstack_react-query.js?v=b50fca6c:2319
+onQueryUpdate @ @tanstack_react-query.js?v=b50fca6c:2275
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1042
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1041
+batch @ @tanstack_react-query.js?v=b50fca6c:603
+dispatch_fn @ @tanstack_react-query.js?v=b50fca6c:1040
+setData @ @tanstack_react-query.js?v=b50fca6c:718
+onSuccess @ @tanstack_react-query.js?v=b50fca6c:940
+resolve @ @tanstack_react-query.js?v=b50fca6c:475
+Promise.then
+run @ @tanstack_react-query.js?v=b50fca6c:517
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:2314
+queryClient.ts:32 Fetch finished loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/live-stats".
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=b50fca6c:881
+run @ @tanstack_react-query.js?v=b50fca6c:513
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:2314
+setInterval
+updateRefetchInterval_fn @ @tanstack_react-query.js?v=b50fca6c:2312
+updateTimers_fn @ @tanstack_react-query.js?v=b50fca6c:2319
+onQueryUpdate @ @tanstack_react-query.js?v=b50fca6c:2275
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1042
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1041
+batch @ @tanstack_react-query.js?v=b50fca6c:603
+dispatch_fn @ @tanstack_react-query.js?v=b50fca6c:1040
+setData @ @tanstack_react-query.js?v=b50fca6c:718
+onSuccess @ @tanstack_react-query.js?v=b50fca6c:940
+resolve @ @tanstack_react-query.js?v=b50fca6c:475
+Promise.then
+run @ @tanstack_react-query.js?v=b50fca6c:517
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:2314
+setInterval
+updateRefetchInterval_fn @ @tanstack_react-query.js?v=b50fca6c:2312
+updateTimers_fn @ @tanstack_react-query.js?v=b50fca6c:2319
+onQueryUpdate @ @tanstack_react-query.js?v=b50fca6c:2275
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1042
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1041
+batch @ @tanstack_react-query.js?v=b50fca6c:603
+dispatch_fn @ @tanstack_react-query.js?v=b50fca6c:1040
+setData @ @tanstack_react-query.js?v=b50fca6c:718
+onSuccess @ @tanstack_react-query.js?v=b50fca6c:940
+resolve @ @tanstack_react-query.js?v=b50fca6c:475
+Promise.then
+run @ @tanstack_react-query.js?v=b50fca6c:517
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:2314
+queryClient.ts:32 Fetch finished loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/live-stats".
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=b50fca6c:881
+run @ @tanstack_react-query.js?v=b50fca6c:513
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:2314
+setInterval
+updateRefetchInterval_fn @ @tanstack_react-query.js?v=b50fca6c:2312
+updateTimers_fn @ @tanstack_react-query.js?v=b50fca6c:2319
+onQueryUpdate @ @tanstack_react-query.js?v=b50fca6c:2275
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1042
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1041
+batch @ @tanstack_react-query.js?v=b50fca6c:603
+dispatch_fn @ @tanstack_react-query.js?v=b50fca6c:1040
+setData @ @tanstack_react-query.js?v=b50fca6c:718
+onSuccess @ @tanstack_react-query.js?v=b50fca6c:940
+resolve @ @tanstack_react-query.js?v=b50fca6c:475
+Promise.then
+run @ @tanstack_react-query.js?v=b50fca6c:517
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:2314
+setInterval
+updateRefetchInterval_fn @ @tanstack_react-query.js?v=b50fca6c:2312
+updateTimers_fn @ @tanstack_react-query.js?v=b50fca6c:2319
+onQueryUpdate @ @tanstack_react-query.js?v=b50fca6c:2275
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1042
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1041
+batch @ @tanstack_react-query.js?v=b50fca6c:603
+dispatch_fn @ @tanstack_react-query.js?v=b50fca6c:1040
+setData @ @tanstack_react-query.js?v=b50fca6c:718
+onSuccess @ @tanstack_react-query.js?v=b50fca6c:940
+resolve @ @tanstack_react-query.js?v=b50fca6c:475
+Promise.then
+run @ @tanstack_react-query.js?v=b50fca6c:517
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:2314
+setInterval
+updateRefetchInterval_fn @ @tanstack_react-query.js?v=b50fca6c:2312
+updateTimers_fn @ @tanstack_react-query.js?v=b50fca6c:2319
+onQueryUpdate @ @tanstack_react-query.js?v=b50fca6c:2275
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1042
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:1041
+batch @ @tanstack_react-query.js?v=b50fca6c:603
+dispatch_fn @ @tanstack_react-query.js?v=b50fca6c:1040
+setData @ @tanstack_react-query.js?v=b50fca6c:718
+onSuccess @ @tanstack_react-query.js?v=b50fca6c:940
+resolve @ @tanstack_react-query.js?v=b50fca6c:475
+Promise.then
+run @ @tanstack_react-query.js?v=b50fca6c:517
+start @ @tanstack_react-query.js?v=b50fca6c:555
+fetch @ @tanstack_react-query.js?v=b50fca6c:969
+executeFetch_fn @ @tanstack_react-query.js?v=b50fca6c:2280
+(anonymous) @ @tanstack_react-query.js?v=b50fca6c:2314

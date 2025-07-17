@@ -360,6 +360,18 @@ export default function FullWidthGlobeMap() {
     document.head.appendChild(style);
 
     const initializeMap = () => {
+      // Check if Google Maps API is fully loaded
+      if (!window.google || !window.google.maps || !window.google.maps.Map || !window.google.maps.MapTypeId) {
+        console.error('Google Maps API not fully loaded');
+        return;
+      }
+      
+      // Check if marker library is loaded
+      if (!window.google.maps.marker || !window.google.maps.marker.AdvancedMarkerElement) {
+        console.error('Google Maps marker library not loaded');
+        return;
+      }
+      
       const mapInstance = new google.maps.Map(currentContainer, {
         zoom: 2,
         center: userLocation || { lat: 40.7128, lng: -74.0060 }, // Default to NYC
@@ -955,7 +967,19 @@ export default function FullWidthGlobeMap() {
       script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=geometry,marker&loading=async`;
       script.async = true;
       script.defer = true;
-      script.onload = initializeMap;
+      script.onload = () => {
+        // Wait a bit for all Google Maps modules to be fully loaded
+        setTimeout(() => {
+          if (window.google && window.google.maps && window.google.maps.Map && window.google.maps.MapTypeId && window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement) {
+            initializeMap();
+          } else {
+            console.error('Google Maps API modules not fully loaded after timeout');
+          }
+        }, 100);
+      };
+      script.onerror = (error) => {
+        console.error('Failed to load Google Maps API:', error);
+      };
       document.head.appendChild(script);
     } else {
       initializeMap();
