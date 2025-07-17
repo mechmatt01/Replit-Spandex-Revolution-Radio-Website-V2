@@ -201,35 +201,34 @@ export default function FullWidthGlobeMap() {
 
   // Intelligent theme detection for Google Maps
   const shouldUseDarkMap = () => {
-    const currentColors = theme.colors[isDarkMode ? 'dark' : 'light'];
-    const backgroundColor = currentColors.background;
+    // Force dark map for classic metal theme
+    if (currentTheme === 'classic-metal') {
+      return true;
+    }
     
-    // Convert hex color to RGB and calculate brightness
-    const hexToRgb = (hex: string) => {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-      } : null;
-    };
+    // Force dark map for other dark themes
+    if (currentTheme === 'black-metal' || currentTheme === 'death-metal' || 
+        currentTheme === 'doom-metal' || currentTheme === 'thrash-metal' || 
+        currentTheme === 'gothic-metal' || currentTheme === 'dark-mode' ||
+        currentTheme === 'glassmorphism-premium') {
+      return true;
+    }
     
-    const rgb = hexToRgb(backgroundColor);
-    if (!rgb) return isDarkMode; // Fallback to isDarkMode
+    // Use light map for light themes
+    if (currentTheme === 'light-mode' || currentTheme === 'power-metal') {
+      return false;
+    }
     
-    // Calculate relative luminance
-    const brightness = (0.299 * rgb.r + 0.587 * rgb.g + 0.114 * rgb.b) / 255;
-    
-    // Use dark map if background brightness is below 0.5
-    return brightness < 0.5;
+    // Fallback to current mode
+    return isDarkMode;
   };
   
   const isMapDark = shouldUseDarkMap();
 
   // Function to update map styling when theme changes
   const updateMapStyles = (mapInstance: google.maps.Map) => {
-    // Force dark mode for Classic Metal theme
-    const shouldUseDarkStyles = theme.name === 'Classic Metal' || isMapDark;
+    // Use dark styles based on theme detection
+    const shouldUseDarkStyles = isMapDark;
     const darkStyles = [
       {
         elementType: "geometry",
@@ -1038,6 +1037,13 @@ export default function FullWidthGlobeMap() {
     }
   }, [config, userLocation, isDarkMode, theme, isMapDark]);
 
+  // Update map styles when theme changes
+  useEffect(() => {
+    if (map) {
+      updateMapStyles(map);
+    }
+  }, [currentTheme, isDarkMode, isMapDark]);
+
   // Generate mock listener data
   const activeListeners: ListenerData[] = [
     {
@@ -1219,13 +1225,19 @@ export default function FullWidthGlobeMap() {
         <div
           className={`relative transition-all duration-700 ease-in-out ${
             isFullscreen 
-              ? "fixed inset-0 z-[9999] bg-black" 
+              ? "fixed inset-0 z-[9999]" 
               : "h-[600px] mb-16"
           }`}
           style={{
-            animation: isFullscreen 
-              ? "fadeIn 0.7s ease-in-out, zoomIn 0.7s ease-in-out" 
-              : "fadeIn 0.5s ease-in-out, slideInFromBottom 0.5s ease-in-out"
+            backgroundColor: isFullscreen ? "#000000" : "transparent",
+            top: isFullscreen ? "0" : "auto",
+            left: isFullscreen ? "0" : "auto",
+            right: isFullscreen ? "0" : "auto",
+            bottom: isFullscreen ? "0" : "auto",
+            width: isFullscreen ? "100vw" : "100%",
+            height: isFullscreen ? "100vh" : "600px",
+            position: isFullscreen ? "fixed" : "relative",
+            zIndex: isFullscreen ? 9999 : "auto"
           }}
         >
           {/* Fullscreen header bar */}
@@ -1283,11 +1295,16 @@ export default function FullWidthGlobeMap() {
             style={{
               minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              height: isFullscreen ? "calc(100vh - 64px)" : "100%",
-              marginTop: isFullscreen ? "64px" : "0",
+              height: isFullscreen ? "100vh" : "100%",
+              marginTop: isFullscreen ? "0" : "0",
               borderRadius: isFullscreen ? "0" : "0.5rem",
               overflow: "hidden",
-              width: "100%"
+              width: "100%",
+              position: "absolute",
+              top: "0",
+              left: "0",
+              right: "0",
+              bottom: "0"
             }}
           />
 
@@ -1506,8 +1523,14 @@ export default function FullWidthGlobeMap() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Live Statistics - Left Side with Vertical Layout */}
             <Card
-              className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2`}
-              style={{ borderColor: `${colors.primary}40` }}
+              className="transition-all duration-300 border-2"
+              style={{ 
+                backgroundColor: colors.card,
+                borderColor: `${colors.primary}40`,
+                '&:hover': {
+                  backgroundColor: colors.surface
+                }
+              }}
             >
               <CardContent className="p-6 h-full flex flex-col">
                 <h3
@@ -1603,8 +1626,11 @@ export default function FullWidthGlobeMap() {
             {/* Active Locations - Combined Single Box */}
             <div className="lg:col-span-2">
               <Card
-                className={`${isDarkMode ? "bg-gray-900/50 hover:bg-gray-900/70" : "bg-gray-100/50 hover:bg-gray-100/70"} transition-all duration-300 border-2 h-full`}
-                style={{ borderColor: `${colors.primary}40` }}
+                className="transition-all duration-300 border-2 h-full"
+                style={{ 
+                  backgroundColor: colors.card,
+                  borderColor: `${colors.primary}40`
+                }}
               >
                 <CardContent className="p-6 h-full flex flex-col">
                   <h3
