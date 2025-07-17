@@ -62,7 +62,8 @@
 
 @layer base {
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
@@ -74,15 +75,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-secondary;
+  background-color: hsl(var(--secondary));
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-primary rounded-full;
+  background-color: hsl(var(--primary));
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary/80;
+  background-color: hsl(var(--primary) / 0.8);
 }
 
 /* Smooth scrolling */
@@ -127,12 +129,16 @@ html {
 
 /* Glass morphism effect */
 .glass {
-  @apply backdrop-blur-md bg-white/10;
+  backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Text gradient */
 .text-gradient {
-  @apply bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent;
+  background: linear-gradient(to right, hsl(var(--primary)), #ea580c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Custom animations */
@@ -164,16 +170,37 @@ html {
 
 /* Metal theme gradients */
 .metal-gradient {
-  @apply bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900;
+  background: linear-gradient(to bottom right, #111827, #1f2937, #111827);
 }
 
 .metal-text {
-  @apply bg-gradient-to-br from-gray-300 via-gray-100 to-gray-300 bg-clip-text text-transparent;
+  background: linear-gradient(to bottom right, #d1d5db, #f3f4f6, #d1d5db);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Responsive text utilities */
 .text-responsive {
-  @apply text-sm sm:text-base md:text-lg lg:text-xl;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .text-responsive {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .text-responsive {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .text-responsive {
+    font-size: 1.25rem;
+  }
 }
 
 /* Animation delays */
@@ -198,18 +225,27 @@ html {
 }
 
 /* Custom focus styles */
-.focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--primary));
 }
 
 /* Transition utilities */
 .transition-all-300 {
-  @apply transition-all duration-300 ease-in-out;
+  transition-property: all;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Card hover effects */
 .card-hover {
-  @apply transition-all duration-300 hover:scale-105 hover:shadow-xl;
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.card-hover:hover {
+  transform: scale(1.05);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 /* Radio wave animation */
@@ -243,7 +279,19 @@ html {
 
 /* Custom button styles */
 .btn-metal {
-  @apply relative overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 text-white font-bold uppercase tracking-wider transition-all duration-300 hover:from-gray-700 hover:to-gray-800;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(to bottom right, #1f2937, #111827);
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition-property: all;
+  transition-duration: 300ms;
+}
+
+.btn-metal:hover {
+  background: linear-gradient(to bottom right, #374151, #1f2937);
 }
 
 .btn-metal::before {
@@ -336,12 +384,34 @@ html {
 
 /* Custom container styles */
 .container-metal {
-  @apply relative overflow-hidden rounded-lg bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-sm;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: linear-gradient(to bottom right, rgba(17, 24, 39, 0.95), rgba(31, 41, 55, 0.95), rgba(17, 24, 39, 0.95));
+  backdrop-filter: blur(4px);
 }
 
 /* Responsive padding utilities */
 .section-padding {
-  @apply px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-16 lg:px-12 lg:py-20;
+  padding: 2rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .section-padding {
+    padding: 3rem 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding: 4rem 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding: 5rem 3rem;
+  }
 }
 
 /* Fix for Radix UI dropdown content */
@@ -381,11 +451,35 @@ html {
 
 /* Custom input styles */
 input[type="range"]::-webkit-slider-thumb {
-  @apply appearance-none w-4 h-4 bg-primary rounded-full cursor-pointer transition-all hover:scale-110;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  background-color: hsl(var(--primary));
+  border-radius: 9999px;
+  cursor: pointer;
+  transition-property: all;
+  transition-duration: 150ms;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
 }
 
 input[type="range"]::-moz-range-thumb {
-  @apply appearance-none w-4 h-4 bg-primary rounded-full cursor-pointer transition-all hover:scale-110 border-0;
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  background-color: hsl(var(--primary));
+  border-radius: 9999px;
+  cursor: pointer;
+  transition-property: all;
+  transition-duration: 150ms;
+  border: 0;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.1);
 }
 
 /* Loading skeleton animation */
@@ -420,11 +514,19 @@ input[type="range"]::-moz-range-thumb {
 
 /* Ensure proper stacking context for modals */
 .modal-backdrop {
-  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 50;
 }
 
 .modal-content {
-  @apply relative z-50;
+  position: relative;
+  z-index: 50;
 }
 
 /* Print styles */
@@ -437,7 +539,7 @@ input[type="range"]::-moz-range-thumb {
 /* High contrast mode support */
 @media (prefers-contrast: high) {
   .btn-metal {
-    @apply border-2 border-white;
+    border: 2px solid white;
   }
 }
 
