@@ -4,20 +4,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-import { AdminProvider } from "@/contexts/AdminContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { RadioProvider } from "@/contexts/RadioContext";
-import { AuthProvider } from "@/contexts/FirebaseAuthContext";
-import SkipToContent from "@/components/SkipToContent";
-import DynamicMetaTags from "@/components/DynamicMetaTags";
 import HomePage from "@/pages/HomePage";
 import MusicPage from "@/pages/MusicPage";
-import ProfilePage from "@/pages/ProfilePage";
-import LoginPage from "@/pages/LoginPage";
-import SubscribePage from "@/pages/SubscribePage";
-import TermsOfService from "@/pages/TermsOfService";
-import PrivacyPolicy from "@/pages/PrivacyPolicy";
-import OrderConfirmation from "@/components/OrderConfirmation";
 import NotFound from "@/pages/not-found";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -26,12 +16,6 @@ function Router() {
     <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/music" component={MusicPage} />
-      <Route path="/profile" component={ProfilePage} />
-      <Route path="/login" component={LoginPage} />
-      <Route path="/subscribe" component={SubscribePage} />
-      <Route path="/terms" component={TermsOfService} />
-      <Route path="/privacy" component={PrivacyPolicy} />
-      <Route path="/order-confirmation" component={OrderConfirmation} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -61,20 +45,17 @@ function App() {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <ThemeProvider>
-            <RadioProvider>
-              <AdminProvider>
-                <TooltipProvider>
-                  <SkipToContent />
-                  <DynamicMetaTags />
-                  <Toaster />
-                  <Router />
-                </TooltipProvider>
-              </AdminProvider>
-            </RadioProvider>
-          </ThemeProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <RadioProvider>
+            <TooltipProvider>
+              <div className="min-h-screen bg-background text-foreground">
+                <h1 className="text-4xl font-bold text-center p-8">Spandex Salvation Radio</h1>
+                <Toaster />
+                <Router />
+              </div>
+            </TooltipProvider>
+          </RadioProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
