@@ -593,15 +593,22 @@ export class FirebaseStorage implements IStorage {
       },
     ];
 
-    // Check if stations already exist
-    const existingStations = await this.getRadioStations();
-    
-    if (existingStations.length === 0) {
-      // Initialize with default stations
-      for (const station of defaultStations) {
-        await this.createRadioStation(station);
+    try {
+      // Check if stations already exist
+      const existingStations = await this.getRadioStations();
+      
+      if (existingStations.length === 0) {
+        // Initialize with default stations
+        for (const station of defaultStations) {
+          await this.createRadioStation(station);
+        }
+        console.log('Default radio stations initialized in Firebase');
+      } else {
+        console.log(`Found ${existingStations.length} existing radio stations in Firebase`);
       }
-      console.log('Default radio stations initialized');
+    } catch (error) {
+      console.error('Error initializing radio stations:', error);
+      throw error;
     }
   }
 }
