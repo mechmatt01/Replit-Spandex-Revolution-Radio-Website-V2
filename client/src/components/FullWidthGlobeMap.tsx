@@ -680,374 +680,228 @@ export default function FullWidthGlobeMap() {
       // Apply theme styles immediately after map creation
       updateMapStyles(mapInstance);
 
-      // Add user location marker if available
-      if (userLocation) {
-        const userMarker = new google.maps.Marker({
-          position: userLocation,
-          map: mapInstance,
-          title: "Your Location",
-          icon: {
-            url: "data:image/svg+xml;base64," + btoa(`
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="3" fill="#2563eb"/>
-                <circle cx="12" cy="12" r="10" fill="none" stroke="#2563eb" stroke-width="2" opacity="0.3"/>
-                <circle cx="12" cy="12" r="6" fill="none" stroke="#2563eb" stroke-width="1" opacity="0.5"/>
-              </svg>
-            `),
-            scaledSize: new google.maps.Size(24, 24),
-            anchor: new google.maps.Point(12, 12),
-          },
-        });
-      }
+      // Function to add listener markers
+      const addListenerMarkers = (mapInstance: google.maps.Map) => {
+        // Add mock listener markers
+        const mockListeners = [
+          { lat: 40.7128, lng: -74.006, city: "New York", country: "USA" },
+          { lat: 34.0522, lng: -118.2437, city: "Los Angeles", country: "USA" },
+          { lat: 51.5074, lng: -0.1278, city: "London", country: "UK" },
+          { lat: 48.8566, lng: 2.3522, city: "Paris", country: "France" },
+          { lat: 35.6762, lng: 139.6503, city: "Tokyo", country: "Japan" },
+          { lat: -33.8688, lng: 151.2093, city: "Sydney", country: "Australia" },
+          { lat: 55.7558, lng: 37.6173, city: "Moscow", country: "Russia" },
+          { lat: 39.9042, lng: 116.4074, city: "Beijing", country: "China" },
+          { lat: 19.076, lng: 72.8777, city: "Mumbai", country: "India" },
+          { lat: -23.5505, lng: -46.6333, city: "São Paulo", country: "Brazil" },
+        ];
 
-      // Add mock listener markers
-      const mockListeners = [
-        { lat: 40.7128, lng: -74.006, city: "New York", country: "USA" },
-        { lat: 34.0522, lng: -118.2437, city: "Los Angeles", country: "USA" },
-        { lat: 51.5074, lng: -0.1278, city: "London", country: "UK" },
-        { lat: 48.8566, lng: 2.3522, city: "Paris", country: "France" },
-        { lat: 35.6762, lng: 139.6503, city: "Tokyo", country: "Japan" },
-        { lat: -33.8688, lng: 151.2093, city: "Sydney", country: "Australia" },
-        { lat: 55.7558, lng: 37.6173, city: "Moscow", country: "Russia" },
-        { lat: 39.9042, lng: 116.4074, city: "Beijing", country: "China" },
-        { lat: 19.076, lng: 72.8777, city: "Mumbai", country: "India" },
-        { lat: -23.5505, lng: -46.6333, city: "São Paulo", country: "Brazil" },
-      ];
-
-      // Filter out mock listeners that are too close to user's current location
-      const filteredListeners = mockListeners.filter((listener) => {
-        if (!userLocation?.lat || !userLocation?.lng) return true;
-        const distance = Math.sqrt(
-          Math.pow(listener.lat - userLocation.lat, 2) +
-          Math.pow(listener.lng - userLocation.lng, 2)
-        );
-        // If distance is less than 0.1 degrees (roughly 11km), exclude it
-        return distance > 0.1;
-      });
-
-      filteredListeners.forEach((listener) => {
-        // Create animated theme-colored dot SVG
-        const animatedDotSvg = `
-          <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="6" fill="${colors.primary}" opacity="0.8">
-              <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite"/>
-              <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
-            </circle>
-            <circle cx="12" cy="12" r="4" fill="${colors.primary}">
-              <animate attributeName="opacity" values="1;0.6;1" dur="1.5s" repeatCount="indefinite"/>
-            </circle>
-          </svg>
-        `;
-
-        const marker = useAdvancedMarkers 
-          ? new google.maps.marker.AdvancedMarkerElement({
-              position: { lat: listener.lat, lng: listener.lng },
-              map: mapInstance,
-              title: `${listener.city}, ${listener.country}`,
-              content: (() => {
-                const div = document.createElement('div');
-                div.innerHTML = animatedDotSvg;
-                return div;
-              })(),
-            })
-          : new google.maps.Marker({
-              position: { lat: listener.lat, lng: listener.lng },
-              map: mapInstance,
-              title: `${listener.city}, ${listener.country}`,
-              icon: {
-                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(animatedDotSvg),
-                scaledSize: new google.maps.Size(20, 20),
-                anchor: new google.maps.Point(10, 10),
-              },
-            });
-
-        // Add click listener to zoom and center on the marker
-        marker.addListener("click", () => {
-          console.log('Marker clicked:', listener.city);
-          
-          // Animate marker selection with pulsing effect
-          const originalContent = marker.content;
-          const selectedContent = (() => {
-            const div = document.createElement('div');
-            div.innerHTML = `
-              <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="16" cy="16" r="14" fill="${colors.primary}" opacity="0.3">
-                  <animate attributeName="r" values="14;18;14" dur="0.6s" repeatCount="3"/>
-                  <animate attributeName="opacity" values="0.3;0.1;0.3" dur="0.6s" repeatCount="3"/>
-                </circle>
-                <circle cx="16" cy="16" r="10" fill="${colors.primary}" opacity="0.6">
-                  <animate attributeName="r" values="10;14;10" dur="0.8s" repeatCount="3"/>
-                  <animate attributeName="opacity" values="0.6;0.2;0.6" dur="0.8s" repeatCount="3"/>
-                </circle>
-                <circle cx="16" cy="16" r="6" fill="${colors.primary}">
-                  <animate attributeName="opacity" values="1;0.7;1" dur="1s" repeatCount="3"/>
-                </circle>
-              </svg>
-            `;
-            return div;
-          })();
-          
-          // Apply selection animation
-          marker.content = selectedContent;
-          
-          // Center the map on the clicked location and zoom to show the popup above the point
-          const targetZoom = Math.max(8, Math.min(12, mapInstance.getZoom() + 2));
-          
-          // Pan to position the point in the lower center to show popup above
-          const projection = mapInstance.getProjection();
-          if (projection) {
-            const bounds = mapInstance.getBounds();
-            if (bounds) {
-              const center = mapInstance.getCenter();
-              // Calculate offset to position point lower on screen to show popup above
-              const offsetLat = (bounds.getNorthEast().lat() - bounds.getSouthWest().lat()) * 0.15;
-              const adjustedCenter = {
-                lat: listener.lat - offsetLat,
-                lng: listener.lng
-              };
-              mapInstance.panTo(adjustedCenter);
-            }
-          }
-          
-          // Smooth zoom transition
-          const currentZoom = mapInstance.getZoom();
-          const zoomDiff = targetZoom - currentZoom;
-          
-          const zoomAnimation = () => {
-            let progress = 0;
-            const animateZoom = () => {
-              progress += 0.1;
-              if (progress <= 1) {
-                const currentZoomLevel = currentZoom + (zoomDiff * progress);
-                mapInstance.setZoom(currentZoomLevel);
-                requestAnimationFrame(animateZoom);
-              } else {
-                mapInstance.setZoom(targetZoom);
-              }
-            };
-            
-            if (Math.abs(zoomDiff) > 0.1) {
-              requestAnimationFrame(animateZoom);
-            }
-          };
-          
-          setTimeout(zoomAnimation, 300); // Start zoom after pan animation
-          
-          // Restore original content after animation
-          setTimeout(() => {
-            marker.content = originalContent;
-          }, 2000);
+        // Filter out mock listeners that are too close to user's current location
+        const filteredListeners = mockListeners.filter((listener) => {
+          if (!userLocation?.lat || !userLocation?.lng) return true;
+          const distance = Math.sqrt(
+            Math.pow(listener.lat - userLocation.lat, 2) +
+            Math.pow(listener.lng - userLocation.lng, 2)
+          );
+          // If distance is less than 0.1 degrees (roughly 11km), exclude it
+          return distance > 0.1;
         });
 
-        // Create custom overlay instead of InfoWindow
-        class CustomOverlay extends google.maps.OverlayView {
-          private position: google.maps.LatLng;
-          private content: string;
-          private div?: HTMLDivElement;
-          private listener: ListenerData;
+        filteredListeners.forEach((listener) => {
+          // Create animated theme-colored dot SVG
+          const animatedDotSvg = `
+            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="6" fill="${colors.primary}" opacity="0.8">
+                <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="12" cy="12" r="4" fill="${colors.primary}">
+                <animate attributeName="opacity" values="1;0.6;1" dur="1.5s" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+          `;
 
-          constructor(
-            position: google.maps.LatLng,
-            content: string,
-            listener: ListenerData,
-          ) {
-            super();
-            this.position = position;
-            this.content = content;
-            this.listener = listener;
-          }
+          const marker = new google.maps.Marker({
+            position: { lat: listener.lat, lng: listener.lng },
+            map: mapInstance,
+            title: `${listener.city}, ${listener.country}`,
+            icon: {
+              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(animatedDotSvg),
+              scaledSize: new google.maps.Size(20, 20),
+              anchor: new google.maps.Point(10, 10),
+            },
+          });
 
-          onAdd() {
-            const div = document.createElement("div");
-            div.style.cssText = `
-              position: absolute;
-              background: #1f2937;
-              color: #ffffff;
-              border-radius: 12px;
-              padding: 16px;
-              box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-              border: 2px solid #ff6b35;
-              min-width: 200px;
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              z-index: 1000;
-              pointer-events: auto;
-              opacity: 0;
-              transform: translateY(10px);
-              transition: opacity 0.3s ease, transform 0.3s ease;
-            `;
-
-            // Create close button
-            const closeButton = document.createElement("button");
-            closeButton.className = "close-overlay";
-            closeButton.style.cssText = `
-              position: absolute;
-              top: -2px;
-              right: -2px;
-              background: transparent;
-              border: none;
-              color: white;
-              cursor: pointer;
-              font-size: 20px;
-              font-weight: bold;
-              line-height: 1;
-              padding: 0;
-              border-radius: 0;
-              width: 24px;
-              height: 24px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              transition: all 0.2s ease;
-            `;
-            closeButton.textContent = "×";
-            
-            // Create header container
-            const headerContainer = document.createElement("div");
-            headerContainer.style.cssText = `
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              margin-bottom: 8px;
-              padding-right: 16px;
-            `;
-            
-            // Create pulse indicator
-            const pulseIndicator = document.createElement("div");
-            pulseIndicator.style.cssText = `
-              width: 12px;
-              height: 12px;
-              border-radius: 50%;
-              background: #ff6b35;
-              animation: pulse 2s infinite;
-            `;
-            
-            // Create title (safely escape user data)
-            const title = document.createElement("h3");
-            title.style.cssText = `
-              margin: 0;
-              font-size: 16px;
-              font-weight: 700;
-              color: #ff6b35;
-            `;
-            title.textContent = `${this.listener.city}, ${this.listener.country}`;
-            
-            // Create description paragraph
-            const description = document.createElement("p");
-            description.style.cssText = `
-              margin: 0;
-              font-size: 14px;
-              color: #e5e5e5;
-              font-weight: 500;
-            `;
-            description.textContent = "🎵 Currently listening to metal!";
-            
-            // Create status container
-            const statusContainer = document.createElement("div");
-            statusContainer.style.cssText = `
-              margin-top: 12px;
-              padding: 8px;
-              background: #374151;
-              border-radius: 8px;
-              font-size: 12px;
-              color: #d1d5db;
-            `;
-            statusContainer.textContent = "Live listener • Active now";
-            
-            // Assemble the structure
-            headerContainer.appendChild(pulseIndicator);
-            headerContainer.appendChild(title);
-            
-            div.appendChild(closeButton);
-            div.appendChild(headerContainer);
-            div.appendChild(description);
-            div.appendChild(statusContainer);
-
-            this.div = div;
-
-            // Add close button functionality
-            closeButton.addEventListener("mouseenter", () => {
-              closeButton.style.background = "transparent";
-            });
-            closeButton.addEventListener("mouseleave", () => {
-              closeButton.style.background = "transparent";
-            });
-            closeButton.addEventListener("click", (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              this.setMap(null);
-              if (currentInfoWindow.current === this) {
-                currentInfoWindow.current = null;
-              }
-            });
-
-            // Add pulse animation style
-            const pulseStyle = document.createElement("style");
-            pulseStyle.textContent = `
-              @keyframes pulse {
-                0% { transform: scale(1); opacity: 1; }
-                50% { transform: scale(1.2); opacity: 0.8; }
-                100% { transform: scale(1); opacity: 1; }
-              }
-            `;
-            document.head.appendChild(pulseStyle);
-
-            // Add to map
-            const panes = this.getPanes();
-            if (panes) {
-              panes.overlayMouseTarget.appendChild(div);
+          // Add click listener for popup
+          marker.addListener("click", () => {
+            // Close any existing overlay
+            if (currentInfoWindow.current) {
+              currentInfoWindow.current.setMap(null);
             }
 
-            // Animate in
-            setTimeout(() => {
-              div.style.opacity = "1";
-              div.style.transform = "translateY(0)";
-            }, 10);
-          }
+            // Create custom overlay with dynamic theme colors
+            class CustomOverlay extends google.maps.OverlayView {
+              private position: google.maps.LatLng;
+              private div?: HTMLDivElement;
+              private listener: any;
 
-          draw() {
-            if (this.div) {
-              const overlayProjection = this.getProjection();
-              if (overlayProjection) {
-                const position = overlayProjection.fromLatLngToDivPixel(
-                  this.position,
-                );
-                if (position) {
-                  this.div.style.left = position.x - 100 + "px";
-                  this.div.style.top = position.y - 120 + "px";
+              constructor(position: google.maps.LatLng, listener: any) {
+                super();
+                this.position = position;
+                this.listener = listener;
+              }
+
+              onAdd() {
+                const div = document.createElement("div");
+                div.style.cssText = `
+                  position: absolute;
+                  background: #1f2937;
+                  color: #ffffff;
+                  border-radius: 12px;
+                  padding: 16px;
+                  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                  border: 2px solid ${colors.primary};
+                  min-width: 200px;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  z-index: 1000;
+                  pointer-events: auto;
+                  opacity: 0;
+                  transform: translateY(10px);
+                  transition: all 0.3s ease;
+                `;
+
+                // Create close button
+                const closeButton = document.createElement("button");
+                closeButton.style.cssText = `
+                  position: absolute;
+                  top: 8px;
+                  right: 8px;
+                  background: transparent;
+                  border: none;
+                  color: #ffffff;
+                  font-size: 18px;
+                  cursor: pointer;
+                  width: 24px;
+                  height: 24px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  transition: all 0.2s ease;
+                `;
+                closeButton.textContent = "×";
+
+                // Create title
+                const title = document.createElement("h3");
+                title.style.cssText = `
+                  margin: 0;
+                  font-size: 16px;
+                  font-weight: 700;
+                  color: ${colors.primary};
+                `;
+                title.textContent = `${this.listener.city}, ${this.listener.country}`;
+
+                // Create description
+                const description = document.createElement("p");
+                description.style.cssText = `
+                  margin: 0;
+                  font-size: 14px;
+                  color: #e5e5e5;
+                  font-weight: 500;
+                `;
+                description.textContent = "🎵 Currently listening to metal!";
+
+                // Assemble the structure
+                div.appendChild(closeButton);
+                div.appendChild(title);
+                div.appendChild(description);
+
+                this.div = div;
+
+                // Add close button functionality
+                closeButton.addEventListener("click", (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  this.setMap(null);
+                  if (currentInfoWindow.current === this) {
+                    currentInfoWindow.current = null;
+                  }
+                });
+
+                // Add to map
+                const panes = this.getPanes();
+                if (panes) {
+                  panes.overlayMouseTarget.appendChild(div);
+                }
+
+                // Animate in
+                setTimeout(() => {
+                  div.style.opacity = "1";
+                  div.style.transform = "translateY(0)";
+                }, 10);
+              }
+
+              draw() {
+                if (this.div) {
+                  const overlayProjection = this.getProjection();
+                  if (overlayProjection) {
+                    const position = overlayProjection.fromLatLngToDivPixel(this.position);
+                    if (position) {
+                      this.div.style.left = position.x - 100 + "px";
+                      this.div.style.top = position.y - 120 + "px";
+                    }
+                  }
+                }
+              }
+
+              onRemove() {
+                if (this.div && this.div.parentNode) {
+                  this.div.parentNode.removeChild(this.div);
+                  this.div = undefined;
                 }
               }
             }
-          }
 
-          onRemove() {
-            if (this.div && this.div.parentNode) {
-              this.div.parentNode.removeChild(this.div);
-              this.div = undefined;
-            }
-          }
-        }
-
-        marker.addListener("click", () => {
-          // Close any existing overlay
-          if (currentInfoWindow.current) {
-            currentInfoWindow.current.setMap(null);
-          }
-
-          // Create and open new overlay
-          const overlay = new CustomOverlay(
-            new google.maps.LatLng(listener.lat, listener.lng),
-            "",
-            {
-              ...listener,
-              id: listener.id || `listener-${Date.now()}`,
-              isActive: listener.isActive || true,
-              lastSeen: listener.lastSeen || new Date(),
-            },
-          );
-          overlay.setMap(mapInstance);
-          currentInfoWindow.current = overlay;
+            // Create and show overlay
+            const overlay = new CustomOverlay(
+              new google.maps.LatLng(listener.lat, listener.lng),
+              listener
+            );
+            overlay.setMap(mapInstance);
+            currentInfoWindow.current = overlay;
+          });
         });
+      };
+
+      // Wait for map to be fully initialized before adding markers
+      google.maps.event.addListenerOnce(mapInstance, 'idle', () => {
+        console.log('Map is fully loaded, adding markers...');
+        
+        // Add user location marker if available
+        if (userLocation) {
+          console.log('Adding user location marker at:', userLocation);
+          const userMarker = new google.maps.Marker({
+            position: userLocation,
+            map: mapInstance,
+            title: "Your Location",
+            icon: {
+              url: "data:image/svg+xml;base64," + btoa(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3" fill="#2563eb"/>
+                  <circle cx="12" cy="12" r="10" fill="none" stroke="#2563eb" stroke-width="2" opacity="0.3"/>
+                  <circle cx="12" cy="12" r="6" fill="none" stroke="#2563eb" stroke-width="1" opacity="0.5"/>
+                </svg>
+              `),
+              scaledSize: new google.maps.Size(24, 24),
+              anchor: new google.maps.Point(12, 12),
+            },
+          });
+        }
+        
+        // Add mock listener markers
+        console.log('Adding mock listener markers...');
+        addListenerMarkers(mapInstance);
       });
+      
       } catch (error) {
         console.error('Error initializing Google Maps:', error);
       }
