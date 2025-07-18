@@ -85,7 +85,7 @@ const subscriptionTiers: SubscriptionTier[] = [
 ];
 
 export default function SubscriptionCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0); // Start with Rebel (first)
+  const [currentIndex, setCurrentIndex] = useState(1); // Start with Legend (most popular)
   const [isAnimating, setIsAnimating] = useState(false);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right');
   const [hoveredTier, setHoveredTier] = useState<string | null>(null);
