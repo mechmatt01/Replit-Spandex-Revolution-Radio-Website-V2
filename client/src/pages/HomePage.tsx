@@ -47,7 +47,13 @@ export default function HomePage() {
   }, []);
   
   return (
-    <div className="min-h-screen bg-black text-white" style={{ backgroundColor: '#000000' }}>
+    <div 
+      className="min-h-screen transition-colors duration-300" 
+      style={{ 
+        backgroundColor: colors.background,
+        color: colors.text 
+      }}
+    >
       <Navigation />
       <Hero />
       
