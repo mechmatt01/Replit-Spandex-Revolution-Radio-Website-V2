@@ -669,7 +669,7 @@ export default function FullWidthGlobeMap() {
         zoom: 2,
         center: userLocation || { lat: 40.7128, lng: -74.0060 }, // Default to NYC
         mapTypeId: google.maps.MapTypeId.ROADMAP,
-        mapId: mapId, // Add Map ID to prevent advanced markers error
+        // Don't use mapId when we want custom styling
         styles: [], // Empty styles initially, will be set by updateMapStyles
         // Map controls
         zoomControl: false,
