@@ -204,24 +204,17 @@ export default function FullWidthGlobeMap() {
 
   // Intelligent theme detection for Google Maps
   const shouldUseDarkMap = () => {
-    // Force dark map for classic metal theme
-    if (currentTheme === 'classic-metal') {
-      console.log('Classic Metal detected - using dark map');
+    // Dark themes should use dark map
+    const darkThemes = ['classic-metal', 'black-metal', 'death-metal', 'doom-metal', 'thrash-metal', 'gothic-metal'];
+    
+    if (darkThemes.includes(currentTheme)) {
+      console.log(`${currentTheme} theme detected - using dark map`);
       return true;
     }
     
-    // Force dark map for other dark themes
-    if (currentTheme === 'black-metal' || currentTheme === 'death-metal' || 
-        currentTheme === 'doom-metal' || currentTheme === 'thrash-metal' || 
-        currentTheme === 'gothic-metal' || currentTheme === 'dark-mode' ||
-        currentTheme === 'glassmorphism-premium') {
-      console.log('Dark theme detected - using dark map');
-      return true;
-    }
-    
-    // Use light map for light themes
-    if (currentTheme === 'light-mode' || currentTheme === 'power-metal') {
-      console.log('Light theme detected - using light map');
+    // Light theme should use light map
+    if (currentTheme === 'power-metal') {
+      console.log('Power Metal theme detected - using light map');
       return false;
     }
     
@@ -235,7 +228,6 @@ export default function FullWidthGlobeMap() {
   // Function to update map styling when theme changes
   const updateMapStyles = (mapInstance: google.maps.Map) => {
     // Use dark styles based on theme detection
-    const shouldUseDarkStyles = isMapDark;
     const darkStyles = [
       {
         elementType: "geometry",
@@ -422,7 +414,7 @@ export default function FullWidthGlobeMap() {
     ];
 
     mapInstance.setOptions({
-      styles: shouldUseDarkStyles ? darkStyles : lightStyles
+      styles: isMapDark ? darkStyles : lightStyles
     });
   };
 
@@ -449,6 +441,12 @@ export default function FullWidthGlobeMap() {
     requestAnimationFrame(() => {
       setTimeout(() => {
         if (map) {
+          // Move map to fullscreen container if enabling, otherwise back to normal
+          const targetContainer = enable ? fullscreenMapRef.current : mapRef.current;
+          if (targetContainer && map.getDiv().parentElement !== targetContainer) {
+            targetContainer.appendChild(map.getDiv());
+          }
+          
           google.maps.event.trigger(map, 'resize');
           map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
           updateMapStyles(map);
@@ -582,6 +580,9 @@ export default function FullWidthGlobeMap() {
       isMapDark,
       shouldUseDarkStyles: currentTheme === 'classic-metal' || isMapDark
     });
+    
+    // Don't reinitialize if map already exists
+    if (map) return;
     
     // Always use the same map container
     const currentContainer = mapRef.current;
@@ -1062,7 +1063,7 @@ export default function FullWidthGlobeMap() {
     } else {
       initializeMap();
     }
-  }, [config, userLocation, isDarkMode, currentTheme, isMapDark]);
+  }, [config, userLocation]); // Only initialize once, theme changes handled separately
 
   // Update map styles when theme changes
   useEffect(() => {
@@ -1205,6 +1206,16 @@ export default function FullWidthGlobeMap() {
               </Button>
             </div>
           </div>
+          
+          {/* Fullscreen map container */}
+          <div
+            ref={fullscreenMapRef}
+            className="fixed inset-0 z-[9999] bg-gray-900"
+            style={{
+              top: "80px",
+              minHeight: "calc(100vh - 80px)",
+            }}
+          />
 
           {/* Map Controls for fullscreen */}
           <div className="fixed top-20 right-8 z-[10001] flex flex-col gap-2">
@@ -1302,7 +1313,7 @@ export default function FullWidthGlobeMap() {
 
       <section
         id="map"
-        className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20 ${isFullscreen ? "hidden" : ""}`}
+        className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
       >
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header for normal view */}
@@ -1374,18 +1385,13 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Map Container */}
-        <div className={`relative mb-16 ${isFullscreen ? "" : "h-[600px]"}`}>
+        <div className={`relative mb-16 ${isFullscreen ? "hidden" : "h-[600px]"}`}>
           <div
             ref={mapRef}
-            className={`map-container transition-all duration-300 ${
-              isFullscreen 
-                ? "fixed left-0 right-0 bottom-0 z-[9999]" 
-                : "w-full h-full rounded-lg"
-            }`}
+            className={`map-container transition-all duration-300 w-full h-full rounded-lg`}
             style={{
-              minHeight: isFullscreen ? "calc(100vh - 80px)" : "400px",
+              minHeight: "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              top: isFullscreen ? "80px" : "auto",
             }}
           />
 
