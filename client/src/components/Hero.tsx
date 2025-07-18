@@ -60,18 +60,29 @@ export default function Hero() {
         ></div>
 
         {/* Horizontal fade overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80 transition-colors duration-300"></div>
+        <div 
+          className="absolute inset-0 transition-all duration-300"
+          style={{
+            background: `linear-gradient(to right, 
+              ${colors.background}80 0%, 
+              transparent 20%, 
+              transparent 80%, 
+              ${colors.background}80 100%
+            )`,
+          }}
+        ></div>
 
-        {/* Theme-aware vertical fade to background */}
+        {/* Theme-aware vertical fade to background - stronger transition to next section */}
         <div
           className="absolute inset-0 transition-all duration-300"
           style={{
             background: `linear-gradient(to bottom, 
               transparent 0%, 
-              transparent 40%, 
-              ${colors.background}30 60%, 
-              ${colors.background}70 80%, 
-              ${colors.background}95 100%
+              transparent 30%, 
+              ${colors.background}20 50%, 
+              ${colors.background}60 70%, 
+              ${colors.background}90 85%, 
+              ${colors.background} 100%
             )`,
           }}
         ></div>

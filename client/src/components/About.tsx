@@ -4,7 +4,8 @@ import FadeInView from "./FadeInView";
 import StaggeredAnimation from "./StaggeredAnimation";
 
 export default function About() {
-  const { colors } = useTheme();
+  const { getColors } = useTheme();
+  const colors = getColors();
 
   const scrollToSubscribe = () => {
     const element = document.getElementById("subscribe");
@@ -14,19 +15,33 @@ export default function About() {
   };
 
   return (
-    <section id="about" className="py-20 bg-black" aria-label="About Spandex Salvation Radio">
+    <section 
+      id="about" 
+      className="py-20 transition-colors duration-300" 
+      style={{ backgroundColor: colors.background }}
+      aria-label="About Spandex Salvation Radio"
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-12 items-center">
           <div className="lg:w-3/5">
-            <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-6 text-white">
+            <h2 
+              className="font-orbitron font-black text-3xl md:text-4xl mb-6"
+              style={{ color: colors.text }}
+            >
               ABOUT THE REBELLION
             </h2>
-            <p className="text-gray-300 text-lg font-semibold mb-6">
+            <p 
+              className="text-lg font-semibold mb-6"
+              style={{ color: colors.textSecondary }}
+            >
               Spandex Salvation Radio was born from a passion for the golden era
               of metal music. When hair was big, guitars were loud, and the
               stage was set ablaze with pure rock energy.
             </p>
-            <p className="text-gray-400 font-semibold mb-6">
+            <p 
+              className="font-semibold mb-6"
+              style={{ color: colors.textMuted }}
+            >
               We're dedicated to preserving and celebrating the legendary sounds
               of bands like Skid Row, Twisted Sister, Mötley Crüe, and countless
               other metal pioneers who defined a generation.
@@ -43,7 +58,10 @@ export default function About() {
                 >
                   24/7
                 </div>
-                <div className="text-sm font-semibold text-gray-500 text-center">
+                <div 
+                  className="text-sm font-semibold text-center"
+                  style={{ color: colors.textMuted }}
+                >
                   Live Streaming
                 </div>
               </div>
@@ -54,7 +72,10 @@ export default function About() {
                 >
                   1000+
                 </div>
-                <div className="text-sm font-semibold text-gray-500 text-center">
+                <div 
+                  className="text-sm font-semibold text-center"
+                  style={{ color: colors.textMuted }}
+                >
                   Metal Tracks
                 </div>
               </div>
@@ -65,7 +86,10 @@ export default function About() {
                 >
                   50+
                 </div>
-                <div className="text-sm font-semibold text-gray-500 text-center">
+                <div 
+                  className="text-sm font-semibold text-center"
+                  style={{ color: colors.textMuted }}
+                >
                   Countries
                 </div>
               </div>

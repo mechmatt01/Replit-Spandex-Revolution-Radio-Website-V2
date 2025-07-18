@@ -119,28 +119,44 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-black">
+    <section 
+      id="contact" 
+      className="py-20 transition-colors duration-300"
+      style={{ backgroundColor: colors.background }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-black dark:text-white">
+          <h2 
+            className="font-orbitron font-black text-3xl md:text-4xl mb-4"
+            style={{ color: colors.text }}
+          >
             GET IN TOUCH
           </h2>
-          <p className="text-gray-400 text-lg font-semibold">
-            Have questions, feedback, or want to collaborate? We'd love to hear
-            from you.
+          <p 
+            className="text-lg font-semibold"
+            style={{ color: colors.textMuted }}
+          >
+            Have questions, feedback, or want to get involved? Drop us a line!
           </p>
+
         </div>
 
         <div className="flex justify-center items-center min-h-[500px]">
           <div className="w-full max-w-lg">
             <Card
-              className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 mx-auto"
-              style={{ borderColor: colors.primary }}
+              className="transition-all duration-300 mx-auto"
+              style={{ 
+                backgroundColor: colors.card,
+                borderColor: colors.primary
+              }}
             >
               <CardContent className="p-8">
                 {!showSuccess && !showError && (
                   <>
-                    <h3 className="font-black text-xl mb-6 text-center text-metal-orange">
+                    <h3 
+                      className="font-black text-xl mb-6 text-center"
+                      style={{ color: colors.primary }}
+                    >
                       Send us a Message
                     </h3>
 
@@ -162,7 +178,8 @@ export default function Contact() {
                         <div>
                           <Label
                             htmlFor="firstName"
-                            className="text-gray-300 font-semibold"
+                            className="font-semibold"
+                            style={{ color: colors.textSecondary }}
                           >
                             First Name{validationErrors.includes("First Name") && <span className="text-red-500">*</span>}
                           </Label>

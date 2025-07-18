@@ -29,7 +29,8 @@ export default function Submissions() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { colors } = useTheme();
+  const { getColors } = useTheme();
+  const colors = getColors();
 
   const { data: recentSubmissions = [] } = useQuery<Submission[]>({
     queryKey: ["/api/submissions"],
@@ -110,13 +111,23 @@ export default function Submissions() {
   const hasPaidSubscription = user?.stripeSubscriptionId || false;
 
   return (
-    <section id="submissions" className="py-20 bg-black">
+    <section 
+      id="submissions" 
+      className="py-20 transition-colors duration-300"
+      style={{ backgroundColor: colors.background }}
+    >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="font-orbitron font-bold text-3xl md:text-4xl mb-4 text-black dark:text-white">
+          <h2 
+            className="font-orbitron font-bold text-3xl md:text-4xl mb-4"
+            style={{ color: colors.text }}
+          >
             SUBMIT YOUR REQUESTS
           </h2>
-          <p className="text-gray-400 text-lg">
+          <p 
+            className="text-lg"
+            style={{ color: colors.textMuted }}
+          >
             Got a metal track that needs to be heard? Submit your requests and
             help shape our playlist.
           </p>
@@ -141,7 +152,10 @@ export default function Submissions() {
                   Premium Feature - Paid Subscription Required
                 </span>
               </div>
-              <p className="text-gray-400 mb-6">
+              <p 
+                className="mb-6"
+                style={{ color: colors.textMuted }}
+              >
                 Song submissions are available exclusively to paid subscribers.
                 Sign in and upgrade to submit your favorite tracks.
               </p>

@@ -16,7 +16,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-black py-12 transition-colors duration-300">
+    <footer 
+      className="py-12 transition-colors duration-300"
+      style={{ backgroundColor: colors.background }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
@@ -44,7 +47,10 @@ export default function Footer() {
                 </div>
               </div>
             </div>
-            <p className="text-muted-foreground text-sm">
+            <p 
+              className="text-sm"
+              style={{ color: colors.textMuted }}
+            >
               Your home for old-school metal music. Broadcasting the rebellion
               since 2025.
             </p>
@@ -52,12 +58,18 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Quick Links</h4>
+            <h4 
+              className="font-semibold mb-4"
+              style={{ color: colors.text }}
+            >Quick Links</h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <button
                   onClick={() => scrollToSection("hero")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ color: colors.textMuted }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
                 >
                   Home
                 </button>
@@ -65,7 +77,10 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("schedule")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ color: colors.textMuted }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
                 >
                   Schedule
                 </button>
@@ -73,7 +88,10 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ color: colors.textMuted }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
                 >
                   Submissions
                 </button>
@@ -81,7 +99,10 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ color: colors.textMuted }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
                 >
                   Contact
                 </button>
@@ -89,7 +110,10 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("subscribe")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ color: colors.textMuted }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
                 >
                   Subscribe
                 </button>
@@ -99,12 +123,18 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Support</h4>
+            <h4 
+              className="font-semibold mb-4"
+              style={{ color: colors.text }}
+            >Support</h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <button
                   onClick={() => window.location.href = "/help"}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ color: colors.textMuted }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
                 >
                   Help Center
                 </button>
@@ -112,7 +142,10 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ color: colors.textMuted }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
                 >
                   Technical Support
                 </button>
@@ -120,7 +153,10 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ color: colors.textMuted }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
                 >
                   Submit Songs
                 </button>
@@ -128,7 +164,10 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => window.location.href = "/guidelines"}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ color: colors.textMuted }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
                 >
                   Community Guidelines
                 </button>
@@ -136,7 +175,10 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => window.location.href = "/privacy"}
-                  className="text-muted-foreground hover:text-metal-orange transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ color: colors.textMuted }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
                 >
                   Privacy Policy
                 </button>
@@ -146,25 +188,46 @@ export default function Footer() {
 
           {/* Stream Info */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Stream Info</h4>
+            <h4 
+              className="font-semibold mb-4"
+              style={{ color: colors.text }}
+            >Stream Info</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <div className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-3 flex-shrink-0">
+                <div 
+                  className="flex items-center"
+                  style={{ color: colors.textMuted }}
+                >
+                  <span 
+                    className="mr-3 flex-shrink-0"
+                    style={{ color: colors.primary }}
+                  >
                     <Radio className="h-4 w-4" />
                   </span>
                   <span className="-ml-7">24/7 Live Stream</span>
                 </div>
               </li>
               <li>
-                <div className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">♪</span>
+                <div 
+                  className="flex items-center"
+                  style={{ color: colors.textMuted }}
+                >
+                  <span 
+                    className="mr-3 flex-shrink-0 text-center w-4"
+                    style={{ color: colors.primary }}
+                  >♪</span>
                   <span className="-ml-7">320kbps Quality</span>
                 </div>
               </li>
               <li>
-                <div className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">🌍</span>
+                <div 
+                  className="flex items-center"
+                  style={{ color: colors.textMuted }}
+                >
+                  <span 
+                    className="mr-3 flex-shrink-0 text-center w-4"
+                    style={{ color: colors.primary }}
+                  >🌍</span>
                   <span className="-ml-7">Global Coverage</span>
                 </div>
               </li>
