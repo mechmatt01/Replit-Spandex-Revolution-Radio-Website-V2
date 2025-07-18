@@ -456,17 +456,33 @@ export default function FullWidthGlobeMap() {
     requestAnimationFrame(() => {
       setTimeout(() => {
         if (map) {
-          // Move map to fullscreen container if enabling, otherwise back to normal
+          // Get the map div
+          const mapDiv = map.getDiv();
           const targetContainer = enable ? fullscreenMapRef.current : mapRef.current;
-          if (targetContainer && map.getDiv().parentElement !== targetContainer) {
-            targetContainer.appendChild(map.getDiv());
-          }
           
-          google.maps.event.trigger(map, 'resize');
-          map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
-          updateMapStyles(map);
+          if (targetContainer && mapDiv) {
+            // Ensure the map div maintains proper styling
+            mapDiv.style.width = '100%';
+            mapDiv.style.height = '100%';
+            mapDiv.style.position = 'absolute';
+            mapDiv.style.top = '0';
+            mapDiv.style.left = '0';
+            
+            // Move the map to the target container
+            targetContainer.appendChild(mapDiv);
+            
+            // Force Google Maps to recalculate its size
+            google.maps.event.trigger(map, 'resize');
+            
+            // Re-center the map
+            const center = userLocation || { lat: 40.7128, lng: -74.0060 };
+            map.setCenter(center);
+            
+            // Update styles
+            updateMapStyles(map);
+          }
         }
-      }, 300); // Allow time for CSS transition
+      }, 100); // Reduced delay for faster response
     });
   };
 
@@ -1082,10 +1098,11 @@ export default function FullWidthGlobeMap() {
 
   // Update map styles when theme changes
   useEffect(() => {
-    if (map) {
+    if (map && window.google && window.google.maps) {
+      console.log('Theme changed, updating map styles. Current theme:', currentTheme);
       updateMapStyles(map);
     }
-  }, [map, currentTheme, isDarkMode, isMapDark]);
+  }, [map, currentTheme, isDarkMode]);
 
   // Generate mock listener data
   const activeListeners: ListenerData[] = [
@@ -1203,11 +1220,14 @@ export default function FullWidthGlobeMap() {
           {/* Fullscreen map container */}
           <div
             ref={fullscreenMapRef}
-            className="fixed inset-0 z-[9999] bg-gray-900"
+            className="fixed inset-0 z-[9999]"
             style={{
               touchAction: 'none',
               overscrollBehavior: 'none',
-              overflow: 'hidden'
+              overflow: 'hidden',
+              backgroundColor: '#1f2937',
+              width: '100vw',
+              height: '100vh'
             }}
           />
           
