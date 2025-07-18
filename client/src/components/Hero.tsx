@@ -69,9 +69,9 @@ export default function Hero() {
             background: `linear-gradient(to bottom, 
               transparent 0%, 
               transparent 40%, 
-              rgba(0, 0, 0, 0.3) 60%, 
-              rgba(0, 0, 0, 0.7) 80%, 
-              rgba(0, 0, 0, 0.95) 100%
+              ${colors.background}30 60%, 
+              ${colors.background}70 80%, 
+              ${colors.background}95 100%
             )`,
           }}
         ></div>
