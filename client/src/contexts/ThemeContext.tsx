@@ -516,6 +516,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [currentTheme, isDarkMode, colors]);
 
   const setTheme = (theme: MetalTheme) => {
+    console.log('ThemeContext setTheme called with:', theme);
+    console.log('Current theme before change:', currentTheme);
     setCurrentTheme(theme);
   };
 
