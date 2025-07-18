@@ -57,15 +57,11 @@ export default function MetalThemeSwitcher() {
   const hasActiveSubscription = user?.subscriptionStatus === "active";
 
   const handleThemeClick = (themeKey: string, themeConfig: any) => {
-    console.log('Theme click detected:', themeKey, themeConfig);
-    
     if (themeConfig.isPremium && !hasActiveSubscription) {
-      console.log('Premium theme requires subscription');
       setShowPremiumDialog(true);
       return;
     }
 
-    console.log('Setting theme to:', themeKey);
     setTheme(themeKey as MetalTheme);
     setIsOpen(false);
   };

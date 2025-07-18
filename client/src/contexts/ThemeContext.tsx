@@ -516,8 +516,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [currentTheme, isDarkMode, colors]);
 
   const setTheme = (theme: MetalTheme) => {
-    console.log('ThemeContext setTheme called with:', theme);
-    console.log('Current theme before change:', currentTheme);
+    // For light-mode theme, also set isDarkMode to false
+    if (theme === 'light-mode') {
+      setIsDarkMode(false);
+    } else if (theme !== 'light-mode') {
+      setIsDarkMode(true);
+    }
+    
     setCurrentTheme(theme);
   };
 

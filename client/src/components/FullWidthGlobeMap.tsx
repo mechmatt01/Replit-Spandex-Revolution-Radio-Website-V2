@@ -447,36 +447,16 @@ export default function FullWidthGlobeMap() {
     refetchIntervalInBackground: true,
   });
 
-  // Handle fullscreen toggle with proper map resizing
+  // Handle fullscreen toggle with proper map resizing - FIXED VERSION
   const toggleFullscreen = (enable: boolean) => {
-    console.log('Toggle fullscreen called:', enable);
-    
     setIsFullscreen(enable);
     
-    // Prevent body scrolling when fullscreen
-    if (enable) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.height = '100%';
-      document.body.style.top = '0';
-      document.body.style.left = '0';
-    } else {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.height = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-    }
-    
-    // Trigger map resize after transition
+    // Trigger map resize after state change without affecting body position
     setTimeout(() => {
       if (map) {
         google.maps.event.trigger(map, 'resize');
-        console.log('Map resize triggered');
       }
-    }, 500);
+    }, 50);
   };
 
   // Fetch Google Maps API key and config
@@ -1085,17 +1065,18 @@ export default function FullWidthGlobeMap() {
                   </div>
                 )}
               </div>
-              <Button
+              <button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   toggleFullscreen(false);
+                  return false;
                 }}
-                className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
-                size="sm"
+                type="button"
+                className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300 rounded"
               >
                 <Minimize2 className="w-4 h-4" />
-              </Button>
+              </button>
             </div>
           </div>
 
@@ -1386,25 +1367,26 @@ export default function FullWidthGlobeMap() {
               <RotateCcw className="w-4 h-4" />
             </Button>
             {!isFullscreen && (
-              <Button
+              <button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   toggleFullscreen(true);
+                  return false;
                 }}
-                size="sm"
+                type="button"
                 className={`p-2 ${
                   isDarkMode 
                     ? "bg-gray-800 hover:bg-gray-700 text-white" 
                     : "bg-white hover:bg-gray-50 text-black"
-                } border-0 shadow-lg`}
+                } border-0 shadow-lg rounded transition-colors`}
                 style={{
                   backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
                   color: isDarkMode ? "#ffffff" : "#000000",
                 }}
               >
                 <Maximize2 className="w-4 h-4" />
-              </Button>
+              </button>
             )}
           </div>
         </div>
