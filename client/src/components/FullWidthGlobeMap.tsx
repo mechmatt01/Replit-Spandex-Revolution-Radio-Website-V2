@@ -199,28 +199,28 @@ export default function FullWidthGlobeMap() {
   const mapRef = useRef<HTMLDivElement>(null);
   const fullscreenMapRef = useRef<HTMLDivElement>(null);
   const currentInfoWindow = useRef<any>(null);
-  const { colors, isDarkMode, theme } = useTheme();
-  const currentTheme = theme.name;
+  const { colors, isDarkMode, currentTheme } = useTheme();
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   // Intelligent theme detection for Google Maps
   const shouldUseDarkMap = () => {
     // Force dark map for classic metal theme
-    if (currentTheme === 'Classic Metal') {
+    if (currentTheme === 'classic-metal') {
       console.log('Classic Metal detected - using dark map');
       return true;
     }
     
     // Force dark map for other dark themes
-    if (currentTheme === 'Black Metal' || currentTheme === 'Death Metal' || 
-        currentTheme === 'Doom Metal' || currentTheme === 'Thrash Metal' || 
-        currentTheme === 'Gothic Metal' || currentTheme === 'Dark Mode' ||
-        currentTheme === 'Glassmorphism Premium') {
+    if (currentTheme === 'black-metal' || currentTheme === 'death-metal' || 
+        currentTheme === 'doom-metal' || currentTheme === 'thrash-metal' || 
+        currentTheme === 'gothic-metal' || currentTheme === 'dark-mode' ||
+        currentTheme === 'glassmorphism-premium') {
       console.log('Dark theme detected - using dark map');
       return true;
     }
     
     // Use light map for light themes
-    if (currentTheme === 'Light Mode' || currentTheme === 'Power Metal') {
+    if (currentTheme === 'light-mode' || currentTheme === 'power-metal') {
       console.log('Light theme detected - using light map');
       return false;
     }
@@ -441,6 +441,22 @@ export default function FullWidthGlobeMap() {
     refetchIntervalInBackground: true,
   });
 
+  // Handle fullscreen toggle with proper map resizing
+  const toggleFullscreen = (enable: boolean) => {
+    setIsFullscreen(enable);
+    
+    // Use requestAnimationFrame to ensure smooth transition
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        if (map) {
+          google.maps.event.trigger(map, 'resize');
+          map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
+          updateMapStyles(map);
+        }
+      }, 300); // Allow time for CSS transition
+    });
+  };
+
   // Fetch Google Maps API key and config
   const { data: config, error: configError, isLoading: configLoading } = useQuery<{
     googleMapsApiKey: string;
@@ -560,15 +576,15 @@ export default function FullWidthGlobeMap() {
     console.log('Initializing Google Maps with API key:', apiKey.substring(0, 20) + '...');
     console.log('Using Map ID:', mapId);
     console.log('Theme detection:', {
-      currentTheme: theme.name,
+      currentTheme: currentTheme,
       isDarkMode,
-      backgroundColor: theme.colors[isDarkMode ? 'dark' : 'light'].background,
+      backgroundColor: themes[currentTheme].colors[isDarkMode ? 'dark' : 'light'].background,
       isMapDark,
-      shouldUseDarkStyles: theme.name === 'Classic Metal' || isMapDark
+      shouldUseDarkStyles: currentTheme === 'classic-metal' || isMapDark
     });
     
-    // Use the correct map container based on fullscreen state
-    const currentContainer = isFullscreen ? fullscreenMapRef.current : mapRef.current;
+    // Always use the same map container
+    const currentContainer = mapRef.current;
     if (!currentContainer) return;
 
     // Add CSS to hide Google attribution and keyboard shortcuts overlay
@@ -614,16 +630,17 @@ export default function FullWidthGlobeMap() {
     document.head.appendChild(style);
 
     const initializeMap = () => {
-      // Check if Google Maps API is fully loaded
-      if (!window.google || !window.google.maps || !window.google.maps.Map || !window.google.maps.MapTypeId) {
-        console.error('Google Maps API not fully loaded');
-        return;
-      }
-      
-      // Use regular markers if advanced markers aren't available
-      const useAdvancedMarkers = window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
-      
-      const mapInstance = new google.maps.Map(currentContainer, {
+      try {
+        // Check if Google Maps API is fully loaded
+        if (!window.google || !window.google.maps || !window.google.maps.Map || !window.google.maps.MapTypeId) {
+          console.error('Google Maps API not fully loaded');
+          return;
+        }
+        
+        // Use regular markers if advanced markers aren't available
+        const useAdvancedMarkers = window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
+        
+        const mapInstance = new google.maps.Map(currentContainer, {
         zoom: 2,
         center: userLocation || { lat: 40.7128, lng: -74.0060 }, // Default to NYC
         mapTypeId: google.maps.MapTypeId.ROADMAP,
@@ -1014,6 +1031,9 @@ export default function FullWidthGlobeMap() {
           currentInfoWindow.current = overlay;
         });
       });
+      } catch (error) {
+        console.error('Error initializing Google Maps:', error);
+      }
     };
 
     // Define global callback function
@@ -1042,7 +1062,7 @@ export default function FullWidthGlobeMap() {
     } else {
       initializeMap();
     }
-  }, [config, userLocation, isDarkMode, theme, isMapDark, isFullscreen]);
+  }, [config, userLocation, isDarkMode, currentTheme, isMapDark]);
 
   // Update map styles when theme changes
   useEffect(() => {
@@ -1150,166 +1170,140 @@ export default function FullWidthGlobeMap() {
     .size;
   const top10Listeners = activeListeners.slice(0, 10);
 
-  if (isFullscreen) {
-    return (
-      <div className="fixed inset-0 z-[9999] bg-black">
-        {/* Fullscreen header bar */}
-        <div className="absolute top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-700">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div className="flex items-center gap-4">
-              <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
-              {weather && (
-                <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
-                  <div className="w-8 h-8">
-                    <img
-                      src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
-                      alt={weather.description}
-                      className="w-full h-full object-contain"
-                    />
+  return (
+    <>
+      {/* Fullscreen overlay elements */}
+      {isFullscreen && (
+        <>
+          {/* Fullscreen header bar */}
+          <div className="fixed top-0 left-0 right-0 z-[10000] bg-black/80 backdrop-blur-md border-b border-gray-700">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-4">
+                <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
+                {weather && (
+                  <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
+                    <div className="w-8 h-8">
+                      <img
+                        src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
+                        alt={weather.description}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="text-sm">
+                      <span className="text-white font-medium">{weather.location}</span>
+                      <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
+                    </div>
                   </div>
-                  <div className="text-sm">
-                    <span className="text-white font-medium">{weather.location}</span>
-                    <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
+              <Button
+                onClick={() => toggleFullscreen(false)}
+                className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
+                size="sm"
+              >
+                <Minimize2 className="w-4 h-4" />
+              </Button>
             </div>
+          </div>
+
+          {/* Map Controls for fullscreen */}
+          <div className="fixed top-20 right-8 z-[10001] flex flex-col gap-2">
             <Button
               onClick={() => {
-                setIsFullscreen(false);
-                // Use requestAnimationFrame to ensure smooth transition
-                requestAnimationFrame(() => {
-                  setTimeout(() => {
-                    if (map) {
-                      google.maps.event.trigger(map, 'resize');
-                      map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
-                      updateMapStyles(map);
-                    }
-                  }, 100);
-                });
+                if (map) {
+                  map.setZoom(map.getZoom() + 1);
+                }
               }}
-              className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
               size="sm"
+              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+              style={{
+                backgroundColor: "#1f2937",
+                color: "#ffffff",
+              }}
             >
-              <Minimize2 className="w-4 h-4" />
+              <ZoomIn className="w-4 h-4" />
+            </Button>
+            <Button
+              onClick={() => {
+                if (map) {
+                  map.setZoom(map.getZoom() - 1);
+                }
+              }}
+              size="sm"
+              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+              style={{
+                backgroundColor: "#1f2937",
+                color: "#ffffff",
+              }}
+            >
+              <ZoomOut className="w-4 h-4" />
             </Button>
           </div>
-        </div>
 
-        <div
-          ref={fullscreenMapRef}
-          className="w-full h-full map-container"
-          style={{
-            minHeight: "100vh",
-            backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-            position: "absolute",
-            top: "80px",
-            left: "0",
-            right: "0",
-            bottom: "0"
-          }}
-        />
-
-        {/* Map Controls for fullscreen */}
-        <div className="absolute top-20 right-8 z-10 flex flex-col gap-2">
-          <Button
-            onClick={() => {
-              if (map) {
-                map.setZoom(map.getZoom() + 1);
-              }
-            }}
-            size="sm"
-            className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-            style={{
-              backgroundColor: "#1f2937",
-              color: "#ffffff",
-            }}
-          >
-            <ZoomIn className="w-4 h-4" />
-          </Button>
-          <Button
-            onClick={() => {
-              if (map) {
-                map.setZoom(map.getZoom() - 1);
-              }
-            }}
-            size="sm"
-            className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-            style={{
-              backgroundColor: "#1f2937",
-              color: "#ffffff",
-            }}
-          >
-            <ZoomOut className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Left-side controls for fullscreen mode */}
-        <div className="absolute top-20 left-8 z-10 flex flex-col gap-2">
-          <Button
-            onClick={() => {
-              if (userLocation) {
-                if (map) {
-                  map.panTo(userLocation);
-                  map.setZoom(12);
-                }
-              } else {
-                // Request location if not available
-                if (navigator.geolocation) {
-                  navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                      const newLocation = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                      };
-                      setUserLocation(newLocation);
-                      if (map) {
-                        map.panTo(newLocation);
-                        map.setZoom(12);
+          {/* Left-side controls for fullscreen mode */}
+          <div className="fixed top-20 left-8 z-[10001] flex flex-col gap-2">
+            <Button
+              onClick={() => {
+                if (userLocation) {
+                  if (map) {
+                    map.panTo(userLocation);
+                    map.setZoom(12);
+                  }
+                } else {
+                  // Request location if not available
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                      (position) => {
+                        const newLocation = {
+                          lat: position.coords.latitude,
+                          lng: position.coords.longitude,
+                        };
+                        setUserLocation(newLocation);
+                        if (map) {
+                          map.panTo(newLocation);
+                          map.setZoom(12);
+                        }
+                      },
+                      (error) => {
+                        console.error("Error getting location:", error);
                       }
-                    },
-                    (error) => {
-                      console.error("Error getting location:", error);
-                    }
-                  );
+                    );
+                  }
                 }
-              }
-            }}
-            size="sm"
-            className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-            style={{
-              backgroundColor: "#1f2937",
-              color: "#ffffff",
-            }}
-          >
-            <MapPin className="w-4 h-4" />
-          </Button>
-          <Button
-            onClick={() => {
-              if (map) {
-                map.panTo({ lat: 40.7128, lng: -74.006 });
-                map.setZoom(2);
-              }
-            }}
-            size="sm"
-            className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-            style={{
-              backgroundColor: "#1f2937",
-              color: "#ffffff",
-            }}
-          >
-            <RotateCcw className="w-4 h-4" />
-          </Button>
-        </div>
-      </div>
-    );
-  }
+              }}
+              size="sm"
+              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+              style={{
+                backgroundColor: "#1f2937",
+                color: "#ffffff",
+              }}
+            >
+              <MapPin className="w-4 h-4" />
+            </Button>
+            <Button
+              onClick={() => {
+                if (map) {
+                  map.panTo({ lat: 40.7128, lng: -74.006 });
+                  map.setZoom(2);
+                }
+              }}
+              size="sm"
+              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+              style={{
+                backgroundColor: "#1f2937",
+                color: "#ffffff",
+              }}
+            >
+              <RotateCcw className="w-4 h-4" />
+            </Button>
+          </div>
+        </>
+      )}
 
-  return (
-    <section
-      id="map"
-      className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
-    >
+      <section
+        id="map"
+        className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20 ${isFullscreen ? "hidden" : ""}`}
+      >
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header for normal view */}
         <div className="text-center mb-16">
@@ -1380,13 +1374,18 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Map Container */}
-        <div className="relative h-[600px] mb-16">
+        <div className={`relative mb-16 ${isFullscreen ? "" : "h-[600px]"}`}>
           <div
             ref={mapRef}
-            className="w-full h-full map-container rounded-lg"
+            className={`map-container transition-all duration-300 ${
+              isFullscreen 
+                ? "fixed left-0 right-0 bottom-0 z-[9999]" 
+                : "w-full h-full rounded-lg"
+            }`}
             style={{
-              minHeight: "400px",
+              minHeight: isFullscreen ? "calc(100vh - 80px)" : "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+              top: isFullscreen ? "80px" : "auto",
             }}
           />
 
@@ -1496,19 +1495,7 @@ export default function FullWidthGlobeMap() {
 
           {/* Fullscreen Toggle */}
           <Button
-            onClick={() => {
-              setIsFullscreen(true);
-              // Use requestAnimationFrame to ensure smooth transition
-              requestAnimationFrame(() => {
-                setTimeout(() => {
-                  if (map) {
-                    google.maps.event.trigger(map, 'resize');
-                    map.panTo(userLocation || { lat: 40.7128, lng: -74.0060 });
-                    updateMapStyles(map);
-                  }
-                }, 100);
-              });
-            }}
+            onClick={() => toggleFullscreen(true)}
             className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg transition-all duration-300 ${
               isDarkMode
                 ? "bg-gray-800 hover:bg-gray-700 text-white"
@@ -1738,5 +1725,6 @@ export default function FullWidthGlobeMap() {
         </div>
       </div>
     </section>
+    </>
   );
 }

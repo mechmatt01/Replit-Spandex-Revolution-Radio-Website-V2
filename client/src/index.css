@@ -73,6 +73,20 @@
 }
 
 /* More specific selector for Select placeholder text */
+
+/* Fullscreen animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
 [data-radix-select-trigger] span[data-radix-select-value] {
   color: rgb(156 163 175 / 0.6) !important;
   opacity: 0.6 !important;

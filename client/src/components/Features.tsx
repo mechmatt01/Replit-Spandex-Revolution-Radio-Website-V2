@@ -73,17 +73,17 @@ export default function Features() {
           <Card
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
-              backgroundColor: colors.card,
-              borderColor: borderColor,
-              boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
+              backgroundColor: colors.background,
+              borderColor: `${colors.primary}80`,
+              boxShadow: `0 8px 32px ${colors.primary}20`,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = borderColor;
-              e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
+              e.currentTarget.style.borderColor = `${colors.primary}80`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
             onClick={scrollToRadioPlayer}
           >
@@ -124,17 +124,17 @@ export default function Features() {
           <Card
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
-              backgroundColor: colors.card,
-              borderColor: borderColor,
-              boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
+              backgroundColor: colors.background,
+              borderColor: `${colors.primary}80`,
+              boxShadow: `0 8px 32px ${colors.primary}20`,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = borderColor;
-              e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
+              e.currentTarget.style.borderColor = `${colors.primary}80`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
             onClick={() => scrollToSection("map")}
           >
@@ -175,17 +175,17 @@ export default function Features() {
           <Card
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
-              backgroundColor: colors.card,
-              borderColor: borderColor,
-              boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
+              backgroundColor: colors.background,
+              borderColor: `${colors.primary}80`,
+              boxShadow: `0 8px 32px ${colors.primary}20`,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = borderColor;
-              e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
+              e.currentTarget.style.borderColor = `${colors.primary}80`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
             onClick={() => scrollToSection("schedule")}
           >
@@ -226,17 +226,17 @@ export default function Features() {
           <Card
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
-              backgroundColor: colors.card,
-              borderColor: borderColor,
-              boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
+              backgroundColor: colors.background,
+              borderColor: `${colors.primary}80`,
+              boxShadow: `0 8px 32px ${colors.primary}20`,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = borderColor;
-              e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
+              e.currentTarget.style.borderColor = `${colors.primary}80`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
             onClick={() => scrollToSection("submissions")}
           >
@@ -292,17 +292,17 @@ export default function Features() {
           <Card
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
-              backgroundColor: colors.card,
-              borderColor: borderColor,
-              boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
+              backgroundColor: colors.background,
+              borderColor: `${colors.primary}80`,
+              boxShadow: `0 8px 32px ${colors.primary}20`,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = borderColor;
-              e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
+              e.currentTarget.style.borderColor = `${colors.primary}80`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
             onClick={() => scrollToSection("subscribe")}
           >
@@ -358,17 +358,17 @@ export default function Features() {
           <Card
             className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
             style={{
-              backgroundColor: colors.card,
-              borderColor: borderColor,
-              boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`,
+              backgroundColor: colors.background,
+              borderColor: `${colors.primary}80`,
+              boxShadow: `0 8px 32px ${colors.primary}20`,
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px rgba(0, 0, 0, 0.2)`;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = borderColor;
-              e.currentTarget.style.boxShadow = `0 8px 32px rgba(0, 0, 0, 0.1)`;
+              e.currentTarget.style.borderColor = `${colors.primary}80`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
             }}
             onClick={() => scrollToSection("merch")}
           >

@@ -80,9 +80,10 @@ export default function HomePage() {
         <Submissions />
       </FadeInView>
       
-      <FadeInView direction="up" delay={0}>
+      {/* Temporarily comment out FullWidthGlobeMap to isolate the issue */}
+      {/* <FadeInView direction="up" delay={0}>
         <FullWidthGlobeMap />
-      </FadeInView>
+      </FadeInView> */}
       
       <FadeInView direction="up" delay={0}>
         <Contact />

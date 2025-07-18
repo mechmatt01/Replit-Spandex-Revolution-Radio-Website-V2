@@ -15,6 +15,7 @@ import {
   CloudDrizzle,
   CloudLightning,
   Thermometer,
+  X,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -201,6 +202,7 @@ const GoogleMapWithListeners = ({
   listeners,
   colors,
   isDarkMode,
+  themeName,
   onListenerClick,
   selectedListener,
   apiKey,
@@ -209,6 +211,7 @@ const GoogleMapWithListeners = ({
   listeners: ActiveListener[];
   colors: any;
   isDarkMode: boolean;
+  themeName: string;
   onListenerClick: (listener: ActiveListener) => void;
   selectedListener: ActiveListener | null;
   apiKey: string;
@@ -271,18 +274,25 @@ const GoogleMapWithListeners = ({
         console.log('Creating Google Map...');
         
         // Use theme-aware styling for Google Maps
-        const { theme } = useTheme();
-        const currentTheme = theme.name;
-        const shouldUseDarkMap = currentTheme === 'Classic Metal' || isDarkMode;
+        // Check if it's any dark theme or if isDarkMode is true
+        const shouldUseDarkMap = isDarkMode || 
+          themeName === 'classic-metal' || 
+          themeName === 'black-metal' || 
+          themeName === 'death-metal' || 
+          themeName === 'doom-metal' || 
+          themeName === 'thrash-metal' || 
+          themeName === 'gothic-metal' ||
+          themeName === 'dark-mode';
         
         console.log('InteractiveListenerMap theme detection:', {
-          currentTheme,
+          themeName,
           isDarkMode,
           shouldUseDarkMap
         });
         
         // Create map styles based on theme
         const mapStyles = shouldUseDarkMap ? [
+          // Dark theme map styles
           { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
           { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
           { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
@@ -290,7 +300,26 @@ const GoogleMapWithListeners = ({
           { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
           { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
           { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
-        ] : [];
+          { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+          { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
+          { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
+          { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
+          { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
+        ] : [
+          // Light theme map styles
+          { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+          { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+          { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+          { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] },
+          { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+          { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#e0e0e0" }] },
+          { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#696969" }] },
+          { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+          { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#e5e5e5" }] },
+          { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+          { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
+          { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
+        ];
 
         const map = new window.google.maps.Map(mapRef.current, {
           zoom: 2,
@@ -616,7 +645,7 @@ export default function InteractiveListenerMap() {
   const [locationPermissionDenied, setLocationPermissionDenied] = useState(false);
   const [isUserLocationSelected, setIsUserLocationSelected] = useState(false);
 
-  const { colors, isDarkMode } = useTheme();
+  const { colors, isDarkMode, currentTheme } = useTheme();
 
   // Add CSS-based fullscreen functionality
   const toggleFullscreen = () => {
@@ -890,88 +919,45 @@ export default function InteractiveListenerMap() {
           </p>
         </div>
 
+        {/* Fullscreen Overlay */}
         {isFullscreen && (
-          <div className="fixed inset-0 z-50 bg-black flex flex-col">
-            {/* Fullscreen Header */}
-            <div className="bg-gray-900/80 backdrop-blur-md border-b border-gray-700 p-4 flex justify-between items-center">
-              <h3 className="font-black text-xl text-white">
-                Live Listener Map - Fullscreen
-              </h3>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleFullscreen}
-                className="text-white hover:bg-white/10"
-              >
-                <Minimize2 className="w-4 h-4" />
-              </Button>
-            </div>
-            
-            {/* Fullscreen Map Container */}
-            <div className="flex-1 p-4">
-              <div
-                className="relative bg-gray-800 rounded-lg h-full overflow-hidden"
-                style={{ minHeight: "calc(100vh - 120px)" }}
-              >
-                {/* Loading State */}
-                {isLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center z-10">
-                    <div className="text-center">
-                      <Globe className="text-gray-600 h-32 w-32 opacity-30 animate-pulse mx-auto mb-4" />
-                      <div className="flex justify-center space-x-2">
-                        {[0, 1, 2].map((i) => (
-                          <div
-                            key={i}
-                            className="w-3 h-3 rounded-full animate-pulse"
-                            style={{
-                              backgroundColor: colors.primary,
-                              animationDelay: `${i * 0.3}s`,
-                              animationDuration: "1.5s",
-                            }}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-white font-semibold mt-4">
-                        Loading Interactive Map...
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Google Maps or Fallback */}
-                {!isLoading && (
-                  <>
-                    {apiKey ? (
-                      <GoogleMapWithListeners
-                        listeners={activeListeners}
-                        colors={colors}
-                        isDarkMode={isDarkMode}
-                        onListenerClick={setSelectedListener}
-                        selectedListener={selectedListener}
-                        apiKey={apiKey}
-                        userLocation={userLocation || undefined}
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center h-full">
-                        <div className="text-center">
-                          <Globe className="text-gray-600 h-16 w-16 mx-auto mb-4 opacity-50" />
-                          <p className="font-semibold text-gray-400">
-                            Interactive map coming soon
-                          </p>
-                          <p className="text-sm mt-2 text-gray-500">
-                            Google Maps API key missing
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </>
+          <div className="fixed inset-0 z-[9999] bg-black animate-fadeIn">
+            <div className="h-full flex flex-col">
+              {/* Fullscreen Header */}
+              <div className="bg-gray-900/80 backdrop-blur-md border-b border-gray-700 p-4 flex justify-between items-center">
+                <h3 className="font-black text-xl text-white">
+                  Live Listener Map - Fullscreen
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleFullscreen}
+                  className="text-white hover:bg-white/10"
+                >
+                  <X className="w-5 h-5" />
+                </Button>
+              </div>
+              
+              {/* Fullscreen Map Container */}
+              <div className="flex-1 relative overflow-hidden">
+                {!isLoading && apiKey && (
+                  <GoogleMapWithListeners
+                    listeners={activeListeners}
+                    colors={colors}
+                    isDarkMode={true}
+                    themeName={currentTheme}
+                    onListenerClick={setSelectedListener}
+                    selectedListener={selectedListener}
+                    apiKey={apiKey}
+                    userLocation={userLocation || undefined}
+                  />
                 )}
               </div>
             </div>
           </div>
         )}
 
-        <div className={`${isFullscreen ? "hidden" : "grid grid-cols-1 lg:grid-cols-3 gap-8"}`}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Interactive Map */}
           <div className="lg:col-span-2">
             <Card
@@ -1044,6 +1030,7 @@ export default function InteractiveListenerMap() {
                           listeners={activeListeners}
                           colors={colors}
                           isDarkMode={isDarkMode}
+                          themeName={currentTheme}
                           onListenerClick={setSelectedListener}
                           selectedListener={selectedListener}
                           apiKey={apiKey}
