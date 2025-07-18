@@ -10,7 +10,7 @@ import SkeletonLoader from "./SkeletonLoader";
 import FadeInView from "./FadeInView";
 
 export default function Schedule() {
-  const { getColors } = useTheme();
+  const { getColors, currentTheme } = useTheme();
   const colors = getColors();
   const { setCurrentTrack } = useRadio();
   const [selectedPastShow, setSelectedPastShow] = useState<PastShow | null>(null);
@@ -193,7 +193,9 @@ export default function Schedule() {
         <div className="text-center mb-16">
           <h2 
             className="font-orbitron font-black text-3xl md:text-4xl mb-4"
-            style={{ color: colors.text }}
+            style={{ 
+              color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+            }}
           >
             SHOW SCHEDULE
           </h2>

@@ -29,7 +29,7 @@ export default function Submissions() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user, isAuthenticated, isLoading } = useAuth();
-  const { getColors } = useTheme();
+  const { getColors, currentTheme } = useTheme();
   const colors = getColors();
 
   const { data: recentSubmissions = [] } = useQuery<Submission[]>({
@@ -120,7 +120,9 @@ export default function Submissions() {
         <div className="text-center mb-12">
           <h2 
             className="font-orbitron font-bold text-3xl md:text-4xl mb-4"
-            style={{ color: colors.text }}
+            style={{ 
+              color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+            }}
           >
             SUBMIT YOUR REQUESTS
           </h2>

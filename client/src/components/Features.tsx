@@ -12,7 +12,7 @@ export default function Features() {
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
   });
-  const { getColors, isDarkMode } = useTheme();
+  const { getColors, isDarkMode, currentTheme } = useTheme();
   const colors = getColors();
   
   // Use primary color for borders to ensure theme consistency
@@ -51,7 +51,9 @@ export default function Features() {
         <div className="text-center mb-16">
           <h2
             className="font-orbitron font-black text-4xl md:text-5xl mb-6"
-            style={{ color: colors.text }}
+            style={{ 
+              color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+            }}
           >
             ROCK THE AIRWAVES
           </h2>

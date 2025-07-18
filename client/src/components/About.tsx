@@ -4,7 +4,7 @@ import FadeInView from "./FadeInView";
 import StaggeredAnimation from "./StaggeredAnimation";
 
 export default function About() {
-  const { getColors } = useTheme();
+  const { getColors, currentTheme } = useTheme();
   const colors = getColors();
 
   const scrollToSubscribe = () => {
@@ -26,7 +26,9 @@ export default function About() {
           <div className="lg:w-3/5">
             <h2 
               className="font-orbitron font-black text-3xl md:text-4xl mb-6"
-              style={{ color: colors.text }}
+              style={{ 
+                color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+              }}
             >
               ABOUT THE REBELLION
             </h2>
