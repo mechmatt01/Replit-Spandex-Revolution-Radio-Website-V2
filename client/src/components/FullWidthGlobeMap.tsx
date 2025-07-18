@@ -227,6 +227,10 @@ export default function FullWidthGlobeMap() {
 
   // Function to update map styling when theme changes
   const updateMapStyles = (mapInstance: google.maps.Map) => {
+    // Check current theme for map styling
+    const shouldUseDark = shouldUseDarkMap();
+    console.log('Updating map styles - Dark mode:', shouldUseDark, 'Theme:', currentTheme);
+    
     // Use dark styles based on theme detection
     const darkStyles = [
       {
@@ -414,7 +418,7 @@ export default function FullWidthGlobeMap() {
     ];
 
     mapInstance.setOptions({
-      styles: isMapDark ? darkStyles : lightStyles
+      styles: shouldUseDark ? darkStyles : lightStyles
     });
   };
 
@@ -436,6 +440,17 @@ export default function FullWidthGlobeMap() {
   // Handle fullscreen toggle with proper map resizing
   const toggleFullscreen = (enable: boolean) => {
     setIsFullscreen(enable);
+    
+    // Prevent body scrolling when fullscreen
+    if (enable) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
     
     // Use requestAnimationFrame to ensure smooth transition
     requestAnimationFrame(() => {
@@ -1176,6 +1191,26 @@ export default function FullWidthGlobeMap() {
       {/* Fullscreen overlay elements */}
       {isFullscreen && (
         <>
+          {/* Fullscreen backdrop to prevent scrolling */}
+          <div 
+            className="fixed inset-0 z-[9998] bg-black"
+            style={{ 
+              touchAction: 'none',
+              overscrollBehavior: 'none' 
+            }}
+          />
+          
+          {/* Fullscreen map container */}
+          <div
+            ref={fullscreenMapRef}
+            className="fixed inset-0 z-[9999] bg-gray-900"
+            style={{
+              touchAction: 'none',
+              overscrollBehavior: 'none',
+              overflow: 'hidden'
+            }}
+          />
+          
           {/* Fullscreen header bar */}
           <div className="fixed top-0 left-0 right-0 z-[10000] bg-black/80 backdrop-blur-md border-b border-gray-700">
             <div className="flex items-center justify-between px-6 py-4">
@@ -1206,16 +1241,6 @@ export default function FullWidthGlobeMap() {
               </Button>
             </div>
           </div>
-          
-          {/* Fullscreen map container */}
-          <div
-            ref={fullscreenMapRef}
-            className="fixed inset-0 z-[9999] bg-gray-900"
-            style={{
-              top: "80px",
-              minHeight: "calc(100vh - 80px)",
-            }}
-          />
 
           {/* Map Controls for fullscreen */}
           <div className="fixed top-20 right-8 z-[10001] flex flex-col gap-2">
@@ -1497,6 +1522,21 @@ export default function FullWidthGlobeMap() {
             >
               <RotateCcw className="w-4 h-4" />
             </Button>
+            <Button
+              onClick={() => toggleFullscreen(true)}
+              size="sm"
+              className={`p-2 ${
+                isDarkMode 
+                  ? "bg-gray-800 hover:bg-gray-700 text-white" 
+                  : "bg-white hover:bg-gray-50 text-black"
+              } border-0 shadow-lg`}
+              style={{
+                backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                color: isDarkMode ? "#ffffff" : "#000000",
+              }}
+            >
+              <Maximize2 className="w-4 h-4" />
+            </Button>
           </div>
 
           {/* Fullscreen Toggle */}
@@ -1518,6 +1558,7 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Statistics Layout - positioned below map */}
+        {!isFullscreen && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Live Statistics - Left Side with Vertical Layout */}
           <Card
@@ -1729,6 +1770,7 @@ export default function FullWidthGlobeMap() {
             </Card>
           </div>
         </div>
+        )}
       </div>
     </section>
     </>
