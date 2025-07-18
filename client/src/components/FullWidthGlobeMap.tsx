@@ -222,14 +222,14 @@ export default function FullWidthGlobeMap() {
 
   // Intelligent theme detection for Google Maps
   const shouldUseDarkMap = () => {
-    // Light mode should always use light map
-    if (currentTheme === 'light-mode') {
+    // Use light map only when in light mode (light theme)
+    if (!isDarkMode) {
       console.log('Light mode detected - using light map');
       return false;
     }
     
-    // All other themes (metal themes) should use dark map
-    console.log(`${currentTheme} theme detected - using dark map`);
+    // All dark themes should use dark map
+    console.log(`Dark mode detected (${currentTheme}) - using dark map`);
     return true;
   };
   
@@ -449,8 +449,7 @@ export default function FullWidthGlobeMap() {
 
   // Handle fullscreen toggle with proper map resizing
   const toggleFullscreen = (enable: boolean) => {
-    if (!map) return;
-    
+    console.log('Toggle fullscreen called:', enable);
     setIsFullscreen(enable);
     
     // Prevent body scrolling when fullscreen
@@ -469,6 +468,14 @@ export default function FullWidthGlobeMap() {
       document.body.style.top = '';
       document.body.style.left = '';
     }
+    
+    // Trigger map resize after transition
+    setTimeout(() => {
+      if (map) {
+        google.maps.event.trigger(map, 'resize');
+        console.log('Map resize triggered');
+      }
+    }, 300);
   };
 
   // Fetch Google Maps API key and config
@@ -1255,17 +1262,20 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Map Container */}
-        <div className={`relative mb-16 transition-all duration-300 ${
+        <div className={`relative mb-16 transition-all duration-500 ease-in-out ${
           isFullscreen 
-            ? "fixed inset-0 z-[9999] mb-0" 
+            ? "fixed inset-0 z-[9999] mb-0 bg-black/90 backdrop-blur-sm" 
             : "h-[600px]"
         }`}>
           <div
             ref={mapRef}
-            className={`map-container w-full h-full ${isFullscreen ? "" : "rounded-lg"}`}
+            className={`map-container w-full h-full transition-all duration-500 ease-in-out ${
+              isFullscreen ? "scale-105 opacity-100" : "rounded-lg scale-100 opacity-100"
+            }`}
             style={{
               minHeight: isFullscreen ? "100vh" : "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+              transform: isFullscreen ? "scale(1.02)" : "scale(1)",
             }}
           />
 
