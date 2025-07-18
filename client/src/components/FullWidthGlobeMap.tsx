@@ -189,6 +189,24 @@ const getWeatherIcon = (condition: string, isDay: boolean) => {
   return isDay ? clearDayIcon : clearNightIcon;
 };
 
+// Helper function to convert hex color to CSS filter for images
+const getIconFilter = (hexColor: string) => {
+  // Convert hex to RGB
+  const hex = hexColor.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  
+  // For orange/red colors
+  if (r > 200 && g < 150) {
+    return 'brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)';
+  }
+  
+  // For other colors, create a custom filter
+  const hue = Math.atan2(Math.sqrt(3) * (g - b), 2 * r - g - b) * 180 / Math.PI;
+  return `brightness(0) saturate(100%) invert(50%) sepia(100%) saturate(2000%) hue-rotate(${hue}deg) brightness(100%) contrast(101%)`;
+};
+
 export default function FullWidthGlobeMap() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -204,23 +222,15 @@ export default function FullWidthGlobeMap() {
 
   // Intelligent theme detection for Google Maps
   const shouldUseDarkMap = () => {
-    // Dark themes should use dark map
-    const darkThemes = ['classic-metal', 'black-metal', 'death-metal', 'doom-metal', 'thrash-metal', 'gothic-metal'];
-    
-    if (darkThemes.includes(currentTheme)) {
-      console.log(`${currentTheme} theme detected - using dark map`);
-      return true;
-    }
-    
-    // Light theme should use light map
-    if (currentTheme === 'power-metal') {
-      console.log('Power Metal theme detected - using light map');
+    // Light mode should always use light map
+    if (currentTheme === 'light-mode') {
+      console.log('Light mode detected - using light map');
       return false;
     }
     
-    // Fallback to current mode
-    console.log('Using fallback to isDarkMode:', isDarkMode);
-    return isDarkMode;
+    // All other themes (metal themes) should use dark map
+    console.log(`${currentTheme} theme detected - using dark map`);
+    return true;
   };
   
   const isMapDark = shouldUseDarkMap();
@@ -439,6 +449,8 @@ export default function FullWidthGlobeMap() {
 
   // Handle fullscreen toggle with proper map resizing
   const toggleFullscreen = (enable: boolean) => {
+    if (!map) return;
+    
     setIsFullscreen(enable);
     
     // Prevent body scrolling when fullscreen
@@ -446,44 +458,17 @@ export default function FullWidthGlobeMap() {
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      document.body.style.top = '0';
+      document.body.style.left = '0';
     } else {
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.width = '';
+      document.body.style.height = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
     }
-    
-    // Use requestAnimationFrame to ensure smooth transition
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        if (map) {
-          // Get the map div
-          const mapDiv = map.getDiv();
-          const targetContainer = enable ? fullscreenMapRef.current : mapRef.current;
-          
-          if (targetContainer && mapDiv) {
-            // Ensure the map div maintains proper styling
-            mapDiv.style.width = '100%';
-            mapDiv.style.height = '100%';
-            mapDiv.style.position = 'absolute';
-            mapDiv.style.top = '0';
-            mapDiv.style.left = '0';
-            
-            // Move the map to the target container
-            targetContainer.appendChild(mapDiv);
-            
-            // Force Google Maps to recalculate its size
-            google.maps.event.trigger(map, 'resize');
-            
-            // Re-center the map
-            const center = userLocation || { lat: 40.7128, lng: -74.0060 };
-            map.setCenter(center);
-            
-            // Update styles
-            updateMapStyles(map);
-          }
-        }
-      }, 100); // Reduced delay for faster response
-    });
   };
 
   // Fetch Google Maps API key and config
@@ -1217,22 +1202,8 @@ export default function FullWidthGlobeMap() {
             }}
           />
           
-          {/* Fullscreen map container */}
-          <div
-            ref={fullscreenMapRef}
-            className="fixed inset-0 z-[9999]"
-            style={{
-              touchAction: 'none',
-              overscrollBehavior: 'none',
-              overflow: 'hidden',
-              backgroundColor: '#1f2937',
-              width: '100vw',
-              height: '100vh'
-            }}
-          />
-          
           {/* Fullscreen header bar */}
-          <div className="fixed top-0 left-0 right-0 z-[10000] bg-black/80 backdrop-blur-md border-b border-gray-700">
+          <div className="fixed top-0 left-0 right-0 z-[10001] bg-black/80 backdrop-blur-md border-b border-gray-700">
             <div className="flex items-center justify-between px-6 py-4">
               <div className="flex items-center gap-4">
                 <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
@@ -1430,18 +1401,22 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Map Container */}
-        <div className={`relative mb-16 ${isFullscreen ? "hidden" : "h-[600px]"}`}>
+        <div className={`relative mb-16 transition-all duration-300 ${
+          isFullscreen 
+            ? "fixed inset-0 z-[9999] mb-0" 
+            : "h-[600px]"
+        }`}>
           <div
             ref={mapRef}
-            className={`map-container transition-all duration-300 w-full h-full rounded-lg`}
+            className={`map-container w-full h-full ${isFullscreen ? "" : "rounded-lg"}`}
             style={{
-              minHeight: "400px",
+              minHeight: isFullscreen ? "100vh" : "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
             }}
           />
 
           {/* Map Controls */}
-          <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+          <div className={`absolute ${isFullscreen ? "top-20 right-8" : "top-4 right-4"} z-10 flex flex-col gap-2`}>
             <Button
               onClick={() => {
                 if (map) {
@@ -1542,39 +1517,24 @@ export default function FullWidthGlobeMap() {
             >
               <RotateCcw className="w-4 h-4" />
             </Button>
-            <Button
-              onClick={() => toggleFullscreen(true)}
-              size="sm"
-              className={`p-2 ${
-                isDarkMode 
-                  ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                  : "bg-white hover:bg-gray-50 text-black"
-              } border-0 shadow-lg`}
-              style={{
-                backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                color: isDarkMode ? "#ffffff" : "#000000",
-              }}
-            >
-              <Maximize2 className="w-4 h-4" />
-            </Button>
+            {!isFullscreen && (
+              <Button
+                onClick={() => toggleFullscreen(true)}
+                size="sm"
+                className={`p-2 ${
+                  isDarkMode 
+                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
+                    : "bg-white hover:bg-gray-50 text-black"
+                } border-0 shadow-lg`}
+                style={{
+                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                  color: isDarkMode ? "#ffffff" : "#000000",
+                }}
+              >
+                <Maximize2 className="w-4 h-4" />
+              </Button>
+            )}
           </div>
-
-          {/* Fullscreen Toggle */}
-          <Button
-            onClick={() => toggleFullscreen(true)}
-            className={`absolute top-4 left-4 z-10 p-2 border-0 shadow-lg transition-all duration-300 ${
-              isDarkMode
-                ? "bg-gray-800 hover:bg-gray-700 text-white"
-                : "bg-white hover:bg-gray-50 text-black"
-            }`}
-            style={{
-              backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-              color: isDarkMode ? "#ffffff" : "#000000",
-            }}
-            size="sm"
-          >
-            <Maximize2 className="w-4 h-4" />
-          </Button>
         </div>
 
         {/* Statistics Layout - positioned below map */}
@@ -1638,7 +1598,7 @@ export default function FullWidthGlobeMap() {
                     alt="Countries"
                     className="h-8 w-8 drop-shadow-md"
                     style={{
-                      filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
+                      filter: getIconFilter(colors.primary),
                     }}
                   />
                   <span
@@ -1666,7 +1626,7 @@ export default function FullWidthGlobeMap() {
                     alt="Total Listeners"
                     className="h-8 w-8 drop-shadow-md"
                     style={{
-                      filter: `brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)`,
+                      filter: getIconFilter(colors.primary),
                     }}
                   />
                   <span
