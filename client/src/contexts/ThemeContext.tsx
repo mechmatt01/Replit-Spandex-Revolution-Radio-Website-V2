@@ -310,7 +310,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         accent: "#60a5fa",
         background: "#ffffff",
         surface: "#f8fafc",
-        text: "#0f172a",
+        text: "#ffffff",
         textSecondary: "#475569",
         textMuted: "#94a3b8",
         border: "#e2e8f0",
@@ -422,8 +422,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("theme-mode");
-      return saved !== "light";
+      const savedTheme = localStorage.getItem("metal-theme") as MetalTheme;
+      const savedMode = localStorage.getItem("theme-mode");
+      
+      // If light-mode theme is selected, force isDarkMode to false
+      if (savedTheme === "light-mode") {
+        return false;
+      }
+      
+      return savedMode !== "light";
     }
     return true;
   });
@@ -519,8 +526,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     // For light-mode theme, also set isDarkMode to false
     if (theme === 'light-mode') {
       setIsDarkMode(false);
+      localStorage.setItem("theme-mode", "light");
     } else if (theme !== 'light-mode') {
       setIsDarkMode(true);
+      localStorage.setItem("theme-mode", "dark");
     }
     
     setCurrentTheme(theme);

@@ -5,7 +5,7 @@ import RadioCoPlayer from "@/components/RadioCoPlayer";
 import { useTheme } from "../contexts/ThemeContext";
 
 export default function Hero() {
-  const { isDarkMode, getColors } = useTheme();
+  const { isDarkMode, getColors, currentTheme } = useTheme();
   const colors = getColors();
 
   const scrollToSchedule = () => {
@@ -90,7 +90,9 @@ export default function Hero() {
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 pt-8">
         <h1 
           className="font-orbitron font-black text-5xl md:text-8xl mb-8"
-          style={{ color: colors.text }}
+          style={{ 
+            color: currentTheme === 'light-mode' ? '#ffffff' : colors.text 
+          }}
         >
           <div>SPANDEX</div>
           <div>SALVATION</div>
