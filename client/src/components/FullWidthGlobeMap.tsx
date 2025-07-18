@@ -450,6 +450,7 @@ export default function FullWidthGlobeMap() {
   // Handle fullscreen toggle with proper map resizing
   const toggleFullscreen = (enable: boolean) => {
     console.log('Toggle fullscreen called:', enable);
+    
     setIsFullscreen(enable);
     
     // Prevent body scrolling when fullscreen
@@ -475,7 +476,7 @@ export default function FullWidthGlobeMap() {
         google.maps.event.trigger(map, 'resize');
         console.log('Map resize triggered');
       }
-    }, 300);
+    }, 500);
   };
 
   // Fetch Google Maps API key and config
@@ -1085,7 +1086,11 @@ export default function FullWidthGlobeMap() {
                 )}
               </div>
               <Button
-                onClick={() => toggleFullscreen(false)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFullscreen(false);
+                }}
                 className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300"
                 size="sm"
               >
@@ -1264,18 +1269,17 @@ export default function FullWidthGlobeMap() {
         {/* Map Container */}
         <div className={`relative mb-16 transition-all duration-500 ease-in-out ${
           isFullscreen 
-            ? "fixed inset-0 z-[9999] mb-0 bg-black/90 backdrop-blur-sm" 
+            ? "fixed inset-0 z-[9999] mb-0" 
             : "h-[600px]"
         }`}>
           <div
             ref={mapRef}
             className={`map-container w-full h-full transition-all duration-500 ease-in-out ${
-              isFullscreen ? "scale-105 opacity-100" : "rounded-lg scale-100 opacity-100"
+              isFullscreen ? "opacity-100" : "rounded-lg opacity-100"
             }`}
             style={{
               minHeight: isFullscreen ? "100vh" : "400px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              transform: isFullscreen ? "scale(1.02)" : "scale(1)",
             }}
           />
 
@@ -1383,7 +1387,11 @@ export default function FullWidthGlobeMap() {
             </Button>
             {!isFullscreen && (
               <Button
-                onClick={() => toggleFullscreen(true)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFullscreen(true);
+                }}
                 size="sm"
                 className={`p-2 ${
                   isDarkMode 
