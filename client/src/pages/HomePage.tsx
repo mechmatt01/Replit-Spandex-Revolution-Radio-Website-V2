@@ -44,7 +44,7 @@ export default function HomePage() {
   }, []);
   
   return (
-    <div className="min-h-screen bg-black dark:bg-black text-white dark:text-white transition-colors duration-300">
+    <div className="min-h-screen bg-black text-white" style={{ backgroundColor: '#000000' }}>
       <Navigation />
       <Hero />
       
@@ -80,10 +80,9 @@ export default function HomePage() {
         <Submissions />
       </FadeInView>
       
-      {/* Temporarily comment out FullWidthGlobeMap to isolate the issue */}
-      {/* <FadeInView direction="up" delay={0}>
+      <FadeInView direction="up" delay={0}>
         <FullWidthGlobeMap />
-      </FadeInView> */}
+      </FadeInView>
       
       <FadeInView direction="up" delay={0}>
         <Contact />
@@ -93,7 +92,7 @@ export default function HomePage() {
         <ShopifyEcommerce />
       </FadeInView>
       
-      <FadeInView direction="up" delay={1000}>
+      <FadeInView direction="up" delay={0}>
         <Footer />
       </FadeInView>
       

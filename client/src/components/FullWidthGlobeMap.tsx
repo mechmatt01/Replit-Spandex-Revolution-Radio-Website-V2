@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import CountriesIconPath from "@assets/CountriesIcon.png";
 import LiveNowIconPath from "@assets/LiveNowIcon.png";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useTheme, METAL_THEMES } from "@/contexts/ThemeContext";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import type { StreamStats } from "@shared/schema";
 import AnimatedCounter from "./AnimatedCounter";
@@ -578,7 +578,7 @@ export default function FullWidthGlobeMap() {
     console.log('Theme detection:', {
       currentTheme: currentTheme,
       isDarkMode,
-      backgroundColor: themes[currentTheme].colors[isDarkMode ? 'dark' : 'light'].background,
+      backgroundColor: METAL_THEMES[currentTheme].colors[isDarkMode ? 'dark' : 'light'].background,
       isMapDark,
       shouldUseDarkStyles: currentTheme === 'classic-metal' || isMapDark
     });
