@@ -5,7 +5,7 @@ import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
 import AdminPanel from "./AdminPanel";
 
 export default function Footer() {
-  const { colors, gradient } = useTheme();
+  const { colors, gradient, currentTheme } = useTheme();
   const [isAdminPanelOpen, setIsAdminPanelOpen] = useState(false);
   
   const scrollToSection = (sectionId: string) => {
@@ -39,7 +39,12 @@ export default function Footer() {
                 />
               </div>
               <div className="flex flex-col">
-                <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
+                <div 
+                  className="text-sm font-black leading-tight" 
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+                  }}
+                >
                   SPANDEX SALVATION
                 </div>
                 <div className="text-sm font-black leading-tight" style={{ color: colors.primary }}>
@@ -60,7 +65,9 @@ export default function Footer() {
           <div>
             <h4 
               className="font-semibold mb-4"
-              style={{ color: colors.text }}
+              style={{ 
+                color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+              }}
             >Quick Links</h4>
             <ul className="space-y-3 text-sm">
               <li>
@@ -125,7 +132,9 @@ export default function Footer() {
           <div>
             <h4 
               className="font-semibold mb-4"
-              style={{ color: colors.text }}
+              style={{ 
+                color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+              }}
             >Support</h4>
             <ul className="space-y-3 text-sm">
               <li>
@@ -190,7 +199,9 @@ export default function Footer() {
           <div>
             <h4 
               className="font-semibold mb-4"
-              style={{ color: colors.text }}
+              style={{ 
+                color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+              }}
             >Stream Info</h4>
             <ul className="space-y-3 text-sm">
               <li>
@@ -232,8 +243,14 @@ export default function Footer() {
                 </div>
               </li>
               <li>
-                <div className="text-muted-foreground flex items-center">
-                  <span className="text-metal-orange mr-3 flex-shrink-0 text-center w-4">🛡️</span>
+                <div 
+                  className="flex items-center"
+                  style={{ color: colors.textMuted }}
+                >
+                  <span 
+                    className="mr-3 flex-shrink-0 text-center w-4"
+                    style={{ color: colors.primary }}
+                  >🛡️</span>
                   <span className="-ml-7">Secure & Reliable</span>
                 </div>
               </li>
@@ -244,31 +261,56 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between">
-            <div className="text-sm text-muted-foreground font-semibold mb-4 md:mb-0 flex items-center">
+            <div 
+              className="text-sm font-semibold mb-4 md:mb-0 flex items-center"
+              style={{ 
+                color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+              }}
+            >
               © 2025 Spandex Salvation Radio. All rights reserved.
             </div>
-            <div className="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-6 text-sm">
               <a
                 href="/terms"
-                className="font-semibold hover:text-metal-orange transition-colors"
+                className="font-semibold transition-colors duration-300"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
               >
                 Terms of Service
               </a>
               <a
                 href="/privacy"
-                className="font-semibold hover:text-metal-orange transition-colors"
+                className="font-semibold transition-colors duration-300"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
               >
                 Privacy Policy
               </a>
               <a
                 href="/cookies"
-                className="font-semibold hover:text-metal-orange transition-colors"
+                className="font-semibold transition-colors duration-300"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
               >
                 Cookies
               </a>
               <button
                 onClick={() => setIsAdminPanelOpen(true)}
-                className="font-semibold hover:text-metal-orange transition-colors"
+                className="font-semibold transition-colors duration-300 bg-transparent border-0 p-0"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
               >
                 Admin
               </button>

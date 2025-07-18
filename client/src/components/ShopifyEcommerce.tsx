@@ -176,7 +176,7 @@ export default function ShopifyEcommerce() {
   );
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { getColors } = useTheme();
+  const { getColors, currentTheme } = useTheme();
   const colors = getColors();
 
   useEffect(() => {
@@ -268,10 +268,19 @@ export default function ShopifyEcommerce() {
   }
 
   return (
-    <section id="merch" className="py-20 bg-dark-bg">
+    <section 
+      id="merch" 
+      className="py-20 transition-colors duration-300"
+      style={{ backgroundColor: colors.background }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-4 text-white">
+          <h2 
+            className="font-orbitron font-black text-3xl md:text-4xl mb-4"
+            style={{ 
+              color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+            }}
+          >
             OFFICIAL MERCH STORE
           </h2>
           <p className="text-gray-400 text-lg font-semibold">
@@ -365,13 +374,16 @@ function ProductCard({
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant>(
     product.variants[0],
   );
-  const { getColors } = useTheme();
+  const { getColors, currentTheme } = useTheme();
   const colors = getColors();
 
   return (
     <Card
-      className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300 group h-full flex flex-col"
-      style={{ borderColor: colors.primary }}
+      className="transition-all duration-300 group h-full flex flex-col"
+      style={{ 
+        backgroundColor: currentTheme === 'light-mode' ? '#ffffff' : 'rgba(30, 30, 30, 0.5)',
+        borderColor: colors.primary 
+      }}
     >
       <CardContent className="p-4 flex flex-col h-full">
         <div className="relative mb-4">

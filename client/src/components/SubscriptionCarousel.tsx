@@ -89,7 +89,7 @@ export default function SubscriptionCarousel() {
   const [isAnimating, setIsAnimating] = useState(false);
   const [slideDirection, setSlideDirection] = useState<'left' | 'right'>('right');
   const [hoveredTier, setHoveredTier] = useState<string | null>(null);
-  const { getColors } = useTheme();
+  const { getColors, currentTheme } = useTheme();
   const colors = getColors();
 
   const handlePrevious = useCallback(() => {
@@ -195,13 +195,14 @@ export default function SubscriptionCarousel() {
 
             {/* Main Card */}
             <div
-              className="relative bg-black/80 backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col subscription-card"
+              className="relative backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col subscription-card"
               style={{
                 border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
                 borderRadius: "24px",
+                backgroundColor: currentTheme === 'light-mode' ? '#ffffff' : 'rgba(0, 0, 0, 0.8)',
                 background: currentTier.popular 
-                  ? `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${currentTier.gradientStart} 0%, ${currentTier.gradientEnd} 25%, ${currentTier.gradientStart} 50%, ${currentTier.gradientEnd} 75%, ${currentTier.gradientStart} 100%) border-box`
-                  : `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}) border-box`,
+                  ? `linear-gradient(${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}, ${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}) padding-box, linear-gradient(90deg, ${currentTier.gradientStart} 0%, ${currentTier.gradientEnd} 25%, ${currentTier.gradientStart} 50%, ${currentTier.gradientEnd} 75%, ${currentTier.gradientStart} 100%) border-box`
+                  : `linear-gradient(${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}, ${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}) padding-box, linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}) border-box`,
                 backgroundSize: currentTier.popular ? "300% 300%" : "100% 100%",
                 animation: currentTier.popular ? "gradientFlow 6s ease-in-out infinite" : "none",
                 boxShadow: currentTier.popular 
@@ -258,7 +259,14 @@ export default function SubscriptionCarousel() {
                     {currentTier.name}
                   </span>
                 </h3>
-                <p className="text-gray-400 text-sm sm:text-base">{currentTier.description}</p>
+                <p 
+                  className="text-sm sm:text-base"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.6)' : '#9ca3af' 
+                  }}
+                >
+                  {currentTier.description}
+                </p>
 
                 {/* MOST POPULAR badge for Legend package */}
                 {currentTier.popular && (
@@ -280,8 +288,22 @@ export default function SubscriptionCarousel() {
               {/* Price */}
               <div className="text-center mb-3 sm:mb-6">
                 <div className="flex items-center justify-center">
-                  <span className="text-3xl sm:text-4xl font-black text-white">${currentTier.price}</span>
-                  <span className="text-gray-400 ml-2 text-sm sm:text-base">/month</span>
+                  <span 
+                    className="text-3xl sm:text-4xl font-black"
+                    style={{ 
+                      color: currentTheme === 'light-mode' ? '#000000' : '#ffffff' 
+                    }}
+                  >
+                    ${currentTier.price}
+                  </span>
+                  <span 
+                    className="ml-2 text-sm sm:text-base"
+                    style={{ 
+                      color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.6)' : '#9ca3af' 
+                    }}
+                  >
+                    /month
+                  </span>
                 </div>
               </div>
 
@@ -308,7 +330,14 @@ export default function SubscriptionCarousel() {
                         >
                           <Check className="w-2 h-2 sm:w-2.5 sm:h-2.5 text-white" />
                         </div>
-                        <span className="text-gray-300 text-xs sm:text-sm font-medium text-center">{feature}</span>
+                        <span 
+                          className="text-xs sm:text-sm font-medium text-center"
+                          style={{ 
+                            color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : '#d1d5db' 
+                          }}
+                        >
+                          {feature}
+                        </span>
                       </div>
                     </div>
                   ))}
@@ -318,10 +347,23 @@ export default function SubscriptionCarousel() {
               {/* Special Perks - centered */}
               <div className="mb-2 sm:mb-3">
                 <div className="bg-white/5 rounded-lg p-2 sm:p-3 max-w-xs mx-auto">
-                  <h4 className="text-xs font-bold text-gray-400 mb-1 sm:mb-2 text-center">EXCLUSIVE PERKS</h4>
+                  <h4 
+                    className="text-xs font-bold mb-1 sm:mb-2 text-center"
+                    style={{ 
+                      color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.6)' : '#9ca3af' 
+                    }}
+                  >
+                    EXCLUSIVE PERKS
+                  </h4>
                   <div className="space-y-0.5 sm:space-y-1">
                     {currentTier.perks.map((perk, index) => (
-                      <div key={index} className="text-xs text-gray-300 text-center leading-tight">
+                      <div 
+                        key={index} 
+                        className="text-xs text-center leading-tight"
+                        style={{ 
+                          color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : '#d1d5db' 
+                        }}
+                      >
                         {perk}
                       </div>
                     ))}

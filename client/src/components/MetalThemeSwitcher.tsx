@@ -99,7 +99,7 @@ export default function MetalThemeSwitcher() {
             size="sm"
             className="flex items-center gap-2 hover:bg-opacity-20"
             style={{
-              color: colors.text,
+              color: currentTheme === 'light-mode' ? '#000000' : colors.text,
               backgroundColor: "transparent",
             }}
           >
