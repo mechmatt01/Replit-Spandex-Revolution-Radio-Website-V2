@@ -191,13 +191,19 @@ export default function Contact() {
                             }
                             placeholder="John"
                             required
-                            className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
+                            className="transition-colors duration-300"
+                            style={{
+                              backgroundColor: colors.surface,
+                              borderColor: colors.border,
+                              color: colors.text
+                            }}
                           />
                         </div>
                         <div>
                           <Label
                             htmlFor="lastName"
-                            className="text-gray-300 font-semibold"
+                            className="font-semibold"
+                            style={{ color: colors.textSecondary }}
                           >
                             Last Name{validationErrors.includes("Last Name") && <span className="text-red-500">*</span>}
                           </Label>
@@ -209,7 +215,12 @@ export default function Contact() {
                             }
                             placeholder="Doe"
                             required
-                            className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
+                            className="transition-colors duration-300"
+                            style={{
+                              backgroundColor: colors.surface,
+                              borderColor: colors.border,
+                              color: colors.text
+                            }}
                           />
                         </div>
                       </div>

@@ -156,10 +156,10 @@ export default function MetalThemeSwitcher() {
                     } ${isLocked ? "opacity-75" : ""}`}
                     style={{
                       backgroundColor: isActive
-                        ? `${colors.primary}20`
+                        ? colors.primary
                         : "transparent",
                       borderColor: isActive ? colors.primary : "transparent",
-                      color: colors.text,
+                      color: isActive ? 'white' : colors.text,
                     }}
                   >
                     <div className="flex items-start gap-3 w-full">
@@ -185,7 +185,7 @@ export default function MetalThemeSwitcher() {
                           <div className="flex items-center gap-2">
                             <span
                               className="font-semibold text-sm"
-                              style={{ color: themeColors.primary }}
+                              style={{ color: isActive ? 'white' : themeColors.primary }}
                             >
                               {themeConfig.name}
                             </span>
@@ -194,8 +194,8 @@ export default function MetalThemeSwitcher() {
                                 variant="secondary"
                                 className="text-xs px-2 py-0"
                                 style={{
-                                  backgroundColor: colors.primary,
-                                  color: colors.background,
+                                  backgroundColor: 'white',
+                                  color: colors.primary,
                                 }}
                               >
                                 Active
@@ -218,7 +218,7 @@ export default function MetalThemeSwitcher() {
                         <p
                           className="text-xs mt-1 break-words leading-relaxed whitespace-pre-wrap overflow-hidden"
                           style={{
-                            color: themeColors.primary,
+                            color: isActive ? 'rgba(255, 255, 255, 0.8)' : `${themeColors.primary}80`,
                             wordBreak: "break-word",
                             overflowWrap: "break-word",
                           }}
