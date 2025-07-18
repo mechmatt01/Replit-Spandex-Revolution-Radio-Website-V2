@@ -18,7 +18,7 @@ export default function StickyPlayer() {
     isMuted,
     toggleMute,
   } = useRadio();
-  const { getGradient, getColors } = useTheme();
+  const { getGradient, getColors, currentTheme } = useTheme();
   const colors = getColors();
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -89,7 +89,10 @@ export default function StickyPlayer() {
                     ? currentTrack.title
                     : stationName
                 }
-                className="font-semibold text-foreground text-sm whitespace-nowrap"
+                className="font-semibold text-sm whitespace-nowrap"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+                }}
                 maxWidth="100%"
                 isFloating={true}
                 backgroundColor="hsl(var(--background))"

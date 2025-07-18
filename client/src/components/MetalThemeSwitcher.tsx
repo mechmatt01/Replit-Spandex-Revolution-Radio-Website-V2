@@ -104,7 +104,14 @@ export default function MetalThemeSwitcher() {
             }}
           >
             <Palette className="w-4 h-4" style={{ color: colors.primary }} />
-            <span className="hidden sm:inline text-sm font-medium">
+            <span 
+              className="hidden sm:inline text-sm font-medium"
+              style={{ 
+                color: currentTheme === 'light-mode' 
+                  ? '#3B82F6'  // Blue color to match the Sun icon
+                  : colors.text 
+              }}
+            >
               {METAL_THEMES[currentTheme].name}
             </span>
           </Button>

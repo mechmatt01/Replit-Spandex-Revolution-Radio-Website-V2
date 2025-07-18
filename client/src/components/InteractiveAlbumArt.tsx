@@ -107,7 +107,13 @@ export default function InteractiveAlbumArt({
           title.toLowerCase().includes("commercial") ||
           title.toLowerCase().includes("advertisement") ||
           title.toLowerCase().includes("commercial break") ? (
-            <div className="text-white font-black text-xs bg-red-600 px-2 py-1 rounded m-1">
+            <div 
+              className={`text-white font-black bg-red-600 rounded m-1 flex items-center justify-center ${
+                size === 'sm' 
+                  ? 'text-xs px-1 py-0.5 w-6 h-4'  // 1.5x smaller for floating player
+                  : 'text-2xl px-4 py-2 w-16 h-12'  // 3x larger for main player
+              }`}
+            >
               AD
             </div>
           ) : (
