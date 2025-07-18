@@ -44,7 +44,7 @@ export default function Navigation() {
     return () => window.removeEventListener('openAuthModal', handleOpenAuthModal as EventListener);
   }, []);
 
-  const { colors, gradient, toggleTheme, isDarkMode } = useTheme();
+  const { colors, gradient, toggleTheme, isDarkMode, currentTheme } = useTheme();
   const { user, isAuthenticated, isLoading } = useAuth();
 
   const logout = () => {
@@ -279,7 +279,12 @@ export default function Navigation() {
                 />
               </div>
               <div className="flex flex-col" id="brand-text" ref={brandTextRef}>
-                <div className="text-sm font-black leading-tight" style={{ color: colors.text }}>
+                <div 
+                  className="text-sm font-black leading-tight transition-colors duration-300" 
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? '#1f2937' : colors.text 
+                  }}
+                >
                   SPANDEX SALVATION
                 </div>
                 <div className="text-sm font-black leading-tight" style={{ color: colors.primary }}>
