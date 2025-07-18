@@ -69,21 +69,27 @@ export default function Hero() {
             background: `linear-gradient(to bottom, 
               transparent 0%, 
               transparent 40%, 
-              ${isDarkMode ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.3)"} 60%, 
-              ${isDarkMode ? "rgba(0, 0, 0, 0.7)" : "rgba(255, 255, 255, 0.7)"} 80%, 
-              ${isDarkMode ? "rgba(0, 0, 0, 0.95)" : "rgba(255, 255, 255, 0.95)"} 100%
+              rgba(0, 0, 0, 0.3) 60%, 
+              rgba(0, 0, 0, 0.7) 80%, 
+              rgba(0, 0, 0, 0.95) 100%
             )`,
           }}
         ></div>
       </div>
       <div className="relative z-10 text-center max-w-4xl mx-auto px-4 pt-8">
-        <h1 className="font-orbitron font-black text-5xl md:text-8xl mb-8 text-black dark:text-white">
+        <h1 
+          className="font-orbitron font-black text-5xl md:text-8xl mb-8"
+          style={{ color: colors.text }}
+        >
           <div>SPANDEX</div>
           <div>SALVATION</div>
           <div>RADIO</div>
         </h1>
 
-        <p className="text-lg md:text-xl font-orbitron font-semibold text-muted-foreground mb-6 max-w-2xl mx-auto text-center">
+        <p 
+          className="text-lg md:text-xl font-orbitron font-semibold mb-6 max-w-2xl mx-auto text-center"
+          style={{ color: colors.textMuted }}
+        >
           Bringing you the best of old-school metal with legendary
           <br />
           bands like Skid Row, Twisted Sister, and more.
@@ -92,10 +98,16 @@ export default function Hero() {
         </p>
 
         <div className="mb-8 flex flex-col justify-center items-center">
-          <p className="font-orbitron font-black text-xl md:text-2xl text-metal-orange mb-1">
+          <p 
+            className="font-orbitron font-black text-xl md:text-2xl mb-1"
+            style={{ color: colors.primary }}
+          >
             Old School Metal
           </p>
-          <p className="font-orbitron font-black text-base md:text-lg text-metal-orange">
+          <p 
+            className="font-orbitron font-black text-base md:text-lg"
+            style={{ color: colors.primary }}
+          >
             24/7 Live Stream
           </p>
         </div>
@@ -150,7 +162,10 @@ export default function Hero() {
             </div>
           </div>
           <div className="text-center mt-3">
-            <p className="text-gray-400 text-sm font-semibold opacity-80">
+            <p 
+              className="text-sm font-semibold opacity-80"
+              style={{ color: colors.textMuted }}
+            >
               First Broadcast Countdown
             </p>
           </div>
