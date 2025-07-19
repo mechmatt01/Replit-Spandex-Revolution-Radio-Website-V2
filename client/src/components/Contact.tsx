@@ -230,7 +230,8 @@ export default function Contact() {
                       <div>
                         <Label
                           htmlFor="email"
-                          className="text-gray-300 font-semibold"
+                          className="font-semibold"
+                          style={{ color: colors.textSecondary }}
                         >
                           Email Address{validationErrors.includes("Email Address") && <span className="text-red-500">*</span>}
                         </Label>
@@ -243,14 +244,20 @@ export default function Contact() {
                           }
                           placeholder="john@example.com"
                           required
-                          className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange"
+                          className="transition-colors duration-300"
+                          style={{
+                            backgroundColor: colors.surface,
+                            borderColor: colors.border,
+                            color: colors.text
+                          }}
                         />
                       </div>
 
                       <div>
                         <Label
                           htmlFor="subject"
-                          className="text-gray-300 font-semibold"
+                          className="font-semibold"
+                          style={{ color: colors.textSecondary }}
                         >
                           Subject{validationErrors.includes("Subject") && <span className="text-red-500">*</span>}
                         </Label>
@@ -260,10 +267,23 @@ export default function Contact() {
                             handleInputChange("subject", value)
                           }
                         >
-                          <SelectTrigger className="bg-dark-bg border-dark-border text-white focus:border-metal-orange" aria-label="Select message subject">
+                          <SelectTrigger 
+                            className="transition-colors duration-300" 
+                            style={{
+                              backgroundColor: colors.surface,
+                              borderColor: colors.border,
+                              color: colors.text
+                            }}
+                            aria-label="Select message subject"
+                          >
                             <SelectValue placeholder="Select a subject" />
                           </SelectTrigger>
-                          <SelectContent className="bg-black border-dark-border">
+                          <SelectContent 
+                            style={{
+                              backgroundColor: colors.surface,
+                              borderColor: colors.border
+                            }}
+                          >
                             <SelectItem value="general">
                               General Inquiry
                             </SelectItem>
@@ -282,7 +302,8 @@ export default function Contact() {
                       <div>
                         <Label
                           htmlFor="contactMessage"
-                          className="text-gray-300 font-semibold"
+                          className="font-semibold"
+                          style={{ color: colors.textSecondary }}
                         >
                           Message{validationErrors.includes("Message") && <span className="text-red-500">*</span>}
                         </Label>
@@ -295,7 +316,12 @@ export default function Contact() {
                           placeholder="Tell us what's on your mind..."
                           rows={5}
                           required
-                          className="bg-dark-bg border-dark-border text-white placeholder:text-gray-400 placeholder:opacity-60 focus:border-metal-orange resize-none"
+                          className="resize-none transition-colors duration-300"
+                          style={{
+                            backgroundColor: colors.surface,
+                            borderColor: colors.border,
+                            color: colors.text
+                          }}
                         />
                       </div>
 

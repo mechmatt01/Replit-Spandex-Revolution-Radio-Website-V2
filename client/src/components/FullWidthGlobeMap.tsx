@@ -754,17 +754,16 @@ export default function FullWidthGlobeMap() {
               marker.setAnimation(null);
             }, 1500);
 
-            // Create simple InfoWindow with clean styling
+            // Create InfoWindow with minimal styling for better compatibility
             const infoWindow = new google.maps.InfoWindow({
               content: `
-                <div style="padding: 10px; text-align: center; font-family: system-ui, -apple-system, sans-serif;">
-                  <div style="font-size: 16px; margin-bottom: 4px;">🎧 Active Listener</div>
-                  <div style="font-size: 14px; font-weight: bold; color: ${colors.primary}; margin-bottom: 2px;">${listener.city}</div>
-                  <div style="font-size: 12px; color: #666;">${listener.country}</div>
+                <div style="padding: 8px; text-align: center;">
+                  <div>🎧 Active Listener</div>
+                  <div style="font-weight: bold; color: #e67e22;">${listener.city}</div>
+                  <div>${listener.country}</div>
                 </div>
               `,
-              maxWidth: 180,
-              disableAutoPan: false,
+              maxWidth: 160,
             });
             
             // Open info window with small delay for smoother animation
