@@ -754,18 +754,37 @@ export default function FullWidthGlobeMap() {
               marker.setAnimation(null);
             }, 1500);
 
-            // Create InfoWindow with no inline styles to avoid CSP issues
-            const infoWindow = new google.maps.InfoWindow({
-              content: `
-                <div>
-                  <div>🎧 Active Listener</div>
-                  <div><strong>${listener.city}</strong></div>
-                  <div>${listener.country}</div>
-                </div>
-              `,
-            });
+            // Create InfoWindow with simple content
+            const infoWindow = new google.maps.InfoWindow();
             
-            // Open info window immediately after creation
+            // Set content as DOM element instead of HTML string
+            const contentDiv = document.createElement('div');
+            contentDiv.style.padding = '12px';
+            contentDiv.style.textAlign = 'center';
+            contentDiv.style.minWidth = '140px';
+            
+            const listenerIcon = document.createElement('div');
+            listenerIcon.textContent = '🎧 Active Listener';
+            listenerIcon.style.fontSize = '14px';
+            listenerIcon.style.marginBottom = '6px';
+            
+            const cityDiv = document.createElement('div');
+            cityDiv.textContent = listener.city;
+            cityDiv.style.fontWeight = 'bold';
+            cityDiv.style.fontSize = '16px';
+            cityDiv.style.color = '#e67e22';
+            cityDiv.style.marginBottom = '2px';
+            
+            const countryDiv = document.createElement('div');
+            countryDiv.textContent = listener.country;
+            countryDiv.style.fontSize = '13px';
+            countryDiv.style.color = '#666';
+            
+            contentDiv.appendChild(listenerIcon);
+            contentDiv.appendChild(cityDiv);
+            contentDiv.appendChild(countryDiv);
+            
+            infoWindow.setContent(contentDiv);
             infoWindow.open(mapInstance, marker);
             currentInfoWindow.current = infoWindow;
           });
@@ -1207,7 +1226,7 @@ export default function FullWidthGlobeMap() {
         {/* Map Container */}
         <div className={`relative mb-16 transition-all duration-500 ease-in-out ${
           isFullscreen 
-            ? "fixed inset-0 z-[9999] mb-0" 
+            ? "fixed inset-0 z-[9999] mb-0 bg-black" 
             : "h-[600px]"
         }`}>
           <div
@@ -1216,7 +1235,7 @@ export default function FullWidthGlobeMap() {
               isFullscreen ? "opacity-100" : "rounded-lg opacity-100"
             }`}
             style={{
-              minHeight: isFullscreen ? "100vh" : "400px",
+              minHeight: isFullscreen ? "100vh" : "600px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
             }}
           />
@@ -1232,14 +1251,15 @@ export default function FullWidthGlobeMap() {
                   return false;
                 }}
                 size="sm"
-                className={`p-2 ${
-                  isDarkMode 
-                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                    : "bg-white hover:bg-gray-50 text-black"
-                } border-0 shadow-lg`}
+                className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg rounded-lg"
                 style={{
-                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                  color: isDarkMode ? "#ffffff" : "#000000",
+                  backgroundColor: "#1f2937",
+                  color: "#ffffff",
+                  minWidth: "40px",
+                  minHeight: "40px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
                 }}
               >
                 <Maximize2 className="w-4 h-4" />
