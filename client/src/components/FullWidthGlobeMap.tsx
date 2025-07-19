@@ -1743,6 +1743,5 @@ export default function FullWidthGlobeMap() {
         )}
       </div>
     </section>
-    </>
   );
 }

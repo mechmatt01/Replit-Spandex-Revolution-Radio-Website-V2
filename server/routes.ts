@@ -194,7 +194,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.json(defaultStations);
       }
     } catch (error) {
-      console.error('Firebase error, using fallback stations:', error.message);
+      // Firebase unavailable, using fallback stations
       res.json(defaultStations);
     }
   });

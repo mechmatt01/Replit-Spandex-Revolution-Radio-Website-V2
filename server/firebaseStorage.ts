@@ -84,7 +84,7 @@ export class FirebaseLiveStatsStorage {
       const result = await Promise.race([dataPromise, timeoutPromise]);
       return result as any;
     } catch (error) {
-      // Silently return fallback data without logging errors
+      // Firebase unavailable, using fallback data
       return this.getFallbackStats();
     }
   }
