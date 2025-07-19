@@ -754,28 +754,17 @@ export default function FullWidthGlobeMap() {
               marker.setAnimation(null);
             }, 1500);
 
-            // Create simple InfoWindow instead of custom overlay
+            // Create simple InfoWindow with clean styling
             const infoWindow = new google.maps.InfoWindow({
               content: `
-                <div style="
-                  background: ${isDarkMode ? '#1f2937' : '#ffffff'};
-                  color: ${isDarkMode ? '#ffffff' : '#1f2937'};
-                  padding: 12px;
-                  border-radius: 8px;
-                  font-size: 14px;
-                  font-weight: 600;
-                  border: 2px solid ${colors.primary};
-                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                  min-width: 120px;
-                  text-align: center;
-                  margin: 0;
-                ">
-                  <div style="margin-bottom: 4px;">🎧 Active Listener</div>
-                  <div style="color: ${colors.primary};">${listener.city}</div>
-                  <div style="font-size: 12px; color: ${isDarkMode ? '#9ca3af' : '#6b7280'};">${listener.country}</div>
+                <div style="padding: 10px; text-align: center; font-family: system-ui, -apple-system, sans-serif;">
+                  <div style="font-size: 16px; margin-bottom: 4px;">🎧 Active Listener</div>
+                  <div style="font-size: 14px; font-weight: bold; color: ${colors.primary}; margin-bottom: 2px;">${listener.city}</div>
+                  <div style="font-size: 12px; color: #666;">${listener.country}</div>
                 </div>
               `,
-              maxWidth: 200,
+              maxWidth: 180,
+              disableAutoPan: false,
             });
             
             // Open info window with small delay for smoother animation
@@ -1236,6 +1225,32 @@ export default function FullWidthGlobeMap() {
             }}
           />
 
+          {/* Expand Button - Top Left Corner */}
+          {!isFullscreen && (
+            <div className="absolute top-4 left-4 z-10">
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  toggleFullscreen(true);
+                  return false;
+                }}
+                size="sm"
+                className={`p-2 ${
+                  isDarkMode 
+                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
+                    : "bg-white hover:bg-gray-50 text-black"
+                } border-0 shadow-lg`}
+                style={{
+                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                  color: isDarkMode ? "#ffffff" : "#000000",
+                }}
+              >
+                <Maximize2 className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
+
           {/* Map Controls */}
           <div className={`absolute ${isFullscreen ? "top-20 right-8" : "top-4 right-4"} z-10 flex flex-col gap-2`}>
             <Button
@@ -1338,28 +1353,7 @@ export default function FullWidthGlobeMap() {
             >
               <RotateCcw className="w-4 h-4" />
             </Button>
-            {!isFullscreen && (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleFullscreen(true);
-                  return false;
-                }}
-                type="button"
-                className={`p-2 ${
-                  isDarkMode 
-                    ? "bg-gray-800 hover:bg-gray-700 text-white" 
-                    : "bg-white hover:bg-gray-50 text-black"
-                } border-0 shadow-lg rounded transition-colors`}
-                style={{
-                  backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
-                  color: isDarkMode ? "#ffffff" : "#000000",
-                }}
-              >
-                <Maximize2 className="w-4 h-4" />
-              </button>
-            )}
+
           </div>
         </div>
 
