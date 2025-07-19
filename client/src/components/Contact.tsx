@@ -193,7 +193,7 @@ export default function Contact() {
                             }
                             placeholder="John"
                             required
-                            className="transition-colors duration-300"
+                            className="transition-colors duration-300 placeholder:text-gray-400 placeholder:opacity-50"
                             style={{
                               backgroundColor: colors.surface,
                               borderColor: colors.border,
@@ -217,7 +217,7 @@ export default function Contact() {
                             }
                             placeholder="Doe"
                             required
-                            className="transition-colors duration-300"
+                            className="transition-colors duration-300 placeholder:text-gray-400 placeholder:opacity-50"
                             style={{
                               backgroundColor: colors.surface,
                               borderColor: colors.border,
@@ -244,7 +244,7 @@ export default function Contact() {
                           }
                           placeholder="john@example.com"
                           required
-                          className="transition-colors duration-300"
+                          className="transition-colors duration-300 placeholder:text-gray-400 placeholder:opacity-50"
                           style={{
                             backgroundColor: colors.surface,
                             borderColor: colors.border,
@@ -316,7 +316,7 @@ export default function Contact() {
                           placeholder="Tell us what's on your mind..."
                           rows={5}
                           required
-                          className="resize-none transition-colors duration-300"
+                          className="resize-none transition-colors duration-300 placeholder:text-gray-400 placeholder:opacity-50"
                           style={{
                             backgroundColor: colors.surface,
                             borderColor: colors.border,
