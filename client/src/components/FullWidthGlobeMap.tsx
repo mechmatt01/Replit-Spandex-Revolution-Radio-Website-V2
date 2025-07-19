@@ -1,3 +1,4 @@
+
 /// <reference types="@types/google.maps" />
 declare global {
   interface Window {
@@ -226,6 +227,18 @@ export default function FullWidthGlobeMap() {
   const currentInfoWindow = useRef<any>(null);
   const { colors, isDarkMode, currentTheme } = useTheme();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  
+  // Store original body styles
+  const originalBodyStylesRef = useRef<{
+    overflow: string;
+    position: string;
+    width: string;
+    height: string;
+    top: string;
+    left: string;
+    right: string;
+    paddingRight: string;
+  } | null>(null);
 
   // Intelligent theme detection for Google Maps
   const shouldUseDarkMap = () => {
@@ -456,11 +469,14 @@ export default function FullWidthGlobeMap() {
 
   // Handle fullscreen toggle with proper map resizing
   const toggleFullscreen = (enable: boolean, event?: React.MouseEvent) => {
-    console.log(`Toggling fullscreen: ${enable}`);
+    // Stop ALL event propagation immediately
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
 
-    // Prevent default behavior and event propagation
-    event?.preventDefault();
-    event?.stopPropagation();
+    console.log(`Toggling fullscreen: ${enable}`);
 
     // Close any open info windows when toggling fullscreen
     if (currentInfoWindow.current) {
@@ -468,28 +484,58 @@ export default function FullWidthGlobeMap() {
       currentInfoWindow.current = null;
     }
 
-    setIsFullscreen(enable);
-
-    // Prevent/allow body scrolling
     if (enable) {
+      // Store original body styles before modifying
+      originalBodyStylesRef.current = {
+        overflow: document.body.style.overflow || '',
+        position: document.body.style.position || '',
+        width: document.body.style.width || '',
+        height: document.body.style.height || '',
+        top: document.body.style.top || '',
+        left: document.body.style.left || '',
+        right: document.body.style.right || '',
+        paddingRight: document.body.style.paddingRight || ''
+      };
+
+      // Calculate scrollbar width to prevent layout shift
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      // Prevent body scrolling completely
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
-      document.body.style.top = '0';
+      document.body.style.height = '100vh';
+      document.body.style.top = `-${window.scrollY}px`;
       document.body.style.left = '0';
       document.body.style.right = '0';
-      document.body.style.height = '100vh';
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+      // Also prevent scrolling on html element
+      document.documentElement.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.width = '';
-      document.body.style.top = '';
-      document.body.style.left = '';
-      document.body.style.right = '';
-      document.body.style.height = '';
+      // Restore original body styles
+      if (originalBodyStylesRef.current) {
+        const scrollY = parseInt(document.body.style.top || '0') * -1;
+        
+        document.body.style.overflow = originalBodyStylesRef.current.overflow;
+        document.body.style.position = originalBodyStylesRef.current.position;
+        document.body.style.width = originalBodyStylesRef.current.width;
+        document.body.style.height = originalBodyStylesRef.current.height;
+        document.body.style.top = originalBodyStylesRef.current.top;
+        document.body.style.left = originalBodyStylesRef.current.left;
+        document.body.style.right = originalBodyStylesRef.current.right;
+        document.body.style.paddingRight = originalBodyStylesRef.current.paddingRight;
+
+        document.documentElement.style.overflow = '';
+
+        // Restore scroll position
+        window.scrollTo(0, scrollY);
+      }
     }
 
-    // Trigger map resize after state change with longer delay
+    setIsFullscreen(enable);
+
+    // Trigger map resize after state change with proper timing
     setTimeout(() => {
       if (map && window.google && window.google.maps) {
         google.maps.event.trigger(map, 'resize');
@@ -500,7 +546,7 @@ export default function FullWidthGlobeMap() {
           map.panTo(userLocation);
         }
       }
-    }, 300);
+    }, 100);
   };
 
   // Fetch Google Maps API key and config
@@ -1204,13 +1250,16 @@ export default function FullWidthGlobeMap() {
   // Cleanup fullscreen state on component unmount
   useEffect(() => {
     return () => {
-      if (isFullscreen) {
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.top = '';
-        document.body.style.left = '';
-        document.body.style.right = '';
+      if (isFullscreen && originalBodyStylesRef.current) {
+        document.body.style.overflow = originalBodyStylesRef.current.overflow;
+        document.body.style.position = originalBodyStylesRef.current.position;
+        document.body.style.width = originalBodyStylesRef.current.width;
+        document.body.style.height = originalBodyStylesRef.current.height;
+        document.body.style.top = originalBodyStylesRef.current.top;
+        document.body.style.left = originalBodyStylesRef.current.left;
+        document.body.style.right = originalBodyStylesRef.current.right;
+        document.body.style.paddingRight = originalBodyStylesRef.current.paddingRight;
+        document.documentElement.style.overflow = '';
       }
     };
   }, [isFullscreen]);
@@ -1314,9 +1363,91 @@ export default function FullWidthGlobeMap() {
     .size;
   const top10Listeners = activeListeners.slice(0, 10);
 
+  // Handle map control button clicks with proper event prevention
+  const handleMapControlClick = (action: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    console.log(`${action} button clicked`);
+    
+    if (!map || !window.google || !window.google.maps) {
+      console.log('Map not available for', action);
+      return false;
+    }
+
+    try {
+      switch (action) {
+        case 'zoomIn':
+          const currentZoomIn = map.getZoom() || 2;
+          const newZoomIn = Math.min(currentZoomIn + 1, 20);
+          console.log(`Setting zoom from ${currentZoomIn} to ${newZoomIn}`);
+          map.setZoom(newZoomIn);
+          break;
+          
+        case 'zoomOut':
+          const currentZoomOut = map.getZoom() || 2;
+          const newZoomOut = Math.max(currentZoomOut - 1, 1);
+          console.log(`Setting zoom from ${currentZoomOut} to ${newZoomOut}`);
+          map.setZoom(newZoomOut);
+          break;
+          
+        case 'myLocation':
+          if (userLocation) {
+            console.log('Panning to user location:', userLocation);
+            map.panTo(userLocation);
+            map.setZoom(12);
+          } else {
+            console.log('Requesting user location...');
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const newLocation = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                  };
+                  console.log('Got new location:', newLocation);
+                  setUserLocation(newLocation);
+                  map.panTo(newLocation);
+                  map.setZoom(12);
+                },
+                (error) => {
+                  console.error("Error getting location:", error);
+                  const defaultLocation = { lat: 40.7128, lng: -74.006 };
+                  setUserLocation(defaultLocation);
+                  map.panTo(defaultLocation);
+                  map.setZoom(8);
+                },
+                {
+                  enableHighAccuracy: true,
+                  timeout: 10000,
+                  maximumAge: 300000
+                }
+              );
+            } else {
+              console.log('Geolocation not supported, using default location');
+              const defaultLocation = { lat: 40.7128, lng: -74.006 };
+              setUserLocation(defaultLocation);
+              map.panTo(defaultLocation);
+              map.setZoom(8);
+            }
+          }
+          break;
+          
+        case 'reset':
+          console.log('Resetting map to world view');
+          map.panTo({ lat: 20, lng: 0 });
+          map.setZoom(2);
+          break;
+      }
+    } catch (error) {
+      console.error(`Error in ${action}:`, error);
+    }
+
+    return false;
+  };
+
   return (
-
-
       <section
         id="map"
         className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
@@ -1446,11 +1577,18 @@ export default function FullWidthGlobeMap() {
           }`}>
             <button
               type="button"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+              }}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 console.log('Expand button clicked, current fullscreen:', isFullscreen);
                 toggleFullscreen(!isFullscreen, e);
+                return false;
               }}
               className={`p-3 border-0 shadow-xl rounded-lg transition-all duration-300 cursor-pointer select-none ${
                 isFullscreen 
@@ -1483,24 +1621,12 @@ export default function FullWidthGlobeMap() {
           }`}>
             <button
               type="button"
-              onClick={(e) => {
+              onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Zoom in button clicked');
-                if (map && window.google && window.google.maps) {
-                  try {
-                    const currentZoom = map.getZoom() || 2;
-                    const newZoom = Math.min(currentZoom + 1, 20);
-                    console.log(`Setting zoom from ${currentZoom} to ${newZoom}`);
-                    map.setZoom(newZoom);
-                  } catch (error) {
-                    console.error('Error zooming in:', error);
-                  }
-                } else {
-                  console.log('Map not available for zoom in');
-                }
-                return false;
+                e.stopImmediatePropagation();
               }}
+              onClick={(e) => handleMapControlClick('zoomIn', e)}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
@@ -1518,24 +1644,12 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onClick={(e) => {
+              onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Zoom out button clicked');
-                if (map && window.google && window.google.maps) {
-                  try {
-                    const currentZoom = map.getZoom() || 2;
-                    const newZoom = Math.max(currentZoom - 1, 1);
-                    console.log(`Setting zoom from ${currentZoom} to ${newZoom}`);
-                    map.setZoom(newZoom);
-                  } catch (error) {
-                    console.error('Error zooming out:', error);
-                  }
-                } else {
-                  console.log('Map not available for zoom out');
-                }
-                return false;
+                e.stopImmediatePropagation();
               }}
+              onClick={(e) => handleMapControlClick('zoomOut', e)}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
@@ -1553,64 +1667,12 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onClick={(e) => {
+              onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('My location button clicked');
-                if (userLocation && map && window.google && window.google.maps) {
-                  try {
-                    console.log('Panning to user location:', userLocation);
-                    map.panTo(userLocation);
-                    map.setZoom(12);
-                  } catch (error) {
-                    console.error('Error going to location:', error);
-                  }
-                } else if (!userLocation) {
-                  console.log('Requesting user location...');
-                  if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                      (position) => {
-                        const newLocation = {
-                          lat: position.coords.latitude,
-                          lng: position.coords.longitude,
-                        };
-                        console.log('Got new location:', newLocation);
-                        setUserLocation(newLocation);
-                        if (map && window.google && window.google.maps) {
-                          map.panTo(newLocation);
-                          map.setZoom(12);
-                        }
-                      },
-                      (error) => {
-                        console.error("Error getting location:", error);
-                        // Fallback to default location
-                        const defaultLocation = { lat: 40.7128, lng: -74.006 };
-                        setUserLocation(defaultLocation);
-                        if (map && window.google && window.google.maps) {
-                          map.panTo(defaultLocation);
-                          map.setZoom(8);
-                        }
-                      },
-                      {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 300000
-                      }
-                    );
-                  } else {
-                    console.log('Geolocation not supported, using default location');
-                    const defaultLocation = { lat: 40.7128, lng: -74.006 };
-                    setUserLocation(defaultLocation);
-                    if (map && window.google && window.google.maps) {
-                      map.panTo(defaultLocation);
-                      map.setZoom(8);
-                    }
-                  }
-                } else {
-                  console.log('Map not available for location');
-                }
-                return false;
+                e.stopImmediatePropagation();
               }}
+              onClick={(e) => handleMapControlClick('myLocation', e)}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
@@ -1628,23 +1690,12 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onClick={(e) => {
+              onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Reset map view button clicked');
-                if (map && window.google && window.google.maps) {
-                  try {
-                    console.log('Resetting map to world view');
-                    map.panTo({ lat: 20, lng: 0 });
-                    map.setZoom(2);
-                  } catch (error) {
-                    console.error('Error resetting map:', error);
-                  }
-                } else {
-                  console.log('Map not available for reset');
-                }
-                return false;
+                e.stopImmediatePropagation();
               }}
+              onClick={(e) => handleMapControlClick('reset', e)}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
