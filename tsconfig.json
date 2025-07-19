@@ -11,9 +11,9 @@
     "skipLibCheck": true,
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
-    "noEmit": true,
+    "noEmit": false,
     "jsx": "preserve",
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
     "baseUrl": ".",
     "types": ["node", "vite/client", "google.maps"],
     "paths": {
