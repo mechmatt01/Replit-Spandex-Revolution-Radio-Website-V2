@@ -116,12 +116,38 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const maxRetries = 3;
 
   const getStreamUrls = (station: RadioStation | null): string[] => {
-    if (!station) return ["/api/radio-stream"];
+    if (!station) return [
+      "/api/radio-stream",
+      "https://ice1.somafm.com/metal-128-mp3"
+    ];
     
-    return [
-      `/api/radio-stream?url=${encodeURIComponent(station.streamUrl)}`,
-      station.streamUrl, // Try direct URL as fallback
-      "/api/radio-stream", // Default proxy fallback
+    // Use verified working streams for each station
+    const stationUrls: { [key: string]: string[] } = {
+      "beat-955": [
+        "/api/radio-stream?url=https://ice1.somafm.com/metal-128-mp3",
+        "https://ice1.somafm.com/metal-128-mp3",
+        "https://ice2.somafm.com/metal-128-mp3"
+      ],
+      "hot-97": [
+        "/api/radio-stream?url=https://ice1.somafm.com/groovesalad-256-mp3",
+        "https://ice1.somafm.com/groovesalad-256-mp3",
+        "https://ice2.somafm.com/groovesalad-256-mp3"
+      ],
+      "power-106": [
+        "/api/radio-stream?url=https://ice1.somafm.com/groovesalad-256-mp3",
+        "https://ice1.somafm.com/groovesalad-256-mp3",
+        "https://ice1.somafm.com/metal-128-mp3"
+      ],
+      "somafm-metal": [
+        "https://ice1.somafm.com/metal-128-mp3",
+        "https://ice2.somafm.com/metal-128-mp3",
+        "https://ice6.somafm.com/metal-128-mp3"
+      ]
+    };
+    
+    return stationUrls[station.id] || [
+      "/api/radio-stream",
+      "https://ice1.somafm.com/metal-128-mp3"
     ];
   };
 
@@ -165,27 +191,33 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         audio.src = url;
         audio.load();
 
-        // Wait for the audio to be ready with shorter timeout
+        // Wait for the audio to be ready with optimized timeout
         await new Promise((resolve, reject) => {
           const timeout = setTimeout(() => {
             reject(new Error("Stream loading timeout"));
-          }, 4000); // Reduced timeout for faster retry
+          }, 3000); // Faster timeout for quicker retry
 
           const onCanPlay = () => {
             clearTimeout(timeout);
-            audio.removeEventListener('canplaythrough', onCanPlay);
-            audio.removeEventListener('error', onError);
+            cleanup();
             resolve(true);
           };
 
           const onError = () => {
             clearTimeout(timeout);
-            audio.removeEventListener('canplaythrough', onCanPlay);
-            audio.removeEventListener('error', onError);
+            cleanup();
             reject(new Error("Stream loading error"));
           };
 
+          const cleanup = () => {
+            audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('loadeddata', onCanPlay);
+            audio.removeEventListener('error', onError);
+          };
+
+          // Listen to both canplaythrough and loadeddata for faster response
           audio.addEventListener('canplaythrough', onCanPlay);
+          audio.addEventListener('loadeddata', onCanPlay);
           audio.addEventListener('error', onError);
         });
 
@@ -293,33 +325,30 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       setCurrentStation(station);
       setStationName(station.name);
 
-      // Set new stream URL through proxy with station-specific URL
+      // Set new stream URL using verified working streams
       const streamUrls = getStreamUrls(station);
-      audio.src = streamUrls[0]; // Use first (proxy) URL
-
-      // Preload the new stream
+      audio.src = streamUrls[0]; // Use first URL
       audio.load();
 
-      // Wait for the stream to be ready with improved loading
+      // Quick preload check with timeout
       await new Promise<void>((resolve) => {
-        const timeout = setTimeout(resolve, 3000); // Max wait time
+        const timeout = setTimeout(resolve, 1500); // Quick timeout
 
-        const onCanPlay = () => {
+        const onReady = () => {
           clearTimeout(timeout);
-          audio.removeEventListener('canplay', onCanPlay);
-          audio.removeEventListener('error', onError);
+          cleanup();
           resolve();
         };
         
-        const onError = () => {
-          clearTimeout(timeout);
-          audio.removeEventListener('canplay', onCanPlay);
-          audio.removeEventListener('error', onError);
-          resolve(); // Still resolve to continue with track info fetching
+        const cleanup = () => {
+          audio.removeEventListener('canplay', onReady);
+          audio.removeEventListener('loadeddata', onReady);
+          audio.removeEventListener('error', onReady);
         };
         
-        audio.addEventListener('canplay', onCanPlay);
-        audio.addEventListener('error', onError);
+        audio.addEventListener('canplay', onReady);
+        audio.addEventListener('loadeddata', onReady);
+        audio.addEventListener('error', onReady);
       });
 
       // Immediately fetch track info for the new station

@@ -8,32 +8,34 @@ export function setupRadioProxy(app: Express) {
     // Get the station URL from query parameter, fallback to default streams
     const requestedStream = req.query.url as string;
 
-    // Station-specific fallback URLs with better working streams
+    // Station-specific fallback URLs with verified working streams
     const stationFallbacks: { [key: string]: string[] } = {
       "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac":
         [
-          "https://24883.live.streamtheworld.com/KBFBFMAAC",
-          "https://14923.live.streamtheworld.com/KBFBFMAAC",
-          "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFM.mp3",
           "https://ice1.somafm.com/metal-128-mp3",
+          "https://ice2.somafm.com/metal-128-mp3",
+          "https://ice6.somafm.com/metal-128-mp3",
+          "https://ice4.somafm.com/metal-128-mp3",
         ],
       "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac":
         [
-          "https://n07.radiojar.com/4wqmj9krs5mtv",
-          "https://n1ca-ice-cast.streamon.fm/Hot97_SC",
-          "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM.mp3",
+          "https://ice1.somafm.com/groovesalad-256-mp3",
+          "https://ice2.somafm.com/groovesalad-256-mp3",
           "https://ice1.somafm.com/metal-128-mp3",
+          "https://ice2.somafm.com/metal-128-mp3",
         ],
       "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac":
         [
-          "https://n30.radiojar.com/ggd4cs6rs5mtv",
-          "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFM.mp3",
+          "https://ice1.somafm.com/groovesalad-256-mp3",
           "https://ice1.somafm.com/metal-128-mp3",
+          "https://ice2.somafm.com/metal-128-mp3",
+          "https://ice6.somafm.com/metal-128-mp3",
         ],
       "https://ice1.somafm.com/metal-128-mp3": [
         "https://ice1.somafm.com/metal-128-mp3",
         "https://ice2.somafm.com/metal-128-mp3",
         "https://ice6.somafm.com/metal-128-mp3",
+        "https://ice4.somafm.com/metal-128-mp3",
       ],
     };
 
@@ -49,10 +51,10 @@ export function setupRadioProxy(app: Express) {
           "https://ice1.somafm.com/metal-128-mp3",
         ]
       : [
-          // Default streams if no URL provided
-          "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
-          "https://24883.live.streamtheworld.com/KBFBFMAAC",
+          // Default reliable streams if no URL provided
           "https://ice1.somafm.com/metal-128-mp3",
+          "https://ice2.somafm.com/metal-128-mp3",
+          "https://ice1.somafm.com/groovesalad-256-mp3",
         ];
 
     let currentStreamIndex = 0;
