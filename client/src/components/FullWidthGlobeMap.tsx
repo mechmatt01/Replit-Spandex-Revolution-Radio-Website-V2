@@ -468,15 +468,10 @@ export default function FullWidthGlobeMap() {
   });
 
   // Handle fullscreen toggle with proper map resizing
-  const toggleFullscreen = (enable: boolean, event?: React.MouseEvent) => {
-    // Stop ALL event propagation immediately
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-    }
-
-    console.log(`Toggling fullscreen: ${enable}`);
+  const toggleFullscreen = (enable?: boolean) => {
+    const newFullscreenState = enable !== undefined ? enable : !isFullscreen;
+    
+    console.log(`Toggling fullscreen from ${isFullscreen} to ${newFullscreenState}`);
 
     // Close any open info windows when toggling fullscreen
     if (currentInfoWindow.current) {
@@ -484,7 +479,7 @@ export default function FullWidthGlobeMap() {
       currentInfoWindow.current = null;
     }
 
-    if (enable) {
+    if (newFullscreenState) {
       // Store original body styles before modifying
       originalBodyStylesRef.current = {
         overflow: document.body.style.overflow || '',
@@ -497,18 +492,17 @@ export default function FullWidthGlobeMap() {
         paddingRight: document.body.style.paddingRight || ''
       };
 
-      // Calculate scrollbar width to prevent layout shift
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      // Store current scroll position
+      const scrollY = window.scrollY;
 
       // Prevent body scrolling completely
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
       document.body.style.height = '100vh';
-      document.body.style.top = `-${window.scrollY}px`;
+      document.body.style.top = `-${scrollY}px`;
       document.body.style.left = '0';
       document.body.style.right = '0';
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
 
       // Also prevent scrolling on html element
       document.documentElement.style.overflow = 'hidden';
@@ -530,16 +524,18 @@ export default function FullWidthGlobeMap() {
 
         // Restore scroll position
         window.scrollTo(0, scrollY);
+        originalBodyStylesRef.current = null;
       }
     }
 
-    setIsFullscreen(enable);
+    // Update state
+    setIsFullscreen(newFullscreenState);
 
     // Trigger map resize after state change with proper timing
     setTimeout(() => {
       if (map && window.google && window.google.maps) {
         google.maps.event.trigger(map, 'resize');
-        console.log('Map resize triggered for fullscreen:', enable);
+        console.log('Map resize triggered for fullscreen:', newFullscreenState);
 
         // Re-center the map if needed
         if (userLocation) {
@@ -1365,15 +1361,11 @@ export default function FullWidthGlobeMap() {
 
   // Handle map control button clicks with proper event prevention
   const handleMapControlClick = (action: string, event: React.MouseEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
-
     console.log(`${action} button clicked`);
     
     if (!map || !window.google || !window.google.maps) {
       console.log('Map not available for', action);
-      return false;
+      return;
     }
 
     try {
@@ -1443,8 +1435,6 @@ export default function FullWidthGlobeMap() {
     } catch (error) {
       console.error(`Error in ${action}:`, error);
     }
-
-    return false;
   };
 
   return (
@@ -1577,18 +1567,11 @@ export default function FullWidthGlobeMap() {
           }`}>
             <button
               type="button"
-              onMouseDown={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-              }}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                e.stopImmediatePropagation();
                 console.log('Expand button clicked, current fullscreen:', isFullscreen);
-                toggleFullscreen(!isFullscreen, e);
-                return false;
+                toggleFullscreen();
               }}
               className={`p-3 border-0 shadow-xl rounded-lg transition-all duration-300 cursor-pointer select-none ${
                 isFullscreen 
@@ -1621,12 +1604,11 @@ export default function FullWidthGlobeMap() {
           }`}>
             <button
               type="button"
-              onMouseDown={(e) => {
+              onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                e.stopImmediatePropagation();
+                handleMapControlClick('zoomIn', e);
               }}
-              onClick={(e) => handleMapControlClick('zoomIn', e)}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
@@ -1644,12 +1626,11 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onMouseDown={(e) => {
+              onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                e.stopImmediatePropagation();
+                handleMapControlClick('zoomOut', e);
               }}
-              onClick={(e) => handleMapControlClick('zoomOut', e)}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
@@ -1667,12 +1648,11 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onMouseDown={(e) => {
+              onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                e.stopImmediatePropagation();
+                handleMapControlClick('myLocation', e);
               }}
-              onClick={(e) => handleMapControlClick('myLocation', e)}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
@@ -1690,12 +1670,11 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onMouseDown={(e) => {
+              onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                e.stopImmediatePropagation();
+                handleMapControlClick('reset', e);
               }}
-              onClick={(e) => handleMapControlClick('reset', e)}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
