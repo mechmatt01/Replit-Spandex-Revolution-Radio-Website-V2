@@ -458,6 +458,10 @@ export default function FullWidthGlobeMap() {
   const toggleFullscreen = (enable: boolean) => {
     console.log(`Toggling fullscreen: ${enable}`);
 
+    // Prevent default behavior and event propagation
+    event?.preventDefault();
+    event?.stopPropagation();
+
     // Close any open info windows when toggling fullscreen
     if (currentInfoWindow.current) {
       currentInfoWindow.current.close();
@@ -474,6 +478,7 @@ export default function FullWidthGlobeMap() {
       document.body.style.top = '0';
       document.body.style.left = '0';
       document.body.style.right = '0';
+      document.body.style.height = '100vh';
     } else {
       document.body.style.overflow = '';
       document.body.style.position = '';
@@ -481,11 +486,12 @@ export default function FullWidthGlobeMap() {
       document.body.style.top = '';
       document.body.style.left = '';
       document.body.style.right = '';
+      document.body.style.height = '';
     }
 
     // Trigger map resize after state change with longer delay
     setTimeout(() => {
-      if (map) {
+      if (map && window.google && window.google.maps) {
         google.maps.event.trigger(map, 'resize');
         console.log('Map resize triggered for fullscreen:', enable);
 
@@ -494,7 +500,7 @@ export default function FullWidthGlobeMap() {
           map.panTo(userLocation);
         }
       }
-    }, 500);
+    }, 300);
   };
 
   // Fetch Google Maps API key and config
@@ -1389,7 +1395,10 @@ export default function FullWidthGlobeMap() {
           isFullscreen 
             ? "fixed inset-0 z-[9990] mb-0 bg-black overflow-hidden" 
             : "h-[600px] rounded-lg overflow-hidden"
-        }`}>
+        }`}
+        style={{
+          zIndex: isFullscreen ? 9990 : 'auto'
+        }}>
           {/* Fullscreen Header */}
           {isFullscreen && (
             <div className="absolute top-0 left-0 right-0 z-[9999] bg-black/90 backdrop-blur-md border-b border-gray-700">
@@ -1437,7 +1446,9 @@ export default function FullWidthGlobeMap() {
           }`}>
             <button
               type="button"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 console.log('Expand button clicked, current fullscreen:', isFullscreen);
                 toggleFullscreen(!isFullscreen);
               }}
@@ -1472,7 +1483,9 @@ export default function FullWidthGlobeMap() {
           }`}>
             <button
               type="button"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 console.log('Zoom in button clicked');
                 if (map && window.google && window.google.maps) {
                   try {
@@ -1504,7 +1517,9 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 console.log('Zoom out button clicked');
                 if (map && window.google && window.google.maps) {
                   try {
@@ -1536,7 +1551,9 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 console.log('My location button clicked');
                 if (userLocation && map && window.google && window.google.maps) {
                   try {
@@ -1608,7 +1625,9 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 console.log('Reset map view button clicked');
                 if (map && window.google && window.google.maps) {
                   try {
