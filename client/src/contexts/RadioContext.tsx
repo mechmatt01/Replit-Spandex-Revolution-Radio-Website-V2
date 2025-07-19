@@ -10,6 +10,7 @@ import {
 // Radio station interface
 interface RadioStation {
   id: string;
+  stationId?: string;
   name: string;
   frequency: string;
   location: string;
@@ -279,7 +280,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
       // Immediately fetch track info for the new station
       try {
-        const response = await fetch(`/api/now-playing?station=${station.id}`);
+        const response = await fetch(`/api/now-playing?station=${station.stationId || station.id}`);
         if (response.ok) {
           const trackData = await response.json();
           setCurrentTrack({
