@@ -1437,21 +1437,9 @@ export default function FullWidthGlobeMap() {
           }`}>
             <button
               type="button"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log('Expand button activated via keyboard, current fullscreen:', isFullscreen);
-                  toggleFullscreen(!isFullscreen);
-                }
-              }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
+              onClick={() => {
                 console.log('Expand button clicked, current fullscreen:', isFullscreen);
                 toggleFullscreen(!isFullscreen);
-                return false;
               }}
               className={`p-3 border-0 shadow-xl rounded-lg transition-all duration-300 cursor-pointer select-none ${
                 isFullscreen 
@@ -1484,22 +1472,19 @@ export default function FullWidthGlobeMap() {
           }`}>
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                if (map) {
-                  map.setZoom((map.getZoom() || 2) + 1);
-                }
-                return false;
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (map) {
-                    map.setZoom((map.getZoom() || 2) + 1);
+              onClick={() => {
+                console.log('Zoom in button clicked');
+                if (map && window.google && window.google.maps) {
+                  try {
+                    const currentZoom = map.getZoom() || 2;
+                    const newZoom = Math.min(currentZoom + 1, 20);
+                    console.log(`Setting zoom from ${currentZoom} to ${newZoom}`);
+                    map.setZoom(newZoom);
+                  } catch (error) {
+                    console.error('Error zooming in:', error);
                   }
+                } else {
+                  console.log('Map not available for zoom in');
                 }
               }}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
@@ -1519,28 +1504,19 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                if (map) {
-                  const currentZoom = map.getZoom() || 2;
-                  if (currentZoom > 1) {
-                    map.setZoom(currentZoom - 1);
-                  }
-                }
-                return false;
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (map) {
+              onClick={() => {
+                console.log('Zoom out button clicked');
+                if (map && window.google && window.google.maps) {
+                  try {
                     const currentZoom = map.getZoom() || 2;
-                    if (currentZoom > 1) {
-                      map.setZoom(currentZoom - 1);
-                    }
+                    const newZoom = Math.max(currentZoom - 1, 1);
+                    console.log(`Setting zoom from ${currentZoom} to ${newZoom}`);
+                    map.setZoom(newZoom);
+                  } catch (error) {
+                    console.error('Error zooming out:', error);
                   }
+                } else {
+                  console.log('Map not available for zoom out');
                 }
               }}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
@@ -1560,17 +1536,18 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                if (userLocation) {
-                  if (map) {
+              onClick={() => {
+                console.log('My location button clicked');
+                if (userLocation && map && window.google && window.google.maps) {
+                  try {
+                    console.log('Panning to user location:', userLocation);
                     map.panTo(userLocation);
                     map.setZoom(12);
+                  } catch (error) {
+                    console.error('Error going to location:', error);
                   }
-                } else {
-                  // Request location if not available
+                } else if (!userLocation) {
+                  console.log('Requesting user location...');
                   if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                       (position) => {
@@ -1578,28 +1555,40 @@ export default function FullWidthGlobeMap() {
                           lat: position.coords.latitude,
                           lng: position.coords.longitude,
                         };
+                        console.log('Got new location:', newLocation);
                         setUserLocation(newLocation);
-                        if (map) {
+                        if (map && window.google && window.google.maps) {
                           map.panTo(newLocation);
                           map.setZoom(12);
                         }
                       },
                       (error) => {
                         console.error("Error getting location:", error);
+                        // Fallback to default location
+                        const defaultLocation = { lat: 40.7128, lng: -74.006 };
+                        setUserLocation(defaultLocation);
+                        if (map && window.google && window.google.maps) {
+                          map.panTo(defaultLocation);
+                          map.setZoom(8);
+                        }
+                      },
+                      {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 300000
                       }
                     );
+                  } else {
+                    console.log('Geolocation not supported, using default location');
+                    const defaultLocation = { lat: 40.7128, lng: -74.006 };
+                    setUserLocation(defaultLocation);
+                    if (map && window.google && window.google.maps) {
+                      map.panTo(defaultLocation);
+                      map.setZoom(8);
+                    }
                   }
-                }
-                return false;
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (userLocation && map) {
-                    map.panTo(userLocation);
-                    map.setZoom(12);
-                  }
+                } else {
+                  console.log('Map not available for location');
                 }
               }}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
@@ -1619,24 +1608,18 @@ export default function FullWidthGlobeMap() {
             </button>
             <button
               type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                if (map) {
-                  map.panTo({ lat: 40.7128, lng: -74.006 });
-                  map.setZoom(2);
-                }
-                return false;
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (map) {
-                    map.panTo({ lat: 40.7128, lng: -74.006 });
+              onClick={() => {
+                console.log('Reset map view button clicked');
+                if (map && window.google && window.google.maps) {
+                  try {
+                    console.log('Resetting map to world view');
+                    map.panTo({ lat: 20, lng: 0 });
                     map.setZoom(2);
+                  } catch (error) {
+                    console.error('Error resetting map:', error);
                   }
+                } else {
+                  console.log('Map not available for reset');
                 }
               }}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
