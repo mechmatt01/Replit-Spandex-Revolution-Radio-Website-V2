@@ -470,7 +470,7 @@ export default function Navigation() {
                             className="w-10 h-10 rounded-full bg-gradient-to-br flex items-center justify-center shadow-lg ring-2 ring-offset-2"
                             style={{
                               background: user?.profileImageUrl 
-                                ? `url(${user.profileImageUrl}) center/cover` 
+                                ? `url(${user?.profileImageUrl}) center/cover` 
                                 : gradient,
                               ringColor: colors.primary,
                               ringOffsetColor: isDarkMode ? '#000000' : '#ffffff',

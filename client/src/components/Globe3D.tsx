@@ -491,7 +491,7 @@ export default function Globe3D({
         </CardContent>
       </Card>
 
-      <style jsx>{`
+      <style>{`
         .perspective-1000 {
           perspective: 1000px;
         }

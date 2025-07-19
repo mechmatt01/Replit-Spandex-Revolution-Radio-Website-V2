@@ -207,6 +207,8 @@ const GoogleMapWithListeners = ({
   selectedListener,
   apiKey,
   userLocation,
+  setSelectedListener,
+  setIsUserLocationSelected,
 }: {
   listeners: ActiveListener[];
   colors: any;
@@ -216,6 +218,8 @@ const GoogleMapWithListeners = ({
   selectedListener: ActiveListener | null;
   apiKey: string;
   userLocation?: { lat: number; lng: number };
+  setSelectedListener: (listener: ActiveListener | null) => void;
+  setIsUserLocationSelected: (selected: boolean) => void;
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -370,19 +374,20 @@ const GoogleMapWithListeners = ({
             console.log('Marker clicked:', listener.city);
             
             // Animate marker selection with pulsing effect
-            const originalIcon = marker.getIcon();
-            const selectedIcon = {
-              path: window.google.maps.SymbolPath.CIRCLE,
-              scale: 12,
-              fillColor: colors.primary,
-              fillOpacity: 1,
-              strokeColor: isDarkMode ? "#ffffff" : "#000000",
-              strokeWeight: 3,
-              animation: window.google.maps.Animation.BOUNCE,
-            };
+            const originalContent = marker.content;
             
-            // Apply bounce animation
-            marker.setIcon(selectedIcon);
+            // Create animated content for selection
+            const selectedContent = document.createElement('div');
+            selectedContent.innerHTML = `
+              <svg width="32" height="32" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="8" fill="${colors.primary}" opacity="1" stroke="${isDarkMode ? "#ffffff" : "#000000"}" stroke-width="3">
+                  <animate attributeName="r" values="8;12;8" dur="1s" repeatCount="indefinite"/>
+                </circle>
+              </svg>
+            `;
+            
+            // Apply animated content
+            marker.content = selectedContent;
             
             // Smooth zoom animation to the clicked location
             if (map) {
@@ -425,9 +430,9 @@ const GoogleMapWithListeners = ({
             // Reset user location selection when clicking on another listener
             setIsUserLocationSelected(false);
             
-            // Restore original icon after animation
+            // Restore original content after animation
             setTimeout(() => {
-              marker.setIcon(originalIcon);
+              marker.content = originalContent;
             }, 2000);
             
             onListenerClick(listener);
@@ -950,6 +955,8 @@ export default function InteractiveListenerMap() {
                     selectedListener={selectedListener}
                     apiKey={apiKey}
                     userLocation={userLocation || undefined}
+                    setSelectedListener={setSelectedListener}
+                    setIsUserLocationSelected={setIsUserLocationSelected}
                   />
                 )}
               </div>
@@ -1035,6 +1042,8 @@ export default function InteractiveListenerMap() {
                           selectedListener={selectedListener}
                           apiKey={apiKey}
                           userLocation={userLocation || undefined}
+                          setSelectedListener={setSelectedListener}
+                          setIsUserLocationSelected={setIsUserLocationSelected}
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full">
@@ -1228,8 +1237,3 @@ export default function InteractiveListenerMap() {
   );
 }
 
-declare global {
-  interface Window {
-    google: any;
-  }
-}

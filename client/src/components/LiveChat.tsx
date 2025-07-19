@@ -8,6 +8,7 @@ import { Send, MessageCircle, X, Users, Mic, MicOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
+import type { User } from "@shared/schema";
 
 interface ChatMessage {
   id: string;
