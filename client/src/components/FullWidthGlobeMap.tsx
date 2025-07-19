@@ -846,8 +846,6 @@ export default function FullWidthGlobeMap() {
                 <animate attributeName="opacity" values="1;0.6;1" dur="1.5s" repeatCount="indefinite"/>
               </circle>
             </svg>
-          ```text
-
           `;
 
           const marker = new google.maps.Marker({
