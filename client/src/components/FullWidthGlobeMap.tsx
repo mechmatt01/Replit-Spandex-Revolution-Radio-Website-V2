@@ -1435,9 +1435,8 @@ export default function FullWidthGlobeMap() {
           <div className={`absolute transition-all duration-500 ${
             isFullscreen ? "top-20 left-6 z-[9999]" : "top-4 left-4 z-10"
           }`}>
-            <div
-              role="button"
-              tabIndex={0}
+            <button
+              type="button"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
@@ -1476,16 +1475,15 @@ export default function FullWidthGlobeMap() {
               ) : (
                 <Maximize2 className="w-4 h-4" />
               )}
-            </div>
-          </div>
+            </button>
+          </div></old_str>
 
           {/* Map Controls */}
           <div className={`absolute transition-all duration-500 flex flex-col gap-2 ${
             isFullscreen ? "top-20 right-6 z-[9999]" : "top-4 right-4 z-10"
           }`}>
-            <div
-              role="button"
-              tabIndex={0}
+            <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1518,10 +1516,9 @@ export default function FullWidthGlobeMap() {
               aria-label="Zoom in"
             >
               <ZoomIn className="w-5 h-5" />
-            </div>
-            <div
-              role="button"
-              tabIndex={0}
+            </button>
+            <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1560,10 +1557,9 @@ export default function FullWidthGlobeMap() {
               aria-label="Zoom out"
             >
               <ZoomOut className="w-5 h-5" />
-            </div>
-            <div
-              role="button"
-              tabIndex={0}
+            </button>
+            <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1620,10 +1616,9 @@ export default function FullWidthGlobeMap() {
               aria-label="Go to my location"
             >
               <MapPin className="w-5 h-5" />
-            </div>
-            <div
-              role="button"
-              tabIndex={0}
+            </button>
+            <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -1658,8 +1653,8 @@ export default function FullWidthGlobeMap() {
               aria-label="Reset map view"
             >
               <RotateCcw className="w-5 h-5" />
-            </div>
-          </div>
+            </button>
+          </div></old_str>
         </div>
 
         {/* Statistics Layout - positioned below map */}
