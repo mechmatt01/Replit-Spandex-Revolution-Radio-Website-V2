@@ -457,12 +457,14 @@ export default function FullWidthGlobeMap() {
 
   // Handle fullscreen toggle with proper map resizing - FIXED VERSION
   const toggleFullscreen = (enable: boolean) => {
+    console.log(`Toggling fullscreen: ${enable}`);
     setIsFullscreen(enable);
     
     // Trigger map resize after state change without affecting body position
     setTimeout(() => {
       if (map) {
         google.maps.event.trigger(map, 'resize');
+        console.log('Map resize triggered');
       }
     }, 50);
   };
@@ -1007,150 +1009,7 @@ export default function FullWidthGlobeMap() {
   const top10Listeners = activeListeners.slice(0, 10);
 
   return (
-    <>
-      {/* Fullscreen overlay elements */}
-      {isFullscreen && (
-        <>
-          {/* Fullscreen backdrop to prevent scrolling */}
-          <div 
-            className="fixed inset-0 z-[9998] bg-black"
-            style={{ 
-              touchAction: 'none',
-              overscrollBehavior: 'none' 
-            }}
-          />
-          
-          {/* Fullscreen header bar */}
-          <div className="fixed top-0 left-0 right-0 z-[10001] bg-black/80 backdrop-blur-md border-b border-gray-700">
-            <div className="flex items-center justify-between px-6 py-4">
-              <div className="flex items-center gap-4">
-                <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
-                {weather && (
-                  <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
-                    <div className="w-8 h-8">
-                      <img
-                        src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
-                        alt={weather.description}
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div className="text-sm">
-                      <span className="text-white font-medium">{weather.location}</span>
-                      <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleFullscreen(false);
-                  return false;
-                }}
-                type="button"
-                className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300 rounded"
-              >
-                <Minimize2 className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Map Controls for fullscreen */}
-          <div className="fixed top-20 right-8 z-[10001] flex flex-col gap-2">
-            <Button
-              onClick={() => {
-                if (map) {
-                  map.setZoom(map.getZoom() + 1);
-                }
-              }}
-              size="sm"
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-              style={{
-                backgroundColor: "#1f2937",
-                color: "#ffffff",
-              }}
-            >
-              <ZoomIn className="w-4 h-4" />
-            </Button>
-            <Button
-              onClick={() => {
-                if (map) {
-                  map.setZoom(map.getZoom() - 1);
-                }
-              }}
-              size="sm"
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-              style={{
-                backgroundColor: "#1f2937",
-                color: "#ffffff",
-              }}
-            >
-              <ZoomOut className="w-4 h-4" />
-            </Button>
-          </div>
-
-          {/* Left-side controls for fullscreen mode */}
-          <div className="fixed top-20 left-8 z-[10001] flex flex-col gap-2">
-            <Button
-              onClick={() => {
-                if (userLocation) {
-                  if (map) {
-                    map.panTo(userLocation);
-                    map.setZoom(12);
-                  }
-                } else {
-                  // Request location if not available
-                  if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                      (position) => {
-                        const newLocation = {
-                          lat: position.coords.latitude,
-                          lng: position.coords.longitude,
-                        };
-                        setUserLocation(newLocation);
-                        if (map) {
-                          map.panTo(newLocation);
-                          map.setZoom(12);
-                        }
-                      },
-                      (error) => {
-                        console.error("Error getting location:", error);
-                      }
-                    );
-                  }
-                }
-              }}
-              size="sm"
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-              style={{
-                backgroundColor: "#1f2937",
-                color: "#ffffff",
-              }}
-            >
-              <MapPin className="w-4 h-4" />
-            </Button>
-            <Button
-              onClick={() => {
-                if (map) {
-                  map.panTo({ lat: 40.7128, lng: -74.006 });
-                  map.setZoom(2);
-                }
-              }}
-              size="sm"
-              className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
-              style={{
-                backgroundColor: "#1f2937",
-                color: "#ffffff",
-              }}
-            >
-              <RotateCcw className="w-4 h-4" />
-            </Button>
-          </div>
-        </>
-      )}
-
-      <section
+    <section
         id="map"
         className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
       >
@@ -1377,8 +1236,93 @@ export default function FullWidthGlobeMap() {
             >
               <RotateCcw className="w-4 h-4" />
             </Button>
-
           </div>
+
+          {/* Additional left-side controls for fullscreen */}
+          {isFullscreen && (
+            <div className="absolute bottom-20 left-8 z-10 flex flex-col gap-2 transition-all duration-700">
+              <Button
+                onClick={() => {
+                  if (userLocation) {
+                    if (map) {
+                      map.panTo(userLocation);
+                      map.setZoom(12);
+                    }
+                  } else {
+                    // Request location if not available
+                    if (navigator.geolocation) {
+                      navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                          const newLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                          };
+                          setUserLocation(newLocation);
+                          if (map) {
+                            map.panTo(newLocation);
+                            map.setZoom(12);
+                          }
+                        },
+                        (error) => {
+                          console.error("Error getting location:", error);
+                        }
+                      );
+                    }
+                  }
+                }}
+                size="sm"
+                className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+                style={{
+                  backgroundColor: "#1f2937",
+                  color: "#ffffff",
+                }}
+              >
+                <MapPin className="w-4 h-4" />
+              </Button>
+              <Button
+                onClick={() => {
+                  if (map) {
+                    map.panTo({ lat: 40.7128, lng: -74.006 });
+                    map.setZoom(2);
+                  }
+                }}
+                size="sm"
+                className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+                style={{
+                  backgroundColor: "#1f2937",
+                  color: "#ffffff",
+                }}
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+            </div>
+          )}
+
+          {/* Fullscreen header with weather */}
+          {isFullscreen && (
+            <div className="absolute top-0 left-0 right-0 z-[9999] bg-black/80 backdrop-blur-md border-b border-gray-700">
+              <div className="flex items-center justify-between px-6 py-4">
+                <div className="flex items-center gap-4">
+                  <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
+                  {weather && (
+                    <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
+                      <div className="w-8 h-8">
+                        <img
+                          src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
+                          alt={weather.description}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="text-sm">
+                        <span className="text-white font-medium">{weather.location}</span>
+                        <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Statistics Layout - positioned below map */}
@@ -1589,6 +1533,5 @@ export default function FullWidthGlobeMap() {
         )}
       </div>
     </section>
-    </>
   );
 }
