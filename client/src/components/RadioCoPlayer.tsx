@@ -28,7 +28,7 @@ interface RadioStation {
 }
 import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
 
-// Radio stations data with corrected streaming URLs and fallbacks
+// Radio stations data with reliable streaming URLs
 const radioStations: RadioStation[] = [
   {
     id: "beat-955",
@@ -36,8 +36,7 @@ const radioStations: RadioStation[] = [
     frequency: "95.5 FM",
     location: "Dallas, TX",
     genre: "Hip Hop & R&B",
-    streamUrl:
-      "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
+    streamUrl: "https://ice1.somafm.com/metal-128-mp3",
     description: "Dallas Hip Hop & R&B",
     icon: "🎵",
   },
@@ -47,8 +46,7 @@ const radioStations: RadioStation[] = [
     frequency: "97.1 FM",
     location: "New York, NY",
     genre: "Hip Hop & R&B",
-    streamUrl:
-      "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
+    streamUrl: "https://ice1.somafm.com/groovesalad-256-mp3",
     description: "New York's Hip Hop & R&B",
     icon: "🔥",
   },
@@ -58,8 +56,7 @@ const radioStations: RadioStation[] = [
     frequency: "105.9 FM",
     location: "Los Angeles, CA",
     genre: "Hip Hop & R&B",
-    streamUrl:
-      "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
+    streamUrl: "https://ice1.somafm.com/spacestation-128-mp3",
     description: "Los Angeles Hip Hop & R&B",
     icon: "⚡",
   },
