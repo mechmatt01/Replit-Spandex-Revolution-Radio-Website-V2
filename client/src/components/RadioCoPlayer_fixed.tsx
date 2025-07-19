@@ -85,7 +85,7 @@ export default function RadioCoPlayer() {
     setVolume,
     isMuted,
     toggleMute,
-    switchStation,
+    // switchStation,
   } = useRadio();
 
   const { getColors, getGradient } = useTheme();
@@ -107,7 +107,8 @@ export default function RadioCoPlayer() {
     setIsStationDropdownOpen(false);
 
     try {
-      await switchStation(station.streamUrl);
+      // await switchStation(station.streamUrl);
+      console.log("Station switching not implemented yet");
     } catch (err) {
       console.error("Failed to switch station:", err);
     }

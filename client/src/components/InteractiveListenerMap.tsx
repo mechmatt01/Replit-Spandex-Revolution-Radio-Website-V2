@@ -487,7 +487,7 @@ const GoogleMapWithListeners = ({
           setTimeout(() => {
             const markerDiv = document.querySelector(`div[title="This is you!"]`);
             if (markerDiv) {
-              markerDiv.style.animation = 'pulse 2s infinite';
+              (markerDiv as HTMLElement).style.animation = 'pulse 2s infinite';
             }
           }, 100);
 

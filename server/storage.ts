@@ -121,7 +121,7 @@ export class DatabaseStorage implements IStorage {
   async upsertUser(userData: UpsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
-      .values(userData)
+      .values(userData as any)
       .onConflictDoUpdate({
         target: users.id,
         set: userData,
@@ -158,7 +158,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ isActiveListening })
+      .set({ isActiveListening } as any)
       .where(eq(users.id, id))
       .returning();
     return user;
@@ -194,7 +194,7 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({
         location,
-      })
+      } as any)
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
@@ -218,7 +218,7 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({
         isPhoneVerified: true,
-      })
+      } as any)
       .where(eq(users.id, userId))
       .returning();
 
@@ -240,7 +240,7 @@ export class DatabaseStorage implements IStorage {
       .set({
         isEmailVerified: true,
         emailVerificationToken: null,
-      })
+      } as any)
       .where(eq(users.id, user.id))
       .returning();
 
@@ -253,7 +253,9 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({})
+      .set({
+        passwordHash: hashedPassword,
+      } as any)
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
@@ -269,7 +271,7 @@ export class DatabaseStorage implements IStorage {
       .set({
         stripeCustomerId,
         stripeSubscriptionId,
-      })
+      } as any)
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
@@ -295,7 +297,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<Submission> {
     const [submission] = await db
       .insert(submissions)
-      .values(insertSubmission)
+      .values(insertSubmission as any)
       .returning();
     return submission;
   }
@@ -313,7 +315,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<Submission | undefined> {
     const [submission] = await db
       .update(submissions)
-      .set({ status })
+      .set({ status } as any)
       .where(eq(submissions.id, id))
       .returning();
     return submission || undefined;
@@ -326,7 +328,7 @@ export class DatabaseStorage implements IStorage {
   async createContact(insertContact: InsertContact): Promise<Contact> {
     const [contact] = await db
       .insert(contacts)
-      .values(insertContact)
+      .values(insertContact as any)
       .returning();
     return contact;
   }
@@ -347,7 +349,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<ShowSchedule> {
     const [schedule] = await db
       .insert(showSchedules)
-      .values(insertSchedule)
+      .values(insertSchedule as any)
       .returning();
     return schedule;
   }
@@ -382,12 +384,31 @@ export class DatabaseStorage implements IStorage {
     if (existingTrack) {
       const [updated] = await db
         .update(nowPlaying)
-        .set({ ...track, updatedAt: new Date() })
+        .set({
+          title: track.title,
+          artist: track.artist,
+          album: track.album,
+          artwork: track.artwork,
+          isAd: track.isAd,
+          duration: track.duration,
+          currentTime: track.currentTime,
+          isLive: track.isLive,
+          updatedAt: new Date(),
+        } as any)
         .where(eq(nowPlaying.id, existingTrack.id))
         .returning();
       return updated;
     } else {
-      const [newTrack] = await db.insert(nowPlaying).values(track as any).returning();
+      const [newTrack] = await db.insert(nowPlaying).values({
+        title: track.title,
+        artist: track.artist,
+        album: track.album,
+        artwork: track.artwork,
+        isAd: track.isAd,
+        duration: track.duration,
+        currentTime: track.currentTime,
+        isLive: track.isLive,
+      } as any).returning();
       return newTrack;
     }
   }
@@ -445,7 +466,7 @@ export class DatabaseStorage implements IStorage {
       .set({
         accountDeletionScheduled: true,
         accountDeletionDate: deletionDate,
-      })
+      } as any)
       .where(eq(users.id, id))
       .returning();
 

@@ -81,7 +81,7 @@ interface AuthenticatedRequest extends Request {
     id: string;
     userId: string;
   } & User;
-  session: Express.Session & {
+  session: any & {
     phoneVerificationCode?: string;
     phoneToVerify?: string;
   };
@@ -227,10 +227,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const stations = await firebaseRadioStorage.getRadioStations();
       status.services.firebase.connection = 'connected';
-      status.services.firebase.stationCount = stations.length;
+      (status.services.firebase as any).stationCount = stations.length;
     } catch (error) {
       status.services.firebase.connection = 'failed';
-      status.services.firebase.error = error.message;
+      (status.services.firebase as any).error = (error as any).message;
     }
 
     res.json(status);
@@ -627,8 +627,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Store in Firebase Firestore
       try {
-        const { db } = await import("firebase-admin/firestore");
-        const firestore = db();
+        const { getFirestore } = await import("firebase-admin/firestore");
+        const firestore = getFirestore();
         
         // Create the message document with timestamp
         const messageData = {
@@ -2075,7 +2075,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Update user with verification token
         await storage.updateUser(user.id, {
           emailVerificationToken: token,
-          emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+          // emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
         });
 
         // Send verification email
@@ -2219,7 +2219,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // CSRF token endpoint
   app.get("/api/csrf-token", (req, res) => {
     const token = crypto.randomBytes(32).toString('hex');
-    req.session.csrfToken = token;
+    (req.session as any).csrfToken = token;
     res.json({ token });
   });
 

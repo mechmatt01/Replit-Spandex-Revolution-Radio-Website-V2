@@ -529,7 +529,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (theme === 'light-mode') {
       setIsDarkMode(false);
       localStorage.setItem("theme-mode", "light");
-    } else if (theme !== 'light-mode') {
+    } else if ((theme as any) !== 'light-mode') {
       setIsDarkMode(true);
       localStorage.setItem("theme-mode", "dark");
     }

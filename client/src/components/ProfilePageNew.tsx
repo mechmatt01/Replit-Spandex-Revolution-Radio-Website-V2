@@ -375,9 +375,9 @@ export default function ProfilePage() {
                           background: profileData.profileImageUrl 
                             ? `url(${profileData.profileImageUrl}) center/cover` 
                             : gradient,
-                          ringColor: colors.primary,
-                          ringOffsetColor: isDarkMode ? '#000000' : '#ffffff',
-                        }}
+                          '--ring-color': colors.primary,
+                          '--ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
+                        } as React.CSSProperties}
                       >
                         {!profileData.profileImageUrl && (
                           <div className="w-full h-full flex items-center justify-center">

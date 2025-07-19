@@ -36,7 +36,7 @@ export default function VerificationModal({
 
   // reCAPTCHA Enterprise integration for SMS fraud detection
   const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || "";
-  const { executeRecaptcha } = useRecaptcha(siteKey);
+  const { executeRecaptcha } = useRecaptcha();
 
   // Reset state when modal opens/closes
   useEffect(() => {

@@ -73,7 +73,7 @@ export default function SubscribePage() {
     <div
       className={cn(
         "min-h-screen p-4",
-        theme === "light" ? "bg-white" : "bg-black",
+        (theme as any) === "light" ? "bg-white" : "bg-black",
       )}
     >
       <div className="max-w-6xl mx-auto">
@@ -109,10 +109,10 @@ export default function SubscribePage() {
                 tier.popular && "border-2",
               )}
               style={{
-                ringColor:
+                '--ring-color':
                   selectedTier === tier.id ? colors.primary : undefined,
                 borderColor: tier.popular ? colors.primary : undefined,
-              }}
+              } as React.CSSProperties}
             >
               {tier.popular && (
                 <div

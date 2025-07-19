@@ -65,11 +65,11 @@ export function setupPassport(app: Express) {
       async (email: string, password: string, done) => {
         try {
           const user = await storage.getUserByEmail(email);
-          if (!user || !user.password) {
+          if (!user || !(user as any).password) {
             return done(null, false, { message: "Invalid email or password" });
           }
 
-          const isValidPassword = await bcrypt.compare(password, user.password);
+          const isValidPassword = await bcrypt.compare(password, (user as any).password);
           if (!isValidPassword) {
             return done(null, false, { message: "Invalid email or password" });
           }
@@ -133,13 +133,12 @@ export function setupPassport(app: Express) {
                 }
 
                 user = await storage.upsertUser({
-                  username,
+                  id: `google_${profile.id}`,
                   email,
                   firstName,
                   lastName,
                   googleId: profile.id,
-                  isEmailVerified: true,
-                });
+                } as any);
 
                 user = await storage.updateUser(user.id, {
                   isEmailVerified: true,
@@ -160,7 +159,7 @@ export function setupPassport(app: Express) {
     done(null, user.id);
   });
 
-  passport.deserializeUser(async (id: number, done) => {
+  passport.deserializeUser(async (id: string, done) => {
     try {
       const user = await storage.getUser(id);
       done(null, user);

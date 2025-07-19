@@ -104,7 +104,7 @@ export default function LoginPage() {
     <div
       className={cn(
         "min-h-screen flex items-center justify-center p-4",
-        theme === "light" ? "bg-white" : "bg-black",
+        (theme as any) === "light" ? "bg-white" : "bg-black",
       )}
     >
       <Card className="w-full max-w-md">

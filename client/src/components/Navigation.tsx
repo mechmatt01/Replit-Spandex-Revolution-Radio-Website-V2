@@ -469,20 +469,20 @@ export default function Navigation() {
                           <div
                             className="w-10 h-10 rounded-full bg-gradient-to-br flex items-center justify-center shadow-lg ring-2 ring-offset-2"
                             style={{
-                              background: user?.profileImageUrl 
-                                ? `url(${user?.profileImageUrl}) center/cover` 
+                              background: (user as any)?.profileImageUrl 
+                                ? `url(${(user as any)?.profileImageUrl}) center/cover` 
                                 : gradient,
-                              ringColor: colors.primary,
-                              ringOffsetColor: isDarkMode ? '#000000' : '#ffffff',
-                            }}
+                              '--ring-color': colors.primary,
+                              '--ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
+                            } as React.CSSProperties}
                           >
-                            {!user?.profileImageUrl && (
+                            {!(user as any)?.profileImageUrl && (
                               <User size={20} className="text-white" />
                             )}
                           </div>
                           
                           {/* Verified Badge for Subscribers */}
-                          {user?.activeSubscription && (
+                          {(user as any)?.activeSubscription && (
                             <div 
                               className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center shadow-md"
                               style={{
@@ -532,13 +532,13 @@ export default function Navigation() {
                           className="font-black text-sm"
                           style={{ color: colors.text }}
                         >
-                          {user?.firstName || user?.email?.split('@')[0] || 'User'}
+                          {(user as any)?.firstName || (user as any)?.email?.split('@')[0] || 'User'}
                         </p>
                         <p 
                           className="text-xs opacity-70"
                           style={{ color: colors.text }}
                         >
-                          {user?.email}
+                          {(user as any)?.email}
                         </p>
                       </div>
                       
@@ -557,7 +557,7 @@ export default function Navigation() {
                       </DropdownMenuItem>
                       
                       {/* Subscription Management - Only if active */}
-                      {user?.activeSubscription && (
+                      {(user as any)?.activeSubscription && (
                         <DropdownMenuItem
                           onClick={() => setLocation("/profile?section=subscription")}
                           className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200"

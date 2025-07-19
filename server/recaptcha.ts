@@ -77,7 +77,7 @@ class RecaptchaService {
           valid: false,
           score: 0,
           reasons: tokenProperties?.invalidReason
-            ? [tokenProperties.invalidReason]
+            ? [(tokenProperties.invalidReason as any)]
             : ["Invalid token"],
         };
       }
@@ -94,8 +94,8 @@ class RecaptchaService {
       // Analyze phone number risk
       let phoneRisk;
       if (
-        fraudSignals?.cardTestingSignals ||
-        fraudSignals?.stolenInstrumentSignals
+        (fraudSignals as any)?.cardTestingSignals ||
+        (fraudSignals as any)?.stolenInstrumentSignals
       ) {
         phoneRisk = {
           level: "HIGH",
@@ -106,7 +106,7 @@ class RecaptchaService {
       return {
         valid: true,
         score: riskAnalysis?.score || 0.5,
-        reasons: riskAnalysis?.reasons || [],
+        reasons: (riskAnalysis?.reasons as any) || [],
         phoneRisk,
       };
     } catch (error) {

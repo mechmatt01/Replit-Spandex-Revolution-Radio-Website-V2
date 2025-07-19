@@ -51,7 +51,7 @@ const AdminPanel: React.FC = () => {
       return await apiRequest('/api/admin/radio-stations', {
         method: 'POST',
         body: JSON.stringify(data),
-      });
+      } as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/radio-stations'] });
@@ -77,7 +77,7 @@ const AdminPanel: React.FC = () => {
       return await apiRequest(`/api/admin/radio-stations/${id}`, {
         method: 'PUT',
         body: JSON.stringify(data),
-      });
+      } as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/radio-stations'] });
@@ -102,7 +102,7 @@ const AdminPanel: React.FC = () => {
     mutationFn: async (id: number) => {
       return await apiRequest(`/api/admin/radio-stations/${id}`, {
         method: 'DELETE',
-      });
+      } as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/radio-stations'] });
@@ -126,13 +126,13 @@ const AdminPanel: React.FC = () => {
     mutationFn: async (id: number) => {
       return await apiRequest(`/api/admin/radio-stations/${id}/test`, {
         method: 'POST',
-      });
+      } as any);
     },
     onSuccess: (data) => {
       toast({
         title: "Test Complete",
-        description: data.message || "Station test completed",
-        variant: data.status === 'success' ? "default" : "destructive",
+        description: (data as any).message || "Station test completed",
+        variant: (data as any).status === 'success' ? "default" : "destructive",
       });
     },
     onError: (error: any) => {
@@ -149,7 +149,7 @@ const AdminPanel: React.FC = () => {
     mutationFn: async () => {
       return await apiRequest('/api/admin/radio-stations/initialize', {
         method: 'POST',
-      });
+      } as any);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/radio-stations'] });

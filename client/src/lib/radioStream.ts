@@ -176,7 +176,7 @@ class RadioStreamAPI {
             server_name: "Hot 97",
             server_description: "New York's Hip Hop & R&B",
             genre: "Hip Hop",
-            artwork: nowPlayingData.artwork,
+            // artwork: nowPlayingData.artwork,
           };
         }
       }

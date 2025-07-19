@@ -528,7 +528,7 @@ function ProductCard({
           )}
 
           <Button
-            onClick={() => handleBuyNow(product, selectedVariant)}
+            onClick={() => console.log('Buy now:', product, selectedVariant)}
             disabled={!product.inStock || !selectedVariant.available}
             className="w-full font-bold transition-all duration-300"
             style={{
@@ -611,7 +611,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                 <span 
                   className="font-semibold ml-2"
                   style={{ 
-                    color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                    color: '#9ca3af'
                   }}
                 >
                   {product.rating} ({product.reviewCount} reviews)
@@ -626,7 +626,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                   <span 
                     className="line-through ml-2"
                     style={{ 
-                      color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                      color: '#9ca3af'
                     }}
                   >
                     ${product.compareAtPrice}
@@ -677,7 +677,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
 
               <Button
                 onClick={() => {
-                  handleBuyNow(product, selectedVariant);
+                  console.log('Buy now:', product, selectedVariant);
                   onClose();
                 }}
                 disabled={!product.inStock || !selectedVariant.available}

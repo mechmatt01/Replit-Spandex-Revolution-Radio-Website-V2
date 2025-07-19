@@ -108,7 +108,7 @@ export default function Submissions() {
   const [showPremiumNotification, setShowPremiumNotification] = useState(false);
 
   // Check if user has paid subscription (assuming stripeSubscriptionId indicates paid status)
-  const hasPaidSubscription = user?.stripeSubscriptionId || false;
+  const hasPaidSubscription = (user as any)?.stripeSubscriptionId || false;
 
   return (
     <section 
@@ -298,7 +298,7 @@ export default function Submissions() {
                   <Checkbox
                     id="terms"
                     checked={agreedToTerms}
-                    onCheckedChange={setAgreedToTerms}
+                    onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
                     className="border-dark-border"
                   />
                   <Label htmlFor="terms" className="text-gray-400 text-sm">

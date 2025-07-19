@@ -47,7 +47,7 @@ export default function LiveChat({
   const colors = getColors();
 
   // Check if user has paid subscription (assuming stripeSubscriptionId indicates paid status)
-  const hasPaidSubscription = user?.stripeSubscriptionId || false;
+  const hasPaidSubscription = (user as any)?.stripeSubscriptionId || false;
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -61,7 +61,7 @@ export default function LiveChat({
 
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
-      username: user?.firstName || "Anonymous",
+      username: (user as any)?.firstName || "Anonymous",
       message: message.trim(),
       timestamp: new Date(),
       isHost: isHost,
