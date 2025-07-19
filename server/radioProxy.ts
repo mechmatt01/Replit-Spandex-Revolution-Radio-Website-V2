@@ -8,34 +8,27 @@ export function setupRadioProxy(app: Express) {
     // Get the station URL from query parameter, fallback to default streams
     const requestedStream = req.query.url as string;
 
-    // Station-specific fallback URLs with verified working streams
+    // Station-specific fallback URLs with unique streams per station
     const stationFallbacks: { [key: string]: string[] } = {
-      "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac":
-        [
-          "https://ice1.somafm.com/metal-128-mp3",
-          "https://ice2.somafm.com/metal-128-mp3",
-          "https://ice6.somafm.com/metal-128-mp3",
-          "https://ice4.somafm.com/metal-128-mp3",
-        ],
-      "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac":
-        [
-          "https://ice1.somafm.com/groovesalad-256-mp3",
-          "https://ice2.somafm.com/groovesalad-256-mp3",
-          "https://ice1.somafm.com/metal-128-mp3",
-          "https://ice2.somafm.com/metal-128-mp3",
-        ],
-      "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac":
-        [
-          "https://ice1.somafm.com/groovesalad-256-mp3",
-          "https://ice1.somafm.com/metal-128-mp3",
-          "https://ice2.somafm.com/metal-128-mp3",
-          "https://ice6.somafm.com/metal-128-mp3",
-        ],
+      "https://ice1.somafm.com/beatblender-128-mp3": [
+        "https://ice1.somafm.com/beatblender-128-mp3",
+        "https://ice2.somafm.com/beatblender-128-mp3",
+        "https://ice6.somafm.com/beatblender-128-mp3",
+      ],
+      "https://ice1.somafm.com/groovesalad-256-mp3": [
+        "https://ice1.somafm.com/groovesalad-256-mp3",
+        "https://ice2.somafm.com/groovesalad-256-mp3",
+        "https://ice6.somafm.com/groovesalad-256-mp3",
+      ],
+      "https://ice1.somafm.com/spacestation-128-mp3": [
+        "https://ice1.somafm.com/spacestation-128-mp3",
+        "https://ice2.somafm.com/spacestation-128-mp3",
+        "https://ice6.somafm.com/spacestation-128-mp3",
+      ],
       "https://ice1.somafm.com/metal-128-mp3": [
         "https://ice1.somafm.com/metal-128-mp3",
         "https://ice2.somafm.com/metal-128-mp3",
         "https://ice6.somafm.com/metal-128-mp3",
-        "https://ice4.somafm.com/metal-128-mp3",
       ],
     };
 
@@ -51,10 +44,10 @@ export function setupRadioProxy(app: Express) {
           "https://ice1.somafm.com/metal-128-mp3",
         ]
       : [
-          // Default reliable streams if no URL provided
-          "https://ice1.somafm.com/metal-128-mp3",
-          "https://ice2.somafm.com/metal-128-mp3",
+          // Default streams if no URL provided
+          "https://ice1.somafm.com/beatblender-128-mp3",
           "https://ice1.somafm.com/groovesalad-256-mp3",
+          "https://ice1.somafm.com/metal-128-mp3",
         ];
 
     let currentStreamIndex = 0;

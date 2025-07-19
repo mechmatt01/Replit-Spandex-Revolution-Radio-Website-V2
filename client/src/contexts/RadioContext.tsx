@@ -121,12 +121,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       "https://ice1.somafm.com/metal-128-mp3"
     ];
     
-    // Use verified working streams for each station
+    // Use unique verified working streams for each station
     const stationUrls: { [key: string]: string[] } = {
       "beat-955": [
-        "/api/radio-stream?url=https://ice1.somafm.com/metal-128-mp3",
-        "https://ice1.somafm.com/metal-128-mp3",
-        "https://ice2.somafm.com/metal-128-mp3"
+        "/api/radio-stream?url=https://ice1.somafm.com/beatblender-128-mp3",
+        "https://ice1.somafm.com/beatblender-128-mp3",
+        "https://ice2.somafm.com/beatblender-128-mp3"
       ],
       "hot-97": [
         "/api/radio-stream?url=https://ice1.somafm.com/groovesalad-256-mp3",
@@ -134,9 +134,9 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         "https://ice2.somafm.com/groovesalad-256-mp3"
       ],
       "power-106": [
-        "/api/radio-stream?url=https://ice1.somafm.com/groovesalad-256-mp3",
-        "https://ice1.somafm.com/groovesalad-256-mp3",
-        "https://ice1.somafm.com/metal-128-mp3"
+        "/api/radio-stream?url=https://ice1.somafm.com/spacestation-128-mp3",
+        "https://ice1.somafm.com/spacestation-128-mp3",
+        "https://ice2.somafm.com/spacestation-128-mp3"
       ],
       "somafm-metal": [
         "https://ice1.somafm.com/metal-128-mp3",

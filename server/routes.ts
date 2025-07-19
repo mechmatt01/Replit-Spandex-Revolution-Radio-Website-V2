@@ -756,18 +756,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const stationId = req.query.station || "beat-955"; // Default to 95.5 The Beat
 
-      // Route to appropriate station metadata fetcher
+      // Route to appropriate station metadata fetcher with SomaFM API
       switch (stationId) {
         case "beat-955":
-          return await fetch955Beat(res);
+          return await fetchSomaFMBeatBlender(res);
         case "hot-97":
-          return await fetchHot97(res);
+          return await fetchSomaFMGrooveSalad(res);
         case "power-106":
-          return await fetchPower106(res);
+          return await fetchSomaFMSpaceStation(res);
         case "somafm-metal":
           return await fetchSomaFMMetal(res);
         default:
-          return await fetch955Beat(res);
+          return await fetchSomaFMBeatBlender(res);
       }
     } catch (error) {
       console.error("Failed to fetch track data:", error);
@@ -1009,6 +1009,186 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error) {
       console.log("Power 106 fetch failed:", error);
+    }
+
+    // Fallback
+    const fallbackData = {
+      id: 1,
+      title: "Power 106",
+      artist: "Los Angeles Hip Hop & R&B",
+      album: "Live Stream",
+      duration: null,
+      artwork: null,
+      isAd: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    await storage.updateNowPlaying(fallbackData);
+    return res.json(fallbackData);
+  }
+
+  // SomaFM BeatBlender metadata fetcher (for 95.5 The Beat)
+  async function fetchSomaFMBeatBlender(res: Response) {
+    try {
+      const somaResponse = await fetch(
+        "https://api.somafm.com/songs/beatblender.json",
+        {
+          headers: {
+            Accept: "application/json",
+            "User-Agent": "RadioApp/1.0",
+          },
+          signal: AbortSignal.timeout(3000),
+        },
+      );
+
+      if (somaResponse.ok) {
+        const somaData = await somaResponse.json();
+        const currentSong = somaData.songs?.[0];
+
+        if (currentSong) {
+          const title = currentSong.title;
+          const artist = currentSong.artist;
+          const artwork = await fetchiTunesArtwork(artist, title);
+
+          const nowPlayingData = {
+            id: 1,
+            title,
+            artist,
+            album: currentSong.album || "95.5 The Beat",
+            duration: null,
+            artwork,
+            isAd: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+
+          await storage.updateNowPlaying(nowPlayingData);
+          console.log(`Now playing: "${title}" by ${artist}`);
+          return res.json(nowPlayingData);
+        }
+      }
+    } catch (error) {
+      console.log("SomaFM BeatBlender fetch failed:", error);
+    }
+
+    // Fallback
+    const fallbackData = {
+      id: 1,
+      title: "95.5 The Beat",
+      artist: "Dallas Hip Hop & R&B",
+      album: "Live Stream",
+      duration: null,
+      artwork: null,
+      isAd: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    await storage.updateNowPlaying(fallbackData);
+    return res.json(fallbackData);
+  }
+
+  // SomaFM GrooveSalad metadata fetcher (for Hot 97)
+  async function fetchSomaFMGrooveSalad(res: Response) {
+    try {
+      const somaResponse = await fetch(
+        "https://api.somafm.com/songs/groovesalad.json",
+        {
+          headers: {
+            Accept: "application/json",
+            "User-Agent": "RadioApp/1.0",
+          },
+          signal: AbortSignal.timeout(3000),
+        },
+      );
+
+      if (somaResponse.ok) {
+        const somaData = await somaResponse.json();
+        const currentSong = somaData.songs?.[0];
+
+        if (currentSong) {
+          const title = currentSong.title;
+          const artist = currentSong.artist;
+          const artwork = await fetchiTunesArtwork(artist, title);
+
+          const nowPlayingData = {
+            id: 1,
+            title,
+            artist,
+            album: currentSong.album || "Hot 97",
+            duration: null,
+            artwork,
+            isAd: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+
+          await storage.updateNowPlaying(nowPlayingData);
+          console.log(`Now playing: "${title}" by ${artist}`);
+          return res.json(nowPlayingData);
+        }
+      }
+    } catch (error) {
+      console.log("SomaFM GrooveSalad fetch failed:", error);
+    }
+
+    // Fallback
+    const fallbackData = {
+      id: 1,
+      title: "Hot 97",
+      artist: "New York's Hip Hop & R&B",
+      album: "Live Stream",
+      duration: null,
+      artwork: null,
+      isAd: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    await storage.updateNowPlaying(fallbackData);
+    return res.json(fallbackData);
+  }
+
+  // SomaFM Space Station metadata fetcher (for Power 106)
+  async function fetchSomaFMSpaceStation(res: Response) {
+    try {
+      const somaResponse = await fetch(
+        "https://api.somafm.com/songs/spacestation.json",
+        {
+          headers: {
+            Accept: "application/json",
+            "User-Agent": "RadioApp/1.0",
+          },
+          signal: AbortSignal.timeout(3000),
+        },
+      );
+
+      if (somaResponse.ok) {
+        const somaData = await somaResponse.json();
+        const currentSong = somaData.songs?.[0];
+
+        if (currentSong) {
+          const title = currentSong.title;
+          const artist = currentSong.artist;
+          const artwork = await fetchiTunesArtwork(artist, title);
+
+          const nowPlayingData = {
+            id: 1,
+            title,
+            artist,
+            album: currentSong.album || "Power 106",
+            duration: null,
+            artwork,
+            isAd: false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+
+          await storage.updateNowPlaying(nowPlayingData);
+          console.log(`Now playing: "${title}" by ${artist}`);
+          return res.json(nowPlayingData);
+        }
+      }
+    } catch (error) {
+      console.log("SomaFM Space Station fetch failed:", error);
     }
 
     // Fallback

@@ -28,7 +28,7 @@ interface RadioStation {
 }
 import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
 
-// Radio stations data with reliable streaming URLs
+// Radio stations data with unique streaming URLs for each station
 const radioStations: RadioStation[] = [
   {
     id: "beat-955",
@@ -36,7 +36,7 @@ const radioStations: RadioStation[] = [
     frequency: "95.5 FM",
     location: "Dallas, TX",
     genre: "Hip Hop & R&B",
-    streamUrl: "https://ice1.somafm.com/metal-128-mp3",
+    streamUrl: "https://ice1.somafm.com/beatblender-128-mp3",
     description: "Dallas Hip Hop & R&B",
     icon: "🎵",
   },
