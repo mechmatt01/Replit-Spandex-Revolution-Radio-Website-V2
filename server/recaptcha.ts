@@ -98,7 +98,7 @@ class RecaptchaService {
         fraudSignals?.stolenInstrumentSignals
       ) {
         phoneRisk = {
-          level: "HIGH" as const,
+          level: "HIGH",
           reasons: ["Fraud signals detected"],
         };
       }
