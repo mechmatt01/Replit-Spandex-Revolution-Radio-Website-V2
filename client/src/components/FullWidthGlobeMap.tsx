@@ -5,7 +5,7 @@ declare global {
   }
 }
 
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -1704,7 +1704,7 @@ export default function FullWidthGlobeMap() {
                 <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
                   <div className="relative">
                     <AnimatedCounter
-                      value{liveStats?.countries || countriesWithListeners}
+                      value={liveStats?.countries || countriesWithListeners}
                       className="font-black text-4xl tracking-tight"
                       style={{ color: colors.primary }}
                     />

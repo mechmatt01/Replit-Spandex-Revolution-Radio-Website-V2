@@ -1,11 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 
+import React, { useState, useRef, useEffect } from 'react';
+
 interface AnimatedCounterProps {
   value: number;
   duration?: number;
   className?: string;
   style?: React.CSSProperties;
 }
+
+const formatNumber = (num: number): string => {
+  return new Intl.NumberFormat().format(Math.floor(num));
+};
 
 export default function AnimatedCounter({
   value,
@@ -26,6 +32,41 @@ export default function AnimatedCounter({
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+
+      const startValue = previousValueRef.current;
+      const endValue = value;
+      const startTime = Date.now();
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Use easeOutCubic for smooth animation
+        const easeProgress = 1 - Math.pow(1 - progress, 3);
+        const currentAnimatedValue = startValue + (endValue - startValue) * easeProgress;
+        
+        setCurrentValue(currentAnimatedValue);
+        
+        if (progress < 1) {
+          animationRef.current = requestAnimationFrame(animate);
+        } else {
+          setCurrentValue(endValue);
+          setIsAnimating(false);
+          previousValueRef.current = endValue;
+        }
+      };
+
+      animationRef.current = requestAnimationFrame(animate);
+    }
+  }, [value, duration]);
+
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
 
       const startValue = previousValueRef.current;
       const endValue = value;
