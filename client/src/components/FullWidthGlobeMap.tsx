@@ -457,6 +457,13 @@ export default function FullWidthGlobeMap() {
   // Handle fullscreen toggle with proper map resizing
   const toggleFullscreen = (enable: boolean) => {
     console.log(`Toggling fullscreen: ${enable}`);
+    
+    // Close any open info windows when toggling fullscreen
+    if (currentInfoWindow.current) {
+      currentInfoWindow.current.close();
+      currentInfoWindow.current = null;
+    }
+
     setIsFullscreen(enable);
 
     // Prevent/allow body scrolling
@@ -465,20 +472,29 @@ export default function FullWidthGlobeMap() {
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
       document.body.style.top = '0';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
     } else {
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.width = '';
       document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
     }
 
-    // Trigger map resize after state change
+    // Trigger map resize after state change with longer delay
     setTimeout(() => {
       if (map) {
         google.maps.event.trigger(map, 'resize');
-        console.log('Map resize triggered');
+        console.log('Map resize triggered for fullscreen:', enable);
+        
+        // Re-center the map if needed
+        if (userLocation) {
+          map.panTo(userLocation);
+        }
       }
-    }, 300);
+    }, 500);
   };
 
   // Fetch Google Maps API key and config
@@ -1179,6 +1195,20 @@ export default function FullWidthGlobeMap() {
     }
   }, [map, currentTheme, isDarkMode]);
 
+  // Cleanup fullscreen state on component unmount
+  useEffect(() => {
+    return () => {
+      if (isFullscreen) {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+      }
+    };
+  }, [isFullscreen]);
+
   // Generate mock listener data
   const activeListeners: ListenerData[] = [
     {
@@ -1357,8 +1387,8 @@ export default function FullWidthGlobeMap() {
         {/* Map Container */}
         <div className={`relative mb-16 transition-all duration-500 ease-in-out ${
           isFullscreen 
-            ? "fixed inset-0 z-[9990] mb-0 bg-black" 
-            : "h-[600px]"
+            ? "fixed inset-0 z-[9990] mb-0 bg-black overflow-hidden" 
+            : "h-[600px] rounded-lg overflow-hidden"
         }`}>
           {/* Fullscreen Header */}
           {isFullscreen && (
@@ -1396,6 +1426,8 @@ export default function FullWidthGlobeMap() {
               width: isFullscreen ? "100vw" : "100%",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
               paddingTop: isFullscreen ? "72px" : "0",
+              position: "relative",
+              zIndex: isFullscreen ? 9991 : "auto"
             }}
           />
 
@@ -1403,15 +1435,26 @@ export default function FullWidthGlobeMap() {
           <div className={`absolute transition-all duration-500 ${
             isFullscreen ? "top-20 left-6 z-[9999]" : "top-4 left-4 z-10"
           }`}>
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('Expand button activated via keyboard, current fullscreen:', isFullscreen);
+                  toggleFullscreen(!isFullscreen);
+                }
+              }}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 console.log('Expand button clicked, current fullscreen:', isFullscreen);
                 toggleFullscreen(!isFullscreen);
+                return false;
               }}
-              className={`p-3 border-0 shadow-xl rounded-lg transition-all duration-300 cursor-pointer ${
+              className={`p-3 border-0 shadow-xl rounded-lg transition-all duration-300 cursor-pointer select-none ${
                 isFullscreen 
                   ? "bg-red-600 hover:bg-red-700 text-white" 
                   : "bg-gray-800 hover:bg-gray-700 text-white"
@@ -1423,7 +1466,8 @@ export default function FullWidthGlobeMap() {
                 alignItems: "center",
                 justifyContent: "center",
                 border: "none",
-                outline: "none"
+                outline: "none",
+                userSelect: "none"
               }}
               aria-label={isFullscreen ? "Exit fullscreen map" : "Enter fullscreen map"}
             >
@@ -1432,23 +1476,35 @@ export default function FullWidthGlobeMap() {
               ) : (
                 <Maximize2 className="w-4 h-4" />
               )}
-            </button>
+            </div>
           </div>
 
           {/* Map Controls */}
           <div className={`absolute transition-all duration-500 flex flex-col gap-2 ${
             isFullscreen ? "top-20 right-6 z-[9999]" : "top-4 right-4 z-10"
           }`}>
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 if (map) {
-                  map.setZoom(map.getZoom() + 1);
+                  map.setZoom((map.getZoom() || 2) + 1);
+                }
+                return false;
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (map) {
+                    map.setZoom((map.getZoom() || 2) + 1);
+                  }
                 }
               }}
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer"
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
                 minHeight: "48px",
@@ -1456,22 +1512,41 @@ export default function FullWidthGlobeMap() {
                 alignItems: "center",
                 justifyContent: "center",
                 border: "none",
-                outline: "none"
+                outline: "none",
+                userSelect: "none"
               }}
               aria-label="Zoom in"
             >
               <ZoomIn className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 if (map) {
-                  map.setZoom(map.getZoom() - 1);
+                  const currentZoom = map.getZoom() || 2;
+                  if (currentZoom > 1) {
+                    map.setZoom(currentZoom - 1);
+                  }
+                }
+                return false;
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (map) {
+                    const currentZoom = map.getZoom() || 2;
+                    if (currentZoom > 1) {
+                      map.setZoom(currentZoom - 1);
+                    }
+                  }
                 }
               }}
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer"
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
                 minHeight: "48px",
@@ -1479,17 +1554,20 @@ export default function FullWidthGlobeMap() {
                 alignItems: "center",
                 justifyContent: "center",
                 border: "none",
-                outline: "none"
+                outline: "none",
+                userSelect: "none"
               }}
               aria-label="Zoom out"
             >
               <ZoomOut className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 if (userLocation) {
                   if (map) {
                     map.panTo(userLocation);
@@ -1516,8 +1594,19 @@ export default function FullWidthGlobeMap() {
                     );
                   }
                 }
+                return false;
               }}
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (userLocation && map) {
+                    map.panTo(userLocation);
+                    map.setZoom(12);
+                  }
+                }
+              }}
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
                 minHeight: "48px",
@@ -1525,23 +1614,37 @@ export default function FullWidthGlobeMap() {
                 alignItems: "center",
                 justifyContent: "center",
                 border: "none",
-                outline: "none"
+                outline: "none",
+                userSelect: "none"
               }}
               aria-label="Go to my location"
             >
               <MapPin className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                e.stopImmediatePropagation();
                 if (map) {
                   map.panTo({ lat: 40.7128, lng: -74.006 });
                   map.setZoom(2);
                 }
+                return false;
               }}
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (map) {
+                    map.panTo({ lat: 40.7128, lng: -74.006 });
+                    map.setZoom(2);
+                  }
+                }
+              }}
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
                 minWidth: "48px",
                 minHeight: "48px",
@@ -1549,12 +1652,13 @@ export default function FullWidthGlobeMap() {
                 alignItems: "center",
                 justifyContent: "center",
                 border: "none",
-                outline: "none"
+                outline: "none",
+                userSelect: "none"
               }}
               aria-label="Reset map view"
             >
               <RotateCcw className="w-5 h-5" />
-            </button>
+            </div>
           </div>
         </div>
 
