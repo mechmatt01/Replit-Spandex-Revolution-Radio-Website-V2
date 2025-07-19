@@ -457,7 +457,7 @@ export default function FullWidthGlobeMap() {
   // Handle fullscreen toggle with proper map resizing
   const toggleFullscreen = (enable: boolean) => {
     console.log(`Toggling fullscreen: ${enable}`);
-    
+
     // Close any open info windows when toggling fullscreen
     if (currentInfoWindow.current) {
       currentInfoWindow.current.close();
@@ -488,7 +488,7 @@ export default function FullWidthGlobeMap() {
       if (map) {
         google.maps.event.trigger(map, 'resize');
         console.log('Map resize triggered for fullscreen:', enable);
-        
+
         // Re-center the map if needed
         if (userLocation) {
           map.panTo(userLocation);
@@ -846,6 +846,8 @@ export default function FullWidthGlobeMap() {
                 <animate attributeName="opacity" values="1;0.6;1" dur="1.5s" repeatCount="indefinite"/>
               </circle>
             </svg>
+          ```text
+
           `;
 
           const marker = new google.maps.Marker({
@@ -872,7 +874,7 @@ export default function FullWidthGlobeMap() {
               // Pan and zoom to marker location with slight delay for smooth transition
               setTimeout(() => {
                 mapInstance.panTo({ lat: listener.lat, lng: listener.lng });
-                
+
                 // Set appropriate zoom level
                 const currentZoom = mapInstance.getZoom() || 2;
                 if (currentZoom < 6) {
@@ -960,20 +962,20 @@ export default function FullWidthGlobeMap() {
                 const iwBackground = document.querySelector('.gm-style-iw-d');
                 const iwContainer = document.querySelector('.gm-style-iw-c');
                 const iwCloseBtn = document.querySelector('.gm-style-iw-chr');
-                
+
                 if (iwOuter) {
                   iwOuter.style.visibility = 'visible !important';
                   iwOuter.style.display = 'block !important';
                   iwOuter.style.opacity = '1 !important';
                 }
-                
+
                 if (iwContainer) {
                   iwContainer.style.padding = '0 !important';
                   iwContainer.style.margin = '0 !important';
                   iwContainer.style.borderRadius = '8px !important';
                   iwContainer.style.overflow = 'visible !important';
                 }
-                
+
                 if (iwBackground) {
                   iwBackground.style.overflow = 'visible !important';
                   iwBackground.style.background = 'transparent !important';
@@ -1104,20 +1106,20 @@ export default function FullWidthGlobeMap() {
               const iwBackground = document.querySelector('.gm-style-iw-d');
               const iwContainer = document.querySelector('.gm-style-iw-c');
               const iwCloseBtn = document.querySelector('.gm-style-iw-chr');
-              
+
               if (iwOuter) {
                 iwOuter.style.visibility = 'visible !important';
                 iwOuter.style.display = 'block !important';
                 iwOuter.style.opacity = '1 !important';
               }
-              
+
               if (iwContainer) {
                 iwContainer.style.padding = '0 !important';
                 iwContainer.style.margin = '0 !important';
                 iwContainer.style.borderRadius = '8px !important';
                 iwContainer.style.overflow = 'visible !important';
               }
-              
+
               if (iwBackground) {
                 iwBackground.style.overflow = 'visible !important';
                 iwBackground.style.background = 'transparent !important';
@@ -1309,7 +1311,7 @@ export default function FullWidthGlobeMap() {
   const top10Listeners = activeListeners.slice(0, 10);
 
   return (
-    
+
 
       <section
         id="map"
@@ -1476,7 +1478,7 @@ export default function FullWidthGlobeMap() {
                 <Maximize2 className="w-4 h-4" />
               )}
             </button>
-          </div></old_str>
+          </div>
 
           {/* Map Controls */}
           <div className={`absolute transition-all duration-500 flex flex-col gap-2 ${
@@ -1654,7 +1656,7 @@ export default function FullWidthGlobeMap() {
             >
               <RotateCcw className="w-5 h-5" />
             </button>
-          </div></old_str>
+          </div>
         </div>
 
         {/* Statistics Layout - positioned below map */}
@@ -1704,7 +1706,7 @@ export default function FullWidthGlobeMap() {
                 <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
                   <div className="relative">
                     <AnimatedCounter
-                      value={liveStats?.countries || countriesWithListeners}
+                      value{liveStats?.countries || countriesWithListeners}
                       className="font-black text-4xl tracking-tight"
                       style={{ color: colors.primary }}
                     />
