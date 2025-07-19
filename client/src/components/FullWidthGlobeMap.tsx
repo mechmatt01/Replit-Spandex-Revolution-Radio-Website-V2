@@ -528,18 +528,35 @@ export default function FullWidthGlobeMap() {
       }
     }
 
-    // Update state
+    // Update state first
     setIsFullscreen(newFullscreenState);
 
-    // Trigger map resize after state change with proper timing
+    // Use multiple timeouts to ensure proper map rendering
     setTimeout(() => {
       if (map && window.google && window.google.maps) {
-        google.maps.event.trigger(map, 'resize');
-        console.log('Map resize triggered for fullscreen:', newFullscreenState);
+        // Force map container to recalculate dimensions
+        const mapContainer = mapRef.current;
+        if (mapContainer) {
+          // Temporarily hide and show to force reflow
+          mapContainer.style.visibility = 'hidden';
+          mapContainer.style.height = newFullscreenState ? '100vh' : '600px';
+          mapContainer.style.width = newFullscreenState ? '100vw' : '100%';
+          
+          setTimeout(() => {
+            mapContainer.style.visibility = 'visible';
+            
+            // Trigger Google Maps resize event
+            google.maps.event.trigger(map, 'resize');
+            console.log('Map resize triggered for fullscreen:', newFullscreenState);
 
-        // Re-center the map if needed
-        if (userLocation) {
-          map.panTo(userLocation);
+            // Re-center the map if needed
+            if (userLocation) {
+              map.panTo(userLocation);
+            } else {
+              // Default center position for world view
+              map.panTo({ lat: 20, lng: 0 });
+            }
+          }, 50);
         }
       }
     }, 100);
@@ -1552,12 +1569,14 @@ export default function FullWidthGlobeMap() {
               isFullscreen ? "opacity-100" : "rounded-lg opacity-100"
             }`}
             style={{
-              height: isFullscreen ? "100vh" : "600px",
+              height: isFullscreen ? "calc(100vh - 72px)" : "600px",
               width: isFullscreen ? "100vw" : "100%",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              paddingTop: isFullscreen ? "72px" : "0",
+              marginTop: isFullscreen ? "72px" : "0",
               position: "relative",
-              zIndex: isFullscreen ? 9991 : "auto"
+              zIndex: isFullscreen ? 9991 : "auto",
+              display: "block",
+              visibility: "visible"
             }}
           />
 
