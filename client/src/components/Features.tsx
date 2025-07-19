@@ -211,30 +211,15 @@ export default function Features() {
                 See where metalheads around the world are tuning in from in
                 real-time.
               </p>
-              <div className="flex justify-start">
-                <Button
-                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center"
-                  style={{
-                    color: colors.primary,
-                    backgroundColor: "transparent",
-                    border: "none",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary;
-                    e.currentTarget.style.color = colors.primaryText || "white";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                    e.currentTarget.style.color = colors.primary;
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    scrollToSection("subscribe");
-                  }}
-                >
-                  <span className="text-left">Learn More</span>
-                  <Crown className="w-4 h-4 ml-2" />
-                </Button>
+              <div
+                className="flex items-center text-sm font-bold mt-auto text-left"
+                style={{ color: colors.primary }}
+              >
+                <div
+                  className="w-3 h-3 rounded-full mr-3 animate-pulse"
+                  style={{ backgroundColor: colors.primary }}
+                ></div>
+                <span>{stats?.currentListeners || 42} listeners online</span>
               </div>
             </CardContent>
           </Card>
