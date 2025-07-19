@@ -93,11 +93,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [error, setError] = useState<string | null>(null);
   const [currentStation, setCurrentStation] = useState<RadioStation | null>({
     id: "beat-955",
+    stationId: "kbfb-955",
     name: "95.5 The Beat",
     frequency: "95.5 FM",
     location: "Dallas, TX",
     genre: "Hip Hop & R&B",
-    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
     description: "Dallas Hip Hop & R&B",
     icon: "🎵",
   });
@@ -111,11 +112,18 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const retryCountRef = useRef(0);
+  const maxRetries = 3;
 
-  const streamUrls = [
-    "/api/radio-stream",
-    "https://ice1.somafm.com/metal-128-mp3",
-  ];
+  const getStreamUrls = (station: RadioStation | null): string[] => {
+    if (!station) return ["/api/radio-stream"];
+    
+    return [
+      `/api/radio-stream?url=${encodeURIComponent(station.streamUrl)}`,
+      station.streamUrl, // Try direct URL as fallback
+      "/api/radio-stream", // Default proxy fallback
+    ];
+  };
 
   const togglePlayback = async () => {
     const audio = audioRef.current;
@@ -125,83 +133,122 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       if (isPlaying) {
         audio.pause();
         setError(null);
+        retryCountRef.current = 0;
       } else {
-        setIsLoading(true);
-        setError(null);
-
-        // Try multiple stream formats
-        let streamWorked = false;
-
-        for (let i = 0; i < streamUrls.length; i++) {
-          try {
-            const url = streamUrls[i];
-            console.log(
-              `Attempting to play stream ${i + 1}/${streamUrls.length}: ${url}`,
-            );
-
-            // Reset audio element
-            audio.pause();
-            audio.currentTime = 0;
-            audio.src = url;
-            audio.load();
-
-            // Wait for the audio to be ready
-            await new Promise((resolve, reject) => {
-              const timeout = setTimeout(() => {
-                reject(new Error("Stream loading timeout"));
-              }, 10000);
-
-              audio.oncanplaythrough = () => {
-                clearTimeout(timeout);
-                resolve(true);
-              };
-
-              audio.onerror = () => {
-                clearTimeout(timeout);
-                reject(new Error("Stream loading error"));
-              };
-            });
-
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-              await playPromise;
-              streamWorked = true;
-              console.log(`Stream ${i + 1} working successfully`);
-              break;
-            }
-          } catch (urlError: any) {
-            console.warn(`Stream ${i + 1} failed:`, urlError);
-
-            if (i === streamUrls.length - 1) {
-              // Last URL failed, throw error
-              throw urlError;
-            }
-          }
-        }
-
-        if (!streamWorked) {
-          throw new Error("All stream formats failed");
-        }
+        await startPlayback();
       }
     } catch (error: any) {
-      console.error("Playback error:", error);
-      let errorMessage = "Failed to start playback";
-
-      if (error.name === "NotAllowedError") {
-        errorMessage = "Please click play to start the stream";
-      } else if (error.name === "NotSupportedError") {
-        errorMessage =
-          "Stream format not supported - trying alternative formats";
-      } else if (error.name === "AbortError") {
-        errorMessage = "Stream loading was interrupted";
-      } else {
-        errorMessage = "Unable to connect to radio stream";
-      }
-
-      setError(errorMessage);
-      setIsLoading(false);
-      setIsPlaying(false);
+      console.error("Playback toggle error:", error);
+      handlePlaybackError(error);
     }
+  };
+
+  const startPlayback = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    // Try multiple stream formats
+    let streamWorked = false;
+    const streamUrls = getStreamUrls(currentStation);
+
+    for (let i = 0; i < streamUrls.length; i++) {
+      try {
+        const url = streamUrls[i];
+        console.log(`Trying radio stream ${i + 1}: ${url}`);
+
+        // Reset audio element
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = url;
+        audio.load();
+
+        // Wait for the audio to be ready with shorter timeout
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            reject(new Error("Stream loading timeout"));
+          }, 4000); // Reduced timeout for faster retry
+
+          const onCanPlay = () => {
+            clearTimeout(timeout);
+            audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('error', onError);
+            resolve(true);
+          };
+
+          const onError = () => {
+            clearTimeout(timeout);
+            audio.removeEventListener('canplaythrough', onCanPlay);
+            audio.removeEventListener('error', onError);
+            reject(new Error("Stream loading error"));
+          };
+
+          audio.addEventListener('canplaythrough', onCanPlay);
+          audio.addEventListener('error', onError);
+        });
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+          streamWorked = true;
+          retryCountRef.current = 0; // Reset retry count on success
+          console.log(`Stream ${i + 1} connected successfully via redirect`);
+          break;
+        }
+      } catch (urlError: any) {
+        console.warn(`Stream ${i + 1} failed:`, urlError?.message || 'Unknown error');
+
+        if (i === streamUrls.length - 1) {
+          throw new Error("All stream sources failed");
+        }
+      }
+    }
+
+    if (!streamWorked) {
+      throw new Error("All stream formats failed");
+    }
+  };
+
+  const handlePlaybackError = (error: any) => {
+    let errorMessage = "Failed to start playback";
+
+    if (error.name === "NotAllowedError") {
+      errorMessage = "Please click play to start the stream";
+    } else if (error.name === "NotSupportedError") {
+      errorMessage = "Stream format not supported - trying alternative formats";
+    } else if (error.name === "AbortError") {
+      errorMessage = "Stream loading was interrupted";
+    } else {
+      errorMessage = "Unable to connect to radio stream";
+    }
+
+    // Auto-retry logic for connection issues
+    if (retryCountRef.current < maxRetries && 
+        !error.name?.includes("NotAllowed") && 
+        !isPlaying) {
+      retryCountRef.current++;
+      console.log(`Auto-retry attempt ${retryCountRef.current}/${maxRetries}`);
+      
+      // Retry after short delay
+      setTimeout(() => {
+        if (!isPlaying && !error.name?.includes("NotAllowed")) {
+          startPlayback().catch(() => {
+            // Final retry failed
+            setError(errorMessage);
+            setIsLoading(false);
+            setIsPlaying(false);
+          });
+        }
+      }, 1000);
+      
+      return;
+    }
+
+    setError(errorMessage);
+    setIsLoading(false);
+    setIsPlaying(false);
   };
 
   const setVolume = (newVolume: number) => {
@@ -247,21 +294,25 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       setStationName(station.name);
 
       // Set new stream URL through proxy with station-specific URL
-      const proxyUrl = `/api/radio-stream?url=${encodeURIComponent(station.streamUrl)}`;
-      audio.src = proxyUrl;
+      const streamUrls = getStreamUrls(station);
+      audio.src = streamUrls[0]; // Use first (proxy) URL
 
       // Preload the new stream
       audio.load();
 
-      // Wait for the stream to be ready
+      // Wait for the stream to be ready with improved loading
       await new Promise<void>((resolve) => {
+        const timeout = setTimeout(resolve, 3000); // Max wait time
+
         const onCanPlay = () => {
+          clearTimeout(timeout);
           audio.removeEventListener('canplay', onCanPlay);
           audio.removeEventListener('error', onError);
           resolve();
         };
         
         const onError = () => {
+          clearTimeout(timeout);
           audio.removeEventListener('canplay', onCanPlay);
           audio.removeEventListener('error', onError);
           resolve(); // Still resolve to continue with track info fetching
@@ -269,13 +320,6 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         
         audio.addEventListener('canplay', onCanPlay);
         audio.addEventListener('error', onError);
-        
-        // Timeout fallback
-        setTimeout(() => {
-          audio.removeEventListener('canplay', onCanPlay);
-          audio.removeEventListener('error', onError);
-          resolve();
-        }, 2000);
       });
 
       // Immediately fetch track info for the new station
