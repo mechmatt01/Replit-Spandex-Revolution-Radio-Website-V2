@@ -1470,17 +1470,19 @@ export default function FullWidthGlobeMap() {
                 }
               }}
               size="sm"
-              className={`p-2 ${
+              className={`${isFullscreen ? "p-3" : "p-2"} ${
                 isDarkMode 
                   ? "bg-gray-800 hover:bg-gray-700 text-white" 
                   : "bg-white hover:bg-gray-50 text-black"
-              } border-0 shadow-lg`}
+              } border-0 shadow-xl transition-all duration-300 ${isFullscreen ? "scale-110" : ""}`}
               style={{
                 backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
                 color: isDarkMode ? "#ffffff" : "#000000",
+                minWidth: isFullscreen ? "48px" : "40px",
+                minHeight: isFullscreen ? "48px" : "40px",
               }}
             >
-              <ZoomIn className="w-4 h-4" />
+              <ZoomIn className={`${isFullscreen ? "w-5 h-5" : "w-4 h-4"}`} />
             </Button>
             <Button
               onClick={() => {
@@ -1489,17 +1491,19 @@ export default function FullWidthGlobeMap() {
                 }
               }}
               size="sm"
-              className={`p-2 ${
+              className={`${isFullscreen ? "p-3" : "p-2"} ${
                 isDarkMode 
                   ? "bg-gray-800 hover:bg-gray-700 text-white" 
                   : "bg-white hover:bg-gray-50 text-black"
-              } border-0 shadow-lg`}
+              } border-0 shadow-xl transition-all duration-300 ${isFullscreen ? "scale-110" : ""}`}
               style={{
                 backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
                 color: isDarkMode ? "#ffffff" : "#000000",
+                minWidth: isFullscreen ? "48px" : "40px",
+                minHeight: isFullscreen ? "48px" : "40px",
               }}
             >
-              <ZoomOut className="w-4 h-4" />
+              <ZoomOut className={`${isFullscreen ? "w-5 h-5" : "w-4 h-4"}`} />
             </Button>
             <Button
               onClick={() => {
