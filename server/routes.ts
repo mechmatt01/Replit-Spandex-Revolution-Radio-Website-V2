@@ -1606,7 +1606,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Final fallback - use authentic rotating hip-hop tracks with commercial detection
       try {
-        // No fake track rotation - use only real stream data
+        // Define fallback track when no live data is available
+        const radioTrack = {
+          title: "Hot 97 FM",
+          artist: "Live Radio Stream",
+          album: "New York's Hip Hop & R&B",
+          artwork: null
+        };
 
         // Check if fallback track is a commercial
         const isAd = isCommercial({

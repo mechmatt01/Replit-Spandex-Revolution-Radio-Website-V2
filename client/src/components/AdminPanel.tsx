@@ -133,6 +133,9 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     mutationFn: async (showData: Partial<ShowScheduleItem>) => {
       return apiRequest(`/api/schedules/${showData.id}`, {
         method: "PUT",
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(showData),
       });
     },
@@ -158,6 +161,9 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     mutationFn: async (showData: Partial<ShowScheduleItem>) => {
       return apiRequest("/api/schedules", {
         method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(showData),
       });
     },
