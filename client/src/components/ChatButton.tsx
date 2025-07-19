@@ -11,7 +11,7 @@ export default function ChatButton() {
   const { colors } = useTheme();
 
   // Check if user has paid subscription
-  const hasPaidSubscription = user?.stripeSubscriptionId || false;
+  const hasPaidSubscription = (user as any)?.stripeSubscriptionId || false;
 
   const handleChatClick = () => {
     if (!isAuthenticated || !hasPaidSubscription) {

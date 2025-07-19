@@ -104,7 +104,7 @@ async function transcribeAudio(audioBuffer: Buffer): Promise<string> {
     const audioStream = Readable.from(audioBuffer);
 
     const transcription = await openai.audio.transcriptions.create({
-      file: audioStream,
+      file: audioStream as any,
       model: "whisper-1",
       response_format: "text",
       language: "en",
