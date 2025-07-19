@@ -1403,15 +1403,15 @@ export default function FullWidthGlobeMap() {
           <div className={`absolute transition-all duration-500 ${
             isFullscreen ? "top-20 left-6 z-[9999]" : "top-4 left-4 z-10"
           }`}>
-            <Button
+            <button
+              type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                console.log('Expand button clicked, current fullscreen:', isFullscreen);
                 toggleFullscreen(!isFullscreen);
-                return false;
               }}
-              size="sm"
-              className={`p-3 border-0 shadow-xl rounded-lg transition-all duration-300 ${
+              className={`p-3 border-0 shadow-xl rounded-lg transition-all duration-300 cursor-pointer ${
                 isFullscreen 
                   ? "bg-red-600 hover:bg-red-700 text-white" 
                   : "bg-gray-800 hover:bg-gray-700 text-white"
@@ -1421,59 +1421,75 @@ export default function FullWidthGlobeMap() {
                 minHeight: "48px",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center"
+                justifyContent: "center",
+                border: "none",
+                outline: "none"
               }}
+              aria-label={isFullscreen ? "Exit fullscreen map" : "Enter fullscreen map"}
             >
               {isFullscreen ? (
                 <Minimize2 className="w-5 h-5" />
               ) : (
                 <Maximize2 className="w-4 h-4" />
               )}
-            </Button>
+            </button>
           </div>
 
           {/* Map Controls */}
           <div className={`absolute transition-all duration-500 flex flex-col gap-2 ${
             isFullscreen ? "top-20 right-6 z-[9999]" : "top-4 right-4 z-10"
           }`}>
-            <Button
-              onClick={() => {
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (map) {
                   map.setZoom(map.getZoom() + 1);
                 }
               }}
-              size="sm"
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg"
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer"
               style={{
                 minWidth: "48px",
                 minHeight: "48px",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center"
+                justifyContent: "center",
+                border: "none",
+                outline: "none"
               }}
+              aria-label="Zoom in"
             >
               <ZoomIn className="w-5 h-5" />
-            </Button>
-            <Button
-              onClick={() => {
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (map) {
                   map.setZoom(map.getZoom() - 1);
                 }
               }}
-              size="sm"
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg"
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer"
               style={{
                 minWidth: "48px",
                 minHeight: "48px",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center"
+                justifyContent: "center",
+                border: "none",
+                outline: "none"
               }}
+              aria-label="Zoom out"
             >
               <ZoomOut className="w-5 h-5" />
-            </Button>
-            <Button
-              onClick={() => {
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (userLocation) {
                   if (map) {
                     map.panTo(userLocation);
@@ -1501,37 +1517,44 @@ export default function FullWidthGlobeMap() {
                   }
                 }
               }}
-              size="sm"
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg"
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer"
               style={{
                 minWidth: "48px",
                 minHeight: "48px",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center"
+                justifyContent: "center",
+                border: "none",
+                outline: "none"
               }}
+              aria-label="Go to my location"
             >
               <MapPin className="w-5 h-5" />
-            </Button>
-            <Button
-              onClick={() => {
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (map) {
                   map.panTo({ lat: 40.7128, lng: -74.006 });
                   map.setZoom(2);
                 }
               }}
-              size="sm"
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg"
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer"
               style={{
                 minWidth: "48px",
                 minHeight: "48px",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center"
+                justifyContent: "center",
+                border: "none",
+                outline: "none"
               }}
+              aria-label="Reset map view"
             >
               <RotateCcw className="w-5 h-5" />
-            </Button>
+            </button>
           </div>
         </div>
 
