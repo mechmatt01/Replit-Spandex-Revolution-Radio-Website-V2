@@ -1,0 +1,94 @@
+Map ref current: true
+FullWidthGlobeMap.tsx:573 User location available: false
+FullWidthGlobeMap.tsx:574 User location value: null
+FullWidthGlobeMap.tsx:575 Is fullscreen: false
+FullWidthGlobeMap.tsx:586 Initializing Google Maps with API key: AIzaSyBfRJS8dGDJqA4X...
+FullWidthGlobeMap.tsx:587 Using Map ID: DEMO_MAP_ID
+FullWidthGlobeMap.tsx:588 Theme detection: Object
+/api/auth/user:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+FullWidthGlobeMap.tsx:497 Geolocation permission: granted
+/api/auth/user:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+FullWidthGlobeMap.tsx:501 Got location: 33.64170212547789 -86.6140703742314
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:568 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:569 Config available: false
+FullWidthGlobeMap.tsx:570 API key available: false
+FullWidthGlobeMap.tsx:571 API key value: undefined...
+FullWidthGlobeMap.tsx:572 Map ref current: true
+FullWidthGlobeMap.tsx:573 User location available: true
+FullWidthGlobeMap.tsx:574 User location value: Object
+FullWidthGlobeMap.tsx:575 Is fullscreen: false
+FullWidthGlobeMap.tsx:586 Initializing Google Maps with API key: AIzaSyBfRJS8dGDJqA4X...
+FullWidthGlobeMap.tsx:587 Using Map ID: DEMO_MAP_ID
+FullWidthGlobeMap.tsx:588 Theme detection: Object
+hook.js:608 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+overrideMethod @ hook.js:608Understand this warning
+FullWidthGlobeMap.tsx:876 Google Maps API callback triggered
+hook.js:608 Element with name "gmp-internal-google-attribution" already defined.
+overrideMethod @ hook.js:608Understand this warning
+hook.js:608 Element with name "gmp-internal-dialog" already defined.
+overrideMethod @ hook.js:608Understand this warning
+hook.js:608 Element with name "gmp-internal-element-support-verification" already defined.
+overrideMethod @ hook.js:608Understand this warning
+hook.js:608 You have included the Google Maps JavaScript API multiple times on this page. This may cause unexpected errors.
+overrideMethod @ hook.js:608Understand this error
+hook.js:608 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+overrideMethod @ hook.js:608Understand this warning
+hook.js:608 Element with name "gmp-internal-pin" already defined.
+overrideMethod @ hook.js:608Understand this warning
+hook.js:608 Element with name "gmp-internal-use-am" already defined.
+overrideMethod @ hook.js:608Understand this warning
+hook.js:608 Element with name "gmp-map" already defined.
+overrideMethod @ hook.js:608Understand this warning
+hook.js:608 Element with name "gmp-advanced-marker" already defined.
+overrideMethod @ hook.js:608Understand this warning
+FullWidthGlobeMap.tsx:876 Google Maps API callback triggered
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:487 Config loading status: Object
+FullWidthGlobeMap.tsx:568 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:569 Config available: true
+FullWidthGlobeMap.tsx:570 API key available: true
+FullWidthGlobeMap.tsx:571 API key value: AIzaSyBfRJS8dGD...
+FullWidthGlobeMap.tsx:572 Map ref current: true
+FullWidthGlobeMap.tsx:573 User location available: true
+FullWidthGlobeMap.tsx:574 User location value: Object
+FullWidthGlobeMap.tsx:575 Is fullscreen: false
+FullWidthGlobeMap.tsx:586 Initializing Google Maps with API key: AIzaSyBfRJS8dGDJqA4X...
+FullWidthGlobeMap.tsx:587 Using Map ID: DEMO_MAP_ID
+FullWidthGlobeMap.tsx:588 Theme detection: Object
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:250 Updating map styles - Dark mode: true Theme: classic-metal
+maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENTUnderstand this error
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:250 Updating map styles - Dark mode: true Theme: classic-metal
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true:1  Failed to load resource: net::ERR_BLOCKED_BY_CLIENTUnderstand this error
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:250 Updating map styles - Dark mode: true Theme: classic-metal
+FullWidthGlobeMap.tsx:905 Theme changed, updating map styles. Current theme: classic-metal
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:250 Updating map styles - Dark mode: true Theme: classic-metal
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+RadioContext.tsx:186 Trying radio stream 1: /api/radio-stream?url=https://ice1.somafm.com/beatblender-128-mp3
+FullWidthGlobeMap.tsx:905 Theme changed, updating map styles. Current theme: classic-metal
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:250 Updating map styles - Dark mode: true Theme: classic-metal
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+RadioContext.tsx:229 Stream 1 connected successfully via redirect
+FullWidthGlobeMap.tsx:796 Map is fully loaded, adding markers...
+FullWidthGlobeMap.tsx:800 Adding user location marker at: Object
+hook.js:608 As of February 21st, 2024, google.maps.Marker is deprecated. Please use google.maps.marker.AdvancedMarkerElement instead. At this time, google.maps.Marker is not scheduled to be discontinued, but google.maps.marker.AdvancedMarkerElement is recommended over google.maps.Marker. While google.maps.Marker will continue to receive bug fixes for any major regressions, existing bugs in google.maps.Marker will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/deprecations for additional details and https://developers.google.com/maps/documentation/javascript/advanced-markers/migration for the migration guide.
+overrideMethod @ hook.js:608Understand this warning
+FullWidthGlobeMap.tsx:865 Adding mock listener markers...
+FullWidthGlobeMap.tsx:796 Map is fully loaded, adding markers...
+FullWidthGlobeMap.tsx:800 Adding user location marker at: Object
+FullWidthGlobeMap.tsx:865 Adding mock listener markers...
+FullWidthGlobeMap.tsx:796 Map is fully loaded, adding markers...
+FullWidthGlobeMap.tsx:800 Adding user location marker at: Object
+FullWidthGlobeMap.tsx:865 Adding mock listener markers...
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:733 Marker clicked: New York, USA
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map
+6Fetch finished loading: GET "<URL>".
+5FullWidthGlobeMap.tsx:240 Dark mode detected (classic-metal) - using dark map

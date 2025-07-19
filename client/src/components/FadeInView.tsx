@@ -29,7 +29,7 @@ export default function FadeInView({
   const [elementId] = useState(() => `fade-${++animationCounter}`);
   const isVisible = useIntersectionObserver(ref, { 
     threshold, 
-    rootMargin: '400px 0px -100px 0px' // Start animation 400px before element comes into view
+    rootMargin: '200px 0px -50px 0px' // Start animation 200px before element comes into view (faster trigger)
   });
   const { velocity } = useScrollVelocity();
 
@@ -40,8 +40,8 @@ export default function FadeInView({
       setAdaptiveDuration(newDuration);
       
       // Add minimal base delay plus reduced staggered delay based on element order
-      const baseDelay = 50; // 0.05 seconds
-      const staggerDelay = (animationCounter - 1) * 25; // 25ms between elements
+      const baseDelay = 0; // Immediate start for faster loading
+      const staggerDelay = (animationCounter - 1) * 10; // 10ms between elements (faster)
       const totalDelay = baseDelay + staggerDelay + delay;
       
       setTimeout(() => {

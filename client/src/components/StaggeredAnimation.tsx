@@ -28,7 +28,7 @@ export default function StaggeredAnimation({
   const [elementId] = useState(() => `stagger-${++staggerCounter}`);
   const isVisible = useIntersectionObserver(ref, { 
     threshold, 
-    rootMargin: '400px 0px -100px 0px' // Start animation 400px before element comes into view
+    rootMargin: '200px 0px -50px 0px' // Start animation 200px before element comes into view (faster trigger)
   });
   const { velocity } = useScrollVelocity();
 
@@ -42,8 +42,8 @@ export default function StaggeredAnimation({
       setAdaptiveStaggerDelay(newStaggerDelay);
       
       // Add minimal base delay plus reduced staggered delay based on element order
-      const baseDelay = 50; // 0.05 seconds
-      const groupDelay = (staggerCounter - 1) * 25; // 25ms between groups
+      const baseDelay = 0; // Immediate start for faster loading
+      const groupDelay = (staggerCounter - 1) * 10; // 10ms between groups (faster)
       const totalDelay = baseDelay + groupDelay;
       
       setTimeout(() => {

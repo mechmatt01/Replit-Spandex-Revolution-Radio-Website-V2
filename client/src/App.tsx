@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -10,6 +11,7 @@ import { RadioProvider } from "@/contexts/RadioContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import SkipToContent from "@/components/SkipToContent";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
+
 import HomePage from "@/pages/HomePage";
 import MusicPage from "@/pages/MusicPage";
 import ProfilePage from "@/pages/ProfilePage";
@@ -40,6 +42,7 @@ function Router() {
 }
 
 function App() {
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

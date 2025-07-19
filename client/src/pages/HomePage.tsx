@@ -11,6 +11,7 @@ import ShopifyEcommerce from "@/components/ShopifyEcommerce";
 import FadeInView from "@/components/FadeInView";
 import StaggeredAnimation from "@/components/StaggeredAnimation";
 
+
 import { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
 import StickyPlayer from "@/components/StickyPlayer";
