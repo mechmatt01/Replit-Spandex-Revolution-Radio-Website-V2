@@ -387,7 +387,7 @@ export class DatabaseStorage implements IStorage {
         .returning();
       return updated;
     } else {
-      const [newTrack] = await db.insert(nowPlaying).values(track).returning();
+      const [newTrack] = await db.insert(nowPlaying).values(track as any).returning();
       return newTrack;
     }
   }
@@ -431,7 +431,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<Subscription> {
     const [subscription] = await db
       .insert(subscriptions)
-      .values(insertSubscription)
+      .values(insertSubscription as any)
       .returning();
     return subscription;
   }
