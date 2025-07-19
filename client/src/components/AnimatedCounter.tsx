@@ -1,6 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 
 interface AnimatedCounterProps {
   value: number;
@@ -27,7 +25,7 @@ export default function AnimatedCounter({
   useEffect(() => {
     if (previousValueRef.current !== value) {
       setIsAnimating(true);
-      
+
       // Clear any existing animation
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -40,13 +38,13 @@ export default function AnimatedCounter({
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        
+
         // Use easeOutCubic for smooth animation
         const easeProgress = 1 - Math.pow(1 - progress, 3);
         const currentAnimatedValue = startValue + (endValue - startValue) * easeProgress;
-        
+
         setCurrentValue(currentAnimatedValue);
-        
+
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
         } else {
@@ -68,46 +66,6 @@ export default function AnimatedCounter({
     };
   }, []);
 
-      const startValue = previousValueRef.current;
-      const endValue = value;
-      const startTime = Date.now();
-      
-      const animate = () => {
-        const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        // Easing function for smooth animation
-        const easeOut = 1 - Math.pow(1 - progress, 3);
-        
-        const currentAnimatedValue = Math.round(
-          startValue + (endValue - startValue) * easeOut
-        );
-        
-        setCurrentValue(currentAnimatedValue);
-        
-        if (progress < 1) {
-          animationRef.current = requestAnimationFrame(animate);
-        } else {
-          setIsAnimating(false);
-          previousValueRef.current = value;
-        }
-      };
-      
-      animationRef.current = requestAnimationFrame(animate);
-    }
-    
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [value, duration]);
-
-  // Create digit wheel animation effect
-  const formatNumber = (num: number): string => {
-    return num.toLocaleString();
-  };
-
   return (
     <div className={`relative overflow-hidden ${className}`} style={{
       ...style,
@@ -127,7 +85,7 @@ export default function AnimatedCounter({
           {formatNumber(currentValue)}
         </span>
       </div>
-      
+
       {/* Improved glow effect with better color transitions */}
       {isAnimating && (
         <div 
