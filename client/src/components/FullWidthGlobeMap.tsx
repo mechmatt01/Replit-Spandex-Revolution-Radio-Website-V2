@@ -650,15 +650,13 @@ export default function FullWidthGlobeMap() {
         opacity: 0 !important;
       }
 
-      /* Fix InfoWindow display issues */
+      /* Fix InfoWindow display issues and positioning */
       .gm-style-iw {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
-        top: 0 !important;
-        left: 0 !important;
-        transform: none !important;
         z-index: 9999 !important;
+        transform: none !important;
       }
 
       .gm-style-iw-c {
@@ -667,6 +665,10 @@ export default function FullWidthGlobeMap() {
         opacity: 1 !important;
         position: relative !important;
         z-index: 9999 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 8px !important;
+        overflow: visible !important;
       }
 
       .gm-style-iw-d {
@@ -676,6 +678,11 @@ export default function FullWidthGlobeMap() {
         overflow: visible !important;
         position: relative !important;
         z-index: 9999 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
       }
 
       .gm-style-iw-chr {
@@ -683,30 +690,69 @@ export default function FullWidthGlobeMap() {
         visibility: visible !important;
         opacity: 1 !important;
         position: absolute !important;
-        top: 2px !important;
-        right: 2px !important;
+        top: 8px !important;
+        right: 8px !important;
         z-index: 10000 !important;
-        width: 16px !important;
-        height: 16px !important;
-        background: rgba(255, 255, 255, 0.9) !important;
+        width: 20px !important;
+        height: 20px !important;
+        background: rgba(0, 0, 0, 0.7) !important;
         border-radius: 50% !important;
         cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: white !important;
+        font-size: 14px !important;
+        font-weight: bold !important;
+        line-height: 1 !important;
+        transition: background-color 0.2s ease !important;
       }
 
       .gm-style-iw-chr:hover {
-        background: rgba(255, 255, 255, 1) !important;
+        background: rgba(0, 0, 0, 0.9) !important;
       }
 
-      /* InfoWindow arrow/tip */
+      .gm-style-iw-chr:after {
+        content: '×' !important;
+        display: block !important;
+      }
+
+      /* InfoWindow arrow/tip positioning and styling */
       .gm-style-iw-tc {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
+        position: relative !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        width: 0 !important;
+        height: 0 !important;
       }
 
       .gm-style-iw-tc::after {
-        background: ${isDarkMode ? '#1f2937' : '#ffffff'} !important;
-        border: 1px solid ${colors.primary} !important;
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: -8px !important;
+        width: 0 !important;
+        height: 0 !important;
+        border-left: 8px solid transparent !important;
+        border-right: 8px solid transparent !important;
+        border-top: 8px solid ${isDarkMode ? '#1f2937' : '#ffffff'} !important;
+        filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1)) !important;
+      }
+
+      .gm-style-iw-tc::before {
+        content: '' !important;
+        position: absolute !important;
+        top: -1px !important;
+        left: -9px !important;
+        width: 0 !important;
+        height: 0 !important;
+        border-left: 9px solid transparent !important;
+        border-right: 9px solid transparent !important;
+        border-top: 9px solid ${colors.primary} !important;
+        z-index: -1 !important;
       }
     `;
     document.head.appendChild(style);
@@ -826,56 +872,62 @@ export default function FullWidthGlobeMap() {
                 marker.setAnimation(null);
               }, 1500);
 
-              // Create InfoWindow content without inline styles that might conflict
+              // Create InfoWindow content with better styling and sizing
               const infoWindowContent = document.createElement('div');
               infoWindowContent.style.cssText = `
                 background: ${isDarkMode ? '#1f2937' : '#ffffff'} !important;
                 color: ${isDarkMode ? '#ffffff' : '#1f2937'} !important;
-                padding: 12px !important;
-                border-radius: 6px !important;
+                padding: 16px 20px !important;
+                border-radius: 8px !important;
                 font-family: Arial, sans-serif !important;
                 text-align: center !important;
-                min-width: 140px !important;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+                min-width: 180px !important;
+                max-width: 220px !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
                 border: 2px solid ${colors.primary} !important;
-                font-size: 13px !important;
-                line-height: 1.3 !important;
+                font-size: 14px !important;
+                line-height: 1.4 !important;
+                margin: 0 !important;
               `;
 
               const headerDiv = document.createElement('div');
               headerDiv.textContent = '🎧 Active Listener';
               headerDiv.style.cssText = `
-                font-size: 12px !important;
-                margin-bottom: 6px !important;
+                font-size: 13px !important;
+                margin-bottom: 8px !important;
                 color: ${colors.primary} !important;
                 font-weight: bold !important;
+                text-transform: uppercase !important;
+                letter-spacing: 0.5px !important;
               `;
 
               const cityDiv = document.createElement('div');
               cityDiv.textContent = listener.city;
               cityDiv.style.cssText = `
                 font-weight: bold !important;
-                font-size: 16px !important;
+                font-size: 18px !important;
                 color: ${colors.primary} !important;
-                margin-bottom: 3px !important;
+                margin-bottom: 4px !important;
               `;
 
               const countryDiv = document.createElement('div');
               countryDiv.textContent = listener.country;
               countryDiv.style.cssText = `
-                font-size: 12px !important;
+                font-size: 13px !important;
                 color: ${isDarkMode ? '#9ca3af' : '#6b7280'} !important;
                 font-weight: 500 !important;
+                margin-top: 2px !important;
               `;
 
               infoWindowContent.appendChild(headerDiv);
               infoWindowContent.appendChild(cityDiv);
               infoWindowContent.appendChild(countryDiv);
 
-              // Create InfoWindow with proper configuration
+              // Create InfoWindow with proper configuration and positioning
               const infoWindow = new google.maps.InfoWindow({
                 content: infoWindowContent,
-                maxWidth: 200,
+                maxWidth: 240,
+                pixelOffset: new google.maps.Size(0, -10),
                 ariaLabel: `Active listener in ${listener.city}, ${listener.country}`,
                 disableAutoPan: false,
                 zIndex: 9999
@@ -890,6 +942,7 @@ export default function FullWidthGlobeMap() {
                 // Ensure InfoWindow is visible and properly styled
                 const iwOuter = document.querySelector('.gm-style-iw');
                 const iwBackground = document.querySelector('.gm-style-iw-d');
+                const iwContainer = document.querySelector('.gm-style-iw-c');
                 const iwCloseBtn = document.querySelector('.gm-style-iw-chr');
                 
                 if (iwOuter) {
@@ -898,17 +951,28 @@ export default function FullWidthGlobeMap() {
                   iwOuter.style.opacity = '1 !important';
                 }
                 
+                if (iwContainer) {
+                  iwContainer.style.padding = '0 !important';
+                  iwContainer.style.margin = '0 !important';
+                  iwContainer.style.borderRadius = '8px !important';
+                  iwContainer.style.overflow = 'visible !important';
+                }
+                
                 if (iwBackground) {
                   iwBackground.style.overflow = 'visible !important';
                   iwBackground.style.background = 'transparent !important';
                   iwBackground.style.border = 'none !important';
                   iwBackground.style.borderRadius = '0 !important';
                   iwBackground.style.boxShadow = 'none !important';
+                  iwBackground.style.padding = '0 !important';
+                  iwBackground.style.margin = '0 !important';
                 }
 
                 if (iwCloseBtn) {
-                  iwCloseBtn.style.display = 'block !important';
+                  iwCloseBtn.style.display = 'flex !important';
                   iwCloseBtn.style.visibility = 'visible !important';
+                  iwCloseBtn.style.alignItems = 'center !important';
+                  iwCloseBtn.style.justifyContent = 'center !important';
                 }
               });
 
@@ -966,32 +1030,40 @@ export default function FullWidthGlobeMap() {
               currentInfoWindow.current = null;
             }
 
-            // Create user location InfoWindow content
+            // Create user location InfoWindow content with improved styling
             const userInfoContent = document.createElement('div');
             userInfoContent.style.cssText = `
               background: ${isDarkMode ? '#1f2937' : '#ffffff'} !important;
               color: ${isDarkMode ? '#ffffff' : '#1f2937'} !important;
-              padding: 10px !important;
-              border-radius: 6px !important;
-              font-size: 13px !important;
+              padding: 16px 20px !important;
+              border-radius: 8px !important;
+              font-size: 14px !important;
               font-weight: 600 !important;
               border: 2px solid #2563eb !important;
-              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
-              min-width: 100px !important;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+              min-width: 160px !important;
+              max-width: 200px !important;
               text-align: center !important;
-              line-height: 1.3 !important;
+              line-height: 1.4 !important;
+              margin: 0 !important;
             `;
 
             const locationDiv = document.createElement('div');
             locationDiv.textContent = '📍 This is you!';
-            locationDiv.style.marginBottom = '3px';
+            locationDiv.style.cssText = `
+              margin-bottom: 6px !important;
+              font-size: 16px !important;
+              font-weight: bold !important;
+              color: #2563eb !important;
+            `;
 
             const descDiv = document.createElement('div');
             descDiv.textContent = 'Your current location';
             descDiv.style.cssText = `
-              font-size: 11px !important;
+              font-size: 12px !important;
               color: ${isDarkMode ? '#9ca3af' : '#6b7280'} !important;
-              font-weight: 400 !important;
+              font-weight: 500 !important;
+              margin-top: 2px !important;
             `;
 
             userInfoContent.appendChild(locationDiv);
@@ -999,7 +1071,8 @@ export default function FullWidthGlobeMap() {
 
             const userInfoWindow = new google.maps.InfoWindow({
               content: userInfoContent,
-              maxWidth: 180,
+              maxWidth: 220,
+              pixelOffset: new google.maps.Size(0, -10),
               ariaLabel: 'Your current location',
               disableAutoPan: false,
               zIndex: 9999
@@ -1010,14 +1083,23 @@ export default function FullWidthGlobeMap() {
             });
 
             userInfoWindow.addListener('domready', () => {
-              // Ensure InfoWindow is visible
+              // Ensure InfoWindow is visible and properly styled
               const iwOuter = document.querySelector('.gm-style-iw');
               const iwBackground = document.querySelector('.gm-style-iw-d');
+              const iwContainer = document.querySelector('.gm-style-iw-c');
+              const iwCloseBtn = document.querySelector('.gm-style-iw-chr');
               
               if (iwOuter) {
                 iwOuter.style.visibility = 'visible !important';
                 iwOuter.style.display = 'block !important';
                 iwOuter.style.opacity = '1 !important';
+              }
+              
+              if (iwContainer) {
+                iwContainer.style.padding = '0 !important';
+                iwContainer.style.margin = '0 !important';
+                iwContainer.style.borderRadius = '8px !important';
+                iwContainer.style.overflow = 'visible !important';
               }
               
               if (iwBackground) {
@@ -1026,6 +1108,15 @@ export default function FullWidthGlobeMap() {
                 iwBackground.style.border = 'none !important';
                 iwBackground.style.borderRadius = '0 !important';
                 iwBackground.style.boxShadow = 'none !important';
+                iwBackground.style.padding = '0 !important';
+                iwBackground.style.margin = '0 !important';
+              }
+
+              if (iwCloseBtn) {
+                iwCloseBtn.style.display = 'flex !important';
+                iwCloseBtn.style.visibility = 'visible !important';
+                iwCloseBtn.style.alignItems = 'center !important';
+                iwCloseBtn.style.justifyContent = 'center !important';
               }
             });
 
@@ -1570,7 +1661,7 @@ export default function FullWidthGlobeMap() {
 
           {/* Additional left-side controls for fullscreen */}
           {isFullscreen && (
-            <div className="absolute bottom-4 left-4 z-[10000] flex flex-col gap-2 transition-all duration-700">
+            <div className="absolute top-20 left-20 z-10 flex flex-col gap-2 transition-all duration-700">
               <Button
                 onClick={() => {
                   if (userLocation) {
@@ -1601,15 +1692,13 @@ export default function FullWidthGlobeMap() {
                   }
                 }}
                 size="sm"
-                className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 scale-110"
+                className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
                 style={{
                   backgroundColor: "#1f2937",
                   color: "#ffffff",
-                  minWidth: "48px",
-                  minHeight: "48px",
                 }}
               >
-                <MapPin className="w-5 h-5" />
+                <MapPin className="w-4 h-4" />
               </Button>
               <Button
                 onClick={() => {
@@ -1619,15 +1708,13 @@ export default function FullWidthGlobeMap() {
                   }
                 }}
                 size="sm"
-                className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 scale-110"
+                className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
                 style={{
                   backgroundColor: "#1f2937",
                   color: "#ffffff",
-                  minWidth: "48px",
-                  minHeight: "48px",
                 }}
               >
-                <RotateCcw className="w-5 h-5" />
+                <RotateCcw className="w-4 h-4" />
               </Button>
             </div>
           )}
