@@ -1,0 +1,1267 @@
+/// <reference types="@types/google.maps" />
+import { useEffect, useState, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, MapPin, TrendingUp, } from "lucide-react";
+import CountriesIconPath from "@assets/CountriesIcon.png";
+import LiveNowIconPath from "@assets/LiveNowIcon.png";
+import { useTheme, METAL_THEMES } from "@/contexts/ThemeContext";
+import AnimatedCounter from "./AnimatedCounter";
+// Animated weather icons
+import clearDayIcon from "@assets/animated_weather_icons/clear-day.svg";
+import clearNightIcon from "@assets/animated_weather_icons/clear-night.svg";
+import cloudy1DayIcon from "@assets/animated_weather_icons/cloudy-day-1.svg";
+import cloudy1NightIcon from "@assets/animated_weather_icons/cloudy-night-1.svg";
+import cloudy2DayIcon from "@assets/animated_weather_icons/cloudy-day-2.svg";
+import cloudy2NightIcon from "@assets/animated_weather_icons/cloudy-night-2.svg";
+import cloudy3DayIcon from "@assets/animated_weather_icons/cloudy-day-3.svg";
+import cloudy3NightIcon from "@assets/animated_weather_icons/cloudy-night-3.svg";
+import cloudyIcon from "@assets/animated_weather_icons/cloudy.svg";
+import fogIcon from "@assets/animated_weather_icons/fog.svg";
+import hazeIcon from "@assets/animated_weather_icons/haze.svg";
+import hurricaneIcon from "@assets/animated_weather_icons/hurricane.svg";
+import isolatedThunderstormsIcon from "@assets/animated_weather_icons/isolated-thunderstorms.svg";
+import rainAndSleetMixIcon from "@assets/animated_weather_icons/rain-and-sleet-mix.svg";
+import rainAndSnowMixIcon from "@assets/animated_weather_icons/rain-and-snow-mix.svg";
+import rainy1DayIcon from "@assets/animated_weather_icons/rainy-1-day.svg";
+import rainy1NightIcon from "@assets/animated_weather_icons/rainy-1-night.svg";
+import rainy2Icon from "@assets/animated_weather_icons/rainy-2.svg";
+import rainy3Icon from "@assets/animated_weather_icons/rainy-3.svg";
+import scatteredThunderstormsIcon from "@assets/animated_weather_icons/scattered-thunderstorms.svg";
+import severeThunderstormIcon from "@assets/animated_weather_icons/severe-thunderstorm.svg";
+import snowAndSleetMixIcon from "@assets/animated_weather_icons/snow-and-sleet-mix.svg";
+import snowy1Icon from "@assets/animated_weather_icons/snowy-1.svg";
+import snowy2Icon from "@assets/animated_weather_icons/snowy-2.svg";
+import snowy3Icon from "@assets/animated_weather_icons/snowy-3.svg";
+import tornadoIcon from "@assets/animated_weather_icons/tornado.svg";
+import tropicalStormIcon from "@assets/animated_weather_icons/tropical-storm.svg";
+import windIcon from "@assets/animated_weather_icons/wind.svg";
+// Weather condition mapping to animated icons
+const getWeatherIcon = (condition, isDay) => {
+    const conditionLower = condition.toLowerCase();
+    // Clear conditions
+    if (conditionLower.includes("clear") || conditionLower.includes("sunny")) {
+        return isDay ? clearDayIcon : clearNightIcon;
+    }
+    // Cloudy conditions
+    if (conditionLower.includes("partly cloudy") ||
+        conditionLower.includes("few clouds")) {
+        return isDay ? cloudy1DayIcon : cloudy1NightIcon;
+    }
+    if (conditionLower.includes("scattered clouds") ||
+        conditionLower.includes("broken clouds")) {
+        return isDay ? cloudy2DayIcon : cloudy2NightIcon;
+    }
+    if (conditionLower.includes("overcast") ||
+        conditionLower.includes("cloudy")) {
+        return isDay ? cloudy3DayIcon : cloudy3NightIcon;
+    }
+    // Rain conditions
+    if (conditionLower.includes("light rain") ||
+        conditionLower.includes("drizzle")) {
+        return isDay ? rainy1DayIcon : rainy1NightIcon;
+    }
+    if (conditionLower.includes("moderate rain") ||
+        conditionLower.includes("rain")) {
+        return rainy2Icon;
+    }
+    if (conditionLower.includes("heavy rain") ||
+        conditionLower.includes("downpour")) {
+        return rainy3Icon;
+    }
+    // Snow conditions
+    if (conditionLower.includes("light snow")) {
+        return snowy1Icon;
+    }
+    if (conditionLower.includes("moderate snow") ||
+        conditionLower.includes("snow")) {
+        return snowy2Icon;
+    }
+    if (conditionLower.includes("heavy snow") ||
+        conditionLower.includes("blizzard")) {
+        return snowy3Icon;
+    }
+    // Thunderstorm conditions
+    if (conditionLower.includes("thunderstorm") ||
+        conditionLower.includes("thunder")) {
+        if (conditionLower.includes("severe"))
+            return severeThunderstormIcon;
+        if (conditionLower.includes("isolated"))
+            return isolatedThunderstormsIcon;
+        if (conditionLower.includes("scattered"))
+            return scatteredThunderstormsIcon;
+        return isolatedThunderstormsIcon;
+    }
+    // Fog conditions
+    if (conditionLower.includes("fog") || conditionLower.includes("mist")) {
+        return fogIcon;
+    }
+    // Haze conditions
+    if (conditionLower.includes("haze")) {
+        return hazeIcon;
+    }
+    // Dust conditions
+    if (conditionLower.includes("dust") || conditionLower.includes("sand")) {
+        return cloudyIcon;
+    }
+    // Wind conditions
+    if (conditionLower.includes("wind")) {
+        return windIcon;
+    }
+    // Extreme conditions
+    if (conditionLower.includes("tornado"))
+        return tornadoIcon;
+    if (conditionLower.includes("hurricane"))
+        return hurricaneIcon;
+    if (conditionLower.includes("tropical storm"))
+        return tropicalStormIcon;
+    if (conditionLower.includes("hail"))
+        return cloudyIcon;
+    if (conditionLower.includes("frost"))
+        return cloudyIcon;
+    // Mixed conditions
+    if (conditionLower.includes("rain") && conditionLower.includes("snow"))
+        return rainAndSnowMixIcon;
+    if (conditionLower.includes("rain") && conditionLower.includes("sleet"))
+        return rainAndSleetMixIcon;
+    if (conditionLower.includes("snow") && conditionLower.includes("sleet"))
+        return snowAndSleetMixIcon;
+    // Default fallback
+    return isDay ? clearDayIcon : clearNightIcon;
+};
+// Helper function to convert hex color to CSS filter for images
+const getIconFilter = (hexColor) => {
+    // Convert hex to RGB
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    // For orange/red colors
+    if (r > 200 && g < 150) {
+        return 'brightness(0) saturate(100%) invert(44%) sepia(78%) saturate(2392%) hue-rotate(8deg) brightness(101%) contrast(101%)';
+    }
+    // For other colors, create a custom filter
+    const hue = Math.atan2(Math.sqrt(3) * (g - b), 2 * r - g - b) * 180 / Math.PI;
+    return `brightness(0) saturate(100%) invert(50%) sepia(100%) saturate(2000%) hue-rotate(${hue}deg) brightness(100%) contrast(101%)`;
+};
+export default function FullWidthGlobeMap() {
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const [map, setMap] = useState(null);
+    const [userLocation, setUserLocation] = useState(null);
+    const mapRef = useRef(null);
+    const fullscreenMapRef = useRef(null);
+    const currentInfoWindow = useRef(null);
+    const { colors, isDarkMode, currentTheme } = useTheme();
+    const mapContainerRef = useRef(null);
+    // Intelligent theme detection for Google Maps
+    const shouldUseDarkMap = () => {
+        // Use light map only when in light mode (light theme)
+        if (!isDarkMode) {
+            console.log('Light mode detected - using light map');
+            return false;
+        }
+        // All dark themes should use dark map
+        console.log(`Dark mode detected (${currentTheme}) - using dark map`);
+        return true;
+    };
+    const isMapDark = shouldUseDarkMap();
+    // Function to update map styling when theme changes
+    const updateMapStyles = (mapInstance) => {
+        // Check current theme for map styling
+        const shouldUseDark = shouldUseDarkMap();
+        console.log('Updating map styles - Dark mode:', shouldUseDark, 'Theme:', currentTheme);
+        // Use dark styles based on theme detection
+        const darkStyles = [
+            {
+                elementType: "geometry",
+                stylers: [{ color: "#212121" }],
+            },
+            {
+                elementType: "labels.icon",
+                stylers: [{ visibility: "off" }],
+            },
+            {
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+            },
+            {
+                elementType: "labels.text.stroke",
+                stylers: [{ color: "#212121" }],
+            },
+            {
+                featureType: "administrative",
+                elementType: "geometry",
+                stylers: [{ color: "#757575" }],
+            },
+            {
+                featureType: "administrative.country",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#9e9e9e" }],
+            },
+            {
+                featureType: "administrative.land_parcel",
+                stylers: [{ visibility: "off" }],
+            },
+            {
+                featureType: "administrative.locality",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#bdbdbd" }],
+            },
+            {
+                featureType: "poi",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+            },
+            {
+                featureType: "poi.park",
+                elementType: "geometry",
+                stylers: [{ color: "#181818" }],
+            },
+            {
+                featureType: "poi.park",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#616161" }],
+            },
+            {
+                featureType: "poi.park",
+                elementType: "labels.text.stroke",
+                stylers: [{ color: "#1b1b1b" }],
+            },
+            {
+                featureType: "road",
+                elementType: "geometry.fill",
+                stylers: [{ color: "#2c2c2c" }],
+            },
+            {
+                featureType: "road",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#8a8a8a" }],
+            },
+            {
+                featureType: "road.arterial",
+                elementType: "geometry",
+                stylers: [{ color: "#373737" }],
+            },
+            {
+                featureType: "road.highway",
+                elementType: "geometry",
+                stylers: [{ color: "#3c3c3c" }],
+            },
+            {
+                featureType: "road.highway.controlled_access",
+                elementType: "geometry",
+                stylers: [{ color: "#4e4e4e" }],
+            },
+            {
+                featureType: "road.local",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#616161" }],
+            },
+            {
+                featureType: "transit",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+            },
+            {
+                featureType: "water",
+                elementType: "geometry",
+                stylers: [{ color: "#000000" }],
+            },
+            {
+                featureType: "water",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#3d3d3d" }],
+            },
+        ];
+        const lightStyles = [
+            {
+                featureType: "administrative",
+                elementType: "geometry",
+                stylers: [{ color: "#e0e0e0" }],
+            },
+            {
+                featureType: "administrative.country",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#666666" }],
+            },
+            {
+                featureType: "administrative.land_parcel",
+                stylers: [{ visibility: "off" }],
+            },
+            {
+                featureType: "administrative.locality",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#333333" }],
+            },
+            {
+                featureType: "poi",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+            },
+            {
+                featureType: "poi.park",
+                elementType: "geometry",
+                stylers: [{ color: "#c5f0c5" }],
+            },
+            {
+                featureType: "poi.park",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#9e9e9e" }],
+            },
+            {
+                featureType: "road",
+                elementType: "geometry.fill",
+                stylers: [{ color: "#ffffff" }],
+            },
+            {
+                featureType: "road",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#666666" }],
+            },
+            {
+                featureType: "road.arterial",
+                elementType: "geometry",
+                stylers: [{ color: "#fefefe" }],
+            },
+            {
+                featureType: "road.highway",
+                elementType: "geometry",
+                stylers: [{ color: "#f5f5f5" }],
+            },
+            {
+                featureType: "road.highway.controlled_access",
+                elementType: "geometry",
+                stylers: [{ color: "#e9e9e9" }],
+            },
+            {
+                featureType: "road.local",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#9e9e9e" }],
+            },
+            {
+                featureType: "transit",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#757575" }],
+            },
+            {
+                featureType: "water",
+                elementType: "geometry",
+                stylers: [{ color: "#c9c9c9" }],
+            },
+            {
+                featureType: "water",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#9e9e9e" }],
+            },
+        ];
+        mapInstance.setOptions({
+            styles: shouldUseDark ? darkStyles : lightStyles
+        });
+    };
+    const { data: stats } = useQuery({
+        queryKey: ["/api/stream-stats"],
+    });
+    // Firebase Live Statistics with 5-second refresh
+    const { data: liveStats } = useQuery({
+        queryKey: ["/api/live-stats"],
+        refetchInterval: 5000, // Update every 5 seconds
+        refetchIntervalInBackground: true,
+    });
+    // Handle fullscreen toggle with proper map resizing - FIXED VERSION
+    const toggleFullscreen = (enable) => {
+        setIsFullscreen(enable);
+        // Trigger map resize after state change without affecting body position
+        setTimeout(() => {
+            if (map) {
+                google.maps.event.trigger(map, 'resize');
+            }
+        }, 50);
+    };
+    // Fetch Google Maps API key and config
+    const { data: config, error: configError, isLoading: configLoading } = useQuery({
+        queryKey: ["/api/config"],
+        staleTime: 0, // Don't cache config data
+        gcTime: 0, // Don't cache config data (TanStack Query v5 uses gcTime)
+        retry: 3,
+        retryDelay: 1000,
+        refetchOnMount: 'always', // Always refetch on mount
+    });
+    // Debug config loading
+    useEffect(() => {
+        console.log('Config loading status:', { configLoading, config, configError });
+    }, [configLoading, config, configError]);
+    // Get user's location
+    useEffect(() => {
+        const getLocation = async () => {
+            if ("geolocation" in navigator) {
+                try {
+                    // Request permission first
+                    const permission = await navigator.permissions.query({ name: 'geolocation' });
+                    console.log('Geolocation permission:', permission.state);
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        console.log('Got location:', position.coords.latitude, position.coords.longitude);
+                        setUserLocation({
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        });
+                    }, (error) => {
+                        console.error("Error getting location:", error);
+                        console.log("Error code:", error.code, "Message:", error.message);
+                        // Fallback to New York
+                        setUserLocation({
+                            lat: 40.7128,
+                            lng: -74.006,
+                        });
+                    }, {
+                        enableHighAccuracy: true,
+                        timeout: 15000,
+                        maximumAge: 300000 // 5 minutes (reduced from 10 minutes)
+                    });
+                }
+                catch (error) {
+                    console.error("Permission error:", error);
+                    // Fallback to New York
+                    setUserLocation({
+                        lat: 40.7128,
+                        lng: -74.006,
+                    });
+                }
+            }
+            else {
+                console.log("Geolocation not supported");
+                // Fallback to New York
+                setUserLocation({
+                    lat: 40.7128,
+                    lng: -74.006,
+                });
+            }
+        };
+        getLocation();
+    }, []);
+    // Fetch weather data when user location is available
+    const { data: weather, error: weatherError, isLoading: weatherLoading, } = useQuery({
+        queryKey: ["/api/weather", userLocation?.lat, userLocation?.lng],
+        queryFn: async () => {
+            if (!userLocation)
+                throw new Error("No location available");
+            const response = await fetch(`/api/weather?lat=${userLocation.lat}&lon=${userLocation.lng}`);
+            if (!response.ok) {
+                throw new Error(`Weather API error: ${response.status}`);
+            }
+            return response.json();
+        },
+        enabled: !!userLocation,
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        refetchInterval: 10 * 60 * 1000, // 10 minutes
+        retry: 3,
+    });
+    // Initialize Google Maps when API key is available
+    useEffect(() => {
+        console.log('=== FullWidthGlobeMap Debug ===');
+        console.log('Config available:', !!config);
+        console.log('API key available:', !!config?.googleMapsApiKey);
+        console.log('API key value:', config?.googleMapsApiKey?.substring(0, 15) + '...');
+        console.log('Map ref current:', !!mapRef.current);
+        console.log('User location available:', !!userLocation);
+        console.log('User location value:', userLocation);
+        console.log('Is fullscreen:', isFullscreen);
+        // Use hardcoded API key if config is not available
+        const apiKey = config?.googleMapsApiKey || "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
+        const mapId = config?.googleMapsMapId || "DEMO_MAP_ID";
+        if (!apiKey) {
+            console.log('No API key available');
+            return;
+        }
+        console.log('Initializing Google Maps with API key:', apiKey.substring(0, 20) + '...');
+        console.log('Using Map ID:', mapId);
+        console.log('Theme detection:', {
+            currentTheme: currentTheme,
+            isDarkMode,
+            backgroundColor: METAL_THEMES[currentTheme].colors[isDarkMode ? 'dark' : 'light'].background,
+            isMapDark,
+            shouldUseDarkStyles: currentTheme === 'classic-metal' || isMapDark
+        });
+        // Don't reinitialize if map already exists
+        if (map)
+            return;
+        // Always use the same map container
+        const currentContainer = mapRef.current;
+        if (!currentContainer)
+            return;
+        // Add CSS to hide Google attribution and keyboard shortcuts overlay
+        const style = document.createElement("style");
+        style.textContent = `
+      .gm-style-cc,
+      .gmnoprint,
+      .gm-style-mtc,
+      a[href*="maps.google.com"],
+      a[href*="google.com/maps"],
+      .gm-svpc,
+      .gm-fullscreen-control,
+      .gm-ui-hover-effect,
+      .gm-control-active,
+      .gm-style-iw,
+      .gm-style-iw-c,
+      .gm-style-iw-d,
+      .gm-style-iw-chr,
+      .gm-compass,
+      .gm-zoom-control,
+      .gm-rotate-control,
+      .gm-scale-control,
+      .gm-style-pbc,
+      .gm-keyboard-shortcuts,
+      .gm-style-cc:not(.gm-style-cc-hide),
+      div[data-control-width],
+      div[data-control-height],
+      button[data-value="keyboard_shortcuts"],
+      button[title*="Keyboard shortcuts"],
+      button[jsaction*="keyboard"],
+      [jsaction*="keyboard.open"],
+      [data-value="keyboard_shortcuts"],
+      .gm-style .gm-style-cc > div,
+      .gm-style .gm-style-cc a,
+      .gm-style .gm-style-cc span,
+      .gm-bundled-control,
+      .gm-bundled-control-on-bottom {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+      }
+    `;
+        document.head.appendChild(style);
+        const initializeMap = () => {
+            try {
+                // Check if Google Maps API is fully loaded
+                if (!window.google || !window.google.maps || !window.google.maps.Map || !window.google.maps.MapTypeId) {
+                    console.error('Google Maps API not fully loaded');
+                    return;
+                }
+                // Use regular markers if advanced markers aren't available
+                const useAdvancedMarkers = window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
+                const mapInstance = new google.maps.Map(currentContainer, {
+                    zoom: 2,
+                    center: userLocation || { lat: 40.7128, lng: -74.0060 }, // Default to NYC
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    // Don't use mapId when we want custom styling
+                    styles: [], // Empty styles initially, will be set by updateMapStyles
+                    // Map controls
+                    zoomControl: false,
+                    mapTypeControl: false,
+                    scaleControl: false,
+                    streetViewControl: false,
+                    rotateControl: false,
+                    fullscreenControl: false,
+                    gestureHandling: "cooperative",
+                    // Disable default UI
+                    disableDefaultUI: true,
+                });
+                setMap(mapInstance);
+                // Apply theme styles immediately after map creation
+                updateMapStyles(mapInstance);
+                // Function to add listener markers
+                const addListenerMarkers = (mapInstance) => {
+                    // Add mock listener markers
+                    const mockListeners = [
+                        { lat: 40.7128, lng: -74.006, city: "New York", country: "USA" },
+                        { lat: 34.0522, lng: -118.2437, city: "Los Angeles", country: "USA" },
+                        { lat: 51.5074, lng: -0.1278, city: "London", country: "UK" },
+                        { lat: 48.8566, lng: 2.3522, city: "Paris", country: "France" },
+                        { lat: 35.6762, lng: 139.6503, city: "Tokyo", country: "Japan" },
+                        { lat: -33.8688, lng: 151.2093, city: "Sydney", country: "Australia" },
+                        { lat: 55.7558, lng: 37.6173, city: "Moscow", country: "Russia" },
+                        { lat: 39.9042, lng: 116.4074, city: "Beijing", country: "China" },
+                        { lat: 19.076, lng: 72.8777, city: "Mumbai", country: "India" },
+                        { lat: -23.5505, lng: -46.6333, city: "São Paulo", country: "Brazil" },
+                    ];
+                    // Filter out mock listeners that are too close to user's current location
+                    const filteredListeners = mockListeners.filter((listener) => {
+                        if (!userLocation?.lat || !userLocation?.lng)
+                            return true;
+                        const distance = Math.sqrt(Math.pow(listener.lat - userLocation.lat, 2) +
+                            Math.pow(listener.lng - userLocation.lng, 2));
+                        // If distance is less than 0.1 degrees (roughly 11km), exclude it
+                        return distance > 0.1;
+                    });
+                    filteredListeners.forEach((listener) => {
+                        // Create animated theme-colored dot SVG
+                        const animatedDotSvg = `
+            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="6" fill="${colors.primary}" opacity="0.8">
+                <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.8;0.3;0.8" dur="2s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="12" cy="12" r="4" fill="${colors.primary}">
+                <animate attributeName="opacity" values="1;0.6;1" dur="1.5s" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+          `;
+                        const marker = new google.maps.Marker({
+                            position: { lat: listener.lat, lng: listener.lng },
+                            map: mapInstance,
+                            title: `${listener.city}, ${listener.country}`,
+                            icon: {
+                                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(animatedDotSvg),
+                                scaledSize: new google.maps.Size(20, 20),
+                                anchor: new google.maps.Point(10, 10),
+                            },
+                        });
+                        // Add click listener for popup
+                        marker.addListener("click", () => {
+                            // Close any existing overlay
+                            if (currentInfoWindow.current) {
+                                currentInfoWindow.current.setMap(null);
+                            }
+                            // Create custom overlay with dynamic theme colors
+                            class CustomOverlay extends google.maps.OverlayView {
+                                position;
+                                div;
+                                listener;
+                                constructor(position, listener) {
+                                    super();
+                                    this.position = position;
+                                    this.listener = listener;
+                                }
+                                onAdd() {
+                                    const div = document.createElement("div");
+                                    div.style.cssText = `
+                  position: absolute;
+                  background: #1f2937;
+                  color: #ffffff;
+                  border-radius: 12px;
+                  padding: 16px;
+                  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                  border: 2px solid ${colors.primary};
+                  min-width: 200px;
+                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                  z-index: 1000;
+                  pointer-events: auto;
+                  opacity: 0;
+                  transform: translateY(10px);
+                  transition: all 0.3s ease;
+                `;
+                                    // Create close button
+                                    const closeButton = document.createElement("button");
+                                    closeButton.style.cssText = `
+                  position: absolute;
+                  top: 8px;
+                  right: 8px;
+                  background: transparent;
+                  border: none;
+                  color: #ffffff;
+                  font-size: 18px;
+                  cursor: pointer;
+                  width: 24px;
+                  height: 24px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  transition: all 0.2s ease;
+                `;
+                                    closeButton.textContent = "×";
+                                    // Create title
+                                    const title = document.createElement("h3");
+                                    title.style.cssText = `
+                  margin: 0;
+                  font-size: 16px;
+                  font-weight: 700;
+                  color: ${colors.primary};
+                `;
+                                    title.textContent = `${this.listener.city}, ${this.listener.country}`;
+                                    // Create description
+                                    const description = document.createElement("p");
+                                    description.style.cssText = `
+                  margin: 0;
+                  font-size: 14px;
+                  color: #e5e5e5;
+                  font-weight: 500;
+                `;
+                                    description.textContent = "🎵 Currently listening to metal!";
+                                    // Assemble the structure
+                                    div.appendChild(closeButton);
+                                    div.appendChild(title);
+                                    div.appendChild(description);
+                                    this.div = div;
+                                    // Add close button functionality
+                                    closeButton.addEventListener("click", (e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        this.setMap(null);
+                                        if (currentInfoWindow.current === this) {
+                                            currentInfoWindow.current = null;
+                                        }
+                                    });
+                                    // Add to map
+                                    const panes = this.getPanes();
+                                    if (panes) {
+                                        panes.overlayMouseTarget.appendChild(div);
+                                    }
+                                    // Animate in
+                                    setTimeout(() => {
+                                        div.style.opacity = "1";
+                                        div.style.transform = "translateY(0)";
+                                    }, 10);
+                                }
+                                draw() {
+                                    if (this.div) {
+                                        const overlayProjection = this.getProjection();
+                                        if (overlayProjection) {
+                                            const position = overlayProjection.fromLatLngToDivPixel(this.position);
+                                            if (position) {
+                                                this.div.style.left = position.x - 100 + "px";
+                                                this.div.style.top = position.y - 120 + "px";
+                                            }
+                                        }
+                                    }
+                                }
+                                onRemove() {
+                                    if (this.div && this.div.parentNode) {
+                                        this.div.parentNode.removeChild(this.div);
+                                        this.div = undefined;
+                                    }
+                                }
+                            }
+                            // Create and show overlay
+                            const overlay = new CustomOverlay(new google.maps.LatLng(listener.lat, listener.lng), listener);
+                            overlay.setMap(mapInstance);
+                            currentInfoWindow.current = overlay;
+                        });
+                    });
+                };
+                // Wait for map to be fully initialized before adding markers
+                google.maps.event.addListenerOnce(mapInstance, 'idle', () => {
+                    console.log('Map is fully loaded, adding markers...');
+                    // Add user location marker if available
+                    if (userLocation) {
+                        console.log('Adding user location marker at:', userLocation);
+                        const userMarker = new google.maps.Marker({
+                            position: userLocation,
+                            map: mapInstance,
+                            title: "Your Location",
+                            icon: {
+                                url: "data:image/svg+xml;base64," + btoa(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3" fill="#2563eb"/>
+                  <circle cx="12" cy="12" r="10" fill="none" stroke="#2563eb" stroke-width="2" opacity="0.3"/>
+                  <circle cx="12" cy="12" r="6" fill="none" stroke="#2563eb" stroke-width="1" opacity="0.5"/>
+                </svg>
+              `),
+                                scaledSize: new google.maps.Size(24, 24),
+                                anchor: new google.maps.Point(12, 12),
+                            },
+                        });
+                    }
+                    // Add mock listener markers
+                    console.log('Adding mock listener markers...');
+                    addListenerMarkers(mapInstance);
+                });
+            }
+            catch (error) {
+                console.error('Error initializing Google Maps:', error);
+            }
+        };
+        // Define global callback function
+        window.initMapCallback = () => {
+            console.log('Google Maps API callback triggered');
+            // Give a moment for all libraries to fully initialize
+            setTimeout(() => {
+                if (window.google && window.google.maps && window.google.maps.Map && window.google.maps.MapTypeId) {
+                    initializeMap();
+                }
+                else {
+                    console.error('Google Maps API not ready after callback');
+                }
+            }, 50);
+        };
+        // Load Google Maps API if not already loaded
+        if (typeof google === "undefined" || !google.maps) {
+            const script = document.createElement("script");
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry,marker&callback=initMapCallback`;
+            script.async = true;
+            script.defer = true;
+            script.onerror = (error) => {
+                console.error('Failed to load Google Maps API:', error);
+            };
+            document.head.appendChild(script);
+        }
+        else {
+            initializeMap();
+        }
+    }, [config, userLocation]); // Only initialize once, theme changes handled separately
+    // Update map styles when theme changes
+    useEffect(() => {
+        if (map && window.google && window.google.maps) {
+            console.log('Theme changed, updating map styles. Current theme:', currentTheme);
+            updateMapStyles(map);
+        }
+    }, [map, currentTheme, isDarkMode]);
+    // Generate mock listener data
+    const activeListeners = [
+        {
+            id: "1",
+            city: "New York",
+            country: "USA",
+            lat: 40.7128,
+            lng: -74.006,
+            isActive: true,
+            lastSeen: new Date(),
+        },
+        {
+            id: "2",
+            city: "Los Angeles",
+            country: "USA",
+            lat: 34.0522,
+            lng: -118.2437,
+            isActive: true,
+            lastSeen: new Date(),
+        },
+        {
+            id: "3",
+            city: "London",
+            country: "UK",
+            lat: 51.5074,
+            lng: -0.1278,
+            isActive: true,
+            lastSeen: new Date(),
+        },
+        {
+            id: "4",
+            city: "Paris",
+            country: "France",
+            lat: 48.8566,
+            lng: 2.3522,
+            isActive: true,
+            lastSeen: new Date(),
+        },
+        {
+            id: "5",
+            city: "Tokyo",
+            country: "Japan",
+            lat: 35.6762,
+            lng: 139.6503,
+            isActive: true,
+            lastSeen: new Date(),
+        },
+        {
+            id: "6",
+            city: "Sydney",
+            country: "Australia",
+            lat: -33.8688,
+            lng: 151.2093,
+            isActive: true,
+            lastSeen: new Date(),
+        },
+        {
+            id: "7",
+            city: "Moscow",
+            country: "Russia",
+            lat: 55.7558,
+            lng: 37.6173,
+            isActive: true,
+            lastSeen: new Date(),
+        },
+        {
+            id: "8",
+            city: "Beijing",
+            country: "China",
+            lat: 39.9042,
+            lng: 116.4074,
+            isActive: true,
+            lastSeen: new Date(),
+        },
+        {
+            id: "9",
+            city: "Mumbai",
+            country: "India",
+            lat: 19.076,
+            lng: 72.8777,
+            isActive: true,
+            lastSeen: new Date(),
+        },
+        {
+            id: "10",
+            city: "São Paulo",
+            country: "Brazil",
+            lat: -23.5505,
+            lng: -46.6333,
+            isActive: true,
+            lastSeen: new Date(),
+        },
+    ];
+    const totalListeners = activeListeners.length;
+    const countriesWithListeners = new Set(activeListeners.map((l) => l.country))
+        .size;
+    const top10Listeners = activeListeners.slice(0, 10);
+    return (<>
+      {/* Fullscreen overlay elements */}
+      {isFullscreen && (<>
+          {/* Fullscreen backdrop to prevent scrolling */}
+          <div className="fixed inset-0 z-[9998] bg-black" style={{
+                touchAction: 'none',
+                overscrollBehavior: 'none'
+            }}/>
+          
+          {/* Fullscreen header bar */}
+          <div className="fixed top-0 left-0 right-0 z-[10001] bg-black/80 backdrop-blur-md border-b border-gray-700">
+            <div className="flex items-center justify-between px-6 py-4">
+              <div className="flex items-center gap-4">
+                <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
+                {weather && (<div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
+                    <div className="w-8 h-8">
+                      <img src={getWeatherIcon(weather.description, weather.icon.includes("d"))} alt={weather.description} className="w-full h-full object-contain"/>
+                    </div>
+                    <div className="text-sm">
+                      <span className="text-white font-medium">{weather.location}</span>
+                      <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
+                    </div>
+                  </div>)}
+              </div>
+              <button onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFullscreen(false);
+                return false;
+            }} type="button" className="p-2 border-0 shadow-lg bg-red-600 hover:bg-red-700 text-white transition-all duration-300 rounded">
+                <Minimize2 className="w-4 h-4"/>
+              </button>
+            </div>
+          </div>
+
+          {/* Map Controls for fullscreen */}
+          <div className="fixed top-20 right-8 z-[10001] flex flex-col gap-2">
+            <Button onClick={() => {
+                if (map) {
+                    map.setZoom(map.getZoom() + 1);
+                }
+            }} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg" style={{
+                backgroundColor: "#1f2937",
+                color: "#ffffff",
+            }}>
+              <ZoomIn className="w-4 h-4"/>
+            </Button>
+            <Button onClick={() => {
+                if (map) {
+                    map.setZoom(map.getZoom() - 1);
+                }
+            }} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg" style={{
+                backgroundColor: "#1f2937",
+                color: "#ffffff",
+            }}>
+              <ZoomOut className="w-4 h-4"/>
+            </Button>
+          </div>
+
+          {/* Left-side controls for fullscreen mode */}
+          <div className="fixed top-20 left-8 z-[10001] flex flex-col gap-2">
+            <Button onClick={() => {
+                if (userLocation) {
+                    if (map) {
+                        map.panTo(userLocation);
+                        map.setZoom(12);
+                    }
+                }
+                else {
+                    // Request location if not available
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition((position) => {
+                            const newLocation = {
+                                lat: position.coords.latitude,
+                                lng: position.coords.longitude,
+                            };
+                            setUserLocation(newLocation);
+                            if (map) {
+                                map.panTo(newLocation);
+                                map.setZoom(12);
+                            }
+                        }, (error) => {
+                            console.error("Error getting location:", error);
+                        });
+                    }
+                }
+            }} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg" style={{
+                backgroundColor: "#1f2937",
+                color: "#ffffff",
+            }}>
+              <MapPin className="w-4 h-4"/>
+            </Button>
+            <Button onClick={() => {
+                if (map) {
+                    map.panTo({ lat: 40.7128, lng: -74.006 });
+                    map.setZoom(2);
+                }
+            }} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg" style={{
+                backgroundColor: "#1f2937",
+                color: "#ffffff",
+            }}>
+              <RotateCcw className="w-4 h-4"/>
+            </Button>
+          </div>
+        </>)}
+
+      <section id="map" className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}>
+      <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header for normal view */}
+        <div className="text-center mb-16">
+          <h2 className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}>
+            GLOBAL LISTENERS
+          </h2>
+          <p className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}>
+            See where metal fans are tuning in from around the world in
+            real-time.
+          </p>
+
+          {/* Weather Information Display */}
+          {weather && (<div className="mb-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}/>
+                <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  {weather.location}
+                </span>
+              </div>
+              <div className="flex items-center justify-center gap-1.5">
+                <img src={getWeatherIcon(weather.description, weather.icon.includes("d"))} alt={weather.description} className="w-12 h-12 flex-shrink-0" style={{ width: "48px", height: "48px" }}/>
+                <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  {Math.round(weather.temperature)}°F
+                </span>
+                <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  {weather.description}
+                </span>
+              </div>
+            </div>)}
+
+          {/* Loading state for weather */}
+          {weatherLoading && (<div className="mb-4">
+              <div className="flex items-center justify-center gap-2">
+                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}/>
+                <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  Loading weather...
+                </span>
+              </div>
+            </div>)}
+        </div>
+
+        {/* Map Container */}
+        <div className={`relative mb-16 transition-all duration-500 ease-in-out ${isFullscreen
+            ? "fixed inset-0 z-[9999] mb-0"
+            : "h-[600px]"}`}>
+          <div ref={mapRef} className={`map-container w-full h-full transition-all duration-500 ease-in-out ${isFullscreen ? "opacity-100" : "rounded-lg opacity-100"}`} style={{
+            minHeight: isFullscreen ? "100vh" : "400px",
+            backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+        }}/>
+
+          {/* Map Controls */}
+          <div className={`absolute ${isFullscreen ? "top-20 right-8" : "top-4 right-4"} z-10 flex flex-col gap-2`}>
+            <Button onClick={() => {
+            if (map) {
+                map.setZoom(map.getZoom() + 1);
+            }
+        }} size="sm" className={`p-2 ${isDarkMode
+            ? "bg-gray-800 hover:bg-gray-700 text-white"
+            : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`} style={{
+            backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+            color: isDarkMode ? "#ffffff" : "#000000",
+        }}>
+              <ZoomIn className="w-4 h-4"/>
+            </Button>
+            <Button onClick={() => {
+            if (map) {
+                map.setZoom(map.getZoom() - 1);
+            }
+        }} size="sm" className={`p-2 ${isDarkMode
+            ? "bg-gray-800 hover:bg-gray-700 text-white"
+            : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`} style={{
+            backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+            color: isDarkMode ? "#ffffff" : "#000000",
+        }}>
+              <ZoomOut className="w-4 h-4"/>
+            </Button>
+            <Button onClick={() => {
+            if (userLocation) {
+                if (map) {
+                    map.panTo(userLocation);
+                    map.setZoom(12);
+                }
+            }
+            else {
+                // Request location if not available
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        const newLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        setUserLocation(newLocation);
+                        if (map) {
+                            map.panTo(newLocation);
+                            map.setZoom(12);
+                        }
+                    }, (error) => {
+                        console.error("Error getting location:", error);
+                    });
+                }
+            }
+        }} size="sm" className={`p-2 ${isDarkMode
+            ? "bg-gray-800 hover:bg-gray-700 text-white"
+            : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`} style={{
+            backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+            color: isDarkMode ? "#ffffff" : "#000000",
+        }}>
+              <MapPin className="w-4 h-4"/>
+            </Button>
+            <Button onClick={() => {
+            if (map) {
+                map.panTo({ lat: 40.7128, lng: -74.006 });
+                map.setZoom(2);
+            }
+        }} size="sm" className={`p-2 ${isDarkMode
+            ? "bg-gray-800 hover:bg-gray-700 text-white"
+            : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg`} style={{
+            backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+            color: isDarkMode ? "#ffffff" : "#000000",
+        }}>
+              <RotateCcw className="w-4 h-4"/>
+            </Button>
+            {!isFullscreen && (<button onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFullscreen(true);
+                return false;
+            }} type="button" className={`p-2 ${isDarkMode
+                ? "bg-gray-800 hover:bg-gray-700 text-white"
+                : "bg-white hover:bg-gray-50 text-black"} border-0 shadow-lg rounded transition-colors`} style={{
+                backgroundColor: isDarkMode ? "#1f2937" : "#ffffff",
+                color: isDarkMode ? "#ffffff" : "#000000",
+            }}>
+                <Maximize2 className="w-4 h-4"/>
+              </button>)}
+          </div>
+        </div>
+
+        {/* Statistics Layout - positioned below map */}
+        {!isFullscreen && (<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Live Statistics - Left Side with Vertical Layout */}
+          <Card className="transition-all duration-300 border-2 hover:shadow-lg" style={{
+                backgroundColor: isDarkMode ? "#000000" : "#ffffff",
+                borderColor: colors.primary
+            }}>
+            <CardContent className="p-6 h-full flex flex-col">
+              <h3 className="font-black text-xl mb-6 text-center" style={{ color: colors.primary }}>
+                Live Statistics
+              </h3>
+              <div className="grid grid-cols-3 gap-4 flex-1 items-center">
+                {/* Active Listeners */}
+                <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
+                  <div className="relative">
+                    <AnimatedCounter value={liveStats?.activeListeners || totalListeners} className="font-black text-4xl tracking-tight" style={{ color: colors.primary }}/>
+                    <div className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm" style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}/>
+                  </div>
+                  <TrendingUp className="h-8 w-8 drop-shadow-md" style={{ color: colors.primary }}/>
+                  <span className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}>
+                    Active Listeners
+                  </span>
+                </div>
+
+                {/* Countries */}
+                <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
+                  <div className="relative">
+                    <AnimatedCounter value={liveStats?.countries || countriesWithListeners} className="font-black text-4xl tracking-tight" style={{ color: colors.primary }}/>
+                    <div className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm" style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}/>
+                  </div>
+                  <img src={CountriesIconPath} alt="Countries" className="h-8 w-8 drop-shadow-md" style={{
+                filter: getIconFilter(colors.primary),
+            }}/>
+                  <span className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}>
+                    Countries
+                  </span>
+                </div>
+
+                {/* Total Listeners */}
+                <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
+                  <div className="relative">
+                    <AnimatedCounter value={liveStats?.totalListeners || stats?.currentListeners || 1247} className="font-black text-4xl tracking-tight" style={{ color: colors.primary }}/>
+                    <div className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm" style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}/>
+                  </div>
+                  <img src={LiveNowIconPath} alt="Total Listeners" className="h-8 w-8 drop-shadow-md" style={{
+                filter: getIconFilter(colors.primary),
+            }}/>
+                  <span className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}>
+                    Total Listeners
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Active Locations - Combined Single Box */}
+          <div className="lg:col-span-2">
+            <Card className="transition-all duration-300 border-2 h-full hover:shadow-lg" style={{
+                backgroundColor: isDarkMode ? "#000000" : "#ffffff",
+                borderColor: colors.primary
+            }}>
+              <CardContent className="p-6 h-full flex flex-col">
+                <h3 className="font-black text-xl mb-6 text-center" style={{ color: colors.primary }}>
+                  Active Locations
+                </h3>
+                <div className="grid grid-cols-2 gap-5 flex-1 items-center">
+                  {/* First Column (1-5) */}
+                  <div className="space-y-3 transform scale-115">
+                    {top10Listeners
+                .filter((l) => l.isActive)
+                .slice(0, 5)
+                .map((listener, index) => (<div key={listener.id} className="flex items-center p-3 rounded transition-colors duration-200 hover:bg-opacity-10">
+                          <div className="flex items-center gap-2 flex-1">
+                            <span className="font-black text-base w-7 text-center" style={{ color: colors.primary }}>
+                              #{index + 1}
+                            </span>
+                            <MapPin className="h-6 w-6" style={{ color: colors.primary }}/>
+                            <div className="flex-1">
+                              <div className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}>
+                                {listener.city}
+                              </div>
+                              <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                {listener.country}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="w-2 h-2 rounded-full animate-pulse ml-2" style={{
+                    backgroundColor: colors.primary,
+                    animation: 'pulse 2s ease-in-out infinite'
+                }}/>
+                        </div>))}
+                  </div>
+
+                  {/* Second Column (6-10) */}
+                  <div className="space-y-3 transform scale-115">
+                    {top10Listeners
+                .filter((l) => l.isActive)
+                .slice(5, 10)
+                .map((listener, index) => (<div key={listener.id} className="flex items-center p-3 rounded transition-colors duration-200 hover:bg-opacity-10">
+                          <div className="flex items-center gap-2 flex-1">
+                            <span className="font-black text-base w-7 text-center" style={{ color: colors.primary }}>
+                              #{index + 6}
+                            </span>
+                            <MapPin className="h-6 w-6" style={{ color: colors.primary }}/>
+                            <div className="flex-1">
+                              <div className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}>
+                                {listener.city}
+                              </div>
+                              <div className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                                {listener.country}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="w-2 h-2 rounded-full animate-pulse ml-2" style={{
+                    backgroundColor: colors.primary,
+                    animation: 'pulse 2s ease-in-out infinite'
+                }}/>
+                        </div>))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>)}
+      </div>
+    </section>
+    </>);
+}
