@@ -373,58 +373,15 @@ const GoogleMapWithListeners = ({
           marker.addListener("click", () => {
             console.log('Marker clicked:', listener.city);
             
-            // Animate marker selection with pulsing effect
-            const originalContent = marker.content;
-            
-            // Create animated content for selection
-            const selectedContent = document.createElement('div');
-            selectedContent.innerHTML = `
-              <svg width="32" height="32" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="8" fill="${colors.primary}" opacity="1" stroke="${isDarkMode ? "#ffffff" : "#000000"}" stroke-width="3">
-                  <animate attributeName="r" values="8;12;8" dur="1s" repeatCount="indefinite"/>
-                </circle>
-              </svg>
-            `;
-            
-            // Apply animated content
-            marker.content = selectedContent;
-            
-            // Smooth zoom animation to the clicked location
+            // Simple zoom and pan to clicked location
             if (map) {
+              // Center the map on the clicked location
               map.panTo({ lat: listener.lat, lng: listener.lng });
               
-              // Smooth zoom transition
-              const currentZoom = map.getZoom();
-              let targetZoom = 8;
-              if (currentZoom < 8) {
-                targetZoom = 8; // Zoom level 8 for a good city view
-              } else if (currentZoom < 12) {
-                targetZoom = 12; // Zoom closer if already at city level
-              }
-              
-              // Animate zoom with smooth transition
-              const zoomAnimation = () => {
-                const startZoom = map.getZoom();
-                const zoomDiff = targetZoom - startZoom;
-                let progress = 0;
-                
-                const animateZoom = () => {
-                  progress += 0.1;
-                  if (progress <= 1) {
-                    const currentZoomLevel = startZoom + (zoomDiff * progress);
-                    map.setZoom(currentZoomLevel);
-                    requestAnimationFrame(animateZoom);
-                  } else {
-                    map.setZoom(targetZoom);
-                  }
-                };
-                
-                if (Math.abs(zoomDiff) > 0.1) {
-                  requestAnimationFrame(animateZoom);
-                }
-              };
-              
-              setTimeout(zoomAnimation, 300); // Start zoom after pan animation
+              // Set appropriate zoom level
+              const currentZoom = map.getZoom() || 2;
+              const targetZoom = currentZoom < 6 ? 6 : 8;
+              map.setZoom(targetZoom);
             }
             
             // Reset user location selection when clicking on another listener

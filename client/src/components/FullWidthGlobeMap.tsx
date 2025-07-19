@@ -727,142 +727,61 @@ export default function FullWidthGlobeMap() {
             },
           });
 
-          // Add click listener for popup
+          // Add click listener for zoom and popup
           marker.addListener("click", () => {
+            console.log(`Marker clicked: ${listener.city}, ${listener.country}`);
+            
             // Close any existing overlay
             if (currentInfoWindow.current) {
               currentInfoWindow.current.setMap(null);
             }
 
-            // Create custom overlay with dynamic theme colors
-            class CustomOverlay extends google.maps.OverlayView {
-              private position: google.maps.LatLng;
-              private div?: HTMLDivElement;
-              private listener: any;
-
-              constructor(position: google.maps.LatLng, listener: any) {
-                super();
-                this.position = position;
-                this.listener = listener;
-              }
-
-              onAdd() {
-                const div = document.createElement("div");
-                div.style.cssText = `
-                  position: absolute;
-                  background: #1f2937;
-                  color: #ffffff;
-                  border-radius: 12px;
-                  padding: 16px;
-                  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-                  border: 2px solid ${colors.primary};
-                  min-width: 200px;
-                  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                  z-index: 1000;
-                  pointer-events: auto;
-                  opacity: 0;
-                  transform: translateY(10px);
-                  transition: all 0.3s ease;
-                `;
-
-                // Create close button
-                const closeButton = document.createElement("button");
-                closeButton.style.cssText = `
-                  position: absolute;
-                  top: 8px;
-                  right: 8px;
-                  background: transparent;
-                  border: none;
-                  color: #ffffff;
-                  font-size: 18px;
-                  cursor: pointer;
-                  width: 24px;
-                  height: 24px;
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  transition: all 0.2s ease;
-                `;
-                closeButton.textContent = "×";
-
-                // Create title
-                const title = document.createElement("h3");
-                title.style.cssText = `
-                  margin: 0;
-                  font-size: 16px;
-                  font-weight: 700;
-                  color: ${colors.primary};
-                `;
-                title.textContent = `${this.listener.city}, ${this.listener.country}`;
-
-                // Create description
-                const description = document.createElement("p");
-                description.style.cssText = `
-                  margin: 0;
-                  font-size: 14px;
-                  color: #e5e5e5;
-                  font-weight: 500;
-                `;
-                description.textContent = "🎵 Currently listening to metal!";
-
-                // Assemble the structure
-                div.appendChild(closeButton);
-                div.appendChild(title);
-                div.appendChild(description);
-
-                this.div = div;
-
-                // Add close button functionality
-                closeButton.addEventListener("click", (e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  this.setMap(null);
-                  if (currentInfoWindow.current === this) {
-                    currentInfoWindow.current = null;
-                  }
-                });
-
-                // Add to map
-                const panes = this.getPanes();
-                if (panes) {
-                  panes.overlayMouseTarget.appendChild(div);
-                }
-
-                // Animate in
-                setTimeout(() => {
-                  div.style.opacity = "1";
-                  div.style.transform = "translateY(0)";
-                }, 10);
-              }
-
-              draw() {
-                if (this.div) {
-                  const overlayProjection = this.getProjection();
-                  if (overlayProjection) {
-                    const position = overlayProjection.fromLatLngToDivPixel(this.position);
-                    if (position) {
-                      this.div.style.left = position.x - 100 + "px";
-                      this.div.style.top = position.y - 120 + "px";
-                    }
-                  }
-                }
-              }
-
-              onRemove() {
-                if (this.div && this.div.parentNode) {
-                  this.div.parentNode.removeChild(this.div);
-                  this.div = undefined;
-                }
-              }
+            // Pan and zoom to marker location
+            mapInstance.panTo({ lat: listener.lat, lng: listener.lng });
+            
+            // Set appropriate zoom level
+            const currentZoom = mapInstance.getZoom() || 2;
+            if (currentZoom < 6) {
+              mapInstance.setZoom(6);
+            } else if (currentZoom < 8) {
+              mapInstance.setZoom(8);
             }
 
-            // Create and show overlay
-            const overlay = new CustomOverlay(
-              new google.maps.LatLng(listener.lat, listener.lng),
-              listener
-            );
-            overlay.setMap(mapInstance);
-            currentInfoWindow.current = overlay;
+            // Animate marker with bounce effect
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(() => {
+              marker.setAnimation(null);
+            }, 1500);
+
+            // Create simple InfoWindow instead of custom overlay
+            const infoWindow = new google.maps.InfoWindow({
+              content: `
+                <div style="
+                  background: ${isDarkMode ? '#1f2937' : '#ffffff'};
+                  color: ${isDarkMode ? '#ffffff' : '#1f2937'};
+                  padding: 12px;
+                  border-radius: 8px;
+                  font-size: 14px;
+                  font-weight: 600;
+                  border: 2px solid ${colors.primary};
+                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                  min-width: 120px;
+                  text-align: center;
+                  margin: 0;
+                ">
+                  <div style="margin-bottom: 4px;">🎧 Active Listener</div>
+                  <div style="color: ${colors.primary};">${listener.city}</div>
+                  <div style="font-size: 12px; color: ${isDarkMode ? '#9ca3af' : '#6b7280'};">${listener.country}</div>
+                </div>
+              `,
+              maxWidth: 200,
+            });
+            
+            // Open info window with small delay for smoother animation
+            setTimeout(() => {
+              infoWindow.open(mapInstance, marker);
+              currentInfoWindow.current = infoWindow;
+            }, 300);
           });
         });
       };
@@ -871,24 +790,69 @@ export default function FullWidthGlobeMap() {
       google.maps.event.addListenerOnce(mapInstance, 'idle', () => {
         console.log('Map is fully loaded, adding markers...');
         
-        // Add user location marker if available
+        // Add user location marker with pulsing animation
         if (userLocation) {
           console.log('Adding user location marker at:', userLocation);
+          
+          // Create pulsing blue dot for user location
+          const userLocationSvg = `
+            <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="16" cy="16" r="8" fill="#2563eb" opacity="0.3">
+                <animate attributeName="r" values="8;16;8" dur="2s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.3;0.1;0.3" dur="2s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="16" cy="16" r="6" fill="#2563eb" opacity="0.6">
+                <animate attributeName="r" values="6;10;6" dur="1.5s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.6;0.3;0.6" dur="1.5s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="16" cy="16" r="4" fill="#2563eb" opacity="1">
+                <animate attributeName="opacity" values="1;0.8;1" dur="1s" repeatCount="indefinite"/>
+              </circle>
+            </svg>
+          `;
+          
           const userMarker = new google.maps.Marker({
             position: userLocation,
             map: mapInstance,
             title: "Your Location",
             icon: {
-              url: "data:image/svg+xml;base64," + btoa(`
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="3" fill="#2563eb"/>
-                  <circle cx="12" cy="12" r="10" fill="none" stroke="#2563eb" stroke-width="2" opacity="0.3"/>
-                  <circle cx="12" cy="12" r="6" fill="none" stroke="#2563eb" stroke-width="1" opacity="0.5"/>
-                </svg>
-              `),
-              scaledSize: new google.maps.Size(24, 24),
-              anchor: new google.maps.Point(12, 12),
+              url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(userLocationSvg),
+              scaledSize: new google.maps.Size(32, 32),
+              anchor: new google.maps.Point(16, 16),
             },
+            zIndex: 1000, // Ensure it appears above other markers
+          });
+          
+          // Add click listener for user location marker
+          userMarker.addListener("click", () => {
+            const userInfoWindow = new google.maps.InfoWindow({
+              content: `
+                <div style="
+                  background: ${isDarkMode ? '#1f2937' : '#ffffff'};
+                  color: ${isDarkMode ? '#ffffff' : '#1f2937'};
+                  padding: 12px;
+                  border-radius: 8px;
+                  font-size: 14px;
+                  font-weight: 600;
+                  border: 2px solid #2563eb;
+                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                  min-width: 120px;
+                  text-align: center;
+                ">
+                  <div style="margin-bottom: 4px;">📍 This is you!</div>
+                  <div style="font-size: 12px; color: ${isDarkMode ? '#9ca3af' : '#6b7280'};">Your current location</div>
+                </div>
+              `,
+              maxWidth: 200,
+            });
+            
+            // Close other info windows
+            if (currentInfoWindow.current) {
+              currentInfoWindow.current.setMap(null);
+            }
+            
+            userInfoWindow.open(mapInstance, userMarker);
+            currentInfoWindow.current = userInfoWindow;
           });
         }
         
