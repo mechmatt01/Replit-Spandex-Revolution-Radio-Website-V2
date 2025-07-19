@@ -110,10 +110,38 @@ export default function StickyPlayer() {
               <div className="hidden sm:flex items-center justify-center flex-1 mx-2">
                 <div className="flex items-center space-x-2">
                   <Volume2 
-                    className="text-gray-400 h-3 w-3 cursor-pointer hover:text-gray-300 transition-colors" 
+                    className="h-3 w-3 cursor-pointer transition-colors" 
+                    style={{
+                      color: isMuted 
+                        ? '#ef4444'  // Red for muted
+                        : currentTheme === 'light-mode' 
+                          ? '#4b5563'  // Gray for light mode
+                          : '#9ca3af'  // Light gray for dark modes
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isMuted) {
+                        e.currentTarget.style.color = currentTheme === 'light-mode' 
+                          ? '#374151' 
+                          : '#d1d5db';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = isMuted 
+                        ? '#ef4444'
+                        : currentTheme === 'light-mode' 
+                          ? '#4b5563'
+                          : '#9ca3af';
+                    }}
                     onClick={toggleMute}
                   />
-                  <div className="w-16 h-1 bg-gray-700 rounded-full relative">
+                  <div 
+                    className="w-16 h-1 rounded-full relative"
+                    style={{
+                      backgroundColor: currentTheme === 'light-mode' 
+                        ? '#d1d5db'  // Light gray for light mode
+                        : '#374151'  // Dark gray for dark modes
+                    }}
+                  >
                     <div
                       className="h-1 rounded-full transition-all duration-150"
                       style={{
@@ -130,7 +158,14 @@ export default function StickyPlayer() {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                   </div>
-                  <span className="text-xs text-gray-400 font-medium min-w-[20px] text-center">
+                  <span 
+                    className="text-xs font-medium min-w-[20px] text-center"
+                    style={{
+                      color: currentTheme === 'light-mode' 
+                        ? '#6b7280'  // Gray for light mode
+                        : '#9ca3af'  // Light gray for dark modes
+                    }}
+                  >
                     {Math.round((isMuted ? 0 : volume) * 100)}%
                   </span>
                 </div>

@@ -90,7 +90,7 @@ export default function RadioCoPlayer() {
     currentStation,
   } = useRadio();
 
-  const { getColors, getGradient } = useTheme();
+  const { getColors, getGradient, currentTheme } = useTheme();
   const colors = getColors();
 
   const [isStationDropdownOpen, setIsStationDropdownOpen] = useState(false);
@@ -525,16 +525,36 @@ export default function RadioCoPlayer() {
                 onClick={toggleMute}
                 variant="ghost"
                 size="sm"
-                className="text-white hover:bg-white/10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105"
+                className="rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105"
                 style={{
+                  color: isMuted 
+                    ? '#ef4444'  // Red for muted
+                    : currentTheme === 'light-mode' 
+                      ? '#1f2937'  // Dark gray for light mode
+                      : '#ffffff', // White for dark modes
                   background:
                     isMuted || volume === 0
                       ? `${colors.primary}40`
-                      : "rgba(255, 255, 255, 0.05)",
+                      : currentTheme === 'light-mode'
+                        ? "rgba(0, 0, 0, 0.05)"
+                        : "rgba(255, 255, 255, 0.05)",
                   backdropFilter: "blur(20px)",
                   padding: "5px",
                   width: "auto",
                   height: "auto",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = currentTheme === 'light-mode' 
+                    ? 'rgba(0, 0, 0, 0.1)' 
+                    : 'rgba(255, 255, 255, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 
+                    isMuted || volume === 0
+                      ? `${colors.primary}40`
+                      : currentTheme === 'light-mode'
+                        ? "rgba(0, 0, 0, 0.05)"
+                        : "rgba(255, 255, 255, 0.05)";
                 }}
                 aria-label={isMuted ? "Unmute" : "Mute"}
               >
@@ -605,7 +625,14 @@ export default function RadioCoPlayer() {
               >
                 {/* Volume slider - exact same as floating player but bigger */}
                 <div className="flex items-center space-x-2">
-                  <div className="w-32 h-2 bg-gray-700 rounded-full relative">
+                  <div 
+                    className="w-32 h-2 rounded-full relative"
+                    style={{
+                      backgroundColor: currentTheme === 'light-mode' 
+                        ? '#d1d5db'  // Light gray for light mode
+                        : '#374151'  // Dark gray for dark modes
+                    }}
+                  >
                     <div
                       className="h-2 rounded-full transition-all duration-150"
                       style={{
@@ -628,7 +655,14 @@ export default function RadioCoPlayer() {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     />
                   </div>
-                  <span className="text-xs text-gray-400 font-medium min-w-[30px] text-center">
+                  <span 
+                    className="text-xs font-medium min-w-[30px] text-center"
+                    style={{
+                      color: currentTheme === 'light-mode' 
+                        ? '#6b7280'  // Gray for light mode
+                        : '#9ca3af'  // Light gray for dark modes
+                    }}
+                  >
                     {Math.round((isMuted ? 0 : volume) * 100)}%
                   </span>
                 </div>

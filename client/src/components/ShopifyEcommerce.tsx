@@ -455,7 +455,12 @@ function ProductCard({
                 }`}
               />
             ))}
-            <span className="text-gray-400 text-sm font-semibold ml-2">
+            <span 
+              className="text-sm font-semibold ml-2"
+              style={{ 
+                color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+              }}
+            >
               ({product.reviewCount})
             </span>
           </div>
@@ -464,7 +469,12 @@ function ProductCard({
               ${product.price}
             </span>
             {product.compareAtPrice && (
-              <span className="text-gray-500 line-through ml-2">
+              <span 
+                className="line-through ml-2"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                }}
+              >
                 ${product.compareAtPrice}
               </span>
             )}
@@ -598,7 +608,12 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                     />
                   ))}
                 </div>
-                <span className="text-gray-400 font-semibold ml-2">
+                <span 
+                  className="font-semibold ml-2"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                  }}
+                >
                   {product.rating} ({product.reviewCount} reviews)
                 </span>
               </div>
@@ -608,7 +623,12 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                   ${selectedVariant.price}
                 </span>
                 {product.compareAtPrice && (
-                  <span className="text-gray-500 line-through ml-2">
+                  <span 
+                    className="line-through ml-2"
+                    style={{ 
+                      color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                    }}
+                  >
                     ${product.compareAtPrice}
                   </span>
                 )}

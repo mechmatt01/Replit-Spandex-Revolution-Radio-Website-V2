@@ -145,7 +145,12 @@ export default function Hero() {
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
                 {countdown.days}
               </div>
-              <div className="text-xs text-gray-400 opacity-65 font-semibold">
+              <div 
+                className="text-xs opacity-65 font-semibold"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                }}
+              >
                 DAYS
               </div>
             </div>
@@ -153,7 +158,12 @@ export default function Hero() {
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
                 {countdown.hours}
               </div>
-              <div className="text-xs text-gray-400 opacity-65 font-semibold">
+              <div 
+                className="text-xs opacity-65 font-semibold"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                }}
+              >
                 HOURS
               </div>
             </div>
@@ -161,7 +171,12 @@ export default function Hero() {
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
                 {countdown.minutes}
               </div>
-              <div className="text-xs text-gray-400 opacity-65 font-semibold">
+              <div 
+                className="text-xs opacity-65 font-semibold"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                }}
+              >
                 MINS
               </div>
             </div>
@@ -169,7 +184,12 @@ export default function Hero() {
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
                 {countdown.seconds}
               </div>
-              <div className="text-xs text-gray-400 opacity-65 font-semibold">
+              <div 
+                className="text-xs opacity-65 font-semibold"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                }}
+              >
                 SECS
               </div>
             </div>
