@@ -20,7 +20,7 @@ export default function Hero() {
   });
 
   useEffect(() => {
-    const launchDate = new Date("2025-07-14T00:00:00").getTime();
+    const launchDate = new Date("2025-07-31T12:00:00").getTime();
 
     const updateCountdown = () => {
       const now = new Date().getTime();
