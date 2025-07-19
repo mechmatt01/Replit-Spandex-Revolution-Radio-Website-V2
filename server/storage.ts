@@ -445,7 +445,6 @@ export class DatabaseStorage implements IStorage {
       .set({
         accountDeletionScheduled: true,
         accountDeletionDate: deletionDate,
-        updatedAt: new Date(),
       })
       .where(eq(users.id, id))
       .returning();
@@ -483,10 +482,7 @@ export class DatabaseStorage implements IStorage {
 
   async updateRadioStation(id: number, updates: Partial<InsertRadioStation>): Promise<RadioStation | undefined> {
     const [station] = await db.update(radioStations)
-      .set({
-        ...updates,
-        updatedAt: new Date(),
-      })
+      .set(updates)
       .where(eq(radioStations.id, id))
       .returning();
     return station;
@@ -500,7 +496,6 @@ export class DatabaseStorage implements IStorage {
     const [station] = await db.update(radioStations)
       .set({
         sortOrder,
-        updatedAt: new Date(),
       })
       .where(eq(radioStations.id, id))
       .returning();

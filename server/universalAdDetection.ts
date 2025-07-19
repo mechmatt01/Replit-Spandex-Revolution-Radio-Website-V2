@@ -128,11 +128,7 @@ export class UniversalAdDetector {
   private async performAudioDetection(station: RadioStation, metadata?: StreamMetadata): Promise<UniversalAdDetectionResult> {
     try {
       // Use existing audio detection system
-      const audioResult = await detectAdContent(station.streamUrl, {
-        stationId: station.stationId,
-        apiType: station.apiType,
-        apiUrl: station.apiUrl || undefined
-      });
+      const audioResult = await detectAdContent(station.streamUrl);
 
       return {
         isAd: audioResult.isAd,
@@ -326,7 +322,7 @@ export class UniversalAdDetector {
         const metadata = await this.fetchStationMetadata(tempStation);
         if (metadata) {
           // Update station with detected API type
-          await storage.updateRadioStation(station.id, { apiType });
+          await storage.updateRadioStation(station.id, { apiType: apiType as "triton" | "streamtheworld" | "somafm" | "custom" | "auto" });
           return metadata;
         }
       } catch (error) {
