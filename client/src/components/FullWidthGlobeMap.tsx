@@ -459,10 +459,8 @@ export default function FullWidthGlobeMap() {
     console.log(`Toggling fullscreen: ${enable}`);
 
     // Prevent default behavior and event propagation
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+    event?.preventDefault();
+    event?.stopPropagation();
 
     // Close any open info windows when toggling fullscreen
     if (currentInfoWindow.current) {
@@ -1501,6 +1499,7 @@ export default function FullWidthGlobeMap() {
                 } else {
                   console.log('Map not available for zoom in');
                 }
+                return false;
               }}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
@@ -1535,6 +1534,7 @@ export default function FullWidthGlobeMap() {
                 } else {
                   console.log('Map not available for zoom out');
                 }
+                return false;
               }}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
@@ -1609,6 +1609,7 @@ export default function FullWidthGlobeMap() {
                 } else {
                   console.log('Map not available for location');
                 }
+                return false;
               }}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
@@ -1642,6 +1643,7 @@ export default function FullWidthGlobeMap() {
                 } else {
                   console.log('Map not available for reset');
                 }
+                return false;
               }}
               className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
               style={{
