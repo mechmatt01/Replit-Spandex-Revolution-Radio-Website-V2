@@ -456,14 +456,29 @@ export default function FullWidthGlobeMap() {
 
   // Handle fullscreen toggle with proper map resizing - FIXED VERSION
   const toggleFullscreen = (enable: boolean) => {
+    console.log(`Toggling fullscreen: ${enable}`);
     setIsFullscreen(enable);
 
-    // Trigger map resize after state change without affecting body position
+    // Prevent/allow body scrolling
+    if (enable) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.top = '0';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.top = '';
+    }
+
+    // Trigger map resize after state change
     setTimeout(() => {
       if (map) {
         google.maps.event.trigger(map, 'resize');
+        console.log('Map resize triggered');
       }
-    }, 50);
+    }, 100);
   };
 
   // Fetch Google Maps API key and config
@@ -1392,12 +1407,16 @@ export default function FullWidthGlobeMap() {
         {/* Map Container */}
         <div className={`relative mb-16 transition-all duration-700 ease-in-out transform-gpu ${
           isFullscreen 
-            ? "fixed inset-0 z-[9998] mb-0" 
+            ? "fixed inset-0 z-[9999] mb-0" 
             : "h-[600px]"
         }`}
         style={{
           top: isFullscreen ? "0" : "auto",
-          backgroundColor: isFullscreen ? "rgba(0,0,0,0.9)" : "transparent"
+          left: isFullscreen ? "0" : "auto",
+          right: isFullscreen ? "0" : "auto", 
+          bottom: isFullscreen ? "0" : "auto",
+          backgroundColor: isFullscreen ? "rgba(0,0,0,1)" : "transparent",
+          overflow: isFullscreen ? "hidden" : "visible"
         }}>
           <div
             ref={mapRef}
@@ -1406,12 +1425,13 @@ export default function FullWidthGlobeMap() {
             }`}
             style={{
               height: isFullscreen ? "100vh" : "600px",
+              width: isFullscreen ? "100vw" : "100%",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
             }}
           />
 
           {/* Expand/Close Button - Top Left Corner */}
-          <div className={`absolute ${isFullscreen ? "top-20" : "top-4"} left-4 z-10 transition-all duration-700`}>
+          <div className={`absolute ${isFullscreen ? "top-4 left-4 z-[10000]" : "top-4 left-4 z-10"} transition-all duration-700`}>
             <Button
               onClick={(e) => {
                 e.preventDefault();
@@ -1420,21 +1440,21 @@ export default function FullWidthGlobeMap() {
                 return false;
               }}
               size="sm"
-              className={`p-2 border-0 shadow-lg rounded-lg transition-all duration-300 ${
+              className={`p-3 border-0 shadow-xl rounded-lg transition-all duration-300 ${
                 isFullscreen 
-                  ? "bg-red-600 hover:bg-red-700" 
-                  : "bg-gray-800 hover:bg-gray-700"
-              } text-white`}
+                  ? "bg-red-600 hover:bg-red-700 text-white scale-110" 
+                  : "bg-gray-800 hover:bg-gray-700 text-white"
+              }`}
               style={{
-                minWidth: "40px",
-                minHeight: "40px",
+                minWidth: isFullscreen ? "48px" : "40px",
+                minHeight: isFullscreen ? "48px" : "40px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
               }}
             >
               {isFullscreen ? (
-                <Minimize2 className="w-4 h-4" />
+                <Minimize2 className="w-5 h-5" />
               ) : (
                 <Maximize2 className="w-4 h-4" />
               )}
@@ -1442,7 +1462,7 @@ export default function FullWidthGlobeMap() {
           </div>
 
           {/* Map Controls - Animate to edges in fullscreen */}
-          <div className={`absolute ${isFullscreen ? "top-20 right-8" : "top-4 right-4"} z-10 flex flex-col gap-2 transition-all duration-700`}>
+          <div className={`absolute ${isFullscreen ? "top-4 right-4 z-[10000]" : "top-4 right-4 z-10"} flex flex-col gap-2 transition-all duration-700`}>
             <Button
               onClick={() => {
                 if (map) {
