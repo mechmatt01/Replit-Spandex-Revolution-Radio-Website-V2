@@ -754,23 +754,20 @@ export default function FullWidthGlobeMap() {
               marker.setAnimation(null);
             }, 1500);
 
-            // Create InfoWindow with minimal styling for better compatibility
+            // Create InfoWindow with no inline styles to avoid CSP issues
             const infoWindow = new google.maps.InfoWindow({
               content: `
-                <div style="padding: 8px; text-align: center;">
+                <div>
                   <div>🎧 Active Listener</div>
-                  <div style="font-weight: bold; color: #e67e22;">${listener.city}</div>
+                  <div><strong>${listener.city}</strong></div>
                   <div>${listener.country}</div>
                 </div>
               `,
-              maxWidth: 160,
             });
             
-            // Open info window with small delay for smoother animation
-            setTimeout(() => {
-              infoWindow.open(mapInstance, marker);
-              currentInfoWindow.current = infoWindow;
-            }, 300);
+            // Open info window immediately after creation
+            infoWindow.open(mapInstance, marker);
+            currentInfoWindow.current = infoWindow;
           });
         });
       };
