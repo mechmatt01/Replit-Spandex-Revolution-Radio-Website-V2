@@ -1570,7 +1570,7 @@ export default function FullWidthGlobeMap() {
 
           {/* Additional left-side controls for fullscreen */}
           {isFullscreen && (
-            <div className="absolute top-20 left-20 z-10 flex flex-col gap-2 transition-all duration-700">
+            <div className="absolute bottom-4 left-4 z-[10000] flex flex-col gap-2 transition-all duration-700">
               <Button
                 onClick={() => {
                   if (userLocation) {
@@ -1601,13 +1601,15 @@ export default function FullWidthGlobeMap() {
                   }
                 }}
                 size="sm"
-                className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+                className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 scale-110"
                 style={{
                   backgroundColor: "#1f2937",
                   color: "#ffffff",
+                  minWidth: "48px",
+                  minHeight: "48px",
                 }}
               >
-                <MapPin className="w-4 h-4" />
+                <MapPin className="w-5 h-5" />
               </Button>
               <Button
                 onClick={() => {
@@ -1617,13 +1619,15 @@ export default function FullWidthGlobeMap() {
                   }
                 }}
                 size="sm"
-                className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg"
+                className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 scale-110"
                 style={{
                   backgroundColor: "#1f2937",
                   color: "#ffffff",
+                  minWidth: "48px",
+                  minHeight: "48px",
                 }}
               >
-                <RotateCcw className="w-4 h-4" />
+                <RotateCcw className="w-5 h-5" />
               </Button>
             </div>
           )}
