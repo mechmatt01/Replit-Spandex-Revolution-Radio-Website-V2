@@ -20,6 +20,7 @@ import {
   Pause,
   MapPin,
   TrendingUp,
+  Users,
 } from "lucide-react";
 import CountriesIconPath from "@assets/CountriesIcon.png";
 import LiveNowIconPath from "@assets/LiveNowIcon.png";
@@ -1418,13 +1419,9 @@ export default function FullWidthGlobeMap() {
                       style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
                     />
                   </div>
-                  <img
-                    src={CountriesIconPath}
-                    alt="Countries"
+                  <MapPin
                     className="h-8 w-8 drop-shadow-md"
-                    style={{
-                      filter: getIconFilter(colors.primary),
-                    }}
+                    style={{ color: colors.primary }}
                   />
                   <span
                     className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
@@ -1446,13 +1443,9 @@ export default function FullWidthGlobeMap() {
                       style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
                     />
                   </div>
-                  <img
-                    src={LiveNowIconPath}
-                    alt="Total Listeners"
+                  <Users
                     className="h-8 w-8 drop-shadow-md"
-                    style={{
-                      filter: getIconFilter(colors.primary),
-                    }}
+                    style={{ color: colors.primary }}
                   />
                   <span
                     className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}

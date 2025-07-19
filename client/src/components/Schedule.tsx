@@ -314,12 +314,12 @@ export default function Schedule() {
                   pastShows.slice(0, 3).map((show) => (
                   <Card
                     key={show.id}
-                    className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-6"
+                    className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
                     style={{
                       backgroundColor: colors.background,
                       borderColor: `${colors.primary}80`,
                       boxShadow: `0 8px 32px ${colors.primary}20`,
-                      minHeight: "fit-content",
+                      height: "160px",
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.borderColor = colors.primary;
@@ -334,76 +334,85 @@ export default function Schedule() {
                     <CardContent
                       className="p-0"
                       style={{
+                        height: "100%",
                         display: "flex",
-                        flexDirection: "column",
-                        gap: "12px",
+                        flexDirection: "row",
+                        alignItems: "center",
                       }}
                     >
-                      {/* Title */}
-                      <div className="text-center">
-                        <h4 
-                          className="font-black text-lg"
-                          style={{ color: colors.text }}
+                      {/* Left side - Content */}
+                      <div style={{
+                        flex: "1",
+                        display: "flex",
+                        flexDirection: "column",
+                        height: "100%",
+                        justifyContent: "space-between"
+                      }}>
+                        {/* Title and Host */}
+                        <div className="text-center mb-2">
+                          <h4 className="font-black text-lg"
+                            style={{ color: colors.text }}
+                          >
+                            {show.title}
+                          </h4>
+                          <p className="text-gray-500 text-sm font-semibold mt-1">
+                            Hosted by: {show.host || "Spandex Salvation Radio"}
+                          </p>
+                        </div>
+                        
+                        {/* Description */}
+                        <p className="text-gray-400 text-sm font-semibold text-center flex-1 flex items-center justify-center">
+                          {show.description || "Past episode archive"}
+                        </p>
+                        
+                        {/* Date with Duration */}
+                        <div
+                          className="flex items-center justify-center space-x-2"
+                          style={{ marginTop: "auto", paddingTop: "8px" }}
                         >
-                          {show.title}
-                        </h4>
+                          <Calendar className="text-gray-500 h-3 w-3" />
+                          <span className="text-gray-500 text-xs font-bold">
+                            {formatDateWithDuration(show.date, show.duration)}
+                          </span>
+                        </div>
                       </div>
-                      
-                      {/* Description */}
-                      <p 
-                        className="text-sm font-semibold text-center text-gray-400"
-                        style={{ 
-                          minHeight: "40px", 
-                          display: "flex", 
-                          alignItems: "center", 
-                          justifyContent: "center" 
-                        }}
-                      >
-                        {show.description || "Past episode archive"}
-                      </p>
-                      
-                      {/* Circular Play Button */}
-                      <Button
-                        className="mx-auto rounded-full transition-all duration-300 hover:scale-110"
-                        style={{
-                          backgroundColor: colors.primary,
-                          color: "white",
-                          border: "none",
-                          width: "48px",
-                          height: "48px",
-                          minWidth: "48px",
-                          maxWidth: "48px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginTop: "2px",
-                          padding: "0",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
-                          e.currentTarget.style.transform = "scale(1.1)";
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.primary;
-                          e.currentTarget.style.transform = "scale(1)";
-                        }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePastShowSelect(show);
-                        }}
-                      >
-                        <Play className="h-5 w-5" style={{ strokeLinecap: "round", strokeLinejoin: "round" }} fill="currentColor" />
-                      </Button>
-                      
-                      {/* Date with Duration */}
-                      <div
-                        className="flex items-center justify-center space-x-2"
-                        style={{ marginTop: "14px" }}
-                      >
-                        <Calendar className="text-gray-500 h-3 w-3" />
-                        <span className="text-gray-500 text-xs font-bold">
-                          {formatDateWithDuration(show.date, show.duration)}
-                        </span>
+
+                      {/* Right side - Play Button */}
+                      <div style={{
+                        display: "flex",
+                        alignItems: "center",
+                        paddingLeft: "16px"
+                      }}>
+                        <Button
+                          className="rounded-full transition-all duration-300 hover:scale-110"
+                          style={{
+                            backgroundColor: colors.primary,
+                            color: "white",
+                            border: "none",
+                            width: "48px",
+                            height: "48px",
+                            minWidth: "48px",
+                            maxWidth: "48px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: "0",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = colors.secondary || colors.primary;
+                            e.currentTarget.style.transform = "scale(1.1)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = colors.primary;
+                            e.currentTarget.style.transform = "scale(1)";
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePastShowSelect(show);
+                          }}
+                        >
+                          <Play className="h-5 w-5" style={{ strokeLinecap: "round", strokeLinejoin: "round" }} fill="currentColor" />
+                        </Button>
                       </div>
                     </CardContent>
                   </Card>
