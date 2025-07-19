@@ -1,0 +1,18 @@
+# Ignore during Docker builds
+node_modules
+.git
+*.log
+.cache
+/tmp/*
+/dev/shm/*
+/proc/*
+/sys/*
+*.pulse
+pulse-*
+.env.local
+.env.*.local
+coverage
+.nyc_output
+*.pid
+*.seed
+*.pid.lock

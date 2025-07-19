@@ -18,49 +18,10 @@ try {
   process.exit(1);
 }
 
-// Step 2: Build the backend
+// Step 2: Build the backend using TypeScript
 console.log('🔧 Building backend...');
 try {
-  await build({
-    entryPoints: ['server/index.ts'],
-    bundle: true,
-    outfile: 'dist/index.js',
-    platform: 'node',
-    target: 'node20',
-    format: 'esm',
-    external: [
-      // Don't bundle node modules
-      'express',
-      'pg',
-      'drizzle-orm',
-      'firebase-admin',
-      'nodemailer',
-      'passport',
-      'bcryptjs',
-      'jsonwebtoken',
-      'stripe',
-      'openai',
-      'multer',
-      'cors',
-      'helmet',
-      'express-session',
-      'connect-pg-simple',
-      'ws'
-    ],
-    define: {
-      'process.env.NODE_ENV': '"production"'
-    },
-    loader: {
-      '.ts': 'ts',
-      '.tsx': 'tsx'
-    },
-    resolveExtensions: ['.ts', '.tsx', '.js', '.jsx'],
-    tsconfig: 'tsconfig.json',
-    sourcemap: false,
-    minify: true,
-    keepNames: true,
-    metafile: true
-  });
+  execSync('npx tsc --project tsconfig.build.json', { stdio: 'inherit' });
   console.log('✅ Backend build completed');
 } catch (error) {
   console.error('❌ Backend build failed:', error.message);

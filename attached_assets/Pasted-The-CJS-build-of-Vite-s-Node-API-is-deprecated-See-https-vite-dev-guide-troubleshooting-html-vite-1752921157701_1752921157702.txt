@@ -1,0 +1,57 @@
+The CJS build of Vite's Node API is deprecated. See https://vite.dev/guide/troubleshooting.html#vite-cjs-node-api-deprecated for more details.
+
+vite v6.3.5 building for production...
+
+transforming...
+
+✓ 2125 modules transformed.
+
+rendering chunks...
+
+computing gzip size...
+
+dist/assets/isolated-thunderstorms-Bb6Nn6fS.svg    12.26 kB │ gzip:   1.68 kB
+
+✓ built in 9.69s
+
+2025-07-19T10:29:41Z info: Pushing pid1 binary layer...
+2025-07-19T10:29:42Z info: Pushing Repl layer...
+2025-07-19T10:29:42Z info: Retrieved cached nix layer
+2025-07-19T10:29:42Z warning: Detected broken symlink! The path "/tmp/pulse-dbVtm9xGoKB4" does not exist.
+2025-07-19T10:29:42Z info: Created pid1 binary layer
+2025-07-19T10:29:42Z warning: Detected broken symlink! The path "/tmp/pulse-WMVJFelyrpbb" does not exist.
+2025-07-19T10:29:42Z info: Created hosting layer
+2025-07-19T10:30:36Z info: Created Repl layer
+2025-07-19T10:30:37Z info: Pushed image manifest
+2025-07-19T10:30:37Z info: Pushed soci index manifest
+2025-07-19T10:30:41Z info: Creating Autoscale service
+Error: Cannot find module '/home/runner/workspace/dist/index.js'
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+Error: Cannot find module '/home/runner/workspace/dist/index.js'
+node:internal/modules/cjs/loader:1228
+  ^
+node:internal/modules/cjs/loader:1228
+> rest-express@1.0.0 start
+  code: 'MODULE_NOT_FOUND',
+> rest-express@1.0.0 start
+Node.js v20.18.1
+> rest-express@1.0.0 start
+
+crash loop detected
+> rest-express@1.0.0 start
+  code: 'MODULE_NOT_FOUND',
+  ^
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+  throw err;
+
+    at node:internal/main/run_main_module:28:49 {
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:173:12)
+  requireStack: []
+Error: Cannot find module '/home/runner/workspace/dist/index.js'
+  requireStack: []
+> rest-express@1.0.0 start
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+    at Module._load (node:internal/modules/cjs/loader:1051:27)
+Node.js v20.18.1
+2025-07-19T10:32:13Z error: The deployment is crash looping. This can happen if the run command fails or exits immediately after starting. Check the logs for more information.

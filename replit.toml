@@ -1,15 +1,17 @@
 # Replit deployment configuration
 [deployment]
-run = ["sh", "-c", "npm run build && npm run start"]
+run = ["sh", "-c", "cd client && npm run build && cd .. && NODE_ENV=production tsx server/index.ts"]
 deploymentTarget = "autoscale"
 ignorePorts = false
 
 [nix]
-channel = "stable-22_11"
+channel = "stable-23_11"
 
 [env]
 NODE_ENV = "production"
 PATH = "/home/runner/workspace/node_modules/.bin:$PATH"
+PULSE_RUNTIME_PATH = "/dev/null"
+PULSE_CLIENTCONFIG = "/dev/null"
 
 [[ports]]
 localPort = 5000
@@ -20,7 +22,9 @@ localPort = 5000
 externalPort = 443
 
 [deployment.run]
-command = ["sh", "-c", "npm run build && npm run start"]
+command = ["sh", "-c", "cd client && npm run build && cd .. && NODE_ENV=production tsx server/index.ts"]
 
 [deployment.environment]
 NODE_ENV = "production"
+PULSE_RUNTIME_PATH = "/dev/null"
+PULSE_CLIENTCONFIG = "/dev/null"

@@ -1,9 +1,13 @@
-# Build ignore file - exclude backup and test files from production builds
-*_backup.tsx
-*_backup.ts
-*_backup.js
-*_backup.jsx
-*.backup.*
-**/backup/**
-**/test/**
-**/__tests__/**
+# Ignore these files during deployment build
+/tmp/pulse-*
+*.pulse
+pulse-*
+/dev/shm/*
+/tmp/tmp.*
+/proc/*
+/sys/*
+node_modules/.cache/
+.cache/
+.git/
+*.log
+*.tmp
