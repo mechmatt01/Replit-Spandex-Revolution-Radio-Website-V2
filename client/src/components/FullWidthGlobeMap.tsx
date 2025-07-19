@@ -455,12 +455,14 @@ export default function FullWidthGlobeMap() {
   });
 
   // Handle fullscreen toggle with proper map resizing
-  const toggleFullscreen = (enable: boolean) => {
+  const toggleFullscreen = (enable: boolean, event?: React.MouseEvent) => {
     console.log(`Toggling fullscreen: ${enable}`);
 
     // Prevent default behavior and event propagation
-    event?.preventDefault();
-    event?.stopPropagation();
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
     // Close any open info windows when toggling fullscreen
     if (currentInfoWindow.current) {
@@ -1450,7 +1452,7 @@ export default function FullWidthGlobeMap() {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Expand button clicked, current fullscreen:', isFullscreen);
-                toggleFullscreen(!isFullscreen);
+                toggleFullscreen(!isFullscreen, e);
               }}
               className={`p-3 border-0 shadow-xl rounded-lg transition-all duration-300 cursor-pointer select-none ${
                 isFullscreen 
