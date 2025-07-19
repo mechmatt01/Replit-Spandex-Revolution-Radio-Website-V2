@@ -1224,51 +1224,59 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Map Container */}
-        <div className={`relative mb-16 transition-all duration-500 ease-in-out ${
+        <div className={`relative mb-16 transition-all duration-700 ease-in-out transform-gpu ${
           isFullscreen 
-            ? "fixed inset-0 z-[9999] mb-0 bg-black" 
+            ? "fixed inset-0 z-[9998] mb-0" 
             : "h-[600px]"
-        }`}>
+        }`}
+        style={{
+          top: isFullscreen ? "0" : "auto",
+          backgroundColor: isFullscreen ? "rgba(0,0,0,0.9)" : "transparent"
+        }}>
           <div
             ref={mapRef}
-            className={`map-container w-full h-full transition-all duration-500 ease-in-out ${
+            className={`map-container w-full h-full transition-all duration-700 ease-in-out ${
               isFullscreen ? "opacity-100" : "rounded-lg opacity-100"
             }`}
             style={{
-              minHeight: isFullscreen ? "100vh" : "600px",
+              height: isFullscreen ? "100vh" : "600px",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
             }}
           />
 
-          {/* Expand Button - Top Left Corner */}
-          {!isFullscreen && (
-            <div className="absolute top-4 left-4 z-10">
-              <Button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleFullscreen(true);
-                  return false;
-                }}
-                size="sm"
-                className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg rounded-lg"
-                style={{
-                  backgroundColor: "#1f2937",
-                  color: "#ffffff",
-                  minWidth: "40px",
-                  minHeight: "40px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center"
-                }}
-              >
+          {/* Expand/Close Button - Top Left Corner */}
+          <div className={`absolute ${isFullscreen ? "top-20" : "top-4"} left-4 z-10 transition-all duration-700`}>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFullscreen(!isFullscreen);
+                return false;
+              }}
+              size="sm"
+              className={`p-2 border-0 shadow-lg rounded-lg transition-all duration-300 ${
+                isFullscreen 
+                  ? "bg-red-600 hover:bg-red-700" 
+                  : "bg-gray-800 hover:bg-gray-700"
+              } text-white`}
+              style={{
+                minWidth: "40px",
+                minHeight: "40px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+            >
+              {isFullscreen ? (
+                <Minimize2 className="w-4 h-4" />
+              ) : (
                 <Maximize2 className="w-4 h-4" />
-              </Button>
-            </div>
-          )}
+              )}
+            </Button>
+          </div>
 
-          {/* Map Controls */}
-          <div className={`absolute ${isFullscreen ? "top-20 right-8" : "top-4 right-4"} z-10 flex flex-col gap-2`}>
+          {/* Map Controls - Animate to edges in fullscreen */}
+          <div className={`absolute ${isFullscreen ? "top-20 right-8" : "top-4 right-4"} z-10 flex flex-col gap-2 transition-all duration-700`}>
             <Button
               onClick={() => {
                 if (map) {
