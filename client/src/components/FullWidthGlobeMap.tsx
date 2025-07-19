@@ -599,7 +599,7 @@ export default function FullWidthGlobeMap() {
     const currentContainer = mapRef.current;
     if (!currentContainer) return;
 
-    // Add CSS to hide Google attribution and keyboard shortcuts overlay
+    // Add CSS to hide Google attribution and fix InfoWindow styling
     const style = document.createElement("style");
     style.textContent = `
       .gm-style-cc,
@@ -611,10 +611,6 @@ export default function FullWidthGlobeMap() {
       .gm-fullscreen-control,
       .gm-ui-hover-effect,
       .gm-control-active,
-      .gm-style-iw,
-      .gm-style-iw-c,
-      .gm-style-iw-d,
-      .gm-style-iw-chr,
       .gm-compass,
       .gm-zoom-control,
       .gm-rotate-control,
@@ -637,6 +633,65 @@ export default function FullWidthGlobeMap() {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
+      }
+
+      /* Fix InfoWindow display issues */
+      .gm-style-iw {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        z-index: 9999 !important;
+      }
+
+      .gm-style-iw-c {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: relative !important;
+        z-index: 9999 !important;
+      }
+
+      .gm-style-iw-d {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        overflow: visible !important;
+        position: relative !important;
+        z-index: 9999 !important;
+      }
+
+      .gm-style-iw-chr {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        position: absolute !important;
+        top: 2px !important;
+        right: 2px !important;
+        z-index: 10000 !important;
+        width: 16px !important;
+        height: 16px !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-radius: 50% !important;
+        cursor: pointer !important;
+      }
+
+      .gm-style-iw-chr:hover {
+        background: rgba(255, 255, 255, 1) !important;
+      }
+
+      /* InfoWindow arrow/tip */
+      .gm-style-iw-tc {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+
+      .gm-style-iw-tc::after {
+        background: ${isDarkMode ? '#1f2937' : '#ffffff'} !important;
+        border: 1px solid ${colors.primary} !important;
       }
     `;
     document.head.appendChild(style);
@@ -731,22 +786,24 @@ export default function FullWidthGlobeMap() {
             marker.addListener("click", () => {
               console.log(`Marker clicked: ${listener.city}, ${listener.country}`);
 
-              // Close any existing info window with animation
+              // Close any existing info window
               if (currentInfoWindow.current) {
                 currentInfoWindow.current.close();
                 currentInfoWindow.current = null;
               }
 
-              // Pan and zoom to marker location
-              mapInstance.panTo({ lat: listener.lat, lng: listener.lng });
-
-              // Set appropriate zoom level
-              const currentZoom = mapInstance.getZoom() || 2;
-              if (currentZoom < 6) {
-                mapInstance.setZoom(6);
-              } else if (currentZoom < 8) {
-                mapInstance.setZoom(8);
-              }
+              // Pan and zoom to marker location with slight delay for smooth transition
+              setTimeout(() => {
+                mapInstance.panTo({ lat: listener.lat, lng: listener.lng });
+                
+                // Set appropriate zoom level
+                const currentZoom = mapInstance.getZoom() || 2;
+                if (currentZoom < 6) {
+                  mapInstance.setZoom(6);
+                } else if (currentZoom < 8) {
+                  mapInstance.setZoom(8);
+                }
+              }, 100);
 
               // Animate marker with bounce effect
               marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -754,58 +811,97 @@ export default function FullWidthGlobeMap() {
                 marker.setAnimation(null);
               }, 1500);
 
-              // Create InfoWindow with enhanced styling and proper configuration
+              // Create InfoWindow content without inline styles that might conflict
+              const infoWindowContent = document.createElement('div');
+              infoWindowContent.style.cssText = `
+                background: ${isDarkMode ? '#1f2937' : '#ffffff'} !important;
+                color: ${isDarkMode ? '#ffffff' : '#1f2937'} !important;
+                padding: 12px !important;
+                border-radius: 6px !important;
+                font-family: Arial, sans-serif !important;
+                text-align: center !important;
+                min-width: 140px !important;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+                border: 2px solid ${colors.primary} !important;
+                font-size: 13px !important;
+                line-height: 1.3 !important;
+              `;
+
+              const headerDiv = document.createElement('div');
+              headerDiv.textContent = '🎧 Active Listener';
+              headerDiv.style.cssText = `
+                font-size: 12px !important;
+                margin-bottom: 6px !important;
+                color: ${colors.primary} !important;
+                font-weight: bold !important;
+              `;
+
+              const cityDiv = document.createElement('div');
+              cityDiv.textContent = listener.city;
+              cityDiv.style.cssText = `
+                font-weight: bold !important;
+                font-size: 16px !important;
+                color: ${colors.primary} !important;
+                margin-bottom: 3px !important;
+              `;
+
+              const countryDiv = document.createElement('div');
+              countryDiv.textContent = listener.country;
+              countryDiv.style.cssText = `
+                font-size: 12px !important;
+                color: ${isDarkMode ? '#9ca3af' : '#6b7280'} !important;
+                font-weight: 500 !important;
+              `;
+
+              infoWindowContent.appendChild(headerDiv);
+              infoWindowContent.appendChild(cityDiv);
+              infoWindowContent.appendChild(countryDiv);
+
+              // Create InfoWindow with proper configuration
               const infoWindow = new google.maps.InfoWindow({
-                content: `
-                  <div style="
-                    background: ${isDarkMode ? '#1f2937' : '#ffffff'};
-                    color: ${isDarkMode ? '#ffffff' : '#1f2937'};
-                    padding: 16px;
-                    border-radius: 8px;
-                    font-family: 'Arial', sans-serif;
-                    text-align: center;
-                    min-width: 160px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                    border: 2px solid ${colors.primary};
-                  ">
-                    <div style="
-                      font-size: 14px;
-                      margin-bottom: 8px;
-                      color: ${colors.primary};
-                      font-weight: bold;
-                    ">🎧 Active Listener</div>
-                    <div style="
-                      font-weight: bold;
-                      font-size: 18px;
-                      color: ${colors.primary};
-                      margin-bottom: 4px;
-                      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-                    ">${listener.city}</div>
-                    <div style="
-                      font-size: 14px;
-                      color: ${isDarkMode ? '#9ca3af' : '#6b7280'};
-                      font-weight: 500;
-                    ">${listener.country}</div>
-                  </div>
-                `,
-                maxWidth: 250,
-                pixelOffset: new google.maps.Size(0, -10),
+                content: infoWindowContent,
+                maxWidth: 200,
+                ariaLabel: `Active listener in ${listener.city}, ${listener.country}`,
                 disableAutoPan: false,
-                zIndex: 1000
+                zIndex: 9999
               });
 
-              // Add close event listener to clear reference
+              // Add close event listeners
               infoWindow.addListener('closeclick', () => {
                 currentInfoWindow.current = null;
               });
 
-              infoWindow.open({
-                anchor: marker,
-                map: mapInstance,
-                shouldFocus: false
+              infoWindow.addListener('domready', () => {
+                // Ensure InfoWindow is visible and properly styled
+                const iwOuter = document.querySelector('.gm-style-iw');
+                const iwBackground = document.querySelector('.gm-style-iw-d');
+                const iwCloseBtn = document.querySelector('.gm-style-iw-chr');
+                
+                if (iwOuter) {
+                  iwOuter.style.visibility = 'visible !important';
+                  iwOuter.style.display = 'block !important';
+                  iwOuter.style.opacity = '1 !important';
+                }
+                
+                if (iwBackground) {
+                  iwBackground.style.overflow = 'visible !important';
+                  iwBackground.style.background = 'transparent !important';
+                  iwBackground.style.border = 'none !important';
+                  iwBackground.style.borderRadius = '0 !important';
+                  iwBackground.style.boxShadow = 'none !important';
+                }
+
+                if (iwCloseBtn) {
+                  iwCloseBtn.style.display = 'block !important';
+                  iwCloseBtn.style.visibility = 'visible !important';
+                }
               });
 
-              currentInfoWindow.current = infoWindow;
+              // Open InfoWindow with delay to ensure marker animation completes
+              setTimeout(() => {
+                infoWindow.open(mapInstance, marker);
+                currentInfoWindow.current = infoWindow;
+              }, 200);
             });
         });
       };
@@ -849,31 +945,74 @@ export default function FullWidthGlobeMap() {
 
           // Add click listener for user location marker
           userMarker.addListener("click", () => {
+            // Close any existing info window
+            if (currentInfoWindow.current) {
+              currentInfoWindow.current.close();
+              currentInfoWindow.current = null;
+            }
+
+            // Create user location InfoWindow content
+            const userInfoContent = document.createElement('div');
+            userInfoContent.style.cssText = `
+              background: ${isDarkMode ? '#1f2937' : '#ffffff'} !important;
+              color: ${isDarkMode ? '#ffffff' : '#1f2937'} !important;
+              padding: 10px !important;
+              border-radius: 6px !important;
+              font-size: 13px !important;
+              font-weight: 600 !important;
+              border: 2px solid #2563eb !important;
+              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+              min-width: 100px !important;
+              text-align: center !important;
+              line-height: 1.3 !important;
+            `;
+
+            const locationDiv = document.createElement('div');
+            locationDiv.textContent = '📍 This is you!';
+            locationDiv.style.marginBottom = '3px';
+
+            const descDiv = document.createElement('div');
+            descDiv.textContent = 'Your current location';
+            descDiv.style.cssText = `
+              font-size: 11px !important;
+              color: ${isDarkMode ? '#9ca3af' : '#6b7280'} !important;
+              font-weight: 400 !important;
+            `;
+
+            userInfoContent.appendChild(locationDiv);
+            userInfoContent.appendChild(descDiv);
+
             const userInfoWindow = new google.maps.InfoWindow({
-              content: `
-                <div style="
-                  background: ${isDarkMode ? '#1f2937' : '#ffffff'};
-                  color: ${isDarkMode ? '#ffffff' : '#1f2937'};
-                  padding: 12px;
-                  border-radius: 8px;
-                  font-size: 14px;
-                  font-weight: 600;
-                  border: 2px solid #2563eb;
-                  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                  min-width: 120px;
-                  text-align: center;
-                ">
-                  <div style="margin-bottom: 4px;">📍 This is you!</div>
-                  <div style="font-size: 12px; color: ${isDarkMode ? '#9ca3af' : '#6b7280'};">Your current location</div>
-                </div>
-              `,
-              maxWidth: 200,
+              content: userInfoContent,
+              maxWidth: 180,
+              ariaLabel: 'Your current location',
+              disableAutoPan: false,
+              zIndex: 9999
             });
 
-            // Close other info windows
-            if (currentInfoWindow.current) {
-              currentInfoWindow.current.setMap(null);
-            }
+            userInfoWindow.addListener('closeclick', () => {
+              currentInfoWindow.current = null;
+            });
+
+            userInfoWindow.addListener('domready', () => {
+              // Ensure InfoWindow is visible
+              const iwOuter = document.querySelector('.gm-style-iw');
+              const iwBackground = document.querySelector('.gm-style-iw-d');
+              
+              if (iwOuter) {
+                iwOuter.style.visibility = 'visible !important';
+                iwOuter.style.display = 'block !important';
+                iwOuter.style.opacity = '1 !important';
+              }
+              
+              if (iwBackground) {
+                iwBackground.style.overflow = 'visible !important';
+                iwBackground.style.background = 'transparent !important';
+                iwBackground.style.border = 'none !important';
+                iwBackground.style.borderRadius = '0 !important';
+                iwBackground.style.boxShadow = 'none !important';
+              }
+            });
 
             userInfoWindow.open(mapInstance, userMarker);
             currentInfoWindow.current = userInfoWindow;
@@ -883,6 +1022,14 @@ export default function FullWidthGlobeMap() {
         // Add mock listener markers
         console.log('Adding mock listener markers...');
         addListenerMarkers(mapInstance);
+
+        // Add map click listener to close any open info windows
+        mapInstance.addListener('click', () => {
+          if (currentInfoWindow.current) {
+            currentInfoWindow.current.close();
+            currentInfoWindow.current = null;
+          }
+        });
       });
 
       } catch (error) {
