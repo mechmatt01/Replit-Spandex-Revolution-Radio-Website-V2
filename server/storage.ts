@@ -476,7 +476,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createRadioStation(insertStation: InsertRadioStation): Promise<RadioStation> {
-    const [station] = await db.insert(radioStations).values(insertStation).returning();
+    const [station] = await db.insert(radioStations).values(insertStation as any).returning();
     return station;
   }
 
@@ -495,8 +495,8 @@ export class DatabaseStorage implements IStorage {
   async updateStationSortOrder(id: number, sortOrder: number): Promise<RadioStation | undefined> {
     const [station] = await db.update(radioStations)
       .set({
-        sortOrder,
-      })
+        sortOrder: sortOrder,
+      } as any)
       .where(eq(radioStations.id, id))
       .returning();
     return station;
