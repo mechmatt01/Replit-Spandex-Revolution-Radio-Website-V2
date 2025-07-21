@@ -1487,7 +1487,7 @@ export default function FullWidthGlobeMap() {
             left: 0,
             right: 0,
             bottom: 0,
-            height: 'calc(100vh - 4rem)',
+            height: 'calc(100vh - 4rem - 80px)', // Subtract both nav (4rem) and floating player (80px)
             width: '100vw',
             zIndex: 9999,
             background: 'black',
