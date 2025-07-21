@@ -488,22 +488,24 @@ export default function FullWidthGlobeMap() {
       document.body.style.overflow = '';
     }
 
-    // Let CSS handle the positioning, just trigger map resize
+    // Wait for CSS transitions to complete, then trigger map resize
     setTimeout(() => {
       if (map && window.google && window.google.maps) {
-        console.log('Triggering map resize after layout change');
+        console.log('Triggering map resize after fullscreen layout change');
         window.google.maps.event.trigger(map, 'resize');
         
-        // Ensure map is centered properly
+        // Ensure map is centered properly after resize
         setTimeout(() => {
           if (userLocation) {
             map.panTo(userLocation);
+            map.setZoom(12);
           } else {
             map.panTo({ lat: 20, lng: 0 });
+            map.setZoom(3);
           }
-        }, 50);
+        }, 100);
       }
-    }, 150);
+    }, 400); // Increased delay to ensure CSS transition completes
   };
 
   // Fetch Google Maps API key and config
@@ -1473,51 +1475,49 @@ export default function FullWidthGlobeMap() {
         </div>
 
         {/* Map Container */}
-        <div className={`relative mb-16 transition-all duration-300 ease-in-out ${
-          isFullscreen 
-            ? "fixed inset-0 z-[9999] mb-0 bg-black overflow-hidden pt-16" 
-            : "h-[600px] rounded-lg overflow-hidden"
-        }`}>
-          {/* Fullscreen Header */}
-          {isFullscreen && (
-            <div className="absolute top-0 left-0 right-0 z-[9999] bg-black/90 backdrop-blur-md border-b border-gray-700">
-              <div className="flex items-center justify-between px-6 py-4">
-                <div className="flex items-center gap-4">
-                  <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
-                  {weather && (
-                    <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
-                      <div className="w-8 h-8">
-                        <img
-                          src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
-                          alt={weather.description}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      <div className="text-sm">
-                        <span className="text-white font-medium">{weather.location}</span>
-                        <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
+        <div 
+          className={`relative mb-16 transition-all duration-300 ease-in-out ${
+            isFullscreen 
+              ? "fixed inset-0 z-[9999] mb-0 bg-black overflow-hidden" 
+              : "h-[600px] rounded-lg overflow-hidden"
+          }`}
+          style={isFullscreen ? {
+            position: 'fixed',
+            top: '4rem', // Account for navigation header
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 'calc(100vh - 4rem)',
+            width: '100vw',
+            zIndex: 9999,
+            background: 'black',
+            overflow: 'hidden'
+          } : {
+            height: '600px'
+          }}
+        >
+
 
           <div
             ref={mapRef}
-            className={`map-container w-full transition-all duration-300 ${
-              isFullscreen ? "h-full opacity-100" : "h-[600px] rounded-lg opacity-100"
-            }`}
-            style={{
+            className="map-container w-full transition-all duration-300"
+            style={isFullscreen ? {
+              height: '100%',
+              width: '100%',
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
               position: "relative"
+            } : {
+              height: '600px',
+              width: '100%',
+              backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+              position: "relative",
+              borderRadius: '0.75rem'
             }}
           />
 
           {/* Expand/Close Button */}
           <div className={`absolute transition-all duration-500 ${
-            isFullscreen ? "top-20 left-6 z-[9999]" : "top-4 left-4 z-10"
+            isFullscreen ? "top-4 left-6 z-[9999]" : "top-4 left-4 z-10"
           }`}>
             <button
               type="button"
@@ -1554,7 +1554,7 @@ export default function FullWidthGlobeMap() {
 
           {/* Map Controls */}
           <div className={`absolute transition-all duration-500 flex flex-col gap-2 ${
-            isFullscreen ? "top-20 right-6 z-[9999]" : "top-4 right-4 z-10"
+            isFullscreen ? "top-4 right-6 z-[9999]" : "top-4 right-4 z-10"
           }`}>
             <button
               type="button"
