@@ -494,6 +494,11 @@ export default function FullWidthGlobeMap() {
         console.log('Triggering map resize after fullscreen layout change');
         window.google.maps.event.trigger(map, 'resize');
         
+        // Force map container to recalculate height
+        if (mapRef.current) {
+          mapRef.current.style.height = '100%';
+        }
+        
         // Ensure map is centered properly after resize
         setTimeout(() => {
           if (userLocation) {
@@ -505,7 +510,7 @@ export default function FullWidthGlobeMap() {
           }
         }, 100);
       }
-    }, 400); // Increased delay to ensure CSS transition completes
+    }, 500); // Extended delay to ensure fullscreen CSS is fully applied
   };
 
   // Fetch Google Maps API key and config
@@ -1478,21 +1483,21 @@ export default function FullWidthGlobeMap() {
         <div 
           className={`relative mb-16 transition-all duration-300 ease-in-out ${
             isFullscreen 
-              ? "fixed inset-0 z-[9998] mb-0 bg-black overflow-hidden" 
+              ? "fixed inset-0 z-[48] mb-0 bg-black overflow-hidden" 
               : "h-[600px] rounded-lg overflow-hidden"
           }`}
           style={isFullscreen ? {
             position: 'fixed',
-            top: '4rem', // Account for navigation header (64px)
+            top: '64px', // Navigation bar height
             left: 0,
             right: 0,
             bottom: 0,
-            height: 'calc(100vh - 64px)', // Subtract exact navigation height in pixels
+            height: 'calc(100vh - 64px)', // Full viewport minus nav
             width: '100vw',
-            zIndex: 9998, // Lower than floating player (z-50 = z-[50])
+            zIndex: 48, // Below floating player (z-50)
             background: 'black',
             overflow: 'hidden',
-            minHeight: 'calc(100vh - 64px)' // Ensure minimum height covers full screen
+            display: 'block' // Force block display
           } : {
             height: '600px'
           }}
