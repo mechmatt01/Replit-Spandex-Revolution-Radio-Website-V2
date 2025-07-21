@@ -98,7 +98,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     frequency: "95.5 FM",
     location: "Dallas, TX",
     genre: "Hip Hop & R&B",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
+    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
     description: "Dallas Hip Hop & R&B",
     icon: "🎵",
   });
@@ -116,38 +116,28 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const maxRetries = 3;
 
   const getStreamUrls = (station: RadioStation | null): string[] => {
-    if (!station) return [
+    if (!station || !station.streamUrl) return [
       "/api/radio-stream",
       "https://ice1.somafm.com/metal-128-mp3"
     ];
     
-    // Use unique verified working streams for each station
-    const stationUrls: { [key: string]: string[] } = {
-      "beat-955": [
-        "/api/radio-stream?url=https://ice1.somafm.com/beatblender-128-mp3",
-        "https://ice1.somafm.com/beatblender-128-mp3",
-        "https://ice2.somafm.com/beatblender-128-mp3"
-      ],
-      "hot-97": [
-        "/api/radio-stream?url=https://ice1.somafm.com/groovesalad-256-mp3",
-        "https://ice1.somafm.com/groovesalad-256-mp3",
-        "https://ice2.somafm.com/groovesalad-256-mp3"
-      ],
-      "power-106": [
-        "/api/radio-stream?url=https://ice1.somafm.com/spacestation-128-mp3",
-        "https://ice1.somafm.com/spacestation-128-mp3",
-        "https://ice2.somafm.com/spacestation-128-mp3"
-      ],
-      "somafm-metal": [
-        "https://ice1.somafm.com/metal-128-mp3",
-        "https://ice2.somafm.com/metal-128-mp3",
-        "https://ice6.somafm.com/metal-128-mp3"
-      ]
-    };
+    // Use actual station stream URLs with proxy fallbacks
+    const streamUrl = station.streamUrl;
     
-    return stationUrls[station.id] || [
-      "/api/radio-stream",
-      "https://ice1.somafm.com/metal-128-mp3"
+    // For SomaFM stations, provide multiple ice servers as fallbacks
+    if (streamUrl.includes('somafm.com')) {
+      const baseUrl = streamUrl.replace('ice1.somafm.com', '');
+      return [
+        streamUrl, // Original URL
+        `https://ice2.somafm.com${baseUrl}`,
+        `https://ice6.somafm.com${baseUrl}`
+      ];
+    }
+    
+    // For StreamTheWorld stations (Hot 97, Power 106, 95.5 The Beat), use proxy + direct
+    return [
+      `/api/radio-stream?url=${encodeURIComponent(streamUrl)}`, // Proxy first for CORS
+      streamUrl // Direct stream as fallback
     ];
   };
 
