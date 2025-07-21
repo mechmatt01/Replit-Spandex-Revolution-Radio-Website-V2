@@ -1478,21 +1478,24 @@ export default function FullWidthGlobeMap() {
         <div 
           className={`relative mb-16 transition-all duration-300 ease-in-out ${
             isFullscreen 
-              ? "fixed inset-0 z-[9998] mb-0 bg-black overflow-hidden" 
+              ? "fixed z-[9998] bg-black overflow-hidden" 
               : "h-[600px] rounded-lg overflow-hidden"
           }`}
           style={isFullscreen ? {
-            position: 'fixed',
-            top: '4rem', // Account for navigation header (64px)
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 'calc(100vh - 64px)', // Subtract exact navigation height in pixels
-            width: '100vw',
-            zIndex: 9998, // Lower than floating player (z-50 = z-[50])
+            position: 'fixed !important',
+            top: '0px',
+            left: '0px',
+            right: '0px', 
+            bottom: '0px',
+            height: '100vh !important',
+            width: '100vw !important',
+            zIndex: 9998,
             background: 'black',
             overflow: 'hidden',
-            minHeight: 'calc(100vh - 64px)' // Ensure minimum height covers full screen
+            margin: '0 !important',
+            padding: '0 !important',
+            paddingTop: '64px', // Space for navigation
+            boxSizing: 'border-box'
           } : {
             height: '600px'
           }}
@@ -1503,11 +1506,13 @@ export default function FullWidthGlobeMap() {
             ref={mapRef}
             className="map-container w-full transition-all duration-300"
             style={isFullscreen ? {
-              height: '100%',
-              width: '100%',
-              minHeight: '100%',
+              height: 'calc(100vh - 64px) !important',
+              width: '100% !important',
+              minHeight: 'calc(100vh - 64px)',
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              position: "relative"
+              position: "relative",
+              margin: '0',
+              padding: '0'
             } : {
               height: '600px',
               width: '100%',
