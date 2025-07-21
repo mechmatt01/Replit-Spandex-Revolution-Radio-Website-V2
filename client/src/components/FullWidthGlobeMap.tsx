@@ -1483,15 +1483,16 @@ export default function FullWidthGlobeMap() {
           }`}
           style={isFullscreen ? {
             position: 'fixed',
-            top: '4rem', // Account for navigation header
+            top: '4rem', // Account for navigation header (64px)
             left: 0,
             right: 0,
             bottom: 0,
-            height: 'calc(100vh - 4rem)', // Only subtract navigation bar, let map cover full remaining space
+            height: 'calc(100vh - 64px)', // Subtract exact navigation height in pixels
             width: '100vw',
             zIndex: 9998, // Lower than floating player (z-50 = z-[50])
             background: 'black',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            minHeight: 'calc(100vh - 64px)' // Ensure minimum height covers full screen
           } : {
             height: '600px'
           }}
@@ -1504,6 +1505,7 @@ export default function FullWidthGlobeMap() {
             style={isFullscreen ? {
               height: '100%',
               width: '100%',
+              minHeight: '100%',
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
               position: "relative"
             } : {
