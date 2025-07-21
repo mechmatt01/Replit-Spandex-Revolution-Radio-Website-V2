@@ -467,99 +467,43 @@ export default function FullWidthGlobeMap() {
     refetchIntervalInBackground: true,
   });
 
-  // Handle fullscreen toggle with proper map resizing
-  const toggleFullscreen = (enable?: boolean) => {
-    const newFullscreenState = enable !== undefined ? enable : !isFullscreen;
+  // COMPLETELY REWRITTEN - Simple fullscreen toggle that works
+  const toggleFullscreen = () => {
+    const newState = !isFullscreen;
+    console.log(`Simple fullscreen toggle: ${isFullscreen} → ${newState}`);
     
-    console.log(`Toggling fullscreen from ${isFullscreen} to ${newFullscreenState}`);
-
-    // Close any open info windows when toggling fullscreen
+    // Close any open info windows
     if (currentInfoWindow.current) {
       currentInfoWindow.current.close();
       currentInfoWindow.current = null;
     }
 
-    if (newFullscreenState) {
-      // Store original body styles before modifying
-      originalBodyStylesRef.current = {
-        overflow: document.body.style.overflow || '',
-        position: document.body.style.position || '',
-        width: document.body.style.width || '',
-        height: document.body.style.height || '',
-        top: document.body.style.top || '',
-        left: document.body.style.left || '',
-        right: document.body.style.right || '',
-        paddingRight: document.body.style.paddingRight || ''
-      };
+    // Update state immediately
+    setIsFullscreen(newState);
 
-      // Store current scroll position
-      const scrollY = window.scrollY;
-
-      // Prevent body scrolling completely
+    // Simple body scroll handling
+    if (newState) {
       document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.height = '100vh';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.left = '0';
-      document.body.style.right = '0';
-
-      // Also prevent scrolling on html element
-      document.documentElement.style.overflow = 'hidden';
     } else {
-      // Restore original body styles
-      if (originalBodyStylesRef.current) {
-        const scrollY = parseInt(document.body.style.top || '0') * -1;
-        
-        document.body.style.overflow = originalBodyStylesRef.current.overflow;
-        document.body.style.position = originalBodyStylesRef.current.position;
-        document.body.style.width = originalBodyStylesRef.current.width;
-        document.body.style.height = originalBodyStylesRef.current.height;
-        document.body.style.top = originalBodyStylesRef.current.top;
-        document.body.style.left = originalBodyStylesRef.current.left;
-        document.body.style.right = originalBodyStylesRef.current.right;
-        document.body.style.paddingRight = originalBodyStylesRef.current.paddingRight;
-
-        document.documentElement.style.overflow = '';
-
-        // Restore scroll position
-        window.scrollTo(0, scrollY);
-        originalBodyStylesRef.current = null;
-      }
+      document.body.style.overflow = '';
     }
 
-    // Update state first
-    setIsFullscreen(newFullscreenState);
-
-    // Use multiple timeouts to ensure proper map rendering
+    // Let CSS handle the positioning, just trigger map resize
     setTimeout(() => {
       if (map && window.google && window.google.maps) {
-        // Force map container to recalculate dimensions
-        const mapContainer = mapRef.current;
-        if (mapContainer) {
-          // Temporarily hide and show to force reflow
-          mapContainer.style.visibility = 'hidden';
-          mapContainer.style.height = newFullscreenState ? '100vh' : '600px';
-          mapContainer.style.width = newFullscreenState ? '100vw' : '100%';
-          
-          setTimeout(() => {
-            mapContainer.style.visibility = 'visible';
-            
-            // Trigger Google Maps resize event
-            google.maps.event.trigger(map, 'resize');
-            console.log('Map resize triggered for fullscreen:', newFullscreenState);
-
-            // Re-center the map if needed
-            if (userLocation) {
-              map.panTo(userLocation);
-            } else {
-              // Default center position for world view
-              map.panTo({ lat: 20, lng: 0 });
-            }
-          }, 50);
-        }
+        console.log('Triggering map resize after layout change');
+        window.google.maps.event.trigger(map, 'resize');
+        
+        // Ensure map is centered properly
+        setTimeout(() => {
+          if (userLocation) {
+            map.panTo(userLocation);
+          } else {
+            map.panTo({ lat: 20, lng: 0 });
+          }
+        }, 50);
       }
-    }, 100);
+    }, 150);
   };
 
   // Fetch Google Maps API key and config
@@ -1562,15 +1506,16 @@ export default function FullWidthGlobeMap() {
 
           <div
             ref={mapRef}
-            className={`map-container w-full h-full transition-all duration-500 ease-in-out ${
+            className={`map-container w-full h-full transition-all duration-300 ${
               isFullscreen ? "opacity-100" : "rounded-lg opacity-100"
             }`}
             style={{
-              height: isFullscreen ? "100vh" : "600px",
+              height: isFullscreen ? "calc(100vh - 72px)" : "600px",
               width: "100%",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              paddingTop: isFullscreen ? "72px" : "0",
-              position: "relative"
+              marginTop: isFullscreen ? "72px" : "0",
+              position: "relative",
+              zIndex: isFullscreen ? 9998 : "auto"
             }}
           />
 
