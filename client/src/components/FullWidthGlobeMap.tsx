@@ -1478,7 +1478,7 @@ export default function FullWidthGlobeMap() {
         <div 
           className={`relative mb-16 transition-all duration-300 ease-in-out ${
             isFullscreen 
-              ? "fixed inset-0 z-[9999] mb-0 bg-black overflow-hidden" 
+              ? "fixed inset-0 z-[9998] mb-0 bg-black overflow-hidden" 
               : "h-[600px] rounded-lg overflow-hidden"
           }`}
           style={isFullscreen ? {
@@ -1487,9 +1487,9 @@ export default function FullWidthGlobeMap() {
             left: 0,
             right: 0,
             bottom: 0,
-            height: 'calc(100vh - 4rem - 80px)', // Subtract both nav (4rem) and floating player (80px)
+            height: 'calc(100vh - 4rem)', // Only subtract navigation bar, let map cover full remaining space
             width: '100vw',
-            zIndex: 9999,
+            zIndex: 9998, // Lower than floating player (z-50 = z-[50])
             background: 'black',
             overflow: 'hidden'
           } : {
