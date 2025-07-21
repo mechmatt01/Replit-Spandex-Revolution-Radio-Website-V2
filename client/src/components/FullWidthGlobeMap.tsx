@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import {
   ZoomIn,
   ZoomOut,
-  RotateCcw,
+  RefreshCw,
   Maximize2,
   Minimize2,
   Play,
@@ -21,6 +21,9 @@ import {
   MapPin,
   TrendingUp,
   Users,
+  Globe,
+  Radio,
+  X,
 } from "lucide-react";
 import CountriesIconPath from "@assets/CountriesIcon.png";
 import LiveNowIconPath from "@assets/LiveNowIcon.png";
@@ -1405,11 +1408,132 @@ export default function FullWidthGlobeMap() {
     }
   };
 
+  // Render fullscreen map separately when active
+  if (isFullscreen) {
+    return (
+      <>
+        {/* Fullscreen Map Overlay - Completely outside of any parent containers */}
+        <div
+          className="fixed left-0 right-0 bg-black"
+          style={{
+            top: '64px', // Below navigation bar
+            height: 'calc(100vh - 64px)', // Full viewport minus nav only
+            width: '100vw',
+            zIndex: 48, // Below floating player (z-50)
+            overflow: 'hidden',
+          }}
+        >
+          {/* Fullscreen header with weather */}
+          <div className="absolute top-0 left-0 right-0 z-[100] p-6 bg-gradient-to-b from-black/80 to-transparent">
+            <div className="text-center">
+              <h2 className="font-orbitron font-black text-3xl md:text-4xl mb-2 text-white">
+                GLOBAL LISTENERS
+              </h2>
+              {weather && (
+                <div className="flex items-center justify-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-gray-300" />
+                  <span className="text-sm font-semibold text-gray-300">
+                    {weather.location}
+                  </span>
+                  <img
+                    src={getWeatherIcon(weather.description, weather.icon.includes("d"))}
+                    alt={weather.description}
+                    className="w-8 h-8 flex-shrink-0"
+                  />
+                  <span className="text-sm font-bold text-white">
+                    {Math.round(weather.temperature)}°F
+                  </span>
+                  <span className="text-sm text-gray-300">
+                    {weather.description}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Map container */}
+          <div
+            ref={mapRef}
+            className="w-full h-full"
+            style={{
+              backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+            }}
+          />
+
+          {/* Fullscreen controls */}
+          <div className="absolute top-20 left-6 z-[101]">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleFullscreen();
+              }}
+              className="p-3 bg-red-600 hover:bg-red-700 text-white shadow-xl rounded-lg transition-all duration-300"
+              aria-label="Exit fullscreen map"
+            >
+              <Minimize2 className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Map zoom controls */}
+          <div className="absolute top-20 right-6 z-[101] flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                handleMapControlClick('zoomIn', e);
+              }}
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white shadow-xl rounded-lg transition-all duration-300"
+              aria-label="Zoom in"
+            >
+              <ZoomIn className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                handleMapControlClick('zoomOut', e);
+              }}
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white shadow-xl rounded-lg transition-all duration-300"
+              aria-label="Zoom out"
+            >
+              <ZoomOut className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                handleMapControlClick('myLocation', e);
+              }}
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white shadow-xl rounded-lg transition-all duration-300"
+              aria-label="My location"
+            >
+              <MapPin className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                handleMapControlClick('reset', e);
+              }}
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white shadow-xl rounded-lg transition-all duration-300"
+              aria-label="Reset view"
+            >
+              <RefreshCw className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </>
+    );
+  }
+
+  // Normal non-fullscreen view
   return (
-      <section
-        id="map"
-        className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
-      >
+    <section
+      id="map"
+      className={`${isDarkMode ? "bg-black" : "bg-white"} transition-all duration-500 ease-in-out py-20`}
+    >
       <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header for normal view */}
         <div className="text-center mb-16">
@@ -1479,108 +1603,42 @@ export default function FullWidthGlobeMap() {
           )}
         </div>
 
-        {/* Map Container */}
-        <div 
-          className={`relative mb-16 transition-all duration-300 ease-in-out ${
-            isFullscreen 
-              ? "fixed inset-0 z-[48] mb-0 bg-black overflow-hidden" 
-              : "h-[600px] rounded-lg overflow-hidden"
-          }`}
-          style={isFullscreen ? {
-            position: 'fixed',
-            top: '64px', // Navigation bar height
-            left: 0,
-            right: 0,
-            bottom: 0,
-            height: 'calc(100vh - 64px)', // Full viewport minus nav
-            width: '100vw',
-            zIndex: 48, // Below floating player (z-50)
-            background: 'black',
-            overflow: 'hidden',
-            display: 'block' // Force block display
-          } : {
-            height: '600px'
-          }}
-        >
-
-
+        {/* Map Container for normal view */}
+        <div className="relative h-[600px] rounded-lg overflow-hidden mb-16">
           <div
             ref={mapRef}
-            className="map-container w-full transition-all duration-300"
-            style={isFullscreen ? {
-              height: '100%',
-              width: '100%',
-              minHeight: '100%',
+            className="w-full h-full"
+            style={{
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              position: "relative"
-            } : {
-              height: '600px',
-              width: '100%',
-              backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              position: "relative",
               borderRadius: '0.75rem'
             }}
           />
 
-          {/* Expand/Close Button */}
-          <div className={`absolute transition-all duration-500 ${
-            isFullscreen ? "top-4 left-6 z-[9999]" : "top-4 left-4 z-10"
-          }`}>
+          {/* Expand Button */}
+          <div className="absolute top-4 left-4 z-10">
             <button
               type="button"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Expand button clicked, current fullscreen:', isFullscreen);
                 toggleFullscreen();
               }}
-              className={`p-3 border-0 shadow-xl rounded-lg transition-all duration-300 cursor-pointer select-none ${
-                isFullscreen 
-                  ? "bg-red-600 hover:bg-red-700 text-white" 
-                  : "bg-gray-800 hover:bg-gray-700 text-white"
-              }`}
-              style={{
-                minWidth: "48px",
-                minHeight: "48px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "none",
-                outline: "none",
-                userSelect: "none"
-              }}
-              aria-label={isFullscreen ? "Exit fullscreen map" : "Enter fullscreen map"}
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white shadow-xl rounded-lg transition-all duration-300"
+              aria-label="Enter fullscreen map"
             >
-              {isFullscreen ? (
-                <Minimize2 className="w-5 h-5" />
-              ) : (
-                <Maximize2 className="w-4 h-4" />
-              )}
+              <Maximize2 className="w-4 h-4" />
             </button>
           </div>
 
           {/* Map Controls */}
-          <div className={`absolute transition-all duration-500 flex flex-col gap-2 ${
-            isFullscreen ? "top-4 right-6 z-[9999]" : "top-4 right-4 z-10"
-          }`}>
+          <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
             <button
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                e.stopPropagation();
                 handleMapControlClick('zoomIn', e);
               }}
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
-              style={{
-                minWidth: "48px",
-                minHeight: "48px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "none",
-                outline: "none",
-                userSelect: "none"
-              }}
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white shadow-xl rounded-lg transition-all duration-300"
               aria-label="Zoom in"
             >
               <ZoomIn className="w-5 h-5" />
@@ -1589,20 +1647,9 @@ export default function FullWidthGlobeMap() {
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                e.stopPropagation();
                 handleMapControlClick('zoomOut', e);
               }}
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
-              style={{
-                minWidth: "48px",
-                minHeight: "48px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "none",
-                outline: "none",
-                userSelect: "none"
-              }}
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white shadow-xl rounded-lg transition-all duration-300"
               aria-label="Zoom out"
             >
               <ZoomOut className="w-5 h-5" />
@@ -1611,21 +1658,10 @@ export default function FullWidthGlobeMap() {
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                e.stopPropagation();
                 handleMapControlClick('myLocation', e);
               }}
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
-              style={{
-                minWidth: "48px",
-                minHeight: "48px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "none",
-                outline: "none",
-                userSelect: "none"
-              }}
-              aria-label="Go to my location"
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white shadow-xl rounded-lg transition-all duration-300"
+              aria-label="My location"
             >
               <MapPin className="w-5 h-5" />
             </button>
@@ -1633,233 +1669,15 @@ export default function FullWidthGlobeMap() {
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                e.stopPropagation();
                 handleMapControlClick('reset', e);
               }}
-              className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl transition-all duration-300 rounded-lg cursor-pointer select-none"
-              style={{
-                minWidth: "48px",
-                minHeight: "48px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "none",
-                outline: "none",
-                userSelect: "none"
-              }}
-              aria-label="Reset map view"
+              className="p-3 bg-gray-800 hover:bg-gray-700 text-white shadow-xl rounded-lg transition-all duration-300"
+              aria-label="Reset view"
             >
-              <RotateCcw className="w-5 h-5" />
+              <RefreshCw className="w-5 h-5" />
             </button>
           </div>
         </div>
-
-        {/* Statistics Layout - positioned below map */}
-        {!isFullscreen && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Live Statistics - Left Side with Vertical Layout */}
-          <Card
-            className="transition-all duration-300 border-2 hover:shadow-lg"
-            style={{ 
-              backgroundColor: isDarkMode ? "#000000" : "#ffffff",
-              borderColor: colors.primary
-            }}
-          >
-            <CardContent className="p-6 h-full flex flex-col">
-              <h3
-                className="font-black text-xl mb-6 text-center"
-                style={{ color: colors.primary }}
-              >
-                Live Statistics
-              </h3>
-              <div className="grid grid-cols-3 gap-4 flex-1 items-center">
-                {/* Active Listeners */}
-                <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
-                  <div className="relative">
-                    <AnimatedCounter
-                      value={liveStats?.activeListeners || totalListeners}
-                      className="font-black text-4xl tracking-tight"
-                      style={{ color: colors.primary }}
-                    />
-                    <div 
-                      className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
-                      style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
-                    />
-                  </div>
-                  <TrendingUp
-                    className="h-8 w-8 drop-shadow-md"
-                    style={{ color: colors.primary }}
-                  />
-                  <span
-                    className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
-                  >
-                    Active Listeners
-                  </span>
-                </div>
-
-                {/* Countries */}
-                <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
-                  <div className="relative">
-                    <AnimatedCounter
-                      value={liveStats?.countries || countriesWithListeners}
-                      className="font-black text-4xl tracking-tight"
-                      style={{ color: colors.primary }}
-                    />
-                    <div 
-                      className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
-                      style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
-                    />
-                  </div>
-                  <MapPin
-                    className="h-8 w-8 drop-shadow-md"
-                    style={{ color: colors.primary }}
-                  />
-                  <span
-                    className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
-                  >
-                    Countries
-                  </span>
-                </div>
-
-                {/* Total Listeners */}
-                <div className="flex flex-col items-center text-center space-y-3 transform scale-125">
-                  <div className="relative">
-                    <AnimatedCounter
-                      value={liveStats?.totalListeners || stats?.currentListeners || 1247}
-                      className="font-black text-4xl tracking-tight"
-                      style={{ color: colors.primary }}
-                    />
-                    <div 
-                      className="absolute -inset-2 bg-gradient-to-r from-transparent via-current to-transparent opacity-10 rounded-lg blur-sm"
-                      style={{ background: `radial-gradient(circle, ${colors.primary}20, transparent)` }}
-                    />
-                  </div>
-                  <Users
-                    className="h-8 w-8 drop-shadow-md"
-                    style={{ color: colors.primary }}
-                  />
-                  <span
-                    className={`font-bold text-xs uppercase tracking-wide ${isDarkMode ? "text-white" : "text-black"}`}
-                  >
-                    Total Listeners
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Active Locations - Combined Single Box */}
-          <div className="lg:col-span-2">
-            <Card
-              className="transition-all duration-300 border-2 h-full hover:shadow-lg"
-              style={{ 
-                backgroundColor: isDarkMode ? "#000000" : "#ffffff",
-                borderColor: colors.primary
-              }}
-            >
-              <CardContent className="p-6 h-full flex flex-col">
-                <h3
-                  className="font-black text-xl mb-6 text-center"
-                  style={{ color: colors.primary }}
-                >
-                  Active Locations
-                </h3>
-                <div className="grid grid-cols-2 gap-5 flex-1 items-center">
-                  {/* First Column (1-5) */}
-                  <div className="space-y-3 transform scale-115">
-                    {top10Listeners
-                      .filter((l) => l.isActive)
-                      .slice(0, 5)
-                      .map((listener, index) => (
-                        <div
-                          key={listener.id}
-                          className="flex items-center p-3 rounded transition-colors duration-200 hover:bg-opacity-10"
-                        >
-                          <div className="flex items-center gap-2 flex-1">
-                            <span
-                              className="font-black text-base w-7 text-center"
-                              style={{ color: colors.primary }}
-                            >
-                              #{index + 1}
-                            </span>
-                            <MapPin
-                              className="h-6 w-6"
-                              style={{ color: colors.primary }}
-                            />
-                            <div className="flex-1">
-                              <div
-                                className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
-                              >
-                                {listener.city}
-                              </div>
-                              <div
-                                className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                              >
-                                {listener.country}
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            className="w-2 h-2 rounded-full animate-pulse ml-2"
-                            style={{ 
-                              backgroundColor: colors.primary,
-                              animation: 'pulse 2s ease-in-out infinite'
-                            }}
-                          />
-                        </div>
-                      ))}
-                  </div>
-
-                  {/* Second Column (6-10) */}
-                  <div className="space-y-3 transform scale-115">
-                    {top10Listeners
-                      .filter((l) => l.isActive)
-                      .slice(5, 10)
-                      .map((listener, index) => (
-                        <div
-                          key={listener.id}
-                          className="flex items-center p-3 rounded transition-colors duration-200 hover:bg-opacity-10"
-                        >
-                          <div className="flex items-center gap-2 flex-1">
-                            <span
-                              className="font-black text-base w-7 text-center"
-                              style={{ color: colors.primary }}
-                            >
-                              #{index + 6}
-                            </span>
-                            <MapPin
-                              className="h-6 w-6"
-                              style={{ color: colors.primary }}
-                            />
-                            <div className="flex-1">
-                              <div
-                                className={`font-semibold text-base ${isDarkMode ? "text-white" : "text-black"}`}
-                              >
-                                {listener.city}
-                              </div>
-                              <div
-                                className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}
-                              >
-                                {listener.country}
-                              </div>
-                            </div>
-                          </div>
-                          <div
-                            className="w-2 h-2 rounded-full animate-pulse ml-2"
-                            style={{ 
-                              backgroundColor: colors.primary,
-                              animation: 'pulse 2s ease-in-out infinite'
-                            }}
-                          />
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-        )}
       </div>
     </section>
   );
