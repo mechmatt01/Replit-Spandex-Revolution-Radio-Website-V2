@@ -48,10 +48,18 @@ const FullWidthGlobeMapFixed = () => {
     queryKey: ["/api/config"],
   });
 
-  // Fetch weather data
+  // Fetch weather data with default coordinates (New York)
   const { data: weather } = useQuery<Weather>({
-    queryKey: ["/api/weather"],
+    queryKey: ["/api/weather", { lat: 40.7128, lon: -74.006 }],
+    queryFn: async () => {
+      const response = await fetch("/api/weather?lat=40.7128&lon=-74.006");
+      if (!response.ok) {
+        throw new Error("Weather API failed");
+      }
+      return response.json();
+    },
     refetchInterval: 600000, // 10 minutes
+    enabled: true, // Always fetch weather
   });
 
   // Firebase Live Statistics
@@ -85,8 +93,11 @@ const FullWidthGlobeMapFixed = () => {
   };
 
   // Initialize map
-  const initializeMap = useCallback(async () => {
-    if (!mapRef.current || !config?.googleMapsApiKey || map) return;
+  const initializeMap = useCallback(() => {
+    if (!mapRef.current || !config?.googleMapsApiKey) return;
+    if (map) return; // Don't recreate if map already exists
+
+    console.log('Initializing Google Maps with API key:', config.googleMapsApiKey.substring(0, 20) + '...');
 
     try {
       const mapInstance = new google.maps.Map(mapRef.current, {
@@ -150,26 +161,46 @@ const FullWidthGlobeMapFixed = () => {
       });
 
       setMap(mapInstance);
+      console.log('Google Maps initialized successfully');
     } catch (error) {
       console.error("Error initializing map:", error);
     }
-  }, [config, isDarkMode, colors.primary, map]);
+  }, [config?.googleMapsApiKey, isDarkMode, colors.primary]);
 
   // Load Google Maps API
   useEffect(() => {
-    if (!config?.googleMapsApiKey) return;
+    if (!config?.googleMapsApiKey) {
+      console.log('No Google Maps API key available');
+      return;
+    }
 
     const loadGoogleMaps = () => {
+      // Check if Google Maps is already loaded
       if (window.google && window.google.maps) {
+        console.log('Google Maps already loaded, initializing...');
         initializeMap();
         return;
       }
 
+      // Check if script is already added
+      const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+      if (existingScript) {
+        console.log('Google Maps script already exists, waiting for load...');
+        return;
+      }
+
+      console.log('Loading Google Maps script...');
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=places`;
       script.async = true;
       script.defer = true;
-      script.onload = initializeMap;
+      script.onload = () => {
+        console.log('Google Maps script loaded successfully');
+        initializeMap();
+      };
+      script.onerror = (error) => {
+        console.error('Error loading Google Maps script:', error);
+      };
       document.head.appendChild(script);
     };
 

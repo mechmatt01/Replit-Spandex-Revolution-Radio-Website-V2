@@ -4,7 +4,7 @@ import Features from "@/components/Features";
 import About from "@/components/About";
 import Schedule from "@/components/Schedule";
 import Submissions from "@/components/Submissions";
-import FullWidthGlobeMapFixed from "@/components/FullWidthGlobeMapFixed";
+import FullWidthGlobeMap from "@/components/FullWidthGlobeMap";
 import Contact from "@/components/Contact";
 import SubscriptionCarousel from "@/components/SubscriptionCarousel";
 import ShopifyEcommerce from "@/components/ShopifyEcommerce";
@@ -105,7 +105,7 @@ export default function HomePage() {
       </FadeInView>
       
       <FadeInView direction="up" delay={0}>
-        <FullWidthGlobeMapFixed />
+        <FullWidthGlobeMap />
       </FadeInView>
       
       <FadeInView direction="up" delay={0}>

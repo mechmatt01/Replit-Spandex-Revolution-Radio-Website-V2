@@ -1531,12 +1531,9 @@ export default function FullWidthGlobeMap() {
         {/* Map Container */}
         <div className={`relative mb-16 transition-all duration-500 ease-in-out ${
           isFullscreen 
-            ? "fixed inset-0 z-[9990] mb-0 bg-black overflow-hidden" 
+            ? "fixed inset-0 z-[9999] mb-0 bg-black overflow-hidden" 
             : "h-[600px] rounded-lg overflow-hidden"
-        }`}
-        style={{
-          zIndex: isFullscreen ? 9990 : 'auto'
-        }}>
+        }`}>
           {/* Fullscreen Header */}
           {isFullscreen && (
             <div className="absolute top-0 left-0 right-0 z-[9999] bg-black/90 backdrop-blur-md border-b border-gray-700">
@@ -1569,14 +1566,11 @@ export default function FullWidthGlobeMap() {
               isFullscreen ? "opacity-100" : "rounded-lg opacity-100"
             }`}
             style={{
-              height: isFullscreen ? "calc(100vh - 72px)" : "600px",
-              width: isFullscreen ? "100vw" : "100%",
+              height: isFullscreen ? "100vh" : "600px",
+              width: "100%",
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              marginTop: isFullscreen ? "72px" : "0",
-              position: "relative",
-              zIndex: isFullscreen ? 9991 : "auto",
-              display: "block",
-              visibility: "visible"
+              paddingTop: isFullscreen ? "72px" : "0",
+              position: "relative"
             }}
           />
 
