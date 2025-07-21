@@ -225,7 +225,7 @@ export default function FullWidthGlobeMap() {
     lat: number;
     lng: number;
   } | null>(null);
-  const mapRef = useRef<HTMLDivElement>(null);
+  const normalMapRef = useRef<HTMLDivElement>(null);
   const fullscreenMapRef = useRef<HTMLDivElement>(null);
   const currentInfoWindow = useRef<any>(null);
   const { colors, isDarkMode, currentTheme } = useTheme();
@@ -491,29 +491,36 @@ export default function FullWidthGlobeMap() {
       document.body.style.overflow = '';
     }
 
-    // Wait for CSS transitions to complete, then trigger map resize
+    // Move the map to the appropriate container
     setTimeout(() => {
       if (map && window.google && window.google.maps) {
-        console.log('Triggering map resize after fullscreen layout change');
-        window.google.maps.event.trigger(map, 'resize');
+        console.log('Moving map to', newState ? 'fullscreen' : 'normal', 'container');
         
-        // Force map container to recalculate height
-        if (mapRef.current) {
-          mapRef.current.style.height = '100%';
-        }
-        
-        // Ensure map is centered properly after resize
-        setTimeout(() => {
-          if (userLocation) {
-            map.panTo(userLocation);
-            map.setZoom(12);
-          } else {
-            map.panTo({ lat: 20, lng: 0 });
-            map.setZoom(3);
+        // Get the target container
+        const targetContainer = newState ? fullscreenMapRef.current : normalMapRef.current;
+        if (targetContainer) {
+          // Move the map element to the new container
+          const mapElement = map.getDiv();
+          if (mapElement && mapElement.parentNode) {
+            targetContainer.appendChild(mapElement);
           }
-        }, 100);
+          
+          // Trigger resize and recenter
+          window.google.maps.event.trigger(map, 'resize');
+          
+          // Ensure map is centered properly after resize
+          setTimeout(() => {
+            if (userLocation) {
+              map.panTo(userLocation);
+              map.setZoom(12);
+            } else {
+              map.panTo({ lat: 20, lng: 0 });
+              map.setZoom(3);
+            }
+          }, 100);
+        }
       }
-    }, 500); // Extended delay to ensure fullscreen CSS is fully applied
+    }, 100); // Shorter delay since we're just moving DOM elements
   };
 
   // Fetch Google Maps API key and config
@@ -618,7 +625,8 @@ export default function FullWidthGlobeMap() {
     console.log('Config available:', !!config);
     console.log('API key available:', !!config?.googleMapsApiKey);
     console.log('API key value:', config?.googleMapsApiKey?.substring(0, 15) + '...');
-    console.log('Map ref current:', !!mapRef.current);
+    console.log('Normal map ref current:', !!normalMapRef.current);
+    console.log('Fullscreen map ref current:', !!fullscreenMapRef.current);
     console.log('User location available:', !!userLocation);
     console.log('User location value:', userLocation);
     console.log('Is fullscreen:', isFullscreen);
@@ -645,8 +653,8 @@ export default function FullWidthGlobeMap() {
     // Don't reinitialize if map already exists
     if (map) return;
 
-    // Always use the same map container
-    const currentContainer = mapRef.current;
+    // Use the appropriate map container based on current state
+    const currentContainer = normalMapRef.current;
     if (!currentContainer) return;
 
     // Add CSS to hide Google attribution and fix InfoWindow styling
@@ -1453,7 +1461,7 @@ export default function FullWidthGlobeMap() {
 
           {/* Map container */}
           <div
-            ref={mapRef}
+            ref={fullscreenMapRef}
             className="w-full h-full"
             style={{
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
@@ -1606,7 +1614,7 @@ export default function FullWidthGlobeMap() {
         {/* Map Container for normal view */}
         <div className="relative h-[600px] rounded-lg overflow-hidden mb-16">
           <div
-            ref={mapRef}
+            ref={normalMapRef}
             className="w-full h-full"
             style={{
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
