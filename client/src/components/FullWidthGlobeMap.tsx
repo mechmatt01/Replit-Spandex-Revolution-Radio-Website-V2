@@ -965,10 +965,10 @@ export default function FullWidthGlobeMap() {
 
               infoWindow.addListener('domready', () => {
                 // Ensure InfoWindow is visible and properly styled
-                const iwOuter = document.querySelector('.gm-style-iw');
-                const iwBackground = document.querySelector('.gm-style-iw-d');
-                const iwContainer = document.querySelector('.gm-style-iw-c');
-                const iwCloseBtn = document.querySelector('.gm-style-iw-chr');
+                const iwOuter = document.querySelector('.gm-style-iw') as HTMLElement;
+                const iwBackground = document.querySelector('.gm-style-iw-d') as HTMLElement;
+                const iwContainer = document.querySelector('.gm-style-iw-c') as HTMLElement;
+                const iwCloseBtn = document.querySelector('.gm-style-iw-chr') as HTMLElement;
 
                 if (iwOuter) {
                   iwOuter.style.visibility = 'visible !important';
@@ -1109,10 +1109,10 @@ export default function FullWidthGlobeMap() {
 
             userInfoWindow.addListener('domready', () => {
               // Ensure InfoWindow is visible and properly styled
-              const iwOuter = document.querySelector('.gm-style-iw');
-              const iwBackground = document.querySelector('.gm-style-iw-d');
-              const iwContainer = document.querySelector('.gm-style-iw-c');
-              const iwCloseBtn = document.querySelector('.gm-style-iw-chr');
+              const iwOuter = document.querySelector('.gm-style-iw') as HTMLElement;
+              const iwBackground = document.querySelector('.gm-style-iw-d') as HTMLElement;
+              const iwContainer = document.querySelector('.gm-style-iw-c') as HTMLElement;
+              const iwCloseBtn = document.querySelector('.gm-style-iw-chr') as HTMLElement;
 
               if (iwOuter) {
                 iwOuter.style.visibility = 'visible !important';
