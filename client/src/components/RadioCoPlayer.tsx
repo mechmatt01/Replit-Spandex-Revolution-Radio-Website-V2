@@ -56,7 +56,7 @@ const radioStations: RadioStation[] = [
     frequency: "105.9 FM",
     location: "Los Angeles, CA",
     genre: "Hip Hop & R&B",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFM.aac",
+    streamUrl: "https://ice1.somafm.com/groovesalad-256-mp3",
     description: "Los Angeles Hip Hop & R&B",
     icon: "⚡",
   },

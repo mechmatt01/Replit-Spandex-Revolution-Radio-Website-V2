@@ -118,26 +118,48 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const getStreamUrls = (station: RadioStation | null): string[] => {
     if (!station || !station.streamUrl) return [
       "/api/radio-stream",
-      "https://ice1.somafm.com/metal-128-mp3"
+      "https://ice1.somafm.com/metal-128-mp3",
+      "https://ice2.somafm.com/metal-128-mp3"
     ];
     
-    // Use actual station stream URLs with proxy fallbacks
+    // Use actual station stream URLs with robust fallbacks
     const streamUrl = station.streamUrl;
     
-    // For SomaFM stations, provide multiple ice servers as fallbacks
-    if (streamUrl.includes('somafm.com')) {
-      const baseUrl = streamUrl.replace('ice1.somafm.com', '');
+    // Station-specific fallbacks with working URLs
+    if (station.id === "beat-955") {
       return [
-        streamUrl, // Original URL
-        `https://ice2.somafm.com${baseUrl}`,
-        `https://ice6.somafm.com${baseUrl}`
+        streamUrl, // Direct 95.5 The Beat URL
+        `/api/radio-stream?url=${encodeURIComponent(streamUrl)}`, // Proxy fallback
+        "https://ice1.somafm.com/beatblender-128-mp3", // SomaFM Hip Hop fallback
+        "https://ice2.somafm.com/beatblender-128-mp3"
       ];
     }
     
-    // For StreamTheWorld stations (Hot 97, Power 106, 95.5 The Beat), use proxy + direct
+    if (station.id === "hot-97") {
+      return [
+        `/api/radio-stream?url=${encodeURIComponent(streamUrl)}`, // Proxy first for redirect
+        streamUrl, // Direct Hot 97 URL
+        "https://ice1.somafm.com/groovesalad-256-mp3", // SomaFM fallback
+        "https://ice2.somafm.com/groovesalad-256-mp3"
+      ];
+    }
+    
+    // For SomaFM stations, provide multiple ice servers as fallbacks
+    if (streamUrl.includes('somafm.com')) {
+      const baseUrl = streamUrl.replace(/https:\/\/ice\d+\.somafm\.com/, '');
+      return [
+        streamUrl, // Original URL
+        `https://ice2.somafm.com${baseUrl}`,
+        `https://ice6.somafm.com${baseUrl}`,
+        `https://ice3.somafm.com${baseUrl}`
+      ];
+    }
+    
+    // Default fallback for any other stations
     return [
-      `/api/radio-stream?url=${encodeURIComponent(streamUrl)}`, // Proxy first for CORS
-      streamUrl // Direct stream as fallback
+      streamUrl,
+      `/api/radio-stream?url=${encodeURIComponent(streamUrl)}`,
+      "https://ice1.somafm.com/metal-128-mp3"
     ];
   };
 
