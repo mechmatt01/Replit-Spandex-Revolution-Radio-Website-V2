@@ -1,0 +1,269 @@
+[vite] connected.
+user:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+Navigated to https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/
+client:789 [vite] connecting...
+client:912 [vite] connected.
+FullWidthGlobeMap.tsx:255 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:543 Config loading status: {configLoading: true, config: undefined, configError: null}
+FullWidthGlobeMap.tsx:624 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:625 Config available: false
+FullWidthGlobeMap.tsx:626 API key available: false
+FullWidthGlobeMap.tsx:627 API key value: undefined...
+FullWidthGlobeMap.tsx:628 Normal map ref current: true
+FullWidthGlobeMap.tsx:629 Fullscreen map ref current: false
+FullWidthGlobeMap.tsx:630 User location available: false
+FullWidthGlobeMap.tsx:631 User location value: null
+FullWidthGlobeMap.tsx:632 Is fullscreen: false
+FullWidthGlobeMap.tsx:643 Initializing Google Maps with API key: AIzaSyBfRJS8dGDJqA4X...
+FullWidthGlobeMap.tsx:644 Using Map ID: DEMO_MAP_ID
+FullWidthGlobeMap.tsx:645 Theme detection: {currentTheme: 'classic-metal', isDarkMode: true, backgroundColor: '#000000', isMapDark: true, shouldUseDarkStyles: true}
+chunk-TIGC5ND6.js?v=16cdfa28:377 [Violation] 'message' handler took 251ms
+[Violation] Forced reflow while executing JavaScript took 125ms
+queryClient.ts:32  GET https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user 401 (Unauthorized)
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=16cdfa28:881
+run @ @tanstack_react-query.js?v=16cdfa28:513
+start @ @tanstack_react-query.js?v=16cdfa28:555
+fetch @ @tanstack_react-query.js?v=16cdfa28:969
+executeFetch_fn @ @tanstack_react-query.js?v=16cdfa28:2279
+onSubscribe @ @tanstack_react-query.js?v=16cdfa28:1983
+subscribe @ @tanstack_react-query.js?v=16cdfa28:24
+(anonymous) @ @tanstack_react-query.js?v=16cdfa28:3146
+subscribeToStore @ chunk-TIGC5ND6.js?v=16cdfa28:12032
+commitHookEffectListMount @ chunk-TIGC5ND6.js?v=16cdfa28:16963
+commitPassiveMountOnFiber @ chunk-TIGC5ND6.js?v=16cdfa28:18206
+commitPassiveMountEffects_complete @ chunk-TIGC5ND6.js?v=16cdfa28:18179
+commitPassiveMountEffects_begin @ chunk-TIGC5ND6.js?v=16cdfa28:18169
+commitPassiveMountEffects @ chunk-TIGC5ND6.js?v=16cdfa28:18159
+flushPassiveEffectsImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19543
+flushPassiveEffects @ chunk-TIGC5ND6.js?v=16cdfa28:19500
+performSyncWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18921
+flushSyncCallbacks @ chunk-TIGC5ND6.js?v=16cdfa28:9166
+commitRootImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19485
+commitRoot @ chunk-TIGC5ND6.js?v=16cdfa28:19330
+finishConcurrentRender @ chunk-TIGC5ND6.js?v=16cdfa28:18858
+performConcurrentWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18768
+workLoop @ chunk-TIGC5ND6.js?v=16cdfa28:197
+flushWork @ chunk-TIGC5ND6.js?v=16cdfa28:176
+performWorkUntilDeadline @ chunk-TIGC5ND6.js?v=16cdfa28:384Understand this error
+FullWidthGlobeMap.tsx:553 Geolocation permission: granted
+AuthContext.tsx:74  GET https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user 401 (Unauthorized)
+refreshUser @ AuthContext.tsx:74
+(anonymous) @ AuthContext.tsx:221
+commitHookEffectListMount @ chunk-TIGC5ND6.js?v=16cdfa28:16963
+commitPassiveMountOnFiber @ chunk-TIGC5ND6.js?v=16cdfa28:18206
+commitPassiveMountEffects_complete @ chunk-TIGC5ND6.js?v=16cdfa28:18179
+commitPassiveMountEffects_begin @ chunk-TIGC5ND6.js?v=16cdfa28:18169
+commitPassiveMountEffects @ chunk-TIGC5ND6.js?v=16cdfa28:18159
+flushPassiveEffectsImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19543
+flushPassiveEffects @ chunk-TIGC5ND6.js?v=16cdfa28:19500
+performSyncWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18921
+flushSyncCallbacks @ chunk-TIGC5ND6.js?v=16cdfa28:9166
+commitRootImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19485
+commitRoot @ chunk-TIGC5ND6.js?v=16cdfa28:19330
+finishConcurrentRender @ chunk-TIGC5ND6.js?v=16cdfa28:18858
+performConcurrentWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18768
+workLoop @ chunk-TIGC5ND6.js?v=16cdfa28:197
+flushWork @ chunk-TIGC5ND6.js?v=16cdfa28:176
+performWorkUntilDeadline @ chunk-TIGC5ND6.js?v=16cdfa28:384Understand this error
+queryClient.ts:32 Fetch failed loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user".
+(anonymous) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=16cdfa28:881
+run @ @tanstack_react-query.js?v=16cdfa28:513
+start @ @tanstack_react-query.js?v=16cdfa28:555
+fetch @ @tanstack_react-query.js?v=16cdfa28:969
+executeFetch_fn @ @tanstack_react-query.js?v=16cdfa28:2279
+onSubscribe @ @tanstack_react-query.js?v=16cdfa28:1983
+subscribe @ @tanstack_react-query.js?v=16cdfa28:24
+(anonymous) @ @tanstack_react-query.js?v=16cdfa28:3146
+subscribeToStore @ chunk-TIGC5ND6.js?v=16cdfa28:12032
+commitHookEffectListMount @ chunk-TIGC5ND6.js?v=16cdfa28:16963
+commitPassiveMountOnFiber @ chunk-TIGC5ND6.js?v=16cdfa28:18206
+commitPassiveMountEffects_complete @ chunk-TIGC5ND6.js?v=16cdfa28:18179
+commitPassiveMountEffects_begin @ chunk-TIGC5ND6.js?v=16cdfa28:18169
+commitPassiveMountEffects @ chunk-TIGC5ND6.js?v=16cdfa28:18159
+flushPassiveEffectsImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19543
+flushPassiveEffects @ chunk-TIGC5ND6.js?v=16cdfa28:19500
+performSyncWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18921
+flushSyncCallbacks @ chunk-TIGC5ND6.js?v=16cdfa28:9166
+commitRootImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19485
+commitRoot @ chunk-TIGC5ND6.js?v=16cdfa28:19330
+finishConcurrentRender @ chunk-TIGC5ND6.js?v=16cdfa28:18858
+performConcurrentWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18768
+workLoop @ chunk-TIGC5ND6.js?v=16cdfa28:197
+flushWork @ chunk-TIGC5ND6.js?v=16cdfa28:176
+performWorkUntilDeadline @ chunk-TIGC5ND6.js?v=16cdfa28:384
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1020 Google Maps JavaScript API has been loaded directly without loading=async. This can result in suboptimal performance. For best-practice loading patterns please see https://goo.gle/js-api-loading
+overrideMethod @ hook.js:608
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1020
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+FullWidthGlobeMap.tsx:1191 Google Maps API callback triggered
+FullWidthGlobeMap.tsx:557 Got location: 29.738153977726423 -95.35375124857926
+FullWidthGlobeMap.tsx:255 Dark mode detected (classic-metal) - using dark map
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1050  GET https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true net::ERR_BLOCKED_BY_CLIENT
+_.B.send @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1050
+$ca @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1029
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1021
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this error
+FullWidthGlobeMap.tsx:624 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:625 Config available: false
+FullWidthGlobeMap.tsx:626 API key available: false
+FullWidthGlobeMap.tsx:627 API key value: undefined...
+FullWidthGlobeMap.tsx:628 Normal map ref current: true
+FullWidthGlobeMap.tsx:629 Fullscreen map ref current: false
+FullWidthGlobeMap.tsx:630 User location available: true
+FullWidthGlobeMap.tsx:631 User location value: {lat: 29.738153977726423, lng: -95.35375124857926}
+FullWidthGlobeMap.tsx:632 Is fullscreen: false
+FullWidthGlobeMap.tsx:643 Initializing Google Maps with API key: AIzaSyBfRJS8dGDJqA4X...
+FullWidthGlobeMap.tsx:644 Using Map ID: DEMO_MAP_ID
+FullWidthGlobeMap.tsx:645 Theme detection: {currentTheme: 'classic-metal', isDarkMode: true, backgroundColor: '#000000', isMapDark: true, shouldUseDarkStyles: true}
+12Fetch finished loading: GET "<URL>".
+FullWidthGlobeMap.tsx:255 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:265 Updating map styles - Dark mode: true Theme: classic-metal
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1050 XHR failed loading: GET "https://maps.googleapis.com/maps/api/mapsjs/gen_204?csp_test=true".
+_.B.send @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1050
+$ca @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1029
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1021
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+AuthContext.tsx:74 Fetch failed loading: GET "https://70cda23f-d4b7-4758-b471-b3d88ec016af-00-4dqudairh7w1.picard.replit.dev/api/auth/user".
+refreshUser @ AuthContext.tsx:74
+(anonymous) @ AuthContext.tsx:221
+commitHookEffectListMount @ chunk-TIGC5ND6.js?v=16cdfa28:16963
+commitPassiveMountOnFiber @ chunk-TIGC5ND6.js?v=16cdfa28:18206
+commitPassiveMountEffects_complete @ chunk-TIGC5ND6.js?v=16cdfa28:18179
+commitPassiveMountEffects_begin @ chunk-TIGC5ND6.js?v=16cdfa28:18169
+commitPassiveMountEffects @ chunk-TIGC5ND6.js?v=16cdfa28:18159
+flushPassiveEffectsImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19543
+flushPassiveEffects @ chunk-TIGC5ND6.js?v=16cdfa28:19500
+performSyncWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18921
+flushSyncCallbacks @ chunk-TIGC5ND6.js?v=16cdfa28:9166
+commitRootImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19485
+commitRoot @ chunk-TIGC5ND6.js?v=16cdfa28:19330
+finishConcurrentRender @ chunk-TIGC5ND6.js?v=16cdfa28:18858
+performConcurrentWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18768
+workLoop @ chunk-TIGC5ND6.js?v=16cdfa28:197
+flushWork @ chunk-TIGC5ND6.js?v=16cdfa28:176
+performWorkUntilDeadline @ chunk-TIGC5ND6.js?v=16cdfa28:384
+FullWidthGlobeMap.tsx:255 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:265 Updating map styles - Dark mode: true Theme: classic-metal
+FullWidthGlobeMap.tsx:255 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:543 Config loading status: {configLoading: false, config: {…}, configError: null}
+FullWidthGlobeMap.tsx:624 === FullWidthGlobeMap Debug ===
+FullWidthGlobeMap.tsx:625 Config available: true
+FullWidthGlobeMap.tsx:626 API key available: true
+FullWidthGlobeMap.tsx:627 API key value: AIzaSyBfRJS8dGD...
+FullWidthGlobeMap.tsx:628 Normal map ref current: true
+FullWidthGlobeMap.tsx:629 Fullscreen map ref current: false
+FullWidthGlobeMap.tsx:630 User location available: true
+FullWidthGlobeMap.tsx:631 User location value: {lat: 29.738153977726423, lng: -95.35375124857926}
+FullWidthGlobeMap.tsx:632 Is fullscreen: false
+FullWidthGlobeMap.tsx:643 Initializing Google Maps with API key: AIzaSyBfRJS8dGDJqA4X...
+FullWidthGlobeMap.tsx:644 Using Map ID: DEMO_MAP_ID
+FullWidthGlobeMap.tsx:645 Theme detection: {currentTheme: 'classic-metal', isDarkMode: true, backgroundColor: '#000000', isMapDark: true, shouldUseDarkStyles: true}
+FullWidthGlobeMap.tsx:1220 Theme changed, updating map styles. Current theme: classic-metal
+FullWidthGlobeMap.tsx:255 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:265 Updating map styles - Dark mode: true Theme: classic-metal
+RadioContext.tsx:198 Trying radio stream 1: https://24883.live.streamtheworld.com/KBFBFMAAC
+2FullWidthGlobeMap.tsx:255 Dark mode detected (classic-metal) - using dark map
+FullWidthGlobeMap.tsx:1033 Map is fully loaded, adding markers...
+FullWidthGlobeMap.tsx:1172 Adding mock listener markers...
+js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:930 As of February 21st, 2024, google.maps.Marker is deprecated. Please use google.maps.marker.AdvancedMarkerElement instead. At this time, google.maps.Marker is not scheduled to be discontinued, but google.maps.marker.AdvancedMarkerElement is recommended over google.maps.Marker. While google.maps.Marker will continue to receive bug fixes for any major regressions, existing bugs in google.maps.Marker will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/deprecations for additional details and https://developers.google.com/maps/documentation/javascript/advanced-markers/migration for the migration guide.
+overrideMethod @ hook.js:608
+_.lo @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:930
+(anonymous) @ FullWidthGlobeMap.tsx:878
+addListenerMarkers @ FullWidthGlobeMap.tsx:864
+(anonymous) @ FullWidthGlobeMap.tsx:1173
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:915
+_.Xm @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:915
+b @ map.js:39
+requestAnimationFrame
+_.PA @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:605
+qta @ map.js:39
+(anonymous) @ map.js:102
+_.B.fD @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1174
+setTimeout
+_.mq @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:963
+_.B.start @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1174
+_.oq @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:964
+Aua.Eg @ map.js:102
+yI @ map.js:39
+Aua @ map.js:103
+Nua @ map.js:69
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:999
+Promise.then
+_.Or @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:999
+initializeMap @ FullWidthGlobeMap.tsx:814
+(anonymous) @ FullWidthGlobeMap.tsx:1195
+setTimeout
+window.initMapCallback @ FullWidthGlobeMap.tsx:1193
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1025
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1024
+Promise.then
+bda @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1024
+google.maps.Load @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:14
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264
+(anonymous) @ js?key=AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw&libraries=geometry,marker&callback=initMapCallback:1264Understand this warning
+FullWidthGlobeMap.tsx:1033 Map is fully loaded, adding markers...
+FullWidthGlobeMap.tsx:1037 Adding user location marker at: {lat: 29.738153977726423, lng: -95.35375124857926}
+FullWidthGlobeMap.tsx:1172 Adding mock listener markers...
+RadioContext.tsx:245 Stream 1 failed: Stream loading timeout
+overrideMethod @ hook.js:608
+startPlayback @ RadioContext.tsx:245
+await in startPlayback
+togglePlayback @ RadioContext.tsx:176
+(anonymous) @ RadioContext.tsx:468
+setTimeout
+initializeAutoPlay @ RadioContext.tsx:467
+(anonymous) @ RadioContext.tsx:476
+commitHookEffectListMount @ chunk-TIGC5ND6.js?v=16cdfa28:16963
+commitPassiveMountOnFiber @ chunk-TIGC5ND6.js?v=16cdfa28:18206
+commitPassiveMountEffects_complete @ chunk-TIGC5ND6.js?v=16cdfa28:18179
+commitPassiveMountEffects_begin @ chunk-TIGC5ND6.js?v=16cdfa28:18169
+commitPassiveMountEffects @ chunk-TIGC5ND6.js?v=16cdfa28:18159
+flushPassiveEffectsImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19543
+flushPassiveEffects @ chunk-TIGC5ND6.js?v=16cdfa28:19500
+performSyncWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18921
+flushSyncCallbacks @ chunk-TIGC5ND6.js?v=16cdfa28:9166
+commitRootImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19485
+commitRoot @ chunk-TIGC5ND6.js?v=16cdfa28:19330
+finishConcurrentRender @ chunk-TIGC5ND6.js?v=16cdfa28:18858
+performConcurrentWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18768
+workLoop @ chunk-TIGC5ND6.js?v=16cdfa28:197
+flushWork @ chunk-TIGC5ND6.js?v=16cdfa28:176
+performWorkUntilDeadline @ chunk-TIGC5ND6.js?v=16cdfa28:384Understand this warning
+RadioContext.tsx:198 Trying radio stream 2: /api/radio-stream?url=https%3A%2F%2F24883.live.streamtheworld.com%2FKBFBFMAAC
+FullWidthGlobeMap.tsx:255 Dark mode detected (classic-metal) - using dark map
+RadioContext.tsx:245 Stream 2 failed: Stream loading timeout
+overrideMethod @ hook.js:608
+startPlayback @ RadioContext.tsx:245
+await in startPlayback
+togglePlayback @ RadioContext.tsx:176
+(anonymous) @ RadioContext.tsx:468
+setTimeout
+initializeAutoPlay @ RadioContext.tsx:467
+(anonymous) @ RadioContext.tsx:476
+commitHookEffectListMount @ chunk-TIGC5ND6.js?v=16cdfa28:16963
+commitPassiveMountOnFiber @ chunk-TIGC5ND6.js?v=16cdfa28:18206
+commitPassiveMountEffects_complete @ chunk-TIGC5ND6.js?v=16cdfa28:18179
+commitPassiveMountEffects_begin @ chunk-TIGC5ND6.js?v=16cdfa28:18169
+commitPassiveMountEffects @ chunk-TIGC5ND6.js?v=16cdfa28:18159
+flushPassiveEffectsImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19543
+flushPassiveEffects @ chunk-TIGC5ND6.js?v=16cdfa28:19500
+performSyncWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18921
+flushSyncCallbacks @ chunk-TIGC5ND6.js?v=16cdfa28:9166
+commitRootImpl @ chunk-TIGC5ND6.js?v=16cdfa28:19485
+commitRoot @ chunk-TIGC5ND6.js?v=16cdfa28:19330
+finishConcurrentRender @ chunk-TIGC5ND6.js?v=16cdfa28:18858
+performConcurrentWorkOnRoot @ chunk-TIGC5ND6.js?v=16cdfa28:18768
+workLoop @ chunk-TIGC5ND6.js?v=16cdfa28:197
+flushWork @ chunk-TIGC5ND6.js?v=16cdfa28:176
+performWorkUntilDeadline @ chunk-TIGC5ND6.js?v=16cdfa28:384Understand this warning
+RadioContext.tsx:198 Trying radio stream 3: https://ice1.somafm.com/beatblender-128-mp3
+RadioContext.tsx:241 Stream 3 connected successfully via redirect
+3FullWidthGlobeMap.tsx:255 Dark mode detected (classic-metal) - using dark map

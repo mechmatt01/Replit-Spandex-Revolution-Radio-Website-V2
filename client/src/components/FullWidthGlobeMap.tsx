@@ -631,12 +631,17 @@ export default function FullWidthGlobeMap() {
     console.log('User location value:', userLocation);
     console.log('Is fullscreen:', isFullscreen);
 
-    // Use hardcoded API key if config is not available
-    const apiKey = config?.googleMapsApiKey || "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
-    const mapId = config?.googleMapsMapId || "DEMO_MAP_ID";
+    // Wait for config to load before initializing map
+    if (!config || configLoading) {
+      console.log('Waiting for config to load...');
+      return;
+    }
+
+    const apiKey = config.googleMapsApiKey;
+    const mapId = config.googleMapsMapId || "DEMO_MAP_ID";
 
     if (!apiKey) {
-      console.log('No API key available');
+      console.log('No API key available in config');
       return;
     }
 
@@ -1212,7 +1217,7 @@ export default function FullWidthGlobeMap() {
     } else {
       initializeMap();
     }
-  }, [config, userLocation]); // Only initialize once, theme changes handled separately
+  }, [config, configLoading]); // Removed userLocation to prevent re-initialization
 
   // Update map styles when theme changes
   useEffect(() => {
