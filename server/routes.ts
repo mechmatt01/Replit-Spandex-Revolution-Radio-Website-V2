@@ -239,12 +239,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Config endpoint for client-side environment variables
   app.get("/api/config", (req: Request, res: Response) => {
     try {
-      // Read API keys from environment variables
-      const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY || "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
-      const googleMapsSigningSecret = process.env.GOOGLE_MAPS_SIGNING_SECRET || "xUMvkKZN7YbwACexIGzpV2o5Fms=";
+      // Force the correct API key to override persistent environment variables
+      const googleMapsApiKey = "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
+      const googleMapsSigningSecret = "xUMvkKZN7YbwACexIGzpV2o5Fms=";
       const openWeatherApiKey = process.env.OPENWEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5";
       // Add Map ID for Google Maps
-      const googleMapsMapId = process.env.GOOGLE_MAPS_MAP_ID || "DEMO_MAP_ID";
+      const googleMapsMapId = "DEMO_MAP_ID";
       
       // Disable caching for config endpoint to ensure new API key is loaded
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
