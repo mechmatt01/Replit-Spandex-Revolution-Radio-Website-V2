@@ -47,6 +47,7 @@ export const users = pgTable("users", {
   accountDeletionDate: timestamp("account_deletion_date"),
   isEmailVerified: boolean("is_email_verified").default(false).notNull(),
   emailVerificationToken: varchar("email_verification_token"),
+  phoneVerificationCode: varchar("phone_verification_code"), // <-- Add this line
   resetPasswordToken: varchar("reset_password_token"),
   resetPasswordExpires: timestamp("reset_password_expires"),
   isAdmin: boolean("is_admin").default(false).notNull(),
@@ -190,6 +191,7 @@ export const insertUserSchema = z.object({
   isPhoneVerified: z.boolean().optional(),
   isEmailVerified: z.boolean().optional(),
   emailVerificationToken: z.string().optional(),
+  phoneVerificationCode: z.string().optional(), // <-- Add this line
   stripeCustomerId: z.string().optional(),
   stripeSubscriptionId: z.string().optional(),
   accountDeletionScheduled: z.boolean().optional(),
@@ -199,11 +201,11 @@ export const registerUserSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
-    email: z.string().email("Please enter a valid email address"),
-    phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
-    username: z.string().min(3, "Username must be at least 3 characters"),
+    email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().optional(),
+    username: z.string().min(3).max(32),
+    phoneNumber: z.string().min(10, "Phone number is required"),
+    phoneVerificationCode: z.string().optional(), // <-- Add this line
   })
   .refine(
     (data) => !data.confirmPassword || data.password === data.confirmPassword,

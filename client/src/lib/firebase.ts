@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, collection as firestoreCollection } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const firebaseConfig = {
@@ -206,6 +206,32 @@ export async function handleRedirectResult() {
   } catch (error) {
     console.error('Error handling redirect result:', error);
     return { success: false, error };
+  }
+}
+
+// Fetch all users with IsActiveListening: true and a valid Location
+export async function getActiveListenersFromFirestore() {
+  try {
+    const q = query(
+      firestoreCollection(db, "Users"),
+      where("IsActiveListening", "==", true),
+      // Firestore does not support querying for non-null objects, so filter after fetch
+    );
+    const querySnapshot = await getDocs(q);
+    const listeners = [];
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.Location && typeof data.Location.lat === "number" && typeof data.Location.lng === "number") {
+        listeners.push({
+          id: doc.id,
+          ...data,
+        });
+      }
+    });
+    return listeners;
+  } catch (error) {
+    console.error("Error fetching active listeners from Firestore:", error);
+    return [];
   }
 }
 

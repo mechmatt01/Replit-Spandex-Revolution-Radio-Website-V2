@@ -28,6 +28,7 @@ import { useTheme, METAL_THEMES } from "@/contexts/ThemeContext";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import type { StreamStats } from "@shared/schema";
 import AnimatedCounter from "./AnimatedCounter";
+import { getActiveListenersFromFirestore } from "@/lib/firebase";
 
 // Animated weather icons
 import clearDayIcon from "@assets/animated_weather_icons/clear-day.svg";
@@ -466,6 +467,37 @@ export default function FullWidthGlobeMap() {
     refetchInterval: 5000, // Update every 5 seconds
     refetchIntervalInBackground: true,
   });
+
+  const [activeListeners, setActiveListeners] = useState<ListenerData[]>([]);
+  const [listenersError, setListenersError] = useState<string | null>(null);
+
+  // Poll Firestore for active listeners every 5 seconds
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchListeners() {
+      try {
+        const listeners = await getActiveListenersFromFirestore();
+        if (isMounted) {
+          setActiveListeners(listeners.map((l: any) => ({
+            id: l.UserID || l.id,
+            city: l.Location?.city || "Unknown",
+            country: l.Location?.country || "Unknown",
+            lat: l.Location.lat,
+            lng: l.Location.lng,
+            isActive: true,
+            lastSeen: l.UpdatedAt ? new Date(l.UpdatedAt) : new Date(),
+            username: l.FirstName || l.EmailAddress || undefined,
+          })));
+          setListenersError(null);
+        }
+      } catch (err: any) {
+        if (isMounted) setListenersError(err.message || "Failed to load listeners");
+      }
+    }
+    fetchListeners();
+    const interval = setInterval(fetchListeners, 5000);
+    return () => { isMounted = false; clearInterval(interval); };
+  }, []);
 
   // COMPLETELY REWRITTEN - Simple fullscreen toggle that works
   const toggleFullscreen = () => {
@@ -1222,100 +1254,6 @@ export default function FullWidthGlobeMap() {
       }
     };
   }, [isFullscreen]);
-
-  // Generate mock listener data
-  const activeListeners: ListenerData[] = [
-    {
-      id: "1",
-      city: "New York",
-      country: "USA",
-      lat: 40.7128,
-      lng: -74.006,
-      isActive: true,
-      lastSeen: new Date(),
-    },
-    {
-      id: "2",
-      city: "Los Angeles",
-      country: "USA",
-      lat: 34.0522,
-      lng: -118.2437,
-      isActive: true,
-      lastSeen: new Date(),
-    },
-    {
-      id: "3",
-      city: "London",
-      country: "UK",
-      lat: 51.5074,
-      lng: -0.1278,
-      isActive: true,
-      lastSeen: new Date(),
-    },
-    {
-      id: "4",
-      city: "Paris",
-      country: "France",
-      lat: 48.8566,
-      lng: 2.3522,
-      isActive: true,
-      lastSeen: new Date(),
-    },
-    {
-      id: "5",
-      city: "Tokyo",
-      country: "Japan",
-      lat: 35.6762,
-      lng: 139.6503,
-      isActive: true,
-      lastSeen: new Date(),
-    },
-    {
-      id: "6",
-      city: "Sydney",
-      country: "Australia",
-      lat: -33.8688,
-      lng: 151.2093,
-      isActive: true,
-      lastSeen: new Date(),
-    },
-    {
-      id: "7",
-      city: "Moscow",
-      country: "Russia",
-      lat: 55.7558,
-      lng: 37.6173,
-      isActive: true,
-      lastSeen: new Date(),
-    },
-    {
-      id: "8",
-      city: "Beijing",
-      country: "China",
-      lat: 39.9042,
-      lng: 116.4074,
-      isActive: true,
-      lastSeen: new Date(),
-    },
-    {
-      id: "9",
-      city: "Mumbai",
-      country: "India",
-      lat: 19.076,
-      lng: 72.8777,
-      isActive: true,
-      lastSeen: new Date(),
-    },
-    {
-      id: "10",
-      city: "São Paulo",
-      country: "Brazil",
-      lat: -23.5505,
-      lng: -46.6333,
-      isActive: true,
-      lastSeen: new Date(),
-    },
-  ];
 
   const totalListeners = activeListeners.length;
   const countriesWithListeners = new Set(activeListeners.map((l) => l.country))

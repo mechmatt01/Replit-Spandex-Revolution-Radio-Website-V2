@@ -11,6 +11,8 @@ import { RadioProvider } from "@/contexts/RadioContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import SkipToContent from "@/components/SkipToContent";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
+import VerificationModal from "@/components/VerificationModal";
+import { useAuth } from "@/hooks/useAuth";
 
 import HomePage from "@/pages/HomePage";
 import MusicPage from "@/pages/MusicPage";
@@ -23,6 +25,39 @@ import OrderConfirmation from "@/components/OrderConfirmation";
 import NotFound from "@/pages/not-found";
 import TestPage from "./TestPage";
 // import { useAuth } from "./hooks/useAuth";
+
+function VerificationGate({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+
+  if (isLoading) return null;
+  if (!user) return <>{children}</>; // Not logged in, allow access to public routes
+
+  // If not verified, show the appropriate modal and block app
+  if (!user.isEmailVerified) {
+    return (
+      <VerificationModal
+        isOpen={true}
+        onClose={() => setShowEmailModal(false)}
+        type="email"
+        contactInfo={user.email}
+      />
+    );
+  }
+  if (!user.isPhoneVerified) {
+    return (
+      <VerificationModal
+        isOpen={true}
+        onClose={() => setShowPhoneModal(false)}
+        type="phone"
+        contactInfo={user.phoneNumber}
+      />
+    );
+  }
+  // Both verified, allow app
+  return <>{children}</>;
+}
 
 function Router() {
   return (
@@ -53,7 +88,9 @@ function App() {
                 <SkipToContent />
                 <DynamicMetaTags />
                 <Toaster />
-                <Router />
+                <VerificationGate>
+                  <Router />
+                </VerificationGate>
               </TooltipProvider>
             </AdminProvider>
           </RadioProvider>

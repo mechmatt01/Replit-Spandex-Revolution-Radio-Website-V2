@@ -388,11 +388,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isActiveListening: false,
         activeSubscription: false,
         isEmailVerified: false,
-        isPhoneVerified: false,
+        isPhoneVerified: false, // Always false at registration
         showVerifiedBadge: false,
       };
 
       const user = await storage.createUser(userData);
+
+      // TODO: Send email verification here (existing logic)
 
       res.json({
         message: "User created successfully",
@@ -2564,6 +2566,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // 404 handler for API routes
   app.use('/api/*', (req: Request, res: Response) => {
     res.status(404).json({ message: 'API endpoint not found' });
+  });
+
+  // Phone verified endpoint
+  app.post("/api/user/phone-verified", isAuthenticated, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      await storage.updateUser(userId, { isPhoneVerified: true });
+      res.json({ message: "Phone number marked as verified." });
+    } catch (error) {
+      console.error("Error marking phone as verified:", error);
+      res.status(500).json({ message: "Failed to mark phone as verified." });
+    }
   });
 
   const httpServer = createServer(app);
