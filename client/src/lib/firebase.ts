@@ -10,12 +10,13 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 // Add test users or complete verification process
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
+  authDomain: "spandex-salvation-radio-site.firebaseapp.com",
+  projectId: "spandex-salvation-radio-site",
+  storageBucket: "spandex-salvation-radio-site.firebasestorage.app",
+  messagingSenderId: "632263635377",
+  appId: "1:632263635377:web:2a9bd6118a6a2cb9d8cd90",
+  measurementId: "G-5SZFPT2Y3K"
 };
 
 // Initialize Firebase
@@ -62,15 +63,20 @@ export function getRandomDefaultAvatar(): string {
   return defaultAvatars[randomIndex];
 }
 
-// Hash password using bcrypt
+// Hash password using crypto (client-side hashing for compatibility)
 export async function hashPassword(password: string): Promise<string> {
-  const saltRounds = 12;
-  return await bcrypt.hash(password, saltRounds);
+  // Client-side password hashing - Note: This should ideally be done server-side
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password + 'spandex_salt_2025');
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // Compare password with hash
 export async function comparePassword(password: string, hash: string): Promise<boolean> {
-  return await bcrypt.compare(password, hash);
+  const hashedPassword = await hashPassword(password);
+  return hashedPassword === hash;
 }
 
 // Get user's location

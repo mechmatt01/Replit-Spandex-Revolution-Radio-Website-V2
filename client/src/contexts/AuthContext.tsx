@@ -5,15 +5,27 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { User } from "@shared/schema";
+// Simple user interface for auth context compatibility
+interface SimpleUser {
+  id: string;
+  email: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  isEmailVerified: boolean;
+  isPhoneVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 import { apiRequest } from "@/lib/queryClient";
 import { auth, handleRedirectResult, signInWithGoogle, createUserProfile, getUserProfile, updateUserProfile, uploadProfileImage, updateListeningStatus, updateUserLocation, loginUser, registerUser } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
-import { XSSProtection } from "../../security/xss-protection";
+
 
 interface AuthContextType {
-  user: User | null;
+  user: SimpleUser | null;
   firebaseUser: any | null;
   firebaseProfile: any | null;
   loading: boolean;
@@ -50,7 +62,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<SimpleUser | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<any | null>(null);
   const [firebaseProfile, setFirebaseProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
@@ -119,8 +131,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           phoneNumber: result.profile.PhoneNumber,
           isEmailVerified: true,
           isPhoneVerified: !!result.profile.PhoneNumber,
-          createdAt: result.profile.CreatedAt || new Date().toISOString(),
-          updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         });
         setFirebaseProfile(result.profile);
         localStorage.setItem('userID', result.userID);
@@ -188,8 +200,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           phoneNumber: result.profile.PhoneNumber,
           isEmailVerified: true,
           isPhoneVerified: !!result.profile.PhoneNumber,
-          createdAt: result.profile.CreatedAt || new Date().toISOString(),
-          updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         });
         setFirebaseProfile(result.profile);
         localStorage.setItem('userID', result.userID);
