@@ -1,12 +1,8 @@
 import { useState, useEffect } from "react";
 import { Switch, Route } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter } from "react-router-dom";
-import { useEffect } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { AdminProvider } from "@/contexts/AdminContext";
@@ -14,7 +10,6 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { RadioProvider } from "@/contexts/RadioContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
-import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
 import VerificationModal from "@/components/VerificationModal";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -105,25 +100,23 @@ function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AccessibilityProvider>
-          <AuthProvider>
-            <FirebaseAuthProvider>
-              <ThemeProvider>
-                <RadioProvider>
-                  <AdminProvider>
-                    <TooltipProvider>
-                      <DynamicMetaTags />
-                      <Toaster />
-                      <VerificationGate>
-                        <Router />
-                      </VerificationGate>
-                    </TooltipProvider>
-                  </AdminProvider>
-                </RadioProvider>
-              </ThemeProvider>
-            </FirebaseAuthProvider>
-          </AuthProvider>
-        </AccessibilityProvider>
+        <AuthProvider>
+          <FirebaseAuthProvider>
+            <ThemeProvider>
+              <RadioProvider>
+                <AdminProvider>
+                  <TooltipProvider>
+                    <DynamicMetaTags />
+                    <Toaster />
+                    <VerificationGate>
+                      <Router />
+                    </VerificationGate>
+                  </TooltipProvider>
+                </AdminProvider>
+              </RadioProvider>
+            </ThemeProvider>
+          </FirebaseAuthProvider>
+        </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
