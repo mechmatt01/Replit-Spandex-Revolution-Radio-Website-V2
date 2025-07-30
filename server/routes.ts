@@ -788,12 +788,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const stationId = req.query.station as string || "somafm-metal"; // Default to SomaFM Metal
       
+      console.log(`Fetching now playing for station: ${stationId}`);
+      
       // Import metadata fetcher dynamically
       const { default: MetadataFetcher } = await import('./metadataFetcher.js');
       const fetcher = MetadataFetcher.getInstance();
       const metadata = await fetcher.getMetadata(stationId);
 
-      if (metadata) {
+      console.log(`Metadata fetcher returned:`, metadata);
+
+      if (metadata && metadata.title !== metadata.stationName) {
+        // Only use metadata if it's actual track data, not just station info
         const nowPlayingData = {
           id: 1,
           title: metadata.title,

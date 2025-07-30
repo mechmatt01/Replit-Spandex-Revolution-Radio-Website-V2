@@ -607,24 +607,18 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     }
   }, [currentStation]);
 
-  // Track information - show station info when playing
+  // Track information - show station info only when NOT playing or as initial state
   useEffect(() => {
-    if (isPlaying && currentStation) {
-      setCurrentTrack({
-        title: currentStation.name,
-        artist: currentStation.description,
-        album: `${currentStation.frequency} • ${currentStation.location}`,
-        artwork: "",
-      });
-    } else if (!isPlaying) {
+    if (!isPlaying) {
       // When stopped, show station name
       setCurrentTrack({
-        title: stationName,
+        title: stationName || (currentStation?.name || "Spandex Salvation Radio"),
         artist: "",
         album: "",
         artwork: "",
       });
     }
+    // Note: When playing, live metadata fetching will handle track updates
   }, [isPlaying, stationName, currentStation]);
 
   // Metadata polling function
