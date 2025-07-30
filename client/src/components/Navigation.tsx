@@ -44,7 +44,7 @@ export default function Navigation() {
   }, []);
 
   const { colors, gradient, toggleTheme, isDarkMode, currentTheme } = useTheme();
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   const logout = () => {
     window.location.href = "/api/logout";

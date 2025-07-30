@@ -548,25 +548,40 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       };
 
       // Set Tailwind CSS variables for focus states and other UI components
+      // Only set the essential ones to avoid breaking existing styling
       root.style.setProperty("--ring", colorToHsl(colors.primary));
-      root.style.setProperty("--primary", colorToHsl(colors.primary));
-      root.style.setProperty("--secondary", colorToHsl(colors.secondary));
-      root.style.setProperty("--accent", colorToHsl(colors.accent));
-      root.style.setProperty("--background", colorToHsl(colors.background));
-      root.style.setProperty("--foreground", colorToHsl(colors.text));
-      root.style.setProperty("--border", colorToHsl(colors.border));
-      root.style.setProperty("--input", colorToHsl(colors.border));
-      root.style.setProperty("--card", colorToHsl(colors.card));
-      root.style.setProperty("--card-foreground", colorToHsl(colors.text));
-      root.style.setProperty("--primary-foreground", colorToHsl(colors.primaryText || "#ffffff"));
-      root.style.setProperty("--secondary-foreground", colorToHsl(colors.text));
-      root.style.setProperty("--accent-foreground", colorToHsl(colors.text));
-      root.style.setProperty("--muted", colorToHsl(colors.surface));
-      root.style.setProperty("--muted-foreground", colorToHsl(colors.textMuted));
+      
+      // Set safe Tailwind variables that don't conflict with existing ones
+      root.style.setProperty("--tw-primary", colorToHsl(colors.primary));
+      root.style.setProperty("--tw-secondary", colorToHsl(colors.secondary));
+      root.style.setProperty("--tw-accent", colorToHsl(colors.accent));
+      root.style.setProperty("--tw-foreground", colorToHsl(colors.text));
+      root.style.setProperty("--tw-border", colorToHsl(colors.border));
+      root.style.setProperty("--tw-muted", colorToHsl(colors.surface));
+      root.style.setProperty("--tw-muted-foreground", colorToHsl(colors.textMuted));
+      
+      // Only set background/card if they don't use rgba (to preserve existing transparency)
+      if (!colors.background.includes('rgba') && !colors.card.includes('rgba')) {
+        root.style.setProperty("--background", colorToHsl(colors.background));
+        root.style.setProperty("--card", colorToHsl(colors.card));
+        root.style.setProperty("--foreground", colorToHsl(colors.text));
+        root.style.setProperty("--primary", colorToHsl(colors.primary));
+        root.style.setProperty("--secondary", colorToHsl(colors.secondary));
+        root.style.setProperty("--accent", colorToHsl(colors.accent));
+        root.style.setProperty("--border", colorToHsl(colors.border));
+        root.style.setProperty("--input", colorToHsl(colors.border));
+        root.style.setProperty("--card-foreground", colorToHsl(colors.text));
+        root.style.setProperty("--primary-foreground", colorToHsl(colors.primaryText || "#ffffff"));
+        root.style.setProperty("--secondary-foreground", colorToHsl(colors.text));
+        root.style.setProperty("--accent-foreground", colorToHsl(colors.text));
+        root.style.setProperty("--muted", colorToHsl(colors.surface));
+        root.style.setProperty("--popover", colorToHsl(colors.card));
+        root.style.setProperty("--popover-foreground", colorToHsl(colors.text));
+      }
+      
+      // Always set these safe variables
       root.style.setProperty("--destructive", "0 84% 60%");
       root.style.setProperty("--destructive-foreground", "0 0% 98%");
-      root.style.setProperty("--popover", colorToHsl(colors.card));
-      root.style.setProperty("--popover-foreground", colorToHsl(colors.text));
 
       // Apply theme class
       root.classList.remove("light", "dark");
