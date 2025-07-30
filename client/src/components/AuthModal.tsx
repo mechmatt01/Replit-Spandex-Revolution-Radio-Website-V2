@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
+import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -18,7 +19,6 @@ import {
   Phone,
 } from "lucide-react";
 import GoogleLogoPath from "@assets/GoogleLogoIcon.png";
-import { registerUser, loginUser } from "@/lib/firebase";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -47,6 +47,7 @@ export default function AuthModal({
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
   const { isAuthenticated, signInWithGoogle } = useAuth();
+  const { register: firebaseRegister, login: firebaseLogin, loginWithGoogle } = useFirebaseAuth();
   const { getColors } = useTheme();
   const { toast } = useToast();
   const colors = getColors();
@@ -91,28 +92,24 @@ export default function AuthModal({
 
     try {
       if (mode === "login") {
-        // Use Firebase login
-        const result = await loginUser(email, password);
+        // Use Firebase Firestore login
+        const result = await firebaseLogin(email, password);
         
         if (!result.success) {
-          throw new Error(result.error || "Login failed");
+          throw new Error(result.message || "Login failed");
         }
-
-        // Store user data in localStorage for session management
-        localStorage.setItem('userID', result.userID);
-        localStorage.setItem('userProfile', JSON.stringify(result.profile));
 
         toast({
           title: "Welcome back!",
-          description: "You've successfully logged in.",
+          description: "You've successfully logged in with Firebase Firestore.",
         });
         
         // Close modal and refresh to update authentication state
         onClose();
         window.location.reload();
       } else {
-        // Use Firebase registration
-        const result = await registerUser({
+        // Use Firebase Firestore registration
+        const result = await firebaseRegister({
           firstName,
           lastName,
           email,
@@ -121,16 +118,12 @@ export default function AuthModal({
         });
 
         if (!result.success) {
-          throw new Error(result.error || "Registration failed");
+          throw new Error(result.message || "Registration failed");
         }
-
-        // Store user data in localStorage for session management
-        localStorage.setItem('userID', result.userID);
-        localStorage.setItem('userProfile', JSON.stringify(result.profile));
 
         toast({
           title: "Account created!",
-          description: "Welcome to Spandex Salvation Radio.",
+          description: `Welcome to Spandex Salvation Radio! User Key: ${result.userKey}`,
         });
         
         // Close modal and refresh to update authentication state

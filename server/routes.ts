@@ -71,6 +71,14 @@ import {
   insertNowPlayingSchema,
 } from "@shared/schema";
 import { z } from "zod";
+import { 
+  createFirestoreUser, 
+  authenticateUser, 
+  getUserByEmail, 
+  getUserByGoogleId,
+  emailExists,
+  updateUserProfile
+} from "./firebaseAuth";
 
 // Define interfaces for extended request types
 interface AuthenticatedRequest extends Request {
@@ -84,6 +92,8 @@ interface AuthenticatedRequest extends Request {
   session: any & {
     phoneVerificationCode?: string;
     phoneToVerify?: string;
+    userId?: string;
+    userEmail?: string;
   };
 }
 
@@ -479,6 +489,247 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Email verification error:", error);
       res.status(500).json({ message: "Email verification failed" });
     }
+  });
+
+  // === FIREBASE FIRESTORE AUTHENTICATION ROUTES ===
+  
+  // Firebase Firestore Registration
+  app.post("/api/auth/firebase/register", rateLimit(5, 15 * 60 * 1000), async (req, res) => {
+    try {
+      const validationSchema = z.object({
+        firstName: z.string().min(1, "First name is required"),
+        lastName: z.string().min(1, "Last name is required"),
+        email: z.string().email("Valid email is required"),
+        phoneNumber: z.string().optional(),
+        password: z.string().min(8, "Password must be at least 8 characters")
+      });
+
+      const validatedData = validationSchema.parse(req.body);
+
+      // Check if email already exists
+      const existingUser = await emailExists(validatedData.email);
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already exists" });
+      }
+
+      // Validate password strength
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(validatedData.password)) {
+        return res.status(400).json({ 
+          message: "Password must be at least 8 characters with uppercase, lowercase, number, and special character" 
+        });
+      }
+
+      // Create user in Firestore
+      const { userKey, userData } = await createFirestoreUser({
+        firstName: validatedData.firstName,
+        lastName: validatedData.lastName,
+        email: validatedData.email,
+        phoneNumber: validatedData.phoneNumber,
+        password: validatedData.password
+      });
+
+      res.json({
+        message: "User created successfully",
+        userKey: userKey,
+        user: {
+          userID: userData.UserID,
+          firstName: userData.FirstName,
+          lastName: userData.LastName,
+          email: userData.EmailAddress,
+          profileImage: userData.UserProfileImage
+        }
+      });
+    } catch (error: any) {
+      console.error("Firebase registration error:", error);
+      res.status(400).json({ message: error.message || "Registration failed" });
+    }
+  });
+
+  // Firebase Firestore Login
+  app.post("/api/auth/firebase/login", rateLimit(10, 15 * 60 * 1000), async (req, res) => {
+    try {
+      const validationSchema = z.object({
+        email: z.string().email("Valid email is required"),
+        password: z.string().min(1, "Password is required")
+      });
+
+      const validatedData = validationSchema.parse(req.body);
+
+      // Authenticate user
+      const user = await authenticateUser(validatedData.email, validatedData.password);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      // Create session or JWT token (using existing session management)
+      (req.session as any).userId = user.UserID;
+      (req.session as any).userEmail = user.EmailAddress;
+
+      res.json({
+        message: "Login successful",
+        user: {
+          userID: user.UserID,
+          firstName: user.FirstName,
+          lastName: user.LastName,
+          email: user.EmailAddress,
+          profileImage: user.UserProfileImage,
+          activeSubscription: user.ActiveSubscription,
+          isActiveListening: user.IsActiveListening
+        }
+      });
+    } catch (error: any) {
+      console.error("Firebase login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+
+  // Firebase Google OAuth Login/Register
+  app.post("/api/auth/firebase/google", async (req, res) => {
+    try {
+      const validationSchema = z.object({
+        googleId: z.string().min(1, "Google ID is required"),
+        email: z.string().email("Valid email is required"),
+        firstName: z.string().min(1, "First name is required"),
+        lastName: z.string().min(1, "Last name is required")
+      });
+
+      const validatedData = validationSchema.parse(req.body);
+
+      // Check if user exists by Google ID
+      let user = await getUserByGoogleId(validatedData.googleId);
+      
+      if (!user) {
+        // Check if user exists by email
+        user = await getUserByEmail(validatedData.email);
+        
+        if (!user) {
+          // Create new user
+          const { userKey, userData } = await createFirestoreUser({
+            firstName: validatedData.firstName,
+            lastName: validatedData.lastName,
+            email: validatedData.email,
+            googleId: validatedData.googleId
+          });
+          user = userData;
+        } else {
+          // Update existing user with Google ID
+          await updateUserProfile(user.UserID, { GoogleID: validatedData.googleId });
+          user.GoogleID = validatedData.googleId;
+        }
+      }
+
+      // Update last login
+      await updateUserProfile(user.UserID, { LastLoginAt: new Date() });
+
+      // Create session
+      (req.session as any).userId = user.UserID;
+      (req.session as any).userEmail = user.EmailAddress;
+
+      res.json({
+        message: "Google authentication successful",
+        user: {
+          userID: user.UserID,
+          firstName: user.FirstName,
+          lastName: user.LastName,
+          email: user.EmailAddress,
+          profileImage: user.UserProfileImage,
+          activeSubscription: user.ActiveSubscription,
+          isActiveListening: user.IsActiveListening
+        }
+      });
+    } catch (error: any) {
+      console.error("Firebase Google auth error:", error);
+      res.status(500).json({ message: "Google authentication failed" });
+    }
+  });
+
+  // Firebase User Profile Update
+  app.post("/api/auth/firebase/update-profile", async (req, res) => {
+    try {
+      if (!(req.session as any).userId) {
+        return res.status(401).json({ message: "User not authenticated" });
+      }
+
+      const validationSchema = z.object({
+        firstName: z.string().optional(),
+        lastName: z.string().optional(),
+        phoneNumber: z.string().optional(),
+        location: z.object({
+          lat: z.number(),
+          lng: z.number(),
+          address: z.string().optional()
+        }).optional(),
+        isActiveListening: z.boolean().optional(),
+        activeSubscription: z.boolean().optional()
+      });
+
+      const validatedData = validationSchema.parse(req.body);
+      
+      // Build update object
+      const updates: any = {};
+      if (validatedData.firstName) updates.FirstName = validatedData.firstName;
+      if (validatedData.lastName) updates.LastName = validatedData.lastName;
+      if (validatedData.phoneNumber) updates.PhoneNumber = validatedData.phoneNumber;
+      if (validatedData.location) updates.Location = validatedData.location;
+      if (typeof validatedData.isActiveListening === 'boolean') updates.IsActiveListening = validatedData.isActiveListening;
+      if (typeof validatedData.activeSubscription === 'boolean') updates.ActiveSubscription = validatedData.activeSubscription;
+
+      const success = await updateUserProfile((req.session as any).userId, updates);
+      if (!success) {
+        return res.status(500).json({ message: "Failed to update profile" });
+      }
+
+      res.json({ message: "Profile updated successfully" });
+    } catch (error: any) {
+      console.error("Profile update error:", error);
+      res.status(500).json({ message: "Profile update failed" });
+    }
+  });
+
+  // Firebase User Info
+  app.get("/api/auth/firebase/user", async (req, res) => {
+    try {
+      if (!(req.session as any).userId) {
+        return res.status(401).json({ message: "User not authenticated", authenticated: false });
+      }
+
+      const user = await getUserByEmail((req.session as any).userEmail);
+      if (!user) {
+        return res.status(404).json({ message: "User not found", authenticated: false });
+      }
+
+      res.json({
+        authenticated: true,
+        user: {
+          userID: user.UserID,
+          firstName: user.FirstName,
+          lastName: user.LastName,
+          email: user.EmailAddress,
+          phoneNumber: user.PhoneNumber,
+          profileImage: user.UserProfileImage,
+          location: user.Location,
+          activeSubscription: user.ActiveSubscription,
+          isActiveListening: user.IsActiveListening,
+          renewalDate: user.RenewalDate,
+          createdAt: user.CreatedAt,
+          lastLoginAt: user.LastLoginAt
+        }
+      });
+    } catch (error: any) {
+      console.error("Firebase user fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch user", authenticated: false });
+    }
+  });
+
+  // Firebase Logout
+  app.post("/api/auth/firebase/logout", (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Logout failed" });
+      }
+      res.json({ message: "Logout successful" });
+    });
   });
 
   // Stripe subscription routes

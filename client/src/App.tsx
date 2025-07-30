@@ -9,6 +9,7 @@ import { AdminProvider } from "@/contexts/AdminContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { RadioProvider } from "@/contexts/RadioContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
 import SkipToContent from "@/components/SkipToContent";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
 import VerificationModal from "@/components/VerificationModal";
@@ -27,11 +28,9 @@ import TestPage from "./TestPage";
 // import { useAuth } from "./hooks/useAuth";
 
 function VerificationGate({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
-
-  if (isLoading) return null;
   if (!user) return <>{children}</>; // Not logged in, allow access to public routes
 
   // If not verified, show the appropriate modal and block app
@@ -82,20 +81,22 @@ function App() {
     <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ThemeProvider>
-          <RadioProvider>
-            <AdminProvider>
-              <TooltipProvider>
-                <SkipToContent />
-                <DynamicMetaTags />
-                <Toaster />
-                <VerificationGate>
-                  <Router />
-                </VerificationGate>
-              </TooltipProvider>
-            </AdminProvider>
-          </RadioProvider>
-        </ThemeProvider>
+        <FirebaseAuthProvider>
+          <ThemeProvider>
+            <RadioProvider>
+              <AdminProvider>
+                <TooltipProvider>
+                  <SkipToContent />
+                  <DynamicMetaTags />
+                  <Toaster />
+                  <VerificationGate>
+                    <Router />
+                  </VerificationGate>
+                </TooltipProvider>
+              </AdminProvider>
+            </RadioProvider>
+          </ThemeProvider>
+        </FirebaseAuthProvider>
       </AuthProvider>
     </QueryClientProvider>
     </ErrorBoundary>
