@@ -1,14 +1,16 @@
+
 // Secure storage utility for API keys and sensitive data
 import crypto from 'crypto';
 
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toString('hex');
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || crypto.randomBytes(32);
+const ALGORITHM = 'aes-256-cbc';
 const IV_LENGTH = 16;
 
 export class SecureStorage {
   private static encryptData(text: string): string {
     try {
       const iv = crypto.randomBytes(IV_LENGTH);
-      const cipher = crypto.createCipher('aes-256-cbc', ENCRYPTION_KEY);
+      const cipher = crypto.createCipheriv(ALGORITHM, ENCRYPTION_KEY, iv);
       let encrypted = cipher.update(text, 'utf8', 'hex');
       encrypted += cipher.final('hex');
       return iv.toString('hex') + ':' + encrypted;
@@ -26,7 +28,7 @@ export class SecureStorage {
       }
       const iv = Buffer.from(textParts.shift()!, 'hex');
       const encryptedText = textParts.join(':');
-      const decipher = crypto.createDecipher('aes-256-cbc', ENCRYPTION_KEY);
+      const decipher = crypto.createDecipheriv(ALGORITHM, ENCRYPTION_KEY, iv);
       let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
       return decrypted;

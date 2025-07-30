@@ -35,5 +35,9 @@ export default defineConfig({
         secure: false,
       }
     }
-  }
+  },
+  define: {
+    'process.env': {},
+  },
+  envPrefix: 'VITE_',
 })

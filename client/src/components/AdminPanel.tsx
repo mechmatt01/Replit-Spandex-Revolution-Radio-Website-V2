@@ -59,7 +59,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [editingShow, setEditingShow] = useState<ShowScheduleItem | null>(null);
   const [newMerchItem, setNewMerchItem] = useState<Partial<MerchItem>>({});
   const [newShowItem, setNewShowItem] = useState<Partial<ShowScheduleItem>>({});
-  
+
   const { colors, isDarkMode } = useTheme();
   const { toast } = useToast();
   const queryClient = useQueryClient();

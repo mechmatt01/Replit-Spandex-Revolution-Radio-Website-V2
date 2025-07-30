@@ -64,11 +64,11 @@ const FullWidthGlobeMapFixed = () => {
   const [locationPermission, setLocationPermission] = useState<'granted' | 'denied' | 'prompt' | null>(null);
   const [mapState, setMapState] = useState<{ center: google.maps.LatLng | null; zoom: number | null }>({ center: null, zoom: null });
 
-  // Use environment variables for configuration
+  // Use hardcoded config for Firebase hosting
   const config: Config = {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
-    googleMapsSigningSecret: import.meta.env.VITE_GOOGLE_MAPS_SIGNING_SECRET || "",
-    openWeatherApiKey: import.meta.env.VITE_OPEN_WEATHER_API_KEY || "",
+    googleMapsSigningSecret: process.env.GOOGLE_MAPS_SIGNING_SECRET || import.meta.env.VITE_GOOGLE_MAPS_SIGNING_SECRET || "",
+    openWeatherApiKey: process.env.OPEN_WEATHER_API_KEY || import.meta.env.VITE_OPEN_WEATHER_API_KEY || "",
     googleMapsMapId: "spandex-salvation-radio-map"
   };
 
@@ -795,6 +795,7 @@ const FullWidthGlobeMapFixed = () => {
       {isFullscreen && (
         <div 
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] transition-all duration-500 ease-in-out"
+          ```text
           style={{ 
             top: '4rem', // Below navigation bar
             bottom: '5rem', // Above floating player
