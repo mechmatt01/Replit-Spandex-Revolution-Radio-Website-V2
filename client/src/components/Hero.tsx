@@ -146,9 +146,9 @@ export default function Hero() {
                 {countdown.days}
               </div>
               <div 
-                className="text-xs opacity-65 font-semibold"
+                className="text-xs font-semibold"
                 style={{ 
-                  color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                  color: colors.textMuted
                 }}
               >
                 DAYS
@@ -159,9 +159,9 @@ export default function Hero() {
                 {countdown.hours}
               </div>
               <div 
-                className="text-xs opacity-65 font-semibold"
+                className="text-xs font-semibold"
                 style={{ 
-                  color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                  color: colors.textMuted
                 }}
               >
                 HOURS
@@ -172,9 +172,9 @@ export default function Hero() {
                 {countdown.minutes}
               </div>
               <div 
-                className="text-xs opacity-65 font-semibold"
+                className="text-xs font-semibold"
                 style={{ 
-                  color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                  color: colors.textMuted
                 }}
               >
                 MINS
@@ -185,9 +185,9 @@ export default function Hero() {
                 {countdown.seconds}
               </div>
               <div 
-                className="text-xs opacity-65 font-semibold"
+                className="text-xs font-semibold"
                 style={{ 
-                  color: currentTheme === 'light-mode' ? '#6b7280' : '#9ca3af' 
+                  color: colors.textMuted
                 }}
               >
                 SECS

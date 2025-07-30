@@ -283,7 +283,10 @@ export default function ShopifyEcommerce() {
           >
             OFFICIAL MERCH STORE
           </h2>
-          <p className="text-gray-400 text-lg font-semibold">
+          <p 
+            className="text-lg font-semibold"
+            style={{ color: colors.textMuted }}
+          >
             Show your metal pride with exclusive Spandex Salvation Radio
             merchandise.
           </p>
@@ -292,12 +295,21 @@ export default function ShopifyEcommerce() {
         {/* Cart Summary */}
                       {(cart || []).length > 0 && (
           <div className="mb-8">
-            <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300">
+            <Card 
+              className="transition-all duration-300"
+              style={{ 
+                backgroundColor: currentTheme === 'light-mode' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 30, 30, 0.5)',
+                borderColor: colors.primary
+              }}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <ShoppingCart className="text-metal-orange h-5 w-5 mr-2" />
-                    <span className="font-black text-white">
+                    <ShoppingCart className="h-5 w-5 mr-2" style={{ color: colors.primary }} />
+                    <span 
+                      className="font-black"
+                      style={{ color: currentTheme === 'light-mode' ? '#000000' : '#ffffff' }}
+                    >
                       {(cart || []).reduce((total, item) => total + item.quantity, 0)}{" "}
                       items in cart
                     </span>
@@ -438,8 +450,16 @@ function ProductCard({
           </div>
         </div>
 
-        <h4 className="font-black text-white mb-2">{product.title}</h4>
-        <p className="text-gray-400 text-sm font-semibold line-clamp-2 flex-grow">
+        <h4 
+          className="font-black mb-2"
+          style={{ color: currentTheme === 'light-mode' ? '#000000' : '#ffffff' }}
+        >
+          {product.title}
+        </h4>
+        <p 
+          className="text-sm font-semibold line-clamp-2 flex-grow"
+          style={{ color: colors.textMuted }}
+        >
           {product.description}
         </p>
 
@@ -496,8 +516,12 @@ function ProductCard({
                     product.variants?.find((v) => v.id === e.target.value)!,
                   )
                 }
-                className="w-full p-2 bg-dark-bg/50 text-white rounded appearance-none pr-8"
-                style={{ borderColor: colors.primary }}
+                className="w-full p-2 rounded appearance-none pr-8"
+                style={{ 
+                  backgroundColor: currentTheme === 'light-mode' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 30, 30, 0.5)',
+                  color: currentTheme === 'light-mode' ? '#000000' : '#ffffff',
+                  borderColor: colors.primary 
+                }}
               >
                 {(product.variants || []).map((variant) => (
                   <option
@@ -571,7 +595,12 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
       <Card className="bg-dark-bg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <CardContent className="p-6">
           <div className="flex justify-between items-start mb-6">
-            <h3 className="font-black text-2xl text-white">{product.title}</h3>
+            <h3 
+              className="font-black text-2xl"
+              style={{ color: currentTheme === 'light-mode' ? '#000000' : '#ffffff' }}
+            >
+              {product.title}
+            </h3>
             <Button
               variant="ghost"
               onClick={onClose}
@@ -591,7 +620,10 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
             </div>
 
             <div>
-              <p className="text-gray-300 font-semibold mb-4">
+              <p 
+                className="font-semibold mb-4"
+                style={{ color: colors.textMuted }}
+              >
                 {product.description}
               </p>
 
