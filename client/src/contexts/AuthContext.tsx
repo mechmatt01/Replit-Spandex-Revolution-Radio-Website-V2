@@ -386,18 +386,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (error) {
           console.error('[AuthContext] Error creating/loading profile:', error);
           // Don't fail silently - provide fallback user state
-          if (!user) {
+          if (!user && firebaseUser) {
             setUser({
-              id: user.uid,
-              email: user.email || '',
-              username: user.displayName || '',
-              firstName: user.displayName?.split(' ')[0] || '',
-              lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-              phoneNumber: user.phoneNumber || '',
-              isEmailVerified: user.emailVerified,
-              isPhoneVerified: !!user.phoneNumber,
-              createdAt: user.metadata.creationTime || new Date().toISOString(),
-              updatedAt: user.metadata.lastSignInTime || new Date().toISOString(),
+              id: firebaseUser.uid,
+              email: firebaseUser.email || '',
+              username: firebaseUser.displayName || '',
+              firstName: firebaseUser.displayName?.split(' ')[0] || '',
+              lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
+              phoneNumber: firebaseUser.phoneNumber || '',
+              isEmailVerified: firebaseUser.emailVerified,
+              isPhoneVerified: !!firebaseUser.phoneNumber,
+              createdAt: firebaseUser.metadata.creationTime || new Date().toISOString(),
+              updatedAt: firebaseUser.metadata.lastSignInTime || new Date().toISOString(),
             });
           }
         }
