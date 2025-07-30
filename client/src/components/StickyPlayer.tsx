@@ -138,9 +138,7 @@ export default function StickyPlayer() {
                 }
                 className="font-semibold text-sm whitespace-nowrap"
                 style={{ 
-                  color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-                    ? adaptiveTheme.textColor 
-                    : (isAdPlaying ? '#f87171' : colors.text)
+                  color: isAdPlaying ? '#f87171' : colors.text
                 }}
                 maxWidth="100%"
                 isFloating={true}
@@ -156,9 +154,7 @@ export default function StickyPlayer() {
               <div 
                 className="text-xs truncate mt-0.5"
                 style={{
-                  color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-                    ? (adaptiveTheme.isLight ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.6)')
-                    : colors.textMuted
+                  color: colors.textMuted
                 }}
               >
                 {currentTrack.artist}

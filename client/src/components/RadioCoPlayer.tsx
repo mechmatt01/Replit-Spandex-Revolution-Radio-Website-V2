@@ -506,9 +506,7 @@ export default function RadioCoPlayer() {
                 style={{ 
                   fontSize: "32px", 
                   lineHeight: "1",
-                  color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-                    ? adaptiveTheme.textColor 
-                    : (isAdPlaying ? '#f87171' : colors.text)
+                  color: isAdPlaying ? '#f87171' : colors.text
                 }}
                 maxWidth="100%"
                 backgroundColor="transparent"
@@ -524,9 +522,7 @@ export default function RadioCoPlayer() {
               <p 
                 className="font-black text-2xl mb-1 transition-opacity duration-500"
                 style={{
-                  color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-                    ? adaptiveTheme.textColor 
-                    : (isAdPlaying ? '#fca5a5' : colors.text)
+                  color: isAdPlaying ? '#fca5a5' : colors.text
                 }}
               >
                 {currentTrack.artist}
@@ -543,9 +539,7 @@ export default function RadioCoPlayer() {
               <p 
                 className="text-sm font-medium mb-2 transition-opacity duration-500"
                 style={{
-                  color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-                    ? (adaptiveTheme.isLight ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)')
-                    : (isAdPlaying ? '#fecaca' : colors.textMuted)
+                  color: isAdPlaying ? '#fecaca' : colors.textMuted
                 }}
               >
                 {currentTrack.album}
