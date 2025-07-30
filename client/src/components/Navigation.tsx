@@ -388,6 +388,7 @@ export default function Navigation() {
                   >
                     {menuItems.slice(3).map((item) => {
                       const IconComponent = item.icon;
+                      const dropdownTextColor = !isDarkMode ? '#000000' : colors.text;
                       return (
                         <Tooltip key={item.id}>
                           <TooltipTrigger asChild>
@@ -395,7 +396,7 @@ export default function Navigation() {
                               onClick={item.action}
                               className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg w-full"
                               style={{ 
-                                color: colors.text
+                                color: dropdownTextColor
                               }}
                               onMouseEnter={(e) => {
                                 e.currentTarget.style.backgroundColor = colors.primary + '20';
@@ -403,7 +404,7 @@ export default function Navigation() {
                               }}
                               onMouseLeave={(e) => {
                                 e.currentTarget.style.backgroundColor = 'transparent';
-                                e.currentTarget.style.color = colors.text;
+                                e.currentTarget.style.color = dropdownTextColor;
                               }}
                             >
                               <IconComponent size={16} style={{ color: colors.primary }} />
@@ -530,13 +531,13 @@ export default function Navigation() {
                       <div className="px-3 py-2 mb-2">
                         <p 
                           className="font-black text-sm"
-                          style={{ color: colors.text }}
+                          style={{ color: !isDarkMode ? '#000000' : colors.text }}
                         >
                           {(user as any)?.firstName || (user as any)?.email?.split('@')[0] || 'User'}
                         </p>
                         <p 
                           className="text-xs opacity-70"
-                          style={{ color: colors.text }}
+                          style={{ color: !isDarkMode ? '#000000' : colors.text }}
                         >
                           {(user as any)?.email}
                         </p>
@@ -549,7 +550,7 @@ export default function Navigation() {
                         onClick={() => setLocation("/profile?section=profile")}
                         className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
                         style={{
-                          color: colors.text,
+                          color: !isDarkMode ? '#000000' : colors.text,
                         }}
                       >
                         <User size={18} style={{ color: colors.primary }} />
@@ -562,7 +563,7 @@ export default function Navigation() {
                           onClick={() => setLocation("/profile?section=subscription")}
                           className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
                           style={{
-                            color: colors.text,
+                            color: !isDarkMode ? '#000000' : colors.text,
                           }}
                         >
                           <CreditCard size={18} style={{ color: colors.primary }} />
@@ -575,7 +576,7 @@ export default function Navigation() {
                         onClick={() => setLocation("/profile?section=submissions")}
                         className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
                         style={{
-                          color: colors.text,
+                          color: !isDarkMode ? '#000000' : colors.text,
                         }}
                       >
                         <FileText size={18} style={{ color: colors.primary }} />
@@ -636,7 +637,7 @@ export default function Navigation() {
                   href="/music"
                   className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
                   style={{ 
-                    color: colors.text,
+                    color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
                     display: 'flex',
                     textDecoration: 'none'
@@ -647,7 +648,7 @@ export default function Navigation() {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    e.currentTarget.style.color = '#ffffff';
                   }}
                 >
                   <Music size={20} style={{ color: colors.primary }} />
@@ -659,7 +660,7 @@ export default function Navigation() {
                   href="/#schedule"
                   className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
                   style={{ 
-                    color: colors.text,
+                    color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
                     display: 'flex',
                     textDecoration: 'none'
@@ -670,7 +671,7 @@ export default function Navigation() {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    e.currentTarget.style.color = '#ffffff';
                   }}
                 >
                   <Calendar size={20} style={{ color: colors.primary }} />
@@ -682,7 +683,7 @@ export default function Navigation() {
                   href="/#subscribe"
                   className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
                   style={{ 
-                    color: colors.text,
+                    color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
                     display: 'flex',
                     textDecoration: 'none'
@@ -693,7 +694,7 @@ export default function Navigation() {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    e.currentTarget.style.color = '#ffffff';
                   }}
                 >
                   <Heart size={20} style={{ color: colors.primary }} />
@@ -705,7 +706,7 @@ export default function Navigation() {
                   href="/#submissions"
                   className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
                   style={{ 
-                    color: colors.text,
+                    color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
                     display: 'flex',
                     textDecoration: 'none'
@@ -716,7 +717,7 @@ export default function Navigation() {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    e.currentTarget.style.color = '#ffffff';
                   }}
                 >
                   <Send size={20} style={{ color: colors.primary }} />
@@ -728,7 +729,7 @@ export default function Navigation() {
                   href="/#contact"
                   className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
                   style={{ 
-                    color: colors.text,
+                    color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
                     display: 'flex',
                     textDecoration: 'none'
@@ -739,7 +740,7 @@ export default function Navigation() {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
+                    e.currentTarget.style.color = '#ffffff';
                   }}
                 >
                   <Phone size={20} style={{ color: colors.primary }} />
