@@ -282,7 +282,7 @@ export default function Navigation() {
                 <div 
                   className="text-sm font-black leading-tight transition-colors duration-300" 
                   style={{ 
-                    color: currentTheme === 'light-mode' ? '#1f2937' : colors.text 
+                    color: colors.textMuted
                   }}
                 >
                   SPANDEX SALVATION

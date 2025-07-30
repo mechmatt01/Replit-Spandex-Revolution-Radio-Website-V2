@@ -846,7 +846,7 @@ const FullWidthGlobeMapFixed = () => {
             <div className="w-full max-w-4xl mx-auto mb-8 mt-8">
               <Card className={`${isDarkMode ? "bg-zinc-900/50" : "bg-white/90"} backdrop-blur-xl ${isDarkMode ? "border-zinc-800/50" : "border-gray-200"} shadow-2xl`}>
                 <CardHeader className="text-center">
-                  <CardTitle className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"} drop-shadow-md`}>
+                  <CardTitle className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`} style={{ textShadow: isDarkMode ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none' }}>
                     Live Statistics
                   </CardTitle>
                 </CardHeader>
@@ -854,19 +854,19 @@ const FullWidthGlobeMapFixed = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-1 space-y-0">
                     <div className="flex-1 text-center">
                       <div className={`text-sm font-medium ${isDarkMode ? "text-zinc-400" : "text-gray-600"} mb-1`}>Active Listeners</div>
-                      <div className={`text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? "text-white" : "text-black"} drop-shadow-md`}>
+                      <div className={`text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? "text-white" : "text-black"}`} style={{ textShadow: isDarkMode ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none' }}>
                         {liveStats?.activeListeners || 42}
                       </div>
                     </div>
                     <div className="flex-1 text-center">
                       <div className={`text-sm font-medium ${isDarkMode ? "text-zinc-400" : "text-gray-600"} mb-1`}>Countries</div>
-                      <div className={`text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? "text-white" : "text-black"} drop-shadow-md`}>
+                      <div className={`text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? "text-white" : "text-black"}`} style={{ textShadow: isDarkMode ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none' }}>
                         {liveStats?.countries || 15}
                       </div>
                     </div>
                     <div className="flex-1 text-center">
                       <div className={`text-sm font-medium ${isDarkMode ? "text-zinc-400" : "text-gray-600"} mb-1`}>Total Listeners</div>
-                      <div className={`text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? "text-white" : "text-black"} drop-shadow-md`}>
+                      <div className={`text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? "text-white" : "text-black"}`} style={{ textShadow: isDarkMode ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none' }}>
                         {liveStats?.totalListeners || 1247}
                       </div>
                     </div>
@@ -879,7 +879,7 @@ const FullWidthGlobeMapFixed = () => {
             <div className="w-full max-w-4xl mx-auto">
               <Card className={`${isDarkMode ? "bg-zinc-900/50" : "bg-white/90"} backdrop-blur-xl ${isDarkMode ? "border-zinc-800/50" : "border-gray-200"} shadow-2xl`}>
                 <CardHeader className="text-center">
-                  <CardTitle className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"} drop-shadow-md`}>
+                  <CardTitle className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`} style={{ textShadow: isDarkMode ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none' }}>
                     Active Locations
                   </CardTitle>
                 </CardHeader>
@@ -900,7 +900,7 @@ const FullWidthGlobeMapFixed = () => {
                         <div 
                           className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
                           style={{
-                            textShadow: `0 0 4px ${colors.primary}`
+                            textShadow: isDarkMode ? `0 0 4px ${colors.primary}` : 'none'
                           }}
                         >
                           {Math.floor(Math.random() * 50) + 1}
