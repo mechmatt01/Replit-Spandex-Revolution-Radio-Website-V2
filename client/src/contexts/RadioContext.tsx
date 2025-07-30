@@ -151,24 +151,23 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     // Use actual station stream URLs with robust fallbacks
     const streamUrl = station.streamUrl;
     
-    // Hot 97 fallbacks
+    // Hot 97 fallbacks (iHeart stream)
     if (station.id === "hot-97") {
       return [
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac", // AAC
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM.mp3",    // MP3
-        "https://26183.live.streamtheworld.com:443/WQHTFMAAC.aac",                        // Old AAC
-        "https://26183.live.streamtheworld.com:443/WQHTFM.mp3",                           // Old MP3
+        "https://stream.revma.ihrhls.com/zc6046",                                         // Primary iHeart
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac", // StreamTheWorld AAC
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM.mp3",    // StreamTheWorld MP3
+        "https://26183.live.streamtheworld.com:443/WQHTFMAAC.aac",                        // Legacy AAC
         "https://ice1.somafm.com/beatblender-128-mp3",                                    // Generic fallback
-        "https://ice2.somafm.com/beatblender-128-mp3",
-        "https://ice6.somafm.com/beatblender-128-mp3"
       ];
     }
     
-    // Power 106 fallbacks
+    // Power 105.1 fallbacks (iHeart stream)
     if (station.id === "power-106") {
       return [
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac", // AAC
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFM.mp3",    // MP3
+        "https://stream.revma.ihrhls.com/zc1481",                                         // Primary iHeart
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WWPRFMAAC.aac", // StreamTheWorld AAC
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WWPRFM.mp3",    // StreamTheWorld MP3
         "https://ice1.somafm.com/beatblender-128-mp3",                                    // Fallback
         "https://ice2.somafm.com/beatblender-128-mp3",
         "https://ice6.somafm.com/beatblender-128-mp3"
@@ -199,25 +198,23 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       ];
     }
     
-    // Hot 105 fallbacks
+    // Hot 105 Miami fallbacks (iHeart stream - WHQT)
     if (station.id === "hot-105") {
       return [
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/WMIBFMAAC.aac", // AAC
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/WMIBFM.mp3",    // MP3
+        "https://stream.revma.ihrhls.com/zc5907",                                         // Primary iHeart
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WHQTFMAAC.aac", // StreamTheWorld AAC
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WHQTFM.mp3",    // StreamTheWorld MP3
         "https://ice1.somafm.com/beatblender-128-mp3",                                    // Fallback
-        "https://ice2.somafm.com/beatblender-128-mp3",
-        "https://ice6.somafm.com/beatblender-128-mp3"
       ];
     }
     
-    // Q93 fallbacks
+    // Q93 New Orleans fallbacks (iHeart stream - WQUE)
     if (station.id === "q-93") {
       return [
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQUE-FMAAC.aac", // AAC
-        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQUE-FM.mp3",    // MP3
+        "https://stream.revma.ihrhls.com/zc1037",                                         // Primary iHeart
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQUEFMAAC.aac", // StreamTheWorld AAC
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQUEFM.mp3",    // StreamTheWorld MP3
         "https://ice1.somafm.com/beatblender-128-mp3",                                     // Fallback
-        "https://ice2.somafm.com/beatblender-128-mp3",
-        "https://ice6.somafm.com/beatblender-128-mp3"
       ];
     }
     

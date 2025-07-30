@@ -181,6 +181,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        id: 5,
+        stationId: 'hot-105',
+        name: 'Hot 105',
+        frequency: '105.1 FM',
+        description: 'Miami\'s Today\'s R&B and Old School',
+        streamUrl: 'https://stream.revma.ihrhls.com/zc5907',
+        location: 'Miami, FL',
+        isActive: true,
+        sortOrder: 5,
+        website: 'https://hot105fm.com',
+        genre: 'Urban R&B',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: 6,
+        stationId: 'q-93',
+        name: 'Q93',
+        frequency: '93.3 FM',
+        description: 'New Orleans Hip Hop & R&B',
+        streamUrl: 'https://stream.revma.ihrhls.com/zc1037',
+        location: 'New Orleans, LA',
+        isActive: true,
+        sortOrder: 6,
+        website: 'https://q93.iheart.com',
+        genre: 'Hip Hop & R&B',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ];
 
     try {
@@ -753,42 +783,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Now Playing API with enhanced metadata and artwork
-  // Dynamic Now Playing API - supports multiple radio stations
+  // Enhanced Now Playing API - supports all 6 radio stations with authentic metadata
   app.get("/api/now-playing", async (req, res) => {
     try {
-      const stationId = req.query.station || "beat-955"; // Default to 95.5 The Beat
+      const stationId = req.query.station as string || "somafm-metal"; // Default to SomaFM Metal
+      
+      // Import metadata fetcher dynamically
+      const { default: MetadataFetcher } = await import('./metadataFetcher.js');
+      const fetcher = MetadataFetcher.getInstance();
+      const metadata = await fetcher.getMetadata(stationId);
 
-      // Route to appropriate station metadata fetcher with SomaFM API
-      switch (stationId) {
-        case "beat-955":
-          return await fetchSomaFMBeatBlender(res);
-        case "hot-97":
-          return await fetchSomaFMGrooveSalad(res);
-        case "power-106":
-          return await fetchSomaFMSpaceStation(res);
-        case "somafm-metal":
-          return await fetchSomaFMMetal(res);
-        default:
-          return await fetchSomaFMBeatBlender(res);
+      if (metadata) {
+        const nowPlayingData = {
+          id: 1,
+          title: metadata.title,
+          artist: metadata.artist,
+          album: metadata.album || null,
+          isLive: true,
+          timestamp: new Date().toISOString(),
+          artwork: metadata.artwork || null,
+          stationId,
+          stationName: metadata.stationName,
+          isAd: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        await storage.updateNowPlaying(nowPlayingData);
+        console.log(`Now playing: "${metadata.title}" by ${metadata.artist} on ${metadata.stationName}`);
+        return res.json(nowPlayingData);
+      } else {
+        // Enhanced fallback with station-specific information
+        const stationInfo: { [key: string]: { name: string; artist: string; album: string } } = {
+          'hot-97': { name: 'Hot 97', artist: 'New York\'s #1 Hip Hop & R&B', album: '97.1 FM • New York, NY' },
+          'power-106': { name: 'Power 105.1', artist: 'New York\'s Power 105.1', album: '105.1 FM • New York, NY' },
+          'beat-955': { name: '95.5 The Beat', artist: 'Dallas\' #1 Hip Hop & R&B', album: '95.5 FM • Dallas, TX' },
+          'hot-105': { name: 'Hot 105', artist: 'Miami\'s Today\'s R&B and Old School', album: '105.1 FM • Miami, FL' },
+          'q-93': { name: 'Q93', artist: 'New Orleans Hip Hop & R&B', album: '93.3 FM • New Orleans, LA' },
+          'somafm-metal': { name: 'SomaFM Metal', artist: 'Heavy Metal & Hard Rock', album: 'Online • San Francisco, CA' }
+        };
+
+        const info = stationInfo[stationId] || stationInfo['somafm-metal'];
+        const fallbackData = {
+          id: 1,
+          title: info.name,
+          artist: info.artist,
+          album: info.album,
+          duration: null,
+          artwork: null,
+          isAd: false,
+          isLive: true,
+          timestamp: new Date().toISOString(),
+          stationId,
+          stationName: info.name,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        await storage.updateNowPlaying(fallbackData);
+        return res.json(fallbackData);
       }
     } catch (error) {
       console.error("Failed to fetch track data:", error);
-
-      // Final fallback only if all station fetchers fail
-      const fallbackData = {
-        id: 1,
-        title: "Radio Stream",
-        artist: "Live Broadcast",
-        album: "Live Stream",
-        duration: null,
-        artwork: null,
-        isAd: false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      await storage.updateNowPlaying(fallbackData);
-      return res.json(fallbackData);
+      res.status(500).json({ error: 'Failed to fetch now playing data' });
     }
   });
 
