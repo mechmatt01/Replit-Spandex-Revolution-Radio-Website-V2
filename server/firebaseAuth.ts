@@ -5,13 +5,28 @@ import bcrypt from 'bcryptjs';
 // Initialize Firebase Admin (if not already initialized)
 if (!getApps().length) {
   try {
-    const serviceAccount = require('../firebase-service-account.json');
+    // Try to get service account from environment variables first
+    const serviceAccountEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
+    let serviceAccount;
+    
+    if (serviceAccountEnv) {
+      // Parse service account from environment variable
+      serviceAccount = JSON.parse(serviceAccountEnv);
+    } else {
+      // Fallback to file (for local development)
+      serviceAccount = require('../firebase-service-account.json');
+      console.warn('⚠️ Using service account file. Consider moving to environment variables for production.');
+    }
+    
     initializeApp({
       credential: cert(serviceAccount),
-      storageBucket: 'spandex-salvation-radio-site.firebasestorage.app'
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'spandex-salvation-radio-site.firebasestorage.app'
     });
+    
+    console.log('✅ Firebase Admin initialized successfully');
   } catch (error) {
-    console.error('Firebase Admin initialization error:', error);
+    console.error('❌ Firebase Admin initialization error:', error);
+    console.error('💡 Make sure FIREBASE_SERVICE_ACCOUNT secret is set in Replit Secrets');
     throw error;
   }
 }

@@ -10,11 +10,11 @@ import bcrypt from 'bcryptjs';
 // Add test users or complete verification process
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
-  authDomain: "spandex-salvation-radio-site.firebaseapp.com",
-  projectId: "spandex-salvation-radio-site",
-  storageBucket: "spandex-salvation-radio-site.firebasestorage.app",
-  appId: "1:632263635377:web:2a9bd6118a6a2cb9d8cd90",
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  appId: process.env.FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
@@ -93,16 +93,6 @@ export async function getUserLocation(): Promise<{ lat: number; lng: number } | 
     );
   });
 }
-
-// Generate random 10-character alphanumeric ID
-const generateUserID = (): string => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < 10; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-};
 
 // Get random avatar from the available options
 const getRandomAvatar = (): string => {
@@ -353,7 +343,7 @@ export async function signInWithGoogle() {
     console.log('Current domain:', window.location.hostname);
     console.log('Auth domain:', auth.config.authDomain);
     console.log('OAuth mode: Testing (should work with test users)');
-    console.log('OAuth Client ID:', '632263635377-sa02i1luggs8hlmc6ivt0a6i5gv0irrn.apps.googleusercontent.com');
+    console.log('OAuth Client ID:', process.env.GOOGLE_CLIENT_ID);
     console.log('Current URL:', window.location.href);
     console.log('Expected redirect URI:', `${window.location.origin}/__/auth/handler`);
 

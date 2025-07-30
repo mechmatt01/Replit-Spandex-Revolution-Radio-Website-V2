@@ -279,10 +279,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Config endpoint for client-side environment variables
   app.get("/api/config", (req: Request, res: Response) => {
     try {
-      // Force the correct API key to override persistent environment variables
-      const googleMapsApiKey = "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ";
-      const googleMapsSigningSecret = "xUMvkKZN7YbwACexIGzpV2o5Fms=";
-      const openWeatherApiKey = process.env.OPENWEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5";
+      // Get API keys from Replit Secrets (environment variables)
+      const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY || "";
+      const googleMapsSigningSecret = process.env.GOOGLE_MAPS_SIGNING_SECRET || "";
+      const openWeatherApiKey = process.env.OPEN_WEATHER_API_KEY || "";
+
+      // Validate that keys are loaded
+      if (!googleMapsApiKey || !openWeatherApiKey) {
+        console.warn('⚠️ Some API keys are missing from Replit Secrets');
+        console.warn('Run: node scripts/setup-secrets.js for setup instructions');
+      }
       // Add Map ID for Google Maps
       const googleMapsMapId = "DEMO_MAP_ID";
 
