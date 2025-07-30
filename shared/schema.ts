@@ -207,13 +207,7 @@ export const registerUserSchema = z
     phoneNumber: z.string().min(10, "Phone number is required"),
     phoneVerificationCode: z.string().optional(), // <-- Add this line
   })
-  .refine(
-    (data) => !data.confirmPassword || data.password === data.confirmPassword,
-    {
-      message: "Passwords don't match",
-      path: ["confirmPassword"],
-    },
-  );
+;
 
 export const loginUserSchema = z.object({
   email: z.string().email("Please enter a valid email address"),

@@ -24,7 +24,7 @@ async function sendVerificationEmail(
     `Verification email would be sent to ${email} for ${firstName} with token ${token}`,
   );
 }
-import { fetchSpotifyArtwork } from "./radioMetadata";
+import { fetchSpotifyArtwork, fetchiTunesArtwork } from "./radioMetadata";
 import {
   fetchRadioCoMetadata,
   isCommercial,
@@ -2954,7 +2954,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Phone verified endpoint
   app.post("/api/user/phone-verified", isAuthenticated, async (req, res) => {
     try {
-      const userId = req.user.id;
+      const userId = (req.user as any).id;
       await storage.updateUser(userId, { isPhoneVerified: true });
       res.json({ message: "Phone number marked as verified." });
     } catch (error) {

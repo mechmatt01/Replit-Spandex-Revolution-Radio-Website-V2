@@ -259,12 +259,15 @@ export default function StickyPlayer() {
             )}
             <Button
               onClick={togglePlayback}
-              className="text-white w-10 h-10 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl"
+              className="text-white w-10 h-10 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl border-0"
               style={{
                 background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
                 boxShadow: `0 4px 20px ${colors.primary}60`,
                 opacity: isLoading ? 0.5 : 1,
-              }}
+                border: "none",
+                outline: "none",
+                '--tw-ring-color': colors.primary,
+              } as React.CSSProperties & { '--tw-ring-color': string }}
               aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
               disabled={isLoading}
             >

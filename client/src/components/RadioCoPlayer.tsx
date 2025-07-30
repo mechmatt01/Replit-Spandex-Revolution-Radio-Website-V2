@@ -581,14 +581,18 @@ export default function RadioCoPlayer() {
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
-            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center mx-auto relative"
+            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center mx-auto relative focus:outline-none focus:ring-2 border-0"
             style={{
               background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
               color: "white",
               boxShadow: `0 10px 40px ${colors.primary}60`,
               position: "relative",
               zIndex: 1,
-            }}
+              border: "none",
+              outline: "none",
+              focusRingColor: colors.primary,
+              '--tw-ring-color': colors.primary,
+            } as React.CSSProperties & { '--tw-ring-color': string }}
           >
             {isLoading ? (
               <>

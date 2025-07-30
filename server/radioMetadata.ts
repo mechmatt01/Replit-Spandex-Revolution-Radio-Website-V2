@@ -129,6 +129,35 @@ export async function fetchSpotifyArtwork(
   return null;
 }
 
+export async function fetchiTunesArtwork(
+  artist: string,
+  title: string,
+): Promise<string | null> {
+  try {
+    const searchQuery = encodeURIComponent(`${artist} ${title}`);
+    const response = await fetch(
+      `https://itunes.apple.com/search?term=${searchQuery}&entity=song&limit=1`,
+      {
+        signal: AbortSignal.timeout(2000),
+      },
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.results && data.results.length > 0) {
+        // Get the highest quality artwork (replace 100x100 with 800x800)
+        const artworkUrl = data.results[0].artworkUrl100;
+        if (artworkUrl) {
+          return artworkUrl.replace("100x100bb.jpg", "800x800bb.jpg");
+        }
+      }
+    }
+  } catch (error) {
+    console.error("iTunes artwork fetch error:", error);
+  }
+  return null;
+}
+
 export async function getTrackFromLastFM(
   artist: string,
   title: string,
