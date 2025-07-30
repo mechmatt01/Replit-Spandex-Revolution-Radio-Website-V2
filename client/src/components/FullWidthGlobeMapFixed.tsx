@@ -791,162 +791,168 @@ const FullWidthGlobeMapFixed = () => {
 
   return (
     <>
-      {/* Normal view container */}
-      {!isFullscreen && (
-        <section className={`${isDarkMode ? "bg-black" : "bg-white"} py-20`}>
-          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Header */}
-            <div className="text-center mb-16">
-              <h2 className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}>
-                GLOBAL LISTENERS
-              </h2>
-              <p className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}>
-                See where metal fans are tuning in from around the world in real-time.
-              </p>
+      {/* Fullscreen Overlay Background */}
+      {isFullscreen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] transition-all duration-500 ease-in-out"
+          style={{ 
+            top: '4rem', // Below navigation bar
+            bottom: '5rem', // Above floating player
+            opacity: isFullscreen ? 1 : 0
+          }}
+        />
+      )}
 
-              {/* Weather Display with Animated Icons */}
-              <div className="mb-4">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                  <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                    {weather?.location || "Loading location..."}
-                  </span>
-                  {(locationPermission === 'denied' || locationPermission === 'prompt') && (
-                    <Button
-                      onClick={handleLocationPermission}
-                      size="sm"
-                      className={`ml-2 transition-colors duration-300 text-xs ${
-                        isDarkMode 
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                          : 'bg-gray-600 hover:bg-gray-700 text-white'
-                      }`}
-                    >
-                      Enable Location
-                    </Button>
-                  )}
-                </div>
-                
-                <div className="flex items-center justify-center gap-3">
-                  {/* Weather Icon */}
-                  {weather && (
-                    <div className="flex items-center justify-center">
-                      {weatherLoading ? (
-                        <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-                      ) : (
-                        <img
-                          src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
-                          alt={weather.description}
-                          className="w-12 h-12 object-contain animate-pulse"
-                          style={{ filter: isDarkMode ? 'brightness(0.8)' : 'none' }}
-                        />
-                      )}
-                    </div>
-                  )}
-                  
-                  {/* Temperature and Description */}
-                  <div className="flex flex-col items-center">
-                    <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                      {weather ? `${Math.round(weather.temperature)}°F` : "Loading..."}
-                    </span>
-                    <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                      {weather?.description || "Loading weather..."}
-                    </span>
+      <section className={`${isDarkMode ? "bg-black" : "bg-white"} py-20`}>
+        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header - Hidden when fullscreen */}
+          <div className={`text-center mb-16 transition-all duration-500 ease-in-out ${
+            isFullscreen ? 'opacity-0 invisible' : 'opacity-100 visible'
+          }`}>
+            <h2 className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}>
+              GLOBAL LISTENERS
+            </h2>
+            <p className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}>
+              See where metal fans are tuning in from around the world in real-time.
+            </p>
+
+            {/* Weather Display with Animated Icons */}
+            <div className="mb-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
+                <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                  {weather?.location || "Loading location..."}
+                </span>
+                {(locationPermission === 'denied' || locationPermission === 'prompt') && (
+                  <Button
+                    onClick={handleLocationPermission}
+                    size="sm"
+                    className={`ml-2 transition-colors duration-300 text-xs ${
+                      isDarkMode 
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                        : 'bg-gray-600 hover:bg-gray-700 text-white'
+                    }`}
+                  >
+                    Enable Location
+                  </Button>
+                )}
+              </div>
+              
+              <div className="flex items-center justify-center gap-3">
+                {/* Weather Icon */}
+                {weather && (
+                  <div className="flex items-center justify-center">
+                    {weatherLoading ? (
+                      <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
+                    ) : (
+                      <img
+                        src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
+                        alt={weather.description}
+                        className="w-12 h-12 object-contain animate-pulse"
+                        style={{ filter: isDarkMode ? 'brightness(0.8)' : 'none' }}
+                      />
+                    )}
                   </div>
+                )}
+                
+                {/* Temperature and Description */}
+                <div className="flex flex-col items-center">
+                  <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                    {weather ? `${Math.round(weather.temperature)}°F` : "Loading..."}
+                  </span>
+                  <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                    {weather?.description || "Loading weather..."}
+                  </span>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* Map Container */}
-            <div className={`relative w-full rounded-xl overflow-hidden shadow-2xl border-2 transition-all duration-500 ease-in-out ${
+          {/* Map Container with smooth fullscreen transition */}
+          <div 
+            className={`relative transition-all duration-500 ease-in-out transform ${
               isFullscreen 
-                ? 'fixed inset-0 z-[9999] rounded-none border-0 top-16 bottom-20' 
-                : 'h-96'
-            }`} 
+                ? 'fixed inset-x-0 z-[9999] rounded-none' 
+                : 'w-full rounded-xl shadow-2xl border-2'
+            }`}
             style={{ 
               borderColor: isFullscreen ? 'transparent' : colors.primary,
-              backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb"
-            }}>
-              {isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-20">
-                  <div className="text-center">
-                    <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-2"></div>
-                    <p className="text-white font-semibold">Loading Map...</p>
-                  </div>
+              backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+              top: isFullscreen ? '4rem' : 'auto', // Below navigation
+              bottom: isFullscreen ? '5rem' : 'auto', // Above floating player
+              height: isFullscreen ? 'calc(100vh - 9rem)' : '24rem', // Full height minus nav and player
+              margin: isFullscreen ? '0' : 'auto',
+              overflow: 'hidden'
+            }}
+          >
+            {isLoading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-20">
+                <div className="text-center">
+                  <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                  <p className="text-white font-semibold">Loading Map...</p>
                 </div>
-              )}
-              
-              {/* Map Element */}
-              <div 
-                ref={mapRef}
-                className="w-full h-full transition-all duration-500 ease-in-out"
-                style={{
-                  backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-                  overflow: "hidden"
-                }}
-              />
-
-              {/* Expand/Close Button - Always in top-left of map */}
-              <Button
-                onClick={toggleFullscreen}
-                size="sm"
-                className={`absolute top-4 left-4 z-[10001] border-0 shadow-lg transition-all duration-300 hover:scale-105 ${
-                  isFullscreen 
-                    ? 'bg-red-600 hover:bg-red-700 text-white' 
-                    : 'bg-gray-800 hover:bg-gray-700 text-white'
-                }`}
-              >
-                {isFullscreen ? (
-                  <>
-                    <Minimize2 className="w-4 h-4 mr-1" />
-                    Close
-                  </>
-                ) : (
-                  <>
-                    <Maximize2 className="w-4 h-4 mr-1" />
-                    Expand
-                  </>
-                )}
-              </Button>
-
-              {/* Map Controls - Always in top-right of map */}
-              <div className={`absolute top-4 right-4 flex flex-col gap-2 z-[10001] transition-all duration-500 ease-in-out ${
-                isFullscreen ? 'scale-110' : 'scale-100'
-              }`}>
-                <Button onClick={handleZoomIn} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
-                  <ZoomIn className="w-4 h-4" />
-                </Button>
-                <Button onClick={handleZoomOut} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
-                  <ZoomOut className="w-4 h-4" />
-                </Button>
-                <Button onClick={handleMyLocation} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
-                  <MapPin className="w-4 h-4" />
-                </Button>
-                <Button onClick={handleReset} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
-                  <RotateCcw className="w-4 h-4" />
-                </Button>
               </div>
+            )}
+            
+            {/* Map Element */}
+            <div 
+              ref={mapRef}
+              className="w-full h-full transition-all duration-500 ease-in-out"
+              style={{
+                backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
+                overflow: "hidden"
+              }}
+            />
 
-              {/* Weather Info Overlay in Fullscreen - Top Left Below Buttons */}
-              {isFullscreen && weather && (
-                <div className="absolute top-4 left-20 z-[10001] bg-black/80 backdrop-blur-md rounded-lg px-4 py-2 transition-all duration-500 ease-in-out">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
-                      alt={weather.description}
-                      className="w-6 h-6 object-contain"
-                    />
-                    <div className="text-sm">
-                      <span className="text-white font-medium">{weather.location}</span>
-                      <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
-                    </div>
-                  </div>
-                </div>
+            {/* Expand/Close Button - Always in top-left of map */}
+            <Button
+              onClick={toggleFullscreen}
+              size="sm"
+              className={`absolute top-4 left-4 z-10 border-0 shadow-lg transition-all duration-300 hover:scale-105 ${
+                isFullscreen 
+                  ? 'bg-red-600 hover:bg-red-700 text-white' 
+                  : 'bg-gray-800 hover:bg-gray-700 text-white'
+              }`}
+            >
+              {isFullscreen ? (
+                <>
+                  <Minimize2 className="w-4 h-4 mr-1" />
+                  Close
+                </>
+              ) : (
+                <>
+                  <Maximize2 className="w-4 h-4 mr-1" />
+                  Expand
+                </>
               )}
+            </Button>
+
+            {/* Map Controls - Always in top-right of map */}
+            <div className={`absolute top-4 right-4 flex flex-col gap-2 z-10 transition-all duration-500 ease-in-out ${
+              isFullscreen ? 'scale-110' : 'scale-100'
+            }`}>
+              <Button onClick={handleZoomIn} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
+                <ZoomIn className="w-4 h-4" />
+              </Button>
+              <Button onClick={handleZoomOut} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
+                <ZoomOut className="w-4 h-4" />
+              </Button>
+              <Button onClick={handleMyLocation} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
+                <MapPin className="w-4 h-4" />
+              </Button>
+              <Button onClick={handleReset} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
+                <RotateCcw className="w-4 h-4" />
+              </Button>
             </div>
 
-            {/* Live Statistics & Active Locations - Side by Side on Desktop */}
-            <div className="w-full max-w-7xl mx-auto mb-8 mt-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Weather Info - No longer in fullscreen */}
+          </div>
+
+          {/* Live Statistics & Active Locations - Hidden when fullscreen */}
+          <div className={`w-full max-w-7xl mx-auto mb-8 mt-8 transition-all duration-500 ease-in-out ${
+            isFullscreen ? 'opacity-0 invisible' : 'opacity-100 visible'
+          }`}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 
                 {/* Live Statistics Section */}
                 <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl"
@@ -1132,13 +1138,10 @@ const FullWidthGlobeMapFixed = () => {
                   </CardContent>
                 </Card>
 
-              </div>
             </div>
           </div>
-        </section>
-      )}
-
-
+        </div>
+      </section>
     </>
   );
 };
