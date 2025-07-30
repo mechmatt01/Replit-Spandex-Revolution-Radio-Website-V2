@@ -123,8 +123,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phoneNumber: result.profile.PhoneNumber,
         isEmailVerified: true,
         isPhoneVerified: !!result.profile.PhoneNumber,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: result.profile.CreatedAt || new Date().toISOString(),
+        updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
       });
       
       setFirebaseProfile(result.profile);
@@ -176,8 +176,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phoneNumber: result.profile.PhoneNumber,
         isEmailVerified: true,
         isPhoneVerified: !!result.profile.PhoneNumber,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: result.profile.CreatedAt || new Date().toISOString(),
+        updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
       });
       
       setFirebaseProfile(result.profile);

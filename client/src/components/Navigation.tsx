@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Menu, ChevronDown, User, Calendar, Music, Send, Phone, MapPin, Heart, UserPlus, LogOut, CreditCard, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -57,7 +56,7 @@ export default function Navigation() {
   const brandTextRef = useRef<HTMLDivElement>(null);
   const navRef = useRef<HTMLDivElement>(null);
   const [navPosition, setNavPosition] = useState<number>(0);
-  
+
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -118,7 +117,7 @@ export default function Navigation() {
   // Simple navigation function that works reliably
   const navigateToSection = (sectionId: string, route?: string) => {
     console.log(`Navigation: ${sectionId}, route: ${route}`);
-    
+
     // Close menus
     setIsOpen(false);
     setIsDropdownOpen(false);
@@ -252,7 +251,7 @@ export default function Navigation() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300 safe-area-inset-top">
         <div className="w-full relative">
           <div className="xl:relative flex justify-between items-center h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
-            
+
             {/* Logo & Brand - Left side */}
             <div className="flex items-center space-x-4">
               <div 
@@ -481,7 +480,7 @@ export default function Navigation() {
                               <User size={20} className="text-white" />
                             )}
                           </div>
-                          
+
                           {/* Verified Badge for Subscribers */}
                           {(user as any)?.activeSubscription && (
                             <div 
@@ -509,7 +508,7 @@ export default function Navigation() {
                             </div>
                           )}
                         </div>
-                        
+
                         <ChevronDown 
                           size={16} 
                           className="transition-transform duration-200"
@@ -517,7 +516,7 @@ export default function Navigation() {
                         />
                       </button>
                     </DropdownMenuTrigger>
-                    
+
                     <DropdownMenuContent 
                       align="end" 
                       className="w-64 p-2 mt-2 shadow-2xl border-2"
@@ -542,9 +541,9 @@ export default function Navigation() {
                           {(user as any)?.email}
                         </p>
                       </div>
-                      
+
                       <DropdownMenuSeparator className="opacity-20" />
-                      
+
                       {/* Profile */}
                       <DropdownMenuItem
                         onClick={() => setLocation("/profile?section=profile")}
@@ -556,7 +555,7 @@ export default function Navigation() {
                         <User size={18} style={{ color: colors.primary }} />
                         <span className="font-semibold">Profile</span>
                       </DropdownMenuItem>
-                      
+
                       {/* Subscription Management - Only if active */}
                       {(user as any)?.activeSubscription && (
                         <DropdownMenuItem
@@ -570,7 +569,7 @@ export default function Navigation() {
                           <span className="font-semibold">Subscription<br/>Management</span>
                         </DropdownMenuItem>
                       )}
-                      
+
                       {/* Submission Requests */}
                       <DropdownMenuItem
                         onClick={() => setLocation("/profile?section=submissions")}
@@ -582,9 +581,9 @@ export default function Navigation() {
                         <FileText size={18} style={{ color: colors.primary }} />
                         <span className="font-semibold">Submission<br/>Requests</span>
                       </DropdownMenuItem>
-                      
+
                       <DropdownMenuSeparator className="opacity-20" />
-                      
+
                       {/* Logout */}
                       <DropdownMenuItem
                         onClick={() => setShowLogoutDialog(true)}
@@ -826,7 +825,7 @@ export default function Navigation() {
                       <User size={18} style={{ color: 'white' }} />
                       <span>LOGIN</span>
                     </div>
-                    
+
                     <div
                       onClick={() => {
                         setTimeout(() => {
@@ -881,7 +880,7 @@ export default function Navigation() {
                       <User size={16} style={{ color: colors.primary }} />
                       <span>PROFILE</span>
                     </a>
-                    
+
                     <a
                       href="/api/logout"
                       className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full no-underline"

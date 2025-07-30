@@ -66,28 +66,33 @@ export default function LoginPage() {
       const response = await apiRequest("POST", endpoint, payload);
       const data = await response.json();
 
-      if (response.ok) {
+      if (isLogin) {
+        await login(formData.email, formData.password);
         toast({
-          title: isLogin ? "Welcome Back!" : "Account Created!",
-          description: isLogin
-            ? "You have successfully signed in."
-            : "Your account has been created. Please check your email for verification.",
+          title: "Welcome Back!",
+          description: "You have successfully signed in.",
         });
-
-        // Redirect to home page
-        window.location.href = "/";
+        navigate("/");
       } else {
+        await register(
+          formData.email,
+          formData.password,
+          `${formData.firstName} ${formData.lastName}`,
+          formData.firstName,
+          formData.lastName,
+          formData.phoneNumber || ""
+        );
         toast({
-          title: "Authentication Failed",
-          description:
-            data.message || "Please check your credentials and try again.",
-          variant: "destructive",
+          title: "Account Created!",
+          description: "Your account has been created successfully. Welcome to Spandex Salvation Radio!",
         });
+        navigate("/");
       }
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Authentication error:", error);
       toast({
-        title: "Connection Error",
-        description: "Unable to connect to the server. Please try again.",
+        title: isLogin ? "Login Failed" : "Registration Failed",
+        description: error.message || "Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -104,7 +109,7 @@ export default function LoginPage() {
     <div
       className={cn(
         "min-h-screen flex items-center justify-center p-4",
-        (theme as any) === "light" ? "bg-white" : "bg-black",
+        (theme as any) === "light" ? "bg-white" : "bg-black"},
       )}
     >
       <Card className="w-full max-w-md">

@@ -74,7 +74,7 @@ export default function ProfilePage() {
   const { colors, isDarkMode } = useTheme();
   const { toast } = useToast();
   const queryString = useSearch();
-  
+
   // Parse query parameters
   const urlParams = new URLSearchParams(queryString);
   const sectionParam = urlParams.get('section') || 'profile';
@@ -164,9 +164,9 @@ export default function ProfilePage() {
         PhoneNumber: profileData.phoneNumber,
         UserProfileImage: profileData.profileImageUrl,
       });
-      
+
       if (!success) throw new Error("Failed to update profile");
-      
+
       toast({
         title: "Profile Updated",
         description: "Your profile has been saved successfully.",
@@ -185,7 +185,7 @@ export default function ProfilePage() {
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    
+
     setUploadingImage(true);
     try {
       // Upload to Firebase Storage
@@ -216,7 +216,7 @@ export default function ProfilePage() {
       const success = await updateProfile({
         UserProfileImage: avatarUrl,
       });
-      
+
       if (success) {
         setProfileData(prev => ({ ...prev, profileImageUrl: avatarUrl }));
         toast({
@@ -243,9 +243,9 @@ export default function ProfilePage() {
         method: "POST",
         credentials: 'include',
       });
-      
+
       if (!response.ok) throw new Error("Failed to cancel subscription");
-      
+
       await refreshUser();
       setShowCancelSubscriptionDialog(false);
       toast({
@@ -327,9 +327,9 @@ export default function ProfilePage() {
                       <span>{item.label}</span>
                     </button>
                   ))}
-                  
+
                   <div className="my-4 mx-4 border-t" style={{ borderColor: `${colors.primary}20` }} />
-                  
+
                   <button
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-all duration-200 hover:shadow-md"
                     style={{
@@ -385,7 +385,7 @@ export default function ProfilePage() {
                           </div>
                         )}
                       </div>
-                      
+
                       <DropdownMenu open={showChangeImageDropdown} onOpenChange={setShowChangeImageDropdown}>
                         <DropdownMenuTrigger asChild>
                           <button
@@ -438,7 +438,7 @@ export default function ProfilePage() {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
-                    
+
                     <div className="flex-1 space-y-2">
                       <h3 className="font-bold text-lg" style={{ color: colors.text }}>
                         Profile Picture

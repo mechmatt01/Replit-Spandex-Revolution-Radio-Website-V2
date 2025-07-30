@@ -83,7 +83,7 @@ export async function createFirestoreUser(userData: {
 }): Promise<{ userKey: string; userData: UserProfileData }> {
   const userKey = generateUserKey();
   const profileImageUrl = getRandomAvatar();
-  
+
   const userProfileData: UserProfileData = {
     FirstName: userData.firstName,
     LastName: userData.lastName,
@@ -111,7 +111,7 @@ export async function createFirestoreUser(userData: {
 
   // Save to Firestore under Users > User:{userKey}
   await db.collection('Users').doc(`User:${userKey}`).set(userProfileData);
-  
+
   return { userKey, userData: userProfileData };
 }
 
@@ -120,13 +120,13 @@ export async function authenticateUser(email: string, password: string): Promise
   try {
     // Query all users to find matching email
     const usersSnapshot = await db.collection('Users').get();
-    
+
     for (const doc of usersSnapshot.docs) {
       const userData = doc.data() as UserProfileData;
-      
+
       if (userData.EmailAddress === email && userData.PasswordHash) {
         const isValidPassword = await verifyPassword(password, userData.PasswordHash);
-        
+
         if (isValidPassword) {
           // Update last login
           await doc.ref.update({ LastLoginAt: new Date() });
@@ -134,7 +134,7 @@ export async function authenticateUser(email: string, password: string): Promise
         }
       }
     }
-    
+
     return null;
   } catch (error) {
     console.error('Authentication error:', error);
@@ -146,14 +146,14 @@ export async function authenticateUser(email: string, password: string): Promise
 export async function getUserByEmail(email: string): Promise<UserProfileData | null> {
   try {
     const usersSnapshot = await db.collection('Users').get();
-    
+
     for (const doc of usersSnapshot.docs) {
       const userData = doc.data() as UserProfileData;
       if (userData.EmailAddress === email) {
         return userData;
       }
     }
-    
+
     return null;
   } catch (error) {
     console.error('Error fetching user by email:', error);
@@ -165,14 +165,14 @@ export async function getUserByEmail(email: string): Promise<UserProfileData | n
 export async function getUserByGoogleId(googleId: string): Promise<UserProfileData | null> {
   try {
     const usersSnapshot = await db.collection('Users').get();
-    
+
     for (const doc of usersSnapshot.docs) {
       const userData = doc.data() as UserProfileData;
       if (userData.GoogleID === googleId) {
         return userData;
       }
     }
-    
+
     return null;
   } catch (error) {
     console.error('Error fetching user by Google ID:', error);
@@ -195,4 +195,159 @@ export async function updateUserProfile(userKey: string, updates: Partial<UserPr
 export async function emailExists(email: string): Promise<boolean> {
   const user = await getUserByEmail(email);
   return user !== null;
+}
+
+// Generate random 10-character alphanumeric user ID
+const generateUserID = (): string => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < 10; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
+// Get random avatar from the available options
+const getRandomAvatar = (): string => {
+  const avatars = [
+    'Bass-Bat.png',
+    'Drum-Dragon.png',
+    'Headbanger-Hamster.png',
+    'Metal-Queen.png',
+    'Metal Cat.png',
+    'Mosh-Pit-Monster.png',
+    'Rebel-Raccoon.png',
+    'Rock-Unicorn.png'
+  ];
+  const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+  return `https://firebasestorage.googleapis.com/v0/b/spandex-salvation-radio-site.firebasestorage.app/o/Avatars%2F${encodeURIComponent(randomAvatar)}?alt=media`;
+};
+
+// Register a new user
+export async function registerFirebaseUser(userData: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+}) {
+  try {
+    console.log('[Firebase Auth] Starting registration for:', userData.email);
+
+    // Check if user already exists
+    const existingUsers = await db.collection('Users').where('EmailAddress', '==', userData.email).get();
+    if (!existingUsers.empty) {
+      console.log('[Firebase Auth] User already exists:', userData.email);
+      return { success: false, error: 'An account with this email already exists. Please try logging in instead.' };
+    }
+
+    // Generate a random 10-character alphanumeric user ID
+    let userID = generateUserID();
+
+    // Ensure userID is unique
+    let userExists = true;
+    while (userExists) {
+      const existingUser = await db.collection('Users').doc(userID).get();
+      if (!existingUser.exists) {
+        userExists = false;
+      } else {
+        userID = generateUserID();
+      }
+    }
+
+    console.log('[Firebase Auth] Generated unique UserID:', userID);
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(userData.password, 12);
+
+    // Get random avatar
+    const randomAvatarUrl = getRandomAvatar();
+
+    // Create user profile data
+    const userProfile = {
+      FirstName: userData.firstName || '',
+      LastName: userData.lastName || '',
+      UserProfileImage: randomAvatarUrl,
+      EmailAddress: userData.email,
+      PhoneNumber: userData.phoneNumber || '',
+      Location: null, // Will be set later when user allows location access
+      IsActiveListening: false,
+      ActiveSubscription: false,
+      RenewalDate: null,
+      UserID: userID,
+      Password: hashedPassword,
+      CreatedAt: new Date().toISOString(),
+      UpdatedAt: new Date().toISOString()
+    };
+
+    // Save to Firestore under Users/{UserID}
+    await db.collection('Users').doc(userID).set(userProfile);
+    console.log('[Firebase Auth] User profile created successfully with ID:', userID);
+
+    // Remove password from response
+    const { Password, ...profileWithoutPassword } = userProfile;
+
+    return {
+      success: true,
+      userID,
+      profile: profileWithoutPassword
+    };
+
+  } catch (error: any) {
+    console.error('[Firebase Auth] Registration error:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Registration failed. Please try again.' 
+    };
+  }
+}
+
+// Login user with email and password
+export async function loginFirebaseUser(email: string, password: string) {
+  try {
+    console.log('[Firebase Auth] Attempting login for:', email);
+
+    // Find user by email
+    const userQuery = await db.collection('Users').where('EmailAddress', '==', email).get();
+
+    if (userQuery.empty) {
+      console.log('[Firebase Auth] User not found:', email);
+      return { success: false, error: 'No account found with this email address. Please check your email or create a new account.' };
+    }
+
+    const userDoc = userQuery.docs[0];
+    const userData = userDoc.data();
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, userData.Password);
+
+    if (!isPasswordValid) {
+      console.log('[Firebase Auth] Invalid password for:', email);
+      return { success: false, error: 'Incorrect password. Please try again.' };
+    }
+
+    // Update last login time
+    await db.collection('Users').doc(userData.UserID).update({
+      UpdatedAt: new Date().toISOString(),
+      LastLoginAt: new Date().toISOString()
+    });
+
+    console.log('[Firebase Auth] Login successful for:', email);
+
+    // Remove password from response
+    const { Password, ...profileWithoutPassword } = userData;
+
+    return {
+      success: true,
+      userID: userData.UserID,
+      profile: profileWithoutPassword
+    };
+
+  } catch (error: any) {
+    console.error('[Firebase Auth] Login error:', error);
+    return { 
+      success: false, 
+      error: error.message || 'Login failed. Please try again.' 
+    };
+  }
 }

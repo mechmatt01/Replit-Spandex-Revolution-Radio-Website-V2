@@ -48,17 +48,17 @@ function rateLimit(maxRequests: number, windowMs: number) {
     const key = req.ip || 'unknown';
     const now = Date.now();
     const windowStart = now - windowMs;
-    
+
     const record = rateLimitStore.get(key);
     if (!record || record.resetTime < now) {
       rateLimitStore.set(key, { count: 1, resetTime: now + windowMs });
       return next();
     }
-    
+
     if (record.count >= maxRequests) {
       return res.status(429).json({ message: "Too many requests, please try again later" });
     }
-    
+
     record.count++;
     next();
   };
@@ -117,10 +117,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Auth middleware
   await setupAuth(app);
-  
+
   // Register admin routes
   registerAdminRoutes(app);
-  
+
   // Initialize Firebase radio storage
   await firebaseRadioStorage.initializeDefaultStations();
 
@@ -225,7 +225,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const stations = await firebaseRadioStorage.getRadioStations();
-      
+
       // If Firebase returns actual stations, use them; otherwise use fallback
       if (stations.length > 0) {
         res.json(stations);
@@ -285,12 +285,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const openWeatherApiKey = process.env.OPENWEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5";
       // Add Map ID for Google Maps
       const googleMapsMapId = "DEMO_MAP_ID";
-      
+
       // Disable caching for config endpoint to ensure new API key is loaded
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
-      
+
       res.json({
         googleMapsApiKey,
         googleMapsSigningSecret,
@@ -307,7 +307,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/weather", async (req: Request, res: Response) => {
     try {
       const { lat, lon } = req.query;
-      
+
       if (!lat || !lon) {
         return res.status(400).json({ error: "Latitude and longitude are required" });
       }
@@ -322,7 +322,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get current weather data
       const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`;
       console.log('Weather API URL:', weatherUrl.replace(apiKey, 'HIDDEN'));
-      
+
       const weatherResponse = await fetch(weatherUrl);
 
       if (!weatherResponse.ok) {
@@ -378,17 +378,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.isAuthenticated() || !req.user) {
         return res.status(401).json({ message: "Unauthorized", authenticated: false });
       }
-      
+
       const userId = (req.user as any).claims?.sub;
       if (!userId) {
         return res.status(401).json({ message: "Invalid user session", authenticated: false });
       }
-      
+
       const user = await storage.getUser(userId);
       if (!user) {
         return res.status(404).json({ message: "User not found", authenticated: false });
       }
-      
+
       res.json({ ...user, authenticated: true });
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -492,7 +492,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // === FIREBASE FIRESTORE AUTHENTICATION ROUTES ===
-  
+
   // Firebase Firestore Registration
   app.post("/api/auth/firebase/register", rateLimit(5, 15 * 60 * 1000), async (req, res) => {
     try {
@@ -598,11 +598,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Check if user exists by Google ID
       let user = await getUserByGoogleId(validatedData.googleId);
-      
+
       if (!user) {
         // Check if user exists by email
         user = await getUserByEmail(validatedData.email);
-        
+
         if (!user) {
           // Create new user
           const { userKey, userData } = await createFirestoreUser({
@@ -665,7 +665,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const validatedData = validationSchema.parse(req.body);
-      
+
       // Build update object
       const updates: any = {};
       if (validatedData.firstName) updates.FirstName = validatedData.firstName;
@@ -904,15 +904,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/contacts", async (req, res) => {
     try {
       const validatedData = insertContactSchema.parse(req.body);
-      
+
       // Store in PostgreSQL database
       const contact = await storage.createContact(validatedData);
-      
+
       // Store in Firebase Firestore
       try {
         const { getFirestore } = await import("firebase-admin/firestore");
         const firestore = getFirestore();
-        
+
         // Create the message document with timestamp
         const messageData = {
           timestamp: new Date().toISOString(),
@@ -923,14 +923,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           message: validatedData.message,
           createdAt: new Date(),
         };
-        
+
         // Store in Forms > Messages collection
         await firestore
           .collection("Forms")
           .doc("Messages")
           .collection("submissions")
           .add(messageData);
-        
+
         console.log("Contact form submitted to Firebase:", {
           name: `${validatedData.firstName} ${validatedData.lastName}`,
           email: validatedData.email,
@@ -940,7 +940,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error("Firebase storage failed:", firebaseError);
         // Don't fail the request if Firebase fails, just log it
       }
-      
+
       res.status(201).json(contact);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -1038,9 +1038,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/now-playing", async (req, res) => {
     try {
       const stationId = req.query.station as string || "somafm-metal"; // Default to SomaFM Metal
-      
+
       console.log(`Fetching now playing for station: ${stationId}`);
-      
+
       // Import metadata fetcher dynamically
       const { default: MetadataFetcher } = await import('./metadataFetcher.js');
       const fetcher = MetadataFetcher.getInstance();
@@ -1136,16 +1136,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Check for advertisement using comprehensive detection
           const { analyzeStreamMetadata } = await import("./adDetection");
           const adAnalysis = analyzeStreamMetadata({ title, artist });
-          
+
           let isAd = adAnalysis.isAd;
           let finalTitle = title;
           let finalArtist = artist;
           let finalArtwork = artwork;
-          
+
           if (isAd) {
             const { extractCompanyName, getClearbitLogo } = await import("./radioCoConfig");
             const companyName = extractCompanyName({ title, artist });
-            
+
             finalTitle = companyName !== "Advertisement" ? `${companyName} Commercial` : "Advertisement";
             finalArtist = "95.5 The Beat";
             finalArtwork = getClearbitLogo(companyName) || "advertisement";
@@ -1233,16 +1233,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Check for advertisement using comprehensive detection
             const { analyzeStreamMetadata } = await import("./adDetection");
             const adAnalysis = analyzeStreamMetadata({ title, artist });
-            
+
             let isAd = adAnalysis.isAd;
             let finalTitle = title;
             let finalArtist = artist;
             let finalArtwork = artwork;
-            
+
             if (isAd) {
               const { extractCompanyName, getClearbitLogo } = await import("./radioCoConfig");
               const companyName = extractCompanyName({ title, artist });
-              
+
               finalTitle = companyName !== "Advertisement" ? `${companyName} Commercial` : "Advertisement";
               finalArtist = "Hot 97";
               finalArtwork = getClearbitLogo(companyName) || "advertisement";
@@ -2272,12 +2272,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         title: "Capital One Commercial",
         artist: "Advertisement"
       };
-      
+
       const adAnalysis = analyzeStreamMetadata(testMetadata);
-      
+
       console.log("Test ad detection:", testMetadata);
       console.log("Analysis result:", adAnalysis);
-      
+
       res.json({
         input: testMetadata,
         result: adAnalysis
@@ -2786,9 +2786,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const token = crypto.randomBytes(32).toString('hex');
     (req.session as any).csrfToken = token;
     res.json({ token });
-  });
-
-  // Dynamic Open Graph image generation
+  });  // Dynamic Open Graph image generation
   app.get("/api/og-image", (req, res) => {
     const {
       theme = "dark",
@@ -2803,7 +2801,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       <svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
         <!-- Background -->
         <rect width="1200" height="630" fill="${background}"/>
-        
+
         <!-- Gradient overlay -->
         <defs>
           <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -2815,10 +2813,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             <stop offset="100%" style="stop-color:${theme === "light" ? "#4a4a4a" : secondary}"/>
           </linearGradient>
         </defs>
-        
+
         <!-- Background gradient -->
         <rect width="1200" height="630" fill="url(#bgGradient)"/>
-        
+
         <!-- Music disc icon -->
         <g transform="translate(80, 180)">
           <!-- Outer circle -->
@@ -2831,34 +2829,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
           <path d="M 70 135 A 65 65 0 0 1 200 135" stroke="${text}" stroke-width="2" fill="none" opacity="0.3"/>
           <path d="M 85 135 A 50 50 0 0 1 185 135" stroke="${text}" stroke-width="1" fill="none" opacity="0.2"/>
         </g>
-        
+
         <!-- Main title -->
         <text x="400" y="200" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="${text}">
           SPANDEX SALVATION
         </text>
-        
+
         <!-- Subtitle -->
         <text x="400" y="280" font-family="Arial, sans-serif" font-size="48" font-weight="600" fill="${primary}">
           RADIO
         </text>
-        
+
         <!-- Description -->
         <text x="400" y="350" font-family="Arial, sans-serif" font-size="32" fill="${text}" opacity="0.8">
           Join the hairspray rebellion!
         </text>
-        
+
         <!-- Features -->
         <text x="400" y="420" font-family="Arial, sans-serif" font-size="24" fill="${text}" opacity="0.7">
           Classic 80s Metal • Glam Rock • Hard Rock • 24/7 Streaming
         </text>
-        
+
         <!-- Live indicator -->
         <g transform="translate(400, 480)">
           <rect x="0" y="0" width="80" height="35" rx="17" fill="${primary}"/>
           <text x="40" y="23" font-family="Arial, sans-serif" font-size="16" font-weight="bold" 
                 fill="${theme === "light" ? "#ffffff" : "#000000"}" text-anchor="middle">LIVE</text>
         </g>
-        
+
         <!-- Accent elements -->
         <circle cx="1000" cy="100" r="80" fill="${primary}" opacity="0.1"/>
         <circle cx="1100" cy="500" r="120" fill="${secondary}" opacity="0.08"/>
@@ -2934,12 +2932,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Global error handling middleware
   app.use((err: any, req: Request, res: Response, next: Function) => {
     console.error('Global error handler:', err);
-    
+
     // Don't leak sensitive information in production
     if (process.env.NODE_ENV === 'production') {
       return res.status(500).json({ message: 'Internal server error' });
     }
-    
+
     res.status(500).json({ 
       message: 'Internal server error',
       error: err.message 
@@ -3008,7 +3006,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const station = req.query.station as string || "beatblender";
       let metadata;
-      
+
       switch (station) {
         case "beatblender":
           await fetchSomaFMBeatBlender(res);
@@ -3494,3 +3492,69 @@ async function fetchQ93(res: Response) {
   await storage.updateNowPlaying(fallbackData);
   return res.json(fallbackData);
 }
+
+// Firebase authentication routes
+app.post('/api/auth/firebase/register', async (req, res) => {
+  try {
+    const { firstName, lastName, email, phoneNumber, password } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ error: 'First name, last name, email, and password are required' });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Please enter a valid email address' });
+    }
+
+    // Validate password strength
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+    }
+
+    const result = await registerFirebaseUser({
+      firstName,
+      lastName,
+      email,
+      phoneNumber: phoneNumber || '',
+      password
+    });
+
+    if (result.success) {
+      res.json(result);
+    } else {
+      res.status(400).json({ error: result.error });
+    }
+  } catch (error: any) {
+    console.error('Firebase registration error:', error);
+    res.status(500).json({ error: 'Registration failed. Please try again.' });
+  }
+});
+
+app.post('/api/auth/firebase/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Please enter a valid email address' });
+    }
+
+    const result = await loginFirebaseUser(email, password);
+
+    if (result.success) {
+      res.json(result);
+    } else {
+      res.status(401).json({ error: result.error });
+    }
+  } catch (error: any) {
+    console.error('Firebase login error:', error);
+    res.status(500).json({ error: 'Login failed. Please try again.' });
+  }
+});

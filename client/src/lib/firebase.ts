@@ -79,7 +79,7 @@ export async function getUserLocation(): Promise<{ lat: number; lng: number } | 
       resolve(null);
       return;
     }
-    
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         resolve({
@@ -94,88 +94,97 @@ export async function getUserLocation(): Promise<{ lat: number; lng: number } | 
   });
 }
 
+// Generate random 10-character alphanumeric ID
+const generateUserID = (): string => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < 10; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
+// Get random avatar from the available options
+const getRandomAvatar = (): string => {
+  const avatars = [
+    'Bass-Bat.png',
+    'Drum-Dragon.png',
+    'Headbanger-Hamster.png',
+    'Metal-Queen.png',
+    'Metal Cat.png',
+    'Mosh-Pit-Monster.png',
+    'Rebel-Raccoon.png',
+    'Rock-Unicorn.png'
+  ];
+  const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+  return `gs://spandex-salvation-radio-site.firebasestorage.app/Avatars/${randomAvatar}`;
+};
+
 // Register new user with email/password
-export async function registerUser(userData: {
+export const registerUser = async (userData: {
   firstName: string;
   lastName: string;
   email: string;
   phoneNumber: string;
   password: string;
-}) {
+}) => {
   try {
-    console.log('Registering new user:', userData.email);
-    
-    // Generate unique user ID
-    const userID = generateUserID();
-    
-    // Hash the password
-    const hashedPassword = await hashPassword(userData.password);
-    
-    // Get user location
-    const location = await getUserLocation();
-    
-    // Get random default avatar
-    const defaultAvatar = getRandomDefaultAvatar();
-    
-    // Create user profile
-    const userProfile = {
-      FirstName: userData.firstName || '',
-      LastName: userData.lastName || '',
-      UserProfileImage: defaultAvatar,
-      EmailAddress: userData.email || '',
-      PhoneNumber: userData.phoneNumber || '',
-      Location: location ? { lat: location.lat, lng: location.lng } : null,
-      IsActiveListening: false,
-      ActiveSubscription: false,
-      RenewalDate: null,
-      UserID: userID,
-      PasswordHash: hashedPassword,
-      CreatedAt: new Date().toISOString(),
-      UpdatedAt: new Date().toISOString(),
-    };
+    console.log('[Firebase] Attempting to register user:', userData.email);
 
-    // Save to Firebase Firestore
-    await setDoc(doc(db, 'Users', `User: ${userID}`), userProfile);
-    
-    console.log('User registered successfully:', userID);
+    const response = await fetch('/api/auth/firebase/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error('[Firebase] Registration failed:', result);
+      return { success: false, error: result.error || 'Registration failed' };
+    }
+
+    console.log('[Firebase] Registration successful:', result);
     return { 
       success: true, 
-      userID, 
-      profile: { ...userProfile, PasswordHash: undefined } // Don't return password hash
+      userID: result.userID,
+      profile: result.profile
     };
-  } catch (error) {
-    console.error('Error registering user:', error);
-    return { success: false, error };
+  } catch (error: any) {
+    console.error('[Firebase] Registration error:', error);
+    return { success: false, error: error.message || 'Registration failed' };
   }
-}
+};
 
 // Login user with email/password
 export async function loginUser(email: string, password: string) {
   try {
     console.log('Attempting login for:', email);
-    
+
     // Query Firestore to find user by email
     const usersRef = collection(db, 'Users');
     const q = query(usersRef, where('EmailAddress', '==', email));
     const querySnapshot = await getDocs(q);
-    
+
     if (querySnapshot.empty) {
       console.log('No user found with email:', email);
       return { success: false, error: 'Invalid email or password' };
     }
-    
+
     // Get the first matching user (should be unique)
     const userDoc = querySnapshot.docs[0];
     const userData = userDoc.data();
-    
+
     // Verify password
     const isPasswordValid = await comparePassword(password, userData.PasswordHash);
-    
+
     if (!isPasswordValid) {
       console.log('Invalid password for user:', email);
       return { success: false, error: 'Invalid email or password' };
     }
-    
+
     console.log('Login successful for user:', userData.UserID);
     return { 
       success: true, 
@@ -203,11 +212,11 @@ export async function loginUser(email: string, password: string) {
 export async function getUserProfile(userID: string) {
   try {
     const userDoc = await getDoc(doc(db, 'Users', `User: ${userID}`));
-    
+
     if (!userDoc.exists()) {
       return { success: false, error: 'User not found' };
     }
-    
+
     const userData = userDoc.data();
     return { 
       success: true, 
@@ -235,7 +244,7 @@ export async function createUserProfile(authUser: any, customUserID?: string) {
   try {
     const userID = customUserID || generateUserID();
     const location = await getUserLocation();
-    
+
     const userProfile = {
       FirstName: authUser.displayName?.split(' ')[0] || '',
       LastName: authUser.displayName?.split(' ').slice(1).join(' ') || '',
@@ -254,7 +263,7 @@ export async function createUserProfile(authUser: any, customUserID?: string) {
 
     // Save to Firebase Firestore
     await setDoc(doc(db, 'Users', `User: ${userID}`), userProfile);
-    
+
     console.log('User profile created successfully:', userID);
     return { success: true, userID, profile: userProfile };
   } catch (error) {
@@ -271,7 +280,7 @@ export async function updateUserProfile(userID: string, updates: any) {
       ...updates,
       UpdatedAt: new Date().toISOString(),
     };
-    
+
     await updateDoc(docRef, updateData);
     console.log('User profile updated successfully');
     return { success: true };
@@ -287,10 +296,10 @@ export async function uploadProfileImage(userID: string, file: File) {
     const storageRef = ref(storage, `User: ${userID}/profile-image`);
     const snapshot = await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(snapshot.ref);
-    
+
     // Update profile with new image URL
     await updateUserProfile(userID, { UserProfileImage: downloadURL });
-    
+
     return { success: true, url: downloadURL };
   } catch (error) {
     console.error('Error uploading profile image:', error);
@@ -347,7 +356,7 @@ export async function signInWithGoogle() {
     console.log('OAuth Client ID:', '632263635377-sa02i1luggs8hlmc6ivt0a6i5gv0irrn.apps.googleusercontent.com');
     console.log('Current URL:', window.location.href);
     console.log('Expected redirect URI:', `${window.location.origin}/__/auth/handler`);
-    
+
     // Check if we're on an authorized domain
     const currentDomain = window.location.hostname;
     const authDomain = auth.config.authDomain;
@@ -359,23 +368,23 @@ export async function signInWithGoogle() {
       'www.spandex-salvation-radio.com',
       'spandex-salvation-radio-site.firebaseapp.com'
     ];
-    
+
     if (!authorizedDomains.includes(currentDomain) && !currentDomain.includes('localhost')) {
       console.warn('Current domain may not be authorized for Google OAuth:', currentDomain);
       console.log('Available domains for testing:', authorizedDomains);
     }
-    
+
     // For testing mode, we need to ensure the user is a test user
     console.log('Note: In testing mode, only authorized test users can sign in');
     console.log('Make sure your Google account is added as a test user in Google Cloud Console');
-    
+
     await signInWithRedirect(auth, provider);
     console.log('Redirect initiated successfully');
   } catch (error: any) {
     console.error('Error signing in with Google:', error);
     console.error('Error code:', error.code);
     console.error('Error message:', error.message);
-    
+
     // Provide helpful error messages for common issues
     if (error.code === 'auth/popup-closed-by-user') {
       throw new Error('Sign-in was cancelled. Please try again.');
@@ -404,17 +413,17 @@ export async function handleRedirectResult() {
     console.log('Current URL:', window.location.href);
     console.log('Has URL parameters:', window.location.search.length > 0);
     console.log('URL search params:', window.location.search);
-    
+
     const result = await getRedirectResult(auth);
     console.log('Redirect result:', result);
-    
+
     if (result) {
       const user = result.user;
       console.log('Google sign-in successful:', user);
       console.log('User email:', user.email);
       console.log('User display name:', user.displayName);
       console.log('User UID:', user.uid);
-      
+
       // Create or update user profile
       const profileResult = await createUserProfile(user);
       console.log('Profile creation result:', profileResult);
@@ -429,7 +438,7 @@ export async function handleRedirectResult() {
     return { success: false, error: 'No redirect result' };
   } catch (error: any) {
     console.error('Error handling redirect result:', error);
-    
+
     // Provide specific error messages
     if (error.code === 'auth/account-exists-with-different-credential') {
       return { success: false, error: 'An account already exists with this email using a different sign-in method.' };
