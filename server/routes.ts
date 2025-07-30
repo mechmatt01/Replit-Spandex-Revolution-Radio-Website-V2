@@ -3498,4 +3498,3 @@ async function fetchQ93(res: Response) {
   await storage.updateNowPlaying(fallbackData);
   return res.json(fallbackData);
 }
-

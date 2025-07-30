@@ -7,14 +7,16 @@ import { Separator } from "@/components/ui/separator";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { ArrowLeft, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -25,6 +27,8 @@ export default function LoginPage() {
 
   const { getColors, theme } = useTheme();
   const { toast } = useToast();
+  const { login, register } = useAuth();
+  const [, navigate] = useLocation();
   const colors = getColors();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,28 +75,39 @@ export default function LoginPage() {
 
         if (result.success) {
           console.log('✅ Login successful');
-          navigate('/profile');
+          toast({
+            title: "Login Successful!",
+            description: "Welcome back to Spandex Salvation Radio!",
+          });
+          navigate('/');
         } else {
           const errorMessage = result.error || 'Login failed. Please try again.';
           setError(errorMessage);
-          // Don't show duplicate notification since AuthContext already handles it
+          toast({
+            title: "Login Failed",
+            description: errorMessage,
+            variant: "destructive",
+          });
         }
       } else {
         const result = await register(formData);
 
         if (result.success) {
           console.log('✅ Registration successful');
-          navigate('/profile');
+          toast({
+            title: "Account Created!",
+            description: "Your account has been created successfully. Welcome to Spandex Salvation Radio!",
+          });
+          navigate('/');
         } else {
           const errorMessage = result.error || 'Registration failed. Please try again.';
           setError(errorMessage);
-          // Don't show duplicate notification since AuthContext already handles it
+          toast({
+            title: "Registration Failed",
+            description: errorMessage,
+            variant: "destructive",
+          });
         }
-        toast({
-          title: "Account Created!",
-          description: "Your account has been created successfully. Welcome to Spandex Salvation Radio!",
-        });
-        navigate("/");
       }
     } catch (error: any) {
       console.error("Authentication error:", error);
@@ -115,7 +130,7 @@ export default function LoginPage() {
     <div
       className={cn(
         "min-h-screen flex items-center justify-center p-4",
-        (theme as any) === "light" ? "bg-white" : "bg-black"},
+        (theme as any) === "light" ? "bg-white" : "bg-black"
       )}
     >
       <Card className="w-full max-w-md">
