@@ -173,14 +173,35 @@ const FullWidthGlobeMapFixed = () => {
 
   // Initialize location and weather on component mount
   useEffect(() => {
-    // Check if we have stored location permission
-    const storedPermission = localStorage.getItem('locationPermission');
-    if (storedPermission) {
-      setLocationPermission(storedPermission as 'granted' | 'denied');
-    }
-
-    // Automatically try to get user location on component mount
-    handleLocationPermission();
+    const initializeLocation = async () => {
+      // Check if we have stored location permission
+      const storedPermission = localStorage.getItem('locationPermission');
+      console.log('Stored location permission:', storedPermission);
+      
+      if (storedPermission === 'granted') {
+        setLocationPermission('granted');
+        // Try to get current location if permission was previously granted
+        try {
+          await handleLocationPermission();
+        } catch (error) {
+          console.log('Failed to get location despite previous permission:', error);
+        }
+      } else if (storedPermission === 'denied') {
+        setLocationPermission('denied');
+      } else {
+        // No stored permission, set to prompt state
+        setLocationPermission('prompt');
+        
+        // Try to get location without showing permission denied state initially
+        try {
+          await handleLocationPermission();
+        } catch (error) {
+          console.log('Initial location request failed:', error);
+        }
+      }
+    };
+    
+    initializeLocation();
   }, []);
 
   // Create animated marker with pulsing effect and popup
@@ -640,11 +661,16 @@ const FullWidthGlobeMapFixed = () => {
   const handleLocationPermission = async () => {
     try {
       console.log('Requesting location permission...');
+      
+      if (!navigator.geolocation) {
+        throw new Error('Geolocation is not supported by this browser');
+      }
+      
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 60000
+          timeout: 15000,
+          maximumAge: 300000 // 5 minutes cache
         });
       });
       
@@ -660,7 +686,10 @@ const FullWidthGlobeMapFixed = () => {
       localStorage.setItem('locationPermission', 'granted');
       setLocationPermission('granted');
       
-      // If map is already initialized, add user marker
+      // Fetch weather for user location
+      await fetchWeather(newUserLocation.lat, newUserLocation.lng);
+      
+      // If map is already initialized, add user marker and center map
       if (map) {
         console.log('Adding user location marker to existing map...');
         const userMarkerData = createAnimatedMarker(
@@ -670,14 +699,46 @@ const FullWidthGlobeMapFixed = () => {
           true // isUserLocation
         );
         setMarkers(prev => [...prev, userMarkerData.marker]);
+        
+        // Center map on user location
+        map.setCenter(newUserLocation);
+        map.setZoom(10);
       }
     } catch (error) {
       console.error('Error getting user location:', error);
-      localStorage.setItem('locationPermission', 'denied');
-      setLocationPermission('denied');
       
-      // Don't set a default location, let user manually enable if needed
-      console.log('User location access denied or failed');
+      // More specific error handling
+      if (error instanceof GeolocationPositionError) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            console.log('User denied location access');
+            localStorage.setItem('locationPermission', 'denied');
+            setLocationPermission('denied');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            console.log('Location information unavailable');
+            localStorage.setItem('locationPermission', 'denied');
+            setLocationPermission('denied');
+            break;
+          case error.TIMEOUT:
+            console.log('Location request timed out');
+            localStorage.setItem('locationPermission', 'denied');
+            setLocationPermission('denied');
+            break;
+          default:
+            console.log('Unknown geolocation error');
+            localStorage.setItem('locationPermission', 'denied');
+            setLocationPermission('denied');
+            break;
+        }
+      } else {
+        localStorage.setItem('locationPermission', 'denied');
+        setLocationPermission('denied');
+      }
+      
+      // Fallback to a default location for weather
+      const defaultLocation = { lat: 40.7128, lng: -74.0060 }; // New York
+      await fetchWeather(defaultLocation.lat, defaultLocation.lng);
     }
   };
 
@@ -745,11 +806,15 @@ const FullWidthGlobeMapFixed = () => {
                   <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
                     {weather?.location || "Loading location..."}
                   </span>
-                  {locationPermission === 'denied' && (
+                  {(locationPermission === 'denied' || locationPermission === 'prompt') && (
                     <Button
                       onClick={handleLocationPermission}
                       size="sm"
-                      className="ml-2 bg-blue-600 hover:bg-blue-700 text-white text-xs"
+                      className={`ml-2 transition-colors duration-300 text-xs ${
+                        isDarkMode 
+                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                          : 'bg-gray-600 hover:bg-gray-700 text-white'
+                      }`}
                     >
                       Enable Location
                     </Button>
