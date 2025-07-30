@@ -91,7 +91,7 @@ export default function Hero() {
         <h1 
           className="font-orbitron font-black text-5xl md:text-8xl mb-8"
           style={{ 
-            color: currentTheme === 'light-mode' ? '#000000' : '#ffffff'
+            color: currentTheme === 'light-mode' ? '#212936' : '#ffffff'
           }}
         >
           <div>SPANDEX</div>

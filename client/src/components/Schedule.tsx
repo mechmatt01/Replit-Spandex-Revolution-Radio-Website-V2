@@ -55,7 +55,7 @@ export default function Schedule() {
       id: "1",
       title: "Classic Metal Hour",
       host: "DJ Classic",
-      airDate: new Date().toISOString(),
+      date: new Date(),
       duration: 60,
       description: "The best classic metal tracks",
       genre: "Classic Metal"
@@ -370,7 +370,7 @@ export default function Schedule() {
                       e.currentTarget.style.borderColor = `${colors.primary}80`;
                       e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
                     }}
-                    onClick={() => handlePastShowSelect(show)}
+                    onClick={() => setSelectedPastShow(show)}
                   >
                     <CardContent
                       className="p-0"
@@ -496,15 +496,25 @@ export default function Schedule() {
       {/* Weekly Show Details Modal */}
       {selectedWeeklyShow && (
         <div
-          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4"
           onClick={() => setSelectedWeeklyShow(null)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
+            width: '100vw',
+          }}
         >
           <div
-            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full mx-4 relative"
+            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full relative"
             style={{
               borderColor: colors.primary,
               backgroundColor: colors.background,
               boxShadow: `0 25px 50px ${colors.primary}40`,
+              margin: 'auto',
+              maxHeight: '90vh',
+              overflow: 'auto',
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -567,6 +577,110 @@ export default function Schedule() {
                 className="text-gray-400 text-sm font-semibold leading-relaxed"
               >
                 {selectedWeeklyShow.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Past Show Details Modal */}
+      {selectedPastShow && (
+        <div
+          className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedPastShow(null)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minHeight: '100vh',
+            width: '100vw',
+          }}
+        >
+          <div
+            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full relative"
+            style={{
+              borderColor: colors.primary,
+              backgroundColor: colors.background,
+              boxShadow: `0 25px 50px ${colors.primary}40`,
+              margin: 'auto',
+              maxHeight: '90vh',
+              overflow: 'auto',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setSelectedPastShow(null)}
+              className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110 flex items-center justify-center"
+              style={{
+                color: colors.primary,
+                backgroundColor: `${colors.primary}20`,
+                width: "40px",
+                height: "40px",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = colors.primary;
+                e.currentTarget.style.color = "white";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                e.currentTarget.style.color = colors.primary;
+              }}
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {/* Content */}
+            <div className="text-center space-y-4">
+              {/* Title */}
+              <h2 
+                className="font-black text-2xl"
+                style={{ color: colors.text }}
+              >
+                {selectedPastShow.title}
+              </h2>
+
+              {/* Host */}
+              <p 
+                className="font-semibold text-base"
+                style={{ color: colors.text }}
+              >
+                Hosted by: {selectedPastShow.host}
+              </p>
+
+              {/* Date */}
+              <div className="flex items-center justify-center space-x-2">
+                <Calendar 
+                  className="h-4 w-4"
+                  style={{ color: colors.primary }}
+                />
+                <span 
+                  className="text-sm font-bold"
+                  style={{ color: colors.text }}
+                >
+                  {formatLongDate(selectedPastShow.date)}
+                </span>
+              </div>
+
+              {/* Duration */}
+              <div className="flex items-center justify-center space-x-2">
+                <Clock 
+                  className="h-4 w-4"
+                  style={{ color: colors.primary }}
+                />
+                <span 
+                  className="text-sm font-bold"
+                  style={{ color: colors.text }}
+                >
+                  {selectedPastShow.duration} minutes
+                </span>
+              </div>
+
+              {/* Description */}
+              <p 
+                className="text-gray-400 text-sm font-semibold leading-relaxed"
+              >
+                {selectedPastShow.description}
               </p>
             </div>
           </div>
