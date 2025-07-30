@@ -101,40 +101,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      console.log('[AuthContext] Attempting email/password login...');
+      setLoading(true);
+
       const result = await loginUser(email, password);
 
-      if (!result.success) {
+      if (result.success) {
+        const userProfile = {
+          ...result.profile,
+          userID: result.userID
+        };
+        setUser({
+          id: result.userID,
+          email: result.profile.EmailAddress,
+          username: `${result.profile.FirstName} ${result.profile.LastName}`.trim(),
+          firstName: result.profile.FirstName,
+          lastName: result.profile.LastName,
+          phoneNumber: result.profile.PhoneNumber,
+          isEmailVerified: true,
+          isPhoneVerified: !!result.profile.PhoneNumber,
+          createdAt: result.profile.CreatedAt || new Date().toISOString(),
+          updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
+        });
+        setFirebaseProfile(result.profile);
+        localStorage.setItem('userID', result.userID);
+        localStorage.setItem('userProfile', JSON.stringify(result.profile));
+        localStorage.setItem('isLoggedIn', 'true');
+
+        // Show success notification
+        if (window.showNotification) {
+          window.showNotification(`Welcome back, ${userProfile.FirstName}!`, 'success');
+        }
+
+        return;
+      } else {
+        // Show error notification
+        if (window.showNotification) {
+          window.showNotification(result.error || 'Login failed. Please try again.', 'error');
+        }
         throw new Error(result.error || "Login failed");
       }
-
-      console.log('[AuthContext] Login successful:', result.userID);
-
-      // Store user data in localStorage
-      localStorage.setItem('userID', result.userID);
-      localStorage.setItem('userProfile', JSON.stringify(result.profile));
-      localStorage.setItem('isLoggedIn', 'true');
-
-      // Set user state
-      setUser({
-        id: result.userID,
-        email: result.profile.EmailAddress,
-        username: `${result.profile.FirstName} ${result.profile.LastName}`.trim(),
-        firstName: result.profile.FirstName,
-        lastName: result.profile.LastName,
-        phoneNumber: result.profile.PhoneNumber,
-        isEmailVerified: true,
-        isPhoneVerified: !!result.profile.PhoneNumber,
-        createdAt: result.profile.CreatedAt || new Date().toISOString(),
-        updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
-      });
-
-      setFirebaseProfile(result.profile);
-
-      console.log('[AuthContext] Login completed, user state updated');
     } catch (error: any) {
-      console.error('[AuthContext] Login error:', error);
-      throw new Error(error.message || "Login failed");
+      console.error('Login error:', error);
+      const errorMessage = error.message || 'Login failed. Please try again.';
+
+      // Show error notification
+      if (window.showNotification) {
+        window.showNotification(errorMessage, 'error');
+      }
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,7 +164,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     recaptchaToken?: string,
   ) => {
     try {
-      console.log('[AuthContext] Attempting email/password registration...');
+      setLoading(true);
+
       const result = await registerUser({
         firstName,
         lastName,
@@ -157,37 +174,52 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password,
       });
 
-      if (!result.success) {
+      if (result.success) {
+        const userProfile = {
+          ...result.profile,
+          userID: result.userID
+        };
+        setUser({
+          id: result.userID,
+          email: result.profile.EmailAddress,
+          username: `${result.profile.FirstName} ${result.profile.LastName}`.trim(),
+          firstName: result.profile.FirstName,
+          lastName: result.profile.LastName,
+          phoneNumber: result.profile.PhoneNumber,
+          isEmailVerified: true,
+          isPhoneVerified: !!result.profile.PhoneNumber,
+          createdAt: result.profile.CreatedAt || new Date().toISOString(),
+          updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
+        });
+        setFirebaseProfile(result.profile);
+        localStorage.setItem('userID', result.userID);
+        localStorage.setItem('userProfile', JSON.stringify(result.profile));
+        localStorage.setItem('isLoggedIn', 'true');
+
+        // Show success notification
+        if (window.showNotification) {
+          window.showNotification('Registration successful! Welcome to Spandex Salvation Radio!', 'success');
+        }
+
+        return;
+      } else {
+        // Show error notification
+        if (window.showNotification) {
+          window.showNotification(result.error || 'Registration failed. Please try again.', 'error');
+        }
         throw new Error(result.error || "Registration failed");
       }
-
-      console.log('[AuthContext] Registration successful:', result.userID);
-
-      // Store user data in localStorage
-      localStorage.setItem('userID', result.userID);
-      localStorage.setItem('userProfile', JSON.stringify(result.profile));
-      localStorage.setItem('isLoggedIn', 'true');
-
-      // Set user state
-      setUser({
-        id: result.userID,
-        email: result.profile.EmailAddress,
-        username: `${result.profile.FirstName} ${result.profile.LastName}`.trim(),
-        firstName: result.profile.FirstName,
-        lastName: result.profile.LastName,
-        phoneNumber: result.profile.PhoneNumber,
-        isEmailVerified: true,
-        isPhoneVerified: !!result.profile.PhoneNumber,
-        createdAt: result.profile.CreatedAt || new Date().toISOString(),
-        updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
-      });
-
-      setFirebaseProfile(result.profile);
-
-      console.log('[AuthContext] Registration completed, user state updated');
     } catch (error: any) {
-      console.error('[AuthContext] Registration error:', error);
-      throw new Error(error.message || "Registration failed");
+      console.error('Registration error:', error);
+      const errorMessage = error.message || 'Registration failed. Please try again.';
+
+      // Show error notification
+      if (window.showNotification) {
+        window.showNotification(errorMessage, 'error');
+      }
+      throw new Error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 

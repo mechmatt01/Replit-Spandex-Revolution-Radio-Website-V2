@@ -212,31 +212,7 @@ export async function emailExists(email: string): Promise<boolean> {
   return user !== null;
 }
 
-// Generate random 10-character alphanumeric user ID
-const generateUserID = (): string => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < 10; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-};
-
-// Get random avatar from the available options
-const getRandomAvatar = (): string => {
-  const avatars = [
-    'Bass-Bat.png',
-    'Drum-Dragon.png',
-    'Headbanger-Hamster.png',
-    'Metal-Queen.png',
-    'Metal Cat.png',
-    'Mosh-Pit-Monster.png',
-    'Rebel-Raccoon.png',
-    'Rock-Unicorn.png'
-  ];
-  const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
-  return `https://firebasestorage.googleapis.com/v0/b/spandex-salvation-radio-site.firebasestorage.app/o/Avatars%2F${encodeURIComponent(randomAvatar)}?alt=media`;
-};
+// Note: Using existing generateUserKey and getRandomAvatar functions defined above
 
 // Register a new user
 export async function registerFirebaseUser(userData: {
@@ -257,16 +233,16 @@ export async function registerFirebaseUser(userData: {
     }
 
     // Generate a random 10-character alphanumeric user ID
-    let userID = generateUserID();
+    let userID = generateUserKey();
 
     // Ensure userID is unique
     let userExists = true;
     while (userExists) {
-      const existingUser = await db.collection('Users').doc(userID).get();
+      const existingUser = await db.collection('Users').doc(`User:${userID}`).get();
       if (!existingUser.exists) {
         userExists = false;
       } else {
-        userID = generateUserID();
+        userID = generateUserKey();
       }
     }
 
@@ -295,8 +271,8 @@ export async function registerFirebaseUser(userData: {
       UpdatedAt: new Date().toISOString()
     };
 
-    // Save to Firestore under Users/{UserID}
-    await db.collection('Users').doc(userID).set(userProfile);
+    // Save to Firestore under Users/User:{UserID}
+    await db.collection('Users').doc(`User:${userID}`).set(userProfile);
     console.log('[Firebase Auth] User profile created successfully with ID:', userID);
 
     // Remove password from response
@@ -342,7 +318,7 @@ export async function loginFirebaseUser(email: string, password: string) {
     }
 
     // Update last login time
-    await db.collection('Users').doc(userData.UserID).update({
+    await db.collection('Users').doc(`User:${userData.UserID}`).update({
       UpdatedAt: new Date().toISOString(),
       LastLoginAt: new Date().toISOString()
     });

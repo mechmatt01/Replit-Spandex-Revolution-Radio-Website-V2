@@ -67,21 +67,27 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (isLogin) {
-        await login(formData.email, formData.password);
-        toast({
-          title: "Welcome Back!",
-          description: "You have successfully signed in.",
-        });
-        navigate("/");
+        const result = await login(formData.email, formData.password);
+
+        if (result.success) {
+          console.log('✅ Login successful');
+          navigate('/profile');
+        } else {
+          const errorMessage = result.error || 'Login failed. Please try again.';
+          setError(errorMessage);
+          // Don't show duplicate notification since AuthContext already handles it
+        }
       } else {
-        await register(
-          formData.email,
-          formData.password,
-          `${formData.firstName} ${formData.lastName}`,
-          formData.firstName,
-          formData.lastName,
-          formData.phoneNumber || ""
-        );
+        const result = await register(formData);
+
+        if (result.success) {
+          console.log('✅ Registration successful');
+          navigate('/profile');
+        } else {
+          const errorMessage = result.error || 'Registration failed. Please try again.';
+          setError(errorMessage);
+          // Don't show duplicate notification since AuthContext already handles it
+        }
         toast({
           title: "Account Created!",
           description: "Your account has been created successfully. Welcome to Spandex Salvation Radio!",
