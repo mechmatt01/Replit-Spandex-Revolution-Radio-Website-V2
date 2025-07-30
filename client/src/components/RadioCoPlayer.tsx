@@ -581,22 +581,27 @@ export default function RadioCoPlayer() {
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
-            className="w-16 h-16 rounded-full border-4 bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all duration-300 group shadow-lg hover:shadow-xl"
-                style={{
-                  borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-                    ? adaptiveTheme.accentColor
-                    : colors.primary
-                }}
+            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 group shadow-lg hover:shadow-xl border-0"
+            style={{
+              background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+              boxShadow: `0 4px 20px ${colors.primary}60`,
+              opacity: isLoading ? 0.5 : 1,
+              border: "none",
+              outline: "none",
+            }}
           >
             {isLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3" />
-                <span className="font-semibold text-lg">CONNECTING...</span>
-              </>
+              <div 
+                className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin"
+                style={{ 
+                  borderColor: colors.primary, 
+                  borderTopColor: 'transparent' 
+                }}
+              ></div>
             ) : isPlaying ? (
               <svg
                 className="h-16 w-16"
-                fill="currentColor"
+                fill="#ffffff"
                 viewBox="0 0 24 24"
               >
                 <rect
@@ -612,7 +617,7 @@ export default function RadioCoPlayer() {
             ) : (
               <svg
                 className="h-15 w-15"
-                fill="currentColor"
+                fill="#ffffff"
                 viewBox="0 0 24 24"
                 style={{
                   animation: "pulse 2s ease-in-out infinite",
