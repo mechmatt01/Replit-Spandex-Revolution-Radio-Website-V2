@@ -11,16 +11,26 @@ import { useLocation } from "wouter";
 import { ArrowLeft } from "lucide-react";
 
 export default function TermsOfService() {
-  const { colors } = useTheme();
+  const { colors, currentTheme } = useTheme();
   const [, navigate] = useLocation();
 
   return (
     <div className="relative">
       <button
-        className="fixed top-4 left-4 z-50 bg-black/70 hover:bg-black/90 text-white rounded-full p-2 shadow-lg"
+        className="fixed top-4 left-4 z-50 rounded-full p-2 shadow-lg transition-colors duration-300"
         onClick={() => navigate("/")}
         aria-label="Back to Home"
-        style={{ backdropFilter: "blur(4px)" }}
+        style={{ 
+          backdropFilter: "blur(4px)",
+          backgroundColor: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.7)',
+          color: currentTheme === 'light-mode' ? '#ffffff' : '#ffffff'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.9)' : 'rgba(0, 0, 0, 0.9)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(0, 0, 0, 0.7)';
+        }}
       >
         <ArrowLeft className="w-6 h-6" />
       </button>

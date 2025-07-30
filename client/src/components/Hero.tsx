@@ -91,7 +91,7 @@ export default function Hero() {
         <h1 
           className="font-orbitron font-black text-5xl md:text-8xl mb-8"
           style={{ 
-            color: currentTheme === 'light-mode' ? colors.text : '#ffffff'
+            color: currentTheme === 'light-mode' ? '#000000' : '#ffffff'
           }}
         >
           <div>SPANDEX</div>
@@ -101,7 +101,9 @@ export default function Hero() {
 
         <p 
           className="text-lg md:text-xl font-orbitron font-semibold mb-6 max-w-2xl mx-auto text-center"
-          style={{ color: colors.textMuted }}
+          style={{ 
+            color: currentTheme === 'light-mode' ? '#212936' : colors.textMuted 
+          }}
         >
           Bringing you the best of old-school metal with legendary
           <br />
@@ -148,7 +150,7 @@ export default function Hero() {
               <div 
                 className="text-xs font-semibold"
                 style={{ 
-                  color: colors.textMuted
+                  color: currentTheme === 'light-mode' ? '#212936' : colors.textMuted
                 }}
               >
                 DAYS
@@ -161,7 +163,7 @@ export default function Hero() {
               <div 
                 className="text-xs font-semibold"
                 style={{ 
-                  color: colors.textMuted
+                  color: currentTheme === 'light-mode' ? '#212936' : colors.textMuted
                 }}
               >
                 HOURS
@@ -174,7 +176,7 @@ export default function Hero() {
               <div 
                 className="text-xs font-semibold"
                 style={{ 
-                  color: colors.textMuted
+                  color: currentTheme === 'light-mode' ? '#212936' : colors.textMuted
                 }}
               >
                 MINS
@@ -187,7 +189,7 @@ export default function Hero() {
               <div 
                 className="text-xs font-semibold"
                 style={{ 
-                  color: colors.textMuted
+                  color: currentTheme === 'light-mode' ? '#212936' : colors.textMuted
                 }}
               >
                 SECS
@@ -197,7 +199,9 @@ export default function Hero() {
           <div className="text-center mt-3">
             <p 
               className="text-sm font-semibold opacity-80"
-              style={{ color: colors.textMuted }}
+              style={{ 
+                color: currentTheme === 'light-mode' ? '#212936' : colors.textMuted 
+              }}
             >
               First Broadcast Countdown
             </p>

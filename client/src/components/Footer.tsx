@@ -260,61 +260,59 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="pt-8">
-          <div className="flex flex-col md:flex-row md:items-center justify-between">
+          <div className="flex flex-wrap items-center justify-center md:justify-between gap-6 text-sm">
             <div 
-              className="text-sm font-semibold mb-4 md:mb-0 flex items-center"
+              className="font-semibold"
               style={{ 
                 color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
               }}
             >
               © 2025 Spandex Salvation Radio. All rights reserved.
             </div>
-            <div className="flex flex-wrap items-center gap-6 text-sm">
-              <a
-                href="/terms"
-                className="font-semibold transition-colors duration-300"
-                style={{ 
-                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
-              >
-                Terms of Service
-              </a>
-              <a
-                href="/privacy"
-                className="font-semibold transition-colors duration-300"
-                style={{ 
-                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
-              >
-                Privacy Policy
-              </a>
-              <a
-                href="/cookies"
-                className="font-semibold transition-colors duration-300"
-                style={{ 
-                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
-              >
-                Cookies
-              </a>
-              <button
-                onClick={() => setIsAdminPanelOpen(true)}
-                className="font-semibold transition-colors duration-300 bg-transparent border-0 p-0"
-                style={{ 
-                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
-              >
-                Admin
-              </button>
-            </div>
+            <a
+              href="/terms"
+              className="font-semibold transition-colors duration-300"
+              style={{ 
+                color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+              onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
+            >
+              Terms of Service
+            </a>
+            <a
+              href="/privacy"
+              className="font-semibold transition-colors duration-300"
+              style={{ 
+                color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+              onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="/cookies"
+              className="font-semibold transition-colors duration-300"
+              style={{ 
+                color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+              onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
+            >
+              Cookies
+            </a>
+            <button
+              onClick={() => setIsAdminPanelOpen(true)}
+              className="font-semibold transition-colors duration-300 bg-transparent border-0 p-0"
+              style={{ 
+                color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+              onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
+            >
+              Admin
+            </button>
           </div>
         </div>
       </div>

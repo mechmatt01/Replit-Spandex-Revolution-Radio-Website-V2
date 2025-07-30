@@ -179,9 +179,9 @@ const FullWidthGlobeMapFixed = () => {
       setLocationPermission(storedPermission as 'granted' | 'denied');
     }
 
-    // Try to get user location
-    requestUserLocation();
-  }, [requestUserLocation]);
+    // Automatically try to get user location on component mount
+    handleLocationPermission();
+  }, []);
 
   // Create animated marker with pulsing effect and popup
   const createAnimatedMarker = (position: google.maps.LatLngLiteral, title: string, mapInstance: google.maps.Map, isUserLocation: boolean = false) => {
@@ -656,6 +656,10 @@ const FullWidthGlobeMapFixed = () => {
       console.log('User location obtained:', newUserLocation);
       setUserLocation(newUserLocation);
       
+      // Store location permission
+      localStorage.setItem('locationPermission', 'granted');
+      setLocationPermission('granted');
+      
       // If map is already initialized, add user marker
       if (map) {
         console.log('Adding user location marker to existing map...');
@@ -666,15 +670,14 @@ const FullWidthGlobeMapFixed = () => {
           true // isUserLocation
         );
         setMarkers(prev => [...prev, userMarkerData.marker]);
-        // setInfoWindows(prev => [...prev, userMarkerData.infoWindow]); // This line was removed as per the new_code
-        // setPulsingOverlays(prev => [...prev, userMarkerData.pulsingOverlay]); // This line was removed as per the new_code
       }
     } catch (error) {
       console.error('Error getting user location:', error);
-      // Set a default location for testing
-      const defaultLocation = { lat: 40.7128, lng: -74.0060 }; // New York
-      console.log('Setting default location for testing:', defaultLocation);
-      setUserLocation(defaultLocation);
+      localStorage.setItem('locationPermission', 'denied');
+      setLocationPermission('denied');
+      
+      // Don't set a default location, let user manually enable if needed
+      console.log('User location access denied or failed');
     }
   };
 
