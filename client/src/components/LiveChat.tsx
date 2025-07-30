@@ -161,7 +161,7 @@ export default function LiveChat({
       {!isOpen && (
         <Button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 z-50 bg-orange-500 hover:bg-orange-600 text-white rounded-full p-4 shadow-lg"
+          className="fixed bottom-4 right-4 z-50 bg-primary hover:bg-primary/90 text-white rounded-full p-4 shadow-lg"
         >
           <MessageCircle className="h-6 w-6" />
           <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5">
@@ -198,7 +198,7 @@ export default function LiveChat({
                       onClick={onToggle}
                       variant="ghost"
                       size="sm"
-                      className="text-gray-400 hover:text-orange-400 p-1"
+                      className="text-gray-400 hover:text-primary p-1"
                     >
                       <MicOff className="h-4 w-4" />
                     </Button>
@@ -232,11 +232,11 @@ export default function LiveChat({
                       <div key={msg.id} className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-xs">
                           <span
-                            className={`font-medium ${msg.isHost ? "text-orange-400" : "text-gray-300"}`}
+                            className={`font-medium ${msg.isHost ? "text-primary" : "text-gray-300"}`}
                           >
                             {msg.username}
                             {msg.isHost && (
-                              <Badge className="ml-1 bg-orange-500/20 text-orange-400 text-xs px-1">
+                              <Badge className="ml-1 bg-primary/20 text-primary text-xs px-1">
                                 HOST
                               </Badge>
                             )}
@@ -267,7 +267,7 @@ export default function LiveChat({
                   <Button
                     type="submit"
                     size="sm"
-                    className="bg-orange-500 hover:bg-orange-600 px-3"
+                    className="bg-primary hover:bg-primary/90 px-3"
                     disabled={!message.trim()}
                   >
                     <Send className="h-4 w-4" />

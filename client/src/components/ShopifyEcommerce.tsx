@@ -262,7 +262,7 @@ export default function ShopifyEcommerce() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin w-8 h-8 border-4 border-metal-orange border-t-transparent rounded-full"></div>
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
       </div>
     );
   }
@@ -679,7 +679,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                         product.variants?.find((v) => v.id === e.target.value)!,
                       )
                     }
-                    className="w-full p-2 bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange rounded text-center"
+                    className="w-full p-2 bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-primary rounded text-center"
                     style={{ textAlign: 'center' }}
                   >
                     {(product.variants || []).map((variant) => (

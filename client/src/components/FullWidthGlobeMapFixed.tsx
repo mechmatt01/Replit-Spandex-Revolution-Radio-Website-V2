@@ -888,7 +888,7 @@ const FullWidthGlobeMapFixed = () => {
             {isLoading && (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-20">
                 <div className="text-center">
-                  <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                  <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-2"></div>
                   <p className="text-white font-semibold">Loading Map...</p>
                 </div>
               </div>

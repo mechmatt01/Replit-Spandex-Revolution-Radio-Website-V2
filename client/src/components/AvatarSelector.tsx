@@ -176,7 +176,7 @@ export default function AvatarSelector({
                   key={avatar.id}
                   className={`relative cursor-pointer rounded-lg border-2 p-2 transition-all duration-200 hover:scale-105 ${
                     selectedAvatar === avatar.url
-                      ? "border-orange-500"
+                      ? "border-primary"
                       : "border-gray-600"
                   }`}
                   style={{
@@ -222,7 +222,7 @@ export default function AvatarSelector({
             <div className="space-y-6">
               <div className="text-center">
                 <div
-                  className="mx-auto w-32 h-32 rounded-full border-2 border-dashed border-gray-600 flex items-center justify-center cursor-pointer hover:border-orange-500 transition-colors"
+                  className="mx-auto w-32 h-32 rounded-full border-2 border-dashed border-gray-600 flex items-center justify-center cursor-pointer hover:border-primary transition-colors"
                   onClick={() => fileInputRef.current?.click()}
                   style={{
                     borderColor: selectedAvatar ? colors.primary : "#4B5563",

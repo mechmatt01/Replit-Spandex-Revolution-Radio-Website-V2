@@ -548,8 +548,25 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       };
 
       // Set Tailwind CSS variables for focus states and other UI components
-      // Only set the essential ones to avoid breaking existing styling
+      // Force override of default Tailwind ring color with !important
       root.style.setProperty("--ring", colorToHsl(colors.primary));
+      root.style.setProperty("--tw-ring-color", `hsl(${colorToHsl(colors.primary)} / 0.5)`);
+      
+      // Force override compiled CSS defaults
+      const style = document.createElement('style');
+      style.textContent = `
+        *, ::before, ::after {
+          --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+        }
+        ::backdrop {
+          --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+        }
+      `;
+      // Remove any existing theme override styles
+      const existingStyle = document.getElementById('theme-ring-override');
+      if (existingStyle) existingStyle.remove();
+      style.id = 'theme-ring-override';
+      document.head.appendChild(style);
       
       // Set safe Tailwind variables that don't conflict with existing ones
       root.style.setProperty("--tw-primary", colorToHsl(colors.primary));
