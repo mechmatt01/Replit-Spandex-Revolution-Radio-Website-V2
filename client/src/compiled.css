@@ -3527,24 +3527,7 @@ video {
   outline-offset: 2px;
 }
 
-/* Skip to content link */
-
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: var(--color-primary);
-  color: white;
-  padding: 8px;
-  border-radius: 4px;
-  text-decoration: none;
-  z-index: 100;
-  transition: top 0.3s;
-}
-
-.skip-link:focus {
-  top: 6px;
-}
+/* Skip to content link - removed */
 
 :root {
   /* Dynamic theme colors - will be updated by ThemeContext */

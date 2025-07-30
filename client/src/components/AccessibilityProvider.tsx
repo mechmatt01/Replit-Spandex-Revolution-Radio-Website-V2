@@ -248,51 +248,7 @@ export function AccessibilityProvider({ children }: AccessibilityProviderProps) 
   );
 }
 
-// Custom hook for skip links
-export function useSkipLinks() {
-  useEffect(() => {
-    const skipLinkStyle = document.getElementById('skip-link-styles') || document.createElement('style');
-    skipLinkStyle.id = 'skip-link-styles';
-    skipLinkStyle.textContent = `
-      .skip-link {
-        position: absolute;
-        top: -40px;
-        left: 6px;
-        background: #f97316;
-        color: white;
-        padding: 8px;
-        text-decoration: none;
-        border-radius: 4px;
-        z-index: 100000;
-        font-weight: bold;
-        transition: top 0.3s ease;
-      }
-      .skip-link:focus {
-        top: 6px;
-      }
-    `;
-    
-    if (!document.getElementById('skip-link-styles')) {
-      document.head.appendChild(skipLinkStyle);
-    }
-
-    // Add skip links if they don't exist
-    if (!document.querySelector('.skip-link')) {
-      const skipToMain = document.createElement('a');
-      skipToMain.href = '#main-content';
-      skipToMain.className = 'skip-link';
-      skipToMain.textContent = 'Skip to main content';
-      
-      const skipToNav = document.createElement('a');
-      skipToNav.href = '#main-navigation';
-      skipToNav.className = 'skip-link';
-      skipToNav.textContent = 'Skip to navigation';
-      
-      document.body.insertBefore(skipToMain, document.body.firstChild);
-      document.body.insertBefore(skipToNav, document.body.firstChild);
-    }
-  }, []);
-}
+// Custom hook for skip links - removed as requested
 
 // Hook for managing focus
 export function useFocusManagement() {

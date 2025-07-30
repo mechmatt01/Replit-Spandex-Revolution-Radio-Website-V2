@@ -10,8 +10,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { RadioProvider } from "@/contexts/RadioContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
-import { AccessibilityProvider, useSkipLinks } from "@/components/AccessibilityProvider";
-import SkipToContent from "@/components/SkipToContent";
+import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
 import VerificationModal from "@/components/VerificationModal";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -77,7 +76,6 @@ function Router() {
 }
 
 function App() {
-  useSkipLinks();
 
   return (
     <ErrorBoundary>
@@ -89,7 +87,6 @@ function App() {
                 <RadioProvider>
                   <AdminProvider>
                     <TooltipProvider>
-                      <SkipToContent />
                       <DynamicMetaTags />
                       <Toaster />
                       <VerificationGate>
