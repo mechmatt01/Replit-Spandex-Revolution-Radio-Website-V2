@@ -24,7 +24,7 @@
   body {
     padding-top: calc(4rem + env(safe-area-inset-top));
   }
-  
+
   /* Fix for iOS Safari viewport issues */
   @supports (-webkit-touch-callout: none) {
     body {
@@ -799,4 +799,23 @@
   z-index: 1000 !important;
   min-width: 280px !important;
   max-width: 320px !important;
+}
+
+/* Focus styles for accessibility */
+
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Enhanced focus styles for better accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
 }
