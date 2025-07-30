@@ -367,8 +367,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         primaryText: "#ffffff",
         secondary: "#ff6600",
         accent: "#ffff00",
-        background:
-          "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
+        background: "#0a0a0a",
         surface: "rgba(0, 0, 0, 0.25)",
         text: "#ffffff",
         textSecondary: "#f0f0f0",
@@ -383,8 +382,7 @@ export const METAL_THEMES: Record<MetalTheme, MetalThemeConfig> = {
         primaryText: "#ffffff",
         secondary: "#ff6600",
         accent: "#ffff00",
-        background:
-          "linear-gradient(135deg, #8b0080 0%, #ff0080 25%, #ff6600 50%, #ffff00 75%, #ff0080 100%)",
+        background: "#0a0a0a",
         surface: "rgba(0, 0, 0, 0.25)",
         text: "#ffffff",
         textSecondary: "#f0f0f0",
@@ -428,12 +426,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem("metal-theme") as MetalTheme;
       const savedMode = localStorage.getItem("theme-mode");
-      
+
       // If light-mode theme is selected, force isDarkMode to false
       if (savedTheme === "light-mode") {
         return false;
       }
-      
+
       return savedMode !== "light";
     }
     return true;
@@ -476,7 +474,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
       // Handle glassmorphism theme special background
       if (currentTheme === "glassmorphism-premium") {
-        document.body.style.background = colors.background;
+        //document.body.style.background = colors.background;
         document.body.style.backgroundSize = "400% 400%";
         document.body.style.animation = "glassmorphGradient 8s ease infinite";
         root.style.setProperty("--color-background", "transparent");
@@ -535,7 +533,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setIsDarkMode(true);
       localStorage.setItem("theme-mode", "dark");
     }
-    
+
     setCurrentTheme(theme);
   };
 
