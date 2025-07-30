@@ -385,6 +385,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         } catch (error) {
           console.error('[AuthContext] Error creating/loading profile:', error);
+          // Don't fail silently - provide fallback user state
+          if (!user) {
+            setUser({
+              id: user.uid,
+              email: user.email || '',
+              username: user.displayName || '',
+              firstName: user.displayName?.split(' ')[0] || '',
+              lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+              phoneNumber: user.phoneNumber || '',
+              isEmailVerified: user.emailVerified,
+              isPhoneVerified: !!user.phoneNumber,
+              createdAt: user.metadata.creationTime || new Date().toISOString(),
+              updatedAt: user.metadata.lastSignInTime || new Date().toISOString(),
+            });
+          }
         }
       } else {
         console.log('[AuthContext] No user authenticated, clearing state');

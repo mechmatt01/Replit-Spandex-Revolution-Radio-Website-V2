@@ -121,8 +121,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register admin routes
   registerAdminRoutes(app);
 
-  // Initialize Firebase radio storage
-  await firebaseRadioStorage.initializeDefaultStations();
+  // Initialize Firebase radio storage with error handling
+  try {
+    await firebaseRadioStorage.initializeDefaultStations();
+  } catch (error) {
+    console.warn('Firebase radio storage initialization failed, using fallback data:', error.message);
+  }
 
   // Setup radio stream proxy
   setupRadioProxy(app);

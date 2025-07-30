@@ -20,29 +20,40 @@ try {
     let serviceAccount;
     
     if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
-      // Fall back to environment variables
-      serviceAccount = {
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-      };
-      console.log('Loaded Firebase service account from environment variables');
+      // Validate the private key format
+      let privateKey = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
+      
+      // Ensure the private key has proper format
+      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
+        console.warn('Invalid Firebase private key format - disabling Firebase');
+        isFirebaseAvailable = false;
+      } else {
+        serviceAccount = {
+          projectId: process.env.FIREBASE_PROJECT_ID,
+          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+          privateKey: privateKey,
+        };
+        console.log('Loaded Firebase service account from environment variables');
+        
+        try {
+          firebaseApp = initializeApp({
+            credential: cert(serviceAccount),
+            projectId: serviceAccount.projectId,
+          });
+          isFirebaseAvailable = true;
+          console.log('Firebase app initialized successfully');
+        } catch (initError) {
+          console.warn('Firebase initialization failed, using fallback mode:', initError.message);
+          isFirebaseAvailable = false;
+        }
+      }
     } else {
       console.log('Firebase service account not found - using mock data');
       isFirebaseAvailable = false;
     }
-
-    if (serviceAccount) {
-      firebaseApp = initializeApp({
-        credential: cert(serviceAccount),
-        projectId: serviceAccount.projectId || serviceAccount.project_id,
-      });
-      isFirebaseAvailable = true;
-      console.log('Firebase app initialized successfully');
-    }
   }
 } catch (error) {
-  console.error('Firebase initialization error:', error);
+  console.warn('Firebase initialization error, using fallback mode:', error.message);
   isFirebaseAvailable = false;
 }
 
