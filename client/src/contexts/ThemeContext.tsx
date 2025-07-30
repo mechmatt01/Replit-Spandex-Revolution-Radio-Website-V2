@@ -503,6 +503,71 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         METAL_THEMES[currentTheme].gradient,
       );
 
+      // Convert hex or rgba colors to HSL for Tailwind CSS variables
+      const colorToHsl = (color: string) => {
+        // Handle rgba colors
+        if (color.startsWith('rgba(')) {
+          const rgba = color.match(/rgba?\(([^)]+)\)/)?.[1].split(',').map(x => parseFloat(x.trim()));
+          if (!rgba || rgba.length < 3) return "0 0% 50%";
+          const [r, g, b] = rgba.map(x => x / 255);
+          return rgbToHsl(r, g, b);
+        }
+        
+        // Handle hex colors
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+        if (!result) return "0 0% 50%";
+        
+        const r = parseInt(result[1], 16) / 255;
+        const g = parseInt(result[2], 16) / 255;
+        const b = parseInt(result[3], 16) / 255;
+        
+        return rgbToHsl(r, g, b);
+      };
+
+      const rgbToHsl = (r: number, g: number, b: number) => {
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        let h = 0, s = 0, l = (max + min) / 2;
+        
+        if (max !== min) {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+          }
+          h /= 6;
+        }
+        
+        h = Math.round(h * 360);
+        s = Math.round(s * 100);
+        l = Math.round(l * 100);
+        
+        return `${h} ${s}% ${l}%`;
+      };
+
+      // Set Tailwind CSS variables for focus states and other UI components
+      root.style.setProperty("--ring", colorToHsl(colors.primary));
+      root.style.setProperty("--primary", colorToHsl(colors.primary));
+      root.style.setProperty("--secondary", colorToHsl(colors.secondary));
+      root.style.setProperty("--accent", colorToHsl(colors.accent));
+      root.style.setProperty("--background", colorToHsl(colors.background));
+      root.style.setProperty("--foreground", colorToHsl(colors.text));
+      root.style.setProperty("--border", colorToHsl(colors.border));
+      root.style.setProperty("--input", colorToHsl(colors.border));
+      root.style.setProperty("--card", colorToHsl(colors.card));
+      root.style.setProperty("--card-foreground", colorToHsl(colors.text));
+      root.style.setProperty("--primary-foreground", colorToHsl(colors.primaryText || "#ffffff"));
+      root.style.setProperty("--secondary-foreground", colorToHsl(colors.text));
+      root.style.setProperty("--accent-foreground", colorToHsl(colors.text));
+      root.style.setProperty("--muted", colorToHsl(colors.surface));
+      root.style.setProperty("--muted-foreground", colorToHsl(colors.textMuted));
+      root.style.setProperty("--destructive", "0 84% 60%");
+      root.style.setProperty("--destructive-foreground", "0 0% 98%");
+      root.style.setProperty("--popover", colorToHsl(colors.card));
+      root.style.setProperty("--popover-foreground", colorToHsl(colors.text));
+
       // Apply theme class
       root.classList.remove("light", "dark");
       root.classList.add(isLightMode ? "light" : "dark");
