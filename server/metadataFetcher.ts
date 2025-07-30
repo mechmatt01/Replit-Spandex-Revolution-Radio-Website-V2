@@ -52,8 +52,7 @@ class MetadataFetcher {
       switch (stationId) {
         case 'hot-97':
           metadata = await this.fetchIHeartMetadata('6046', 'Hot 97') || 
-                    await this.fetchAlternativeMetadata('WQHTFM', 'Hot 97') ||
-                    await this.getFallbackTrack('Hot 97');
+                    await this.fetchAlternativeMetadata('WQHTFM', 'Hot 97');
           break;
         case 'power-106':
           metadata = await this.fetchIHeartMetadata('1481', 'Power 105.1') || 
@@ -361,30 +360,6 @@ class MetadataFetcher {
     } catch (error) {
       console.log(`iTunes artwork search failed:`, error.message);
       return undefined;
-    }
-  }
-
-  private async getFallbackTrack(stationName: string): Promise<StationMetadata | null> {
-    try {
-      // Import radioMetadata module dynamically
-      const { getCurrentRadioTrack } = await import('./radioMetadata');
-      const track = await getCurrentRadioTrack();
-      
-      if (track) {
-        return {
-          title: track.title,
-          artist: track.artist,
-          album: track.album,
-          artwork: track.artwork !== 'advertisement' ? track.artwork : undefined,
-          stationName,
-          timestamp: Date.now(),
-        };
-      }
-      
-      return null;
-    } catch (error) {
-      console.error('Failed to get fallback track:', error);
-      return null;
     }
   }
 

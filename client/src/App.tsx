@@ -24,7 +24,7 @@ import TermsOfService from "@/pages/TermsOfService";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import OrderConfirmation from "@/components/OrderConfirmation";
 import NotFound from "@/pages/not-found";
-
+import TestPage from "./TestPage";
 // import { useAuth } from "./hooks/useAuth";
 
 function VerificationGate({ children }: { children: React.ReactNode }) {
@@ -61,7 +61,7 @@ function VerificationGate({ children }: { children: React.ReactNode }) {
 function Router() {
   return (
     <Switch>
-
+      <Route path="/test" component={TestPage} />
       <Route path="/" component={HomePage} />
       <Route path="/music" component={MusicPage} />
       <Route path="/profile" component={ProfilePage} />

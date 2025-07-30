@@ -1,24 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="a" x1="22.56" y1="21.96" x2="39.2" y2="50.8" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#f3f7fe"/>
-      <stop offset="0.45" stop-color="#f3f7fe"/>
-      <stop offset="1" stop-color="#deeafb"/>
-    </linearGradient>
-    <linearGradient id="b" x1="22.53" y1="42.95" x2="25.47" y2="48.05" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#4286ee"/>
-      <stop offset="0.45" stop-color="#4286ee"/>
-      <stop offset="1" stop-color="#0950bc"/>
-    </linearGradient>
-    <linearGradient id="c" x1="34.53" y1="42.95" x2="37.47" y2="48.05" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#4286ee"/>
-      <stop offset="0.45" stop-color="#4286ee"/>
-      <stop offset="1" stop-color="#0950bc"/>
-    </linearGradient>
-  </defs>
-  <circle cx="26" cy="26" r="6" stroke="#f8af18" stroke-miterlimit="10" stroke-width="0.5" fill="#fbbf24"/>
-  <path d="m19.17 19.17a.5.5 0 0 1 .71.71l-.71.71a.5.5 0 0 1 -.71-.71zm13.66 0-.71.71a.5.5 0 0 1 .71.71l.71-.71a.5.5 0 0 1 -.71-.71zm-6.83-7.17v1a.5.5 0 0 1 -1 0v-1a.5.5 0 0 1 1 0zm0 14v1a.5.5 0 0 1 -1 0v-1a.5.5 0 0 1 1 0zm-14-7h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1 0-1zm14 0h1a.5.5 0 0 1 0 1h-1a.5.5 0 0 1 0-1z" stroke="#f8af18" stroke-miterlimit="10" stroke-width="0.5" fill="#fbbf24"/>
-  <path d="M46.5,31.5h-.32a10.49,10.49,0,0,0-19.11-8,7,7,0,0,0-10.57,6,7.21,7.21,0,0,0,.1,1.14A7.5,7.5,0,0,0,18,45.5a4.19,4.19,0,0,0,.5,0v0h28a7,7,0,0,0,0-14Z" stroke="#e6effc" stroke-miterlimit="10" stroke-width="0.5" fill="url(#a)"/>
-  <line x1="24.39" y1="43.03" x2="23.61" y2="47.97" stroke="#4286ee" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" fill="url(#b)"/>
-  <line x1="36.39" y1="43.03" x2="35.61" y2="47.97" stroke="#4286ee" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" fill="url(#c)"/>
+<?xml version="1.0"?>
+<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <style>
+  <![CDATA[#egei1vwea3mi3_to {animation: egei1vwea3mi3_to__to 9000ms linear infinite normal forwards}@keyframes egei1vwea3mi3_to__to { 0% {transform: translate(51.200000px,0px)} 11.111111% {transform: translate(85.333333px,-1.013862px)} 16.666667% {transform: translate(102.400000px,0px)} 33.333333% {transform: translate(51.200000px,0px)} 50% {transform: translate(51.200000px,0px)} 66.666667% {transform: translate(-0px,0px)} 83.333333% {transform: translate(51.200000px,0px)} 100% {transform: translate(51.200000px,0px)} }]]>
+ </style>
+ <g class="layer">
+  <title>Layer 1</title>
+  <circle cx="144" cy="144" fill="orange" id="egei1vwea3mi2" r="96" transform="matrix(1 0 0 1 416 176)"/>
+  <g id="egei1vwea3mi3_to">
+   <path d="m525.491206,336.025603c-11.9552,-59.212801 -63.820801,-102.425602 -125.491202,-102.425602c-51.225601,0 -97.203201,30.4896 -117.350402,76.825601c-48.409601,1.152 -87.449601,40.883201 -87.449601,89.574401c0,49.408001 40.192001,89.600001 89.600001,89.600001l243.200004,0c42.342401,0 76.800001,-34.457601 76.800001,-76.800001c0,-43.187201 -36.428801,-77.875201 -79.308801,-76.774401z" fill="#57A0EE" id="egei1vwea3mi3"/>
+  </g>
+ </g>
 </svg>
