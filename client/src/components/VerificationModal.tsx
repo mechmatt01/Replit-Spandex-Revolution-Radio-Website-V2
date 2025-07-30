@@ -204,9 +204,9 @@ export default function VerificationModal({
             <div className="flex flex-col gap-3">
               <Button
                 type="submit"
-                disabled={loading || code.length !== 6}
+                disabled={loading || (code?.length || 0) !== 6}
                 className="w-full py-3 font-semibold transition-all duration-200"
-                style={{ backgroundColor: colors.primary, color: "white", opacity: loading || code.length !== 6 ? 0.6 : 1 }}
+                style={{ backgroundColor: colors.primary, color: "white", opacity: loading || (code?.length || 0) !== 6 ? 0.6 : 1 }}
               >
                 {loading ? "Verifying..." : "Verify Code"}
               </Button>

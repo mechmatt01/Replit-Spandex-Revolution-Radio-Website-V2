@@ -9,6 +9,7 @@ interface InteractiveAlbumArtProps {
   isPlaying?: boolean;
   size?: "sm" | "md" | "lg";
   className?: string;
+  isAd?: boolean;
 }
 
 export default function InteractiveAlbumArt({
@@ -18,6 +19,7 @@ export default function InteractiveAlbumArt({
   isPlaying = false,
   size = "md",
   className = "",
+  isAd = false,
 }: InteractiveAlbumArtProps) {
   const { getGradient, currentTheme } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
@@ -88,7 +90,9 @@ export default function InteractiveAlbumArt({
       <div
         className="absolute inset-0 flex items-center justify-center transition-all duration-500"
         style={{
-          background: getGradient(),
+          background: isAd 
+            ? "linear-gradient(45deg, #ff4444, #cc0000)" 
+            : getGradient(),
           opacity:
             !artwork ||
             artwork === "" ||
@@ -99,27 +103,15 @@ export default function InteractiveAlbumArt({
           transform: isHovered ? "scale(1.1)" : "scale(1)",
         }}
       >
-        <div
-          className="transition-transform duration-300"
-          style={{ transform: isHovered ? "rotate(5deg)" : "rotate(0deg)" }}
-        >
-          {artwork === "advertisement" ||
-          title.toLowerCase().includes("commercial") ||
-          title.toLowerCase().includes("advertisement") ||
-          title.toLowerCase().includes("commercial break") ? (
-            <div 
-              className={`text-white font-black bg-red-600 rounded m-1 flex items-center justify-center ${
-                size === 'sm' 
-                  ? 'text-xs px-1 py-0.5 w-6 h-4'  // 1.5x smaller for floating player
-                  : 'text-2xl px-4 py-2 w-16 h-12'  // 3x larger for main player
-              }`}
-            >
-              AD
-            </div>
-          ) : (
-            <ThemedMusicLogo size={logoSizes[size]} />
-          )}
-        </div>
+        {isAd ? (
+          <div className="text-center text-white">
+            <div className="text-2xl mb-1">📢</div>
+            <div className="text-xs font-bold">AD</div>
+            <div className="text-xs opacity-80">ADVERTISEMENT</div>
+          </div>
+        ) : (
+          <ThemedMusicLogo size={logoSizes[size]} />
+        )}
       </div>
 
       {/* Album Artwork with Verification */}
@@ -171,7 +163,7 @@ export default function InteractiveAlbumArt({
           border: isHovered
             ? `2px solid ${getGradient()}80`
             : "2px solid transparent",
-          boxShadow: isHovered ? `inset 0 0 20px ${getGradient()}20` : "none",
+          boxShadow: isHovered ? `inset 0 0 10px ${getGradient()}20` : "none",
         }}
       />
 

@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development tsx server/index.ts",
-    "build": "cd client && npm run build && cd .. && tsc --project tsconfig.json",
+    "build": "cd client && npm run build",
+    "build:server": "tsc --project tsconfig.json",
     "build:css": "cd client && npm run build:css",
     "start": "NODE_ENV=production node dist/index.js",
     "preview": "cd client && npm run preview"

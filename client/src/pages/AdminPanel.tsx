@@ -480,7 +480,7 @@ const AdminPanel: React.FC = () => {
         ))}
       </div>
 
-      {stations?.length === 0 && (
+      {(stations?.length || 0) === 0 && (
         <Card>
           <CardContent className="pt-6">
             <div className="text-center text-muted-foreground">

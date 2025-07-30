@@ -48,7 +48,7 @@ export default function SkeletonLoader({
   if (variant === 'text') {
     return (
       <div className="space-y-2">
-        {Array.from({ length: lines }).map((_, index) => (
+        {Array.from({ length: lines || 0 }).map((_, index) => (
           <div
             key={index}
             className={`${baseClasses} rounded`}

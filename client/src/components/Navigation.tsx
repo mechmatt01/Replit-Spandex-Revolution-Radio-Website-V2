@@ -24,7 +24,7 @@ import { useLocation } from "wouter";
 import MetalThemeSwitcher from "./MetalThemeSwitcher";
 import AuthModal from "./AuthModal";
 import { useTheme } from "../contexts/ThemeContext";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
 
 export default function Navigation() {
@@ -249,7 +249,7 @@ export default function Navigation() {
 
   return (
     <TooltipProvider>
-      <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-sm transition-colors duration-300 safe-area-inset-top">
         <div className="w-full relative">
           <div className="xl:relative flex justify-between items-center h-16" style={{ paddingLeft: '15px', paddingRight: '15px' }}>
             

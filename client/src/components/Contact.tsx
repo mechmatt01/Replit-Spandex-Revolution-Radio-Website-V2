@@ -90,7 +90,7 @@ export default function Contact() {
       errors.push("Please enter a valid email address");
     }
 
-    if (errors.length > 0) {
+    if ((errors?.length || 0) > 0) {
       setValidationErrors(errors);
       return;
     }
@@ -162,7 +162,7 @@ export default function Contact() {
                       Send us a Message
                     </h3>
 
-                    {validationErrors.length > 0 && (
+                    {(validationErrors?.length || 0) > 0 && (
                       <div className="mb-4 p-3 bg-red-900/20 border border-red-500 rounded-md">
                         <p className="text-red-400 text-sm font-semibold">
                           Please fill out the following required fields:

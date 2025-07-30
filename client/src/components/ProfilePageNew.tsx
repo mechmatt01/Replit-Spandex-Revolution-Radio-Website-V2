@@ -309,7 +309,7 @@ export default function ProfilePage() {
             >
               <CardContent className="p-0">
                 <div className="space-y-1 p-2">
-                  {sidebarItems.map((item) => (
+                  {(sidebarItems || []).map((item) => (
                     <button
                       key={item.id}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
@@ -670,7 +670,7 @@ export default function ProfilePage() {
                         Upgrade to Premium
                       </Button>
                     </div>
-                  ) : submissions.length === 0 ? (
+                  ) : (submissions?.length || 0) === 0 ? (
                     <div className="text-center py-12">
                       <FileText size={48} className="mx-auto mb-4 opacity-50" style={{ color: colors.primary }} />
                       <h3 className="font-bold text-lg mb-2" style={{ color: colors.text }}>
@@ -682,7 +682,7 @@ export default function ProfilePage() {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {submissions.map((submission) => (
+                      {(submissions || []).map((submission) => (
                         <div
                           key={submission.id}
                           className="p-4 rounded-lg border transition-all duration-200 hover:shadow-md"
@@ -739,7 +739,7 @@ export default function ProfilePage() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-3 gap-4 mt-4">
-            {premiumAvatars.map((avatar) => (
+            {(premiumAvatars || []).map((avatar) => (
               <button
                 key={avatar.id}
                 onClick={() => handleAvatarSelect(avatar.url)}

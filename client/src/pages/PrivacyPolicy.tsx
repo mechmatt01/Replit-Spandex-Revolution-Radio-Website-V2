@@ -7,11 +7,23 @@ import {
 } from "../components/ui/card";
 import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
+import { useLocation } from "wouter";
+import { ArrowLeft } from "lucide-react";
 
 export default function PrivacyPolicy() {
   const { colors } = useTheme();
+  const [, navigate] = useLocation();
 
   return (
+    <div className="relative">
+      <button
+        className="fixed top-4 left-4 z-50 bg-black/70 hover:bg-black/90 text-white rounded-full p-2 shadow-lg"
+        onClick={() => navigate("/")}
+        aria-label="Back to Home"
+        style={{ backdropFilter: "blur(4px)" }}
+      >
+        <ArrowLeft className="w-6 h-6" />
+      </button>
     <div className="min-h-screen p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         <Card
@@ -333,6 +345,7 @@ export default function PrivacyPolicy() {
             </ScrollArea>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );

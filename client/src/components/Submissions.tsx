@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest } from "@/lib/queryClient";
@@ -323,7 +323,7 @@ export default function Submissions() {
         )}
 
         {/* Recent Submissions */}
-        {recentSubmissions.length > 0 &&
+        {(recentSubmissions || []).length > 0 &&
           isAuthenticated &&
           hasPaidSubscription && (
             <div className="mt-16">
@@ -334,7 +334,7 @@ export default function Submissions() {
                 Recent Submissions
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {recentSubmissions.slice(0, 4).map((submission) => (
+                {(recentSubmissions || []).slice(0, 4).map((submission) => (
                   <Card
                     key={submission.id}
                     className="bg-dark-surface border-dark-border"

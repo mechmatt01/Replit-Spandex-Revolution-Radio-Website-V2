@@ -240,7 +240,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/config", (req: Request, res: Response) => {
     try {
       // Force the correct API key to override persistent environment variables
-      const googleMapsApiKey = "AIzaSyBfRJS8dGDJqA4X5sZ6ASq267WV--C7cYw";
+      const googleMapsApiKey = "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ";
       const googleMapsSigningSecret = "xUMvkKZN7YbwACexIGzpV2o5Fms=";
       const openWeatherApiKey = process.env.OPENWEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5";
       // Add Map ID for Google Maps
@@ -846,6 +846,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
             duration: null,
             artwork: finalArtwork,
             isAd,
+            adCompany: isAd ? (await import("./radioCoConfig")).extractCompanyName({ title, artist }) : undefined,
+            adReason: isAd ? adAnalysis.reason : undefined,
+            stationName: "95.5 The Beat",
+            frequency: "95.5 FM",
+            location: "Dallas, TX",
+            genre: "Hip Hop & R&B",
+            lastUpdated: new Date(),
             createdAt: new Date(),
             updatedAt: new Date(),
           };
@@ -871,6 +878,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       duration: null,
       artwork: null,
       isAd: false,
+      adCompany: undefined,
+      adReason: undefined,
+      stationName: "95.5 The Beat",
+      frequency: "95.5 FM",
+      location: "Dallas, TX",
+      genre: "Hip Hop & R&B",
+      lastUpdated: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -929,6 +943,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
               duration: null,
               artwork: finalArtwork,
               isAd,
+              adCompany: isAd ? (await import("./radioCoConfig")).extractCompanyName({ title, artist }) : undefined,
+              adReason: isAd ? adAnalysis.reason : undefined,
+              stationName: "Hot 97",
+              frequency: "97.1 FM",
+              location: "New York, NY",
+              genre: "Hip Hop & Urban Contemporary",
+              lastUpdated: new Date(),
               createdAt: new Date(),
               updatedAt: new Date(),
             };
@@ -957,6 +978,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       duration: null,
       artwork: null,
       isAd: false,
+      adCompany: undefined,
+      adReason: undefined,
+      stationName: "Hot 97",
+      frequency: "97.1 FM",
+      location: "New York, NY",
+      genre: "Hip Hop & Urban Contemporary",
+      lastUpdated: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -1056,10 +1084,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             id: 1,
             title,
             artist,
-            album: currentSong.album || "95.5 The Beat",
+            album: currentSong.album || "Beat Blender",
             duration: null,
             artwork,
             isAd: false,
+            adCompany: undefined,
+            adReason: undefined,
+            stationName: "Beat Blender",
+            frequency: "Online",
+            location: "SomaFM",
+            genre: "Downtempo House",
+            lastUpdated: new Date(),
             createdAt: new Date(),
             updatedAt: new Date(),
           };
@@ -1082,6 +1117,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       duration: null,
       artwork: null,
       isAd: false,
+      adCompany: undefined,
+      adReason: undefined,
+      stationName: "95.5 The Beat",
+      frequency: "95.5 FM",
+      location: "Dallas, TX",
+      genre: "Hip Hop & R&B",
+      lastUpdated: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -1116,10 +1158,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             id: 1,
             title,
             artist,
-            album: currentSong.album || "Hot 97",
+            album: currentSong.album || "Groove Salad",
             duration: null,
             artwork,
             isAd: false,
+            adCompany: undefined,
+            adReason: undefined,
+            stationName: "Groove Salad",
+            frequency: "Online",
+            location: "SomaFM",
+            genre: "Ambient Chill",
+            lastUpdated: new Date(),
             createdAt: new Date(),
             updatedAt: new Date(),
           };
@@ -1176,10 +1225,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             id: 1,
             title,
             artist,
-            album: currentSong.album || "Power 106",
+            album: currentSong.album || "Drone Zone",
             duration: null,
             artwork,
             isAd: false,
+            adCompany: undefined,
+            adReason: undefined,
+            stationName: "Drone Zone",
+            frequency: "Online",
+            location: "SomaFM",
+            genre: "Ambient Space",
+            lastUpdated: new Date(),
             createdAt: new Date(),
             updatedAt: new Date(),
           };
@@ -1236,10 +1292,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
             id: 1,
             title,
             artist,
-            album: currentSong.album || "SomaFM Metal",
+            album: currentSong.album || "DEF CON Radio",
             duration: null,
             artwork,
             isAd: false,
+            adCompany: undefined,
+            adReason: undefined,
+            stationName: "DEF CON Radio",
+            frequency: "Online",
+            location: "SomaFM",
+            genre: "Electronic Hacking",
+            lastUpdated: new Date(),
             createdAt: new Date(),
             updatedAt: new Date(),
           };
@@ -1256,12 +1319,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Fallback
     const fallbackData = {
       id: 1,
-      title: "SomaFM Metal",
-      artist: "Metal Music Stream",
+      title: "DEF CON Radio",
+      artist: "Electronic Hacking Music",
       album: "Live Stream",
       duration: null,
       artwork: null,
       isAd: false,
+      adCompany: undefined,
+      adReason: undefined,
+      stationName: "DEF CON Radio",
+      frequency: "Online",
+      location: "SomaFM",
+      genre: "Electronic Hacking",
+      lastUpdated: new Date(),
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -2580,6 +2650,534 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Metadata API endpoints for live track information
+  app.get("/api/metadata/hot-97", async (req, res) => {
+    try {
+      await fetchHot97(res);
+    } catch (error) {
+      console.error("Hot 97 metadata fetch failed:", error);
+      res.json({
+        title: "Hot 97",
+        artist: "New York's Hip Hop & Urban Contemporary",
+        album: "97.1 FM • New York, NY",
+        artwork: "",
+        isAd: false,
+        stationName: "Hot 97",
+        frequency: "97.1 FM",
+        location: "New York, NY",
+        genre: "Hip Hop & Urban Contemporary",
+        lastUpdated: new Date(),
+      });
+    }
+  });
+
+  app.get("/api/metadata/beat-955", async (req, res) => {
+    try {
+      await fetch955Beat(res);
+    } catch (error) {
+      console.error("95.5 The Beat metadata fetch failed:", error);
+      res.json({
+        title: "95.5 The Beat",
+        artist: "Dallas Hip Hop & R&B",
+        album: "95.5 FM • Dallas, TX",
+        artwork: "",
+        isAd: false,
+        stationName: "95.5 The Beat",
+        frequency: "95.5 FM",
+        location: "Dallas, TX",
+        genre: "Hip Hop & R&B",
+        lastUpdated: new Date(),
+      });
+    }
+  });
+
+  app.get("/api/metadata/somafm", async (req, res) => {
+    try {
+      const station = req.query.station as string || "beatblender";
+      let metadata;
+      
+      switch (station) {
+        case "beatblender":
+          await fetchSomaFMBeatBlender(res);
+          break;
+        case "groovesalad":
+          await fetchSomaFMGrooveSalad(res);
+          break;
+        case "spacestation":
+          await fetchSomaFMSpaceStation(res);
+          break;
+        case "defcon":
+          await fetchSomaFMMetal(res);
+          break;
+        default:
+          await fetchSomaFMBeatBlender(res);
+      }
+    } catch (error) {
+      console.error("SomaFM metadata fetch failed:", error);
+      res.json({
+        title: "SomaFM",
+        artist: "Ambient Electronic",
+        album: "Online • SomaFM",
+        artwork: "",
+        isAd: false,
+        stationName: "SomaFM",
+        frequency: "Online",
+        location: "SomaFM",
+        genre: "Ambient Electronic",
+        lastUpdated: new Date(),
+      });
+    }
+  });
+
+  app.get("/api/metadata/fallback", async (req, res) => {
+    res.json({
+      title: "Live Radio",
+      artist: "Streaming Now",
+      album: "Live Stream",
+      artwork: "",
+      isAd: false,
+      stationName: "Live Radio",
+      frequency: "Online",
+      location: "Live Stream",
+      genre: "Live Radio",
+      lastUpdated: new Date(),
+    });
+  });
+
+  app.get("/api/metadata/power-106", async (req, res) => {
+    try {
+      await fetchPower106(res);
+    } catch (error) {
+      console.error("Power 106 metadata fetch failed:", error);
+      res.json({
+        title: "Power 106",
+        artist: "Los Angeles Hip Hop & R&B",
+        album: "105.9 FM • Los Angeles, CA",
+        artwork: "",
+        isAd: false,
+        stationName: "Power 106",
+        frequency: "105.9 FM",
+        location: "Los Angeles, CA",
+        genre: "Hip Hop & R&B",
+        lastUpdated: new Date(),
+      });
+    }
+  });
+
+  app.get("/api/metadata/v-103", async (req, res) => {
+    try {
+      await fetchV103(res);
+    } catch (error) {
+      console.error("V-103 metadata fetch failed:", error);
+      res.json({
+        title: "V-103",
+        artist: "Atlanta Hip Hop & R&B",
+        album: "103.3 FM • Atlanta, GA",
+        artwork: "",
+        isAd: false,
+        stationName: "V-103",
+        frequency: "103.3 FM",
+        location: "Atlanta, GA",
+        genre: "Hip Hop & R&B",
+        lastUpdated: new Date(),
+      });
+    }
+  });
+
+  app.get("/api/metadata/hot-105", async (req, res) => {
+    try {
+      await fetchHot105(res);
+    } catch (error) {
+      console.error("Hot 105 metadata fetch failed:", error);
+      res.json({
+        title: "Hot 105",
+        artist: "Miami Hip Hop & R&B",
+        album: "105.1 FM • Miami, FL",
+        artwork: "",
+        isAd: false,
+        stationName: "Hot 105",
+        frequency: "105.1 FM",
+        location: "Miami, FL",
+        genre: "Hip Hop & R&B",
+        lastUpdated: new Date(),
+      });
+    }
+  });
+
+  app.get("/api/metadata/q-93", async (req, res) => {
+    try {
+      await fetchQ93(res);
+    } catch (error) {
+      console.error("Q93 metadata fetch failed:", error);
+      res.json({
+        title: "Q93",
+        artist: "New Orleans Hip Hop & R&B",
+        album: "93.3 FM • New Orleans, LA",
+        artwork: "",
+        isAd: false,
+        stationName: "Q93",
+        frequency: "93.3 FM",
+        location: "New Orleans, LA",
+        genre: "Hip Hop & R&B",
+        lastUpdated: new Date(),
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
+}
+
+async function fetchV103(res: Response) {
+  try {
+    // Try V-103 official StreamTheWorld API
+    const v103Response = await fetch(
+      "https://playerservices.streamtheworld.com/api/livestream?version=1.9&mount=WVEEFMAAC&lang=en",
+      {
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "V103RadioApp/1.0",
+          Origin: "https://www.v103.com",
+        },
+        signal: AbortSignal.timeout(3000),
+      },
+    );
+
+    if (v103Response.ok) {
+      const v103Data = await v103Response.json();
+      const nowPlaying = v103Data?.results?.livestream?.[0]?.cue;
+
+      if (nowPlaying && nowPlaying.title) {
+        let title = nowPlaying.title;
+        let artist = nowPlaying.artist || "V-103";
+        let artwork = null;
+        let isAd = false;
+
+        // Enhanced commercial detection
+        if (
+          title.toLowerCase().includes("commercial") ||
+          title.toLowerCase().includes("advertisement") ||
+          title.toLowerCase().includes("in commercial break") ||
+          artist.toLowerCase().includes("commercial") ||
+          title.toLowerCase().includes("capital one") ||
+          title.toLowerCase().includes("geico") ||
+          title.toLowerCase().includes("progressive") ||
+          title.toLowerCase().includes("mcdonald") ||
+          title.toLowerCase().includes("coca cola") ||
+          title.toLowerCase().includes("nike") ||
+          title.toLowerCase().includes("verizon")
+        ) {
+          isAd = true;
+          const { extractCompanyName, getClearbitLogo } = await import(
+            "./radioCoConfig"
+          );
+          const companyName = extractCompanyName({ title, artist });
+
+          if (title.toLowerCase().includes("in commercial break")) {
+            title = "Commercial Break";
+            artist = "V-103";
+            artwork = "advertisement";
+          } else {
+            title =
+              companyName !== "Advertisement"
+                ? `${companyName} Commercial`
+                : "Advertisement";
+            artist = "V-103";
+            const logoUrl = getClearbitLogo(companyName);
+            artwork = logoUrl || "advertisement";
+          }
+        } else {
+          // Try to get artwork from iTunes
+          try {
+            artwork = await fetchiTunesArtwork(artist, title);
+          } catch (artworkError) {
+            console.log("iTunes artwork fetch failed:", artworkError);
+          }
+        }
+
+        const nowPlayingData = {
+          id: 1,
+          title: title,
+          artist: artist,
+          album: "V-103 • 103.3 FM • Atlanta, GA",
+          duration: null,
+          artwork: artwork,
+          isAd: isAd,
+          adCompany: isAd ? extractCompanyName({ title, artist }) : undefined,
+          adReason: isAd ? "Commercial break" : undefined,
+          stationName: "V-103",
+          frequency: "103.3 FM",
+          location: "Atlanta, GA",
+          genre: "Hip Hop & R&B",
+          lastUpdated: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        await storage.updateNowPlaying(nowPlayingData);
+        console.log(`Now playing: "${title}" by ${artist}`);
+        return res.json(nowPlayingData);
+      }
+    }
+  } catch (error) {
+    console.log("V-103 fetch failed:", error);
+  }
+
+  // Fallback
+  const fallbackData = {
+    id: 1,
+    title: "V-103",
+    artist: "Atlanta Hip Hop & R&B",
+    album: "103.3 FM • Atlanta, GA",
+    duration: null,
+    artwork: null,
+    isAd: false,
+    adCompany: undefined,
+    adReason: undefined,
+    stationName: "V-103",
+    frequency: "103.3 FM",
+    location: "Atlanta, GA",
+    genre: "Hip Hop & R&B",
+    lastUpdated: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+  await storage.updateNowPlaying(fallbackData);
+  return res.json(fallbackData);
+}
+
+async function fetchHot105(res: Response) {
+  try {
+    // Try Hot 105 official StreamTheWorld API
+    const hot105Response = await fetch(
+      "https://playerservices.streamtheworld.com/api/livestream?version=1.9&mount=WMIBFMAAC&lang=en",
+      {
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "Hot105RadioApp/1.0",
+          Origin: "https://www.hot105.com",
+        },
+        signal: AbortSignal.timeout(3000),
+      },
+    );
+
+    if (hot105Response.ok) {
+      const hot105Data = await hot105Response.json();
+      const nowPlaying = hot105Data?.results?.livestream?.[0]?.cue;
+
+      if (nowPlaying && nowPlaying.title) {
+        let title = nowPlaying.title;
+        let artist = nowPlaying.artist || "Hot 105";
+        let artwork = null;
+        let isAd = false;
+
+        // Enhanced commercial detection
+        if (
+          title.toLowerCase().includes("commercial") ||
+          title.toLowerCase().includes("advertisement") ||
+          title.toLowerCase().includes("in commercial break") ||
+          artist.toLowerCase().includes("commercial") ||
+          title.toLowerCase().includes("capital one") ||
+          title.toLowerCase().includes("geico") ||
+          title.toLowerCase().includes("progressive") ||
+          title.toLowerCase().includes("mcdonald") ||
+          title.toLowerCase().includes("coca cola") ||
+          title.toLowerCase().includes("nike") ||
+          title.toLowerCase().includes("verizon")
+        ) {
+          isAd = true;
+          const { extractCompanyName, getClearbitLogo } = await import(
+            "./radioCoConfig"
+          );
+          const companyName = extractCompanyName({ title, artist });
+
+          if (title.toLowerCase().includes("in commercial break")) {
+            title = "Commercial Break";
+            artist = "Hot 105";
+            artwork = "advertisement";
+          } else {
+            title =
+              companyName !== "Advertisement"
+                ? `${companyName} Commercial`
+                : "Advertisement";
+            artist = "Hot 105";
+            const logoUrl = getClearbitLogo(companyName);
+            artwork = logoUrl || "advertisement";
+          }
+        } else {
+          // Try to get artwork from iTunes
+          try {
+            artwork = await fetchiTunesArtwork(artist, title);
+          } catch (artworkError) {
+            console.log("iTunes artwork fetch failed:", artworkError);
+          }
+        }
+
+        const nowPlayingData = {
+          id: 1,
+          title: title,
+          artist: artist,
+          album: "Hot 105 • 105.1 FM • Miami, FL",
+          duration: null,
+          artwork: artwork,
+          isAd: isAd,
+          adCompany: isAd ? extractCompanyName({ title, artist }) : undefined,
+          adReason: isAd ? "Commercial break" : undefined,
+          stationName: "Hot 105",
+          frequency: "105.1 FM",
+          location: "Miami, FL",
+          genre: "Hip Hop & R&B",
+          lastUpdated: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        await storage.updateNowPlaying(nowPlayingData);
+        console.log(`Now playing: "${title}" by ${artist}`);
+        return res.json(nowPlayingData);
+      }
+    }
+  } catch (error) {
+    console.log("Hot 105 fetch failed:", error);
+  }
+
+  // Fallback
+  const fallbackData = {
+    id: 1,
+    title: "Hot 105",
+    artist: "Miami Hip Hop & R&B",
+    album: "105.1 FM • Miami, FL",
+    duration: null,
+    artwork: null,
+    isAd: false,
+    adCompany: undefined,
+    adReason: undefined,
+    stationName: "Hot 105",
+    frequency: "105.1 FM",
+    location: "Miami, FL",
+    genre: "Hip Hop & R&B",
+    lastUpdated: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+  await storage.updateNowPlaying(fallbackData);
+  return res.json(fallbackData);
+}
+
+async function fetchQ93(res: Response) {
+  try {
+    // Try Q93 official StreamTheWorld API
+    const q93Response = await fetch(
+      "https://playerservices.streamtheworld.com/api/livestream?version=1.9&mount=WQUE-FMAAC&lang=en",
+      {
+        headers: {
+          Accept: "application/json",
+          "User-Agent": "Q93RadioApp/1.0",
+          Origin: "https://www.q93.com",
+        },
+        signal: AbortSignal.timeout(3000),
+      },
+    );
+
+    if (q93Response.ok) {
+      const q93Data = await q93Response.json();
+      const nowPlaying = q93Data?.results?.livestream?.[0]?.cue;
+
+      if (nowPlaying && nowPlaying.title) {
+        let title = nowPlaying.title;
+        let artist = nowPlaying.artist || "Q93";
+        let artwork = null;
+        let isAd = false;
+
+        // Enhanced commercial detection
+        if (
+          title.toLowerCase().includes("commercial") ||
+          title.toLowerCase().includes("advertisement") ||
+          title.toLowerCase().includes("in commercial break") ||
+          artist.toLowerCase().includes("commercial") ||
+          title.toLowerCase().includes("capital one") ||
+          title.toLowerCase().includes("geico") ||
+          title.toLowerCase().includes("progressive") ||
+          title.toLowerCase().includes("mcdonald") ||
+          title.toLowerCase().includes("coca cola") ||
+          title.toLowerCase().includes("nike") ||
+          title.toLowerCase().includes("verizon")
+        ) {
+          isAd = true;
+          const { extractCompanyName, getClearbitLogo } = await import(
+            "./radioCoConfig"
+          );
+          const companyName = extractCompanyName({ title, artist });
+
+          if (title.toLowerCase().includes("in commercial break")) {
+            title = "Commercial Break";
+            artist = "Q93";
+            artwork = "advertisement";
+          } else {
+            title =
+              companyName !== "Advertisement"
+                ? `${companyName} Commercial`
+                : "Advertisement";
+            artist = "Q93";
+            const logoUrl = getClearbitLogo(companyName);
+            artwork = logoUrl || "advertisement";
+          }
+        } else {
+          // Try to get artwork from iTunes
+          try {
+            artwork = await fetchiTunesArtwork(artist, title);
+          } catch (artworkError) {
+            console.log("iTunes artwork fetch failed:", artworkError);
+          }
+        }
+
+        const nowPlayingData = {
+          id: 1,
+          title: title,
+          artist: artist,
+          album: "Q93 • 93.3 FM • New Orleans, LA",
+          duration: null,
+          artwork: artwork,
+          isAd: isAd,
+          adCompany: isAd ? extractCompanyName({ title, artist }) : undefined,
+          adReason: isAd ? "Commercial break" : undefined,
+          stationName: "Q93",
+          frequency: "93.3 FM",
+          location: "New Orleans, LA",
+          genre: "Hip Hop & R&B",
+          lastUpdated: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        await storage.updateNowPlaying(nowPlayingData);
+        console.log(`Now playing: "${title}" by ${artist}`);
+        return res.json(nowPlayingData);
+      }
+    }
+  } catch (error) {
+    console.log("Q93 fetch failed:", error);
+  }
+
+  // Fallback
+  const fallbackData = {
+    id: 1,
+    title: "Q93",
+    artist: "New Orleans Hip Hop & R&B",
+    album: "93.3 FM • New Orleans, LA",
+    duration: null,
+    artwork: null,
+    isAd: false,
+    adCompany: undefined,
+    adReason: undefined,
+    stationName: "Q93",
+    frequency: "93.3 FM",
+    location: "New Orleans, LA",
+    genre: "Hip Hop & R&B",
+    lastUpdated: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+  await storage.updateNowPlaying(fallbackData);
+  return res.json(fallbackData);
 }

@@ -97,7 +97,7 @@ export default function SubscriptionCarousel() {
       console.log('Previous animation starting');
       setIsAnimating(true);
       setSlideDirection('right');
-      setCurrentIndex((prev) => (prev - 1 + subscriptionTiers.length) % subscriptionTiers.length);
+      setCurrentIndex((prev) => (prev - 1 + (subscriptionTiers?.length || 0)) % (subscriptionTiers?.length || 1));
       setTimeout(() => {
         setIsAnimating(false);
         console.log('Previous animation complete');
@@ -110,7 +110,7 @@ export default function SubscriptionCarousel() {
       console.log('Next animation starting');
       setIsAnimating(true);
       setSlideDirection('left');
-      setCurrentIndex((prev) => (prev + 1) % subscriptionTiers.length);
+      setCurrentIndex((prev) => (prev + 1) % (subscriptionTiers?.length || 1));
       setTimeout(() => {
         setIsAnimating(false);
         console.log('Next animation complete');
@@ -155,18 +155,20 @@ export default function SubscriptionCarousel() {
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 transition-all duration-300 opacity-50 hover:opacity-100"
+          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 rounded-full p-2 transition-colors"
           disabled={isAnimating}
+          title="Previous subscription"
         >
-          <ChevronLeft className="w-8 h-8 text-white hover:scale-110 transition-transform drop-shadow-lg" />
+          <ChevronLeft className="w-8 h-8 text-white hover:scale-110 transition-transform drop-shadow-md" />
         </button>
 
         <button
           onClick={handleNext}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 transition-all duration-300 opacity-50 hover:opacity-100"
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 rounded-full p-2 transition-colors"
           disabled={isAnimating}
+          title="Next subscription"
         >
-          <ChevronRight className="w-8 h-8 text-white hover:scale-110 transition-transform drop-shadow-lg" />
+          <ChevronRight className="w-8 h-8 text-white hover:scale-110 transition-transform drop-shadow-md" />
         </button>
 
         {/* Main Card Display */}
@@ -310,9 +312,7 @@ export default function SubscriptionCarousel() {
               {/* Features - centered between price and exclusive perks */}
               <div className="flex-1 flex items-center justify-center py-2 sm:py-4">
                 <div className="w-full max-w-xs">
-                  {currentTier.features
-                    .sort((a, b) => a.length - b.length) // Sort by text length - shortest first
-                    .map((feature, index) => (
+                  {(currentTier.features || []).sort((a, b) => (a?.length || 0) - (b?.length || 0)).map((feature, index) => (
                     <div
                       key={index}
                       className="flex items-center justify-center mb-2 sm:mb-3 transform transition-all duration-300"
@@ -356,7 +356,7 @@ export default function SubscriptionCarousel() {
                     EXCLUSIVE PERKS
                   </h4>
                   <div className="space-y-0.5 sm:space-y-1">
-                    {currentTier.perks.map((perk, index) => (
+                    {(currentTier.perks || []).map((perk, index) => (
                       <div 
                         key={index} 
                         className="text-xs text-center leading-tight"
@@ -403,7 +403,7 @@ export default function SubscriptionCarousel() {
 
       {/* Tier Indicators with Package Icons */}
       <div className="flex justify-center items-center space-x-6 mt-6">
-        {subscriptionTiers.map((tier, index) => (
+        {(subscriptionTiers || []).map((tier, index) => (
           <button
             key={tier.id}
             onClick={() => handleSelectTier(index)}

@@ -17,6 +17,8 @@ export default function StickyPlayer() {
     isLoading,
     isMuted,
     toggleMute,
+    isAdPlaying,
+    adInfo,
   } = useRadio();
   const { getGradient, getColors, currentTheme } = useTheme();
   const colors = getColors();
@@ -73,15 +75,37 @@ export default function StickyPlayer() {
         <div className="flex items-center justify-between mb-2">
           {/* Album Art */}
           <InteractiveAlbumArt
-            artwork={currentTrack.artwork}
+            artwork={isAdPlaying && adInfo.artwork ? adInfo.artwork : currentTrack.artwork}
             title={currentTrack.title}
             artist={currentTrack.artist}
             size="sm"
             className="w-12 h-12"
+            isAd={isAdPlaying}
           />
 
           {/* Track Info with 60% width of player box */}
           <div className="min-w-0 ml-3" style={{ width: "60%" }}>
+            {/* Ad Detection Badge */}
+            {isAdPlaying && (
+              <div className="mb-1 flex justify-start">
+                <div
+                  className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-bold text-white animate-pulse"
+                  style={{
+                    background: `linear-gradient(45deg, #ff4444, #cc0000)`,
+                    boxShadow: `0 1px 4px #ff444460`,
+                  }}
+                >
+                  <span className="mr-1 text-xs">📢</span>
+                  AD
+                  {adInfo.company && (
+                    <span className="ml-1 opacity-80 text-xs">
+                      • {adInfo.company}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+
             <div className="w-full overflow-hidden">
               <ScrollingText
                 text={
@@ -89,9 +113,15 @@ export default function StickyPlayer() {
                     ? currentTrack.title
                     : stationName
                 }
-                className="font-semibold text-sm whitespace-nowrap"
+                className={`font-semibold text-sm whitespace-nowrap ${
+                  isAdPlaying ? 'text-red-400' : ''
+                }`}
                 style={{ 
-                  color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+                  color: isAdPlaying 
+                    ? '#f87171' 
+                    : currentTheme === 'light-mode' 
+                      ? '#000000' 
+                      : colors.text 
                 }}
                 maxWidth="100%"
                 isFloating={true}
@@ -99,11 +129,27 @@ export default function StickyPlayer() {
                 alignment="left"
               />
             </div>
+            
+            {/* Artist Information */}
+            {currentTrack.artist && 
+             currentTrack.artist !== currentTrack.title &&
+             currentTrack.artist !== stationName && (
+              <div className="text-xs text-muted-foreground truncate mt-0.5">
+                {currentTrack.artist}
+              </div>
+            )}
+            
             <div className="flex items-center justify-between mt-1">
               <div className="flex items-center space-x-1">
-                {/* LIVE indicator with red dot - restored */}
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-red-500 font-medium">LIVE</span>
+                {/* LIVE/AD indicator */}
+                <div className={`w-2 h-2 rounded-full animate-pulse ${
+                  isAdPlaying ? 'bg-red-600' : 'bg-red-500'
+                }`}></div>
+                <span className={`text-xs font-medium ${
+                  isAdPlaying ? 'text-red-600' : 'text-red-500'
+                }`}>
+                  {isAdPlaying ? 'AD' : 'LIVE'}
+                </span>
               </div>
 
               {/* Volume Controls - Centered between LIVE and play button */}
@@ -156,6 +202,8 @@ export default function StickyPlayer() {
                       value={(isMuted ? 0 : volume) * 100}
                       onChange={handleVolumeChange}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      aria-label="Volume control"
+                      title="Adjust volume"
                     />
                   </div>
                   <span 

@@ -16,13 +16,54 @@ export default function Schedule() {
   const [selectedPastShow, setSelectedPastShow] = useState<PastShow | null>(null);
   const [selectedWeeklyShow, setSelectedWeeklyShow] = useState<ShowSchedule | null>(null);
 
-  const { data: weeklyShows = [], isLoading: isLoadingShows } = useQuery<ShowSchedule[]>({
-    queryKey: ["/api/schedules"],
-  });
+  // Use mock data for Firebase hosting
+  const weeklyShows: ShowSchedule[] = [
+    {
+      id: "1",
+      title: "Morning Metal",
+      host: "DJ Metalhead",
+      dayOfWeek: "Monday",
+      time: "9:00 AM",
+      duration: 120,
+      description: "Start your week with the best metal hits",
+      genre: "Heavy Metal"
+    },
+    {
+      id: "2", 
+      title: "Thrash Tuesday",
+      host: "DJ Thrash",
+      dayOfWeek: "Tuesday",
+      time: "7:00 PM",
+      duration: 180,
+      description: "Pure thrash metal madness",
+      genre: "Thrash Metal"
+    },
+    {
+      id: "3",
+      title: "Death Metal Wednesday",
+      host: "DJ Death",
+      dayOfWeek: "Wednesday", 
+      time: "8:00 PM",
+      duration: 150,
+      description: "The heaviest death metal around",
+      genre: "Death Metal"
+    }
+  ];
 
-  const { data: pastShows = [], isLoading: isLoadingPast } = useQuery<PastShow[]>({
-    queryKey: ["/api/past-shows"],
-  });
+  const pastShows: PastShow[] = [
+    {
+      id: "1",
+      title: "Classic Metal Hour",
+      host: "DJ Classic",
+      airDate: new Date().toISOString(),
+      duration: 60,
+      description: "The best classic metal tracks",
+      genre: "Classic Metal"
+    }
+  ];
+
+  const isLoadingShows = false;
+  const isLoadingPast = false;
 
   // Filter shows for the next 7 days with proper chronological ordering
   const getNext7DaysShows = (shows: ShowSchedule[]) => {
@@ -40,12 +81,12 @@ export default function Schedule() {
       const dayName = dayNames[dayIndex];
       
       // Find shows for this day
-      const dayShows = shows.filter(show => show.dayOfWeek === dayName);
+      const dayShows = (shows || []).filter(show => show.dayOfWeek === dayName);
       
       if (i === 0) {
         // For today, only show shows that haven't aired yet
         const currentTime = today.getHours() * 60 + today.getMinutes();
-        const futureShows = dayShows.filter(show => {
+        const futureShows = (dayShows || []).filter(show => {
           const [time, period] = show.time.split(' ');
           const [hours, minutes] = time.split(':').map(Number);
           let showTime = hours * 60 + minutes;
@@ -69,7 +110,7 @@ export default function Schedule() {
         next7Days.push(...futureShows);
       } else {
         // For future days, sort shows by time
-        const sortedDayShows = dayShows.sort((a, b) => {
+        const sortedDayShows = (dayShows || []).sort((a, b) => {
           const timeA = parseTimeToMinutes(a.time);
           const timeB = parseTimeToMinutes(b.time);
           return timeA - timeB;
@@ -232,7 +273,7 @@ export default function Schedule() {
                   </Card>
                 ))
               ) : (
-                filteredWeeklyShows.map((show) => (
+                (filteredWeeklyShows || []).map((show) => (
                 <Card
                   key={show.id}
                   className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
@@ -288,7 +329,7 @@ export default function Schedule() {
           </div>
 
           {/* Past Shows Archive */}
-          {pastShows.length > 0 && (
+          {(pastShows?.length || 0) > 0 && (
             <div>
               <h3
                 className="font-black text-xl mb-6 text-center"
@@ -311,7 +352,7 @@ export default function Schedule() {
                     </Card>
                   ))
                 ) : (
-                  pastShows.slice(0, 3).map((show) => (
+                  (pastShows || []).slice(0, 3).map((show) => (
                   <Card
                     key={show.id}
                     className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"

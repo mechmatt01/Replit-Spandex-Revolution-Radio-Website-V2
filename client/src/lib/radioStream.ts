@@ -64,7 +64,7 @@ class RadioStreamAPI {
     console.error("Stream error occurred:", event);
 
     // Try next URL in the list
-    if (this.currentUrlIndex < this.streamUrls.length - 1) {
+    if (this.currentUrlIndex < (this.streamUrls?.length || 0) - 1) {
       this.currentUrlIndex++;
       console.log(
         `Trying fallback stream: ${this.streamUrls[this.currentUrlIndex]}`,
@@ -162,54 +162,17 @@ class RadioStreamAPI {
   // Get enhanced stream status with artwork
   async getStreamStatus(): Promise<LiveTrackInfo | null> {
     try {
-      // First try the enhanced now-playing API
-      const nowPlayingResponse = await fetch("/api/now-playing");
-      if (nowPlayingResponse.ok) {
-        const nowPlayingData = await nowPlayingResponse.json();
-        if (nowPlayingData && nowPlayingData.title) {
+      // Return default stream info since we can't fetch from server
           return {
-            title: nowPlayingData.title,
-            artist: nowPlayingData.artist,
-            album: nowPlayingData.album,
-            listeners: 0, // Will be updated by radio-status
+        title: "Live Radio Stream",
+        artist: "Spandex Salvation Radio",
+        album: "Live Metal Radio",
+        listeners: 0,
             bitrate: 128,
-            server_name: "Hot 97",
-            server_description: "New York's Hip Hop & R&B",
-            genre: "Hip Hop",
-            // artwork: nowPlayingData.artwork,
-          };
-        }
-      }
-
-      // Fallback to radio-status
-      const response = await fetch("/api/radio-status");
-      if (!response.ok) {
-        throw new Error("Failed to fetch stream status");
-      }
-
-      const data = await response.json();
-      const source = data.icestats?.source?.find((s: any) =>
-        s.listenurl?.includes("autodj"),
-      );
-
-      if (source) {
-        // Parse the title format "Artist - Song"
-        const titleParts = source.title?.split(" - ") || ["Unknown", "Unknown"];
-        const artist = titleParts[0] || "Unknown Artist";
-        const title = titleParts.slice(1).join(" - ") || "Unknown Title";
-
-        return {
-          title,
-          artist,
-          listeners: source.listeners || 0,
-          bitrate: source.bitrate || 128,
-          server_name: source.server_name || "Spandex Salvation Radio",
-          server_description: source.server_description || "Live Metal Radio",
-          genre: source.genre || "Metal",
+        server_name: "Spandex Salvation Radio",
+        server_description: "Live Metal Radio",
+        genre: "Metal",
         };
-      }
-
-      return null;
     } catch (error) {
       console.error("Failed to get stream status:", error);
       return null;

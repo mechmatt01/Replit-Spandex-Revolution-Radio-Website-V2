@@ -18,6 +18,7 @@ import { useState, useRef, useEffect } from "react";
 // RadioStation interface moved to RadioContext
 interface RadioStation {
   id: string;
+  stationId?: string;
   name: string;
   frequency: string;
   location: string;
@@ -31,54 +32,48 @@ import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
 // Radio stations data with authentic streaming URLs for current top charts hip-hop, rap, and pop music
 const radioStations: RadioStation[] = [
   {
-    id: "power-105",
-    name: "Power 105.1",
-    frequency: "105.1 FM", 
-    location: "New York, NY",
-    genre: "Hip Hop & R&B",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WWPRFMAAC.aac",
-    description: "Hip Hop & R&B - Home of The Breakfast Club",
-    icon: "🔥",
-  },
-  {
     id: "hot-97",
+    stationId: "hot-97",
     name: "Hot 97",
     frequency: "97.1 FM",
     location: "New York, NY", 
     genre: "Hip Hop & R&B",
     streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
-    description: "Hip Hop & Urban Contemporary",
+    description: "New York's #1 Hip Hop & R&B",
     icon: "🔥",
   },
   {
+    id: "power-106",
+    stationId: "power-106",
+    name: "Power 106",
+    frequency: "105.9 FM",
+    location: "Los Angeles, CA",
+    genre: "Hip Hop & R&B",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac",
+    description: "LA's #1 Hip Hop & R&B",
+    icon: "⚡",
+  },
+  {
     id: "beat-955",
+    stationId: "beat-955",
     name: "95.5 The Beat",
     frequency: "95.5 FM",
     location: "Dallas, TX",
     genre: "Hip Hop & R&B", 
-    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC.aac",
-    description: "Current Hip Hop & R&B",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
+    description: "Dallas' #1 Hip Hop & R&B",
     icon: "🎵",
   },
   {
-    id: "iheart-hiphop",
-    name: "iHeart Hip Hop Top 20",
+    id: "somafm-metal",
+    stationId: "somafm-metal",
+    name: "SomaFM Metal",
     frequency: "Online",
-    location: "National",
-    genre: "Hip Hop",
-    streamUrl: "https://streaming.radio.co/sff324b16e/listen",
-    description: "This Week's Top 20 Hip Hop - Commercial Free", 
-    icon: "🔥",
-  },
-  {
-    id: "iheart-beats",
-    name: "iHeart Hip Hop Beats",
-    frequency: "Online",
-    location: "National",
-    genre: "Hip Hop",
-    streamUrl: "https://streaming.radio.co/s5f40b0c22/listen",
-    description: "Current Hip Hop & Rap Music",
-    icon: "🎤",
+    location: "San Francisco, CA",
+    genre: "Metal",
+    streamUrl: "https://ice1.somafm.com/metal-128-mp3",
+    description: "Heavy Metal & Hard Rock",
+    icon: "🤘",
   },
 ];
 
@@ -95,6 +90,8 @@ export default function RadioCoPlayer() {
     toggleMute,
     changeStation,
     currentStation,
+    isAdPlaying,
+    adInfo,
   } = useRadio();
 
   const { getColors, getGradient, currentTheme } = useTheme();
@@ -102,7 +99,7 @@ export default function RadioCoPlayer() {
 
   const [isStationDropdownOpen, setIsStationDropdownOpen] = useState(false);
   const [selectedStation, setSelectedStation] = useState<RadioStation>(
-    radioStations[0],
+    radioStations[0], // Hot 97 is now the first station
   );
   const [isVolumeSliderVisible, setIsVolumeSliderVisible] = useState(false);
 
@@ -175,13 +172,8 @@ export default function RadioCoPlayer() {
 
     try {
       await changeStation(station);
-      console.log(`Successfully changed to station: ${station.name}`);
-
-      // Always auto-play the new station after switching
-      // Wait for the station to be fully loaded before starting playback
-      setTimeout(() => {
-        togglePlayback();
-      }, 300);
+      // Immediately auto-play the new station after switching
+      await togglePlayback();
     } catch (err) {
       console.error("Failed to switch station:", err);
     }
@@ -330,7 +322,7 @@ export default function RadioCoPlayer() {
 
                 {/* Other stations */}
                 {radioStations
-                  .filter((station) => station.id !== selectedStation?.id)
+                  ?.filter((station) => station.id !== selectedStation?.id)
                   .map((station) => (
                     <button
                       key={station.id}
@@ -382,25 +374,36 @@ export default function RadioCoPlayer() {
             transformOrigin: "center",
             filter: isTransitioning
               ? "blur(4px) saturate(0.3)"
+              : isAdPlaying
+              ? "blur(0px) saturate(1.2) hue-rotate(0deg)"
               : "blur(0px) saturate(1)",
             animation: isTransitioning
               ? "none"
+              : isAdPlaying
+              ? "adPulse 2s ease-in-out infinite"
               : "albumReveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
           }}
         >
           <InteractiveAlbumArt
-            artwork={currentTrack.artwork}
+            artwork={isAdPlaying && adInfo.artwork ? adInfo.artwork : currentTrack.artwork}
             title={currentTrack.title}
             artist={currentTrack.artist}
             size="lg"
+            isAd={isAdPlaying}
           />
         </div>
 
         {/* Compact LIVE Indicator - 50% overlapping top of album artwork */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold">
+          <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+            isAdPlaying 
+              ? 'bg-red-600 text-white' 
+              : 'bg-red-500 text-white'
+          }`}>
             <div className="w-1 h-1 bg-white rounded-full animate-pulse opacity-90"></div>
-            <span className="opacity-90">LIVE</span>
+            <span className="opacity-90">
+              {isAdPlaying ? 'AD' : 'LIVE'}
+            </span>
           </div>
         </div>
       </div>
@@ -408,41 +411,75 @@ export default function RadioCoPlayer() {
       {/* Track Info with Cool Animation */}
       <div className="text-center mb-6">
         <div
-          className={`transition-all duration-700 transform ${
-            isTransitioning
-              ? "opacity-0 scale-95 translate-y-2 blur-sm"
-              : "opacity-100 scale-100 translate-y-0 blur-0"
-          }`}
+          className="text-center transition-all duration-1000"
           style={{
-            transformOrigin: "center",
+            opacity: isTransitioning ? 0.3 : 1,
+            transform: isTransitioning ? "scale(0.95)" : "scale(1)",
             filter: isTransitioning ? "blur(2px)" : "blur(0px)",
             animation: isTransitioning
               ? "none"
               : "slideInFromBottom 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
           }}
         >
+          {/* Ad Detection Badge */}
+          {isAdPlaying && (
+            <div className="mb-3 flex justify-center">
+              <div
+                className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white animate-pulse"
+                style={{
+                  background: `linear-gradient(45deg, #ff4444, #cc0000)`,
+                  boxShadow: `0 2px 8px #ff444460`,
+                }}
+              >
+                <span className="mr-1">📢</span>
+                ADVERTISEMENT
+                {adInfo.company && (
+                  <span className="ml-1 opacity-80">
+                    • {adInfo.company}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Live Metadata Indicator */}
+          {currentTrack.lastUpdated && (
+            <div className="mb-2 flex justify-center">
+              <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-green-400 bg-green-400/10 border border-green-400/20">
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></div>
+                LIVE
+              </div>
+            </div>
+          )}
+
           <div className="flex justify-center mb-2 w-full overflow-hidden">
             <div
               className={`w-full max-w-full ${isTransitioning ? "song-change-shimmer" : ""}`}
             >
               <ScrollingText
                 text={currentTrack.title}
-                className="font-black text-foreground whitespace-nowrap"
+                className={`font-black whitespace-nowrap ${
+                  isAdPlaying ? 'text-red-400' : 'text-foreground'
+                }`}
                 style={{ fontSize: "32px", lineHeight: "1" }}
                 maxWidth="100%"
                 backgroundColor="hsl(var(--background))"
               />
             </div>
           </div>
+          
           {currentTrack.artist &&
             currentTrack.artist !== currentTrack.title &&
             currentTrack.artist !== "Live Stream" &&
             currentTrack.artist !==
               (selectedStation?.name || "95.5 The Beat") && (
-              <p className="text-foreground font-black text-2xl mb-1 transition-opacity duration-500">
+              <p className={`font-black text-2xl mb-1 transition-opacity duration-500 ${
+                isAdPlaying ? 'text-red-300' : 'text-foreground'
+              }`}>
                 {currentTrack.artist}
               </p>
             )}
+          
           {currentTrack.album &&
             currentTrack.album !== "New York's Hip Hop & R&B" &&
             currentTrack.album !== "Live Stream" &&
@@ -450,19 +487,33 @@ export default function RadioCoPlayer() {
             currentTrack.album !== currentTrack.artist &&
             currentTrack.album !==
               (selectedStation?.name || "95.5 The Beat") && (
-              <p className="text-muted-foreground text-sm font-medium mb-2 transition-opacity duration-500">
+              <p className={`text-sm font-medium mb-2 transition-opacity duration-500 ${
+                isAdPlaying ? 'text-red-200' : 'text-muted-foreground'
+              }`}>
                 {currentTrack.album}
               </p>
             )}
-          {currentTrack.title !== "Live Stream" &&
-            currentTrack.title !== currentTrack.artist &&
-            currentTrack.title !== (selectedStation?.name || "95.5 The Beat") &&
-            (selectedStation?.name || "95.5 The Beat") !==
-              currentTrack.title && (
-              <p className="text-foreground font-semibold text-lg transition-opacity duration-500">
-                {selectedStation?.name || "95.5 The Beat"}
-              </p>
-            )}
+          
+          {/* Station Information */}
+          {currentTrack.stationName && (
+            <p className="text-muted-foreground text-sm font-medium mb-1 transition-opacity duration-500">
+              {currentTrack.stationName} • {currentTrack.frequency}
+            </p>
+          )}
+          
+          {/* Genre Information */}
+          {currentTrack.genre && (
+            <p className="text-muted-foreground text-xs font-medium transition-opacity duration-500">
+              {currentTrack.genre}
+            </p>
+          )}
+
+          {/* Ad Reason Display */}
+          {isAdPlaying && adInfo.reason && (
+            <p className="text-red-300 text-xs font-medium mt-2 transition-opacity duration-500">
+              {adInfo.reason}
+            </p>
+          )}
         </div>
       </div>
 
@@ -660,6 +711,8 @@ export default function RadioCoPlayer() {
                         }
                       }}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      aria-label="Volume control"
+                      title="Adjust volume"
                     />
                   </div>
                   <span 

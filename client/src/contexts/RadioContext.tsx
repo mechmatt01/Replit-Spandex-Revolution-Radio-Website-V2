@@ -25,6 +25,14 @@ interface TrackInfo {
   artist: string;
   album?: string;
   artwork?: string;
+  isAd?: boolean;
+  adCompany?: string;
+  adReason?: string;
+  stationName?: string;
+  frequency?: string;
+  location?: string;
+  genre?: string;
+  lastUpdated?: Date;
 }
 
 interface RadioContextType {
@@ -37,6 +45,12 @@ interface RadioContextType {
   currentStation: RadioStation | null;
   stationName: string;
   isTransitioning: boolean;
+  isAdPlaying: boolean;
+  adInfo: {
+    company?: string;
+    reason?: string;
+    artwork?: string;
+  };
   togglePlayback: () => Promise<void>;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
@@ -92,23 +106,36 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentStation, setCurrentStation] = useState<RadioStation | null>({
-    id: "beat-955",
-    stationId: "kbfb-955",
-    name: "95.5 The Beat",
-    frequency: "95.5 FM",
-    location: "Dallas, TX",
+    id: "hot-97",
+    stationId: "hot-97",
+    name: "Hot 97",
+    frequency: "97.1 FM",
+    location: "New York, NY",
     genre: "Hip Hop & R&B",
-    streamUrl: "https://24883.live.streamtheworld.com/KBFBFMAAC",
-    description: "Dallas Hip Hop & R&B",
-    icon: "🎵",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
+    description: "New York's #1 Hip Hop & R&B",
+    icon: "🔥",
   });
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
-    title: "95.5 The Beat",
-    artist: "Dallas Hip Hop & R&B",
-    album: "95.5 FM • Dallas, TX",
+    title: "Hot 97",
+    artist: "New York's Hip Hop & Urban Contemporary",
+    album: "97.1 FM • New York, NY",
     artwork: "",
+    isAd: false,
+    stationName: "Hot 97",
+    frequency: "97.1 FM",
+    location: "New York, NY",
+    genre: "Hip Hop & Urban Contemporary",
+    lastUpdated: new Date(),
   });
-  const [stationName, setStationName] = useState("95.5 The Beat");
+  const [isAdPlaying, setIsAdPlaying] = useState(false);
+  const [adInfo, setAdInfo] = useState<{
+    company?: string;
+    reason?: string;
+    artwork?: string;
+  }>({});
+  const [metadataPollingInterval, setMetadataPollingInterval] = useState<NodeJS.Timeout | null>(null);
+  const [stationName, setStationName] = useState("Hot 97");
   const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -117,49 +144,90 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
   const getStreamUrls = (station: RadioStation | null): string[] => {
     if (!station || !station.streamUrl) return [
-      "/api/radio-stream",
-      "https://ice1.somafm.com/metal-128-mp3",
-      "https://ice2.somafm.com/metal-128-mp3"
+      "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
+      "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM.mp3"
     ];
     
     // Use actual station stream URLs with robust fallbacks
     const streamUrl = station.streamUrl;
     
-    // Station-specific fallbacks with working URLs
-    if (station.id === "beat-955") {
-      return [
-        streamUrl, // Direct 95.5 The Beat URL
-        `/api/radio-stream?url=${encodeURIComponent(streamUrl)}`, // Proxy fallback
-        "https://ice1.somafm.com/beatblender-128-mp3", // SomaFM Hip Hop fallback
-        "https://ice2.somafm.com/beatblender-128-mp3"
-      ];
-    }
-    
+    // Hot 97 fallbacks
     if (station.id === "hot-97") {
       return [
-        `/api/radio-stream?url=${encodeURIComponent(streamUrl)}`, // Proxy first for redirect
-        streamUrl, // Direct Hot 97 URL
-        "https://ice1.somafm.com/groovesalad-256-mp3", // SomaFM fallback
-        "https://ice2.somafm.com/groovesalad-256-mp3"
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac", // AAC
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM.mp3",    // MP3
+        "https://26183.live.streamtheworld.com:443/WQHTFMAAC.aac",                        // Old AAC
+        "https://26183.live.streamtheworld.com:443/WQHTFM.mp3",                           // Old MP3
+        "https://ice1.somafm.com/beatblender-128-mp3",                                    // Generic fallback
+        "https://ice2.somafm.com/beatblender-128-mp3",
+        "https://ice6.somafm.com/beatblender-128-mp3"
       ];
     }
     
-    // For SomaFM stations, provide multiple ice servers as fallbacks
-    if (streamUrl.includes('somafm.com')) {
-      const baseUrl = streamUrl.replace(/https:\/\/ice\d+\.somafm\.com/, '');
+    // Power 106 fallbacks
+    if (station.id === "power-106") {
       return [
-        streamUrl, // Original URL
-        `https://ice2.somafm.com${baseUrl}`,
-        `https://ice6.somafm.com${baseUrl}`,
-        `https://ice3.somafm.com${baseUrl}`
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFMAAC.aac", // AAC
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/KPWRFM.mp3",    // MP3
+        "https://ice1.somafm.com/beatblender-128-mp3",                                    // Fallback
+        "https://ice2.somafm.com/beatblender-128-mp3",
+        "https://ice6.somafm.com/beatblender-128-mp3"
+      ];
+    }
+    
+    // 95.5 The Beat fallbacks
+    if (station.id === "beat-955") {
+      return [
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac", // AAC
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFM.mp3",    // MP3
+        "https://24883.live.streamtheworld.com/KBFBFMAAC.aac",                            // Old AAC
+        "https://ice1.somafm.com/beatblender-128-mp3",                                    // Fallback
+        "https://ice2.somafm.com/beatblender-128-mp3",
+        "https://ice6.somafm.com/beatblender-128-mp3"
+      ];
+    }
+    
+    // SomaFM Metal fallbacks
+    if (station.id === "somafm-metal") {
+      return [
+        "https://ice1.somafm.com/metal-128-mp3",                                          // Primary
+        "https://ice2.somafm.com/metal-128-mp3",                                          // Fallback 1
+        "https://ice6.somafm.com/metal-128-mp3",                                          // Fallback 2
+        "https://ice1.somafm.com/beatblender-128-mp3",                                    // Generic fallback
+        "https://ice2.somafm.com/beatblender-128-mp3",
+        "https://ice6.somafm.com/beatblender-128-mp3"
+      ];
+    }
+    
+    // Hot 105 fallbacks
+    if (station.id === "hot-105") {
+      return [
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WMIBFMAAC.aac", // AAC
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WMIBFM.mp3",    // MP3
+        "https://ice1.somafm.com/beatblender-128-mp3",                                    // Fallback
+        "https://ice2.somafm.com/beatblender-128-mp3",
+        "https://ice6.somafm.com/beatblender-128-mp3"
+      ];
+    }
+    
+    // Q93 fallbacks
+    if (station.id === "q-93") {
+      return [
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQUE-FMAAC.aac", // AAC
+        "https://playerservices.streamtheworld.com/api/livestream-redirect/WQUE-FM.mp3",    // MP3
+        "https://ice1.somafm.com/beatblender-128-mp3",                                     // Fallback
+        "https://ice2.somafm.com/beatblender-128-mp3",
+        "https://ice6.somafm.com/beatblender-128-mp3"
       ];
     }
     
     // Default fallback for any other stations
     return [
       streamUrl,
-      `/api/radio-stream?url=${encodeURIComponent(streamUrl)}`,
-      "https://ice1.somafm.com/metal-128-mp3"
+      "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
+      "https://ice1.somafm.com/beatblender-128-mp3",
+      "https://ice2.somafm.com/beatblender-128-mp3",
+      "https://ice6.somafm.com/beatblender-128-mp3"
     ];
   };
 
@@ -192,7 +260,11 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     let streamWorked = false;
     const streamUrls = getStreamUrls(currentStation);
 
-    for (let i = 0; i < streamUrls.length; i++) {
+    if (!streamUrls || (streamUrls?.length || 0) === 0) {
+      throw new Error("No stream URLs available");
+    }
+
+    for (let i = 0; i < (streamUrls?.length || 0); i++) {
       try {
         const url = streamUrls[i];
         console.log(`Trying radio stream ${i + 1}: ${url}`);
@@ -244,7 +316,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       } catch (urlError: any) {
         console.warn(`Stream ${i + 1} failed:`, urlError?.message || 'Unknown error');
 
-        if (i === streamUrls.length - 1) {
+        if (i === (streamUrls?.length || 0) - 1) {
           throw new Error("All stream sources failed");
         }
       }
@@ -363,37 +435,13 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         audio.addEventListener('error', onReady);
       });
 
-      // Immediately fetch track info for the new station
-      try {
-        const response = await fetch(`/api/now-playing?station=${station.stationId || station.id}`);
-        if (response.ok) {
-          const trackData = await response.json();
-          setCurrentTrack({
-            title: trackData.title || station.name,
-            artist: trackData.artist || station.description,
-            album:
-              trackData.album || `${station.frequency} • ${station.location}`,
-            artwork: trackData.artwork || "",
-          });
-        } else {
-          // Fallback to station info
-          setCurrentTrack({
-            title: station.name,
-            artist: station.description,
-            album: `${station.frequency} • ${station.location}`,
-            artwork: "",
-          });
-        }
-      } catch (trackError) {
-        console.error("Failed to fetch initial track info:", trackError);
-        // Fallback to station info
-        setCurrentTrack({
-          title: station.name,
-          artist: station.description,
-          album: `${station.frequency} • ${station.location}`,
-          artwork: "",
-        });
-      }
+      // Set track info based on station
+      setCurrentTrack({
+        title: station.name,
+        artist: station.description,
+        album: `${station.frequency} • ${station.location}`,
+        artwork: "",
+      });
 
       console.log(`Station changed to: ${station.name} (${station.streamUrl})`);
     } catch (err) {
@@ -406,23 +454,32 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
   // Audio event handlers
   const handlePlay = () => {
+    console.log("Audio play event triggered");
     setIsPlaying(true);
     setIsLoading(false);
     setError(null);
   };
 
   const handlePause = () => {
+    console.log("Audio pause event triggered");
     setIsPlaying(false);
     setIsLoading(false);
   };
 
   const handleLoadStart = () => {
+    console.log("Audio loadstart event triggered");
     setIsLoading(true);
     setError(null);
   };
 
   const handleCanPlay = () => {
-    setIsLoading(false);
+    console.log("Audio canplay event triggered");
+    // Don't set loading to false here, wait for play event
+  };
+
+  const handleCanPlayThrough = () => {
+    console.log("Audio canplaythrough event triggered");
+    // Don't set loading to false here, wait for play event
   };
 
   const handleError = (e: Event) => {
@@ -433,6 +490,16 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     if (audio && audio.src && !audio.paused) {
       setError("Unable to connect to radio stream");
     }
+  };
+
+  const handleStalled = () => {
+    console.log("Audio stalled event triggered");
+    // Keep loading state if stalled
+  };
+
+  const handleWaiting = () => {
+    console.log("Audio waiting event triggered");
+    setIsLoading(true);
   };
 
   // Set up audio event listeners
@@ -446,131 +513,256 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     audio.addEventListener("pause", handlePause);
     audio.addEventListener("loadstart", handleLoadStart);
     audio.addEventListener("canplay", handleCanPlay);
+    audio.addEventListener("canplaythrough", handleCanPlayThrough);
     audio.addEventListener("error", handleError);
+    audio.addEventListener("stalled", handleStalled);
+    audio.addEventListener("waiting", handleWaiting);
 
     return () => {
       audio.removeEventListener("play", handlePlay);
       audio.removeEventListener("pause", handlePause);
       audio.removeEventListener("loadstart", handleLoadStart);
       audio.removeEventListener("canplay", handleCanPlay);
+      audio.removeEventListener("canplaythrough", handleCanPlayThrough);
       audio.removeEventListener("error", handleError);
+      audio.removeEventListener("stalled", handleStalled);
+      audio.removeEventListener("waiting", handleWaiting);
     };
   }, [volume, isMuted]);
 
-  // Auto-play functionality - start playing when component mounts
+  // Auto-play first station on mount (try immediately, then fallback to user interaction)
   useEffect(() => {
-    const initializeAutoPlay = async () => {
-      // Only auto-play if not already playing and no error
-      if (!isPlaying && !error) {
-        try {
-          // Small delay to ensure audio element is ready
-          setTimeout(() => {
-            togglePlayback();
-          }, 1000);
-        } catch (error) {
-          console.log("Auto-play prevented by browser:", error);
+    const tryImmediateAutoPlay = async () => {
+      try {
+        if (!isPlaying && !error && currentStation) {
+          console.log("[RadioContext] Attempting immediate auto-play on mount.");
+          await togglePlayback();
         }
+      } catch (err) {
+        console.log("[RadioContext] Immediate auto-play blocked by browser:", err);
       }
     };
+    tryImmediateAutoPlay();
 
+    const initializeAutoPlay = async () => {
+      // Check if user has interacted with the page
+      const hasUserInteracted = localStorage.getItem('radio-user-interacted');
+      if (!hasUserInteracted) {
+        // Wait for first user interaction before auto-playing
+        const handleFirstInteraction = async () => {
+          localStorage.setItem('radio-user-interacted', 'true');
+          document.removeEventListener('click', handleFirstInteraction);
+          document.removeEventListener('keydown', handleFirstInteraction);
+          document.removeEventListener('touchstart', handleFirstInteraction);
+          // Small delay to ensure audio element is ready
+          setTimeout(async () => {
+            try {
+              if (!isPlaying && !error && currentStation) {
+                console.log("Auto-playing first station after user interaction:", currentStation.name);
+                await togglePlayback();
+              }
+            } catch (error) {
+              console.log("Auto-play prevented by browser:", error);
+            }
+          }, 1000);
+        };
+        document.addEventListener('click', handleFirstInteraction);
+        document.addEventListener('keydown', handleFirstInteraction);
+        document.addEventListener('touchstart', handleFirstInteraction);
+      }
+    };
     initializeAutoPlay();
   }, []); // Run only once on mount
 
-  // Track information fetching - only when playing and track changes
+  // Auto-play functionality
   useEffect(() => {
-    let trackInterval: NodeJS.Timeout;
-
-    const fetchTrackInfo = async () => {
-      if (!isPlaying) return;
-
+    const initializeAutoPlay = async () => {
       try {
-        const stationParam = currentStation?.id
-          ? `?station=${currentStation.id}`
-          : "";
-        const response = await fetch(`/api/now-playing${stationParam}`);
-        if (response.ok) {
-          const trackData = await response.json();
-
-          // Only update if track has actually changed (and it's not generic station info)
-          const isActualSong =
-            trackData.title &&
-            trackData.title !== "Radio Stream" &&
-            trackData.title !== "Live Stream" &&
-            trackData.title !== currentStation?.name &&
-            trackData.title !== currentStation?.description;
-
-          const hasTrackChanged =
-            trackData.title !== currentTrack.title ||
-            trackData.artist !== currentTrack.artist;
-
-          if (hasTrackChanged) {
-            // Only trigger cool animation for actual song changes
-            if (isActualSong && currentTrack.title !== currentStation?.name) {
-              setIsTransitioning(true);
-
-              // Wait for transition to start, then update content
-              setTimeout(() => {
-                setCurrentTrack({
-                  title: trackData.title,
-                  artist: trackData.artist || "",
-                  album: trackData.album || "",
-                  artwork: trackData.artwork || "",
-                });
-              }, 350); // Half of transition duration
-
-              // End transition after animation completes
-              setTimeout(() => setIsTransitioning(false), 1200);
-            } else {
-              // For station info or non-songs, update without animation
-              const displayTitle =
-                trackData.title === "Radio Stream" || !trackData.title
-                  ? currentStation?.name || stationName
-                  : trackData.title;
-
-              const displayArtist =
-                trackData.artist === "Live Stream" || !trackData.artist
-                  ? currentStation?.description || ""
-                  : trackData.artist;
-
-              const displayAlbum =
-                trackData.album ||
-                (currentStation
-                  ? `${currentStation.frequency} • ${currentStation.location}`
-                  : "");
-
-              setCurrentTrack({
-                title: displayTitle,
-                artist: displayArtist,
-                album: displayAlbum,
-                artwork: trackData.artwork || "",
-              });
+        // Check if user has previously selected a station
+        const lastStationId = localStorage.getItem('last-selected-station');
+        const shouldAutoPlay = localStorage.getItem('auto-play-enabled') !== 'false';
+        
+        if (shouldAutoPlay && currentStation) {
+          console.log('[RadioContext] Auto-playing station:', currentStation.name);
+          
+          // Small delay to ensure everything is loaded
+          setTimeout(async () => {
+            if (!isPlaying) {
+              await togglePlayback();
             }
-          }
+          }, 1000);
         }
       } catch (error) {
-        console.error("Failed to fetch track info:", error);
+        console.error('[RadioContext] Auto-play initialization error:', error);
       }
     };
 
-    if (isPlaying) {
-      fetchTrackInfo();
-      trackInterval = setInterval(fetchTrackInfo, 15000); // Check every 15 seconds instead of 10
+    // Initialize auto-play after a short delay
+    const timer = setTimeout(initializeAutoPlay, 2000);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Save last selected station
+  useEffect(() => {
+    if (currentStation) {
+      localStorage.setItem('last-selected-station', currentStation.id);
+    }
+  }, [currentStation]);
+
+  // Track information - show station info when playing
+  useEffect(() => {
+    if (isPlaying && currentStation) {
+      setCurrentTrack({
+        title: currentStation.name,
+        artist: currentStation.description,
+        album: `${currentStation.frequency} • ${currentStation.location}`,
+        artwork: "",
+      });
+    } else if (!isPlaying) {
+      // When stopped, show station name
+      setCurrentTrack({
+        title: stationName,
+        artist: "",
+        album: "",
+        artwork: "",
+      });
+    }
+  }, [isPlaying, stationName, currentStation]);
+
+  // Metadata polling function
+  const fetchLiveMetadata = useCallback(async (station: RadioStation | null) => {
+    if (!station || !isPlaying) return;
+    
+    console.log(`[RadioContext] Fetching metadata for station: ${station.name} (${station.id})`);
+    
+    try {
+      // Use the correct now-playing endpoint with station parameter
+      const metadataEndpoint = `/api/now-playing?station=${station.stationId || station.id}`;
+      
+      console.log(`[RadioContext] Calling metadata endpoint: ${metadataEndpoint}`);
+      
+      const response = await fetch(metadataEndpoint);
+      console.log(`[RadioContext] Metadata response status: ${response.status}`);
+      
+      const contentType = response.headers.get("content-type");
+      console.log(`[RadioContext] Metadata response content-type: ${contentType}`);
+      
+      if (!response.ok) {
+        console.warn(`[RadioContext] Metadata endpoint returned error: ${response.status} ${response.statusText}`);
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      if (!contentType || !contentType.includes("application/json")) {
+        console.warn("[RadioContext] Metadata endpoint did not return JSON:", metadataEndpoint);
+        // Fallback to static metadata
+        const fallbackTrack: TrackInfo = {
+          title: station.name,
+          artist: station.description,
+          album: `${station.frequency} • ${station.location}`,
+          artwork: getDefaultArtwork(station.name, station.description),
+          isAd: false,
+          stationName: station.name,
+          frequency: station.frequency,
+          location: station.location,
+          genre: station.genre,
+          lastUpdated: new Date(),
+        };
+        setCurrentTrack(fallbackTrack);
+        console.log(`[RadioContext] Using fallback metadata: "${fallbackTrack.title}" by ${fallbackTrack.artist}`);
+        return;
+      }
+      
+      const metadata = await response.json();
+      console.log(`[RadioContext] Received metadata:`, metadata);
+        
+      const newTrackInfo: TrackInfo = {
+        title: metadata.title || station.name,
+        artist: metadata.artist || station.description,
+        album: metadata.album || `${station.frequency} • ${station.location}`,
+        artwork: metadata.artwork || getDefaultArtwork(metadata.title || station.name, metadata.artist || station.description),
+        isAd: metadata.isAd || false,
+        adCompany: metadata.adCompany,
+        adReason: metadata.adReason,
+        stationName: station.name,
+        frequency: station.frequency,
+        location: station.location,
+        genre: station.genre,
+        lastUpdated: new Date(),
+      };
+
+      // Update track info
+      setCurrentTrack(newTrackInfo);
+      
+      // Update ad detection state
+      setIsAdPlaying(metadata.isAd || false);
+      setAdInfo({
+        company: metadata.adCompany,
+        reason: metadata.adReason,
+        artwork: metadata.isAd ? metadata.artwork : undefined,
+      });
+
+      console.log(`[RadioContext] Live metadata updated: "${newTrackInfo.title}" by ${newTrackInfo.artist}${newTrackInfo.isAd ? ' (Advertisement)' : ''}`);
+      
+      if (newTrackInfo.isAd) {
+        console.log(`[RadioContext] Ad detected: ${newTrackInfo.adCompany || 'Unknown Company'} - ${newTrackInfo.adReason || 'Various indicators'}`);
+      }
+    } catch (error) {
+      console.error('[RadioContext] Failed to fetch live metadata:', error);
+      
+      // Use fallback metadata when server is unavailable
+      const fallbackTrack: TrackInfo = {
+        title: station.name,
+        artist: station.description,
+        album: `${station.frequency} • ${station.location}`,
+        artwork: getDefaultArtwork(station.name, station.description),
+        isAd: false,
+        stationName: station.name,
+        frequency: station.frequency,
+        location: station.location,
+        genre: station.genre,
+        lastUpdated: new Date(),
+      };
+      setCurrentTrack(fallbackTrack);
+      console.log(`[RadioContext] Using fallback metadata due to error: "${fallbackTrack.title}" by ${fallbackTrack.artist}`);
+    }
+  }, [isPlaying]);
+
+  // Start metadata polling when playing
+  useEffect(() => {
+    if (isPlaying && currentStation) {
+      // Initial fetch
+      fetchLiveMetadata(currentStation);
+      
+      // Set up polling interval (every 10 seconds)
+      const interval = setInterval(() => {
+        fetchLiveMetadata(currentStation);
+      }, 10000);
+      
+      setMetadataPollingInterval(interval);
+      
+      return () => {
+        if (interval) {
+          clearInterval(interval);
+        }
+      };
     } else {
-      // When stopped, show station name only if no track is set
-      if (currentTrack.title === "" || currentTrack.title === stationName) {
-        setCurrentTrack({
-          title: stationName,
-          artist: "",
-          album: "",
-          artwork: "",
-        });
+      // Clear interval when not playing
+      if (metadataPollingInterval) {
+        clearInterval(metadataPollingInterval);
+        setMetadataPollingInterval(null);
       }
     }
+  }, [isPlaying, currentStation, fetchLiveMetadata]);
 
+  // Cleanup on unmount
+  useEffect(() => {
     return () => {
-      if (trackInterval) clearInterval(trackInterval);
+      if (metadataPollingInterval) {
+        clearInterval(metadataPollingInterval);
+      }
     };
-  }, [isPlaying, stationName, currentStation?.id]);
+  }, [metadataPollingInterval]);
 
   const value: RadioContextType = {
     isPlaying,
@@ -582,6 +774,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     currentStation,
     stationName,
     isTransitioning,
+    isAdPlaying,
+    adInfo,
     togglePlayback,
     setVolume,
     toggleMute,

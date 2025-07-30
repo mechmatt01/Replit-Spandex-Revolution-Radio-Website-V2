@@ -217,7 +217,7 @@ export default function MetalThemeSwitcher() {
                                 fill: "#ffd700",
                                 filter: isLocked
                                   ? "grayscale(100%) opacity(0.5)"
-                                  : "drop-shadow(0 0 2px rgba(255, 215, 0, 0.3))",
+                                  : "drop-shadow(0 0 1px rgba(255, 215, 0, 0.3))",
                               }}
                             />
                           )}

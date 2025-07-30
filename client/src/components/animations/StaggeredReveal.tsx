@@ -24,7 +24,7 @@ const StaggeredReveal: React.FC<StaggeredRevealProps> = ({
           setHasStarted(true);
           
           // Initialize visibility array
-          setVisibleItems(new Array(children.length).fill(false));
+          setVisibleItems(new Array(children?.length || 0).fill(false));
           
           // Stagger the animations
           children.forEach((_, index) => {
@@ -49,7 +49,7 @@ const StaggeredReveal: React.FC<StaggeredRevealProps> = ({
     }
 
     return () => observer.disconnect();
-  }, [children.length, delay, staggerDelay, hasStarted]);
+  }, [children?.length || 0, delay, staggerDelay, hasStarted]);
 
   return (
     <div ref={containerRef} className={className}>

@@ -248,7 +248,7 @@ export default function ShopifyEcommerce() {
 
   const handleCheckout = async () => {
     // In a real implementation, this would redirect to Shopify checkout
-    const checkoutUrl = `https://spandex-salvation-radio.myshopify.com/cart/${cart.map((item) => `${item.variantId}:${item.quantity}`).join(",")}`;
+    const checkoutUrl = `https://spandex-salvation-radio.myshopify.com/cart/${(cart || []).map((item) => `${item.variantId}:${item.quantity}`).join(",")}`;
 
     toast({
       title: "Redirecting to Checkout",
@@ -290,7 +290,7 @@ export default function ShopifyEcommerce() {
         </div>
 
         {/* Cart Summary */}
-        {cart.length > 0 && (
+                      {(cart || []).length > 0 && (
           <div className="mb-8">
             <Card className="bg-dark-surface/50 hover:bg-dark-surface/70 transition-all duration-300">
               <CardContent className="p-4">
@@ -298,7 +298,7 @@ export default function ShopifyEcommerce() {
                   <div className="flex items-center">
                     <ShoppingCart className="text-metal-orange h-5 w-5 mr-2" />
                     <span className="font-black text-white">
-                      {cart.reduce((total, item) => total + item.quantity, 0)}{" "}
+                      {(cart || []).reduce((total, item) => total + item.quantity, 0)}{" "}
                       items in cart
                     </span>
                   </div>
@@ -330,7 +330,7 @@ export default function ShopifyEcommerce() {
           <div className="w-full flex justify-center">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
               {products
-                .filter((product) => product.featured)
+                ?.filter((product) => product.featured)
                 .map((product) => (
                   <ProductCard
                     key={product.id}
@@ -487,19 +487,19 @@ function ProductCard({
         </div>
 
         <div className="mt-auto">
-          {product.variants.length > 1 && (
+          {(product.variants || []).length > 1 && (
             <div className="relative mb-3">
               <select
                 value={selectedVariant.id}
                 onChange={(e) =>
                   setSelectedVariant(
-                    product.variants.find((v) => v.id === e.target.value)!,
+                    product.variants?.find((v) => v.id === e.target.value)!,
                   )
                 }
                 className="w-full p-2 bg-dark-bg/50 text-white rounded appearance-none pr-8"
                 style={{ borderColor: colors.primary }}
               >
-                {product.variants.map((variant) => (
+                {(product.variants || []).map((variant) => (
                   <option
                     key={variant.id}
                     value={variant.id}
@@ -634,7 +634,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                 )}
               </div>
 
-              {product.variants.length > 1 && (
+              {(product.variants || []).length > 1 && (
                 <div className="mb-4">
                   <label className="block text-gray-300 font-semibold mb-2">
                     Size:
@@ -643,12 +643,12 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                     value={selectedVariant.id}
                     onChange={(e) =>
                       setSelectedVariant(
-                        product.variants.find((v) => v.id === e.target.value)!,
+                        product.variants?.find((v) => v.id === e.target.value)!,
                       )
                     }
                     className="w-full p-2 bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange rounded"
                   >
-                    {product.variants.map((variant) => (
+                    {(product.variants || []).map((variant) => (
                       <option
                         key={variant.id}
                         value={variant.id}

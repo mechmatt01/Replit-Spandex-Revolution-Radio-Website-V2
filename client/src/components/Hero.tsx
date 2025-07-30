@@ -46,13 +46,13 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden -mt-16 pt-16"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20"
     >
       {/* Background with Theme-Aware Fade */}
       <div className="absolute inset-0 -top-16">
         {/* Background Image */}
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-20 dark:opacity-20 light:opacity-30"
+          className="absolute inset-0 bg-cover bg-center opacity-25 dark:opacity-20 light:opacity-35"
           style={{
             backgroundImage:
               "url('https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=1080')",
@@ -87,7 +87,7 @@ export default function Hero() {
           }}
         ></div>
       </div>
-      <div className="relative z-10 text-center max-w-4xl mx-auto px-4 pt-8">
+      <div className="relative z-10 text-center max-w-4xl mx-auto px-4 pt-12">
         <h1 
           className="font-orbitron font-black text-5xl md:text-8xl mb-8"
           style={{ 

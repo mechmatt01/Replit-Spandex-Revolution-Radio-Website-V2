@@ -14,6 +14,36 @@
   --background-rgb: 31, 41, 55;
 }
 
+/* Mobile Safari Navigation Fix */
+.safe-area-inset-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Ensure navigation stays above content on mobile */
+@media (max-width: 1023px) {
+  body {
+    padding-top: calc(4rem + env(safe-area-inset-top));
+  }
+  
+  /* Fix for iOS Safari viewport issues */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      padding-top: calc(4rem + env(safe-area-inset-top) + 20px);
+    }
+  }
+}
+
+/* Additional mobile Safari fixes */
+@supports (-webkit-touch-callout: none) {
+  nav {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+  }
+}
+
 /* Gradient text styling for better cross-browser support */
 .gradient-text {
   background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
@@ -153,6 +183,69 @@
   100% {
     background-position: 200% 0;
   }
+}
+
+/* Animation classes for map and UI components */
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in-from-top {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+.slide-in-from-left {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+.slide-in-from-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Duration classes for animations */
+.duration-300 {
+  animation-duration: 300ms;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
 }
 
 @keyframes fadeInUp {
@@ -405,4 +498,305 @@
 .interactive-hover:hover {
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes adPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 10px rgba(255, 68, 68, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+  }
+}
+
+/* Track information fade animations */
+.track-info-fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.track-info-fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+.track-info-fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.track-info-fade-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+/* Ad detection fade animations */
+.ad-badge-fade-enter {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.ad-badge-fade-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 400ms ease-in-out, transform 400ms ease-in-out;
+}
+
+.ad-badge-fade-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ad-badge-fade-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 400ms ease-in-out, transform 400ms ease-in-out;
+}
+
+/* Live metadata indicator animations */
+.live-indicator-pulse {
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulsing marker animation for map */
+.pulsing-marker-overlay {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes modernPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 20px 4px rgba(66, 133, 244, 0.4);
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.6;
+    box-shadow: 0 0 25px 6px rgba(66, 133, 244, 0.5);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.3);
+    opacity: 0.3;
+    box-shadow: 0 0 30px 8px rgba(66, 133, 244, 0.3);
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.6;
+    box-shadow: 0 0 25px 6px rgba(66, 133, 244, 0.5);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 20px 4px rgba(66, 133, 244, 0.4);
+  }
+}
+
+/* Improved: Remove all default Google Maps InfoWindow backgrounds and shadows */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-chr,
+.gm-style-iw-ch,
+.gm-style-iw-d {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.gm-style-iw-t::after,
+.gm-style-iw-t::before {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Aggressively remove all backgrounds and box-shadows from Google Maps InfoWindow */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-chr,
+.gm-style-iw-ch,
+.gm-style-iw-d,
+.gm-style-iw-t,
+.gm-style-iw-t::after,
+.gm-style-iw-t::before,
+.gm-style-iw button,
+.gm-style-iw span,
+.gm-style-iw * {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Remove background from any div with inline background set to white */
+.gm-style-iw [style*="background: #fff"],
+.gm-style-iw [style*="background-color: #fff"],
+.gm-style-iw [style*="background: white"],
+.gm-style-iw [style*="background-color: white"] {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Remove background from all direct children of the InfoWindow */
+.gm-style-iw > div,
+.gm-style-iw-c > div,
+.gm-style-iw-chr > div,
+.gm-style-iw-ch > div,
+.gm-style-iw-d > div {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Google Maps InfoWindow Overrides - Complete white background removal */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-d,
+.gm-style-iw-t,
+.gm-style-iw-t::after,
+.gm-style-iw-t::before {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Remove all default Google Maps InfoWindow styling */
+.gm-style-iw > div,
+.gm-style-iw-c > div,
+.gm-style-iw-d > div {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Remove InfoWindow arrow */
+.gm-style-iw-t::after,
+.gm-style-iw-t::before {
+  display: none !important;
+}
+
+/* Remove any remaining white backgrounds */
+.gm-style-iw [style*="background: #fff"],
+.gm-style-iw [style*="background: white"],
+.gm-style-iw [style*="background-color: #fff"],
+.gm-style-iw [style*="background-color: white"] {
+  background: transparent !important;
+}
+
+/* Ensure our custom InfoWindow content is fully visible */
+#custom-infowindow {
+  background: var(--custom-bg) !important;
+  border: var(--custom-border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--custom-shadow) !important;
+  padding: 24px !important;
+  margin: 0 !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* Remove any Google Maps default InfoWindow container */
+.gm-style-iw-c {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  min-width: none !important;
+}
+
+/* Remove InfoWindow close button default styling */
+.gm-style-iw-d button,
+.gm-style-iw-d .gm-style-iw-c button {
+  display: none !important;
+}
+
+/* Ensure no white space around InfoWindow */
+.gm-style-iw-d {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+/* Additional comprehensive overrides for all possible white backgrounds */
+.gm-style-iw *,
+.gm-style-iw-c *,
+.gm-style-iw-d * {
+  background: transparent !important;
+}
+
+/* Remove any remaining Google Maps default styling */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-d {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  min-width: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Force our custom InfoWindow to be the only visible element */
+#custom-infowindow {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: var(--custom-bg) !important;
+  border: var(--custom-border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--custom-shadow) !important;
+  padding: 24px !important;
+  margin: 0 !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  min-width: 280px !important;
+  max-width: 320px !important;
 }

@@ -1,6 +1,6 @@
 # Replit deployment configuration
 [deployment]
-run = ["sh", "-c", "cd client && npm run build && cd .. && NODE_ENV=production npx tsx server/index.ts"]
+run = ["sh", "-c", "npm run build"]
 deploymentTarget = "autoscale"
 ignorePorts = false
 
@@ -22,7 +22,7 @@ localPort = 5000
 externalPort = 443
 
 [deployment.run]
-command = ["sh", "-c", "cd client && npm run build && cd .. && NODE_ENV=production npx tsx server/index.ts"]
+command = ["sh", "-c", "npm run build"]
 
 [deployment.environment]
 NODE_ENV = "production"

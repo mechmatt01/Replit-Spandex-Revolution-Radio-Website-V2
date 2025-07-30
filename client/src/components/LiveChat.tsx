@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Send, MessageCircle, X, Users, Mic, MicOff } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@shared/schema";
@@ -219,7 +219,7 @@ export default function LiveChat({
               {/* Messages Area */}
               <ScrollArea className="flex-1 px-4" ref={scrollAreaRef}>
                 <div className="space-y-3 py-2">
-                  {messages.length === 0 ? (
+                  {(messages || []).length === 0 ? (
                     <div className="text-center text-gray-500 text-sm py-8">
                       <MessageCircle className="h-8 w-8 mx-auto mb-2 text-gray-600" />
                       <p>Welcome to the live chat!</p>
@@ -228,7 +228,7 @@ export default function LiveChat({
                       </p>
                     </div>
                   ) : (
-                    messages.map((msg) => (
+                    (messages || []).map((msg) => (
                       <div key={msg.id} className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-xs">
                           <span

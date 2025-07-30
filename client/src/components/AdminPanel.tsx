@@ -339,7 +339,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                               Merch Items
                             </p>
                             <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                              {mockMerch.length}
+                              {mockMerch?.length || 0}
                             </p>
                           </div>
                           <ShoppingBag className="w-8 h-8" style={{ color: colors.primary }} />
@@ -381,7 +381,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   </div>
 
                   {/* New Show Form */}
-                  {Object.keys(newShowItem).length > 0 && (
+                  {Object.keys(newShowItem || {}).length > 0 && (
                     <Card className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
                       <CardHeader>
                         <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>
@@ -479,7 +479,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
                   {/* Show List */}
                   <div className="space-y-4">
-                    {showSchedules?.map((show) => (
+                    {(showSchedules || []).map((show) => (
                       <Card key={show.id} className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
                         <CardContent className="p-4">
                           {editingShow?.id === show.id ? (
@@ -584,7 +584,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {mockMerch.map((item) => (
+                    {(mockMerch || []).map((item) => (
                       <Card key={item.id} className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
                         <CardContent className="p-4">
                           <div className="aspect-square bg-gray-200 rounded-lg mb-4 flex items-center justify-center">

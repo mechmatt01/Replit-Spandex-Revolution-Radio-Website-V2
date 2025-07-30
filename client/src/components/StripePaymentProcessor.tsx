@@ -301,7 +301,7 @@ export default function StripePaymentProcessor() {
       {/* Mobile Layout - Only visible on small screens */}
       <div className="md:hidden w-full">
         <div className="flex flex-col gap-8 max-w-sm mx-auto">
-        {subscriptionTiers.map((tier) => (
+        {(subscriptionTiers || []).map((tier) => (
         <div key={`mobile-${tier.id}`} className="relative">
           {/* Title Above Box */}
           <h3 
@@ -365,7 +365,7 @@ export default function StripePaymentProcessor() {
                 </div>
 
                 <ul className="space-y-4 mb-12 flex-grow">
-                  {tier.features.map((feature, index) => (
+                  {(tier.features || []).map((feature, index) => (
                     <li key={index} className="flex items-start justify-center">
                       <div className="flex items-start max-w-xs">
                         <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
@@ -387,7 +387,7 @@ export default function StripePaymentProcessor() {
                   boxShadow: `0 4px 15px ${tier.gradientStart}40`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = `0 8px 25px ${tier.gradientStart}80, 0 0 20px ${tier.gradientEnd}60`;
+                  e.currentTarget.style.boxShadow = `0 8px 25px ${tier.gradientStart}80, 0 0 10px ${tier.gradientEnd}60`;
                   e.currentTarget.style.transform = "scale(1.1)";
                 }}
                 onMouseLeave={(e) => {
@@ -413,7 +413,7 @@ export default function StripePaymentProcessor() {
           height: "600px" 
         }}
       >
-        {subscriptionTiers.map((tier, index) => (
+        {(subscriptionTiers || []).map((tier, index) => (
           <div
             key={`desktop-${tier.id}`}
             className="absolute transition-all duration-300"
@@ -516,7 +516,7 @@ export default function StripePaymentProcessor() {
                   </div>
 
                   <ul className="space-y-4 mb-12 flex-grow px-6">
-                    {tier.features.map((feature, index) => (
+                    {(tier.features || []).map((feature, index) => (
                       <li key={index} className="flex items-start">
                         <Check className="text-metal-orange h-6 w-6 mr-3 mt-0.5 flex-shrink-0" />
                         <span className="text-gray-300 font-semibold text-base leading-relaxed">
@@ -536,7 +536,7 @@ export default function StripePaymentProcessor() {
                     boxShadow: `0 4px 15px ${tier.gradientStart}40`,
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = `0 8px 25px ${tier.gradientStart}80, 0 0 20px ${tier.gradientEnd}60`;
+                    e.currentTarget.style.boxShadow = `0 8px 25px ${tier.gradientStart}80, 0 0 10px ${tier.gradientEnd}60`;
                     e.currentTarget.style.transform = "scale(1.1)";
                   }}
                   onMouseLeave={(e) => {

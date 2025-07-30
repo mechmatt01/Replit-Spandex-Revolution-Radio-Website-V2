@@ -40,10 +40,10 @@ export default function ShoppingCartComponent({
   const total = subtotal + tax;
 
   useEffect(() => {
-    if (cart.length > 0) {
+    if ((cart?.length || 0) > 0) {
       setIsVisible(true);
     }
-  }, [cart.length]);
+  }, [(cart?.length || 0)]);
 
   useEffect(() => {
     // Listen for cart animation events
@@ -108,12 +108,12 @@ export default function ShoppingCartComponent({
                 </Button>
               </div>
 
-              {cart.length === 0 ? (
+              {(cart || []).length === 0 ? (
                 <p style={{ color: colors.textMuted }}>Your cart is empty</p>
               ) : (
                 <>
                   <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
-                    {cart.map((item) => (
+                    {(cart || []).map((item) => (
                       <div
                         key={item.variantId}
                         className="flex items-center space-x-3"

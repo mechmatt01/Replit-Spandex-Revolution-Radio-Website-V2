@@ -18,6 +18,7 @@ import {
   Phone,
 } from "lucide-react";
 import GoogleLogoPath from "@assets/GoogleLogoIcon.png";
+import { registerUser, loginUser } from "@/lib/firebase";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -70,7 +71,7 @@ export default function AuthModal({
   // Phone number formatting
   const formatPhoneNumber = (value: string) => {
     const phoneNumber = value.replace(/[^\d]/g, "");
-    const phoneNumberLength = phoneNumber.length;
+    const phoneNumberLength = phoneNumber?.length || 0;
 
     if (phoneNumberLength < 4) return phoneNumber;
     if (phoneNumberLength < 7) {
@@ -90,55 +91,52 @@ export default function AuthModal({
 
     try {
       if (mode === "login") {
-        const response = await fetch("/api/auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-        });
-
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || "Login failed");
+        // Use Firebase login
+        const result = await loginUser(email, password);
+        
+        if (!result.success) {
+          throw new Error(result.error || "Login failed");
         }
+
+        // Store user data in localStorage for session management
+        localStorage.setItem('userID', result.userID);
+        localStorage.setItem('userProfile', JSON.stringify(result.profile));
 
         toast({
           title: "Welcome back!",
           description: "You've successfully logged in.",
         });
         
-        // Refresh the page to update authentication state
+        // Close modal and refresh to update authentication state
+        onClose();
         window.location.reload();
       } else {
-        const response = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            firstName,
-            lastName,
-            email,
-            phoneNumber: phoneNumber.replace(/[^\d]/g, ""),
-            username,
-            password,
-          }),
+        // Use Firebase registration
+        const result = await registerUser({
+          firstName,
+          lastName,
+          email,
+          phoneNumber: phoneNumber.replace(/[^\d]/g, ""),
+          password,
         });
 
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.message || "Registration failed");
+        if (!result.success) {
+          throw new Error(result.error || "Registration failed");
         }
+
+        // Store user data in localStorage for session management
+        localStorage.setItem('userID', result.userID);
+        localStorage.setItem('userProfile', JSON.stringify(result.profile));
 
         toast({
           title: "Account created!",
           description: "Welcome to Spandex Salvation Radio.",
         });
         
-        // Refresh the page to update authentication state
+        // Close modal and refresh to update authentication state
+        onClose();
         window.location.reload();
       }
-      onClose();
       resetForm();
     } catch (error: any) {
       toast({
@@ -388,6 +386,7 @@ export default function AuthModal({
                     (e.currentTarget.style.borderColor = "#374151")
                   }
                   placeholder="Password"
+                  autoComplete={mode === "login" ? "current-password" : "new-password"}
                   required
                 />
               </div>
