@@ -158,7 +158,7 @@ export default function MetalThemeSwitcher() {
                     key={themeKey}
                     onClick={() => handleThemeClick(themeKey, themeConfig)}
                     variant="ghost"
-                    className={`w-full justify-start p-3 h-auto hover:bg-opacity-20 ${
+                    className={`w-full justify-start p-3 h-auto transition-all duration-200 ${
                       isActive ? "ring-2" : ""
                     } ${isLocked ? "opacity-75" : ""}`}
                     style={{
@@ -167,6 +167,16 @@ export default function MetalThemeSwitcher() {
                         : "transparent",
                       borderColor: isActive ? colors.primary : "transparent",
                       color: isActive ? 'white' : colors.text,
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isActive && !isLocked) {
+                        e.currentTarget.style.backgroundColor = `${colors.primary}15`; // 15 = ~8% opacity
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isActive) {
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }
                     }}
                   >
                     <div className="flex items-start gap-3 w-full">

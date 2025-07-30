@@ -131,12 +131,12 @@ export default function Hero() {
           <div className="flex flex-col items-center mb-3">
             {/* Modern launch indicator */}
             <div className="relative mb-3" aria-hidden="true">
-              <div className="w-4 h-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-full animate-pulse shadow-lg"></div>
-              <div className="absolute inset-0 w-4 h-4 bg-gradient-to-r from-red-500 to-orange-500 rounded-full animate-ping opacity-75"></div>
+              <div className="w-4 h-4 bg-gradient-to-r from-red-500 to-primary rounded-full animate-pulse shadow-lg"></div>
+              <div className="absolute inset-0 w-4 h-4 bg-gradient-to-r from-red-500 to-primary rounded-full animate-ping opacity-75"></div>
             </div>
             {/* Modern LIVE IN text */}
             <div className="text-center">
-              <span className="text-transparent bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-xl font-black tracking-wider">
+              <span className="text-transparent bg-gradient-to-r from-red-500 to-primary bg-clip-text text-xl font-black tracking-wider">
                 LIVE IN
               </span>
             </div>

@@ -157,7 +157,6 @@ textarea:focus,
   --tw-ring-color: hsl(var(--ring) / 0.5) !important;
   border-color: hsl(var(--ring)) !important;
 }
-}
 
 /* Easter Egg: Site Logo Spin Animation */
 @keyframes logoSpinFastToSlow {
