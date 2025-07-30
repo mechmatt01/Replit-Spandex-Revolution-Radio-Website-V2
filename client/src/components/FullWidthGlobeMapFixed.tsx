@@ -365,7 +365,7 @@ const FullWidthGlobeMapFixed = () => {
     return { marker, infoWindow, pulsingOverlay };
   };
 
-  // Toggle fullscreen map view
+  // Toggle fullscreen map view with smooth animation
   const toggleFullscreen = () => {
     if (!map) return;
     
@@ -378,28 +378,32 @@ const FullWidthGlobeMapFixed = () => {
       // Expand to fullscreen
       setIsFullscreen(true);
       
-      // Force map resize after state change
+      // Force map resize after animation completes
       setTimeout(() => {
         if (map) {
           google.maps.event.trigger(map, 'resize');
+          // Restore center and zoom after resize
+          if (mapState.center && mapState.zoom) {
+            map.setCenter(mapState.center);
+            map.setZoom(mapState.zoom);
+          }
         }
-      }, 100);
+      }, 400); // Match animation duration
     } else {
-      // Restore map state
-      if (mapState) {
-        map.setCenter(mapState.center);
-        map.setZoom(mapState.zoom);
-      }
-      
       // Collapse from fullscreen
       setIsFullscreen(false);
       
-      // Force map resize after state change
+      // Force map resize after animation completes
       setTimeout(() => {
         if (map) {
           google.maps.event.trigger(map, 'resize');
+          // Restore center and zoom after resize
+          if (mapState.center && mapState.zoom) {
+            map.setCenter(mapState.center);
+            map.setZoom(mapState.zoom);
+          }
         }
-      }, 100);
+      }, 400); // Match animation duration
     }
   };
 
@@ -852,7 +856,15 @@ const FullWidthGlobeMapFixed = () => {
             </div>
 
             {/* Map Container */}
-            <div className="relative w-full h-96 rounded-xl overflow-hidden shadow-2xl border-2" style={{ borderColor: colors.primary }}>
+            <div className={`relative w-full rounded-xl overflow-hidden shadow-2xl border-2 transition-all duration-500 ease-in-out ${
+              isFullscreen 
+                ? 'fixed inset-0 z-[9999] rounded-none border-0 top-16 bottom-20' 
+                : 'h-96'
+            }`} 
+            style={{ 
+              borderColor: isFullscreen ? 'transparent' : colors.primary,
+              backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb"
+            }}>
               {isLoading && (
                 <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-20">
                   <div className="text-center">
@@ -861,24 +873,26 @@ const FullWidthGlobeMapFixed = () => {
                   </div>
                 </div>
               )}
+              
+              {/* Map Element */}
               <div 
                 ref={mapRef}
-                className={`${
-                  isFullscreen 
-                    ? 'fixed inset-0 z-[99999] h-screen' 
-                    : 'h-96 rounded-xl'
-                } transition-all duration-500 ease-in-out`}
+                className="w-full h-full transition-all duration-500 ease-in-out"
                 style={{
                   backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
                   overflow: "hidden"
                 }}
               />
 
-              {/* Expand/Close Button */}
+              {/* Expand/Close Button - Always in top-left of map */}
               <Button
                 onClick={toggleFullscreen}
                 size="sm"
-                className="absolute top-4 left-4 z-10 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105"
+                className={`absolute top-4 left-4 z-[10001] border-0 shadow-lg transition-all duration-300 hover:scale-105 ${
+                  isFullscreen 
+                    ? 'bg-red-600 hover:bg-red-700 text-white' 
+                    : 'bg-gray-800 hover:bg-gray-700 text-white'
+                }`}
               >
                 {isFullscreen ? (
                   <>
@@ -893,8 +907,10 @@ const FullWidthGlobeMapFixed = () => {
                 )}
               </Button>
 
-              {/* Map Controls */}
-              <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+              {/* Map Controls - Always in top-right of map */}
+              <div className={`absolute top-4 right-4 flex flex-col gap-2 z-[10001] transition-all duration-500 ease-in-out ${
+                isFullscreen ? 'scale-110' : 'scale-100'
+              }`}>
                 <Button onClick={handleZoomIn} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
                   <ZoomIn className="w-4 h-4" />
                 </Button>
@@ -908,6 +924,23 @@ const FullWidthGlobeMapFixed = () => {
                   <RotateCcw className="w-4 h-4" />
                 </Button>
               </div>
+
+              {/* Weather Info Overlay in Fullscreen - Top Left Below Buttons */}
+              {isFullscreen && weather && (
+                <div className="absolute top-4 left-20 z-[10001] bg-black/80 backdrop-blur-md rounded-lg px-4 py-2 transition-all duration-500 ease-in-out">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
+                      alt={weather.description}
+                      className="w-6 h-6 object-contain"
+                    />
+                    <div className="text-sm">
+                      <span className="text-white font-medium">{weather.location}</span>
+                      <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Live Statistics Section */}
@@ -983,50 +1016,7 @@ const FullWidthGlobeMapFixed = () => {
         </section>
       )}
 
-      {/* Fullscreen Overlay with smooth animation */}
-      {isFullscreen && (
-        <div className="fixed inset-0 z-[99999] bg-black animate-in fade-in duration-300">
-          {/* Fullscreen Header with blur effect */}
-          <div className="absolute top-0 left-0 right-0 z-[100000] bg-black/90 backdrop-blur-md border-b border-gray-700 animate-in slide-in-from-top duration-300">
-            <div className="flex items-center justify-between px-6 py-4">
-              <div className="flex items-center gap-4">
-                <h2 className="text-xl font-bold text-white">Live Interactive Map</h2>
-                {weather && (
-                  <div className="flex items-center gap-3 bg-gray-900/80 rounded-lg px-4 py-2">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
-                        alt={weather.description}
-                        className="w-6 h-6 object-contain"
-                      />
-                      <div className="text-sm">
-                        <span className="text-white font-medium">{weather.location}</span>
-                        <span className="text-gray-300 ml-2">{Math.round(weather.temperature)}°F</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
 
-          {/* Fullscreen Map Controls */}
-          <div className="absolute top-20 right-6 z-[100001] flex flex-col gap-2 animate-in slide-in-from-right duration-300">
-            <Button onClick={handleZoomIn} size="sm" className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl scale-110 transition-all duration-300 hover:scale-125">
-              <ZoomIn className="w-5 h-5" />
-            </Button>
-            <Button onClick={handleZoomOut} size="sm" className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl scale-110 transition-all duration-300 hover:scale-125">
-              <ZoomOut className="w-5 h-5" />
-            </Button>
-            <Button onClick={handleMyLocation} size="sm" className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl scale-110 transition-all duration-300 hover:scale-125">
-              <MapPin className="w-5 h-5" />
-            </Button>
-            <Button onClick={handleReset} size="sm" className="p-3 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-xl scale-110 transition-all duration-300 hover:scale-125">
-              <RotateCcw className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-      )}
     </>
   );
 };
