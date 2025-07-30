@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { RadioProvider } from "@/contexts/RadioContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
+import { AccessibilityProvider, useSkipLinks } from "@/components/AccessibilityProvider";
 import SkipToContent from "@/components/SkipToContent";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
 import VerificationModal from "@/components/VerificationModal";
@@ -76,29 +77,32 @@ function Router() {
 }
 
 function App() {
+  useSkipLinks();
 
   return (
     <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <FirebaseAuthProvider>
-          <ThemeProvider>
-            <RadioProvider>
-              <AdminProvider>
-                <TooltipProvider>
-                  <SkipToContent />
-                  <DynamicMetaTags />
-                  <Toaster />
-                  <VerificationGate>
-                    <Router />
-                  </VerificationGate>
-                </TooltipProvider>
-              </AdminProvider>
-            </RadioProvider>
-          </ThemeProvider>
-        </FirebaseAuthProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <AccessibilityProvider>
+          <AuthProvider>
+            <FirebaseAuthProvider>
+              <ThemeProvider>
+                <RadioProvider>
+                  <AdminProvider>
+                    <TooltipProvider>
+                      <SkipToContent />
+                      <DynamicMetaTags />
+                      <Toaster />
+                      <VerificationGate>
+                        <Router />
+                      </VerificationGate>
+                    </TooltipProvider>
+                  </AdminProvider>
+                </RadioProvider>
+              </ThemeProvider>
+            </FirebaseAuthProvider>
+          </AuthProvider>
+        </AccessibilityProvider>
+      </QueryClientProvider>
     </ErrorBoundary>
   );
 }

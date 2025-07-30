@@ -2,6 +2,7 @@ import { Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRadio } from "@/contexts/RadioContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
 import { useState, useEffect } from "react";
@@ -22,6 +23,13 @@ export default function StickyPlayer() {
   } = useRadio();
   const { getGradient, getColors, currentTheme } = useTheme();
   const colors = getColors();
+  
+  // Adaptive theme for current track artwork
+  const { adaptiveTheme, isAnalyzing } = useAdaptiveTheme(
+    currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+      ? currentTrack.artwork 
+      : undefined
+  );
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -60,12 +68,25 @@ export default function StickyPlayer() {
 
   return (
     <div
-      className={`fixed bottom-2 left-4 bg-card/95 backdrop-blur-sm z-50 transition-all duration-500 rounded-2xl shadow-lg ${
+      className={`fixed bottom-2 left-4 backdrop-blur-sm z-50 transition-all duration-500 rounded-2xl shadow-lg ${
         isVisible
           ? "transform translate-y-0 opacity-100"
           : "transform translate-y-full opacity-0"
       }`}
-      style={{ width: "320px", maxWidth: "calc(100vw - 32px)" }}
+      style={{ 
+        width: "320px", 
+        maxWidth: "calc(100vw - 32px)",
+        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}, ${adaptiveTheme.overlayColor})`
+          : 'rgba(0, 0, 0, 0.9)',
+        backdropFilter: 'blur(20px)',
+        border: `1px solid ${currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+          ? adaptiveTheme.accentColor + '60' 
+          : colors.primary + '40'}`,
+        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+          ? adaptiveTheme.textColor 
+          : colors.text
+      }}
       role="region"
       aria-label="Floating audio player"
       aria-live="polite"
@@ -113,19 +134,15 @@ export default function StickyPlayer() {
                     ? currentTrack.title
                     : stationName
                 }
-                className={`font-semibold text-sm whitespace-nowrap ${
-                  isAdPlaying ? 'text-red-400' : ''
-                }`}
+                className="font-semibold text-sm whitespace-nowrap"
                 style={{ 
-                  color: isAdPlaying 
-                    ? '#f87171' 
-                    : currentTheme === 'light-mode' 
-                      ? '#000000' 
-                      : colors.text 
+                  color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                    ? adaptiveTheme.textColor 
+                    : (isAdPlaying ? '#f87171' : colors.text)
                 }}
                 maxWidth="100%"
                 isFloating={true}
-                backgroundColor="hsl(var(--background))"
+                backgroundColor="transparent"
                 alignment="left"
               />
             </div>
@@ -134,7 +151,14 @@ export default function StickyPlayer() {
             {currentTrack.artist && 
              currentTrack.artist !== currentTrack.title &&
              currentTrack.artist !== stationName && (
-              <div className="text-xs text-muted-foreground truncate mt-0.5">
+              <div 
+                className="text-xs truncate mt-0.5"
+                style={{
+                  color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                    ? (adaptiveTheme.isLight ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.6)')
+                    : colors.textMuted
+                }}
+              >
                 {currentTrack.artist}
               </div>
             )}

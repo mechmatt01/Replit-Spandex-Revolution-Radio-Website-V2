@@ -55,8 +55,11 @@ export default function HomePage() {
         color: colors.text 
       }}
     >
-      <Navigation />
-      <Hero />
+      <div id="main-navigation">
+        <Navigation />
+      </div>
+      <main id="main-content">
+        <Hero />
       
       <FadeInView direction="up" delay={0}>
         <Features />
@@ -122,8 +125,9 @@ export default function HomePage() {
         <Footer />
       </FadeInView>
       
-      <StickyPlayer />
-      <ChatButton />
+        <StickyPlayer />
+        <ChatButton />
+      </main>
     </div>
   );
 }

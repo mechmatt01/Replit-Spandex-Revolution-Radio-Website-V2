@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useRadio } from "@/contexts/RadioContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
 import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
@@ -118,6 +119,13 @@ export default function RadioCoPlayer() {
 
   const { getColors, getGradient, currentTheme } = useTheme();
   const colors = getColors();
+  
+  // Adaptive theme for current track artwork
+  const { adaptiveTheme, isAnalyzing } = useAdaptiveTheme(
+    currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+      ? currentTrack.artwork 
+      : undefined
+  );
 
   const [isStationDropdownOpen, setIsStationDropdownOpen] = useState(false);
   const [selectedStation, setSelectedStation] = useState<RadioStation>(
@@ -205,9 +213,21 @@ export default function RadioCoPlayer() {
 
   return (
     <section
-      className="bg-card/50 backdrop-blur-sm rounded-2xl p-6 shadow-lg"
+      className="backdrop-blur-sm rounded-2xl p-6 shadow-lg transition-all duration-500 ease-in-out"
       role="region"
       aria-label="Radio player controls"
+      style={{
+        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}, ${adaptiveTheme.overlayColor})`
+          : 'rgba(255, 255, 255, 0.1)',
+        backdropFilter: 'blur(20px)',
+        border: `1px solid ${currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+          ? adaptiveTheme.accentColor + '40' 
+          : colors.primary + '40'}`,
+        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+          ? adaptiveTheme.textColor 
+          : colors.text
+      }}
     >
       {/* Hidden Audio Element */}
       <audio
@@ -480,12 +500,16 @@ export default function RadioCoPlayer() {
             >
               <ScrollingText
                 text={currentTrack.title}
-                className={`font-black whitespace-nowrap ${
-                  isAdPlaying ? 'text-red-400' : 'text-foreground'
-                }`}
-                style={{ fontSize: "32px", lineHeight: "1" }}
+                className={`font-black whitespace-nowrap`}
+                style={{ 
+                  fontSize: "32px", 
+                  lineHeight: "1",
+                  color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                    ? adaptiveTheme.textColor 
+                    : (isAdPlaying ? '#f87171' : colors.text)
+                }}
                 maxWidth="100%"
-                backgroundColor="hsl(var(--background))"
+                backgroundColor="transparent"
               />
             </div>
           </div>
@@ -495,9 +519,14 @@ export default function RadioCoPlayer() {
             currentTrack.artist !== "Live Stream" &&
             currentTrack.artist !==
               (selectedStation?.name || "95.5 The Beat") && (
-              <p className={`font-black text-2xl mb-1 transition-opacity duration-500 ${
-                isAdPlaying ? 'text-red-300' : 'text-foreground'
-              }`}>
+              <p 
+                className="font-black text-2xl mb-1 transition-opacity duration-500"
+                style={{
+                  color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                    ? adaptiveTheme.textColor 
+                    : (isAdPlaying ? '#fca5a5' : colors.text)
+                }}
+              >
                 {currentTrack.artist}
               </p>
             )}
@@ -509,9 +538,14 @@ export default function RadioCoPlayer() {
             currentTrack.album !== currentTrack.artist &&
             currentTrack.album !==
               (selectedStation?.name || "95.5 The Beat") && (
-              <p className={`text-sm font-medium mb-2 transition-opacity duration-500 ${
-                isAdPlaying ? 'text-red-200' : 'text-muted-foreground'
-              }`}>
+              <p 
+                className="text-sm font-medium mb-2 transition-opacity duration-500"
+                style={{
+                  color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                    ? (adaptiveTheme.isLight ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)')
+                    : (isAdPlaying ? '#fecaca' : colors.textMuted)
+                }}
+              >
                 {currentTrack.album}
               </p>
             )}
