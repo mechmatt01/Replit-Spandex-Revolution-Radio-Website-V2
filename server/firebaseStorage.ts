@@ -201,9 +201,39 @@ export class FirebaseRadioStationStorage {
   private readonly collection = 'radio_stations';
 
   /**
+   * Get fallback radio stations when Firebase is not available
+   */
+  private getFallbackStations(): RadioStation[] {
+    return [
+      {
+        id: 1,
+        name: "Spandex Salvation Radio",
+        stationId: "spandex-salvation",
+        streamUrl: "https://stream.radio.co/sc4b64e91c/listen",
+        description: "The ultimate destination for heavy metal, hard rock, and everything in between",
+        genre: "Heavy Metal",
+        website: "https://spandex-salvation-radio.com",
+        apiUrl: "https://public.radio.co/stations/sc4b64e91c/status",
+        apiType: "radio_co",
+        frequency: "Spandex Salvation",
+        location: "Worldwide",
+        logo: "/api/placeholder/100/100",
+        isActive: true,
+        sortOrder: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ];
+  }
+
+  /**
    * Get all radio stations ordered by sort order
    */
   async getRadioStations(): Promise<RadioStation[]> {
+    if (!isFirebaseAvailable || !db) {
+      return this.getFallbackStations();
+    }
+
     try {
       const snapshot = await db.collection(this.collection)
         .orderBy('sortOrder', 'asc')
@@ -217,7 +247,7 @@ export class FirebaseRadioStationStorage {
       })) as RadioStation[];
     } catch (error) {
       console.error('Error getting radio stations:', error);
-      return [];
+      return this.getFallbackStations();
     }
   }
 
@@ -225,6 +255,10 @@ export class FirebaseRadioStationStorage {
    * Get only active radio stations
    */
   async getActiveRadioStations(): Promise<RadioStation[]> {
+    if (!isFirebaseAvailable || !db) {
+      return this.getFallbackStations().filter(station => station.isActive);
+    }
+
     try {
       const snapshot = await db.collection(this.collection)
         .where('isActive', '==', true)
@@ -239,7 +273,7 @@ export class FirebaseRadioStationStorage {
       })) as RadioStation[];
     } catch (error) {
       console.error('Error getting active radio stations:', error);
-      return [];
+      return this.getFallbackStations().filter(station => station.isActive);
     }
   }
 
@@ -247,6 +281,10 @@ export class FirebaseRadioStationStorage {
    * Get radio station by ID
    */
   async getRadioStationById(id: number): Promise<RadioStation | undefined> {
+    if (!isFirebaseAvailable || !db) {
+      return this.getFallbackStations().find(station => station.id === id);
+    }
+
     try {
       const doc = await db.collection(this.collection).doc(id.toString()).get();
 
@@ -260,7 +298,7 @@ export class FirebaseRadioStationStorage {
       } as RadioStation;
     } catch (error) {
       console.error('Error getting radio station by ID:', error);
-      return undefined;
+      return this.getFallbackStations().find(station => station.id === id);
     }
   }
 
@@ -268,6 +306,10 @@ export class FirebaseRadioStationStorage {
    * Get radio station by station ID
    */
   async getRadioStationByStationId(stationId: string): Promise<RadioStation | undefined> {
+    if (!isFirebaseAvailable || !db) {
+      return this.getFallbackStations().find(station => station.stationId === stationId);
+    }
+
     try {
       const snapshot = await db.collection(this.collection)
         .where('stationId', '==', stationId)
@@ -285,7 +327,7 @@ export class FirebaseRadioStationStorage {
       } as RadioStation;
     } catch (error) {
       console.error('Error getting radio station by station ID:', error);
-      return undefined;
+      return this.getFallbackStations().find(station => station.stationId === stationId);
     }
   }
 
@@ -293,6 +335,11 @@ export class FirebaseRadioStationStorage {
    * Create new radio station
    */
   async createRadioStation(insertStation: InsertRadioStation): Promise<RadioStation> {
+    if (!isFirebaseAvailable || !db) {
+      console.warn('Firebase not available. Cannot create radio station.');
+      throw new Error('Firebase service not available');
+    }
+
     try {
       // Generate new ID
       const newId = await this.generateNewId();
@@ -370,6 +417,10 @@ export class FirebaseRadioStationStorage {
    * Generate new ID for radio station
    */
   private async generateNewId(): Promise<number> {
+    if (!isFirebaseAvailable || !db) {
+      return Date.now(); // Fallback to timestamp
+    }
+
     try {
       const snapshot = await db.collection(this.collection)
         .orderBy('__name__', 'desc')
@@ -391,6 +442,11 @@ export class FirebaseRadioStationStorage {
    * Initialize default radio stations
    */
   async initializeDefaultStations(): Promise<void> {
+    if (!isFirebaseAvailable || !db) {
+      console.log('Firebase not available. Using fallback stations.');
+      return;
+    }
+
     try {
       // Check if any stations exist
       const existing = await this.getRadioStations();

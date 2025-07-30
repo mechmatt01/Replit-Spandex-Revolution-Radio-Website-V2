@@ -74,17 +74,8 @@ function Router() {
   );
 }
 
-function App() {
+function GlobalNotificationHandler() {
   const { toast } = useToast();
-
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        gcTime: 10 * 60 * 1000, // 10 minutes
-      },
-    },
-  });
 
   // Initialize global notification function
   useEffect(() => {
@@ -97,6 +88,19 @@ function App() {
     };
   }, [toast]);
 
+  return null;
+}
+
+function App() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        gcTime: 10 * 60 * 1000, // 10 minutes
+      },
+    },
+  });
+
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
@@ -108,6 +112,7 @@ function App() {
                   <TooltipProvider>
                     <DynamicMetaTags />
                     <Toaster />
+                    <GlobalNotificationHandler />
                     <VerificationGate>
                       <Router />
                     </VerificationGate>

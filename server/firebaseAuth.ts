@@ -2,36 +2,42 @@ import { initializeApp, cert, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import bcrypt from 'bcryptjs';
 
+let firebaseInitialized = false;
+
 // Initialize Firebase Admin (if not already initialized)
-if (!getApps().length) {
-  try {
+try {
+  if (!getApps().length) {
     // Try to get service account from environment variables first
     const serviceAccountEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
-    let serviceAccount;
-
+    
     if (serviceAccountEnv) {
       // Parse service account from environment variable
-      serviceAccount = JSON.parse(serviceAccountEnv);
+      const serviceAccount = JSON.parse(serviceAccountEnv);
+      console.log('Firebase service account loaded from environment variables');
+      
+      initializeApp({
+        credential: cert(serviceAccount),
+        storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'spandex-salvation-radio-site.firebasestorage.app'
+      });
+      
+      firebaseInitialized = true;
+      console.log('✅ Firebase Admin initialized successfully');
     } else {
-      // Fallback to file (for local development)
-      serviceAccount = require('../firebase-service-account.json');
-      console.warn('⚠️ Using service account file. Consider moving to environment variables for production.');
+      console.log('Firebase service account not found - using mock data');
+      console.warn('💡 Make sure FIREBASE_SERVICE_ACCOUNT secret is set in Replit Secrets');
+      // Firebase will not be initialized - functions will use fallback behavior
     }
-
-    initializeApp({
-      credential: cert(serviceAccount),
-      storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'spandex-salvation-radio-site.firebasestorage.app'
-    });
-
-    console.log('✅ Firebase Admin initialized successfully');
-  } catch (error) {
-    console.error('❌ Firebase Admin initialization error:', error);
-    console.error('💡 Make sure FIREBASE_SERVICE_ACCOUNT secret is set in Replit Secrets');
-    throw error;
+  } else {
+    firebaseInitialized = true;
   }
+} catch (error) {
+  console.error('❌ Firebase Admin initialization error:', error);
+  console.error('💡 Make sure FIREBASE_SERVICE_ACCOUNT secret is set in Replit Secrets');
+  firebaseInitialized = false;
 }
 
-export const db = getFirestore();
+// Export Firestore database instance with fallback
+export const db = firebaseInitialized ? getFirestore() : null;
 
 // Available avatars in Firebase Storage
 const AVATAR_OPTIONS = [
@@ -96,6 +102,10 @@ export async function createFirestoreUser(userData: {
   password?: string;
   googleId?: string;
 }): Promise<{ userKey: string; userData: UserProfileData }> {
+  if (!firebaseInitialized || !db) {
+    throw new Error('Firebase not initialized. Please set up FIREBASE_SERVICE_ACCOUNT.');
+  }
+
   const userKey = generateUserKey();
   const profileImageUrl = getRandomAvatar();
 
@@ -132,6 +142,11 @@ export async function createFirestoreUser(userData: {
 
 // Authenticate user (email/password login)
 export async function authenticateUser(email: string, password: string): Promise<UserProfileData | null> {
+  if (!firebaseInitialized || !db) {
+    console.warn('Firebase not initialized. Authentication unavailable.');
+    return null;
+  }
+
   try {
     // Query all users to find matching email
     const usersSnapshot = await db.collection('Users').get();
@@ -159,6 +174,11 @@ export async function authenticateUser(email: string, password: string): Promise
 
 // Get user by email
 export async function getUserByEmail(email: string): Promise<UserProfileData | null> {
+  if (!firebaseInitialized || !db) {
+    console.warn('Firebase not initialized. User lookup unavailable.');
+    return null;
+  }
+
   try {
     const usersSnapshot = await db.collection('Users').get();
 
@@ -178,6 +198,11 @@ export async function getUserByEmail(email: string): Promise<UserProfileData | n
 
 // Get user by Google ID
 export async function getUserByGoogleId(googleId: string): Promise<UserProfileData | null> {
+  if (!firebaseInitialized || !db) {
+    console.warn('Firebase not initialized. User lookup unavailable.');
+    return null;
+  }
+
   try {
     const usersSnapshot = await db.collection('Users').get();
 
@@ -197,6 +222,11 @@ export async function getUserByGoogleId(googleId: string): Promise<UserProfileDa
 
 // Update user profile
 export async function updateUserProfile(userKey: string, updates: Partial<UserProfileData>): Promise<boolean> {
+  if (!firebaseInitialized || !db) {
+    console.warn('Firebase not initialized. Profile update unavailable.');
+    return false;
+  }
+
   try {
     await db.collection('Users').doc(`User:${userKey}`).update(updates);
     return true;
@@ -208,6 +238,11 @@ export async function updateUserProfile(userKey: string, updates: Partial<UserPr
 
 // Check if email already exists
 export async function emailExists(email: string): Promise<boolean> {
+  if (!firebaseInitialized || !db) {
+    console.warn('Firebase not initialized. Email check unavailable.');
+    return false;
+  }
+  
   const user = await getUserByEmail(email);
   return user !== null;
 }
@@ -222,6 +257,10 @@ export async function registerFirebaseUser(userData: {
   phoneNumber: string;
   password: string;
 }) {
+  if (!firebaseInitialized || !db) {
+    return { success: false, error: 'Firebase service not available. Please contact support.' };
+  }
+
   try {
     console.log('[Firebase Auth] Starting registration for:', userData.email);
 
@@ -306,6 +345,10 @@ export async function registerFirebaseUser(userData: {
 
 // Login user with email and password
 export async function loginFirebaseUser(email: string, password: string) {
+  if (!firebaseInitialized || !db) {
+    return { success: false, error: 'Firebase service not available. Please contact support.' };
+  }
+
   try {
     console.log('[Firebase Auth] Attempting login for:', email);
 

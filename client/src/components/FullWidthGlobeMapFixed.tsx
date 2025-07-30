@@ -795,7 +795,6 @@ const FullWidthGlobeMapFixed = () => {
       {isFullscreen && (
         <div 
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] transition-all duration-500 ease-in-out"
-          ```text
           style={{ 
             top: '4rem', // Below navigation bar
             bottom: '5rem', // Above floating player
