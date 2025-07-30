@@ -7,6 +7,9 @@
 :root {
   --background: #1f2937;
   --background-rgb: 31, 41, 55;
+  /* Default ring color that will be overridden by theme system */
+  --ring: 213 94% 68%;
+  --tw-ring-color: hsl(213 94% 68% / 0.5);
 }
 
 .dark {
@@ -123,6 +126,37 @@
 
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Force theme-aware focus ring colors - highest priority override */
+* {
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+}
+
+/* Target all possible focus states with theme colors */
+button:focus-visible,
+input:focus,
+select:focus,
+textarea:focus,
+[role="button"]:focus-visible,
+.focus\:ring-2:focus,
+.focus-visible\:ring-2:focus-visible,
+.focus\:ring-ring:focus,
+.focus-visible\:ring-ring:focus-visible {
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+}
+
+/* Ensure theme colors override any hardcoded focus states */
+.ring-orange-500,
+.focus\:ring-orange-500:focus,
+.focus\:ring-metal-orange:focus,
+.border-orange-500,
+.focus\:border-orange-500:focus,
+.focus\:border-metal-orange:focus {
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  border-color: hsl(var(--ring)) !important;
+}
 }
 
 /* Easter Egg: Site Logo Spin Animation */

@@ -552,13 +552,34 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.style.setProperty("--ring", colorToHsl(colors.primary));
       root.style.setProperty("--tw-ring-color", `hsl(${colorToHsl(colors.primary)} / 0.5)`);
       
-      // Force override compiled CSS defaults
+      // Force override compiled CSS defaults with comprehensive ring color fix
       const style = document.createElement('style');
       style.textContent = `
         *, ::before, ::after {
           --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+          --ring: ${colorToHsl(colors.primary)} !important;
         }
         ::backdrop {
+          --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+          --ring: ${colorToHsl(colors.primary)} !important;
+        }
+        
+        /* Force all focus ring states to use theme color */
+        .focus\\:ring-2:focus,
+        .focus-visible\\:ring-2:focus-visible,
+        .focus\\:ring-ring:focus,
+        .focus-visible\\:ring-ring:focus-visible,
+        button:focus-visible,
+        input:focus,
+        select:focus,
+        textarea:focus,
+        [role="button"]:focus-visible {
+          --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+          box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+        }
+        
+        /* Override any existing ring colors */
+        .ring-orange-500, .focus\\:ring-orange-500:focus, .focus\\:ring-metal-orange:focus {
           --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
         }
       `;
