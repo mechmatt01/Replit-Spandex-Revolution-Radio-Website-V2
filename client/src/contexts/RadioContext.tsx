@@ -147,10 +147,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
       "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFM.mp3"
     ];
-    
+
     // Use actual station stream URLs with robust fallbacks
     const streamUrl = station.streamUrl;
-    
+
     // Hot 97 fallbacks (iHeart stream)
     if (station.id === "hot-97") {
       return [
@@ -161,7 +161,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         "https://ice1.somafm.com/beatblender-128-mp3",                                    // Generic fallback
       ];
     }
-    
+
     // Power 105.1 fallbacks (iHeart stream)
     if (station.id === "power-106") {
       return [
@@ -173,7 +173,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         "https://ice6.somafm.com/beatblender-128-mp3"
       ];
     }
-    
+
     // 95.5 The Beat fallbacks
     if (station.id === "beat-955") {
       return [
@@ -185,7 +185,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         "https://ice6.somafm.com/beatblender-128-mp3"
       ];
     }
-    
+
     // SomaFM Metal fallbacks
     if (station.id === "somafm-metal") {
       return [
@@ -197,7 +197,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         "https://ice6.somafm.com/beatblender-128-mp3"
       ];
     }
-    
+
     // Hot 105 Miami fallbacks (iHeart stream - WHQT)
     if (station.id === "hot-105") {
       return [
@@ -207,7 +207,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         "https://ice1.somafm.com/beatblender-128-mp3",                                    // Fallback
       ];
     }
-    
+
     // Q93 New Orleans fallbacks (iHeart stream - WQUE)
     if (station.id === "q-93") {
       return [
@@ -217,7 +217,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         "https://ice1.somafm.com/beatblender-128-mp3",                                     // Fallback
       ];
     }
-    
+
     // Default fallback for any other stations
     return [
       streamUrl,
@@ -343,7 +343,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         !isPlaying) {
       retryCountRef.current++;
       console.log(`Auto-retry attempt ${retryCountRef.current}/${maxRetries}`);
-      
+
       // Retry after short delay
       setTimeout(() => {
         if (!isPlaying && !error.name?.includes("NotAllowed")) {
@@ -355,7 +355,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           });
         }
       }, 1000);
-      
+
       return;
     }
 
@@ -420,13 +420,13 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           cleanup();
           resolve();
         };
-        
+
         const cleanup = () => {
           audio.removeEventListener('canplay', onReady);
           audio.removeEventListener('loadeddata', onReady);
           audio.removeEventListener('error', onReady);
         };
-        
+
         audio.addEventListener('canplay', onReady);
         audio.addEventListener('loadeddata', onReady);
         audio.addEventListener('error', onReady);
@@ -578,10 +578,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         // Check if user has previously selected a station
         const lastStationId = localStorage.getItem('last-selected-station');
         const shouldAutoPlay = localStorage.getItem('auto-play-enabled') !== 'false';
-        
+
         if (shouldAutoPlay && currentStation) {
           console.log('[RadioContext] Auto-playing station:', currentStation.name);
-          
+
           // Small delay to ensure everything is loaded
           setTimeout(async () => {
             if (!isPlaying) {
@@ -596,7 +596,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
     // Initialize auto-play after a short delay
     const timer = setTimeout(initializeAutoPlay, 2000);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -624,26 +624,26 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   // Metadata polling function
   const fetchLiveMetadata = useCallback(async (station: RadioStation | null) => {
     if (!station || !isPlaying) return;
-    
+
     console.log(`[RadioContext] Fetching metadata for station: ${station.name} (${station.id})`);
-    
+
     try {
       // Use the correct now-playing endpoint with station parameter
       const metadataEndpoint = `/api/now-playing?station=${station.stationId || station.id}`;
-      
+
       console.log(`[RadioContext] Calling metadata endpoint: ${metadataEndpoint}`);
-      
+
       const response = await fetch(metadataEndpoint);
       console.log(`[RadioContext] Metadata response status: ${response.status}`);
-      
+
       const contentType = response.headers.get("content-type");
       console.log(`[RadioContext] Metadata response content-type: ${contentType}`);
-      
+
       if (!response.ok) {
         console.warn(`[RadioContext] Metadata endpoint returned error: ${response.status} ${response.statusText}`);
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       if (!contentType || !contentType.includes("application/json")) {
         console.warn("[RadioContext] Metadata endpoint did not return JSON:", metadataEndpoint);
         // Fallback to static metadata
@@ -663,10 +663,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         console.log(`[RadioContext] Using fallback metadata: "${fallbackTrack.title}" by ${fallbackTrack.artist}`);
         return;
       }
-      
+
       const metadata = await response.json();
       console.log(`[RadioContext] Received metadata:`, metadata);
-        
+
       const newTrackInfo: TrackInfo = {
         title: metadata.title || station.name,
         artist: metadata.artist || station.description,
@@ -684,7 +684,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
       // Update track info
       setCurrentTrack(newTrackInfo);
-      
+
       // Update ad detection state
       setIsAdPlaying(metadata.isAd || false);
       setAdInfo({
@@ -694,13 +694,13 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       });
 
       console.log(`[RadioContext] Live metadata updated: "${newTrackInfo.title}" by ${newTrackInfo.artist}${newTrackInfo.isAd ? ' (Advertisement)' : ''}`);
-      
+
       if (newTrackInfo.isAd) {
         console.log(`[RadioContext] Ad detected: ${newTrackInfo.adCompany || 'Unknown Company'} - ${newTrackInfo.adReason || 'Various indicators'}`);
       }
     } catch (error) {
       console.error('[RadioContext] Failed to fetch live metadata:', error);
-      
+
       // Use fallback metadata when server is unavailable
       const fallbackTrack: TrackInfo = {
         title: station.name,
@@ -724,14 +724,14 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     if (isPlaying && currentStation) {
       // Initial fetch
       fetchLiveMetadata(currentStation);
-      
+
       // Set up polling interval (every 10 seconds)
       const interval = setInterval(() => {
         fetchLiveMetadata(currentStation);
       }, 10000);
-      
+
       setMetadataPollingInterval(interval);
-      
+
       return () => {
         if (interval) {
           clearInterval(interval);
@@ -787,3 +787,12 @@ export function useRadio() {
   }
   return context;
 }
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "./AuthContext";
+import { apiRequest } from "@/lib/queryClient";
+const { data: streamStats } = useQuery({
+    queryKey: ['/api/stream-stats'],
+    queryFn: () => apiRequest('/api/stream-stats'),
+    refetchInterval: 30000, // Refresh every 30 seconds
+    retry: false, // Don't retry if API is not available
+  });

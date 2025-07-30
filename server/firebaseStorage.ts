@@ -53,7 +53,7 @@ try {
     }
   }
 } catch (error) {
-  console.warn('Firebase initialization error, using fallback mode:', error.message);
+  console.warn('Firebase initialization error, using fallback mode:', error instanceof Error ? error.message : 'Unknown error');
   isFirebaseAvailable = false;
 }
 
