@@ -516,11 +516,12 @@ function ProductCard({
                     product.variants?.find((v) => v.id === e.target.value)!,
                   )
                 }
-                className="w-full p-2 rounded appearance-none pr-8"
+                className="w-full p-2 rounded appearance-none pr-8 text-center"
                 style={{ 
                   backgroundColor: currentTheme === 'light-mode' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 30, 30, 0.5)',
                   color: currentTheme === 'light-mode' ? '#000000' : '#ffffff',
-                  borderColor: colors.primary 
+                  borderColor: colors.primary,
+                  textAlign: 'center'
                 }}
               >
                 {(product.variants || []).map((variant) => (
@@ -678,7 +679,8 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                         product.variants?.find((v) => v.id === e.target.value)!,
                       )
                     }
-                    className="w-full p-2 bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange rounded"
+                    className="w-full p-2 bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-metal-orange rounded text-center"
+                    style={{ textAlign: 'center' }}
                   >
                     {(product.variants || []).map((variant) => (
                       <option
