@@ -8,7 +8,7 @@ if (!getApps().length) {
     // Try to get service account from environment variables first
     const serviceAccountEnv = process.env.FIREBASE_SERVICE_ACCOUNT;
     let serviceAccount;
-    
+
     if (serviceAccountEnv) {
       // Parse service account from environment variable
       serviceAccount = JSON.parse(serviceAccountEnv);
@@ -17,12 +17,12 @@ if (!getApps().length) {
       serviceAccount = require('../firebase-service-account.json');
       console.warn('⚠️ Using service account file. Consider moving to environment variables for production.');
     }
-    
+
     initializeApp({
       credential: cert(serviceAccount),
       storageBucket: process.env.FIREBASE_STORAGE_BUCKET || 'spandex-salvation-radio-site.firebasestorage.app'
     });
-    
+
     console.log('✅ Firebase Admin initialized successfully');
   } catch (error) {
     console.error('❌ Firebase Admin initialization error:', error);
@@ -286,10 +286,21 @@ export async function registerFirebaseUser(userData: {
 
   } catch (error: any) {
     console.error('[Firebase Auth] Registration error:', error);
-    return { 
-      success: false, 
-      error: error.message || 'Registration failed. Please try again.' 
-    };
+
+      // Send user-friendly error message
+      let errorMessage = 'Registration failed. Please try again.';
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'An account with this email already exists.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Password should be at least 6 characters.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Please enter a valid email address.';
+      }
+
+      return { 
+        success: false, 
+        error: errorMessage || 'Registration failed. Please try again.' 
+      };
   }
 }
 
@@ -336,9 +347,22 @@ export async function loginFirebaseUser(email: string, password: string) {
 
   } catch (error: any) {
     console.error('[Firebase Auth] Login error:', error);
-    return { 
-      success: false, 
-      error: error.message || 'Login failed. Please try again.' 
-    };
+
+      // Send user-friendly error message
+      let errorMessage = 'Login failed. Please check your credentials.';
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = 'No account found with this email address.';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Incorrect password. Please try again.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Please enter a valid email address.';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many failed attempts. Please try again later.';
+      }
+
+      return { 
+        success: false, 
+        error: errorMessage || 'Login failed. Please try again.' 
+      };
   }
 }

@@ -16,14 +16,10 @@ try {
     isFirebaseAvailable = true;
     console.log('Using existing Firebase app');
   } else {
-    // Try to load service account from file first
+    // Load service account from environment variables only (more secure)
     let serviceAccount;
-    const serviceAccountPath = path.join(process.cwd(), 'firebase-service-account.json');
     
-    if (fs.existsSync(serviceAccountPath)) {
-      serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
-      console.log('Loaded Firebase service account from file');
-    } else if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
+    if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
       // Fall back to environment variables
       serviceAccount = {
         projectId: process.env.FIREBASE_PROJECT_ID,

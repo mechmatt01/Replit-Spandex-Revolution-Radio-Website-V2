@@ -18,7 +18,13 @@ export class XSSProtection {
     // Create a temporary element to sanitize
     const temp = document.createElement('div');
     temp.textContent = html;
-    element.innerHTML = temp.innerHTML;
+    // Use safe DOM methods instead of innerHTML
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
+    while (temp.firstChild) {
+      element.appendChild(temp.firstChild);
+    }
   }
 
   // Create elements safely
