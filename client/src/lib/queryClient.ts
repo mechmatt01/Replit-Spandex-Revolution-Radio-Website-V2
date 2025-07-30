@@ -70,15 +70,25 @@ export const getQueryFn: <T>(options: {
     }
   };
 
+// Default query function for API calls
+const defaultQueryFn = async ({ queryKey }: { queryKey: readonly unknown[] }) => {
+  const url = queryKey[0] as string;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
+};
+
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      queryFn: async ({ queryKey }) => {
-        const url = Array.isArray(queryKey) ? queryKey[0] : queryKey;
-        return apiRequest(url as string);
-      },
+      queryFn: defaultQueryFn,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      refetchOnWindowFocus: false,
+      retry: 3,
     },
   },
 });

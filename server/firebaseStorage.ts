@@ -9,44 +9,37 @@ let firebaseApp: any;
 let isFirebaseAvailable = false;
 
 try {
-  // Check if app already exists
-  const apps = getApps();
-  if (apps.length > 0) {
-    firebaseApp = apps[0];
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    // Parse the service account from environment variable
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+
+    // Check if already initialized
+    if (!getApps().length) {
+      firebaseApp = initializeApp({
+        credential: cert(serviceAccount),
+        projectId: serviceAccount.project_id
+      });
+      console.log('Firebase app initialized successfully');
+    } else {
+      firebaseApp = getApps()[0];
+    }
     isFirebaseAvailable = true;
-    console.log('Using existing Firebase app');
   } else {
-    // Load service account from environment variables only (more secure)
-    let serviceAccount;
-    
-    if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
-      // Validate the private key format
-      let privateKey = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
-      
-      // Ensure the private key has proper format
-      if (!privateKey.includes('-----BEGIN PRIVATE KEY-----')) {
-        console.warn('Invalid Firebase private key format - disabling Firebase');
-        isFirebaseAvailable = false;
+    // Try to load from file (for development)
+    const serviceAccountPath = path.join(process.cwd(), 'firebase-service-account.json');
+    if (fs.existsSync(serviceAccountPath)) {
+      const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+
+      if (!getApps().length) {
+        firebaseApp = initializeApp({
+          credential: cert(serviceAccount),
+          projectId: serviceAccount.project_id
+        });
+        console.log('Firebase app initialized from file');
       } else {
-        serviceAccount = {
-          projectId: process.env.FIREBASE_PROJECT_ID,
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-          privateKey: privateKey,
-        };
-        console.log('Loaded Firebase service account from environment variables');
-        
-        try {
-          firebaseApp = initializeApp({
-            credential: cert(serviceAccount),
-            projectId: serviceAccount.projectId,
-          });
-          isFirebaseAvailable = true;
-          console.log('Firebase app initialized successfully');
-        } catch (initError) {
-          console.warn('Firebase initialization failed, using fallback mode:', initError.message);
-          isFirebaseAvailable = false;
-        }
+        firebaseApp = getApps()[0];
       }
+      isFirebaseAvailable = true;
     } else {
       console.log('Firebase service account not found - using mock data');
       isFirebaseAvailable = false;
@@ -87,7 +80,7 @@ export class FirebaseLiveStatsStorage {
       });
 
       const dataPromise = this.getFirebaseStats();
-      
+
       const result = await Promise.race([dataPromise, timeoutPromise]);
       return result as any;
     } catch (error) {
@@ -101,9 +94,9 @@ export class FirebaseLiveStatsStorage {
     const activeListenersSnapshot = await db!.collection(this.usersCollection)
       .where('isActiveListening', '==', true)
       .get();
-    
+
     const activeListeners = activeListenersSnapshot.size;
-    
+
     // Get unique countries from active listeners
     const activeUsers = activeListenersSnapshot.docs.map(doc => doc.data());
     const uniqueCountries = new Set(
@@ -111,15 +104,15 @@ export class FirebaseLiveStatsStorage {
         .filter(user => user.location?.country)
         .map(user => user.location.country)
     );
-    
+
     const countries = uniqueCountries.size;
-    
+
     // Get total listeners from stats collection (or fallback to current active)
     const statsDoc = await db!.collection(this.collection).doc('current').get();
     const totalListeners = statsDoc.exists ? 
       statsDoc.data()?.totalListeners || activeListeners : 
       activeListeners;
-    
+
     return {
       activeListeners,
       countries,
@@ -150,7 +143,7 @@ export class FirebaseLiveStatsStorage {
         console.log('Firebase not available - skipping live stats update');
         return;
       }
-      
+
       await db.collection(this.collection).doc('current').set({
         ...stats,
         updatedAt: Timestamp.now()
@@ -169,14 +162,14 @@ export class FirebaseLiveStatsStorage {
         console.log('Firebase not available - skipping listener increment');
         return;
       }
-      
+
       const stationStatsRef = db.collection(this.collection).doc(`station_${stationId}`);
       const stationDoc = await stationStatsRef.get();
-      
+
       if (stationDoc.exists) {
         const data = stationDoc.data();
         const uniqueListeners = data?.uniqueListeners || [];
-        
+
         if (!uniqueListeners.includes(userId)) {
           uniqueListeners.push(userId);
           await stationStatsRef.update({
@@ -256,7 +249,7 @@ export class FirebaseRadioStationStorage {
   async getRadioStationById(id: number): Promise<RadioStation | undefined> {
     try {
       const doc = await db.collection(this.collection).doc(id.toString()).get();
-      
+
       if (!doc.exists) return undefined;
 
       return {
@@ -303,7 +296,7 @@ export class FirebaseRadioStationStorage {
     try {
       // Generate new ID
       const newId = await this.generateNewId();
-      
+
       const stationData = {
         ...insertStation,
         createdAt: Timestamp.now(),
