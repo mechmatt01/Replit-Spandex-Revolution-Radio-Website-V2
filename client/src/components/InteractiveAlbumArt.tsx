@@ -21,7 +21,8 @@ export default function InteractiveAlbumArt({
   className = "",
   isAd = false,
 }: InteractiveAlbumArtProps) {
-  const { getGradient, currentTheme } = useTheme();
+  const { getGradient, getColors, currentTheme } = useTheme();
+  const colors = getColors();
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [previousGradient, setPreviousGradient] = useState(getGradient());
@@ -161,9 +162,9 @@ export default function InteractiveAlbumArt({
         className="absolute inset-0 rounded-xl transition-all duration-300 pointer-events-none"
         style={{
           border: isHovered
-            ? `2px solid ${getGradient()}80`
+            ? `2px solid ${colors.primary}80`
             : "2px solid transparent",
-          boxShadow: isHovered ? `inset 0 0 10px ${getGradient()}20` : "none",
+          boxShadow: isHovered ? `inset 0 0 10px ${colors.primary}20` : "none",
         }}
       />
 
