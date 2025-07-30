@@ -119,7 +119,7 @@ export default function RadioCoPlayer() {
 
   const { getColors, getGradient, currentTheme } = useTheme();
   const colors = getColors();
-  
+
   // Adaptive theme for current track artwork
   const { adaptiveTheme, isAnalyzing } = useAdaptiveTheme(
     currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
@@ -515,7 +515,7 @@ export default function RadioCoPlayer() {
               />
             </div>
           </div>
-          
+
           {currentTrack.artist &&
             currentTrack.artist !== currentTrack.title &&
             currentTrack.artist !== "Live Stream" &&
@@ -532,7 +532,7 @@ export default function RadioCoPlayer() {
                 {currentTrack.artist}
               </p>
             )}
-          
+
           {currentTrack.album &&
             currentTrack.album !== "New York's Hip Hop & R&B" &&
             currentTrack.album !== "Live Stream" &&
@@ -551,14 +551,14 @@ export default function RadioCoPlayer() {
                 {currentTrack.album}
               </p>
             )}
-          
+
           {/* Station Information */}
           {currentTrack.stationName && (
             <p className="text-muted-foreground text-sm font-medium mb-1 transition-opacity duration-500">
               {currentTrack.stationName} • {currentTrack.frequency}
             </p>
           )}
-          
+
           {/* Genre Information */}
           {currentTrack.genre && (
             <p className="text-muted-foreground text-xs font-medium transition-opacity duration-500">
@@ -581,18 +581,12 @@ export default function RadioCoPlayer() {
           <Button
             onClick={togglePlayback}
             disabled={isLoading}
-            className="font-bold py-6 px-10 rounded-full transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-110 disabled:opacity-50 disabled:transform-none text-xl flex items-center justify-center mx-auto relative focus:outline-none focus:ring-2 border-0"
-            style={{
-              background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-              color: "white",
-              boxShadow: `0 10px 40px ${colors.primary}60`,
-              position: "relative",
-              zIndex: 1,
-              border: "none",
-              outline: "none",
-              focusRingColor: colors.primary,
-              '--tw-ring-color': colors.primary,
-            } as React.CSSProperties & { '--tw-ring-color': string }}
+            className="w-16 h-16 rounded-full border-4 bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-all duration-300 group shadow-lg hover:shadow-xl"
+                style={{
+                  borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                    ? adaptiveTheme.accentColor
+                    : colors.primary
+                }}
           >
             {isLoading ? (
               <>
