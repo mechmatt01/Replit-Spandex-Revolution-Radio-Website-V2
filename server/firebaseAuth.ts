@@ -198,30 +198,14 @@ export async function emailExists(email: string): Promise<boolean> {
 }
 
 // Generate random 10-character alphanumeric user ID
-const generateUserID = (): string => {
+function generateUserID(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < 10; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
-};
-
-// Get random avatar from the available options
-const getRandomAvatar = (): string => {
-  const avatars = [
-    'Bass-Bat.png',
-    'Drum-Dragon.png',
-    'Headbanger-Hamster.png',
-    'Metal-Queen.png',
-    'Metal Cat.png',
-    'Mosh-Pit-Monster.png',
-    'Rebel-Raccoon.png',
-    'Rock-Unicorn.png'
-  ];
-  const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
-  return `https://firebasestorage.googleapis.com/v0/b/spandex-salvation-radio-site.firebasestorage.app/o/Avatars%2F${encodeURIComponent(randomAvatar)}?alt=media`;
-};
+}
 
 // Register a new user
 export async function registerFirebaseUser(userData: {

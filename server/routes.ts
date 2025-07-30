@@ -77,7 +77,9 @@ import {
   getUserByEmail, 
   getUserByGoogleId,
   emailExists,
-  updateUserProfile
+  updateUserProfile,
+  registerFirebaseUser,
+  loginFirebaseUser
 } from "./firebaseAuth";
 
 // Define interfaces for extended request types
@@ -3135,6 +3137,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Firebase authentication routes
+  app.post('/api/auth/firebase/register', async (req, res) => {
+    try {
+      const { firstName, lastName, email, phoneNumber, password } = req.body;
+
+      if (!firstName || !lastName || !email || !password) {
+        return res.status(400).json({ error: 'First name, last name, email, and password are required' });
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Please enter a valid email address' });
+      }
+
+      // Validate password strength
+      if (password.length < 6) {
+        return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+      }
+
+      const result = await registerFirebaseUser({
+        firstName,
+        lastName,
+        email,
+        phoneNumber: phoneNumber || '',
+        password
+      });
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(400).json({ error: result.error });
+      }
+    } catch (error: any) {
+      console.error('Firebase registration error:', error);
+      res.status(500).json({ error: 'Registration failed. Please try again.' });
+    }
+  });
+
+  app.post('/api/auth/firebase/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Please enter a valid email address' });
+      }
+
+      const result = await loginFirebaseUser(email, password);
+
+      if (result.success) {
+        res.json(result);
+      } else {
+        res.status(401).json({ error: result.error });
+      }
+    } catch (error: any) {
+      console.error('Firebase login error:', error);
+      res.status(500).json({ error: 'Login failed. Please try again.' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
@@ -3492,69 +3560,3 @@ async function fetchQ93(res: Response) {
   await storage.updateNowPlaying(fallbackData);
   return res.json(fallbackData);
 }
-
-// Firebase authentication routes
-app.post('/api/auth/firebase/register', async (req, res) => {
-  try {
-    const { firstName, lastName, email, phoneNumber, password } = req.body;
-
-    if (!firstName || !lastName || !email || !password) {
-      return res.status(400).json({ error: 'First name, last name, email, and password are required' });
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Please enter a valid email address' });
-    }
-
-    // Validate password strength
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters long' });
-    }
-
-    const result = await registerFirebaseUser({
-      firstName,
-      lastName,
-      email,
-      phoneNumber: phoneNumber || '',
-      password
-    });
-
-    if (result.success) {
-      res.json(result);
-    } else {
-      res.status(400).json({ error: result.error });
-    }
-  } catch (error: any) {
-    console.error('Firebase registration error:', error);
-    res.status(500).json({ error: 'Registration failed. Please try again.' });
-  }
-});
-
-app.post('/api/auth/firebase/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: 'Please enter a valid email address' });
-    }
-
-    const result = await loginFirebaseUser(email, password);
-
-    if (result.success) {
-      res.json(result);
-    } else {
-      res.status(401).json({ error: result.error });
-    }
-  } catch (error: any) {
-    console.error('Firebase login error:', error);
-    res.status(500).json({ error: 'Login failed. Please try again.' });
-  }
-});

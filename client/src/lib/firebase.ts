@@ -46,7 +46,7 @@ const defaultAvatars = [
 ];
 
 // Generate 10-character alphanumeric user ID
-export function generateUserID(): string {
+function generateUserID(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < 10; i++) {
@@ -94,31 +94,7 @@ export async function getUserLocation(): Promise<{ lat: number; lng: number } | 
   });
 }
 
-// Generate random 10-character alphanumeric ID
-const generateUserID = (): string => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < 10; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-};
 
-// Get random avatar from the available options
-const getRandomAvatar = (): string => {
-  const avatars = [
-    'Bass-Bat.png',
-    'Drum-Dragon.png',
-    'Headbanger-Hamster.png',
-    'Metal-Queen.png',
-    'Metal Cat.png',
-    'Mosh-Pit-Monster.png',
-    'Rebel-Raccoon.png',
-    'Rock-Unicorn.png'
-  ];
-  const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
-  return `gs://spandex-salvation-radio-site.firebasestorage.app/Avatars/${randomAvatar}`;
-};
 
 // Register new user with email/password
 export const registerUser = async (userData: {
