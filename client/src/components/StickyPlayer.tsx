@@ -253,7 +253,12 @@ export default function StickyPlayer() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <div 
                   className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin"
-                  style={{ borderColor: colors.primary, borderTopColor: 'transparent' }}
+                  style={{ 
+                    borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                      ? adaptiveTheme.accentColor
+                      : colors.primary, 
+                    borderTopColor: 'transparent' 
+                  }}
                 ></div>
               </div>
             )}
@@ -261,12 +266,18 @@ export default function StickyPlayer() {
               onClick={togglePlayback}
               className="text-white w-10 h-10 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl border-0"
               style={{
-                background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
-                boxShadow: `0 4px 20px ${colors.primary}60`,
+                background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                  ? `linear-gradient(45deg, ${adaptiveTheme.accentColor}, ${adaptiveTheme.overlayColor})`
+                  : `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
+                boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
+                  ? `0 4px 20px ${adaptiveTheme.accentColor}60`
+                  : `0 4px 20px ${colors.primary}60`,
                 opacity: isLoading ? 0.5 : 1,
                 border: "none",
                 outline: "none",
-                '--tw-ring-color': colors.primary,
+                '--tw-ring-color': currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                  ? adaptiveTheme.accentColor
+                  : colors.primary,
               } as React.CSSProperties & { '--tw-ring-color': string }}
               aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
               disabled={isLoading}
