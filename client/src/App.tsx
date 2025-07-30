@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Switch, Route } from "wouter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
-import { useToast } from "@/hooks/use-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { AdminProvider } from "@/contexts/AdminContext";
@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { RadioProvider } from "@/contexts/RadioContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { FirebaseAuthProvider } from "@/contexts/FirebaseAuthContext";
+import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import DynamicMetaTags from "@/components/DynamicMetaTags";
 import VerificationModal from "@/components/VerificationModal";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -74,54 +75,30 @@ function Router() {
   );
 }
 
-function GlobalNotificationHandler() {
-  const { toast } = useToast();
-
-  // Initialize global notification function
-  useEffect(() => {
-    window.showNotification = (message: string, type: 'success' | 'error' | 'info' | 'warning') => {
-      toast({
-        title: type === 'success' ? 'Success' : type === 'error' ? 'Error' : type === 'warning' ? 'Warning' : 'Info',
-        description: message,
-        variant: type === 'error' || type === 'warning' ? 'destructive' : 'default',
-      });
-    };
-  }, [toast]);
-
-  return null;
-}
-
 function App() {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 5 * 60 * 1000, // 5 minutes
-        gcTime: 10 * 60 * 1000, // 10 minutes
-      },
-    },
-  });
 
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <FirebaseAuthProvider>
-            <ThemeProvider>
-              <RadioProvider>
-                <AdminProvider>
-                  <TooltipProvider>
-                    <DynamicMetaTags />
-                    <Toaster />
-                    <GlobalNotificationHandler />
-                    <VerificationGate>
-                      <Router />
-                    </VerificationGate>
-                  </TooltipProvider>
-                </AdminProvider>
-              </RadioProvider>
-            </ThemeProvider>
-          </FirebaseAuthProvider>
-        </AuthProvider>
+        <AccessibilityProvider>
+          <AuthProvider>
+            <FirebaseAuthProvider>
+              <ThemeProvider>
+                <RadioProvider>
+                  <AdminProvider>
+                    <TooltipProvider>
+                      <DynamicMetaTags />
+                      <Toaster />
+                      <VerificationGate>
+                        <Router />
+                      </VerificationGate>
+                    </TooltipProvider>
+                  </AdminProvider>
+                </RadioProvider>
+              </ThemeProvider>
+            </FirebaseAuthProvider>
+          </AuthProvider>
+        </AccessibilityProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

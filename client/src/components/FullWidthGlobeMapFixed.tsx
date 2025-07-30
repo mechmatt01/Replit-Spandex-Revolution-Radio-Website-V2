@@ -57,18 +57,18 @@ const FullWidthGlobeMapFixed = () => {
   const [mapError, setMapError] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
-
+  
   // Weather state
   const [weather, setWeather] = useState<Weather | null>(null);
   const [weatherLoading, setWeatherLoading] = useState(false);
   const [locationPermission, setLocationPermission] = useState<'granted' | 'denied' | 'prompt' | null>(null);
   const [mapState, setMapState] = useState<{ center: google.maps.LatLng | null; zoom: number | null }>({ center: null, zoom: null });
 
-  // Use environment variables safely for client-side
+  // Use hardcoded config for Firebase hosting
   const config: Config = {
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "",
-    googleMapsSigningSecret: import.meta.env.VITE_GOOGLE_MAPS_SIGNING_SECRET || "",
-    openWeatherApiKey: import.meta.env.VITE_OPEN_WEATHER_API_KEY || "",
+    googleMapsApiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
+    googleMapsSigningSecret: "",
+    openWeatherApiKey: "bc23ce0746d4fc5c04d1d765589dadc5",
     googleMapsMapId: "spandex-salvation-radio-map"
   };
 
@@ -145,10 +145,10 @@ const FullWidthGlobeMapFixed = () => {
 
       setUserLocation(newLocation);
       setLocationPermission('granted');
-
+      
       // Fetch weather for the user's location
       await fetchWeather(newLocation.lat, newLocation.lng);
-
+      
       // Update map center if map exists
       if (map) {
         map.panTo(newLocation);
@@ -178,7 +178,7 @@ const FullWidthGlobeMapFixed = () => {
       // Check if we have stored location permission
       const storedPermission = localStorage.getItem('locationPermission');
       console.log('Stored location permission:', storedPermission);
-
+      
       if (storedPermission === 'granted') {
         setLocationPermission('granted');
         // Try to get current location if permission was previously granted
@@ -192,7 +192,7 @@ const FullWidthGlobeMapFixed = () => {
       } else {
         // No stored permission, set to prompt state
         setLocationPermission('prompt');
-
+        
         // Try to get location without showing permission denied state initially
         try {
           await handleLocationPermission();
@@ -201,7 +201,7 @@ const FullWidthGlobeMapFixed = () => {
         }
       }
     };
-
+    
     initializeLocation();
   }, []);
 
@@ -329,7 +329,7 @@ const FullWidthGlobeMapFixed = () => {
     // Create modern pulsing overlay with improved design
     const pulsingOverlay = new google.maps.OverlayView();
     pulsingOverlay.setMap(mapInstance);
-
+    
     pulsingOverlay.onAdd = function() {
       const div = document.createElement('div');
       div.className = 'pulsing-marker-overlay';
@@ -353,7 +353,7 @@ const FullWidthGlobeMapFixed = () => {
       const panes = this.getPanes();
       panes.overlayImage.appendChild(div);
     };
-
+    
     pulsingOverlay.draw = function() {
       const projection = this.getProjection();
       const point = projection.fromLatLngToDivPixel(position);
@@ -369,16 +369,16 @@ const FullWidthGlobeMapFixed = () => {
   // Toggle fullscreen map view with smooth animation
   const toggleFullscreen = () => {
     if (!map) return;
-
+    
     if (!isFullscreen) {
       // Store current map state
       const currentCenter = map.getCenter();
       const currentZoom = map.getZoom();
       setMapState({ center: currentCenter, zoom: currentZoom });
-
+      
       // Expand to fullscreen
       setIsFullscreen(true);
-
+      
       // Force map resize after animation completes
       setTimeout(() => {
         if (map) {
@@ -393,7 +393,7 @@ const FullWidthGlobeMapFixed = () => {
     } else {
       // Collapse from fullscreen
       setIsFullscreen(false);
-
+      
       // Force map resize after animation completes
       setTimeout(() => {
         if (map) {
@@ -421,13 +421,13 @@ const FullWidthGlobeMapFixed = () => {
       console.log('Map ref or API key not available');
       return;
     }
-
+    
     // Check if ref is a valid DOM element
     if (!(ref instanceof Element)) {
       console.error('Map ref is not a valid DOM element');
       return;
     }
-
+    
     const rect = ref.getBoundingClientRect();
     console.log('Map ref:', ref, 'Bounding rect:', rect);
     if (rect.width < 50 || rect.height < 50) {
@@ -550,7 +550,7 @@ const FullWidthGlobeMapFixed = () => {
       setIsLoading(false);
       setIsInitializing(false);
       console.log('Google Maps initialized successfully');
-
+      
       // Force a resize after a short delay to ensure proper rendering
       setTimeout(() => {
         if (mapInstance) {
@@ -600,7 +600,7 @@ const FullWidthGlobeMapFixed = () => {
     script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=places&callback=initMap&loading=async`;
     script.async = true;
     script.defer = true;
-
+    
     // Create a global callback function
     (window as any).initMap = () => {
       console.log('Google Maps script loaded successfully');
@@ -608,14 +608,14 @@ const FullWidthGlobeMapFixed = () => {
         initializeMap();
       }, 200);
     };
-
+    
     script.onerror = (error) => {
       console.error('Error loading Google Maps script:', error);
       setIsLoading(false);
       setMapError(true);
       setIsInitializing(false);
     };
-
+    
     script.onload = () => {
       console.log('Google Maps script loaded successfully');
       // Add a delay to ensure the API is fully loaded
@@ -666,11 +666,11 @@ const FullWidthGlobeMapFixed = () => {
   const handleLocationPermission = async () => {
     try {
       console.log('Requesting location permission...');
-
+      
       if (!navigator.geolocation) {
         throw new Error('Geolocation is not supported by this browser');
       }
-
+      
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
           enableHighAccuracy: true,
@@ -678,22 +678,22 @@ const FullWidthGlobeMapFixed = () => {
           maximumAge: 300000 // 5 minutes cache
         });
       });
-
+      
       const newUserLocation = {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       };
-
+      
       console.log('User location obtained:', newUserLocation);
       setUserLocation(newUserLocation);
-
+      
       // Store location permission
       localStorage.setItem('locationPermission', 'granted');
       setLocationPermission('granted');
-
+      
       // Fetch weather for user location
       await fetchWeather(newUserLocation.lat, newUserLocation.lng);
-
+      
       // If map is already initialized, add user marker and center map
       if (map) {
         console.log('Adding user location marker to existing map...');
@@ -704,14 +704,14 @@ const FullWidthGlobeMapFixed = () => {
           true // isUserLocation
         );
         setMarkers(prev => [...prev, userMarkerData.marker]);
-
+        
         // Center map on user location
         map.setCenter(newUserLocation);
         map.setZoom(10);
       }
     } catch (error) {
       console.error('Error getting user location:', error);
-
+      
       // More specific error handling
       if (error instanceof GeolocationPositionError) {
         switch (error.code) {
@@ -740,7 +740,7 @@ const FullWidthGlobeMapFixed = () => {
         localStorage.setItem('locationPermission', 'denied');
         setLocationPermission('denied');
       }
-
+      
       // Fallback to a default location for weather
       const defaultLocation = { lat: 40.7128, lng: -74.0060 }; // New York
       await fetchWeather(defaultLocation.lat, defaultLocation.lng);
@@ -837,7 +837,7 @@ const FullWidthGlobeMapFixed = () => {
                   </Button>
                 )}
               </div>
-
+              
               <div className="flex items-center justify-center gap-3">
                 {/* Weather Icon */}
                 {weather && (
@@ -854,7 +854,7 @@ const FullWidthGlobeMapFixed = () => {
                     )}
                   </div>
                 )}
-
+                
                 {/* Temperature and Description */}
                 <div className="flex flex-col items-center">
                   <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
@@ -893,7 +893,7 @@ const FullWidthGlobeMapFixed = () => {
                 </div>
               </div>
             )}
-
+            
             {/* Map Element */}
             <div 
               ref={mapRef}
@@ -953,7 +953,7 @@ const FullWidthGlobeMapFixed = () => {
             isFullscreen ? 'opacity-0 invisible' : 'opacity-100 visible'
           }`}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
+                
                 {/* Live Statistics Section */}
                 <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl"
                   style={{
@@ -976,7 +976,7 @@ const FullWidthGlobeMapFixed = () => {
                   </CardHeader>
                   <CardContent className="py-6">
                     <div className="grid grid-cols-1 gap-6">
-
+                      
                       {/* Active Listeners */}
                       <div className="text-center p-4 rounded-xl"
                         style={{

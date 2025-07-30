@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,16 +7,14 @@ import { Separator } from "@/components/ui/separator";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Link, useLocation } from "wouter";
+import { Link } from "wouter";
 import { ArrowLeft, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -27,8 +25,6 @@ export default function LoginPage() {
 
   const { getColors, theme } = useTheme();
   const { toast } = useToast();
-  const { login, register } = useAuth();
-  const [, navigate] = useLocation();
   const colors = getColors();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,43 +67,26 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (isLogin) {
-        const result = await login(formData.email, formData.password);
-
-        if (result.success) {
-          console.log('✅ Login successful');
-          toast({
-            title: "Login Successful!",
-            description: "Welcome back to Spandex Salvation Radio!",
-          });
-          navigate('/');
-        } else {
-          const errorMessage = result.error || 'Login failed. Please try again.';
-          setError(errorMessage);
-          toast({
-            title: "Login Failed",
-            description: errorMessage,
-            variant: "destructive",
-          });
-        }
+        await login(formData.email, formData.password);
+        toast({
+          title: "Welcome Back!",
+          description: "You have successfully signed in.",
+        });
+        navigate("/");
       } else {
-        const result = await register(formData);
-
-        if (result.success) {
-          console.log('✅ Registration successful');
-          toast({
-            title: "Account Created!",
-            description: "Your account has been created successfully. Welcome to Spandex Salvation Radio!",
-          });
-          navigate('/');
-        } else {
-          const errorMessage = result.error || 'Registration failed. Please try again.';
-          setError(errorMessage);
-          toast({
-            title: "Registration Failed",
-            description: errorMessage,
-            variant: "destructive",
-          });
-        }
+        await register(
+          formData.email,
+          formData.password,
+          `${formData.firstName} ${formData.lastName}`,
+          formData.firstName,
+          formData.lastName,
+          formData.phoneNumber || ""
+        );
+        toast({
+          title: "Account Created!",
+          description: "Your account has been created successfully. Welcome to Spandex Salvation Radio!",
+        });
+        navigate("/");
       }
     } catch (error: any) {
       console.error("Authentication error:", error);
@@ -130,7 +109,7 @@ export default function LoginPage() {
     <div
       className={cn(
         "min-h-screen flex items-center justify-center p-4",
-        (theme as any) === "light" ? "bg-white" : "bg-black"
+        (theme as any) === "light" ? "bg-white" : "bg-black"},
       )}
     >
       <Card className="w-full max-w-md">

@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, collection as firestoreCollection } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-// Note: bcrypt should only be used on the server side for security
+import bcrypt from 'bcryptjs';
 
 // NOTE: Google OAuth is currently in production mode and requires verification
 // This means only authorized test users can sign in until the app is verified
@@ -14,9 +14,7 @@ const firebaseConfig = {
   authDomain: "spandex-salvation-radio-site.firebaseapp.com",
   projectId: "spandex-salvation-radio-site",
   storageBucket: "spandex-salvation-radio-site.firebasestorage.app",
-  messagingSenderId: "632263635377",
   appId: "1:632263635377:web:2a9bd6118a6a2cb9d8cd90",
-  measurementId: "G-5SZFPT2Y3K"
 };
 
 // Initialize Firebase
@@ -63,20 +61,15 @@ export function getRandomDefaultAvatar(): string {
   return defaultAvatars[randomIndex];
 }
 
-// Hash password using crypto (client-side hashing for compatibility)
+// Hash password using bcrypt
 export async function hashPassword(password: string): Promise<string> {
-  // Client-side password hashing - Note: This should ideally be done server-side
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password + 'spandex_salt_2025');
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const saltRounds = 12;
+  return await bcrypt.hash(password, saltRounds);
 }
 
 // Compare password with hash
 export async function comparePassword(password: string, hash: string): Promise<boolean> {
-  const hashedPassword = await hashPassword(password);
-  return hashedPassword === hash;
+  return await bcrypt.compare(password, hash);
 }
 
 // Get user's location
@@ -100,6 +93,16 @@ export async function getUserLocation(): Promise<{ lat: number; lng: number } | 
     );
   });
 }
+
+// Generate random 10-character alphanumeric ID
+const generateUserID = (): string => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < 10; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
 
 // Get random avatar from the available options
 const getRandomAvatar = (): string => {
@@ -350,7 +353,7 @@ export async function signInWithGoogle() {
     console.log('Current domain:', window.location.hostname);
     console.log('Auth domain:', auth.config.authDomain);
     console.log('OAuth mode: Testing (should work with test users)');
-    console.log('OAuth Client ID:', process.env.GOOGLE_CLIENT_ID);
+    console.log('OAuth Client ID:', '632263635377-sa02i1luggs8hlmc6ivt0a6i5gv0irrn.apps.googleusercontent.com');
     console.log('Current URL:', window.location.href);
     console.log('Expected redirect URI:', `${window.location.origin}/__/auth/handler`);
 

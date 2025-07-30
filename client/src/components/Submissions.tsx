@@ -9,9 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-import { apiRequest } from "@/lib/queryClient";
 import { useTheme } from "@/contexts/ThemeContext";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { apiRequest } from "@/lib/queryClient";
 import type { Submission, InsertSubmission } from "@shared/schema";
 import LiveChat from "@/components/LiveChat";
 
@@ -34,9 +34,6 @@ export default function Submissions() {
 
   const { data: recentSubmissions = [] } = useQuery<Submission[]>({
     queryKey: ["/api/submissions"],
-    queryFn: () => apiRequest('/api/submissions'),
-    enabled: !!user,
-    retry: false, // Don't retry if API is not available
   });
 
   const submitMutation = useMutation({

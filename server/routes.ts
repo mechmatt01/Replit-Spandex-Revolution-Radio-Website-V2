@@ -121,12 +121,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register admin routes
   registerAdminRoutes(app);
 
-  // Initialize Firebase radio storage with error handling
-  try {
-    await firebaseRadioStorage.initializeDefaultStations();
-  } catch (error) {
-    console.warn('Firebase radio storage initialization failed, using fallback data:', error.message);
-  }
+  // Initialize Firebase radio storage
+  await firebaseRadioStorage.initializeDefaultStations();
 
   // Setup radio stream proxy
   setupRadioProxy(app);
@@ -283,16 +279,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Config endpoint for client-side environment variables
   app.get("/api/config", (req: Request, res: Response) => {
     try {
-      // Get API keys from Replit Secrets (environment variables)
-      const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY || "";
-      const googleMapsSigningSecret = process.env.GOOGLE_MAPS_SIGNING_SECRET || "";
-      const openWeatherApiKey = process.env.OPEN_WEATHER_API_KEY || "";
-
-      // Validate that keys are loaded
-      if (!googleMapsApiKey || !openWeatherApiKey) {
-        console.warn('⚠️ Some API keys are missing from Replit Secrets');
-        console.warn('Run: node scripts/setup-secrets.js for setup instructions');
-      }
+      // Force the correct API key to override persistent environment variables
+      const googleMapsApiKey = "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ";
+      const googleMapsSigningSecret = "xUMvkKZN7YbwACexIGzpV2o5Fms=";
+      const openWeatherApiKey = process.env.OPENWEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5";
       // Add Map ID for Google Maps
       const googleMapsMapId = "DEMO_MAP_ID";
 
@@ -3502,3 +3492,69 @@ async function fetchQ93(res: Response) {
   await storage.updateNowPlaying(fallbackData);
   return res.json(fallbackData);
 }
+
+// Firebase authentication routes
+app.post('/api/auth/firebase/register', async (req, res) => {
+  try {
+    const { firstName, lastName, email, phoneNumber, password } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ error: 'First name, last name, email, and password are required' });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Please enter a valid email address' });
+    }
+
+    // Validate password strength
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+    }
+
+    const result = await registerFirebaseUser({
+      firstName,
+      lastName,
+      email,
+      phoneNumber: phoneNumber || '',
+      password
+    });
+
+    if (result.success) {
+      res.json(result);
+    } else {
+      res.status(400).json({ error: result.error });
+    }
+  } catch (error: any) {
+    console.error('Firebase registration error:', error);
+    res.status(500).json({ error: 'Registration failed. Please try again.' });
+  }
+});
+
+app.post('/api/auth/firebase/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Please enter a valid email address' });
+    }
+
+    const result = await loginFirebaseUser(email, password);
+
+    if (result.success) {
+      res.json(result);
+    } else {
+      res.status(401).json({ error: result.error });
+    }
+  } catch (error: any) {
+    console.error('Firebase login error:', error);
+    res.status(500).json({ error: 'Login failed. Please try again.' });
+  }
+});

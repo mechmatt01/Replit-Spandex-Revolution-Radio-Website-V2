@@ -5,27 +5,13 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-// Simple user interface for auth context compatibility
-interface SimpleUser {
-  id: string;
-  email: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  isEmailVerified: boolean;
-  isPhoneVerified: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+import { User } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { auth, handleRedirectResult, signInWithGoogle, createUserProfile, getUserProfile, updateUserProfile, uploadProfileImage, updateListeningStatus, updateUserLocation, loginUser, registerUser } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useToast } from "@/hooks/use-toast";
-
 
 interface AuthContextType {
-  user: SimpleUser | null;
+  user: User | null;
   firebaseUser: any | null;
   firebaseProfile: any | null;
   loading: boolean;
@@ -62,7 +48,7 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<SimpleUser | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<any | null>(null);
   const [firebaseProfile, setFirebaseProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
@@ -113,56 +99,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      setLoading(true);
-
+      console.log('[AuthContext] Attempting email/password login...');
       const result = await loginUser(email, password);
-
-      if (result.success) {
-        const userProfile = {
-          ...result.profile,
-          userID: result.userID
-        };
-        setUser({
-          id: result.userID,
-          email: result.profile.EmailAddress,
-          username: `${result.profile.FirstName} ${result.profile.LastName}`.trim(),
-          firstName: result.profile.FirstName,
-          lastName: result.profile.LastName,
-          phoneNumber: result.profile.PhoneNumber,
-          isEmailVerified: true,
-          isPhoneVerified: !!result.profile.PhoneNumber,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-        setFirebaseProfile(result.profile);
-        localStorage.setItem('userID', result.userID);
-        localStorage.setItem('userProfile', JSON.stringify(result.profile));
-        localStorage.setItem('isLoggedIn', 'true');
-
-        // Show success notification
-        if (window.showNotification) {
-          window.showNotification(`Welcome back, ${userProfile.FirstName}!`, 'success');
-        }
-
-        return;
-      } else {
-        // Show error notification
-        if (window.showNotification) {
-          window.showNotification(result.error || 'Login failed. Please try again.', 'error');
-        }
+      
+      if (!result.success) {
         throw new Error(result.error || "Login failed");
       }
+      
+      console.log('[AuthContext] Login successful:', result.userID);
+      
+      // Store user data in localStorage
+      localStorage.setItem('userID', result.userID);
+      localStorage.setItem('userProfile', JSON.stringify(result.profile));
+      localStorage.setItem('isLoggedIn', 'true');
+      
+      // Set user state
+      setUser({
+        id: result.userID,
+        email: result.profile.EmailAddress,
+        username: `${result.profile.FirstName} ${result.profile.LastName}`.trim(),
+        firstName: result.profile.FirstName,
+        lastName: result.profile.LastName,
+        phoneNumber: result.profile.PhoneNumber,
+        isEmailVerified: true,
+        isPhoneVerified: !!result.profile.PhoneNumber,
+        createdAt: result.profile.CreatedAt || new Date().toISOString(),
+        updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
+      });
+      
+      setFirebaseProfile(result.profile);
+      
+      console.log('[AuthContext] Login completed, user state updated');
     } catch (error: any) {
-      console.error('Login error:', error);
-      const errorMessage = error.message || 'Login failed. Please try again.';
-
-      // Show error notification
-      if (window.showNotification) {
-        window.showNotification(errorMessage, 'error');
-      }
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
+      console.error('[AuthContext] Login error:', error);
+      throw new Error(error.message || "Login failed");
     }
   };
 
@@ -176,8 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     recaptchaToken?: string,
   ) => {
     try {
-      setLoading(true);
-
+      console.log('[AuthContext] Attempting email/password registration...');
       const result = await registerUser({
         firstName,
         lastName,
@@ -185,53 +154,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phoneNumber,
         password,
       });
-
-      if (result.success) {
-        const userProfile = {
-          ...result.profile,
-          userID: result.userID
-        };
-        setUser({
-          id: result.userID,
-          email: result.profile.EmailAddress,
-          username: `${result.profile.FirstName} ${result.profile.LastName}`.trim(),
-          firstName: result.profile.FirstName,
-          lastName: result.profile.LastName,
-          phoneNumber: result.profile.PhoneNumber,
-          isEmailVerified: true,
-          isPhoneVerified: !!result.profile.PhoneNumber,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-        setFirebaseProfile(result.profile);
-        localStorage.setItem('userID', result.userID);
-        localStorage.setItem('userProfile', JSON.stringify(result.profile));
-        localStorage.setItem('isLoggedIn', 'true');
-
-        // Show success notification
-        if (window.showNotification) {
-          window.showNotification('Registration successful! Welcome to Spandex Salvation Radio!', 'success');
-        }
-
-        return;
-      } else {
-        // Show error notification
-        if (window.showNotification) {
-          window.showNotification(result.error || 'Registration failed. Please try again.', 'error');
-        }
+      
+      if (!result.success) {
         throw new Error(result.error || "Registration failed");
       }
+      
+      console.log('[AuthContext] Registration successful:', result.userID);
+      
+      // Store user data in localStorage
+      localStorage.setItem('userID', result.userID);
+      localStorage.setItem('userProfile', JSON.stringify(result.profile));
+      localStorage.setItem('isLoggedIn', 'true');
+      
+      // Set user state
+      setUser({
+        id: result.userID,
+        email: result.profile.EmailAddress,
+        username: `${result.profile.FirstName} ${result.profile.LastName}`.trim(),
+        firstName: result.profile.FirstName,
+        lastName: result.profile.LastName,
+        phoneNumber: result.profile.PhoneNumber,
+        isEmailVerified: true,
+        isPhoneVerified: !!result.profile.PhoneNumber,
+        createdAt: result.profile.CreatedAt || new Date().toISOString(),
+        updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
+      });
+      
+      setFirebaseProfile(result.profile);
+      
+      console.log('[AuthContext] Registration completed, user state updated');
     } catch (error: any) {
-      console.error('Registration error:', error);
-      const errorMessage = error.message || 'Registration failed. Please try again.';
-
-      // Show error notification
-      if (window.showNotification) {
-        window.showNotification(errorMessage, 'error');
-      }
-      throw new Error(errorMessage);
-    } finally {
-      setLoading(false);
+      console.error('[AuthContext] Registration error:', error);
+      throw new Error(error.message || "Registration failed");
     }
   };
 
@@ -241,7 +195,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       setFirebaseUser(null);
       setFirebaseProfile(null);
-
+      
       // Clear localStorage
       localStorage.removeItem('userID');
       localStorage.removeItem('userProfile');
@@ -323,16 +277,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     console.log('[AuthContext] Setting up authentication listeners...');
-
+    
     // Restore login state from localStorage
     const wasLoggedIn = localStorage.getItem('isLoggedIn');
     const userID = localStorage.getItem('userID');
     const userProfile = localStorage.getItem('userProfile');
-
+    
     console.log('[AuthContext] Previous login state:', wasLoggedIn);
     console.log('[AuthContext] Stored userID:', userID);
     console.log('[AuthContext] Stored userProfile:', userProfile);
-
+    
     if (wasLoggedIn === 'true' && userID && userProfile) {
       try {
         const profile = JSON.parse(userProfile);
@@ -370,10 +324,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           emailVerified: user.emailVerified,
           providerId: user.providerData[0]?.providerId
         });
-
+        
         setFirebaseUser(user);
         localStorage.setItem('isLoggedIn', 'true');
-
+        
         // Set the user state for the app
         setUser({
           id: user.uid,
@@ -387,7 +341,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           createdAt: user.metadata.creationTime || new Date().toISOString(),
           updatedAt: user.metadata.lastSignInTime || new Date().toISOString(),
         });
-
+        
         try {
           const profileResult = await createUserProfile(user);
           console.log('[AuthContext] Profile creation result:', profileResult);
@@ -397,21 +351,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         } catch (error) {
           console.error('[AuthContext] Error creating/loading profile:', error);
-          // Don't fail silently - provide fallback user state
-          if (!user && firebaseUser) {
-            setUser({
-              id: firebaseUser.uid,
-              email: firebaseUser.email || '',
-              username: firebaseUser.displayName || '',
-              firstName: firebaseUser.displayName?.split(' ')[0] || '',
-              lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
-              phoneNumber: firebaseUser.phoneNumber || '',
-              isEmailVerified: firebaseUser.emailVerified,
-              isPhoneVerified: !!firebaseUser.phoneNumber,
-              createdAt: firebaseUser.metadata.creationTime || new Date().toISOString(),
-              updatedAt: firebaseUser.metadata.lastSignInTime || new Date().toISOString(),
-            });
-          }
         }
       } else {
         console.log('[AuthContext] No user authenticated, clearing state');

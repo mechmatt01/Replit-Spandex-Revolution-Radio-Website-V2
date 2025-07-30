@@ -9,44 +9,44 @@ let firebaseApp: any;
 let isFirebaseAvailable = false;
 
 try {
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
-    // Parse the service account from environment variable
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
-
-    // Check if already initialized
-    if (!getApps().length) {
-      firebaseApp = initializeApp({
-        credential: cert(serviceAccount),
-        projectId: serviceAccount.project_id
-      });
-      console.log('Firebase app initialized successfully');
-    } else {
-      firebaseApp = getApps()[0];
-    }
+  // Check if app already exists
+  const apps = getApps();
+  if (apps.length > 0) {
+    firebaseApp = apps[0];
     isFirebaseAvailable = true;
+    console.log('Using existing Firebase app');
   } else {
-    // Try to load from file (for development)
+    // Try to load service account from file first
+    let serviceAccount;
     const serviceAccountPath = path.join(process.cwd(), 'firebase-service-account.json');
+    
     if (fs.existsSync(serviceAccountPath)) {
-      const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
-
-      if (!getApps().length) {
-        firebaseApp = initializeApp({
-          credential: cert(serviceAccount),
-          projectId: serviceAccount.project_id
-        });
-        console.log('Firebase app initialized from file');
-      } else {
-        firebaseApp = getApps()[0];
-      }
-      isFirebaseAvailable = true;
+      serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+      console.log('Loaded Firebase service account from file');
+    } else if (process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY) {
+      // Fall back to environment variables
+      serviceAccount = {
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      };
+      console.log('Loaded Firebase service account from environment variables');
     } else {
       console.log('Firebase service account not found - using mock data');
       isFirebaseAvailable = false;
     }
+
+    if (serviceAccount) {
+      firebaseApp = initializeApp({
+        credential: cert(serviceAccount),
+        projectId: serviceAccount.projectId || serviceAccount.project_id,
+      });
+      isFirebaseAvailable = true;
+      console.log('Firebase app initialized successfully');
+    }
   }
 } catch (error) {
-  console.warn('Firebase initialization error, using fallback mode:', error instanceof Error ? error.message : 'Unknown error');
+  console.error('Firebase initialization error:', error);
   isFirebaseAvailable = false;
 }
 
@@ -80,7 +80,7 @@ export class FirebaseLiveStatsStorage {
       });
 
       const dataPromise = this.getFirebaseStats();
-
+      
       const result = await Promise.race([dataPromise, timeoutPromise]);
       return result as any;
     } catch (error) {
@@ -94,9 +94,9 @@ export class FirebaseLiveStatsStorage {
     const activeListenersSnapshot = await db!.collection(this.usersCollection)
       .where('isActiveListening', '==', true)
       .get();
-
+    
     const activeListeners = activeListenersSnapshot.size;
-
+    
     // Get unique countries from active listeners
     const activeUsers = activeListenersSnapshot.docs.map(doc => doc.data());
     const uniqueCountries = new Set(
@@ -104,15 +104,15 @@ export class FirebaseLiveStatsStorage {
         .filter(user => user.location?.country)
         .map(user => user.location.country)
     );
-
+    
     const countries = uniqueCountries.size;
-
+    
     // Get total listeners from stats collection (or fallback to current active)
     const statsDoc = await db!.collection(this.collection).doc('current').get();
     const totalListeners = statsDoc.exists ? 
       statsDoc.data()?.totalListeners || activeListeners : 
       activeListeners;
-
+    
     return {
       activeListeners,
       countries,
@@ -143,7 +143,7 @@ export class FirebaseLiveStatsStorage {
         console.log('Firebase not available - skipping live stats update');
         return;
       }
-
+      
       await db.collection(this.collection).doc('current').set({
         ...stats,
         updatedAt: Timestamp.now()
@@ -162,14 +162,14 @@ export class FirebaseLiveStatsStorage {
         console.log('Firebase not available - skipping listener increment');
         return;
       }
-
+      
       const stationStatsRef = db.collection(this.collection).doc(`station_${stationId}`);
       const stationDoc = await stationStatsRef.get();
-
+      
       if (stationDoc.exists) {
         const data = stationDoc.data();
         const uniqueListeners = data?.uniqueListeners || [];
-
+        
         if (!uniqueListeners.includes(userId)) {
           uniqueListeners.push(userId);
           await stationStatsRef.update({
@@ -201,39 +201,9 @@ export class FirebaseRadioStationStorage {
   private readonly collection = 'radio_stations';
 
   /**
-   * Get fallback radio stations when Firebase is not available
-   */
-  private getFallbackStations(): RadioStation[] {
-    return [
-      {
-        id: 1,
-        name: "Spandex Salvation Radio",
-        stationId: "spandex-salvation",
-        streamUrl: "https://stream.radio.co/sc4b64e91c/listen",
-        description: "The ultimate destination for heavy metal, hard rock, and everything in between",
-        genre: "Heavy Metal",
-        website: "https://spandex-salvation-radio.com",
-        apiUrl: "https://public.radio.co/stations/sc4b64e91c/status",
-        apiType: "radio_co",
-        frequency: "Spandex Salvation",
-        location: "Worldwide",
-        logo: "/api/placeholder/100/100",
-        isActive: true,
-        sortOrder: 1,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    ];
-  }
-
-  /**
    * Get all radio stations ordered by sort order
    */
   async getRadioStations(): Promise<RadioStation[]> {
-    if (!isFirebaseAvailable || !db) {
-      return this.getFallbackStations();
-    }
-
     try {
       const snapshot = await db.collection(this.collection)
         .orderBy('sortOrder', 'asc')
@@ -247,7 +217,7 @@ export class FirebaseRadioStationStorage {
       })) as RadioStation[];
     } catch (error) {
       console.error('Error getting radio stations:', error);
-      return this.getFallbackStations();
+      return [];
     }
   }
 
@@ -255,10 +225,6 @@ export class FirebaseRadioStationStorage {
    * Get only active radio stations
    */
   async getActiveRadioStations(): Promise<RadioStation[]> {
-    if (!isFirebaseAvailable || !db) {
-      return this.getFallbackStations().filter(station => station.isActive);
-    }
-
     try {
       const snapshot = await db.collection(this.collection)
         .where('isActive', '==', true)
@@ -273,7 +239,7 @@ export class FirebaseRadioStationStorage {
       })) as RadioStation[];
     } catch (error) {
       console.error('Error getting active radio stations:', error);
-      return this.getFallbackStations().filter(station => station.isActive);
+      return [];
     }
   }
 
@@ -281,13 +247,9 @@ export class FirebaseRadioStationStorage {
    * Get radio station by ID
    */
   async getRadioStationById(id: number): Promise<RadioStation | undefined> {
-    if (!isFirebaseAvailable || !db) {
-      return this.getFallbackStations().find(station => station.id === id);
-    }
-
     try {
       const doc = await db.collection(this.collection).doc(id.toString()).get();
-
+      
       if (!doc.exists) return undefined;
 
       return {
@@ -298,7 +260,7 @@ export class FirebaseRadioStationStorage {
       } as RadioStation;
     } catch (error) {
       console.error('Error getting radio station by ID:', error);
-      return this.getFallbackStations().find(station => station.id === id);
+      return undefined;
     }
   }
 
@@ -306,10 +268,6 @@ export class FirebaseRadioStationStorage {
    * Get radio station by station ID
    */
   async getRadioStationByStationId(stationId: string): Promise<RadioStation | undefined> {
-    if (!isFirebaseAvailable || !db) {
-      return this.getFallbackStations().find(station => station.stationId === stationId);
-    }
-
     try {
       const snapshot = await db.collection(this.collection)
         .where('stationId', '==', stationId)
@@ -327,7 +285,7 @@ export class FirebaseRadioStationStorage {
       } as RadioStation;
     } catch (error) {
       console.error('Error getting radio station by station ID:', error);
-      return this.getFallbackStations().find(station => station.stationId === stationId);
+      return undefined;
     }
   }
 
@@ -335,15 +293,10 @@ export class FirebaseRadioStationStorage {
    * Create new radio station
    */
   async createRadioStation(insertStation: InsertRadioStation): Promise<RadioStation> {
-    if (!isFirebaseAvailable || !db) {
-      console.warn('Firebase not available. Cannot create radio station.');
-      throw new Error('Firebase service not available');
-    }
-
     try {
       // Generate new ID
       const newId = await this.generateNewId();
-
+      
       const stationData = {
         ...insertStation,
         createdAt: Timestamp.now(),
@@ -417,10 +370,6 @@ export class FirebaseRadioStationStorage {
    * Generate new ID for radio station
    */
   private async generateNewId(): Promise<number> {
-    if (!isFirebaseAvailable || !db) {
-      return Date.now(); // Fallback to timestamp
-    }
-
     try {
       const snapshot = await db.collection(this.collection)
         .orderBy('__name__', 'desc')
@@ -442,11 +391,6 @@ export class FirebaseRadioStationStorage {
    * Initialize default radio stations
    */
   async initializeDefaultStations(): Promise<void> {
-    if (!isFirebaseAvailable || !db) {
-      console.log('Firebase not available. Using fallback stations.');
-      return;
-    }
-
     try {
       // Check if any stations exist
       const existing = await this.getRadioStations();
