@@ -59,30 +59,29 @@ export default function Hero() {
           }}
         ></div>
 
-        {/* Horizontal fade overlay */}
+        {/* Enhanced overlay for better text visibility */}
         <div 
           className="absolute inset-0 transition-all duration-300"
           style={{
-            background: `linear-gradient(to right, 
-              ${colors.background}80 0%, 
-              transparent 20%, 
-              transparent 80%, 
-              ${colors.background}80 100%
+            background: `linear-gradient(to bottom, 
+              ${colors.background}85 0%, 
+              ${colors.background}70 20%, 
+              ${colors.background}50 40%, 
+              ${colors.background}70 70%, 
+              ${colors.background}90 85%, 
+              ${colors.background} 100%
             )`,
           }}
         ></div>
 
-        {/* Theme-aware vertical fade to background - stronger transition to next section */}
-        <div
+        {/* Additional center overlay for hero text area */}
+        <div 
           className="absolute inset-0 transition-all duration-300"
           style={{
-            background: `linear-gradient(to bottom, 
-              transparent 0%, 
-              transparent 30%, 
-              ${colors.background}20 50%, 
-              ${colors.background}60 70%, 
-              ${colors.background}90 85%, 
-              ${colors.background} 100%
+            background: `radial-gradient(ellipse at center, 
+              ${colors.background}40 0%, 
+              ${colors.background}25 30%, 
+              transparent 70%
             )`,
           }}
         ></div>

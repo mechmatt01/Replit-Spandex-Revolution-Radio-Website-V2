@@ -45,7 +45,9 @@
         ]
       }
     ],
-    "site": "spandex-salvation-radio-site"
+    "site": "spandex-salvation-radio-site",
+    "cleanUrls": true,
+    "trailingSlash": false
   },
   "functions": [
     {
