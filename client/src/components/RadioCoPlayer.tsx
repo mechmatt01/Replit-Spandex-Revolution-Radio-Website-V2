@@ -252,7 +252,8 @@ export default function RadioCoPlayer() {
               borderWidth: "2px",
               borderRadius: "12px",
               width: "auto",
-            }}
+              '--tw-ring-color': colors.primary,
+            } as React.CSSProperties & { '--tw-ring-color': string }}
           >
             <RadioIcon
               className="w-3 h-3 mr-1"
@@ -301,11 +302,17 @@ export default function RadioCoPlayer() {
                           <div className="font-semibold text-sm text-white truncate">
                             {selectedStation.name}
                           </div>
-                          <div className="text-xs text-gray-300 truncate">
+                          <div 
+                            className="text-xs truncate"
+                            style={{ color: colors.textMuted }}
+                          >
                             {selectedStation.frequency} •{" "}
                             {selectedStation.location}
                           </div>
-                          <div className="text-xs text-gray-400 truncate">
+                          <div 
+                            className="text-xs truncate"
+                            style={{ color: colors.textMuted, opacity: 0.8 }}
+                          >
                             {selectedStation.description}
                           </div>
                         </div>
@@ -387,13 +394,22 @@ export default function RadioCoPlayer() {
                           <span className="text-lg">{station.icon}</span>
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-sm text-white truncate">
+                          <div 
+                            className="font-semibold text-sm truncate"
+                            style={{ color: colors.text }}
+                          >
                             {station.name}
                           </div>
-                          <div className="text-xs text-gray-300 truncate">
+                          <div 
+                            className="text-xs truncate"
+                            style={{ color: colors.textMuted }}
+                          >
                             {station.frequency} • {station.location}
                           </div>
-                          <div className="text-xs text-gray-400 truncate">
+                          <div 
+                            className="text-xs truncate"
+                            style={{ color: colors.textMuted, opacity: 0.8 }}
+                          >
                             {station.description}
                           </div>
                         </div>
@@ -548,14 +564,20 @@ export default function RadioCoPlayer() {
 
           {/* Station Information */}
           {currentTrack.stationName && (
-            <p className="text-muted-foreground text-sm font-medium mb-1 transition-opacity duration-500">
+            <p 
+              className="text-sm font-medium mb-1 transition-opacity duration-500"
+              style={{ color: colors.textMuted }}
+            >
               {currentTrack.stationName} • {currentTrack.frequency}
             </p>
           )}
 
           {/* Genre Information */}
           {currentTrack.genre && (
-            <p className="text-muted-foreground text-xs font-medium transition-opacity duration-500">
+            <p 
+              className="text-xs font-medium transition-opacity duration-500"
+              style={{ color: colors.textMuted }}
+            >
               {currentTrack.genre}
             </p>
           )}
