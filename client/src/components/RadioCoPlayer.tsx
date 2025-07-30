@@ -213,20 +213,22 @@ export default function RadioCoPlayer() {
 
   return (
     <section
-      className="backdrop-blur-sm rounded-2xl p-6 shadow-lg transition-all duration-500 ease-in-out"
+      className="backdrop-blur-md rounded-2xl p-6 shadow-xl transition-all duration-700 ease-in-out border-0"
       role="region"
       aria-label="Radio player controls"
       style={{
         background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}, ${adaptiveTheme.overlayColor})`
-          : 'rgba(255, 255, 255, 0.1)',
-        backdropFilter: 'blur(20px)',
-        border: `1px solid ${currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-          ? adaptiveTheme.accentColor + '40' 
-          : colors.primary + '40'}`,
+          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.08)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.05)')})`
+          : 'rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
+          ? `0 8px 32px ${adaptiveTheme.accentColor}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`
+          : `0 8px 32px ${colors.primary}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
         color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
           ? adaptiveTheme.textColor 
-          : colors.text
+          : colors.text,
+        border: 'none'
       }}
     >
       {/* Hidden Audio Element */}

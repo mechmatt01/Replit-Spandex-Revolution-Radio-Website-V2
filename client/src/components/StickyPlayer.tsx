@@ -68,7 +68,7 @@ export default function StickyPlayer() {
 
   return (
     <div
-      className={`fixed bottom-2 left-4 backdrop-blur-sm z-50 transition-all duration-500 rounded-2xl shadow-lg ${
+      className={`fixed bottom-2 left-4 backdrop-blur-md z-50 transition-all duration-700 rounded-2xl shadow-2xl border-0 ${
         isVisible
           ? "transform translate-y-0 opacity-100"
           : "transform translate-y-full opacity-0"
@@ -77,15 +77,17 @@ export default function StickyPlayer() {
         width: "320px", 
         maxWidth: "calc(100vw - 32px)",
         background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}, ${adaptiveTheme.overlayColor})`
-          : 'rgba(0, 0, 0, 0.9)',
-        backdropFilter: 'blur(20px)',
-        border: `1px solid ${currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-          ? adaptiveTheme.accentColor + '60' 
-          : colors.primary + '40'}`,
+          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.12)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.08)')})`
+          : 'rgba(0, 0, 0, 0.12)',
+        backdropFilter: 'blur(24px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
+          ? `0 12px 40px ${adaptiveTheme.accentColor}20, inset 0 1px 0 rgba(255, 255, 255, 0.15)`
+          : `0 12px 40px ${colors.primary}20, inset 0 1px 0 rgba(255, 255, 255, 0.15)`,
         color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
           ? adaptiveTheme.textColor 
-          : colors.text
+          : colors.text,
+        border: 'none'
       }}
       role="region"
       aria-label="Floating audio player"

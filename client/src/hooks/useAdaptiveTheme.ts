@@ -20,10 +20,10 @@ interface ColorAnalysis {
 
 export function useAdaptiveTheme(artworkUrl?: string) {
   const [adaptiveTheme, setAdaptiveTheme] = useState<AdaptiveTheme>({
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.12)',
     textColor: '#ffffff',
     accentColor: '#f97316',
-    overlayColor: 'rgba(0, 0, 0, 0.3)',
+    overlayColor: 'rgba(0, 0, 0, 0.08)',
     isLight: false,
     contrastRatio: 21
   });
@@ -188,8 +188,8 @@ export function useAdaptiveTheme(artworkUrl?: string) {
   const generateAdaptiveTheme = useCallback((colorAnalysis: ColorAnalysis): AdaptiveTheme => {
     const [r, g, b] = hexToRgb(colorAnalysis.dominant.replace('rgb(', '').replace(')', '').split(',').map(n => parseInt(n.trim())).map(n => n.toString(16).padStart(2, '0')).join(''));
     
-    // Adjust background opacity based on lightness
-    const backgroundOpacity = colorAnalysis.lightness > 0.6 ? 0.9 : 0.8;
+    // Very low opacity for glass-like effect
+    const backgroundOpacity = colorAnalysis.lightness > 0.6 ? 0.12 : 0.08;
     const backgroundColor = `rgba(${r}, ${g}, ${b}, ${backgroundOpacity})`;
     
     // Get optimal text color
@@ -201,8 +201,8 @@ export function useAdaptiveTheme(artworkUrl?: string) {
     const accentB = Math.min(255, Math.max(0, colorAnalysis.isWarm ? b * 0.8 : b * 1.2));
     const accentColor = `rgb(${Math.round(accentR)}, ${Math.round(accentG)}, ${Math.round(accentB)})`;
     
-    // Create overlay for better text readability
-    const overlayOpacity = colorAnalysis.lightness > 0.5 ? 0.2 : 0.1;
+    // Create very subtle overlay for glass effect
+    const overlayOpacity = colorAnalysis.lightness > 0.5 ? 0.08 : 0.05;
     const overlayColor = textColor === '#ffffff' 
       ? `rgba(0, 0, 0, ${overlayOpacity})`
       : `rgba(255, 255, 255, ${overlayOpacity})`;
@@ -235,12 +235,12 @@ export function useAdaptiveTheme(artworkUrl?: string) {
         if (newTheme.contrastRatio >= 4.5) {
           setAdaptiveTheme(newTheme);
         } else {
-          // Fallback to high contrast theme
+          // Fallback to high contrast glass theme
           setAdaptiveTheme({
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backgroundColor: 'rgba(0, 0, 0, 0.15)',
             textColor: '#ffffff',
             accentColor: colorAnalysis.isWarm ? '#f97316' : '#3b82f6',
-            overlayColor: 'rgba(0, 0, 0, 0.2)',
+            overlayColor: 'rgba(0, 0, 0, 0.08)',
             isLight: false,
             contrastRatio: 21
           });
@@ -263,12 +263,12 @@ export function useAdaptiveTheme(artworkUrl?: string) {
       
       return () => clearTimeout(timeoutId);
     } else {
-      // Reset to default theme
+      // Reset to default glass theme
       setAdaptiveTheme({
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        backgroundColor: 'rgba(0, 0, 0, 0.08)',
         textColor: '#ffffff',
         accentColor: '#f97316',
-        overlayColor: 'rgba(0, 0, 0, 0.3)',
+        overlayColor: 'rgba(0, 0, 0, 0.05)',
         isLight: false,
         contrastRatio: 21
       });
