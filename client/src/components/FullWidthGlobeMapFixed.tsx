@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { AnimatedCounter } from "./AnimatedCounter";
 
 // Types
 interface Weather {
@@ -943,74 +944,195 @@ const FullWidthGlobeMapFixed = () => {
               )}
             </div>
 
-            {/* Live Statistics Section */}
-            <div className="w-full max-w-4xl mx-auto mb-8 mt-8">
-              <Card className={`${isDarkMode ? "bg-zinc-900/50" : "bg-white/90"} backdrop-blur-xl ${isDarkMode ? "border-zinc-800/50" : "border-gray-200"} shadow-2xl`}>
-                <CardHeader className="text-center">
-                  <CardTitle className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`} style={{ textShadow: isDarkMode ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none' }}>
-                    Live Statistics
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="py-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-1 space-y-0">
-                    <div className="flex-1 text-center">
-                      <div className={`text-sm font-medium ${isDarkMode ? "text-zinc-400" : "text-gray-600"} mb-1`}>Active Listeners</div>
-                      <div className={`text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? "text-white" : "text-black"}`} style={{ textShadow: isDarkMode ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none' }}>
-                        {liveStats?.activeListeners || 42}
-                      </div>
-                    </div>
-                    <div className="flex-1 text-center">
-                      <div className={`text-sm font-medium ${isDarkMode ? "text-zinc-400" : "text-gray-600"} mb-1`}>Countries</div>
-                      <div className={`text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? "text-white" : "text-black"}`} style={{ textShadow: isDarkMode ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none' }}>
-                        {liveStats?.countries || 15}
-                      </div>
-                    </div>
-                    <div className="flex-1 text-center">
-                      <div className={`text-sm font-medium ${isDarkMode ? "text-zinc-400" : "text-gray-600"} mb-1`}>Total Listeners</div>
-                      <div className={`text-3xl md:text-4xl lg:text-5xl font-bold ${isDarkMode ? "text-white" : "text-black"}`} style={{ textShadow: isDarkMode ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none' }}>
-                        {liveStats?.totalListeners || 1247}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Active Locations Section */}
-            <div className="w-full max-w-4xl mx-auto">
-              <Card className={`${isDarkMode ? "bg-zinc-900/50" : "bg-white/90"} backdrop-blur-xl ${isDarkMode ? "border-zinc-800/50" : "border-gray-200"} shadow-2xl`}>
-                <CardHeader className="text-center">
-                  <CardTitle className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`} style={{ textShadow: isDarkMode ? '2px 2px 4px rgba(0,0,0,0.5)' : 'none' }}>
-                    Active Locations
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {["New York, USA", "London, UK", "Tokyo, Japan", "Berlin, Germany", "San Francisco, USA", "Sydney, Australia"].map((location, index) => (
-                      <div key={index} className={`flex items-center justify-between p-4 ${isDarkMode ? "bg-zinc-800/30" : "bg-gray-100/50"} rounded-lg border ${isDarkMode ? "border-zinc-700/50" : "border-gray-300/50"}`}>
-                        <div className="flex items-center space-x-3">
-                          <div 
-                            className="w-3 h-3 rounded-full animate-pulse"
-                            style={{
-                              backgroundColor: colors.primary,
-                              boxShadow: `0 0 4px ${colors.primary}`
-                            }}
-                          />
-                          <span className={`${isDarkMode ? "text-white" : "text-black"} font-medium`}>{location}</span>
+            {/* Live Statistics & Active Locations - Side by Side on Desktop */}
+            <div className="w-full max-w-7xl mx-auto mb-8 mt-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                {/* Live Statistics Section */}
+                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl"
+                  style={{
+                    background: isDarkMode 
+                      ? `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%)`
+                      : `linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%)`,
+                    borderColor: colors.primary,
+                    boxShadow: `0 0 20px ${colors.primary}20`
+                  }}>
+                  <CardHeader className="text-center pb-2">
+                    <CardTitle 
+                      className="text-2xl lg:text-3xl font-black tracking-wide"
+                      style={{ 
+                        color: colors.primary,
+                        textShadow: isDarkMode ? `0 0 10px ${colors.primary}40` : 'none'
+                      }}
+                    >
+                      LIVE STATISTICS
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="py-6">
+                    <div className="grid grid-cols-1 gap-6">
+                      
+                      {/* Active Listeners */}
+                      <div className="text-center p-4 rounded-xl"
+                        style={{
+                          background: isDarkMode 
+                            ? `linear-gradient(135deg, ${colors.primary}10 0%, ${colors.primary}05 100%)`
+                            : `linear-gradient(135deg, ${colors.primary}15 0%, ${colors.primary}08 100%)`,
+                          border: `1px solid ${colors.primary}30`
+                        }}>
+                        <div className={`text-sm font-semibold mb-2 tracking-wide ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                          ACTIVE LISTENERS
                         </div>
+                        <AnimatedCounter
+                          value={liveStats?.activeListeners || 42}
+                          className="text-4xl lg:text-5xl font-black"
+                          style={{ 
+                            color: colors.primary,
+                            textShadow: isDarkMode ? `0 2px 10px ${colors.primary}60` : `0 2px 4px ${colors.primary}30`
+                          }}
+                        />
+                        <div className="flex justify-center mt-2">
+                          <div 
+                            className="w-2 h-2 rounded-full animate-pulse"
+                            style={{ backgroundColor: colors.primary, boxShadow: `0 0 8px ${colors.primary}` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Countries */}
+                      <div className="text-center p-4 rounded-xl"
+                        style={{
+                          background: isDarkMode 
+                            ? `linear-gradient(135deg, ${colors.secondary}10 0%, ${colors.secondary}05 100%)`
+                            : `linear-gradient(135deg, ${colors.secondary}15 0%, ${colors.secondary}08 100%)`,
+                          border: `1px solid ${colors.secondary}30`
+                        }}>
+                        <div className={`text-sm font-semibold mb-2 tracking-wide ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                          COUNTRIES
+                        </div>
+                        <AnimatedCounter
+                          value={liveStats?.countries || 15}
+                          className="text-4xl lg:text-5xl font-black"
+                          style={{ 
+                            color: colors.secondary,
+                            textShadow: isDarkMode ? `0 2px 10px ${colors.secondary}60` : `0 2px 4px ${colors.secondary}30`
+                          }}
+                        />
+                        <div className="flex justify-center mt-2">
+                          <div 
+                            className="w-2 h-2 rounded-full animate-pulse"
+                            style={{ backgroundColor: colors.secondary, boxShadow: `0 0 8px ${colors.secondary}` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Total Listeners */}
+                      <div className="text-center p-4 rounded-xl"
+                        style={{
+                          background: isDarkMode 
+                            ? `linear-gradient(135deg, ${colors.accent}10 0%, ${colors.accent}05 100%)`
+                            : `linear-gradient(135deg, ${colors.accent}15 0%, ${colors.accent}08 100%)`,
+                          border: `1px solid ${colors.accent}30`
+                        }}>
+                        <div className={`text-sm font-semibold mb-2 tracking-wide ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                          TOTAL LISTENERS
+                        </div>
+                        <AnimatedCounter
+                          value={liveStats?.totalListeners || 1247}
+                          className="text-4xl lg:text-5xl font-black"
+                          style={{ 
+                            color: colors.accent,
+                            textShadow: isDarkMode ? `0 2px 10px ${colors.accent}60` : `0 2px 4px ${colors.accent}30`
+                          }}
+                        />
+                        <div className="flex justify-center mt-2">
+                          <div 
+                            className="w-2 h-2 rounded-full animate-pulse"
+                            style={{ backgroundColor: colors.accent, boxShadow: `0 0 8px ${colors.accent}` }}
+                          />
+                        </div>
+                      </div>
+
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Active Locations Section */}
+                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl"
+                  style={{
+                    background: isDarkMode 
+                      ? `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%)`
+                      : `linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%)`,
+                    borderColor: colors.primary,
+                    boxShadow: `0 0 20px ${colors.primary}20`
+                  }}>
+                  <CardHeader className="pb-2">
+                    <CardTitle 
+                      className="text-2xl lg:text-3xl font-black tracking-wide"
+                      style={{ 
+                        color: colors.primary,
+                        textShadow: isDarkMode ? `0 0 10px ${colors.primary}40` : 'none'
+                      }}
+                    >
+                      ACTIVE LOCATIONS
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="py-6">
+                    <div className="space-y-3">
+                      {[
+                        { name: "New York, USA", listeners: 4 },
+                        { name: "London, UK", listeners: 19 },
+                        { name: "Tokyo, Japan", listeners: 43 },
+                        { name: "Berlin, Germany", listeners: 17 },
+                        { name: "San Francisco, USA", listeners: 33 },
+                        { name: "Sydney, Australia", listeners: 28 }
+                      ].map((location, index) => (
                         <div 
-                          className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
+                          key={index} 
+                          className="flex items-center justify-between p-4 rounded-xl transition-all duration-300 hover:scale-[1.02]"
                           style={{
-                            textShadow: isDarkMode ? `0 0 4px ${colors.primary}` : 'none'
+                            background: isDarkMode 
+                              ? `linear-gradient(135deg, ${colors.primary}08 0%, ${colors.primary}03 100%)`
+                              : `linear-gradient(135deg, ${colors.primary}12 0%, ${colors.primary}06 100%)`,
+                            border: `1px solid ${colors.primary}20`
                           }}
                         >
-                          {Math.floor(Math.random() * 50) + 1}
+                          <div className="flex items-center space-x-4">
+                            <div 
+                              className="w-3 h-3 rounded-full animate-pulse"
+                              style={{ 
+                                backgroundColor: colors.primary,
+                                boxShadow: `0 0 12px ${colors.primary}80`
+                              }}
+                            />
+                            <span 
+                              className="font-bold text-lg"
+                              style={{ 
+                                color: isDarkMode ? colors.text : colors.textSecondary,
+                                textShadow: isDarkMode ? `0 1px 3px rgba(0,0,0,0.5)` : 'none'
+                              }}
+                            >
+                              {location.name}
+                            </span>
+                          </div>
+                          <div className="flex items-center">
+                            <AnimatedCounter
+                              value={location.listeners}
+                              className="text-xl font-black px-4 py-2 rounded-full"
+                              style={{
+                                backgroundColor: `${colors.primary}20`,
+                                color: colors.primary,
+                                textShadow: isDarkMode ? `0 0 8px ${colors.primary}40` : 'none',
+                                border: `1px solid ${colors.primary}40`
+                              }}
+                            />
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+              </div>
             </div>
           </div>
         </section>

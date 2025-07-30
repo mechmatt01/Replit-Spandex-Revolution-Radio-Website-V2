@@ -4,9 +4,10 @@ interface AnimatedCounterProps {
   value: number;
   duration?: number;
   className?: string;
+  style?: React.CSSProperties;
 }
 
-export function AnimatedCounter({ value, duration = 800, className = "" }: AnimatedCounterProps) {
+export function AnimatedCounter({ value, duration = 800, className = "", style }: AnimatedCounterProps) {
   const [displayValue, setDisplayValue] = useState(0);
   const [previousValue, setPreviousValue] = useState(0);
 
@@ -38,7 +39,7 @@ export function AnimatedCounter({ value, duration = 800, className = "" }: Anima
   }, [value, duration, displayValue, previousValue]);
 
   return (
-    <span className={className}>
+    <span className={className} style={style}>
       {displayValue.toLocaleString()}
     </span>
   );
