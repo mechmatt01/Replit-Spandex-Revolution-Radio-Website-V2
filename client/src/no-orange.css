@@ -66,6 +66,54 @@ a:focus-visible {
   --tw-ring-color: hsl(var(--ring) / 0.5) !important;
 }
 
+/* FLOATING PLAYER COMPLETE ELIMINATION */
+/* Remove all focus rings and borders from floating player */
+.sticky-player,
+.sticky-player *,
+.sticky-player button,
+.sticky-player button *,
+.sticky-player [role="button"],
+.sticky-player [role="button"] *,
+.sticky-player input,
+.sticky-player select,
+.sticky-player textarea,
+.sticky-player [tabindex],
+.sticky-player:focus,
+.sticky-player *:focus,
+.sticky-player button:focus,
+.sticky-player button *:focus,
+.sticky-player [role="button"]:focus,
+.sticky-player [role="button"] *:focus,
+.sticky-player input:focus,
+.sticky-player select:focus,
+.sticky-player textarea:focus,
+.sticky-player [tabindex]:focus,
+.sticky-player:focus-visible,
+.sticky-player *:focus-visible,
+.sticky-player button:focus-visible,
+.sticky-player button *:focus-visible,
+.sticky-player [role="button"]:focus-visible,
+.sticky-player [role="button"] *:focus-visible,
+.sticky-player input:focus-visible,
+.sticky-player select:focus-visible,
+.sticky-player textarea:focus-visible,
+.sticky-player [tabindex]:focus-visible,
+.sticky-player:active,
+.sticky-player *:active,
+.sticky-player button:active,
+.sticky-player button *:active,
+.sticky-player [role="button"]:active,
+.sticky-player [role="button"] *:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-offset-color: transparent !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-border-opacity: 0 !important;
+  border-color: transparent !important;
+}
+
 /* Target form elements specifically */
 input[type="text"]:focus,
 input[type="email"]:focus,
@@ -90,6 +138,34 @@ select:focus {
   border-color: hsl(var(--ring)) !important;
   box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
   accent-color: hsl(var(--ring)) !important;
+}
+
+/* Override floating player to NOT use form element focus styles */
+.sticky-player input[type="text"]:focus,
+.sticky-player input[type="email"]:focus,
+.sticky-player input[type="password"]:focus,
+.sticky-player input[type="search"]:focus,
+.sticky-player input[type="tel"]:focus,
+.sticky-player input[type="url"]:focus,
+.sticky-player input[type="number"]:focus,
+.sticky-player input[type="date"]:focus,
+.sticky-player input[type="time"]:focus,
+.sticky-player input[type="datetime-local"]:focus,
+.sticky-player input[type="month"]:focus,
+.sticky-player input[type="week"]:focus,
+.sticky-player input[type="color"]:focus,
+.sticky-player input[type="range"]:focus,
+.sticky-player input[type="file"]:focus,
+.sticky-player textarea:focus,
+.sticky-player select:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-offset-color: transparent !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-border-opacity: 0 !important;
+  border-color: transparent !important;
 }
 
 /* FLOATING PLAYER SPECIFIC OVERRIDES */

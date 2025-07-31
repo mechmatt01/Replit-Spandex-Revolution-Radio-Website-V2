@@ -601,6 +601,53 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(${colorToHsl(colors.primary)} / 0.5) !important;
         }
 
+        /* FLOATING PLAYER COMPLETE FOCUS ELIMINATION */
+        .sticky-player,
+        .sticky-player *,
+        .sticky-player button,
+        .sticky-player button *,
+        .sticky-player [role="button"],
+        .sticky-player [role="button"] *,
+        .sticky-player input,
+        .sticky-player select,
+        .sticky-player textarea,
+        .sticky-player [tabindex],
+        .sticky-player:focus,
+        .sticky-player *:focus,
+        .sticky-player button:focus,
+        .sticky-player button *:focus,
+        .sticky-player [role="button"]:focus,
+        .sticky-player [role="button"] *:focus,
+        .sticky-player input:focus,
+        .sticky-player select:focus,
+        .sticky-player textarea:focus,
+        .sticky-player [tabindex]:focus,
+        .sticky-player:focus-visible,
+        .sticky-player *:focus-visible,
+        .sticky-player button:focus-visible,
+        .sticky-player button *:focus-visible,
+        .sticky-player [role="button"]:focus-visible,
+        .sticky-player [role="button"] *:focus-visible,
+        .sticky-player input:focus-visible,
+        .sticky-player select:focus-visible,
+        .sticky-player textarea:focus-visible,
+        .sticky-player [tabindex]:focus-visible,
+        .sticky-player:active,
+        .sticky-player *:active,
+        .sticky-player button:active,
+        .sticky-player button *:active,
+        .sticky-player [role="button"]:active,
+        .sticky-player [role="button"] *:active {
+          outline: none !important;
+          border: none !important;
+          box-shadow: none !important;
+          --tw-ring-color: transparent !important;
+          --tw-ring-offset-color: transparent !important;
+          --tw-ring-offset-width: 0px !important;
+          --tw-border-opacity: 0 !important;
+          border-color: transparent !important;
+        }
+
         /* COMPREHENSIVE ORANGE ELIMINATION - All possible selectors */
         .ring-orange-500,
         .ring-orange-400,

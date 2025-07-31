@@ -253,6 +253,73 @@ select:focus {
   animation: fadeIn 0.3s ease-in-out;
 }
 
+/* FLOATING PLAYER FOCUS RING ELIMINATION */
+/* Target the sticky player, audio players, and all their children to prevent any focus rings */
+.sticky-player,
+.audio-player,
+.radio-player,
+.music-player,
+.player,
+[data-player],
+[class*="player"],
+[class*="Player"],
+.sticky-player *,
+.sticky-player button,
+.sticky-player button *,
+.sticky-player [role="button"],
+.sticky-player [role="button"] *,
+.sticky-player input,
+.sticky-player input *,
+.sticky-player select,
+.sticky-player select *,
+.sticky-player textarea,
+.sticky-player textarea *,
+.sticky-player [tabindex],
+.sticky-player [tabindex] *,
+.sticky-player:focus,
+.sticky-player *:focus,
+.sticky-player button:focus,
+.sticky-player button *:focus,
+.sticky-player [role="button"]:focus,
+.sticky-player [role="button"] *:focus,
+.sticky-player input:focus,
+.sticky-player input *:focus,
+.sticky-player select:focus,
+.sticky-player select *:focus,
+.sticky-player textarea:focus,
+.sticky-player textarea *:focus,
+.sticky-player [tabindex]:focus,
+.sticky-player [tabindex] *:focus,
+.sticky-player:focus-visible,
+.sticky-player *:focus-visible,
+.sticky-player button:focus-visible,
+.sticky-player button *:focus-visible,
+.sticky-player [role="button"]:focus-visible,
+.sticky-player [role="button"] *:focus-visible,
+.sticky-player input:focus-visible,
+.sticky-player input *:focus-visible,
+.sticky-player select:focus-visible,
+.sticky-player select *:focus-visible,
+.sticky-player textarea:focus-visible,
+.sticky-player textarea *:focus-visible,
+.sticky-player [tabindex]:focus-visible,
+.sticky-player [tabindex] *:focus-visible,
+.sticky-player:active,
+.sticky-player *:active,
+.sticky-player button:active,
+.sticky-player button *:active,
+.sticky-player [role="button"]:active,
+.sticky-player [role="button"] *:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-offset-color: transparent !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-border-opacity: 0 !important;
+  border-color: transparent !important;
+}
+
 /* Force theme-aware focus ring colors - highest priority override */
 * {
   --tw-ring-color: hsl(var(--ring) / 0.5) !important;
