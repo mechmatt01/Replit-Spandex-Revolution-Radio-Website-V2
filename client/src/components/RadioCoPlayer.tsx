@@ -14,6 +14,7 @@ import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
 import ThemedMusicLogo from "@/components/ThemedMusicLogo";
 import ScrollingText from "@/components/ScrollingText";
 import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
+import { AdLogo } from "@/components/AdLogo";
 import { useState, useRef, useEffect } from "react";
 
 // RadioStation interface moved to RadioContext

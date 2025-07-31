@@ -579,8 +579,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         }
         
         /* Override any existing ring colors */
-        .ring-orange-500, .focus\\:ring-orange-500:focus, .focus\\:ring-metal-orange:focus {
+        .ring-orange-500, .focus\\:ring-orange-500:focus, .focus\\:ring-metal-orange:focus,
+        *:focus-visible, *:focus, button:focus-visible, button:focus,
+        input:focus-visible, input:focus, select:focus-visible, select:focus,
+        textarea:focus-visible, textarea:focus, [role="button"]:focus-visible, [role="button"]:focus,
+        [data-radix-dropdown-menu-trigger]:focus-visible, [data-radix-dropdown-menu-trigger]:focus {
           --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+          ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+          outline-color: hsl(${colorToHsl(colors.primary)}) !important;
         }
       `;
       // Remove any existing theme override styles

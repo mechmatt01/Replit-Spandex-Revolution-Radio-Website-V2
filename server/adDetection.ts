@@ -1,337 +1,224 @@
-import OpenAI from "openai";
-import { Readable } from "stream";
+// Ad detection system for filtering content and displaying appropriate logos
+// Blocks political content and detects commercials
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-let openai: OpenAI | null = null;
+// Known commercial keywords and brand mappings
+const COMMERCIAL_BRANDS = {
+  'gain': { name: 'Gain', logo: 'https://logos-world.net/wp-content/uploads/2022/01/Gain-Logo.png' },
+  'mcdonalds': { name: 'McDonald\'s', logo: 'https://logos-world.net/wp-content/uploads/2020/04/McDonalds-Logo.png' },
+  'nike': { name: 'Nike', logo: 'https://logos-world.net/wp-content/uploads/2020/04/Nike-Logo.png' },
+  'coca cola': { name: 'Coca-Cola', logo: 'https://logos-world.net/wp-content/uploads/2020/05/Coca-Cola-Logo.png' },
+  'pepsi': { name: 'Pepsi', logo: 'https://logos-world.net/wp-content/uploads/2020/05/Pepsi-Logo.png' },
+  'walmart': { name: 'Walmart', logo: 'https://logos-world.net/wp-content/uploads/2020/05/Walmart-Logo.png' },
+  'amazon': { name: 'Amazon', logo: 'https://logos-world.net/wp-content/uploads/2020/04/Amazon-Logo.png' },
+  'apple': { name: 'Apple', logo: 'https://logos-world.net/wp-content/uploads/2020/04/Apple-Logo.png' },
+  'google': { name: 'Google', logo: 'https://logos-world.net/wp-content/uploads/2020/04/Google-Logo.png' },
+  'spotify': { name: 'Spotify', logo: 'https://logos-world.net/wp-content/uploads/2020/06/Spotify-Logo.png' },
+  'ford': { name: 'Ford', logo: 'https://logos-world.net/wp-content/uploads/2020/08/Ford-Logo.png' },
+  'chevrolet': { name: 'Chevrolet', logo: 'https://logos-world.net/wp-content/uploads/2020/08/Chevrolet-Logo.png' },
+  'toyota': { name: 'Toyota', logo: 'https://logos-world.net/wp-content/uploads/2020/08/Toyota-Logo.png' },
+  'verizon': { name: 'Verizon', logo: 'https://logos-world.net/wp-content/uploads/2020/09/Verizon-Logo.png' },
+  'att': { name: 'AT&T', logo: 'https://logos-world.net/wp-content/uploads/2020/09/ATT-Logo.png' },
+  't-mobile': { name: 'T-Mobile', logo: 'https://logos-world.net/wp-content/uploads/2020/09/T-Mobile-Logo.png' }
+};
 
-// Initialize OpenAI only if API key is available
-if (process.env.OPENAI_API_KEY) {
-  openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-}
-
-interface AdDetectionResult {
-  isAd: boolean;
-  confidence: number;
-  transcription: string;
-  category?: string;
-  brand?: string;
-}
-
-// Sample the radio stream and analyze for ad content
-export async function detectAdContent(
-  streamUrl: string,
-): Promise<AdDetectionResult> {
-  try {
-    // Record a 10-second sample from the radio stream
-    const audioSample = await captureAudioSample(streamUrl, 10000);
-
-    // Transcribe the audio using Whisper
-    const transcription = await transcribeAudio(audioSample);
-
-    // Analyze the transcription to detect if it's an advertisement
-    const adAnalysis = await analyzeForAdvertisement(transcription);
-
-    return {
-      isAd: adAnalysis.isAd,
-      confidence: adAnalysis.confidence,
-      transcription: transcription,
-      category: adAnalysis.category,
-      brand: adAnalysis.brand,
-    };
-  } catch (error) {
-    console.error("Error in ad detection:", error);
-    return {
-      isAd: false,
-      confidence: 0,
-      transcription: "",
-      category: undefined,
-      brand: undefined,
-    };
-  }
-}
-
-// Capture a sample of audio from the radio stream
-async function captureAudioSample(
-  streamUrl: string,
-  durationMs: number,
-): Promise<Buffer> {
-  return new Promise((resolve, reject) => {
-    const chunks: Buffer[] = [];
-    const timeout = setTimeout(() => {
-      resolve(Buffer.concat(chunks));
-    }, durationMs);
-
-    // Use native fetch (Node.js 18+)
-    fetch(streamUrl)
-      .then((response) => {
-        if (!response.body) {
-          throw new Error("No response body");
-        }
-
-        const reader = response.body.getReader();
-
-        const pump = () => {
-          return reader.read().then(({ done, value }) => {
-            if (done) {
-              resolve(Buffer.concat(chunks));
-              return;
-            }
-            chunks.push(Buffer.from(value));
-            return pump();
-          });
-        };
-
-        pump().catch((error) => {
-          clearTimeout(timeout);
-          reject(error);
-        });
-      })
-      .catch((error) => {
-        clearTimeout(timeout);
-        reject(error);
-      });
-  });
-}
-
-// Transcribe audio using OpenAI Whisper
-async function transcribeAudio(audioBuffer: Buffer): Promise<string> {
-  if (!openai) {
-    return "";
-  }
-
-  try {
-    // Convert buffer to a readable stream for OpenAI API
-    const audioStream = Readable.from(audioBuffer);
-
-    const transcription = await openai.audio.transcriptions.create({
-      file: audioStream as any,
-      model: "whisper-1",
-      response_format: "text",
-      language: "en",
-    });
-
-    return transcription || "";
-  } catch (error) {
-    console.error("Error transcribing audio:", error);
-    return "";
-  }
-}
-
-// Analyze transcription to determine if it's an advertisement
-async function analyzeForAdvertisement(transcription: string): Promise<{
-  isAd: boolean;
-  confidence: number;
-  category?: string;
-  brand?: string;
-}> {
-  if (!transcription || transcription.trim().length === 0) {
-    return { isAd: false, confidence: 0 };
-  }
-
-  if (!openai) {
-    return { isAd: quickAdDetection(transcription), confidence: 0.5 };
-  }
-
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: `You are an expert at identifying advertisements in radio content. Analyze the following transcription and determine if it's an advertisement or commercial break versus music/DJ content.
-
-Consider these factors:
-- Product/service mentions and promotions
-- Call-to-action phrases ("Call now", "Visit today", "Limited time")
-- Price mentions or deals
-- Company/brand names being promoted
-- Advertising jargon and marketing language
-- Phone numbers, websites, or addresses
-- "Sponsored by" or similar phrases
-
-Respond with JSON in this exact format:
-{
-  "isAd": true/false,
-  "confidence": 0.0-1.0,
-  "category": "automotive/finance/retail/food/etc" (if ad),
-  "brand": "brand name" (if identifiable)
-}`,
-        },
-        {
-          role: "user",
-          content: transcription,
-        },
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.1,
-    });
-
-    const result = JSON.parse(response.choices[0].message.content || "{}");
-
-    return {
-      isAd: result.isAd || false,
-      confidence: Math.max(0, Math.min(1, result.confidence || 0)),
-      category: result.category,
-      brand: result.brand,
-    };
-  } catch (error) {
-    console.error("Error analyzing for advertisement:", error);
-    return { isAd: false, confidence: 0 };
-  }
-}
-
-// Common advertisement keywords for quick detection
-const adKeywords = [
-  "call now",
-  "limited time",
-  "special offer",
-  "visit today",
-  "don't miss",
-  "sale",
-  "discount",
-  "percent off",
-  "financing available",
-  "free delivery",
-  "sponsored by",
-  "brought to you by",
-  "commercial",
-  "advertisement",
-  "phone number",
-  "website",
-  "location",
-  "store",
-  "dealership",
-  "capital one",
-  "bank",
-  "credit card",
-  "interest rate",
-  "apply today",
-  "terms apply",
-  "see website",
-  "member fdic",
-  "credit approval",
+// Blocked content that should be filtered out
+const BLOCKED_CONTENT = [
+  'trump 2024',
+  'maga',
+  'make america great again',
+  'political advertisement',
+  'campaign ad'
 ];
 
-// Quick keyword-based ad detection (fallback method)
-export function quickAdDetection(text: string): boolean {
-  if (!text) return false;
+// Commercial indicators
+const COMMERCIAL_KEYWORDS = [
+  'commercial',
+  'advertisement',
+  'ad break',
+  'sponsored by',
+  'brought to you by',
+  'in a commercial',
+  'promo',
+  'promotion'
+];
 
-  const lowerText = text.toLowerCase();
-  const adKeywordCount = adKeywords.filter((keyword) =>
-    lowerText.includes(keyword),
-  ).length;
-
-  // If 2 or more ad keywords are found, likely an advertisement
-  return adKeywordCount >= 2;
-}
-
-// Enhanced metadata analysis for ad detection
-export function analyzeStreamMetadata(metadata: any): {
+export interface AdDetectionResult {
   isAd: boolean;
-  reason?: string;
-} {
-  if (!metadata) return { isAd: false };
-
-  const title = (metadata.title || "").toLowerCase();
-  const artist = (metadata.artist || "").toLowerCase();
-  const description = (metadata.description || "").toLowerCase();
-  const fullText = `${title} ${artist} ${description}`.toLowerCase();
-
-  // Check for commercial indicators in metadata
-  const commercialIndicators = [
-    "commercial",
-    "advertisement",
-    "ad break",
-    "sponsored",
-    "promo",
-    "jingle",
-    "spot",
-    "PSA",
-    "public service",
-  ];
-
-  // Check for specific brand indicators
-  const brandIndicators = [
-    "capital one",
-    "discover card",
-    "chase bank",
-    "wells fargo",
-    "geico",
-    "progressive",
-    "state farm",
-    "allstate",
-    "mcdonalds",
-    "burger king",
-    "taco bell",
-    "subway",
-    "coca cola",
-    "pepsi",
-    "dr pepper",
-    "mountain dew",
-  ];
-
-  // Check for financial service indicators
-  const financialIndicators = [
-    "apr",
-    "interest rate",
-    "credit score",
-    "loan",
-    "mortgage",
-    "refinance",
-    "debt consolidation",
-    "personal loan",
-    "auto loan",
-    "member fdic",
-    "credit approval",
-    "terms and conditions apply",
-  ];
-
-  for (const indicator of commercialIndicators) {
-    if (fullText.includes(indicator)) {
-      return {
-        isAd: true,
-        reason: `Commercial indicator found: ${indicator}`,
-      };
-    }
-  }
-
-  for (const brand of brandIndicators) {
-    if (fullText.includes(brand)) {
-      return {
-        isAd: true,
-        reason: `Brand detected: ${brand}`,
-      };
-    }
-  }
-
-  for (const financial of financialIndicators) {
-    if (fullText.includes(financial)) {
-      return {
-        isAd: true,
-        reason: `Financial service indicator: ${financial}`,
-      };
-    }
-  }
-
-  // Check for common commercial patterns
-  if (title.includes("call") && title.includes("now")) {
-    return { isAd: true, reason: "Call-to-action detected in title" };
-  }
-
-  if (
-    artist.includes("corp") ||
-    artist.includes("inc") ||
-    artist.includes("llc")
-  ) {
-    return { isAd: true, reason: "Corporate entity detected as artist" };
-  }
-
-  // Check for ad-like timing patterns (ads often have specific durations)
-  if (title.includes("30") || title.includes("60") || title.includes("15")) {
-    if (fullText.includes("second") || fullText.includes("sec")) {
-      return { isAd: true, reason: "Ad duration pattern detected" };
-    }
-  }
-
-  return { isAd: false };
+  isBlocked: boolean;
+  brandName?: string;
+  brandLogo?: string;
+  adType: 'music' | 'commercial' | 'blocked';
+  originalTitle: string;
+  originalArtist: string;
 }
+
+/**
+ * Detects if content is an advertisement and determines appropriate display
+ */
+export function detectAdvertisement(title: string, artist: string): AdDetectionResult {
+  const titleLower = title.toLowerCase();
+  const artistLower = artist.toLowerCase();
+  const combinedContent = `${titleLower} ${artistLower}`;
+
+  // Check for blocked content first
+  for (const blocked of BLOCKED_CONTENT) {
+    if (combinedContent.includes(blocked.toLowerCase())) {
+      console.log(`Blocked content detected: ${title} by ${artist}`);
+      return {
+        isAd: true,
+        isBlocked: true,
+        adType: 'blocked',
+        originalTitle: title,
+        originalArtist: artist
+      };
+    }
+  }
+
+  // Check for commercial indicators
+  const isCommercial = COMMERCIAL_KEYWORDS.some(keyword => 
+    combinedContent.includes(keyword.toLowerCase())
+  );
+
+  if (isCommercial) {
+    // Try to identify specific brand
+    for (const [brandKey, brandInfo] of Object.entries(COMMERCIAL_BRANDS)) {
+      if (combinedContent.includes(brandKey.toLowerCase())) {
+        console.log(`Brand commercial detected: ${brandInfo.name}`);
+        return {
+          isAd: true,
+          isBlocked: false,
+          brandName: brandInfo.name,
+          brandLogo: brandInfo.logo,
+          adType: 'commercial',
+          originalTitle: title,
+          originalArtist: artist
+        };
+      }
+    }
+
+    // Generic commercial detected
+    console.log(`Generic commercial detected: ${title} by ${artist}`);
+    return {
+      isAd: true,
+      isBlocked: false,
+      adType: 'commercial',
+      originalTitle: title,
+      originalArtist: artist
+    };
+  }
+
+  // Regular music content
+  return {
+    isAd: false,
+    isBlocked: false,
+    adType: 'music',
+    originalTitle: title,
+    originalArtist: artist
+  };
+}
+
+/**
+ * Gets appropriate display content based on ad detection
+ */
+export function getDisplayContent(detection: AdDetectionResult) {
+  if (detection.isBlocked) {
+    // Return generic music info for blocked content
+    return {
+      title: 'Live Stream',
+      artist: 'On Air',
+      album: 'Radio Broadcast',
+      artwork: null, // Will use default music icon
+      isAd: false // Hide that it was blocked content
+    };
+  }
+
+  if (detection.isAd && detection.brandName && detection.brandLogo) {
+    // Show brand commercial
+    return {
+      title: `${detection.brandName} Commercial`,
+      artist: 'Advertisement',
+      album: 'Commercial Break',
+      artwork: detection.brandLogo,
+      isAd: true
+    };
+  }
+
+  if (detection.isAd) {
+    // Generic commercial
+    return {
+      title: 'Commercial Break',
+      artist: 'Advertisement',
+      album: 'Radio Commercial',
+      artwork: null, // Will use ad symbol
+      isAd: true
+    };
+  }
+
+  // Regular music - return original content
+  return {
+    title: detection.originalTitle,
+    artist: detection.originalArtist,
+    album: null, // Will be filled by iTunes lookup
+    artwork: null, // Will be filled by iTunes lookup
+    isAd: false
+  };
+}
+
+/**
+ * Enhanced Clearbit logo lookup for brand detection
+ */
+export async function getClearbitLogo(brandName: string): Promise<string | null> {
+  try {
+    const domain = getBrandDomain(brandName);
+    if (!domain) return null;
+
+    const logoUrl = `https://logo.clearbit.com/${domain}`;
+    
+    // Test if logo exists with basic fetch
+    const response = await fetch(logoUrl, {
+      method: 'HEAD'
+    });
+
+    if (response.ok) {
+      console.log(`Clearbit logo found for ${brandName}: ${logoUrl}`);
+      return logoUrl;
+    }
+    
+    return null;
+  } catch (error) {
+    console.log(`Clearbit logo lookup failed for ${brandName}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Maps brand names to their primary domains for Clearbit lookup
+ */
+function getBrandDomain(brandName: string): string | null {
+  const domainMap: Record<string, string> = {
+    'gain': 'gain.com',
+    'mcdonalds': 'mcdonalds.com',
+    'nike': 'nike.com',
+    'coca-cola': 'coca-cola.com',
+    'pepsi': 'pepsi.com',
+    'walmart': 'walmart.com',
+    'amazon': 'amazon.com',
+    'apple': 'apple.com',
+    'google': 'google.com',
+    'spotify': 'spotify.com',
+    'ford': 'ford.com',
+    'chevrolet': 'chevrolet.com',
+    'toyota': 'toyota.com',
+    'verizon': 'verizon.com',
+    'att': 'att.com',
+    't-mobile': 't-mobile.com'
+  };
+
+  return domainMap[brandName.toLowerCase()] || null;
+}
+
+export default {
+  detectAdvertisement,
+  getDisplayContent,
+  getClearbitLogo
+};

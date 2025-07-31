@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { detectAdvertisement, getDisplayContent } from './adDetection.js';
 
 interface StationMetadata {
   title: string;
@@ -78,7 +79,23 @@ class MetadataFetcher {
       }
 
       if (metadata) {
-        this.cache.set(stationId, { data: metadata, timestamp: Date.now() });
+        // Apply ad detection and content filtering
+        const adDetection = detectAdvertisement(metadata.title, metadata.artist);
+        const displayContent = getDisplayContent(adDetection);
+        
+        // Create filtered metadata
+        const filteredMetadata = {
+          ...metadata,
+          title: displayContent.title,
+          artist: displayContent.artist,
+          album: displayContent.album || metadata.album,
+          artwork: displayContent.artwork || metadata.artwork,
+          isAd: displayContent.isAd
+        };
+        
+        this.cache.set(stationId, { data: filteredMetadata, timestamp: Date.now() });
+        console.log(`Metadata fetcher returned (filtered):`, filteredMetadata);
+        return filteredMetadata;
       }
 
       return metadata;

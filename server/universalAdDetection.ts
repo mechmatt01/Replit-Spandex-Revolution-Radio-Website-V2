@@ -1,4 +1,4 @@
-import { detectAdContent, quickAdDetection } from './adDetection';
+import { detectAdvertisement, getDisplayContent } from './adDetection.js';
 import { storage } from './storage';
 import type { RadioStation } from '@shared/schema';
 
@@ -127,15 +127,15 @@ export class UniversalAdDetector {
    */
   private async performAudioDetection(station: RadioStation, metadata?: StreamMetadata): Promise<UniversalAdDetectionResult> {
     try {
-      // Use existing audio detection system
-      const audioResult = await detectAdContent(station.streamUrl);
+      // Use simple ad detection for audio content
+      const adDetection = detectAdvertisement(metadata?.title || 'Unknown', metadata?.artist || 'Unknown');
+      const displayContent = getDisplayContent(adDetection);
 
       return {
-        isAd: audioResult.isAd,
-        confidence: audioResult.confidence,
-        transcription: audioResult.transcription,
-        category: audioResult.category,
-        brand: audioResult.brand,
+        isAd: adDetection.isAd,
+        confidence: adDetection.isAd ? 0.9 : 0.1,
+        category: adDetection.adType,
+        brand: adDetection.brandName,
         stationId: station.stationId,
         timestamp: new Date()
       };
