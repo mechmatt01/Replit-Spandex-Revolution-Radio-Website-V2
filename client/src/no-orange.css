@@ -1,0 +1,93 @@
+
+/* NO ORANGE FOCUS RINGS - ULTIMATE OVERRIDE FILE */
+/* This file specifically targets and eliminates all orange focus rings */
+
+/* Global override for all elements */
+* {
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  --tw-ring-offset-color: hsl(var(--background)) !important;
+}
+
+/* Target all possible focus states */
+*:focus,
+*:focus-visible,
+*:focus-within,
+button:focus,
+button:focus-visible,
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+[tabindex]:focus,
+[tabindex]:focus-visible,
+a:focus,
+a:focus-visible {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-color: hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  border-color: hsl(var(--ring)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  accent-color: hsl(var(--ring)) !important;
+}
+
+/* Override all orange Tailwind classes */
+.ring-orange-500,
+.ring-orange-400,
+.ring-orange-600,
+.border-orange-500,
+.border-orange-400,
+.border-orange-600,
+.accent-orange-500,
+.focus\:ring-orange-500:focus,
+.focus\:ring-orange-400:focus,
+.focus\:ring-orange-600:focus,
+.focus\:border-orange-500:focus,
+.focus\:border-orange-400:focus,
+.focus\:border-orange-600:focus,
+.focus-visible\:ring-orange-500:focus-visible,
+.focus-visible\:ring-orange-400:focus-visible,
+.focus-visible\:ring-orange-600:focus-visible {
+  --tw-ring-opacity: 0.5 !important;
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  --tw-border-opacity: 1 !important;
+  border-color: hsl(var(--ring)) !important;
+  outline-color: hsl(var(--ring)) !important;
+  accent-color: hsl(var(--ring)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+}
+
+/* Remove any hardcoded orange from CSS variables */
+:root {
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+}
+
+/* Target form elements specifically */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="datetime-local"]:focus,
+input[type="month"]:focus,
+input[type="week"]:focus,
+input[type="color"]:focus,
+input[type="range"]:focus,
+input[type="file"]:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-color: hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  border-color: hsl(var(--ring)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+  accent-color: hsl(var(--ring)) !important;
+}

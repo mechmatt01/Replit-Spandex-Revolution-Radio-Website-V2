@@ -59,6 +59,19 @@ module.exports = {
           4: "hsl(var(--chart-4))",
           5: "hsl(var(--chart-5))",
         },
+        // Override any orange colors with theme colors
+        orange: {
+          50: "hsl(var(--muted))",
+          100: "hsl(var(--muted))",
+          200: "hsl(var(--muted))",
+          300: "hsl(var(--accent))",
+          400: "hsl(var(--ring))",
+          500: "hsl(var(--ring))",
+          600: "hsl(var(--ring))",
+          700: "hsl(var(--ring))",
+          800: "hsl(var(--ring))",
+          900: "hsl(var(--ring))",
+        },
       },
       keyframes: {
         "accordion-down": {

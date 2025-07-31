@@ -564,31 +564,76 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           --ring: ${colorToHsl(colors.primary)} !important;
         }
 
-        /* Force all focus ring states to use theme color */
+        /* ULTIMATE FOCUS RING OVERRIDE - All elements use theme color */
+        *:focus,
+        *:focus-visible,
+        *:active,
+        button:focus,
+        button:focus-visible,
+        button:active,
+        input:focus,
+        input:focus-visible,
+        select:focus,
+        select:focus-visible,
+        textarea:focus,
+        textarea:focus-visible,
+        [role="button"]:focus,
+        [role="button"]:focus-visible,
+        [tabindex]:focus,
+        [tabindex]:focus-visible,
+        [data-radix-dropdown-menu-trigger]:focus,
+        [data-radix-dropdown-menu-trigger]:focus-visible,
+        [data-radix-select-trigger]:focus,
+        [data-radix-select-trigger]:focus-visible,
         .focus\\:ring-2:focus,
         .focus-visible\\:ring-2:focus-visible,
         .focus\\:ring-ring:focus,
         .focus-visible\\:ring-ring:focus-visible,
-        button:focus-visible,
-        input:focus,
-        select:focus,
-        textarea:focus,
-        [role="button"]:focus-visible {
+        .focus\\:ring-orange-500:focus,
+        .focus-visible\\:ring-orange-500:focus-visible,
+        .ring-orange-500,
+        .border-orange-500 {
           --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+          border-color: hsl(${colorToHsl(colors.primary)}) !important;
+          outline: 2px solid hsl(${colorToHsl(colors.primary)}) !important;
+          outline-color: hsl(${colorToHsl(colors.primary)}) !important;
+          outline-offset: 2px !important;
           box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(${colorToHsl(colors.primary)} / 0.5) !important;
         }
 
-        /* Override any existing ring colors */
-        .ring-orange-500, .focus\\:ring-orange-500:focus, .focus\\:ring-metal-orange:focus,
-        *:focus-visible, *:focus, button:focus-visible, button:focus,
-        input:focus-visible, input:focus, select:focus-visible, select:focus,
-        textarea:focus-visible, textarea:focus, [role="button"]:focus-visible, [role="button"]:focus,
-        [data-radix-dropdown-menu-trigger]:focus-visible, [data-radix-dropdown-menu-trigger]:focus {
+        /* COMPREHENSIVE ORANGE ELIMINATION - All possible selectors */
+        .ring-orange-500,
+        .ring-orange-400,
+        .ring-orange-600,
+        .border-orange-500,
+        .border-orange-400,
+        .border-orange-600,
+        .focus\\:ring-orange-500:focus,
+        .focus\\:ring-orange-400:focus,
+        .focus\\:ring-orange-600:focus,
+        .focus\\:border-orange-500:focus,
+        .focus\\:border-orange-400:focus,
+        .focus\\:border-orange-600:focus,
+        .focus-visible\\:ring-orange-500:focus-visible,
+        .focus-visible\\:ring-orange-400:focus-visible,
+        .focus-visible\\:ring-orange-600:focus-visible,
+        .focus-visible\\:border-orange-500:focus-visible,
+        .focus-visible\\:border-orange-400:focus-visible,
+        .focus-visible\\:border-orange-600:focus-visible,
+        .accent-orange-500,
+        .text-orange-500,
+        .bg-orange-500 {
           --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
-          ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+          --tw-border-opacity: 1 !important;
+          border-color: hsl(${colorToHsl(colors.primary)}) !important;
+          outline: 2px solid hsl(${colorToHsl(colors.primary)}) !important;
           outline-color: hsl(${colorToHsl(colors.primary)}) !important;
+          outline-offset: 2px !important;
+          box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+          accent-color: hsl(${colorToHsl(colors.primary)}) !important;
         }
       `;
+      
       // Remove any existing theme override styles
       const existingStyle = document.getElementById('theme-ring-override');
       if (existingStyle) existingStyle.remove();
