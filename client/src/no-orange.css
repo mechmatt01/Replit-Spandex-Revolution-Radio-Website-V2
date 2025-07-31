@@ -1,44 +1,120 @@
-/* KEYBOARD-ONLY FOCUS SYSTEM */
-/* This file ensures focus rings only appear during keyboard navigation */
 
-/* Remove focus rings on mouse/click interactions */
-*:focus:not(:focus-visible) {
+/* NO ORANGE FOCUS RINGS - ULTIMATE OVERRIDE FILE */
+/* This file specifically targets and eliminates all orange focus rings */
+
+/* Global override for all elements */
+* {
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  --tw-ring-offset-color: hsl(var(--background)) !important;
+}
+
+/* Target all possible focus states */
+*:focus,
+*:focus-visible,
+*:focus-within,
+button:focus,
+button:focus-visible,
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+[tabindex]:focus,
+[tabindex]:focus-visible,
+a:focus,
+a:focus-visible {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-color: hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  border-color: hsl(var(--ring)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  accent-color: hsl(var(--ring)) !important;
+}
+
+/* Override all orange Tailwind classes */
+.ring-orange-500,
+.ring-orange-400,
+.ring-orange-600,
+.border-orange-500,
+.border-orange-400,
+.border-orange-600,
+.accent-orange-500,
+.focus\:ring-orange-500:focus,
+.focus\:ring-orange-400:focus,
+.focus\:ring-orange-600:focus,
+.focus\:border-orange-500:focus,
+.focus\:border-orange-400:focus,
+.focus\:border-orange-600:focus,
+.focus-visible\:ring-orange-500:focus-visible,
+.focus-visible\:ring-orange-400:focus-visible,
+.focus-visible\:ring-orange-600:focus-visible {
+  --tw-ring-opacity: 0.5 !important;
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  --tw-border-opacity: 1 !important;
+  border-color: hsl(var(--ring)) !important;
+  outline-color: hsl(var(--ring)) !important;
+  accent-color: hsl(var(--ring)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+}
+
+/* Remove any hardcoded orange from CSS variables */
+:root {
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+}
+
+/* Target form elements specifically */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="datetime-local"]:focus,
+input[type="month"]:focus,
+input[type="week"]:focus,
+input[type="color"]:focus,
+input[type="range"]:focus,
+input[type="file"]:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-color: hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  border-color: hsl(var(--ring)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+  accent-color: hsl(var(--ring)) !important;
+}
+
+/* FLOATING PLAYER SPECIFIC OVERRIDES */
+/* Completely disable focus rings for floating player elements except main button */
+.floating-player-no-focus *:not(button):focus,
+.floating-player-no-focus *:not(button):focus-visible,
+.floating-player-no-focus .focus-safe-area *:focus,
+.floating-player-no-focus .focus-safe-area *:focus-visible {
   outline: none !important;
+  border: none !important;
   box-shadow: none !important;
-  border-color: initial !important;
   --tw-ring-color: transparent !important;
   --tw-ring-opacity: 0 !important;
+  --tw-border-opacity: 0 !important;
 }
 
-/* Show theme-aware focus rings only for keyboard navigation */
-*:focus-visible {
-  outline: 2px solid hsl(var(--ring)) !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.3) !important;
-  --tw-ring-color: hsl(var(--ring) / 0.3) !important;
-}
-
-/* Completely disable focus for floating player non-interactive elements */
-.sticky-player .countdown-element,
-.sticky-player .now-playing-info,
-.sticky-player .album-art,
-.floating-player-content > div:not(button),
-.floating-player-content > span,
-.floating-player-content > p {
+/* Override all possible focus states for floating player safe areas */
+.floating-player-no-focus input:focus,
+.floating-player-no-focus input:focus-visible,
+.floating-player-no-focus span:focus,
+.floating-player-no-focus span:focus-visible,
+.floating-player-no-focus div:focus,
+.floating-player-no-focus div:focus-visible {
   outline: none !important;
-  box-shadow: none !important;
   border: none !important;
-  pointer-events: auto;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  tabindex: -1;
-}
-
-/* Ensure only buttons in floating player can receive focus */
-.sticky-player button:focus-visible {
-  outline: 2px solid hsl(var(--ring)) !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.3) !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
 }

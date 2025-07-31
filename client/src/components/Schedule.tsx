@@ -295,7 +295,6 @@ export default function Schedule() {
                 >
                   <CardContent
                     className="p-0"
-                    tabIndex={-1}
                     style={{
                       height: "100%",
                       display: "flex",
@@ -375,7 +374,6 @@ export default function Schedule() {
                   >
                     <CardContent
                       className="p-0"
-                      tabIndex={-1}
                       style={{
                         height: "100%",
                         display: "flex",
