@@ -1084,34 +1084,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`Now playing: "${metadata.title}" by ${metadata.artist} on ${metadata.stationName}`);
         return res.json(nowPlayingData);
       } else {
-        // Enhanced fallback: Use iTunes to get real track data instead of just station info
-        console.log('External APIs failed, trying iTunes fallback for real track data');
+        // If no valid track metadata was returned, fall back to station identification
+        console.log('No live track metadata available, showing station information');
         
-        const itunesTrack = await fetcher.fetchCurrentTrackFromItunes(getStationNameById(stationId));
-        
-        if (itunesTrack) {
-          console.log(`iTunes fallback success:`, itunesTrack);
-          const nowPlayingData = {
-            id: 1,
-            title: itunesTrack.title,
-            artist: itunesTrack.artist,
-            album: itunesTrack.album || null,
-            isLive: true,
-            timestamp: new Date().toISOString(),
-            artwork: itunesTrack.artwork || null,
-            stationId,
-            stationName: getStationNameById(stationId),
-            isAd: false,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          };
-
-          await storage.updateNowPlaying(nowPlayingData);
-          console.log(`iTunes fallback track: "${itunesTrack.title}" by ${itunesTrack.artist}`);
-          return res.json(nowPlayingData);
-        } else {
-          // Ultimate fallback with station-specific information
-          console.log('iTunes fallback also failed, using station info');
+        // Ultimate fallback with station-specific information
           const stationInfo: { [key: string]: { name: string; artist: string; album: string } } = {
             'hot-97': { name: 'Hot 97', artist: 'New York\'s #1 Hip Hop & R&B', album: '97.1 FM • New York, NY' },
             'power-106': { name: 'Power 105.1', artist: 'New York\'s Power 105.1', album: '105.1 FM • New York, NY' },
@@ -1140,11 +1116,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           await storage.updateNowPlaying(fallbackData);
           return res.json(fallbackData);
-        }
       }
     } catch (error) {
       console.error("Failed to fetch track data:", error);
-      res.status(500).json({ error: 'Failed to fetch now playing data' });
+      return res.status(500).json({ error: 'Failed to fetch now playing data' });
     }
   });
 

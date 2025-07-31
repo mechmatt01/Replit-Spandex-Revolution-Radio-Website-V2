@@ -31,7 +31,7 @@ interface IHeartNowPlayingResponse {
 class MetadataFetcher {
   private static instance: MetadataFetcher;
   private cache: Map<string, { data: StationMetadata; timestamp: number }> = new Map();
-  private readonly CACHE_DURATION = 30000; // 30 seconds
+  private readonly CACHE_DURATION = 10000; // 10 seconds (reduced for testing)
 
   public static getInstance(): MetadataFetcher {
     if (!MetadataFetcher.instance) {
@@ -52,19 +52,23 @@ class MetadataFetcher {
 
       switch (stationId) {
         case 'hot-97':
-          metadata = await this.fetchIHeartMetadata('6046', 'Hot 97') || 
+          metadata = await this.fetchStreamTheWorldMetadata('WQHTFMAAC', 'Hot 97') ||
+                    await this.fetchIHeartMetadata('6046', 'Hot 97') || 
                     await this.fetchAlternativeMetadata('WQHTFM', 'Hot 97');
           break;
         case 'power-106':
-          metadata = await this.fetchIHeartMetadata('1481', 'Power 105.1') || 
+          metadata = await this.fetchStreamTheWorldMetadata('WWPRFMAAC', 'Power 105.1') ||
+                    await this.fetchIHeartMetadata('1481', 'Power 105.1') || 
                     await this.fetchAlternativeMetadata('WWPRFM', 'Power 105.1');
           break;
         case 'hot-105':
-          metadata = await this.fetchIHeartMetadata('5907', 'Hot 105') || 
+          metadata = await this.fetchStreamTheWorldMetadata('WHQTFMAAC', 'Hot 105') ||
+                    await this.fetchIHeartMetadata('5907', 'Hot 105') || 
                     await this.fetchAlternativeMetadata('WHQTFM', 'Hot 105');
           break;
         case 'q-93':
-          metadata = await this.fetchIHeartMetadata('1037', 'Q93') || 
+          metadata = await this.fetchStreamTheWorldMetadata('WQUEFMAAC', 'Q93') ||
+                    await this.fetchIHeartMetadata('1037', 'Q93') || 
                     await this.fetchAlternativeMetadata('WQUEFM', 'Q93');
           break;
         case 'beat-955':
@@ -109,23 +113,162 @@ class MetadataFetcher {
     try {
       console.log(`Fetching iHeart metadata for station ${stationId} (${stationName})`);
       
-      // Since external APIs are failing, use iTunes API for live track search
-      // This provides real metadata for current popular tracks
-      const currentTrack = await this.fetchCurrentTrackFromItunes(stationName);
-      
-      if (currentTrack) {
-        console.log(`Successfully fetched track from iTunes:`, currentTrack);
-        return {
-          ...currentTrack,
-          stationName,
-          timestamp: Date.now(),
-        };
+      // Try multiple iHeart Radio API endpoints for real live metadata
+      const endpoints = [
+        `https://radio-api.iheart.com/api/v3/live-meta/stream/${stationId}`,
+        `https://us.api.iheart.com/api/v3/live-meta/stream/${stationId}`,
+        `https://api.iheart.com/api/v3/live-meta/stream/${stationId}`,
+        `https://player.live.iheart.com/api/v2/streams/${stationId}/live-meta`,
+        `https://us.api.iheart.com/api/v2/live-meta/stream/${stationId}`,
+      ];
+
+      for (const endpoint of endpoints) {
+        try {
+          console.log(`Trying iHeart endpoint: ${endpoint}`);
+          
+          const response = await fetch(endpoint, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+              'Accept': 'application/json',
+              'Referer': 'https://www.iheart.com/',
+              'Origin': 'https://www.iheart.com'
+            },
+            signal: AbortSignal.timeout(5000)
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log(`iHeart API response:`, JSON.stringify(data, null, 2));
+            
+            // Parse different possible response structures from iHeart
+            const track = data?.track || data?.song || data?.nowPlaying || data?.current || data;
+            
+            if (track && (track.title || track.trackName || track.name)) {
+              let artwork = track.artwork || track.image || track.albumArt || track.artworkUrl;
+              
+              // Fetch artwork from iTunes if not available
+              const title = track.title || track.trackName || track.name;
+              const artist = track.artist || track.artistName || track.performer;
+              
+              if (!artwork && title && artist) {
+                artwork = await this.fetchArtworkFromItunes(title, artist);
+              }
+
+              return {
+                title,
+                artist: artist || 'Unknown Artist',
+                album: track.album || track.albumName,
+                artwork,
+                stationName,
+                timestamp: Date.now(),
+              };
+            }
+          } else {
+            console.log(`iHeart endpoint returned ${response.status}: ${response.statusText}`);
+          }
+        } catch (endpointError) {
+          console.log(`iHeart endpoint failed:`, endpointError.message);
+          continue;
+        }
       }
 
-      console.log(`Failed to fetch metadata for station ${stationId}`);
-      return null;
+      console.log(`All iHeart endpoints failed for station ${stationId}, trying web scraping approach`);
+      
+      // Try web scraping the iHeart website as last resort
+      return await this.fetchIHeartWebScraping(stationId, stationName);
+      
     } catch (error) {
       console.error(`iHeart metadata fetch failed for ${stationId}:`, error);
+      return null;
+    }
+  }
+
+  private async fetchIHeartWebScraping(stationId: string, stationName: string): Promise<StationMetadata | null> {
+    try {
+      console.log(`Attempting web scraping for iHeart station ${stationId}`);
+      
+      // Map station IDs to their website URLs
+      const stationUrls: { [key: string]: string } = {
+        '6046': 'https://www.iheart.com/live/hot-97-6046/',  // Hot 97
+        '1481': 'https://www.iheart.com/live/power-1051-1481/',  // Power 105.1
+        '5907': 'https://www.iheart.com/live/hot-105-5907/',  // Hot 105
+        '1037': 'https://www.iheart.com/live/q93-1037/'   // Q93
+      };
+
+      const stationUrl = stationUrls[stationId];
+      if (!stationUrl) {
+        console.log(`No URL mapping found for station ${stationId}`);
+        return null;
+      }
+
+      const response = await fetch(stationUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        },
+        signal: AbortSignal.timeout(10000)
+      });
+
+      if (response.ok) {
+        const html = await response.text();
+        
+        // Look for JSON data embedded in the page
+        const jsonMatch = html.match(/"nowPlaying":\s*({[^}]+})/);
+        if (jsonMatch) {
+          try {
+            const nowPlayingData = JSON.parse(jsonMatch[1]);
+            console.log(`Scraped now playing data:`, nowPlayingData);
+            
+            const title = nowPlayingData.title || nowPlayingData.trackName;
+            const artist = nowPlayingData.artist || nowPlayingData.artistName;
+            
+            if (title || artist) {
+              let artwork = nowPlayingData.artwork || nowPlayingData.image;
+              
+              if (!artwork && title && artist) {
+                artwork = await this.fetchArtworkFromItunes(title, artist);
+              }
+              
+              return {
+                title: title || 'Live Stream',
+                artist: artist || stationName,
+                album: nowPlayingData.album,
+                artwork,
+                stationName,
+                timestamp: Date.now(),
+              };
+            }
+          } catch (parseError) {
+            console.log(`Failed to parse scraped JSON:`, parseError.message);
+          }
+        }
+        
+        // Fallback: Look for meta tags or other embedded data
+        const titleMatch = html.match(/<title[^>]*>([^<]+)/i);
+        if (titleMatch && titleMatch[1].includes(' - ')) {
+          const parts = titleMatch[1].split(' - ');
+          if (parts.length >= 2) {
+            const artist = parts[0].trim();
+            const title = parts[1].replace(/\s*\|\s*.*$/, '').trim(); // Remove station name from end
+            
+            const artwork = await this.fetchArtworkFromItunes(title, artist);
+            
+            return {
+              title,
+              artist,
+              album: undefined,
+              artwork,
+              stationName,
+              timestamp: Date.now(),
+            };
+          }
+        }
+      }
+
+      console.log(`Web scraping failed for station ${stationId}`);
+      return null;
+    } catch (error) {
+      console.error(`Web scraping failed for station ${stationId}:`, error);
       return null;
     }
   }
@@ -153,15 +296,19 @@ class MetadataFetcher {
         throw new Error(`HTTP ${response.status}`);
       }
 
-      const data = await response.json();
-      const nowPlaying = data.nowplaying?.[0];
-
-      if (nowPlaying) {
+      const xmlData = await response.text();
+      
+      // Parse XML data to extract track information
+      const titleMatch = xmlData.match(/<property name="cue_title"><!\[CDATA\[(.*?)\]\]>/);
+      const artistMatch = xmlData.match(/<property name="track_artist_name"><!\[CDATA\[(.*?)\]\]>/);
+      const albumMatch = xmlData.match(/<property name="cue_album"><!\[CDATA\[(.*?)\]\]>/);
+      
+      if (titleMatch && artistMatch) {
         return {
-          title: nowPlaying.cue_title || 'Unknown Track',
-          artist: nowPlaying.cue_artist || 'Unknown Artist',
-          album: nowPlaying.cue_album,
-          artwork: nowPlaying.cue_image_url,
+          title: titleMatch[1] || 'Unknown Track',
+          artist: artistMatch[1] || 'Unknown Artist',
+          album: albumMatch?.[1] || stationName,
+          artwork: null,
           stationName,
           timestamp: Date.now(),
         };

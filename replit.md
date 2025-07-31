@@ -38,6 +38,16 @@ The application uses PostgreSQL with the following main entities:
 - **Stream Stats**: Real-time listener statistics
 - **Subscriptions**: Email newsletter and premium tier management
 
+## Recent Changes
+
+### July 31, 2025 - Radio Metadata Fix
+- ✅ Fixed critical radio metadata system that was showing incorrect track information
+- ✅ Replaced broken iTunes fallback API with working Triton Digital API
+- ✅ Implemented proper XML parsing for StreamTheWorld nowplaying data
+- ✅ Now displays authentic real-time tracks from Hot 97 (e.g., "Burning Blue" by "Mariah The Scientist")
+- ✅ Restored application startup by fixing CSS import path in main.tsx
+- ✅ Completely removed focus ring references from all CSS files to eliminate PostCSS warnings
+
 ## Key Components
 
 ### Audio System
@@ -64,6 +74,8 @@ The application uses PostgreSQL with the following main entities:
 ### External Integrations
 
 - **Firebase**: Complete Firestore authentication system with custom database structure, random user key generation, password encryption, and Google OAuth integration
+- **Triton Digital API**: Real-time radio metadata integration for live track information from Hot 97 and other major stations
+- **StreamTheWorld**: XML-based nowplaying API for authentic radio broadcasting data
 - **Shopify**: Merchandise store integration (placeholder)
 - **Social Media**: Platform links and sharing capabilities
 
@@ -73,6 +85,7 @@ The application uses PostgreSQL with the following main entities:
 2. **API Layer**: Express.js handles REST endpoints with validation
 3. **Database Operations**: Drizzle ORM manages PostgreSQL interactions
 4. **Real-time Updates**: Polling-based updates for now playing and stats
+5. **Live Metadata**: Triton Digital API integration provides authentic real-time track data from major radio stations
 5. **State Management**: React Context provides global state for audio and admin features
 
 ## External Dependencies
