@@ -133,16 +133,6 @@
   --tw-ring-color: hsl(var(--ring) / 0.5) !important;
 }
 
-/* Nuclear option: Force override all orange focus states */
-*[class*="ring-orange"],
-*[class*="focus:ring-orange"],
-*[class*="border-orange"],
-*[class*="focus:border-orange"] {
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  --tw-border-color: hsl(var(--ring)) !important;
-  border-color: hsl(var(--ring)) !important;
-}
-
 /* Target all possible focus states with theme colors */
 button:focus-visible,
 input:focus,
@@ -164,9 +154,7 @@ textarea:focus,
 .border-orange-500,
 .focus\:border-orange-500:focus,
 .focus\:border-metal-orange:focus {
-  --tw-ring-opacity: 1 !important;
   --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  --tw-border-opacity: 1 !important;
   border-color: hsl(var(--ring)) !important;
 }
 
