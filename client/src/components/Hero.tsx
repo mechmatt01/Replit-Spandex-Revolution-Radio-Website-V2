@@ -142,7 +142,7 @@ export default function Hero() {
             </div>
           </div>
           <div className="flex justify-center space-x-4 text-center mb-3">
-            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center" tabIndex={-1}>
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
                 {countdown.days}
               </div>
@@ -155,7 +155,7 @@ export default function Hero() {
                 DAYS
               </div>
             </div>
-            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center" tabIndex={-1}>
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
                 {countdown.hours}
               </div>
@@ -168,7 +168,7 @@ export default function Hero() {
                 HOURS
               </div>
             </div>
-            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center" tabIndex={-1}>
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
                 {countdown.minutes}
               </div>
@@ -181,7 +181,7 @@ export default function Hero() {
                 MINS
               </div>
             </div>
-            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center">
+            <div className="bg-card/40 backdrop-blur-sm p-4 min-w-[90px] rounded-xl transition-colors duration-300 flex flex-col items-center" tabIndex={-1}>
               <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
                 {countdown.seconds}
               </div>

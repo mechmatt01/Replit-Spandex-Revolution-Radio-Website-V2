@@ -1,4 +1,3 @@
-
 /* NO ORANGE FOCUS RINGS - ULTIMATE OVERRIDE FILE */
 /* This file specifically targets and eliminates all orange focus rings */
 
@@ -8,31 +7,83 @@
   --tw-ring-offset-color: hsl(var(--background)) !important;
 }
 
-/* Target all possible focus states */
+/* STRICT FOCUS RING CONTROL - NO ORANGE ANYWHERE */
+/* First, disable ALL focus rings globally */
+*,
 *:focus,
 *:focus-visible,
 *:focus-within,
-button:focus,
+div:focus,
+div:focus-visible,
+span:focus,
+span:focus-visible,
+p:focus,
+p:focus-visible,
+h1:focus,
+h2:focus,
+h3:focus,
+h4:focus,
+h5:focus,
+h6:focus,
+section:focus,
+section:focus-visible,
+article:focus,
+article:focus-visible,
+main:focus,
+main:focus-visible,
+header:focus,
+header:focus-visible,
+footer:focus,
+footer:focus-visible,
+nav:focus,
+nav:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-border-opacity: 0 !important;
+}
+
+/* ONLY enable focus rings for actual interactive elements */
 button:focus-visible,
-input:focus,
-input:focus-visible,
-textarea:focus,
+input[type="button"]:focus-visible,
+input[type="submit"]:focus-visible,
+input[type="reset"]:focus-visible,
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+input[type="password"]:focus-visible,
+input[type="search"]:focus-visible,
+input[type="tel"]:focus-visible,
+input[type="url"]:focus-visible,
+input[type="number"]:focus-visible,
+input[type="date"]:focus-visible,
+input[type="time"]:focus-visible,
+input[type="datetime-local"]:focus-visible,
+input[type="month"]:focus-visible,
+input[type="week"]:focus-visible,
+input[type="color"]:focus-visible,
+input[type="range"]:focus-visible,
+input[type="file"]:focus-visible,
+input[type="checkbox"]:focus-visible,
+input[type="radio"]:focus-visible,
 textarea:focus-visible,
-select:focus,
 select:focus-visible,
-[role="button"]:focus,
+a:focus-visible,
 [role="button"]:focus-visible,
-[tabindex]:focus,
-[tabindex]:focus-visible,
-a:focus,
-a:focus-visible {
+[role="link"]:focus-visible,
+[role="tab"]:focus-visible,
+[role="menuitem"]:focus-visible,
+[role="option"]:focus-visible,
+[tabindex="0"]:focus-visible,
+[data-radix-select-trigger]:focus-visible,
+[data-radix-dropdown-menu-trigger]:focus-visible {
   outline: 2px solid hsl(var(--ring)) !important;
-  outline-color: hsl(var(--ring)) !important;
   outline-offset: 2px !important;
   border-color: hsl(var(--ring)) !important;
   box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
   accent-color: hsl(var(--ring)) !important;
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
 }
 
 /* Override all orange Tailwind classes */
@@ -112,32 +163,6 @@ a:focus-visible {
   --tw-ring-offset-width: 0px !important;
   --tw-border-opacity: 0 !important;
   border-color: transparent !important;
-}
-
-/* Target form elements specifically */
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="search"]:focus,
-input[type="tel"]:focus,
-input[type="url"]:focus,
-input[type="number"]:focus,
-input[type="date"]:focus,
-input[type="time"]:focus,
-input[type="datetime-local"]:focus,
-input[type="month"]:focus,
-input[type="week"]:focus,
-input[type="color"]:focus,
-input[type="range"]:focus,
-input[type="file"]:focus,
-textarea:focus,
-select:focus {
-  outline: 2px solid hsl(var(--ring)) !important;
-  outline-color: hsl(var(--ring)) !important;
-  outline-offset: 2px !important;
-  border-color: hsl(var(--ring)) !important;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
-  accent-color: hsl(var(--ring)) !important;
 }
 
 /* Override floating player to NOT use form element focus styles */
