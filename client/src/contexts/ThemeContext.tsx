@@ -564,41 +564,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           --ring: ${colorToHsl(colors.primary)} !important;
         }
 
-        /* ULTIMATE FOCUS RING OVERRIDE - All elements use theme color */
-        *:focus,
-        *:focus-visible,
-        *:active,
-        button:focus,
-        button:focus-visible,
-        button:active,
-        input:focus,
-        input:focus-visible,
-        select:focus,
-        select:focus-visible,
-        textarea:focus,
-        textarea:focus-visible,
-        [role="button"]:focus,
-        [role="button"]:focus-visible,
-        [tabindex]:focus,
-        [tabindex]:focus-visible,
-        [data-radix-dropdown-menu-trigger]:focus,
-        [data-radix-dropdown-menu-trigger]:focus-visible,
-        [data-radix-select-trigger]:focus,
-        [data-radix-select-trigger]:focus-visible,
-        .focus\\:ring-2:focus,
-        .focus-visible\\:ring-2:focus-visible,
-        .focus\\:ring-ring:focus,
-        .focus-visible\\:ring-ring:focus-visible,
-        .focus\\:ring-orange-500:focus,
-        .focus-visible\\:ring-orange-500:focus-visible,
-        .ring-orange-500,
-        .border-orange-500 {
-          --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
-          border-color: hsl(${colorToHsl(colors.primary)}) !important;
+        /* Keyboard-only focus rings with theme colors */
+        *:focus-visible {
+          --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.3) !important;
           outline: 2px solid hsl(${colorToHsl(colors.primary)}) !important;
-          outline-color: hsl(${colorToHsl(colors.primary)}) !important;
           outline-offset: 2px !important;
-          box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+          box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(${colorToHsl(colors.primary)} / 0.3) !important;
+        }
+        
+        /* Remove focus rings on mouse interactions */
+        *:focus:not(:focus-visible) {
+          outline: none !important;
+          box-shadow: none !important;
+          border-color: initial !important;
         }
 
         /* FLOATING PLAYER COMPLETE FOCUS ELIMINATION */

@@ -1,221 +1,44 @@
-/* NO ORANGE FOCUS RINGS - ULTIMATE OVERRIDE FILE */
-/* This file specifically targets and eliminates all orange focus rings */
+/* KEYBOARD-ONLY FOCUS SYSTEM */
+/* This file ensures focus rings only appear during keyboard navigation */
 
-/* Global override for all elements */
-* {
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  --tw-ring-offset-color: hsl(var(--background)) !important;
-}
-
-/* STRICT FOCUS RING CONTROL - NO ORANGE ANYWHERE */
-/* First, disable ALL focus rings globally */
-*,
-*:focus,
-*:focus-visible,
-*:focus-within,
-div:focus,
-div:focus-visible,
-span:focus,
-span:focus-visible,
-p:focus,
-p:focus-visible,
-h1:focus,
-h2:focus,
-h3:focus,
-h4:focus,
-h5:focus,
-h6:focus,
-section:focus,
-section:focus-visible,
-article:focus,
-article:focus-visible,
-main:focus,
-main:focus-visible,
-header:focus,
-header:focus-visible,
-footer:focus,
-footer:focus-visible,
-nav:focus,
-nav:focus-visible {
+/* Remove focus rings on mouse/click interactions */
+*:focus:not(:focus-visible) {
   outline: none !important;
   box-shadow: none !important;
-  border: none !important;
+  border-color: initial !important;
   --tw-ring-color: transparent !important;
   --tw-ring-opacity: 0 !important;
-  --tw-border-opacity: 0 !important;
 }
 
-/* ONLY enable focus rings for actual interactive elements */
-button:focus-visible,
-input[type="button"]:focus-visible,
-input[type="submit"]:focus-visible,
-input[type="reset"]:focus-visible,
-input[type="text"]:focus-visible,
-input[type="email"]:focus-visible,
-input[type="password"]:focus-visible,
-input[type="search"]:focus-visible,
-input[type="tel"]:focus-visible,
-input[type="url"]:focus-visible,
-input[type="number"]:focus-visible,
-input[type="date"]:focus-visible,
-input[type="time"]:focus-visible,
-input[type="datetime-local"]:focus-visible,
-input[type="month"]:focus-visible,
-input[type="week"]:focus-visible,
-input[type="color"]:focus-visible,
-input[type="range"]:focus-visible,
-input[type="file"]:focus-visible,
-input[type="checkbox"]:focus-visible,
-input[type="radio"]:focus-visible,
-textarea:focus-visible,
-select:focus-visible,
-a:focus-visible,
-[role="button"]:focus-visible,
-[role="link"]:focus-visible,
-[role="tab"]:focus-visible,
-[role="menuitem"]:focus-visible,
-[role="option"]:focus-visible,
-[tabindex="0"]:focus-visible,
-[data-radix-select-trigger]:focus-visible,
-[data-radix-dropdown-menu-trigger]:focus-visible {
+/* Show theme-aware focus rings only for keyboard navigation */
+*:focus-visible {
   outline: 2px solid hsl(var(--ring)) !important;
   outline-offset: 2px !important;
-  border-color: hsl(var(--ring)) !important;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
-  accent-color: hsl(var(--ring)) !important;
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.3) !important;
+  --tw-ring-color: hsl(var(--ring) / 0.3) !important;
 }
 
-/* Override all orange Tailwind classes */
-.ring-orange-500,
-.ring-orange-400,
-.ring-orange-600,
-.border-orange-500,
-.border-orange-400,
-.border-orange-600,
-.accent-orange-500,
-.focus\:ring-orange-500:focus,
-.focus\:ring-orange-400:focus,
-.focus\:ring-orange-600:focus,
-.focus\:border-orange-500:focus,
-.focus\:border-orange-400:focus,
-.focus\:border-orange-600:focus,
-.focus-visible\:ring-orange-500:focus-visible,
-.focus-visible\:ring-orange-400:focus-visible,
-.focus-visible\:ring-orange-600:focus-visible {
-  --tw-ring-opacity: 0.5 !important;
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  --tw-border-opacity: 1 !important;
-  border-color: hsl(var(--ring)) !important;
-  outline-color: hsl(var(--ring)) !important;
-  accent-color: hsl(var(--ring)) !important;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
-}
-
-/* Remove any hardcoded orange from CSS variables */
-:root {
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-}
-
-/* FLOATING PLAYER COMPLETE ELIMINATION */
-/* Remove all focus rings and borders from floating player */
-.sticky-player,
-.sticky-player *,
-.sticky-player button,
-.sticky-player button *,
-.sticky-player [role="button"],
-.sticky-player [role="button"] *,
-.sticky-player input,
-.sticky-player select,
-.sticky-player textarea,
-.sticky-player [tabindex],
-.sticky-player:focus,
-.sticky-player *:focus,
-.sticky-player button:focus,
-.sticky-player button *:focus,
-.sticky-player [role="button"]:focus,
-.sticky-player [role="button"] *:focus,
-.sticky-player input:focus,
-.sticky-player select:focus,
-.sticky-player textarea:focus,
-.sticky-player [tabindex]:focus,
-.sticky-player:focus-visible,
-.sticky-player *:focus-visible,
-.sticky-player button:focus-visible,
-.sticky-player button *:focus-visible,
-.sticky-player [role="button"]:focus-visible,
-.sticky-player [role="button"] *:focus-visible,
-.sticky-player input:focus-visible,
-.sticky-player select:focus-visible,
-.sticky-player textarea:focus-visible,
-.sticky-player [tabindex]:focus-visible,
-.sticky-player:active,
-.sticky-player *:active,
-.sticky-player button:active,
-.sticky-player button *:active,
-.sticky-player [role="button"]:active,
-.sticky-player [role="button"] *:active {
+/* Completely disable focus for floating player non-interactive elements */
+.sticky-player .countdown-element,
+.sticky-player .now-playing-info,
+.sticky-player .album-art,
+.floating-player-content > div:not(button),
+.floating-player-content > span,
+.floating-player-content > p {
   outline: none !important;
-  border: none !important;
   box-shadow: none !important;
-  --tw-ring-color: transparent !important;
-  --tw-ring-offset-color: transparent !important;
-  --tw-ring-offset-width: 0px !important;
-  --tw-border-opacity: 0 !important;
-  border-color: transparent !important;
+  border: none !important;
+  pointer-events: auto;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  tabindex: -1;
 }
 
-/* Override floating player to NOT use form element focus styles */
-.sticky-player input[type="text"]:focus,
-.sticky-player input[type="email"]:focus,
-.sticky-player input[type="password"]:focus,
-.sticky-player input[type="search"]:focus,
-.sticky-player input[type="tel"]:focus,
-.sticky-player input[type="url"]:focus,
-.sticky-player input[type="number"]:focus,
-.sticky-player input[type="date"]:focus,
-.sticky-player input[type="time"]:focus,
-.sticky-player input[type="datetime-local"]:focus,
-.sticky-player input[type="month"]:focus,
-.sticky-player input[type="week"]:focus,
-.sticky-player input[type="color"]:focus,
-.sticky-player input[type="range"]:focus,
-.sticky-player input[type="file"]:focus,
-.sticky-player textarea:focus,
-.sticky-player select:focus {
-  outline: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  --tw-ring-color: transparent !important;
-  --tw-ring-offset-color: transparent !important;
-  --tw-ring-offset-width: 0px !important;
-  --tw-border-opacity: 0 !important;
-  border-color: transparent !important;
-}
-
-/* FLOATING PLAYER SPECIFIC OVERRIDES */
-/* Completely disable focus rings for floating player elements except main button */
-.floating-player-no-focus *:not(button):focus,
-.floating-player-no-focus *:not(button):focus-visible,
-.floating-player-no-focus .focus-safe-area *:focus,
-.floating-player-no-focus .focus-safe-area *:focus-visible {
-  outline: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  --tw-ring-color: transparent !important;
-  --tw-ring-opacity: 0 !important;
-  --tw-border-opacity: 0 !important;
-}
-
-/* Override all possible focus states for floating player safe areas */
-.floating-player-no-focus input:focus,
-.floating-player-no-focus input:focus-visible,
-.floating-player-no-focus span:focus,
-.floating-player-no-focus span:focus-visible,
-.floating-player-no-focus div:focus,
-.floating-player-no-focus div:focus-visible {
-  outline: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  --tw-ring-color: transparent !important;
+/* Ensure only buttons in floating player can receive focus */
+.sticky-player button:focus-visible {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.3) !important;
 }

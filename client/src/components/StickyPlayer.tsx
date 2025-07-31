@@ -23,7 +23,7 @@ export default function StickyPlayer() {
   } = useRadio();
   const { getGradient, getColors, currentTheme } = useTheme();
   const colors = getColors();
-  
+
   // Adaptive theme for current track artwork
   const { adaptiveTheme, isAnalyzing } = useAdaptiveTheme(
     currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
@@ -146,7 +146,7 @@ export default function StickyPlayer() {
                 alignment="left"
               />
             </div>
-            
+
             {/* Artist Information */}
             {currentTrack.artist && 
              currentTrack.artist !== currentTrack.title &&
@@ -160,7 +160,7 @@ export default function StickyPlayer() {
                 {currentTrack.artist}
               </div>
             )}
-            
+
             <div className="flex items-center justify-between mt-1">
               <div className="flex items-center space-x-1">
                 {/* LIVE/AD indicator */}

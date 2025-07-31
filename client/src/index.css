@@ -1,126 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* GLOBAL ORANGE FOCUS RING ELIMINATION - HIGHEST PRIORITY */
-/* This must be at the top to override all other styles */
-html body * {
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+/* Modern focus system - only show focus rings when navigating with keyboard */
+/* This prevents focus rings when clicking but preserves them for keyboard navigation */
+
+/* Remove all focus rings on mouse/click interactions */
+*:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: initial !important;
 }
 
-/* Override browser defaults for all form elements */
-input, textarea, select, button, [role="button"], [tabindex] {
-  outline-color: hsl(var(--ring)) !important;
-  accent-color: hsl(var(--ring)) !important;
+/* Only show focus rings when navigating with keyboard (focus-visible) */
+*:focus-visible {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.3) !important;
 }
 
-/* Remove any hardcoded orange from CSS custom properties */
-:root {
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  --tw-ring-offset-color: hsl(var(--background)) !important;
-}
-
-
-
-/* ULTIMATE ORANGE FOCUS RING ELIMINATION */
-/* Remove all orange borders and focus rings globally with maximum specificity */
-*,
-*:focus,
-*:focus-visible,
-*:active,
-*[data-state="active"],
-*[aria-selected="true"],
-button,
-button:focus,
+/* Ensure interactive elements have proper keyboard focus */
 button:focus-visible,
-button:active,
-input,
-input:focus,
 input:focus-visible,
-select,
-select:focus,
 select:focus-visible,
-textarea,
-textarea:focus,
 textarea:focus-visible,
-[role="button"],
-[role="button"]:focus,
 [role="button"]:focus-visible,
-[tabindex],
-[tabindex]:focus,
 [tabindex]:focus-visible,
-[data-radix-dropdown-menu-trigger],
-[data-radix-dropdown-menu-trigger]:focus,
-[data-radix-dropdown-menu-trigger]:focus-visible,
-[data-radix-select-trigger],
-[data-radix-select-trigger]:focus,
-[data-radix-select-trigger]:focus-visible {
-  border-color: hsl(var(--ring)) !important;
-  outline: 2px solid hsl(var(--ring)) !important;
-  outline-color: hsl(var(--ring)) !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  --tw-ring-offset-color: hsl(var(--background)) !important;
-  --tw-ring-offset-width: 2px !important;
-}
-
-/* Override ALL possible orange Tailwind classes */
-.border-orange-500,
-.border-orange-400,
-.border-orange-600,
-.border-orange-300,
-.border-orange-200,
-.border-orange-100,
-.ring-orange-500,
-.ring-orange-400,
-.ring-orange-600,
-.ring-orange-300,
-.ring-orange-200,
-.ring-orange-100,
-.focus\:border-orange-500:focus,
-.focus\:border-orange-400:focus,
-.focus\:border-orange-600:focus,
-.focus\:border-orange-300:focus,
-.focus\:border-orange-200:focus,
-.focus\:border-orange-100:focus,
-.focus\:ring-orange-500:focus,
-.focus\:ring-orange-400:focus,
-.focus\:ring-orange-600:focus,
-.focus\:ring-orange-300:focus,
-.focus\:ring-orange-200:focus,
-.focus\:ring-orange-100:focus,
-.focus-visible\:border-orange-500:focus-visible,
-.focus-visible\:border-orange-400:focus-visible,
-.focus-visible\:border-orange-600:focus-visible,
-.focus-visible\:border-orange-300:focus-visible,
-.focus-visible\:border-orange-200:focus-visible,
-.focus-visible\:border-orange-100:focus-visible,
-.focus-visible\:ring-orange-500:focus-visible,
-.focus-visible\:ring-orange-400:focus-visible,
-.focus-visible\:ring-orange-600:focus-visible,
-.focus-visible\:ring-orange-300:focus-visible,
-.focus-visible\:ring-orange-200:focus-visible,
-.focus-visible\:ring-orange-100:focus-visible {
-  border-color: hsl(var(--ring)) !important;
-  outline-color: hsl(var(--ring)) !important;
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
-}
-
-/* Remove any hardcoded orange colors from browser defaults */
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-input[type="search"]:focus,
-input[type="tel"]:focus,
-input[type="url"]:focus,
-input[type="number"]:focus,
-textarea:focus,
-select:focus {
-  border-color: hsl(var(--ring)) !important;
+a:focus-visible {
   outline: 2px solid hsl(var(--ring)) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.3) !important;
 }
 
+/* Remove any browser default focus styles */
+*:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Global CSS variables for consistency */
+:root {
+  --tw-ring-color: hsl(var(--ring) / 0.3);
+  --tw-ring-offset-color: hsl(var(--background));
+  --tw-ring-offset-width: 2px;
+}
+
+/* Disable focus rings completely for non-interactive elements */
+div:focus,
+span:focus,
+p:focus,
+img:focus,
+.floating-player-content:focus,
+.countdown-element:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+}
 
 @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
 @import "./no-orange.css";
@@ -129,7 +64,7 @@ select:focus {
 @import "tailwindcss/utilities";
 
 /* CSS Variables for Background */
-:root {
+::root {
   --background: #1f2937;
   --background-rgb: 31, 41, 55;
   /* Default ring color that will be overridden by theme system */
@@ -318,56 +253,6 @@ select:focus {
   --tw-ring-offset-width: 0px !important;
   --tw-border-opacity: 0 !important;
   border-color: transparent !important;
-}
-
-/* DISABLE ALL FOCUS RINGS BY DEFAULT */
-/* Remove focus rings from all elements */
-*:focus,
-*:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-  border: none !important;
-  --tw-ring-color: transparent !important;
-}
-
-/* ONLY ENABLE FOCUS RINGS FOR TRULY INTERACTIVE ELEMENTS */
-/* Only apply focus rings to actual interactive elements */
-button:focus-visible,
-input[type="button"]:focus-visible,
-input[type="submit"]:focus-visible,
-input[type="reset"]:focus-visible,
-input[type="text"]:focus-visible,
-input[type="email"]:focus-visible,
-input[type="password"]:focus-visible,
-input[type="search"]:focus-visible,
-input[type="tel"]:focus-visible,
-input[type="url"]:focus-visible,
-input[type="number"]:focus-visible,
-input[type="date"]:focus-visible,
-input[type="time"]:focus-visible,
-input[type="datetime-local"]:focus-visible,
-input[type="month"]:focus-visible,
-input[type="week"]:focus-visible,
-input[type="color"]:focus-visible,
-input[type="range"]:focus-visible,
-input[type="file"]:focus-visible,
-input[type="checkbox"]:focus-visible,
-input[type="radio"]:focus-visible,
-textarea:focus-visible,
-select:focus-visible,
-a:focus-visible,
-[role="button"]:focus-visible,
-[role="link"]:focus-visible,
-[role="tab"]:focus-visible,
-[role="menuitem"]:focus-visible,
-[role="option"]:focus-visible,
-[tabindex="0"]:focus-visible,
-[data-radix-select-trigger]:focus-visible,
-[data-radix-dropdown-menu-trigger]:focus-visible {
-  outline: 2px solid hsl(var(--ring)) !important;
-  outline-offset: 2px !important;
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
 }
 
 /* Easter Egg: Site Logo Spin Animation */
@@ -1044,13 +929,6 @@ a:focus-visible,
   z-index: 1000 !important;
   min-width: 280px !important;
   max-width: 320px !important;
-}
-
-/* Focus styles for accessibility */
-
-:focus-visible {
-  outline: 2px solid hsl(var(--ring));
-  outline-offset: 2px;
 }
 
 /* FLOATING PLAYER FOCUS RING PREVENTION */
