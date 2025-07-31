@@ -129,45 +129,81 @@
   animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Force theme-aware focus ring colors - highest priority override */
+/* COMPLETE FOCUS RING REMOVAL - No focus rings anywhere */
 * {
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
 }
 
-/* Target all possible focus states with theme colors */
+/* ULTIMATE FOCUS RING REMOVAL - NO FOCUS RINGS ANYWHERE ON THE SITE */
+*,
+*:before,
+*:after,
+*:focus,
+*:focus-visible,
+*:focus-within,
+*:active,
+button,
+button:focus,
 button:focus-visible,
+input,
+input:focus,
 input:focus-visible,
+select,
+select:focus,
 select:focus-visible,
+textarea,
+textarea:focus,
 textarea:focus-visible,
+[role="button"],
+[role="button"]:focus,
 [role="button"]:focus-visible,
-.focus\:ring-2:focus,
-.focus-visible\:ring-2:focus-visible,
-.focus\:ring-ring:focus,
-.focus-visible\:ring-ring:focus-visible,
+[tabindex],
+[tabindex]:focus,
+[tabindex]:focus-visible,
+[data-radix-select-trigger],
+[data-radix-select-trigger]:focus,
 [data-radix-select-trigger]:focus-visible,
-[data-radix-dropdown-menu-trigger]:focus-visible {
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  outline: 2px solid hsl(var(--ring)) !important;
-  outline-offset: 2px !important;
-  box-shadow: none !important;
-}
-
-/* Remove all hardcoded orange focus states */
-.ring-orange-500,
+[data-radix-dropdown-menu-trigger],
+[data-radix-dropdown-menu-trigger]:focus,
+[data-radix-dropdown-menu-trigger]:focus-visible,
+[data-radix-checkbox-root],
+[data-radix-checkbox-root]:focus,
+[data-radix-checkbox-root]:focus-visible,
+[data-radix-toggle-root],
+[data-radix-toggle-root]:focus,
+[data-radix-toggle-root]:focus-visible,
+.focus\:ring-0:focus,
+.focus\:ring-1:focus,
+.focus\:ring-2:focus,
+.focus\:ring-ring:focus,
 .focus\:ring-orange-500:focus,
 .focus\:ring-metal-orange:focus,
+.focus-visible\:ring-0:focus-visible,
+.focus-visible\:ring-1:focus-visible,
+.focus-visible\:ring-2:focus-visible,
+.focus-visible\:ring-ring:focus-visible,
+.focus-visible\:ring-orange-500:focus-visible,
+.focus-visible\:ring-metal-orange:focus-visible,
+.ring-0,
+.ring-1,
+.ring-2,
+.ring-orange-500,
+.ring-metal-orange,
+.ring-ring,
+.ring-offset-background,
 .border-orange-500:focus,
 .focus\:border-orange-500:focus,
-.focus\:border-metal-orange:focus,
-button:focus,
-input:focus,
-select:focus,
-textarea:focus {
-  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  border-color: hsl(var(--ring)) !important;
-  outline: 2px solid hsl(var(--ring)) !important;
-  outline-offset: 2px !important;
+.focus\:border-metal-orange:focus {
+  outline: none !important;
   box-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
 }
 
 /* Easter Egg: Site Logo Spin Animation */

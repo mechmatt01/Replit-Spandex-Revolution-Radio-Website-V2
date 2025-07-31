@@ -564,7 +564,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           --ring: ${colorToHsl(colors.primary)} !important;
         }
 
-        /* ULTIMATE FOCUS RING OVERRIDE - All elements use theme color */
+        /* COMPLETE FOCUS RING REMOVAL - No focus rings anywhere */
         *:focus,
         *:focus-visible,
         *:active,
@@ -593,12 +593,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         .focus-visible\\:ring-orange-500:focus-visible,
         .ring-orange-500,
         .border-orange-500 {
-          --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
-          border-color: hsl(${colorToHsl(colors.primary)}) !important;
-          outline: 2px solid hsl(${colorToHsl(colors.primary)}) !important;
-          outline-color: hsl(${colorToHsl(colors.primary)}) !important;
-          outline-offset: 2px !important;
-          box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(${colorToHsl(colors.primary)} / 0.5) !important;
+          outline: none !important;
+          box-shadow: none !important;
+          --tw-ring-shadow: none !important;
+          --tw-ring-offset-shadow: none !important;
+          --tw-ring-color: transparent !important;
+          border: none !important;
         }
 
         /* COMPREHENSIVE ORANGE ELIMINATION - All possible selectors */

@@ -4301,55 +4301,25 @@ body.mobile-player-active {
   --tw-ring-opacity: 0.5;
 }
 
-.focus\:ring-offset-0:focus {
-  --tw-ring-offset-width: 0px;
-}
-
-.focus\:ring-offset-2:focus {
-  --tw-ring-offset-width: 2px;
-}
-
-.focus-visible\:outline-none:focus-visible {
-  outline: 2px solid transparent;
-  outline-offset: 2px;
-}
-
-.focus-visible\:ring-1:focus-visible {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
-    var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
-    calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
-    var(--tw-shadow, 0 0 #0000);
-}
-
-.focus-visible\:ring-2:focus-visible {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
-    var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
-    calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
-    var(--tw-shadow, 0 0 #0000);
-}
-
-.focus-visible\:ring-ring:focus-visible {
-  --tw-ring-color: hsl(var(--ring));
-}
-
-.focus-visible\:ring-sidebar-ring:focus-visible {
-  --tw-ring-color: hsl(var(--sidebar-ring));
-}
-
-.focus-visible\:ring-offset-1:focus-visible {
-  --tw-ring-offset-width: 1px;
-}
-
-.focus-visible\:ring-offset-2:focus-visible {
-  --tw-ring-offset-width: 2px;
-}
-
+/* ALL FOCUS RING STYLES COMPLETELY REMOVED */
+.focus\:ring-offset-0:focus,
+.focus\:ring-offset-2:focus,
+.focus-visible\:outline-none:focus-visible,
+.focus-visible\:ring-1:focus-visible,
+.focus-visible\:ring-2:focus-visible,
+.focus-visible\:ring-ring:focus-visible,
+.focus-visible\:ring-sidebar-ring:focus-visible,
+.focus-visible\:ring-offset-1:focus-visible,
+.focus-visible\:ring-offset-2:focus-visible,
 .focus-visible\:ring-offset-background:focus-visible {
-  --tw-ring-offset-color: hsl(var(--background));
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
 }
 
 .active\:bg-sidebar-accent:active {
