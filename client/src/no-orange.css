@@ -91,3 +91,30 @@ select:focus {
   box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
   accent-color: hsl(var(--ring)) !important;
 }
+
+/* FLOATING PLAYER SPECIFIC OVERRIDES */
+/* Completely disable focus rings for floating player elements except main button */
+.floating-player-no-focus *:not(button):focus,
+.floating-player-no-focus *:not(button):focus-visible,
+.floating-player-no-focus .focus-safe-area *:focus,
+.floating-player-no-focus .focus-safe-area *:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-border-opacity: 0 !important;
+}
+
+/* Override all possible focus states for floating player safe areas */
+.floating-player-no-focus input:focus,
+.floating-player-no-focus input:focus-visible,
+.floating-player-no-focus span:focus,
+.floating-player-no-focus span:focus-visible,
+.floating-player-no-focus div:focus,
+.floating-player-no-focus div:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+}

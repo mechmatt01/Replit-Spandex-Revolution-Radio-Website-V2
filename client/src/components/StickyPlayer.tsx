@@ -68,7 +68,7 @@ export default function StickyPlayer() {
 
   return (
     <div
-      className={`fixed bottom-2 left-4 backdrop-blur-md z-50 transition-all duration-700 rounded-2xl shadow-2xl border-0 ${
+      className={`fixed bottom-2 left-4 backdrop-blur-md z-50 transition-all duration-700 rounded-2xl shadow-2xl border-0 floating-player-no-focus ${
         isVisible
           ? "transform translate-y-0 opacity-100"
           : "transform translate-y-full opacity-0"
@@ -107,7 +107,7 @@ export default function StickyPlayer() {
           />
 
           {/* Track Info with 60% width of player box */}
-          <div className="min-w-0 ml-3" style={{ width: "60%" }}>
+          <div className="min-w-0 ml-3 focus-safe-area" style={{ width: "60%" }}>
             {/* Ad Detection Badge */}
             {isAdPlaying && (
               <div className="mb-1 flex justify-start">
@@ -175,8 +175,8 @@ export default function StickyPlayer() {
               </div>
 
               {/* Volume Controls - Centered between LIVE and play button */}
-              <div className="hidden sm:flex items-center justify-center flex-1 mx-2">
-                <div className="flex items-center space-x-2">
+              <div className="hidden sm:flex items-center justify-center flex-1 mx-2 focus-safe-area">
+                <div className="flex items-center space-x-2 focus-safe-area">
                   <Volume2 
                     className="h-3 w-3 cursor-pointer transition-colors" 
                     style={{

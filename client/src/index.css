@@ -977,6 +977,34 @@ textarea:focus {
   outline-offset: 2px;
 }
 
+/* FLOATING PLAYER FOCUS RING PREVENTION */
+/* Prevent focus rings on all elements inside floating player except the play button */
+.floating-player-no-focus *:not(button):focus,
+.floating-player-no-focus *:not(button):focus-visible,
+.floating-player-no-focus .focus-safe-area *:focus,
+.floating-player-no-focus .focus-safe-area *:focus-visible {
+  outline: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+}
+
+/* Allow focus only on the main play/pause button */
+.floating-player-no-focus button:focus-visible {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+}
+
+/* Remove focus from volume slider and other interactive elements */
+.floating-player-no-focus input[type="range"]:focus,
+.floating-player-no-focus input[type="range"]:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+}
+
 /* Enhanced focus styles for better accessibility */
 button:focus-visible,
 input:focus-visible,
