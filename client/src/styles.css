@@ -3970,10 +3970,6 @@ body.mobile-player-active {
   border-color: var(--metal-orange);
 }
 
-.focus\:border-metal-orange:focus {
-  border-color: var(--metal-orange);
-}
-
 .data-\[state\=active\]\:bg-metal-orange[data-state="active"] {
   background-color: var(--metal-orange);
 }

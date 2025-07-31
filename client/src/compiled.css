@@ -4212,10 +4212,7 @@ body.mobile-player-active {
     var(--tw-shadow, 0 0 #0000);
 }
 
-.focus\:ring-orange-500:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(249 115 22 / var(--tw-ring-opacity, 1));
-}
+
 
 .focus\:ring-ring:focus {
   --tw-ring-color: var(--ring);

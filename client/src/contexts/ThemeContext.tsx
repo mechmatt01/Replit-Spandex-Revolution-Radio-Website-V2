@@ -512,15 +512,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           const [r, g, b] = rgba.map(x => x / 255);
           return rgbToHsl(r, g, b);
         }
-        
+
         // Handle hex colors
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
         if (!result) return "0 0% 50%";
-        
+
         const r = parseInt(result[1], 16) / 255;
         const g = parseInt(result[2], 16) / 255;
         const b = parseInt(result[3], 16) / 255;
-        
+
         return rgbToHsl(r, g, b);
       };
 
@@ -528,7 +528,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         const max = Math.max(r, g, b);
         const min = Math.min(r, g, b);
         let h = 0, s = 0, l = (max + min) / 2;
-        
+
         if (max !== min) {
           const d = max - min;
           s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
@@ -539,11 +539,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           }
           h /= 6;
         }
-        
+
         h = Math.round(h * 360);
         s = Math.round(s * 100);
         l = Math.round(l * 100);
-        
+
         return `${h} ${s}% ${l}%`;
       };
 
@@ -551,7 +551,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       // Force override of default Tailwind ring color with !important
       root.style.setProperty("--ring", colorToHsl(colors.primary));
       root.style.setProperty("--tw-ring-color", `hsl(${colorToHsl(colors.primary)} / 0.5)`);
-      
+
       // Force override compiled CSS defaults with comprehensive ring color fix
       const style = document.createElement('style');
       style.textContent = `
@@ -563,7 +563,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
           --ring: ${colorToHsl(colors.primary)} !important;
         }
-        
+
         /* Force all focus ring states to use theme color */
         .focus\\:ring-2:focus,
         .focus-visible\\:ring-2:focus-visible,
@@ -577,7 +577,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           --tw-ring-color: hsl(${colorToHsl(colors.primary)} / 0.5) !important;
           box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(${colorToHsl(colors.primary)} / 0.5) !important;
         }
-        
+
         /* Override any existing ring colors */
         .ring-orange-500, .focus\\:ring-orange-500:focus, .focus\\:ring-metal-orange:focus,
         *:focus-visible, *:focus, button:focus-visible, button:focus,
@@ -594,7 +594,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       if (existingStyle) existingStyle.remove();
       style.id = 'theme-ring-override';
       document.head.appendChild(style);
-      
+
       // Set safe Tailwind variables that don't conflict with existing ones
       root.style.setProperty("--tw-primary", colorToHsl(colors.primary));
       root.style.setProperty("--tw-secondary", colorToHsl(colors.secondary));
@@ -603,7 +603,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.style.setProperty("--tw-border", colorToHsl(colors.border));
       root.style.setProperty("--tw-muted", colorToHsl(colors.surface));
       root.style.setProperty("--tw-muted-foreground", colorToHsl(colors.textMuted));
-      
+
       // Only set background/card if they don't use rgba (to preserve existing transparency)
       if (!colors.background.includes('rgba') && !colors.card.includes('rgba')) {
         root.style.setProperty("--background", colorToHsl(colors.background));
@@ -622,7 +622,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         root.style.setProperty("--popover", colorToHsl(colors.card));
         root.style.setProperty("--popover-foreground", colorToHsl(colors.text));
       }
-      
+
       // Always set these safe variables
       root.style.setProperty("--destructive", "0 84% 60%");
       root.style.setProperty("--destructive-foreground", "0 0% 98%");

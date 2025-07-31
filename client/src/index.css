@@ -1,3 +1,53 @@
+
+/* COMPREHENSIVE ORANGE BORDER REMOVAL */
+/* Remove all orange borders and focus rings globally */
+*:focus,
+*:focus-visible,
+*:active,
+*[data-state="active"],
+*[aria-selected="true"],
+button:focus,
+button:focus-visible,
+button:active,
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  border-color: hsl(var(--ring)) !important;
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+}
+
+/* Override any Tailwind utility classes that might add orange */
+.border-orange-500,
+.border-orange-400,
+.border-orange-600,
+.ring-orange-500,
+.ring-orange-400,
+.ring-orange-600 {
+  border-color: hsl(var(--ring)) !important;
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+}
+
+/* Specifically target focus states that might use orange */
+.focus\:border-orange-500:focus,
+.focus\:border-orange-400:focus,
+.focus\:border-orange-600:focus,
+.focus\:ring-orange-500:focus,
+.focus\:ring-orange-400:focus,
+.focus\:ring-orange-600:focus {
+  border-color: hsl(var(--ring)) !important;
+  --tw-ring-color: hsl(var(--ring) / 0.5) !important;
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
+}
+
+
 @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
 @import "tailwindcss/base";
 @import "tailwindcss/components";
@@ -135,27 +185,38 @@
 
 /* Target all possible focus states with theme colors */
 button:focus-visible,
-input:focus,
-select:focus,
-textarea:focus,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
 [role="button"]:focus-visible,
 .focus\:ring-2:focus,
 .focus-visible\:ring-2:focus-visible,
 .focus\:ring-ring:focus,
-.focus-visible\:ring-ring:focus-visible {
+.focus-visible\:ring-ring:focus-visible,
+[data-radix-select-trigger]:focus-visible,
+[data-radix-dropdown-menu-trigger]:focus-visible {
   --tw-ring-color: hsl(var(--ring) / 0.5) !important;
-  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
 }
 
-/* Ensure theme colors override any hardcoded focus states */
+/* Remove all hardcoded orange focus states */
 .ring-orange-500,
 .focus\:ring-orange-500:focus,
 .focus\:ring-metal-orange:focus,
-.border-orange-500,
+.border-orange-500:focus,
 .focus\:border-orange-500:focus,
-.focus\:border-metal-orange:focus {
+.focus\:border-metal-orange:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
   --tw-ring-color: hsl(var(--ring) / 0.5) !important;
   border-color: hsl(var(--ring)) !important;
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  box-shadow: none !important;
 }
 
 /* Easter Egg: Site Logo Spin Animation */
