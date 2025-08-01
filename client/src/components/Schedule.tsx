@@ -15,6 +15,7 @@ export default function Schedule() {
   const { setCurrentTrack } = useRadio();
   const [selectedPastShow, setSelectedPastShow] = useState<PastShow | null>(null);
   const [selectedWeeklyShow, setSelectedWeeklyShow] = useState<ShowSchedule | null>(null);
+  const [hoveredShow, setHoveredShow] = useState<string | null>(null);
 
   // Use mock data for Firebase hosting
   const weeklyShows: ShowSchedule[] = [
@@ -274,17 +275,31 @@ export default function Schedule() {
                 ))
               ) : (
                 (filteredWeeklyShows || []).map((show) => (
-                <Card
-                  key={show.id}
-                  className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
-                  style={{
-                    backgroundColor: colors.background,
-                    borderColor: colors.primary,
-                    boxShadow: `0 8px 32px ${colors.primary}20`,
-                    height: "160px",
-                  }}
-                  onClick={() => setSelectedWeeklyShow(show)}
-                >
+                <div key={show.id} className="relative">
+                  {/* Glow Effect */}
+                  <div className="absolute inset-2 rounded-2xl overflow-hidden">
+                    <div
+                      className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
+                      style={{
+                        background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary || colors.primary})`,
+                        opacity: hoveredShow === `weekly-${show.id}` ? 0.3 : 0,
+                      }}
+                    />
+                  </div>
+                  
+                  <Card
+                    className="relative group cursor-pointer transition-all duration-300 border-2 p-4"
+                    style={{
+                      backgroundColor: colors.background,
+                      borderColor: colors.primary,
+                      boxShadow: `0 8px 32px ${colors.primary}20`,
+                      height: "160px",
+                      transform: hoveredShow === `weekly-${show.id}` ? 'scale(1.05)' : 'scale(1)',
+                    }}
+                    onClick={() => setSelectedWeeklyShow(show)}
+                    onMouseEnter={() => setHoveredShow(`weekly-${show.id}`)}
+                    onMouseLeave={() => setHoveredShow(null)}
+                  >
                   <CardContent
                     className="p-0"
                     style={{
@@ -315,6 +330,7 @@ export default function Schedule() {
                     </div>
                   </CardContent>
                 </Card>
+                </div>
                 ))
               )}
             </div>
@@ -345,17 +361,31 @@ export default function Schedule() {
                   ))
                 ) : (
                   (pastShows || []).slice(0, 3).map((show) => (
-                  <Card
-                    key={show.id}
-                    className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
-                    style={{
-                      backgroundColor: colors.background,
-                      borderColor: colors.primary,
-                      boxShadow: `0 8px 32px ${colors.primary}20`,
-                      height: "160px",
-                    }}
-                    onClick={() => setSelectedPastShow(show)}
-                  >
+                  <div key={show.id} className="relative">
+                    {/* Glow Effect */}
+                    <div className="absolute inset-2 rounded-2xl overflow-hidden">
+                      <div
+                        className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
+                        style={{
+                          background: `linear-gradient(135deg, ${colors.secondary || colors.primary}, ${colors.accent || colors.primary})`,
+                          opacity: hoveredShow === `past-${show.id}` ? 0.3 : 0,
+                        }}
+                      />
+                    </div>
+                    
+                    <Card
+                      className="relative group cursor-pointer transition-all duration-300 border-2 p-4"
+                      style={{
+                        backgroundColor: colors.background,
+                        borderColor: colors.primary,
+                        boxShadow: `0 8px 32px ${colors.primary}20`,
+                        height: "160px",
+                        transform: hoveredShow === `past-${show.id}` ? 'scale(1.05)' : 'scale(1)',
+                      }}
+                      onClick={() => setSelectedPastShow(show)}
+                      onMouseEnter={() => setHoveredShow(`past-${show.id}`)}
+                      onMouseLeave={() => setHoveredShow(null)}
+                    >
                     <CardContent
                       className="p-0"
                       style={{
@@ -441,6 +471,7 @@ export default function Schedule() {
                       </div>
                     </CardContent>
                   </Card>
+                  </div>
                   ))
                 )}
               </div>
