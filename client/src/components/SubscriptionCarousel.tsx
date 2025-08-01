@@ -201,10 +201,10 @@ export default function SubscriptionCarousel() {
               style={{
                 border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
                 borderRadius: "24px",
-                backgroundColor: currentTheme === 'light-mode' ? '#ffffff' : 'rgba(0, 0, 0, 0.8)',
+                backgroundColor: colors.surface,
                 background: currentTier.popular 
-                  ? `linear-gradient(${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}, ${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}) padding-box, linear-gradient(90deg, ${currentTier.gradientStart} 0%, ${currentTier.gradientEnd} 25%, ${currentTier.gradientStart} 50%, ${currentTier.gradientEnd} 75%, ${currentTier.gradientStart} 100%) border-box`
-                  : `linear-gradient(${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}, ${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}) padding-box, linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}) border-box`,
+                  ? `linear-gradient(${colors.surface}, ${colors.surface}) padding-box, linear-gradient(90deg, ${currentTier.gradientStart} 0%, ${currentTier.gradientEnd} 25%, ${currentTier.gradientStart} 50%, ${currentTier.gradientEnd} 75%, ${currentTier.gradientStart} 100%) border-box`
+                  : `linear-gradient(${colors.surface}, ${colors.surface}) padding-box, linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}) border-box`,
                 backgroundSize: currentTier.popular ? "300% 300%" : "100% 100%",
                 animation: currentTier.popular ? "gradientFlow 6s ease-in-out infinite" : "none",
                 boxShadow: currentTier.popular 
