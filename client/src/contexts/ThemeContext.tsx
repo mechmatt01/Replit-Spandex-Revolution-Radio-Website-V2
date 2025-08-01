@@ -626,10 +626,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setTimeout(() => {
         const allElements = document.querySelectorAll('*');
         allElements.forEach(element => {
-          element.addEventListener('focus', (e) => {
+          element.addEventListener('focus', (e: any) => {
             e.target.style.outline = 'none';
             e.target.style.boxShadow = 'none';
-            e.target.style.border = 'none';
+            e.target.style.setProperty('outline', 'none', 'important');
+            e.target.style.setProperty('box-shadow', 'none', 'important');
           });
         });
       }, 100);

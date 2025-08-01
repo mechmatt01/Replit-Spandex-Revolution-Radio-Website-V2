@@ -1,7 +1,7 @@
 /* NUCLEAR OPTION: ABSOLUTE FOCUS RING ELIMINATION */
-/* This CSS file has maximum specificity to override ALL focus rings */
+/* This CSS file has maximum specificity to override ALL focus rings including subtle ones */
 
-/* Universal focus ring elimination with maximum priority */
+/* Universal focus ring elimination with maximum priority - targeting subtle opacity rings */
 html *,
 html *:before,
 html *:after,
@@ -46,7 +46,6 @@ html a:focus-visible {
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
-  border: none !important;
   --tw-ring-shadow: 0 0 #0000 !important;
   --tw-ring-offset-shadow: 0 0 #0000 !important;
   --tw-ring-color: transparent !important;
@@ -54,6 +53,8 @@ html a:focus-visible {
   --tw-ring-offset-width: 0px !important;
   --tw-ring-offset-color: transparent !important;
   --ring: transparent !important;
+  border-style: solid !important;
+  opacity: 1 !important;
 }
 
 /* Browser-specific focus ring elimination */
@@ -94,4 +95,26 @@ html .focus-visible\:ring-ring:focus-visible {
   box-shadow: none !important;
   --tw-ring-shadow: none !important;
   --tw-ring-offset-shadow: none !important;
+}
+
+/* Target subtle opacity-based focus rings */
+html *:focus-visible::before,
+html *:focus-visible::after,
+html *:focus::before,
+html *:focus::after {
+  display: none !important;
+  content: none !important;
+  opacity: 0 !important;
+}
+
+/* Override any subtle box-shadow or border effects */
+html button:focus,
+html input:focus,
+html select:focus,
+html [role="button"]:focus {
+  border-color: inherit !important;
+  box-shadow: 0 0 0 0 transparent !important;
+  opacity: 1 !important;
+  filter: none !important;
+  transform: none !important;
 }
