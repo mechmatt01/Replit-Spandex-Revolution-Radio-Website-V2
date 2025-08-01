@@ -197,25 +197,28 @@ export default function SubscriptionCarousel() {
 
             {/* Moving Gradient Border Wrapper */}
             <div
-              className="relative p-1 rounded-3xl overflow-hidden"
+              className="relative p-1 overflow-hidden transition-all duration-500"
               style={{
+                borderRadius: "24px", // Fully rounded border wrapper
                 background: `linear-gradient(45deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}, ${currentTier.gradientStart})`,
                 backgroundSize: '400% 400%',
                 animation: 'movingGradientBorder 4s ease-in-out infinite',
+                transform: hoveredTier === currentTier.id ? 'scale(1.05)' : 'scale(1)', // Move transform to border wrapper
               }}
             >
               {/* Main Card */}
               <div
-                className="relative backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col subscription-card"
+                className="relative backdrop-blur-xl p-6 overflow-hidden flex flex-col subscription-card"
                 style={{
-                  borderRadius: "23px", // Slightly smaller to account for border wrapper
-                  backgroundColor: colors.surface,
-                  background: `${colors.surface}`,
+                  borderRadius: "23px", // Fully rounded to match border wrapper
+                  backgroundColor: colors.background, // Use theme background color instead of surface
+                  background: colors.background,
                   boxShadow: currentTier.popular 
                     ? `0 0 60px ${currentTier.gradientStart}60, 0 0 120px ${currentTier.gradientEnd}40, 0 0 160px ${currentTier.gradientStart}20, inset 0 0 0 1px ${currentTier.gradientStart}40`
                     : `0 20px 40px ${currentTier.gradientStart}40, inset 0 0 0 1px ${currentTier.gradientStart}30`,
                   minHeight: "600px", // Minimum height for mobile devices
                   height: "auto", // Auto height to prevent content cutoff
+                  transition: "none", // Remove individual card transition since it's handled by border wrapper
                 }}
                 onMouseEnter={() => setHoveredTier(currentTier.id)}
                 onMouseLeave={() => setHoveredTier(null)}

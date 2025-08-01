@@ -19,7 +19,7 @@ export default function Schedule() {
   // Use mock data for Firebase hosting
   const weeklyShows: ShowSchedule[] = [
     {
-      id: "1",
+      id: 1,
       title: "Morning Metal",
       host: "DJ Metalhead",
       dayOfWeek: "Monday",
@@ -29,7 +29,7 @@ export default function Schedule() {
       genre: "Heavy Metal"
     },
     {
-      id: "2", 
+      id: 2, 
       title: "Thrash Tuesday",
       host: "DJ Thrash",
       dayOfWeek: "Tuesday",
@@ -39,7 +39,7 @@ export default function Schedule() {
       genre: "Thrash Metal"
     },
     {
-      id: "3",
+      id: 3,
       title: "Death Metal Wednesday",
       host: "DJ Death",
       dayOfWeek: "Wednesday", 
@@ -52,7 +52,7 @@ export default function Schedule() {
 
   const pastShows: PastShow[] = [
     {
-      id: "1",
+      id: 1,
       title: "Classic Metal Hour",
       host: "DJ Classic",
       date: new Date(),
@@ -274,24 +274,25 @@ export default function Schedule() {
                 ))
               ) : (
                 (filteredWeeklyShows || []).map((show) => (
-                <Card
+                <div
                   key={show.id}
-                  className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
+                  className="relative p-1 overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer"
+                  style={{
+                    borderRadius: "16px",
+                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary}, ${colors.primary})`,
+                    backgroundSize: '400% 400%',
+                    animation: 'movingGradientBorder 4s ease-in-out infinite',
+                  }}
+                  onClick={() => setSelectedWeeklyShow(show)}
+                >
+                <Card
+                  className="group border-0 p-4"
                   style={{
                     backgroundColor: colors.background,
-                    borderColor: `${colors.primary}80`,
+                    borderRadius: "15px",
                     boxShadow: `0 8px 32px ${colors.primary}20`,
                     height: "160px",
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = colors.primary;
-                    e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = `${colors.primary}80`;
-                    e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
-                  }}
-                  onClick={() => setSelectedWeeklyShow(show)}
                 >
                   <CardContent
                     className="p-0"
@@ -323,6 +324,7 @@ export default function Schedule() {
                     </div>
                   </CardContent>
                 </Card>
+                </div>
                 ))
               )}
             </div>
@@ -353,24 +355,25 @@ export default function Schedule() {
                   ))
                 ) : (
                   (pastShows || []).slice(0, 3).map((show) => (
-                  <Card
+                  <div
                     key={show.id}
-                    className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
+                    className="relative p-1 overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer"
+                    style={{
+                      borderRadius: "16px",
+                      background: `linear-gradient(45deg, ${colors.secondary}, ${colors.accent}, ${colors.secondary})`,
+                      backgroundSize: '400% 400%',
+                      animation: 'movingGradientBorder 4s ease-in-out infinite',
+                    }}
+                    onClick={() => setSelectedPastShow(show)}
+                  >
+                  <Card
+                    className="group border-0 p-4"
                     style={{
                       backgroundColor: colors.background,
-                      borderColor: `${colors.primary}80`,
+                      borderRadius: "15px",
                       boxShadow: `0 8px 32px ${colors.primary}20`,
                       height: "160px",
                     }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = colors.primary;
-                      e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = `${colors.primary}80`;
-                      e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
-                    }}
-                    onClick={() => setSelectedPastShow(show)}
                   >
                     <CardContent
                       className="p-0"
@@ -457,6 +460,7 @@ export default function Schedule() {
                       </div>
                     </CardContent>
                   </Card>
+                  </div>
                   ))
                 )}
               </div>
