@@ -124,7 +124,7 @@
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
     "axios": "^1.10.0",
-    "drizzle-kit": "^0.31.4",
+    "drizzle-kit": "^0.18.1",
     "esbuild": "^0.25.7",
     "eslint": "^9.29.0",
     "eslint-plugin-react": "^7.37.5",
