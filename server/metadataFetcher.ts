@@ -31,7 +31,7 @@ interface IHeartNowPlayingResponse {
 class MetadataFetcher {
   private static instance: MetadataFetcher;
   private cache: Map<string, { data: StationMetadata; timestamp: number }> = new Map();
-  private readonly CACHE_DURATION = 10000; // 10 seconds (reduced for testing)
+  private readonly CACHE_DURATION = 5000; // 5 seconds for fresh metadata
 
   public static getInstance(): MetadataFetcher {
     if (!MetadataFetcher.instance) {
@@ -41,11 +41,9 @@ class MetadataFetcher {
   }
 
   async getMetadata(stationId: string): Promise<StationMetadata | null> {
-    // Check cache first
-    const cached = this.cache.get(stationId);
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data;
-    }
+    // Clear cache for debugging - always fetch fresh metadata
+    this.cache.delete(stationId);
+    console.log(`Fetching fresh metadata for station: ${stationId}`);
 
     try {
       let metadata: StationMetadata | null = null;

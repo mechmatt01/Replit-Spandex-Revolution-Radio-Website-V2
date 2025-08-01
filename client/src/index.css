@@ -129,11 +129,39 @@
   animation: fadeIn 0.3s ease-in-out;
 }
 
-/* NO RINGS AT ALL */
-* {
-  --tw-ring-color: transparent !important;
+/* ABSOLUTELY NO FOCUS RINGS ANYWHERE */
+*,
+*:before,
+*:after,
+*:focus,
+*:focus-visible,
+*:focus-within,
+*:active,
+button,
+button:focus,
+button:focus-visible,
+input,
+input:focus,
+input:focus-visible,
+select,
+select:focus,
+select:focus-visible,
+textarea,
+textarea:focus,
+textarea:focus-visible,
+[role="button"],
+[role="button"]:focus,
+[role="button"]:focus-visible,
+[tabindex],
+[tabindex]:focus,
+[tabindex]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
   --tw-ring-shadow: none !important;
   --tw-ring-offset-shadow: none !important;
+  --tw-shadow: none !important;
+  --tw-shadow-colored: none !important;
+  --tw-ring-color: transparent !important;
   --ring: transparent !important;
 }
 

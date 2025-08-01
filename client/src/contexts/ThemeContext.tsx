@@ -547,30 +547,72 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         return `${h} ${s}% ${l}%`;
       };
 
-      // NO FOCUS RINGS - COMPLETE ELIMINATION
+      // ULTIMATE FOCUS RING ELIMINATION - HIGHEST PRIORITY CSS
       const style = document.createElement('style');
       style.textContent = `
-        /* ABSOLUTE ZERO FOCUS RINGS */
+        /* MAXIMUM PRIORITY FOCUS RING ELIMINATION */
         *,
-        *:before,
-        *:after,
+        *::before,
+        *::after,
         *:focus,
         *:focus-visible,
+        *:focus-within,
         *:active,
         button,
+        button:focus,
+        button:focus-visible,
         input,
+        input:focus,
+        input:focus-visible,
         select,
+        select:focus,
+        select:focus-visible,
         textarea,
+        textarea:focus,
+        textarea:focus-visible,
         [role="button"],
-        [tabindex] {
+        [role="button"]:focus,
+        [role="button"]:focus-visible,
+        [tabindex],
+        [tabindex]:focus,
+        [tabindex]:focus-visible,
+        audio,
+        audio:focus,
+        audio:focus-visible,
+        video,
+        video:focus,
+        video:focus-visible {
+          outline: 0 !important;
           outline: none !important;
+          outline-width: 0 !important;
+          outline-color: transparent !important;
+          outline-style: none !important;
+          box-shadow: 0 0 0 0 transparent !important;
           box-shadow: none !important;
-          --tw-ring-shadow: none !important;
-          --tw-ring-offset-shadow: none !important;
+          border-color: inherit !important;
+          --tw-ring-shadow: 0 0 #0000 !important;
+          --tw-ring-offset-shadow: 0 0 #0000 !important;
           --tw-ring-color: transparent !important;
           --tw-ring-opacity: 0 !important;
           --tw-ring-offset-width: 0px !important;
+          --tw-ring-offset-color: transparent !important;
           --ring: transparent !important;
+        }
+        
+        /* Extra protection for webkit/chrome focus rings */
+        *::-webkit-focus-ring-color {
+          color: transparent !important;
+          outline-color: transparent !important;
+        }
+        
+        /* Firefox focus rings */
+        *::-moz-focus-inner {
+          border: 0 !important;
+          padding: 0 !important;
+        }
+        
+        *:-moz-focusring {
+          outline: none !important;
         }
       `;
       
