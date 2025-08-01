@@ -260,7 +260,7 @@ export default function StickyPlayer() {
             )}
             <Button
               onClick={togglePlayback}
-              className="text-white w-10 h-10 rounded-full focus:outline-none focus:ring-2 flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl border-0"
+              className="text-white w-10 h-10 rounded-full   flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl border-0"
               style={{
                 background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
                 boxShadow: `0 4px 20px ${colors.primary}60`,

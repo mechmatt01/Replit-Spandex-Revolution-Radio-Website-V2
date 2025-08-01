@@ -167,7 +167,7 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
             }
             placeholder="John Doe"
             required
-            className="bg-dark-bg/50 text-white placeholder-gray-400/60 focus:ring-2 focus:ring-ring focus:ring-opacity-50"
+            className="bg-dark-bg/50 text-white placeholder-gray-400/60 2  50"
           />
         </div>
         <div>
@@ -183,7 +183,7 @@ function PaymentForm({ selectedTier, onSuccess }: PaymentFormProps) {
             }
             placeholder="john@example.com"
             required
-            className="bg-dark-bg/50 text-white placeholder-gray-400/60 focus:ring-2 focus:ring-ring focus:ring-opacity-50"
+            className="bg-dark-bg/50 text-white placeholder-gray-400/60 2  50"
           />
         </div>
       </div>

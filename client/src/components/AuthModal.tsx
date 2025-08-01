@@ -228,7 +228,7 @@ export default function AuthModal({
                       id="username"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
+                      className="pl-10 bg-black/50   placeholder:text-gray-400 placeholder:opacity-50"
                       style={{
                         color: colors.text,
                         borderColor: "#374151",
@@ -255,7 +255,7 @@ export default function AuthModal({
                         id="firstName"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
+                        className="pl-10 bg-black/50   placeholder:text-gray-400 placeholder:opacity-50"
                         style={{
                           color: colors.text,
                           borderColor: "#374151",
@@ -281,7 +281,7 @@ export default function AuthModal({
                         id="lastName"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
-                        className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
+                        className="pl-10 bg-black/50   placeholder:text-gray-400 placeholder:opacity-50"
                         style={{
                           color: colors.text,
                           borderColor: "#374151",
@@ -309,7 +309,7 @@ export default function AuthModal({
                       type="tel"
                       value={phoneNumber}
                       onChange={handlePhoneChange}
-                      className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
+                      className="pl-10 bg-black/50   placeholder:text-gray-400 placeholder:opacity-50"
                       style={{
                         color: colors.text,
                         borderColor: "#374151",
@@ -339,7 +339,7 @@ export default function AuthModal({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
+                  className="pl-10 bg-black/50   placeholder:text-gray-400 placeholder:opacity-50"
                   style={{
                     color: colors.text,
                     borderColor: "#374151",
@@ -367,7 +367,7 @@ export default function AuthModal({
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 bg-black/50 focus:ring-0 focus:ring-offset-0 placeholder:text-gray-400 placeholder:opacity-50"
+                  className="pl-10 bg-black/50   placeholder:text-gray-400 placeholder:opacity-50"
                   style={{
                     color: colors.text,
                     borderColor: "#374151",
