@@ -179,6 +179,7 @@ html audio:focus-visible {
   --tw-ring-offset-color: transparent !important;
 }
 
+/* Browser-specific white ring elimination */
 html *::-webkit-focus-ring-color {
   color: transparent !important;
   outline-color: transparent !important;
@@ -187,10 +188,24 @@ html *::-webkit-focus-ring-color {
 html *::-moz-focus-inner {
   border: 0 !important;
   padding: 0 !important;
+  outline: none !important;
 }
 
 html *:-moz-focusring {
   outline: none !important;
+  outline-color: transparent !important;
+}
+
+/* Additional white ring protection */
+html *:focus:not(:focus-visible) {
+  outline: none !important;
+  border: none !important;
+}
+
+html *:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 /* ZERO FOCUS RINGS - COMPLETELY ELIMINATED */

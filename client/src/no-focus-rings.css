@@ -61,12 +61,31 @@ html span:focus-visible {
   --ring: transparent !important;
 }
 
-/* Eliminate any orange/yellow focus rings specifically */
+/* Eliminate any orange/yellow/white focus rings specifically */
 html *:focus,
-html *:focus-visible {
+html *:focus-visible,
+html *:active {
   border-color: transparent !important;
   box-shadow: 0 0 0 0 rgba(0,0,0,0) !important;
   outline: 0 !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  border: none !important;
+  background-color: inherit !important;
+}
+
+/* Completely eliminate white rings */
+html *:focus {
+  outline: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Override any possible white/light colored outlines */
+html * {
+  outline-color: transparent !important;
+  -webkit-focus-ring-color: transparent !important;
 }
 
 /* Browser-specific focus ring elimination */

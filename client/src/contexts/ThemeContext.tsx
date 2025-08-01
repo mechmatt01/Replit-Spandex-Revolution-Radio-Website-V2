@@ -614,6 +614,39 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         *:-moz-focusring {
           outline: none !important;
         }
+        
+        /* NUCLEAR: Eliminate all possible white/light outline sources */
+        * {
+          outline: none !important;
+          border-color: inherit !important;
+        }
+        
+        *:focus,
+        *:focus-visible,
+        *:active {
+          outline: 0 !important;
+          outline: none !important;
+          outline-width: 0 !important;
+          outline-color: transparent !important;
+          outline-style: none !important;
+          border: none !important;
+          box-shadow: none !important;
+          -webkit-appearance: none !important;
+          -moz-appearance: none !important;
+          appearance: none !important;
+        }
+        
+        /* Target specific white outlines */
+        button:focus,
+        button:focus-visible,
+        input:focus,
+        input:focus-visible,
+        select:focus,
+        select:focus-visible {
+          outline: none !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
       `;
       
       // Remove any existing theme override styles
@@ -621,6 +654,28 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       if (existingStyle) existingStyle.remove();
       style.id = 'theme-ring-override';
       document.head.appendChild(style);
+      
+      // JavaScript-based focus ring elimination (nuclear option)
+      const removeFocusRings = () => {
+        const elements = document.querySelectorAll('*');
+        elements.forEach(element => {
+          element.addEventListener('focus', (e) => {
+            (e.target as HTMLElement).style.outline = 'none';
+            (e.target as HTMLElement).style.border = 'none';
+            (e.target as HTMLElement).style.boxShadow = 'none';
+          });
+          element.addEventListener('focusin', (e) => {
+            (e.target as HTMLElement).style.outline = 'none';
+            (e.target as HTMLElement).style.border = 'none';
+            (e.target as HTMLElement).style.boxShadow = 'none';
+          });
+        });
+      };
+      
+      // Apply immediately and on DOM changes
+      removeFocusRings();
+      const observer = new MutationObserver(removeFocusRings);
+      observer.observe(document.body, { childList: true, subtree: true });
       
       // Additional JavaScript-based focus ring elimination
       setTimeout(() => {
