@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2 } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useRadio } from "@/contexts/RadioContext";
+import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
 import { AnimatedCounter } from "./AnimatedCounter";
 
 // Types
@@ -23,30 +25,32 @@ interface Config {
   googleMapsMapId: string;
 }
 
-// Weather icon mapping
+// Weather icon mapping - Updated to match actual files in animated_weather_icons folder
 const weatherIconMap: { [key: string]: string } = {
   '01d': 'clear-day.svg',
   '01n': 'clear-night.svg',
   '02d': 'partly-cloudy-day.svg',
   '02n': 'partly-cloudy-night.svg',
-  '03d': 'cloudy-day-1.svg',
-  '03n': 'cloudy-night-1.svg',
-  '04d': 'cloudy-day-2.svg',
-  '04n': 'cloudy-night-2.svg',
-  '09d': 'rainy-1-day.svg',
-  '09n': 'rainy-1-night.svg',
-  '10d': 'rainy-2.svg',
-  '10n': 'rainy-3.svg',
+  '03d': 'cloudy-day.svg',
+  '03n': 'cloudy-night.svg',
+  '04d': 'cloudy.svg',
+  '04n': 'cloudy.svg',
+  '09d': 'rainy-day.svg',
+  '09n': 'rainy-night.svg',
+  '10d': 'rain.svg',
+  '10n': 'rainy.svg',
   '11d': 'thunder.svg',
   '11n': 'thunder.svg',
-  '13d': 'snowy-1.svg',
-  '13n': 'snowy-2.svg',
+  '13d': 'snow.svg',
+  '13n': 'snowy.svg',
   '50d': 'fog.svg',
   '50n': 'fog.svg',
 };
 
 const FullWidthGlobeMapFixed = () => {
   const { isDarkMode, colors } = useTheme();
+  const { currentTrack } = useRadio();
+  const { adaptiveTheme } = useAdaptiveTheme(currentTrack?.artwork || '');
   const mapRef = useRef<HTMLDivElement>(null);
   const fullscreenMapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -816,53 +820,99 @@ const FullWidthGlobeMapFixed = () => {
               See where metal fans are tuning in from around the world in real-time.
             </p>
 
-            {/* Weather Display with Animated Icons */}
-            <div className="mb-4">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  {weather?.location || "Loading location..."}
-                </span>
+            {/* Modern Glass Weather Display */}
+            <div className="mb-6 relative max-w-lg mx-auto">
+              {/* Glass/Blur Background Container */}
+              <div
+                className="relative rounded-2xl backdrop-blur-md border border-white/10 shadow-2xl overflow-hidden transition-all duration-500 ease-in-out"
+                style={{
+                  background: `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}80, ${adaptiveTheme.overlayColor}60)`,
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  boxShadow: `0 8px 32px ${adaptiveTheme.accentColor}20, 0 0 0 1px ${adaptiveTheme.accentColor}10`
+                }}
+              >
+                {/* Enable Location Overlay - Only shown when needed */}
                 {(locationPermission === 'denied' || locationPermission === 'prompt') && (
-                  <Button
-                    onClick={handleLocationPermission}
-                    size="sm"
-                    className={`ml-2 transition-colors duration-300 text-xs ${
-                      isDarkMode 
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                        : 'bg-gray-600 hover:bg-gray-700 text-white'
-                    }`}
+                  <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl"
+                    style={{
+                      background: `linear-gradient(135deg, ${adaptiveTheme.accentColor}15, ${adaptiveTheme.overlayColor}25)`,
+                      backdropFilter: 'blur(25px)',
+                      WebkitBackdropFilter: 'blur(25px)'
+                    }}
                   >
-                    Enable Location
-                  </Button>
-                )}
-              </div>
-              
-              <div className="flex items-center justify-center gap-3">
-                {/* Weather Icon */}
-                {weather && (
-                  <div className="flex items-center justify-center">
-                    {weatherLoading ? (
-                      <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-                    ) : (
-                      <img
-                        src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
-                        alt={weather.description}
-                        className="w-12 h-12 object-contain animate-pulse"
-                        style={{ filter: isDarkMode ? 'brightness(0.8)' : 'none' }}
-                      />
-                    )}
+                    <Button
+                      onClick={handleLocationPermission}
+                      className="px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 border-0 shadow-lg"
+                      style={{
+                        background: `linear-gradient(135deg, ${adaptiveTheme.accentColor}, ${adaptiveTheme.accentColor}CC)`,
+                        color: adaptiveTheme.textColor,
+                        boxShadow: `0 4px 20px ${adaptiveTheme.accentColor}40`
+                      }}
+                    >
+                      <MapPin className="w-4 h-4 mr-2" />
+                      Enable Location
+                    </Button>
                   </div>
                 )}
-                
-                {/* Temperature and Description */}
-                <div className="flex flex-col items-center">
-                  <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                    {weather ? `${Math.round(weather.temperature)}°F` : "Loading..."}
-                  </span>
-                  <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                    {weather?.description || "Loading weather..."}
-                  </span>
+
+                {/* Main Content */}
+                <div className="p-6 space-y-4">
+                  {/* Location Header */}
+                  <div className="flex items-center justify-center gap-2">
+                    <MapPin 
+                      className="w-5 h-5" 
+                      style={{ color: adaptiveTheme.accentColor }} 
+                    />
+                    <span 
+                      className="text-lg font-semibold tracking-wide"
+                      style={{ color: adaptiveTheme.textColor }}
+                    >
+                      {weather?.location || "Getting your location..."}
+                    </span>
+                  </div>
+                  
+                  {/* Weather Info */}
+                  <div className="flex items-center justify-center gap-4">
+                    {/* Weather Icon */}
+                    {weather && (
+                      <div className="flex items-center justify-center">
+                        {weatherLoading ? (
+                          <Loader2 
+                            className="w-12 h-12 animate-spin" 
+                            style={{ color: adaptiveTheme.accentColor }} 
+                          />
+                        ) : (
+                          <div className="relative">
+                            <img
+                              src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
+                              alt={weather.description}
+                              className="w-16 h-16 object-contain drop-shadow-lg"
+                              style={{ 
+                                filter: `drop-shadow(0 4px 8px ${adaptiveTheme.accentColor}30)`
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Temperature and Description */}
+                    <div className="flex flex-col items-center">
+                      <span 
+                        className="text-2xl font-bold tracking-tight"
+                        style={{ color: adaptiveTheme.textColor }}
+                      >
+                        {weather ? `${Math.round(weather.temperature)}°F` : "Loading..."}
+                      </span>
+                      <span 
+                        className="text-sm font-medium opacity-80 capitalize"
+                        style={{ color: adaptiveTheme.textColor }}
+                      >
+                        {weather?.description || "Loading weather..."}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
