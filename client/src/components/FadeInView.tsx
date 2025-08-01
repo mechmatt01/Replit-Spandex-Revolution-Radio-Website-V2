@@ -19,7 +19,7 @@ export default function FadeInView({
   children,
   threshold = 0.05,
   delay = 0,
-  duration = 300,
+  duration = 200,
   className = '',
   direction = 'up'
 }: FadeInViewProps) {
@@ -36,12 +36,12 @@ export default function FadeInView({
   useEffect(() => {
     if (isVisible && !hasAnimated && !animatedElements.has(elementId)) {
       // Calculate adaptive duration based on scroll velocity
-      const newDuration = getAdaptiveAnimationDuration(duration, velocity, 300, 800);
+      const newDuration = getAdaptiveAnimationDuration(duration, velocity, 150, 400);
       setAdaptiveDuration(newDuration);
       
       // Add minimal base delay plus reduced staggered delay based on element order
       const baseDelay = 0; // Immediate start for faster loading
-      const staggerDelay = (animationCounter - 1) * 10; // 10ms between elements (faster)
+      const staggerDelay = (animationCounter - 1) * 5; // 5ms between elements (faster)
       const totalDelay = baseDelay + staggerDelay + delay;
       
       setTimeout(() => {

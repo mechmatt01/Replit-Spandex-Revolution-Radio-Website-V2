@@ -208,6 +208,18 @@ export default function MetalThemeSwitcher() {
                             >
                               {themeConfig.name}
                             </span>
+                            {isPremium && !isActive && (
+                              <Star
+                                className="w-4 h-4 flex-shrink-0"
+                                style={{
+                                  color: "#ffd700",
+                                  fill: "#ffd700",
+                                  filter: isLocked
+                                    ? "grayscale(100%) opacity(0.5)"
+                                    : "drop-shadow(0 0 1px rgba(255, 215, 0, 0.3))",
+                                }}
+                              />
+                            )}
                             {isActive && (
                               <Badge
                                 variant="secondary"
@@ -221,18 +233,7 @@ export default function MetalThemeSwitcher() {
                               </Badge>
                             )}
                           </div>
-                          {isPremium && !isActive && (
-                            <Star
-                              className="w-4 h-4 flex-shrink-0"
-                              style={{
-                                color: "#ffd700",
-                                fill: "#ffd700",
-                                filter: isLocked
-                                  ? "grayscale(100%) opacity(0.5)"
-                                  : "drop-shadow(0 0 1px rgba(255, 215, 0, 0.3))",
-                              }}
-                            />
-                          )}
+
                         </div>
                         <p
                           className="text-xs mt-1 break-words leading-relaxed whitespace-pre-wrap overflow-hidden"

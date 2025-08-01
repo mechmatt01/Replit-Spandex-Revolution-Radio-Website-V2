@@ -218,15 +218,15 @@ export default function RadioCoPlayer() {
       role="region"
       aria-label="Radio player controls"
       style={{
-        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme
+        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
           ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.08)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.05)')})`
           : 'rgba(255, 255, 255, 0.08)',
         backdropFilter: 'blur(24px) saturate(180%)',
         WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme
+        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
           ? `0 8px 32px ${adaptiveTheme.accentColor}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`
           : `0 8px 32px ${colors.primary}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
-        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme
+        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
           ? adaptiveTheme.textColor 
           : colors.text,
         border: 'none'
@@ -276,17 +276,17 @@ export default function RadioCoPlayer() {
             <div
               className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto border shadow-xl z-20 scrollbar-thin"
               style={{
-                background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme
+                background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
                   ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.95)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.90)')})`
                   : 'rgba(0, 0, 0, 0.95)',
                 backdropFilter: 'blur(24px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-                borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme
+                borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
                   ? adaptiveTheme.accentColor + "40"
                   : colors.primary + "40",
                 borderRadius: "12px",
                 minWidth: "300px",
-                boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme
+                boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
                   ? `0 8px 32px ${adaptiveTheme.accentColor}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`
                   : `0 8px 32px ${colors.primary}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
               }}
