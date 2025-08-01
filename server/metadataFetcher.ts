@@ -224,6 +224,7 @@ class MetadataFetcher {
               let artwork = nowPlayingData.artwork || nowPlayingData.image;
               
               if (!artwork && title && artist) {
+                console.log(`Fetching artwork for: "${title}" by ${artist}`);
                 artwork = await this.fetchArtworkFromItunes(title, artist);
               }
               
@@ -302,11 +303,18 @@ class MetadataFetcher {
       const albumMatch = xmlData.match(/<property name="cue_album"><!\[CDATA\[(.*?)\]\]>/);
       
       if (titleMatch && artistMatch) {
+        const title = titleMatch[1] || 'Unknown Track';
+        const artist = artistMatch[1] || 'Unknown Artist';
+        
+        // Fetch artwork from iTunes
+        console.log(`Fetching artwork for: "${title}" by ${artist}`);
+        const artwork = await this.fetchArtworkFromItunes(title, artist);
+        
         return {
-          title: titleMatch[1] || 'Unknown Track',
-          artist: artistMatch[1] || 'Unknown Artist',
+          title,
+          artist,
           album: albumMatch?.[1] || stationName,
-          artwork: null,
+          artwork,
           stationName,
           timestamp: Date.now(),
         };

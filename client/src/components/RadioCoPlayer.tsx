@@ -247,7 +247,7 @@ export default function RadioCoPlayer() {
             variant="outline"
             size="sm"
             onClick={() => setIsStationDropdownOpen(!isStationDropdownOpen)}
-            className="bg-card/90 backdrop-blur-sm hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1"
+            className="bg-card/95 backdrop-blur-sm hover:bg-card/100 transition-all duration-200 text-xs px-3 py-1"
             style={{
               borderColor: colors.primary,
               borderWidth: "2px",
@@ -274,7 +274,7 @@ export default function RadioCoPlayer() {
 
           {isStationDropdownOpen && (
             <div
-              className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto bg-black/90 backdrop-blur-lg border shadow-xl z-20 scrollbar-thin"
+              className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto bg-black/95 backdrop-blur-lg border shadow-xl z-20 scrollbar-thin"
               style={{
                 borderColor: colors.primary + "40",
                 borderRadius: "12px",

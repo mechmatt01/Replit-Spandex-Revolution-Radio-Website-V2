@@ -35,7 +35,13 @@ html video:focus,
 html video:focus-visible,
 html a,
 html a:focus,
-html a:focus-visible {
+html a:focus-visible,
+html div,
+html div:focus,
+html div:focus-visible,
+html span,
+html span:focus,
+html span:focus-visible {
   outline: 0 !important;
   outline: none !important;
   outline-width: 0 !important;
@@ -46,7 +52,6 @@ html a:focus-visible {
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
-  border: none !important;
   --tw-ring-shadow: 0 0 #0000 !important;
   --tw-ring-offset-shadow: 0 0 #0000 !important;
   --tw-ring-color: transparent !important;
@@ -54,6 +59,14 @@ html a:focus-visible {
   --tw-ring-offset-width: 0px !important;
   --tw-ring-offset-color: transparent !important;
   --ring: transparent !important;
+}
+
+/* Eliminate any orange/yellow focus rings specifically */
+html *:focus,
+html *:focus-visible {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 0 rgba(0,0,0,0) !important;
+  outline: 0 !important;
 }
 
 /* Browser-specific focus ring elimination */
