@@ -658,17 +658,26 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       // JavaScript-based focus ring elimination (nuclear option)
       const removeFocusRings = () => {
         const elements = document.querySelectorAll('*');
-        elements.forEach(element => {
-          element.addEventListener('focus', (e) => {
-            (e.target as HTMLElement).style.outline = 'none';
-            (e.target as HTMLElement).style.border = 'none';
-            (e.target as HTMLElement).style.boxShadow = 'none';
-          });
-          element.addEventListener('focusin', (e) => {
-            (e.target as HTMLElement).style.outline = 'none';
-            (e.target as HTMLElement).style.border = 'none';
-            (e.target as HTMLElement).style.boxShadow = 'none';
-          });
+        elements.forEach((element: Element) => {
+          const htmlElement = element as HTMLElement;
+          
+          // Remove existing event listeners to prevent duplicates
+          const focusHandler = (e: Event) => {
+            const target = e.target as HTMLElement;
+            target.style.outline = 'none';
+            target.style.border = 'none';
+            target.style.boxShadow = 'none';
+            target.style.setProperty('outline', 'none', 'important');
+            target.style.setProperty('border', 'none', 'important');
+            target.style.setProperty('box-shadow', 'none', 'important');
+          };
+          
+          htmlElement.addEventListener('focus', focusHandler, { passive: true });
+          htmlElement.addEventListener('focusin', focusHandler, { passive: true });
+          
+          // Apply immediately
+          htmlElement.style.outline = 'none';
+          htmlElement.style.setProperty('outline', 'none', 'important');
         });
       };
       
