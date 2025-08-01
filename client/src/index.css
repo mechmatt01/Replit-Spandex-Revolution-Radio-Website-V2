@@ -129,40 +129,68 @@
   animation: fadeIn 0.3s ease-in-out;
 }
 
-/* ABSOLUTELY NO FOCUS RINGS ANYWHERE */
-*,
-*:before,
-*:after,
-*:focus,
-*:focus-visible,
-*:focus-within,
-*:active,
-button,
-button:focus,
-button:focus-visible,
-input,
-input:focus,
-input:focus-visible,
-select,
-select:focus,
-select:focus-visible,
-textarea,
-textarea:focus,
-textarea:focus-visible,
-[role="button"],
-[role="button"]:focus,
-[role="button"]:focus-visible,
-[tabindex],
-[tabindex]:focus,
-[tabindex]:focus-visible {
+/* NUCLEAR FOCUS RING ELIMINATION - MAX PRIORITY */
+html *,
+html *:before,
+html *:after,
+html *:focus,
+html *:focus-visible,
+html *:focus-within,
+html *:active,
+html button,
+html button:focus,
+html button:focus-visible,
+html input,
+html input:focus,
+html input:focus-visible,
+html select,
+html select:focus,
+html select:focus-visible,
+html textarea,
+html textarea:focus,
+html textarea:focus-visible,
+html [role="button"],
+html [role="button"]:focus,
+html [role="button"]:focus-visible,
+html [tabindex],
+html [tabindex]:focus,
+html [tabindex]:focus-visible,
+html audio,
+html audio:focus,
+html audio:focus-visible {
+  outline: 0 !important;
   outline: none !important;
+  outline-width: 0 !important;
+  outline-color: transparent !important;
+  outline-style: none !important;
+  outline-offset: 0 !important;
+  box-shadow: 0 0 0 0 transparent !important;
   box-shadow: none !important;
-  --tw-ring-shadow: none !important;
-  --tw-ring-offset-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
   --tw-shadow: none !important;
   --tw-shadow-colored: none !important;
   --tw-ring-color: transparent !important;
   --ring: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
+}
+
+html *::-webkit-focus-ring-color {
+  color: transparent !important;
+  outline-color: transparent !important;
+}
+
+html *::-moz-focus-inner {
+  border: 0 !important;
+  padding: 0 !important;
+}
+
+html *:-moz-focusring {
+  outline: none !important;
 }
 
 /* ZERO FOCUS RINGS - COMPLETELY ELIMINATED */

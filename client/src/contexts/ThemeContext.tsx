@@ -621,6 +621,18 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       if (existingStyle) existingStyle.remove();
       style.id = 'theme-ring-override';
       document.head.appendChild(style);
+      
+      // Additional JavaScript-based focus ring elimination
+      setTimeout(() => {
+        const allElements = document.querySelectorAll('*');
+        allElements.forEach(element => {
+          element.addEventListener('focus', (e) => {
+            e.target.style.outline = 'none';
+            e.target.style.boxShadow = 'none';
+            e.target.style.border = 'none';
+          });
+        });
+      }, 100);
 
       // Set safe Tailwind variables that don't conflict with existing ones
       root.style.setProperty("--tw-primary", colorToHsl(colors.primary));
