@@ -195,27 +195,31 @@ export default function SubscriptionCarousel() {
               />
             </div>
 
-            {/* Main Card */}
+            {/* Moving Gradient Border Wrapper */}
             <div
-              className="relative backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col subscription-card"
+              className="relative p-1 rounded-3xl overflow-hidden"
               style={{
-                border: currentTier.popular ? "3px solid" : "2px solid",
-                borderColor: currentTier.popular 
-                  ? `${currentTier.gradientStart}`
-                  : `${currentTier.gradientStart}80`,
-                borderRadius: "24px",
-                backgroundColor: colors.surface,
-                background: `${colors.surface}`,
-                boxShadow: currentTier.popular 
-                  ? `0 0 60px ${currentTier.gradientStart}60, 0 0 120px ${currentTier.gradientEnd}40, 0 0 160px ${currentTier.gradientStart}20, inset 0 0 0 1px ${currentTier.gradientStart}40`
-                  : `0 20px 40px ${currentTier.gradientStart}40, inset 0 0 0 1px ${currentTier.gradientStart}30`,
-                minHeight: "600px", // Minimum height for mobile devices
-                height: "auto", // Auto height to prevent content cutoff
-                animation: currentTier.popular ? "borderPulse 3s ease-in-out infinite" : "none"
+                background: `linear-gradient(45deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}, ${currentTier.gradientStart})`,
+                backgroundSize: '400% 400%',
+                animation: 'movingGradientBorder 4s ease-in-out infinite',
               }}
-              onMouseEnter={() => setHoveredTier(currentTier.id)}
-              onMouseLeave={() => setHoveredTier(null)}
             >
+              {/* Main Card */}
+              <div
+                className="relative backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col subscription-card"
+                style={{
+                  borderRadius: "23px", // Slightly smaller to account for border wrapper
+                  backgroundColor: colors.surface,
+                  background: `${colors.surface}`,
+                  boxShadow: currentTier.popular 
+                    ? `0 0 60px ${currentTier.gradientStart}60, 0 0 120px ${currentTier.gradientEnd}40, 0 0 160px ${currentTier.gradientStart}20, inset 0 0 0 1px ${currentTier.gradientStart}40`
+                    : `0 20px 40px ${currentTier.gradientStart}40, inset 0 0 0 1px ${currentTier.gradientStart}30`,
+                  minHeight: "600px", // Minimum height for mobile devices
+                  height: "auto", // Auto height to prevent content cutoff
+                }}
+                onMouseEnter={() => setHoveredTier(currentTier.id)}
+                onMouseLeave={() => setHoveredTier(null)}
+              >
 
 
               {/* Package Icon with Animation */}
@@ -390,6 +394,7 @@ export default function SubscriptionCarousel() {
                 </Button>
               </div>
             </div>
+            </div> {/* Close Moving Gradient Border Wrapper */}
           </div>
         </div>
 

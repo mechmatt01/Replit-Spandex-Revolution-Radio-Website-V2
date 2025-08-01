@@ -230,10 +230,10 @@ export default function RadioCoPlayer() {
           ? adaptiveTheme.textColor 
           : colors.text,
         border: 'none',
-        // Responsive width: 1/3 of viewport width, with minimum based on content plus padding
-        width: 'clamp(480px, 33.333vw, 90vw)',
+        // Responsive width: Reduced by 20% as requested - now 26.666vw instead of 33.333vw
+        width: 'clamp(384px, 26.666vw, 72vw)',
         minWidth: 'max-content',
-        maxWidth: '90vw',
+        maxWidth: '72vw',
         // Ensure it expands to accommodate the longest text element
         contain: 'layout'
       }}

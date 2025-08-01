@@ -400,7 +400,7 @@ const FullWidthGlobeMapFixed = () => {
     return { marker, infoWindow, pulsingOverlay };
   };
 
-  // Toggle fullscreen map view with smooth animation
+  // Toggle fullscreen map view with smooth animation and scroll prevention
   const toggleFullscreen = () => {
     if (!map) return;
     
@@ -410,8 +410,9 @@ const FullWidthGlobeMapFixed = () => {
       const currentZoom = map.getZoom();
       setMapState({ center: currentCenter, zoom: currentZoom });
       
-      // Expand to fullscreen
+      // Expand to fullscreen and prevent page scrolling
       setIsFullscreen(true);
+      document.body.style.overflow = 'hidden';
       
       // Force map resize after animation completes
       setTimeout(() => {
@@ -425,8 +426,9 @@ const FullWidthGlobeMapFixed = () => {
         }
       }, 400); // Match animation duration
     } else {
-      // Collapse from fullscreen
+      // Collapse from fullscreen and re-enable page scrolling
       setIsFullscreen(false);
+      document.body.style.overflow = 'unset';
       
       // Force map resize after animation completes
       setTimeout(() => {
@@ -889,7 +891,7 @@ const FullWidthGlobeMapFixed = () => {
                         color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
                           ? adaptiveTheme.textColor 
                           : colors.text,
-                        borderRadius: '1rem', // Pill shape to match container
+                        borderRadius: '9999px', // True pill shape (100% rounded corners)
                         fontSize: '0.875rem',
                         fontWeight: '600',
                         letterSpacing: '0.025em'
@@ -982,11 +984,11 @@ const FullWidthGlobeMapFixed = () => {
             style={{ 
               borderColor: isFullscreen ? 'transparent' : colors.primary,
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              top: isFullscreen ? '0' : 'auto', // Full screen - no nav offset
-              bottom: isFullscreen ? '0' : 'auto', // Full screen - no player offset
+              top: isFullscreen ? '4rem' : 'auto', // Below navigation bar
+              bottom: isFullscreen ? '5rem' : 'auto', // Above floating player
               left: isFullscreen ? '0' : 'auto',
               right: isFullscreen ? '0' : 'auto',
-              height: isFullscreen ? '100vh' : '26rem', // True full screen height, slightly taller normal view to crop attribution
+              height: isFullscreen ? 'calc(100vh - 9rem)' : '26rem', // Full height minus nav and player, taller normal view to crop attribution
               width: isFullscreen ? '100vw' : 'auto',
               margin: isFullscreen ? '0' : 'auto',
               overflow: 'hidden'
