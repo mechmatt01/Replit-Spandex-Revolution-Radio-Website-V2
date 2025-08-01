@@ -274,25 +274,16 @@ export default function Schedule() {
                 ))
               ) : (
                 (filteredWeeklyShows || []).map((show) => (
-                <div
-                  key={show.id}
-                  className="relative p-1 overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer"
-                  style={{
-                    borderRadius: "16px",
-                    background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary}, ${colors.primary})`,
-                    backgroundSize: '400% 400%',
-                    animation: 'movingGradientBorder 4s ease-in-out infinite',
-                  }}
-                  onClick={() => setSelectedWeeklyShow(show)}
-                >
                 <Card
-                  className="group border-0 p-4"
+                  key={show.id}
+                  className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
                   style={{
                     backgroundColor: colors.background,
-                    borderRadius: "15px",
+                    borderColor: colors.primary,
                     boxShadow: `0 8px 32px ${colors.primary}20`,
                     height: "160px",
                   }}
+                  onClick={() => setSelectedWeeklyShow(show)}
                 >
                   <CardContent
                     className="p-0"
@@ -324,7 +315,6 @@ export default function Schedule() {
                     </div>
                   </CardContent>
                 </Card>
-                </div>
                 ))
               )}
             </div>
@@ -355,25 +345,16 @@ export default function Schedule() {
                   ))
                 ) : (
                   (pastShows || []).slice(0, 3).map((show) => (
-                  <div
-                    key={show.id}
-                    className="relative p-1 overflow-hidden transition-all duration-300 hover:scale-105 cursor-pointer"
-                    style={{
-                      borderRadius: "16px",
-                      background: `linear-gradient(45deg, ${colors.secondary}, ${colors.accent}, ${colors.secondary})`,
-                      backgroundSize: '400% 400%',
-                      animation: 'movingGradientBorder 4s ease-in-out infinite',
-                    }}
-                    onClick={() => setSelectedPastShow(show)}
-                  >
                   <Card
-                    className="group border-0 p-4"
+                    key={show.id}
+                    className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
                     style={{
                       backgroundColor: colors.background,
-                      borderRadius: "15px",
+                      borderColor: colors.primary,
                       boxShadow: `0 8px 32px ${colors.primary}20`,
                       height: "160px",
                     }}
+                    onClick={() => setSelectedPastShow(show)}
                   >
                     <CardContent
                       className="p-0"
@@ -460,7 +441,6 @@ export default function Schedule() {
                       </div>
                     </CardContent>
                   </Card>
-                  </div>
                   ))
                 )}
               </div>
