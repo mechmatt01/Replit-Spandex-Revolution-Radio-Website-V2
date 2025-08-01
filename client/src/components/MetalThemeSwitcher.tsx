@@ -170,12 +170,14 @@ export default function MetalThemeSwitcher() {
                     }}
                     onMouseEnter={(e) => {
                       if (!isActive && !isLocked) {
-                        e.currentTarget.style.backgroundColor = `${colors.primary}15`; // 15 = ~8% opacity
+                        e.currentTarget.style.backgroundColor = `${themeColors.primary}15`; // Use the theme's primary color
+                        e.currentTarget.style.color = themeColors.text;
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!isActive) {
                         e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = colors.text;
                       }
                     }}
                   >
@@ -199,7 +201,7 @@ export default function MetalThemeSwitcher() {
                       {/* Theme Info */}
                       <div className="flex-1 text-left min-w-0">
                         <div className="flex items-center gap-2 justify-between">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-1">
                             <span
                               className="font-semibold text-sm"
                               style={{ color: isActive ? 'white' : themeColors.primary }}
@@ -219,7 +221,7 @@ export default function MetalThemeSwitcher() {
                               </Badge>
                             )}
                           </div>
-                          {isPremium && (
+                          {isPremium && !isActive && (
                             <Star
                               className="w-4 h-4 flex-shrink-0"
                               style={{
