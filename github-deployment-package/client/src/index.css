@@ -1,0 +1,930 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
+
+/* CSS Variables for Background */
+:root {
+  --background: #1f2937;
+  --background-rgb: 31, 41, 55;
+  /* Default ring color variable removed per user request */
+}
+
+.dark {
+  --background: #1f2937;
+  --background-rgb: 31, 41, 55;
+}
+
+/* Mobile Safari Navigation Fix */
+.safe-area-inset-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Ensure navigation stays above content on mobile */
+@media (max-width: 1023px) {
+  body {
+    padding-top: calc(4rem + env(safe-area-inset-top));
+  }
+
+  /* Fix for iOS Safari viewport issues */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      padding-top: calc(4rem + env(safe-area-inset-top) + 20px);
+    }
+  }
+}
+
+/* Additional mobile Safari fixes */
+@supports (-webkit-touch-callout: none) {
+  nav {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+  }
+}
+
+/* Gradient text styling for better cross-browser support */
+.gradient-text {
+  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  font-weight: 900;
+}
+
+/* Gradient text for subscription titles */
+.gradient-text-title {
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline-block !important;
+  background-size: 100% !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed;
+}
+
+/* Ensure gradient text works consistently across all packages */
+.subscription-card h3 span {
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  color: transparent !important;
+  display: inline !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: content-box !important;
+  line-height: inherit !important;
+}
+
+/* Fix Select dropdown placeholder styling */
+[data-radix-select-trigger] [data-placeholder] {
+  color: rgb(156 163 175 / 0.6) !important;
+  opacity: 0.6 !important;
+}
+
+/* Additional fallback for Select component placeholder */
+[data-radix-select-trigger] span[data-placeholder] {
+  color: rgb(156 163 175 / 0.6) !important;
+  opacity: 0.6 !important;
+}
+
+/* Ensure SelectValue placeholder styling */
+[data-radix-select-value] {
+  color: rgb(156 163 175 / 0.6) !important;
+  opacity: 0.6 !important;
+}
+
+[data-radix-select-trigger] span[data-radix-select-value] {
+  color: rgb(156 163 175 / 0.6) !important;
+  opacity: 0.6 !important;
+}
+
+/* Target the specific placeholder state */
+[data-radix-select-trigger][data-placeholder] span {
+  color: rgb(156 163 175 / 0.6) !important;
+  opacity: 0.6 !important;
+}
+
+/* Original animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* COMPLETE FOCUS RING REMOVAL - No focus rings anywhere */
+* {
+  --tw-ring-color: transparent !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+}
+
+/* ULTIMATE FOCUS RING REMOVAL - NO FOCUS RINGS ANYWHERE ON THE SITE */
+*,
+*:before,
+*:after,
+*:focus,
+*:focus-visible,
+*:focus-within,
+*:active,
+button,
+button:focus,
+button:focus-visible,
+input,
+input:focus,
+input:focus-visible,
+select,
+select:focus,
+select:focus-visible,
+textarea,
+textarea:focus,
+textarea:focus-visible,
+[role="button"],
+[role="button"]:focus,
+[role="button"]:focus-visible,
+[tabindex],
+[tabindex]:focus,
+[tabindex]:focus-visible,
+[data-radix-select-trigger],
+[data-radix-select-trigger]:focus,
+[data-radix-select-trigger]:focus-visible,
+[data-radix-dropdown-menu-trigger],
+[data-radix-dropdown-menu-trigger]:focus,
+[data-radix-dropdown-menu-trigger]:focus-visible,
+[data-radix-checkbox-root],
+[data-radix-checkbox-root]:focus,
+[data-radix-checkbox-root]:focus-visible,
+[data-radix-toggle-root],
+[data-radix-toggle-root]:focus,
+[data-radix-toggle-root]:focus-visible,
+.focus\:ring-0:focus,
+.focus\:ring-1:focus,
+.focus\:ring-2:focus,
+.focus\:ring-ring:focus,
+.focus\:ring-orange-500:focus,
+.focus\:ring-metal-orange:focus,
+.focus-visible\:ring-0:focus-visible,
+.focus-visible\:ring-1:focus-visible,
+.focus-visible\:ring-2:focus-visible,
+.focus-visible\:ring-ring:focus-visible,
+.focus-visible\:ring-orange-500:focus-visible,
+.focus-visible\:ring-metal-orange:focus-visible,
+.ring-0,
+.ring-1,
+.ring-2,
+.ring-orange-500,
+.ring-metal-orange,
+.ring-ring,
+.ring-offset-background,
+.border-orange-500:focus,
+.focus\:border-orange-500:focus,
+.focus\:border-metal-orange:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
+}
+
+/* Easter Egg: Site Logo Spin Animation */
+@keyframes logoSpinFastToSlow {
+  0% {
+    transform: rotate(0deg);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  20% {
+    transform: rotate(1440deg); /* 4 full rotations rapidly */
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  50% {
+    transform: rotate(2520deg); /* 7 full rotations total */
+    animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  80% {
+    transform: rotate(3240deg); /* 9 full rotations */
+    animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  100% {
+    transform: rotate(3600deg); /* 10 full rotations, ends at original position */
+    animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+}
+
+.logo-spin-easter-egg {
+  animation: logoSpinFastToSlow 5s ease-out;
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* Smooth floating animation for package icons */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Custom animations for smooth site-wide transitions */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Animation classes for map and UI components */
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in-from-top {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+.slide-in-from-left {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+.slide-in-from-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Duration classes for animations */
+.duration-300 {
+  animation-duration: 300ms;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* NEW IMMERSIVE LOADING TRANSITION ANIMATIONS */
+
+/* Faster, more optimized keyframes for immersive loading */
+@keyframes fastFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes quickSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes smoothScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 165, 0, 0.6);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Optimized utility classes for fast loading */
+.animate-fast-fade-in {
+  animation: fastFadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-quick-slide-in {
+  animation: quickSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-smooth-scale {
+  animation: smoothScale 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+/* Performance optimizations for smooth loading */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Enhanced loading states */
+.loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.loading-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: shimmer-wave 1.5s ease infinite;
+}
+
+@keyframes shimmer-wave {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Immersive page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+}
+
+/* Fast component reveal animations */
+.component-reveal {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fastFadeIn 0.4s ease-out forwards;
+}
+
+.component-reveal-delayed {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fastFadeIn 0.4s ease-out forwards;
+  animation-delay: 0.1s;
+}
+
+/* Progressive loading states for better UX */
+.progressive-load {
+  opacity: 0;
+  animation: progressiveReveal 0.6s ease-out forwards;
+}
+
+@keyframes progressiveReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.98) translateY(10px);
+  }
+  60% {
+    opacity: 0.8;
+    transform: scale(0.99) translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Enhanced hover states for better interactivity */
+.interactive-hover {
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: translateZ(0);
+}
+
+.interactive-hover:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes adPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 10px rgba(255, 68, 68, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+  }
+}
+
+/* Track information fade animations */
+.track-info-fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.track-info-fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+.track-info-fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.track-info-fade-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+/* Ad detection fade animations */
+.ad-badge-fade-enter {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.ad-badge-fade-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 400ms ease-in-out, transform 400ms ease-in-out;
+}
+
+.ad-badge-fade-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ad-badge-fade-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 400ms ease-in-out, transform 400ms ease-in-out;
+}
+
+/* Live metadata indicator animations */
+.live-indicator-pulse {
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulsing marker animation for map */
+.pulsing-marker-overlay {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes modernPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 20px 4px rgba(66, 133, 244, 0.4);
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.6;
+    box-shadow: 0 0 25px 6px rgba(66, 133, 244, 0.5);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.3);
+    opacity: 0.3;
+    box-shadow: 0 0 30px 8px rgba(66, 133, 244, 0.3);
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.6;
+    box-shadow: 0 0 25px 6px rgba(66, 133, 244, 0.5);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 20px 4px rgba(66, 133, 244, 0.4);
+  }
+}
+
+/* Improved: Remove all default Google Maps InfoWindow backgrounds and shadows */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-chr,
+.gm-style-iw-ch,
+.gm-style-iw-d {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.gm-style-iw-t::after,
+.gm-style-iw-t::before {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Aggressively remove all backgrounds and box-shadows from Google Maps InfoWindow */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-chr,
+.gm-style-iw-ch,
+.gm-style-iw-d,
+.gm-style-iw-t,
+.gm-style-iw-t::after,
+.gm-style-iw-t::before,
+.gm-style-iw button,
+.gm-style-iw span,
+.gm-style-iw * {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Remove background from any div with inline background set to white */
+.gm-style-iw [style*="background: #fff"],
+.gm-style-iw [style*="background-color: #fff"],
+.gm-style-iw [style*="background: white"],
+.gm-style-iw [style*="background-color: white"] {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Remove background from all direct children of the InfoWindow */
+.gm-style-iw > div,
+.gm-style-iw-c > div,
+.gm-style-iw-chr > div,
+.gm-style-iw-ch > div,
+.gm-style-iw-d > div {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Google Maps InfoWindow Overrides - Complete white background removal */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-d,
+.gm-style-iw-t,
+.gm-style-iw-t::after,
+.gm-style-iw-t::before {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Remove all default Google Maps InfoWindow styling */
+.gm-style-iw > div,
+.gm-style-iw-c > div,
+.gm-style-iw-d > div {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Remove InfoWindow arrow */
+.gm-style-iw-t::after,
+.gm-style-iw-t::before {
+  display: none !important;
+}
+
+/* Remove any remaining white backgrounds */
+.gm-style-iw [style*="background: #fff"],
+.gm-style-iw [style*="background: white"],
+.gm-style-iw [style*="background-color: #fff"],
+.gm-style-iw [style*="background-color: white"] {
+  background: transparent !important;
+}
+
+/* Ensure our custom InfoWindow content is fully visible */
+#custom-infowindow {
+  background: var(--custom-bg) !important;
+  border: var(--custom-border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--custom-shadow) !important;
+  padding: 24px !important;
+  margin: 0 !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* Remove any Google Maps default InfoWindow container */
+.gm-style-iw-c {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  min-width: none !important;
+}
+
+/* Remove InfoWindow close button default styling */
+.gm-style-iw-d button,
+.gm-style-iw-d .gm-style-iw-c button {
+  display: none !important;
+}
+
+/* Ensure no white space around InfoWindow */
+.gm-style-iw-d {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+/* Additional comprehensive overrides for all possible white backgrounds */
+.gm-style-iw *,
+.gm-style-iw-c *,
+.gm-style-iw-d * {
+  background: transparent !important;
+}
+
+/* Remove any remaining Google Maps default styling */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-d {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  min-width: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Force our custom InfoWindow to be the only visible element */
+#custom-infowindow {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: var(--custom-bg) !important;
+  border: var(--custom-border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--custom-shadow) !important;
+  padding: 24px !important;
+  margin: 0 !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  min-width: 280px !important;
+  max-width: 320px !important;
+}
+
+/* Focus styles for accessibility */
+
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* FLOATING PLAYER FOCUS RING PREVENTION */
+/* Prevent focus rings on all elements inside floating player except the play button */
+.floating-player-no-focus *:not(button):focus,
+.floating-player-no-focus *:not(button):focus-visible,
+.floating-player-no-focus .focus-safe-area *:focus,
+.floating-player-no-focus .focus-safe-area *:focus-visible {
+  outline: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+}
+
+/* Allow focus only on the main play/pause button */
+.floating-player-no-focus button:focus-visible {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+}
+
+/* Remove focus from volume slider and other interactive elements */
+.floating-player-no-focus input[type="range"]:focus,
+.floating-player-no-focus input[type="range"]:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+}
+
+/* Enhanced focus styles for better accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
+}
