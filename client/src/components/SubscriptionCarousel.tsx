@@ -199,19 +199,19 @@ export default function SubscriptionCarousel() {
             <div
               className="relative backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col subscription-card"
               style={{
-                border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
+                border: currentTier.popular ? "3px solid" : "2px solid",
+                borderColor: currentTier.popular 
+                  ? `${currentTier.gradientStart}`
+                  : `${currentTier.gradientStart}80`,
                 borderRadius: "24px",
                 backgroundColor: colors.surface,
-                background: currentTier.popular 
-                  ? `linear-gradient(${colors.surface}, ${colors.surface}) padding-box, linear-gradient(90deg, ${currentTier.gradientStart} 0%, ${currentTier.gradientEnd} 25%, ${currentTier.gradientStart} 50%, ${currentTier.gradientEnd} 75%, ${currentTier.gradientStart} 100%) border-box`
-                  : `linear-gradient(${colors.surface}, ${colors.surface}) padding-box, linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}) border-box`,
-                backgroundSize: currentTier.popular ? "300% 300%" : "100% 100%",
-                animation: currentTier.popular ? "gradientFlow 6s ease-in-out infinite" : "none",
+                background: `${colors.surface}`,
                 boxShadow: currentTier.popular 
-                  ? `0 0 60px ${currentTier.gradientStart}60, 0 0 120px ${currentTier.gradientEnd}40, 0 0 160px ${currentTier.gradientStart}20`
-                  : `0 20px 40px ${currentTier.gradientStart}40`,
+                  ? `0 0 60px ${currentTier.gradientStart}60, 0 0 120px ${currentTier.gradientEnd}40, 0 0 160px ${currentTier.gradientStart}20, inset 0 0 0 1px ${currentTier.gradientStart}40`
+                  : `0 20px 40px ${currentTier.gradientStart}40, inset 0 0 0 1px ${currentTier.gradientStart}30`,
                 minHeight: "600px", // Minimum height for mobile devices
-                height: "auto" // Auto height to prevent content cutoff
+                height: "auto", // Auto height to prevent content cutoff
+                animation: currentTier.popular ? "borderPulse 3s ease-in-out infinite" : "none"
               }}
               onMouseEnter={() => setHoveredTier(currentTier.id)}
               onMouseLeave={() => setHoveredTier(null)}

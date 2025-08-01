@@ -219,13 +219,13 @@ export default function RadioCoPlayer() {
       aria-label="Radio player controls"
       style={{
         background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
-          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.08)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.05)')})`
-          : 'rgba(255, 255, 255, 0.08)',
-        backdropFilter: 'blur(24px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.25)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.15)')})`
+          : 'rgba(255, 255, 255, 0.20)',
+        backdropFilter: 'blur(32px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(32px) saturate(200%)',
         boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-          ? `0 8px 32px ${adaptiveTheme.accentColor}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`
-          : `0 8px 32px ${colors.primary}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
+          ? `0 12px 48px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`
+          : `0 12px 48px ${colors.primary}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`,
         color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
           ? adaptiveTheme.textColor 
           : colors.text,

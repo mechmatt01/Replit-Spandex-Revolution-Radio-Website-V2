@@ -73,6 +73,61 @@
   background-attachment: fixed;
 }
 
+/* Border pulse animation for popular subscription */
+@keyframes borderPulse {
+  0%, 100% {
+    border-color: var(--gradient-start);
+    box-shadow: 0 0 60px var(--gradient-start)60, 0 0 120px var(--gradient-end)40, 0 0 160px var(--gradient-start)20, inset 0 0 0 1px var(--gradient-start)40;
+  }
+  50% {
+    border-color: var(--gradient-end);
+    box-shadow: 0 0 80px var(--gradient-end)80, 0 0 140px var(--gradient-start)60, 0 0 180px var(--gradient-end)30, inset 0 0 0 1px var(--gradient-end)60;
+  }
+}
+
+/* Premium avatar jumping elements effect */
+@keyframes avatarPulse {
+  0%, 100% {
+    transform: scale(1) rotateZ(0deg);
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.3);
+  }
+  50% {
+    transform: scale(1.05) rotateZ(1deg);
+    box-shadow: 0 0 30px rgba(255, 165, 0, 0.6);
+  }
+}
+
+@keyframes elementJump {
+  0%, 100% {
+    transform: translateY(0px) rotateZ(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotateZ(-2deg);
+  }
+  75% {
+    transform: translateY(-1px) rotateZ(1deg);
+  }
+}
+
+/* Premium avatar container with overflow visible for jumping elements */
+.premium-avatar-container {
+  position: relative;
+  overflow: visible !important;
+  animation: avatarPulse 3s ease-in-out infinite;
+}
+
+.jumping-element {
+  position: absolute;
+  animation: elementJump 2s ease-in-out infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.jumping-element:nth-child(1) { animation-delay: 0s; }
+.jumping-element:nth-child(2) { animation-delay: 0.3s; }
+.jumping-element:nth-child(3) { animation-delay: 0.6s; }
+.jumping-element:nth-child(4) { animation-delay: 0.9s; }
+
 /* Ensure gradient text works consistently across all packages */
 .subscription-card h3 span {
   -webkit-background-clip: text !important;

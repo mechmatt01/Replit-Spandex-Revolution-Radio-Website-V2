@@ -798,10 +798,12 @@ const FullWidthGlobeMapFixed = () => {
       {/* Fullscreen Overlay Background */}
       {isFullscreen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] transition-all duration-500 ease-in-out"
+          className="fixed bg-black/60 backdrop-blur-sm z-[9998] transition-all duration-500 ease-in-out"
           style={{ 
             top: '4rem', // Below navigation bar
             bottom: '5rem', // Above floating player
+            left: 0,
+            right: 0,
             opacity: isFullscreen ? 1 : 0
           }}
         />
@@ -922,7 +924,7 @@ const FullWidthGlobeMapFixed = () => {
           <div 
             className={`relative transition-all duration-500 ease-in-out transform ${
               isFullscreen 
-                ? 'fixed inset-x-0 z-[9999] rounded-none' 
+                ? 'fixed z-[9999] rounded-none' 
                 : 'w-full rounded-xl shadow-2xl border-2'
             }`}
             style={{ 
@@ -930,7 +932,10 @@ const FullWidthGlobeMapFixed = () => {
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
               top: isFullscreen ? '4rem' : 'auto', // Below navigation
               bottom: isFullscreen ? '5rem' : 'auto', // Above floating player
+              left: isFullscreen ? '0' : 'auto',
+              right: isFullscreen ? '0' : 'auto',
               height: isFullscreen ? 'calc(100vh - 9rem)' : '24rem', // Full height minus nav and player
+              width: isFullscreen ? '100vw' : 'auto',
               margin: isFullscreen ? '0' : 'auto',
               overflow: 'hidden'
             }}
