@@ -71,8 +71,7 @@ html *:active {
   outline-color: transparent !important;
   outline-width: 0 !important;
   outline-style: none !important;
-  border: none !important;
-  background-color: inherit !important;
+  /* Keep existing borders and backgrounds */
 }
 
 /* Completely eliminate white rings */

@@ -58,10 +58,7 @@ html body a:focus-visible {
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
-  border: none !important;
-  border-width: 0 !important;
-  border-color: transparent !important;
-  border-style: none !important;
+  /* Keep existing borders but remove focus-specific ones */
   --tw-ring-shadow: 0 0 #0000 !important;
   --tw-ring-offset-shadow: 0 0 #0000 !important;
   --tw-ring-color: transparent !important;

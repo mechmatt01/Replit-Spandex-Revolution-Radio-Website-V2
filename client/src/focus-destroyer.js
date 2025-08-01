@@ -9,7 +9,6 @@
     /* NUCLEAR FOCUS ELIMINATION - HIGHEST PRIORITY */
     html body * {
       outline: none !important;
-      border: none !important;
       box-shadow: none !important;
       -webkit-appearance: none !important;
       -moz-appearance: none !important;
@@ -23,9 +22,7 @@
       outline-width: 0 !important;
       outline-color: transparent !important;
       outline-style: none !important;
-      border: none !important;
-      border-width: 0 !important;
-      border-color: transparent !important;
+      /* Keep existing borders for design */
       box-shadow: none !important;
       box-shadow: 0 0 0 0 transparent !important;
     }
@@ -55,11 +52,10 @@
   function eliminateFocus(element) {
     if (element && element.style) {
       element.style.outline = 'none';
-      element.style.border = 'none';
       element.style.boxShadow = 'none';
       element.style.setProperty('outline', 'none', 'important');
-      element.style.setProperty('border', 'none', 'important');
       element.style.setProperty('box-shadow', 'none', 'important');
+      // Don't remove borders as they may be needed for design
     }
   }
   
