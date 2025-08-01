@@ -71,6 +71,23 @@ html body a:focus-visible {
   appearance: none !important;
 }
 
+/* PRESERVE BACKDROP FILTERS AND GLASS EFFECTS */
+html body .backdrop-blur-lg,
+html body .backdrop-blur-md,
+html body .backdrop-blur-sm,
+html body .backdrop-blur-xl,
+html body .blur-md,
+html body .blur-sm,
+html body .filter,
+html body [class*="backdrop-blur"],
+html body [class*="blur-"] {
+  backdrop-filter: inherit !important;
+  -webkit-backdrop-filter: inherit !important;
+  filter: inherit !important;
+  /* Don't override existing box-shadows for glass effects */
+  box-shadow: inherit !important;
+}
+
 /* Browser-specific overrides with maximum priority */
 html body *::-webkit-focus-ring-color {
   color: transparent !important;

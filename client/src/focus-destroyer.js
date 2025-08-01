@@ -14,6 +14,21 @@
       -moz-appearance: none !important;
     }
     
+    /* PRESERVE GLASS/BLUR EFFECTS */
+    html body .backdrop-blur-lg,
+    html body .backdrop-blur-md,
+    html body .backdrop-blur-sm,
+    html body .backdrop-blur-xl,
+    html body .blur-md,
+    html body .blur-sm,
+    html body .filter,
+    html body [class*="backdrop-blur"],
+    html body [class*="blur-"] {
+      backdrop-filter: inherit !important;
+      -webkit-backdrop-filter: inherit !important;
+      filter: inherit !important;
+    }
+    
     html body *:focus,
     html body *:focus-visible,
     html body *:active {
@@ -52,10 +67,12 @@
   function eliminateFocus(element) {
     if (element && element.style) {
       element.style.outline = 'none';
-      element.style.boxShadow = 'none';
       element.style.setProperty('outline', 'none', 'important');
-      element.style.setProperty('box-shadow', 'none', 'important');
-      // Don't remove borders as they may be needed for design
+      // Only remove box-shadow if it's not a backdrop blur element
+      if (!element.className.includes('backdrop-blur') && !element.className.includes('blur-')) {
+        element.style.boxShadow = 'none';
+        element.style.setProperty('box-shadow', 'none', 'important');
+      }
     }
   }
   

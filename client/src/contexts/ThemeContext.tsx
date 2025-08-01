@@ -621,6 +621,21 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           border-color: inherit !important;
         }
         
+        /* PRESERVE GLASS/BLUR EFFECTS */
+        .backdrop-blur-lg,
+        .backdrop-blur-md,
+        .backdrop-blur-sm,
+        .backdrop-blur-xl,
+        .blur-md,
+        .blur-sm,
+        .filter,
+        [class*="backdrop-blur"],
+        [class*="blur-"] {
+          backdrop-filter: inherit !important;
+          -webkit-backdrop-filter: inherit !important;
+          filter: inherit !important;
+        }
+        
         *:focus,
         *:focus-visible,
         *:active {
