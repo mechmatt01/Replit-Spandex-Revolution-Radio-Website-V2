@@ -274,11 +274,21 @@ export default function RadioCoPlayer() {
 
           {isStationDropdownOpen && (
             <div
-              className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto bg-black/95 backdrop-blur-lg border shadow-xl z-20 scrollbar-thin"
+              className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto border shadow-xl z-20 scrollbar-thin"
               style={{
-                borderColor: colors.primary + "40",
+                background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                  ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.95)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.90)')})`
+                  : 'rgba(0, 0, 0, 0.95)',
+                backdropFilter: 'blur(24px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+                borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+                  ? adaptiveTheme.accentColor + "40"
+                  : colors.primary + "40",
                 borderRadius: "12px",
                 minWidth: "300px",
+                boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
+                  ? `0 8px 32px ${adaptiveTheme.accentColor}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`
+                  : `0 8px 32px ${colors.primary}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
               }}
             >
               <div className="p-2">
