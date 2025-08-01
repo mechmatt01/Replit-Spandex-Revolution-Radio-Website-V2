@@ -179,30 +179,60 @@ const FullWidthGlobeMapFixed = () => {
   // Initialize location and weather on component mount
   useEffect(() => {
     const initializeLocation = async () => {
-      // Check if we have stored location permission
+      console.log('Initializing location services...');
+      
+      // Check if geolocation is supported
+      if (!navigator.geolocation) {
+        console.log('Geolocation not supported');
+        setLocationPermission('denied');
+        setWeather({
+          location: "Location not supported",
+          temperature: 72,
+          description: "Geolocation unavailable",
+          icon: "01d",
+          humidity: 45,
+          windSpeed: 5,
+          feelsLike: 75
+        });
+        return;
+      }
+
+      // Check stored permission
       const storedPermission = localStorage.getItem('locationPermission');
       console.log('Stored location permission:', storedPermission);
       
       if (storedPermission === 'granted') {
         setLocationPermission('granted');
-        // Try to get current location if permission was previously granted
         try {
           await handleLocationPermission();
         } catch (error) {
           console.log('Failed to get location despite previous permission:', error);
+          setLocationPermission('prompt');
         }
       } else if (storedPermission === 'denied') {
         setLocationPermission('denied');
+        // Show fallback weather data
+        setWeather({
+          location: "Enable location for weather",
+          temperature: 72,
+          description: "Location access needed",
+          icon: "01d",
+          humidity: 45,
+          windSpeed: 5,
+          feelsLike: 75
+        });
       } else {
-        // No stored permission, set to prompt state
+        // No stored permission - set to prompt state
         setLocationPermission('prompt');
-        
-        // Try to get location without showing permission denied state initially
-        try {
-          await handleLocationPermission();
-        } catch (error) {
-          console.log('Initial location request failed:', error);
-        }
+        setWeather({
+          location: "Enable location for weather",
+          temperature: 72,
+          description: "Tap to enable location",
+          icon: "01d",
+          humidity: 45,
+          windSpeed: 5,
+          feelsLike: 75
+        });
       }
     };
     
@@ -834,26 +864,48 @@ const FullWidthGlobeMapFixed = () => {
                   boxShadow: `0 8px 32px ${adaptiveTheme.accentColor}20, 0 0 0 1px ${adaptiveTheme.accentColor}10`
                 }}
               >
-                {/* Enable Location Overlay - Only shown when needed */}
+                {/* Modern Glass Enable Location Overlay - Pill-shaped covering entire location field */}
                 {(locationPermission === 'denied' || locationPermission === 'prompt') && (
-                  <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl"
+                  <div 
+                    className="absolute inset-0 z-10 flex items-center justify-center transition-all duration-500 ease-in-out"
                     style={{
-                      background: `linear-gradient(135deg, ${adaptiveTheme.accentColor}15, ${adaptiveTheme.overlayColor}25)`,
-                      backdropFilter: 'blur(25px)',
-                      WebkitBackdropFilter: 'blur(25px)'
+                      borderRadius: '1rem', // Match parent container rounding
+                      overflow: 'hidden'
                     }}
                   >
                     <Button
                       onClick={handleLocationPermission}
-                      className="px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 border-0 shadow-lg"
+                      className="w-full h-full backdrop-blur-md border-0 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:backdrop-blur-lg"
                       style={{
-                        background: `linear-gradient(135deg, ${adaptiveTheme.accentColor}, ${adaptiveTheme.accentColor}CC)`,
-                        color: adaptiveTheme.textColor,
-                        boxShadow: `0 4px 20px ${adaptiveTheme.accentColor}40`
+                        // Match floating player's glass/blur styling exactly
+                        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
+                          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.25)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.15)')})`
+                          : 'rgba(255, 255, 255, 0.20)',
+                        backdropFilter: 'blur(32px) saturate(200%)',
+                        WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+                        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
+                          ? `0 12px 48px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`
+                          : `0 12px 48px ${colors.primary}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`,
+                        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
+                          ? adaptiveTheme.textColor 
+                          : colors.text,
+                        borderRadius: '1rem', // Pill shape to match container
+                        fontSize: '0.875rem',
+                        fontWeight: '600',
+                        letterSpacing: '0.025em'
                       }}
                     >
-                      <MapPin className="w-4 h-4 mr-2" />
-                      Enable Location
+                      <div className="flex items-center justify-center gap-3">
+                        <MapPin 
+                          className="w-5 h-5" 
+                          style={{ 
+                            color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
+                              ? adaptiveTheme.accentColor
+                              : colors.primary
+                          }} 
+                        />
+                        <span className="tracking-wide">Enable Location for Weather</span>
+                      </div>
                     </Button>
                   </div>
                 )}
