@@ -982,11 +982,11 @@ const FullWidthGlobeMapFixed = () => {
             style={{ 
               borderColor: isFullscreen ? 'transparent' : colors.primary,
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              top: isFullscreen ? '4rem' : 'auto', // Below navigation
-              bottom: isFullscreen ? '5rem' : 'auto', // Above floating player
+              top: isFullscreen ? '0' : 'auto', // Full screen - no nav offset
+              bottom: isFullscreen ? '0' : 'auto', // Full screen - no player offset
               left: isFullscreen ? '0' : 'auto',
               right: isFullscreen ? '0' : 'auto',
-              height: isFullscreen ? 'calc(100vh - 9rem)' : '24rem', // Full height minus nav and player
+              height: isFullscreen ? '100vh' : '26rem', // True full screen height, slightly taller normal view to crop attribution
               width: isFullscreen ? '100vw' : 'auto',
               margin: isFullscreen ? '0' : 'auto',
               overflow: 'hidden'
@@ -1015,7 +1015,7 @@ const FullWidthGlobeMapFixed = () => {
             <Button
               onClick={toggleFullscreen}
               size="sm"
-              className={`absolute top-4 left-4 z-10 border-0 shadow-lg transition-all duration-300 hover:scale-105 ${
+              className={`absolute ${isFullscreen ? 'top-8 left-8' : 'top-4 left-4'} z-[10000] border-0 shadow-lg transition-all duration-300 hover:scale-105 ${
                 isFullscreen 
                   ? 'bg-red-600 hover:bg-red-700 text-white' 
                   : 'bg-gray-800 hover:bg-gray-700 text-white'

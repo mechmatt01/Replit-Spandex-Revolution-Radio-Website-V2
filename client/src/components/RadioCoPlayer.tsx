@@ -214,7 +214,7 @@ export default function RadioCoPlayer() {
 
   return (
     <section
-      className="backdrop-blur-md rounded-2xl p-6 shadow-xl transition-all duration-700 ease-in-out border-0"
+      className="backdrop-blur-md rounded-2xl p-6 shadow-xl transition-all duration-700 ease-in-out border-0 mx-auto"
       role="region"
       aria-label="Radio player controls"
       style={{
@@ -229,7 +229,13 @@ export default function RadioCoPlayer() {
         color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
           ? adaptiveTheme.textColor 
           : colors.text,
-        border: 'none'
+        border: 'none',
+        // Responsive width: 1/3 of viewport width, with minimum based on content plus padding
+        width: 'clamp(480px, 33.333vw, 90vw)',
+        minWidth: 'max-content',
+        maxWidth: '90vw',
+        // Ensure it expands to accommodate the longest text element
+        contain: 'layout'
       }}
     >
       {/* Hidden Audio Element */}
