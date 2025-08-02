@@ -98,73 +98,81 @@ const LiveStatsAndLocations = () => {
         {/* Left Side - Live Statistics */}
         <Card className="bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm border-border/50 flex flex-col">
           <CardHeader className="pb-4">
-            <CardTitle className={`flex items-center gap-2 text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
-              <Activity className="w-6 h-6 text-primary" />
+            <CardTitle className={`flex items-center justify-center gap-2 text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
+              {isLiveDataEnabled && <Activity className="w-6 h-6 text-primary" />}
               LIVE STATISTICS
             </CardTitle>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col justify-center space-y-8">
-            {/* Active Listeners */}
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                  Live Now
-                </span>
-              </div>
-              {statsLoading ? (
-                <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-              ) : (
-                <div className="text-4xl font-black text-primary">
-                  <AnimatedCounter value={liveStats?.activeListeners || 0} />
+            {isLiveDataEnabled ? (
+              <>
+                {/* Active Listeners */}
+                <div className="text-center space-y-2">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Users className="w-5 h-5 text-primary" />
+                    <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                      Live Now
+                    </span>
+                  </div>
+                  {statsLoading ? (
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                  ) : (
+                    <div className="text-4xl font-black text-primary">
+                      <AnimatedCounter value={liveStats?.activeListeners || 0} />
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground">Active Listeners</p>
                 </div>
-              )}
-              <p className="text-sm text-muted-foreground">Active Listeners</p>
-            </div>
 
-            {/* Countries */}
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Globe className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                  Countries
-                </span>
-              </div>
-              {statsLoading ? (
-                <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-              ) : (
-                <div className="text-4xl font-black text-primary">
-                  <AnimatedCounter value={liveStats?.countries || 0} />
+                {/* Countries */}
+                <div className="text-center space-y-2">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Globe className="w-5 h-5 text-primary" />
+                    <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                      Countries
+                    </span>
+                  </div>
+                  {statsLoading ? (
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                  ) : (
+                    <div className="text-4xl font-black text-primary">
+                      <AnimatedCounter value={liveStats?.countries || 0} />
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground">With Active Listeners</p>
                 </div>
-              )}
-              <p className="text-sm text-muted-foreground">With Active Listeners</p>
-            </div>
 
-            {/* Total Listeners */}
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                  Total Listeners
-                </span>
-              </div>
-              {statsLoading ? (
-                <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-              ) : (
-                <div className="text-4xl font-black text-primary">
-                  <AnimatedCounter value={liveStats?.totalListeners || 0} />
+                {/* Total Listeners */}
+                <div className="text-center space-y-2">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <Users className="w-5 h-5 text-primary" />
+                    <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                      Total Listeners
+                    </span>
+                  </div>
+                  {statsLoading ? (
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                  ) : (
+                    <div className="text-4xl font-black text-primary">
+                      <AnimatedCounter value={liveStats?.totalListeners || 0} />
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground">All Time</p>
                 </div>
-              )}
-              <p className="text-sm text-muted-foreground">All Time</p>
-            </div>
 
-            {/* Live Data Status */}
-            {isLiveDataEnabled && (
-              <div className="text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-semibold">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                  LIVE DATA
+                {/* Live Data Status */}
+                <div className="text-center">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-semibold">
+                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                    LIVE DATA
+                  </div>
                 </div>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <Activity className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
+                <p className="text-muted-foreground">Live data disabled</p>
+                <p className="text-sm text-muted-foreground/70">Enable admin panel to view real-time statistics</p>
               </div>
             )}
           </CardContent>
@@ -173,8 +181,8 @@ const LiveStatsAndLocations = () => {
         {/* Right Side - Active Locations List */}
         <Card className="bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm border-border/50 flex flex-col">
           <CardHeader className="pb-4">
-            <CardTitle className={`flex items-center gap-2 text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
-              <MapPin className="w-6 h-6 text-primary" />
+            <CardTitle className={`flex items-center justify-center gap-2 text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
+              {isLiveDataEnabled && <MapPin className="w-6 h-6 text-primary" />}
               ACTIVE LOCATIONS
             </CardTitle>
           </CardHeader>
@@ -224,6 +232,7 @@ const LiveStatsAndLocations = () => {
                 <MapPin className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
                 <p className="text-muted-foreground">Live data disabled</p>
                 <p className="text-sm text-muted-foreground/70">Enable admin mode to view active locations</p>
+              </div>
               </div>
             )}
           </CardContent>

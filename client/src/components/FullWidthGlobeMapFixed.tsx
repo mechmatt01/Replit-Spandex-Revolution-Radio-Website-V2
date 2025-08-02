@@ -974,7 +974,7 @@ const FullWidthGlobeMapFixed = () => {
                         ) : (
                           <div className="relative">
                             <img
-                              src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
+                              src={`/attached_assets/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
                               alt={weather.description}
                               className="w-16 h-16 object-contain drop-shadow-lg"
                               style={{ 
