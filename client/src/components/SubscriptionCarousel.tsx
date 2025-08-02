@@ -204,14 +204,14 @@ export default function SubscriptionCarousel() {
                 backgroundSize: '400% 400%',
                 animation: 'movingGradientBorder 4s ease-in-out infinite',
                 transform: hoveredTier === currentTier.id ? 'scale(1.05)' : 'scale(1)', // Move transform to border wrapper
-                padding: '2.5px', // Increased border width by 1.5px (from 1px to 2.5px)
+                padding: '5px', // Increased border width by 2.5px (from 2.5px to 5px)
               }}
             >
               {/* Main Card */}
               <div
                 className="relative backdrop-blur-xl p-6 overflow-hidden flex flex-col subscription-card"
                 style={{
-                  borderRadius: "21.5px", // Adjusted to match increased border wrapper padding
+                  borderRadius: "19px", // Adjusted to match increased border wrapper padding (24px - 5px = 19px)
                   backgroundColor: colors.background, // Use theme background color instead of surface
                   background: colors.background,
                   boxShadow: currentTier.popular 
