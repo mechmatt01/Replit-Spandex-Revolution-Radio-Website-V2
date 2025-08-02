@@ -273,56 +273,6 @@ export class FirebaseLiveStatsStorage {
   }
 
   /**
-   * Get active listeners count by country
-   */
-  async getActiveListenersByCountry(): Promise<Array<{
-    country: string;
-    count: number;
-  }>> {
-    // Check if Firebase is available first
-    if (!isFirebaseAvailable || !db) {
-      return [];
-    }
-
-    try {
-      // Check if collections exist first to avoid NOT_FOUND errors
-      const collectionExists = await this.checkCollectionExists(this.usersCollection);
-      if (!collectionExists) {
-        console.log('Users collection does not exist, returning empty country data');
-        return [];
-      }
-
-      // Get active listeners with location data
-      const snapshot = await db!.collection(this.usersCollection)
-        .where('isActiveListening', '==', true)
-        .limit(200) // Limit to prevent large queries
-        .get();
-      
-      // Count listeners by country
-      const countryMap = new Map<string, number>();
-      
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        if (data.location && data.location.country) {
-          const country = data.location.country;
-          countryMap.set(country, (countryMap.get(country) || 0) + 1);
-        }
-      });
-      
-      // Convert to array and sort by count (highest first)
-      const result = Array.from(countryMap.entries())
-        .map(([country, count]) => ({ country, count }))
-        .filter(item => item.count > 0)
-        .sort((a, b) => b.count - a.count);
-      
-      return result;
-    } catch (error) {
-      console.log('Error getting active listeners by country:', error.message);
-      return [];
-    }
-  }
-
-  /**
    * Initialize or get total listeners count from Data collection
    */
   async initializeTotalListeners(initialValue: number = 1000): Promise<void> {

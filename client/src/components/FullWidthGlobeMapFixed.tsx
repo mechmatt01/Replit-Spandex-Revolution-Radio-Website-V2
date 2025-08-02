@@ -885,172 +885,121 @@ const FullWidthGlobeMapFixed = () => {
               See where metal fans are tuning in from around the world in real-time.
             </p>
 
-            {/* Ultra-Modern Weather & Location Display */}
-            <div className="mb-6 relative max-w-2xl mx-auto">
-              {/* Advanced Glass Background Container */}
+            {/* Modern Glass Weather Display */}
+            <div className="mb-6 relative max-w-lg mx-auto">
+              {/* Glass/Blur Background Container */}
               <div
-                className="relative rounded-3xl backdrop-blur-xl border border-white/20 shadow-2xl overflow-hidden transition-all duration-700 ease-out hover:scale-[1.02] hover:shadow-3xl"
+                className="relative rounded-2xl backdrop-blur-md border border-white/10 shadow-2xl overflow-hidden transition-all duration-500 ease-in-out"
                 style={{
-                  background: `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}90, ${adaptiveTheme.overlayColor}70, ${adaptiveTheme.accentColor}20)`,
-                  backdropFilter: 'blur(40px) saturate(150%)',
-                  WebkitBackdropFilter: 'blur(40px) saturate(150%)',
-                  boxShadow: `0 20px 60px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 1px ${adaptiveTheme.accentColor}15`
+                  background: `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}80, ${adaptiveTheme.overlayColor}60)`,
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  boxShadow: `0 8px 32px ${adaptiveTheme.accentColor}20, 0 0 0 1px ${adaptiveTheme.accentColor}10`
                 }}
               >
-                {/* Subtle Gradient Overlay */}
-                <div 
-                  className="absolute inset-0 opacity-30"
-                  style={{
-                    background: `radial-gradient(circle at 30% 30%, ${adaptiveTheme.accentColor}20 0%, transparent 70%)`
-                  }}
-                />
-
-                {/* Enable Location Button - Full Coverage */}
+                {/* Modern Glass Enable Location Overlay - Pill-shaped covering entire location field */}
                 {(locationPermission === 'denied' || locationPermission === 'prompt') && (
-                  <div className="absolute inset-0 z-20 flex items-center justify-center p-6">
+                  <div 
+                    className="absolute inset-0 z-10 flex items-center justify-center transition-all duration-500 ease-in-out"
+                    style={{
+                      borderRadius: '1rem', // Match parent container rounding
+                      overflow: 'hidden'
+                    }}
+                  >
                     <Button
                       onClick={handleLocationPermission}
-                      className="w-full h-full min-h-[120px] backdrop-blur-2xl border-0 shadow-2xl transition-all duration-500 hover:scale-[1.01] hover:shadow-3xl group"
+                      className="w-full h-full backdrop-blur-md border-0 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:backdrop-blur-lg"
                       style={{
-                        background: `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}40, ${adaptiveTheme.overlayColor}30)`,
-                        backdropFilter: 'blur(60px) saturate(200%)',
-                        WebkitBackdropFilter: 'blur(60px) saturate(200%)',
-                        boxShadow: `0 16px 64px ${adaptiveTheme.accentColor}30, inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.2)`,
-                        color: adaptiveTheme.textColor,
-                        borderRadius: '1.5rem',
-                        fontSize: '1rem',
+                        // Match floating player's glass/blur styling exactly
+                        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
+                          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.25)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.15)')})`
+                          : 'rgba(255, 255, 255, 0.20)',
+                        backdropFilter: 'blur(32px) saturate(200%)',
+                        WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+                        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
+                          ? `0 12px 48px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`
+                          : `0 12px 48px ${colors.primary}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`,
+                        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
+                          ? adaptiveTheme.textColor 
+                          : colors.text,
+                        borderRadius: '9999px', // True pill shape (100% rounded corners)
+                        fontSize: '0.875rem',
                         fontWeight: '600',
-                        letterSpacing: '0.05em'
+                        letterSpacing: '0.025em'
                       }}
                     >
-                      <div className="flex flex-col items-center justify-center gap-4">
-                        <div 
-                          className="p-4 rounded-2xl transition-all duration-300 group-hover:scale-110"
-                          style={{
-                            background: `${adaptiveTheme.accentColor}20`,
-                            border: `1px solid ${adaptiveTheme.accentColor}30`
-                          }}
-                        >
-                          <MapPin 
-                            className="w-8 h-8" 
-                            style={{ color: adaptiveTheme.accentColor }}
-                          />
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg font-black mb-1">Enable Location</div>
-                          <div className="text-sm opacity-80">Get weather for your area</div>
-                        </div>
+                      <div className="flex items-center justify-center gap-3">
+                        <MapPin 
+                          className="w-5 h-5" 
+                          style={{ 
+                            color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
+                              ? adaptiveTheme.accentColor
+                              : colors.primary
+                          }} 
+                        />
+                        <span className="tracking-wide">Enable Location for Weather</span>
                       </div>
                     </Button>
                   </div>
                 )}
 
-                {/* Main Weather Content */}
-                <div className={`relative z-10 p-8 transition-all duration-500 ${
+                {/* Main Content - Hide when enable location button is showing */}
+                <div className={`p-6 space-y-4 transition-opacity duration-300 ${
                   (locationPermission === 'denied' || locationPermission === 'prompt') ? 'opacity-0 invisible' : 'opacity-100 visible'
                 }`}>
-                  
-                  {/* Location Section */}
-                  <div className="flex items-center justify-center gap-3 mb-6">
-                    <div 
-                      className="p-2 rounded-xl"
-                      style={{
-                        background: `${adaptiveTheme.accentColor}20`,
-                        border: `1px solid ${adaptiveTheme.accentColor}30`
-                      }}
-                    >
-                      <MapPin 
-                        className="w-5 h-5" 
-                        style={{ color: adaptiveTheme.accentColor }} 
-                      />
-                    </div>
+                  {/* Location Header */}
+                  <div className="flex items-center justify-center gap-2">
+                    <MapPin 
+                      className="w-5 h-5" 
+                      style={{ color: adaptiveTheme.accentColor }} 
+                    />
                     <span 
-                      className="text-xl font-black tracking-wide"
+                      className="text-lg font-semibold tracking-wide"
                       style={{ color: adaptiveTheme.textColor }}
                     >
                       {weather?.location || "Getting your location..."}
                     </span>
                   </div>
                   
-                  {/* Weather Display Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                    
-                    {/* Weather Icon Section */}
-                    <div className="flex justify-center">
-                      {weatherLoading ? (
-                        <div className="flex flex-col items-center gap-3">
+                  {/* Weather Info */}
+                  <div className="flex items-center justify-center gap-4">
+                    {/* Weather Icon */}
+                    {weather && (
+                      <div className="flex items-center justify-center">
+                        {weatherLoading ? (
                           <Loader2 
-                            className="w-16 h-16 animate-spin" 
+                            className="w-12 h-12 animate-spin" 
                             style={{ color: adaptiveTheme.accentColor }} 
                           />
-                          <span 
-                            className="text-sm font-medium"
-                            style={{ color: adaptiveTheme.textColor }}
-                          >
-                            Loading weather...
-                          </span>
-                        </div>
-                      ) : weather ? (
-                        <div className="relative group">
-                          {/* Weather Icon Background Glow */}
-                          <div 
-                            className="absolute inset-0 rounded-full blur-2xl opacity-40 transition-all duration-300 group-hover:opacity-60"
-                            style={{
-                              background: `radial-gradient(circle, ${adaptiveTheme.accentColor}60 0%, transparent 70%)`
-                            }}
-                          />
-                          <img
-                            src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
-                            alt={weather.description}
-                            className="relative w-20 h-20 object-contain transition-transform duration-300 group-hover:scale-110"
-                            style={{ 
-                              filter: `drop-shadow(0 8px 16px ${adaptiveTheme.accentColor}40)`
-                            }}
-                          />
-                        </div>
-                      ) : null}
-                    </div>
+                        ) : (
+                          <div className="relative">
+                            <img
+                              src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
+                              alt={weather.description}
+                              className="w-16 h-16 object-contain drop-shadow-lg"
+                              style={{ 
+                                filter: `drop-shadow(0 4px 8px ${adaptiveTheme.accentColor}30)`
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
                     
-                    {/* Temperature & Description */}
-                    <div className="text-center md:text-left space-y-2">
-                      <div 
-                        className="text-4xl font-black tracking-tight"
+                    {/* Temperature and Description */}
+                    <div className="flex flex-col items-center">
+                      <span 
+                        className="text-2xl font-bold tracking-tight"
                         style={{ color: adaptiveTheme.textColor }}
                       >
                         {weather ? `${Math.round(weather.temperature)}°F` : "Loading..."}
-                      </div>
-                      <div 
-                        className="text-lg font-semibold opacity-90 capitalize"
+                      </span>
+                      <span 
+                        className="text-sm font-medium opacity-80 capitalize"
                         style={{ color: adaptiveTheme.textColor }}
                       >
                         {weather?.description || "Loading weather..."}
-                      </div>
-                      
-                      {/* Additional Weather Details */}
-                      {weather?.humidity && weather?.windSpeed && (
-                        <div className="flex flex-wrap gap-4 justify-center md:justify-start mt-4">
-                          <div 
-                            className="px-3 py-2 rounded-xl text-sm font-medium"
-                            style={{
-                              background: `${adaptiveTheme.accentColor}15`,
-                              color: adaptiveTheme.textColor,
-                              border: `1px solid ${adaptiveTheme.accentColor}25`
-                            }}
-                          >
-                            💧 {weather.humidity}% humidity
-                          </div>
-                          <div 
-                            className="px-3 py-2 rounded-xl text-sm font-medium"
-                            style={{
-                              background: `${adaptiveTheme.accentColor}15`,
-                              color: adaptiveTheme.textColor,
-                              border: `1px solid ${adaptiveTheme.accentColor}25`
-                            }}
-                          >
-                            💨 {Math.round(weather.windSpeed)} mph
-                          </div>
-                        </div>
-                      )}
+                      </span>
                     </div>
                   </div>
                 </div>
