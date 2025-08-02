@@ -3010,11 +3010,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // 404 handler for API routes
-  app.use('/api/*', (req: Request, res: Response) => {
-    res.status(404).json({ message: 'API endpoint not found' });
-  });
-
   // Phone verified endpoint
   app.post("/api/user/phone-verified", isAuthenticated, async (req, res) => {
     try {
@@ -3267,6 +3262,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+
+
   // Merchandise API Routes
   app.get("/api/merchandise", async (req, res) => {
     try {
@@ -3457,6 +3454,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Payment intent creation error:", error);
       res.status(500).json({ message: "Error creating payment intent: " + error.message });
     }
+  });
+
+  // 404 handler for API routes - must be LAST
+  app.use('/api/*', (req: Request, res: Response) => {
+    res.status(404).json({ message: 'API endpoint not found' });
   });
 
   const httpServer = createServer(app);
