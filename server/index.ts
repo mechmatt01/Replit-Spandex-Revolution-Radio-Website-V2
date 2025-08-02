@@ -61,9 +61,9 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // Serve the app on port 3500 for manual runs, port 5000 for Replit workflow
+  // Serve the app on port 5000 for Replit workflow, fallback to 3500 for manual runs
   // this serves both the API and the client.
-  const port = parseInt(process.env.PORT || "3500");
+  const port = parseInt(process.env.PORT || "5000");
   const host = process.env.HOST || "0.0.0.0";
 
   // Enhanced port cleanup for manual runs
