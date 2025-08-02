@@ -26,8 +26,7 @@ export default function Schedule() {
       dayOfWeek: "Monday",
       time: "9:00 AM",
       duration: 120,
-      description: "Start your week with the best metal hits",
-      genre: "Heavy Metal"
+      description: "Start your week with the best metal hits"
     },
     {
       id: 2, 
@@ -36,8 +35,7 @@ export default function Schedule() {
       dayOfWeek: "Tuesday",
       time: "7:00 PM",
       duration: 180,
-      description: "Pure thrash metal madness",
-      genre: "Thrash Metal"
+      description: "Pure thrash metal madness"
     },
     {
       id: 3,
@@ -46,8 +44,7 @@ export default function Schedule() {
       dayOfWeek: "Wednesday", 
       time: "8:00 PM",
       duration: 150,
-      description: "The heaviest death metal around",
-      genre: "Death Metal"
+      description: "The heaviest death metal around"
     }
   ];
 
@@ -58,8 +55,7 @@ export default function Schedule() {
       host: "DJ Classic",
       date: new Date(),
       duration: 60,
-      description: "The best classic metal tracks",
-      genre: "Classic Metal"
+      description: "The best classic metal tracks"
     }
   ];
 
@@ -482,25 +478,21 @@ export default function Schedule() {
         {/* Centered View All Archives Button - Outside grid for full page centering */}
         <div className="mt-12 flex justify-center w-full">
           <Button
-            variant="outline"
-            className="border-2 px-6 py-3 rounded-full font-bold transition-all duration-200 hover:scale-105"
+            className="px-6 py-3 rounded-full font-bold transition-all duration-300 border-0"
             style={{
-              borderColor: colors.primary,
-              color: colors.primary,
-              backgroundColor: "transparent",
+              backgroundColor: colors.primary,
+              color: colors.primaryText || "white",
               width: "25%",
               minWidth: "200px",
               maxWidth: "300px",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.primary;
-              e.currentTarget.style.color = "white";
-              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
+              e.currentTarget.style.transform = "scale(1.05)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.color = colors.primary;
-              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.backgroundColor = colors.primary;
+              e.currentTarget.style.transform = "scale(1)";
             }}
           >
             VIEW ALL ARCHIVES
