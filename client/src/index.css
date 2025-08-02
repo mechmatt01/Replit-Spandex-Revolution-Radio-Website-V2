@@ -1198,6 +1198,38 @@ button:hover, [role="button"]:hover {
   border-color: hsl(var(--primary));
 }
 
+/* Button glow effects */
+.hover\:glow-primary:hover {
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.6),
+    0 0 30px hsl(var(--primary) / 0.3),
+    0 5px 15px rgba(0, 0, 0, 0.1);
+  border-color: hsl(var(--primary)) !important;
+}
+
+/* Ensure all buttons have visible borders */
+button, [role="button"] {
+  border-width: 2px !important;
+  border-style: solid !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Force button border visibility */
+button:not(.border-transparent), [role="button"]:not(.border-transparent) {
+  border-color: hsl(var(--primary)) !important;
+}
+
+button.border-transparent, [role="button"].border-transparent {
+  border-color: hsl(var(--primary) / 0.3) !important;
+}
+
+button:hover, [role="button"]:hover {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.4),
+    0 0 25px hsl(var(--primary) / 0.2) !important;
+}
+
 /* Feature and show specific styling */
 .feature-container, .show-container {
   border: 2px solid hsl(var(--border));
