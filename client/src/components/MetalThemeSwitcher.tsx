@@ -170,7 +170,9 @@ export default function MetalThemeSwitcher() {
                     }}
                     onMouseEnter={(e) => {
                       if (!isActive && !isLocked) {
-                        e.currentTarget.style.backgroundColor = `${themeColors.primary}15`; // Use the theme's primary color
+                        // Special handling for glassmorphism theme to make hover more visible
+                        const hoverOpacity = themeKey === "glassmorphism-premium" ? "30" : "15";
+                        e.currentTarget.style.backgroundColor = `${themeColors.primary}${hoverOpacity}`;
                         e.currentTarget.style.color = themeColors.text;
                       }
                     }}

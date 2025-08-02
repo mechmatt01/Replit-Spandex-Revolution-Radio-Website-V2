@@ -778,10 +778,87 @@ html *:focus-visible {
   box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
 }
 
-/* Feature box theme styling */
+/* Enhanced feature box theme styling with prominent borders and glow */
 .feature-box {
-  border: 2px solid hsl(var(--border));
-  transition: all 0.3s ease;
+  border: 2px solid hsl(var(--primary) / 0.8);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 8px 32px hsl(var(--primary) / 0.2);
+}
+
+.feature-box:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 
+    0 0 20px hsl(var(--primary) / 0.6),
+    0 8px 40px hsl(var(--primary) / 0.3);
+  transform: scale(1.05);
+}
+
+/* Enhanced glow effects for better visibility */
+.enhanced-glow {
+  position: relative;
+  overflow: visible;
+}
+
+.enhanced-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, transparent, hsl(var(--primary) / 0.3), transparent);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.enhanced-glow:hover::before {
+  opacity: 1;
+  animation: glow-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow-pulse {
+  0% {
+    filter: blur(8px);
+    opacity: 0.6;
+  }
+  100% {
+    filter: blur(12px);
+    opacity: 1;
+  }
+}
+
+/* Force visible borders for feature cards - override any conflicting styles */
+.enhanced-glow {
+  border-width: 2px !important;
+  border-style: solid !important;
+  position: relative !important;
+}
+
+/* Ensure borders are always visible with proper opacity */
+.enhanced-glow[style*="borderColor"] {
+  border-color: currentColor !important;
+}
+
+/* Enhanced hover glow effect that's always visible */
+.enhanced-glow:hover {
+  box-shadow: 
+    0 0 25px currentColor,
+    0 8px 50px rgba(255, 107, 53, 0.4) !important;
+  border-color: currentColor !important;
+  transform: scale(1.05) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+/* Remove any Tailwind border overrides that might conflict */
+.enhanced-glow.border-2 {
+  border-width: 2px !important;
+}
+
+/* Ensure card component styles don't override our borders */
+.enhanced-glow.rounded-lg {
+  border-radius: 0.5rem !important;
 }
 
 .feature-box:hover {
