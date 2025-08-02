@@ -123,8 +123,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register admin routes
   registerAdminRoutes(app);
 
-  // Initialize Firebase radio storage
-  await firebaseRadioStorage.initializeDefaultStations();
+  // Initialize Firebase radio storage with enhanced error handling
+  try {
+    console.log('Initializing Firebase radio storage...');
+    await firebaseRadioStorage.initializeDefaultStations();
+    console.log('Firebase radio storage initialization completed');
+  } catch (error) {
+    // Handle Firebase NOT_FOUND errors gracefully
+    if ((error as any).code === 5 || (error as any).message?.includes('NOT_FOUND')) {
+      console.log('Firebase collections not yet created - will be initialized when first data is added');
+    } else {
+      console.error('Error during Firebase radio storage initialization:', error);
+    }
+  }
 
   // Setup radio stream proxy
   setupRadioProxy(app);

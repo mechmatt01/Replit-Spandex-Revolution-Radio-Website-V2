@@ -451,9 +451,22 @@ export class FirebaseRadioStationStorage {
     }
 
     try {
-      // Check if any stations exist
-      const existing = await this.getRadioStations();
-      if (existing.length > 0) return;
+      // Check if any stations exist, but handle NOT_FOUND gracefully
+      let existing: RadioStation[] = [];
+      try {
+        existing = await this.getRadioStations();
+      } catch (error) {
+        if ((error as any).code === 5 || (error as any).message?.includes('NOT_FOUND')) {
+          console.log('Radio stations collection does not exist yet - will skip initialization for now');
+          return; // Skip initialization entirely if collection doesn't exist
+        }
+        throw error;
+      }
+      
+      if (existing.length > 0) {
+        console.log(`Found ${existing.length} existing stations, skipping initialization`);
+        return;
+      }
 
       console.log('No existing stations found, creating default stations...');
 
@@ -517,14 +530,27 @@ export class FirebaseRadioStationStorage {
         },
       ];
 
-      // Create all default stations
+      // Create all default stations with enhanced error handling
       for (const station of defaultStations) {
-        await this.createRadioStation(station);
+        try {
+          await this.createRadioStation(station);
+          console.log(`Created default station: ${station.name}`);
+        } catch (error) {
+          if ((error as any).code === 5 || (error as any).message?.includes('NOT_FOUND')) {
+            console.log(`Skipping station creation for ${station.name} - Firestore collection not ready`);
+            break; // Stop trying to create more stations
+          }
+          console.error(`Failed to create station ${station.name}:`, error);
+        }
       }
 
       console.log('Default radio stations initialized successfully');
     } catch (error) {
-      console.error('Error initializing default stations:', error);
+      if ((error as any).code === 5 || (error as any).message?.includes('NOT_FOUND')) {
+        console.log('Firestore collections not ready - skipping default station initialization');
+      } else {
+        console.error('Error initializing default stations:', error);
+      }
     }
   }
 }
