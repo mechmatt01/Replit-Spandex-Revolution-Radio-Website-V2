@@ -2389,6 +2389,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get active listeners count by country
+  app.get("/api/active-listeners-by-country", async (req, res) => {
+    try {
+      const countryData = await firebaseLiveStatsStorage.getActiveListenersByCountry();
+      res.json(countryData);
+    } catch (error) {
+      console.error('Error getting active listeners by country:', error);
+      res.json([]); // Return empty array if error
+    }
+  });
+
   // Initialize total listeners in Data collection
   app.post("/api/initialize-total-listeners", isAuthenticated, async (req, res) => {
     try {

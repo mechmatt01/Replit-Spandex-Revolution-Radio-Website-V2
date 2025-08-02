@@ -4,7 +4,7 @@ import Features from "@/components/Features";
 import About from "@/components/About";
 import Schedule from "@/components/Schedule";
 import Submissions from "@/components/Submissions";
-import FullWidthGlobeMapFixed from "@/components/FullWidthGlobeMapFixed";
+import FullWidthGlobeMap from "@/components/FullWidthGlobeMapFixed";
 import LiveStatsAndLocations from "@/components/LiveStatsAndLocations";
 import Contact from "@/components/Contact";
 import SubscriptionCarousel from "@/components/SubscriptionCarousel";
@@ -110,13 +110,12 @@ export default function HomePage() {
       
       <FadeInView direction="up" delay={0}>
         <section id="map">
-          <FullWidthGlobeMapFixed />
+          <FullWidthGlobeMap />
         </section>
       </FadeInView>
-      
+
       <FadeInView direction="up" delay={0}>
         <section 
-          id="live-stats" 
           className="py-20"
           style={{ backgroundColor: colors.background }}
         >
