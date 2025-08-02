@@ -233,7 +233,6 @@ const LiveStatsAndLocations = () => {
                 <p className="text-muted-foreground">Live data disabled</p>
                 <p className="text-sm text-muted-foreground/70">Enable admin mode to view active locations</p>
               </div>
-              </div>
             )}
           </CardContent>
         </Card>
