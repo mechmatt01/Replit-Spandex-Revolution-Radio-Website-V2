@@ -432,10 +432,16 @@ export default function Navigation() {
                     className="px-2 py-1 text-sm font-semibold rounded-md transition-all duration-200 hover:scale-105"
                     style={{
                       color: colors.text,
-                      border: `1px solid ${colors.primary}`,
+                      border: 'none',
                       backgroundColor: 'transparent',
                       height: '24px',
                       minWidth: '80px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.border = `1px solid ${colors.primary}`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.border = 'none';
                     }}
                   >
                     LOGIN
@@ -446,9 +452,15 @@ export default function Navigation() {
                     style={{
                       backgroundColor: colors.primary,
                       color: 'white',
-                      border: `1px solid ${colors.primary}`,
+                      border: 'none',
                       height: '24px',
                       minWidth: '80px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.border = `1px solid ${colors.primary}`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.border = 'none';
                     }}
                   >
                     SIGN UP

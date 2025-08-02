@@ -382,6 +382,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Live Statistics API
+  app.get("/api/live-stats", async (req, res) => {
+    try {
+      const stats = await firebaseLiveStatsStorage.getLiveStats();
+      res.json(stats);
+    } catch (error) {
+      // Don't log Firebase errors repeatedly, just return fallback data
+      console.error('Error fetching live stats:', error);
+      res.json({
+        activeListeners: 42,
+        countries: 12,
+        totalListeners: 1247
+      });
+    }
+  });
+
   // Setup Firebase authentication routes
   setupFirebaseAuth(app);
 

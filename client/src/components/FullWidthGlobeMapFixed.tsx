@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2, Users, Globe, Activity, Sun } from "lucide-react";
+import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2, Users, Globe, Activity } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useToast } from "@/hooks/use-toast";
 import { useRadio } from "@/contexts/RadioContext";
-import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
 import { AnimatedCounter } from "./AnimatedCounter";
 
@@ -52,9 +50,7 @@ const weatherIconMap: { [key: string]: string } = {
 const FullWidthGlobeMapFixed = () => {
   const { isDarkMode, colors } = useTheme();
   const { currentTrack } = useRadio();
-  const { user } = useFirebaseAuth();
   const { adaptiveTheme } = useAdaptiveTheme(currentTrack?.artwork || '');
-  const { successToast, errorToast, infoToast } = useToast();
   const mapRef = useRef<HTMLDivElement>(null);
   const fullscreenMapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -65,12 +61,6 @@ const FullWidthGlobeMapFixed = () => {
   const [mapError, setMapError] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
-  const [activeListeners, setActiveListeners] = useState<Array<{
-    id: string;
-    location: { lat: number; lng: number };
-    firstName: string;
-    lastName: string;
-  }>>([]);
   
   // Weather state
   const [weather, setWeather] = useState<Weather | null>(null);
@@ -93,21 +83,6 @@ const FullWidthGlobeMapFixed = () => {
     totalListeners: number;
   } | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
-
-  // Fetch active listeners from API
-  const fetchActiveListeners = async () => {
-    try {
-      const response = await fetch('/api/auth/active-listeners');
-      if (response.ok) {
-        const data = await response.json();
-        setActiveListeners(data.listeners.filter((listener: any) => 
-          listener.IsActiveListening && listener.Location
-        ));
-      }
-    } catch (error) {
-      console.error('Error fetching active listeners:', error);
-    }
-  };
 
   // Fetch live statistics from Firebase API
   const fetchLiveStats = async () => {
@@ -147,32 +122,6 @@ const FullWidthGlobeMapFixed = () => {
     
     return () => clearInterval(interval);
   }, []);
-
-  // Fetch active listeners periodically and update map markers
-  useEffect(() => {
-    fetchActiveListeners();
-    const interval = setInterval(fetchActiveListeners, 10000); // Update every 10 seconds
-    return () => clearInterval(interval);
-  }, [map]);
-
-  // Update listener markers when active listeners change
-  useEffect(() => {
-    if (!map) return;
-
-    // Clear existing listener markers
-    markers.forEach(marker => marker.setMap(null));
-    const newMarkers: google.maps.Marker[] = [];
-
-    // Create new markers for active listeners
-    activeListeners.forEach(listener => {
-      if (listener.location && listener.location.lat && listener.location.lng) {
-        const marker = createListenerMarker(listener, map);
-        newMarkers.push(marker);
-      }
-    });
-
-    setMarkers(newMarkers);
-  }, [activeListeners, map]);
 
   // Get weather icon based on OpenWeatherMap icon code
   const getWeatherIcon = (iconCode: string): string => {
@@ -240,6 +189,7 @@ const FullWidthGlobeMapFixed = () => {
 
       setUserLocation(newLocation);
       setLocationPermission('granted');
+      localStorage.setItem('locationPermission', 'granted');
       
       // Fetch weather for the user's location
       await fetchWeather(newLocation.lat, newLocation.lng);
@@ -255,17 +205,30 @@ const FullWidthGlobeMapFixed = () => {
         switch (error.code) {
           case error.PERMISSION_DENIED:
             setLocationPermission('denied');
+            localStorage.setItem('locationPermission', 'denied');
             break;
           case error.POSITION_UNAVAILABLE:
             setLocationPermission('denied');
+            localStorage.setItem('locationPermission', 'denied');
             break;
           case error.TIMEOUT:
             setLocationPermission('denied');
+            localStorage.setItem('locationPermission', 'denied');
             break;
         }
       }
     }
   }, [map]);
+
+  // Handle location permission with proper state management
+  const handleLocationPermission = async () => {
+    console.log('Handling location permission...');
+    if (locationPermission === 'granted') {
+      await requestUserLocation();
+    } else if (locationPermission === 'prompt') {
+      await requestUserLocation();
+    }
+  };
 
   // Initialize location and weather on component mount
   useEffect(() => {
@@ -339,7 +302,7 @@ const FullWidthGlobeMapFixed = () => {
       title,
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
-        scale: isUserLocation ? 6 : 5, // Reduced by half
+        scale: isUserLocation ? 6 : 5,
         fillColor: isUserLocation ? '#4285F4' : colors.primary,
         fillOpacity: 0.7,
         strokeColor: isUserLocation ? '#4285F4' : colors.primary,
@@ -464,7 +427,7 @@ const FullWidthGlobeMapFixed = () => {
         height: ${isUserLocation ? '20px' : '16px'};
         border-radius: 50%;
         background: ${isUserLocation ? 'radial-gradient(circle, #4285F4 0%, #2563eb 100%)' : `radial-gradient(circle, ${colors.primary} 0%, ${colors.primary}dd 100%)`};
-        border: 0px solid ${isUserLocation ? '#4285F4' : colors.primary};
+        border: 0px solid transparent;
         animation: modernPulse 3s ease-in-out infinite;
         transform: translate(-50%, -50%);
         pointer-events: none;
@@ -491,530 +454,307 @@ const FullWidthGlobeMapFixed = () => {
     return { marker, infoWindow, pulsingOverlay };
   };
 
-  // Create animated listener markers
-  const createListenerMarker = (listener: any, mapInstance: google.maps.Map) => {
-    const marker = new google.maps.Marker({
-      position: { lat: listener.Location.lat, lng: listener.Location.lng },
-      map: mapInstance,
-      title: `${listener.FirstName} ${listener.LastName}`,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 4,
-        fillColor: '#FF6600',
-        fillOpacity: 0.8,
-        strokeColor: '#FF6600',
-        strokeWeight: 1,
-      },
-      animation: google.maps.Animation.BOUNCE,
-    });
-
-    // Add pulsing animation for active listeners
-    const pulseAnimation = () => {
-      marker.setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(() => {
-        marker.setAnimation(null);
-      }, 500);
-    };
-    setInterval(pulseAnimation, 1500);
-
-    return marker;
-  };
-
-  // Toggle fullscreen map view with smooth animation and scroll prevention
-  const toggleFullscreen = () => {
-    if (!map) return;
+  // Initialize map with modern styling and features
+  const initializeMap = useCallback(async () => {
+    if (!mapRef.current || !window.google || isInitializing) return;
     
-    if (!isFullscreen) {
-      // Store current map state
-      const currentCenter = map.getCenter();
-      const currentZoom = map.getZoom();
-      setMapState({ center: currentCenter, zoom: currentZoom });
-      
-      // Expand to fullscreen and prevent page scrolling
-      setIsFullscreen(true);
-      document.body.style.overflow = 'hidden';
-      
-      // Force map resize after animation completes
-      setTimeout(() => {
-        if (map) {
-          google.maps.event.trigger(map, 'resize');
-          // Set more zoomed in view for fullscreen
-          if (mapState.center) {
-            map.setCenter(mapState.center);
-            map.setZoom(4); // More zoomed in for fullscreen
-          }
-        }
-      }, 400); // Match animation duration
-    } else {
-      // Collapse from fullscreen and re-enable page scrolling
-      setIsFullscreen(false);
-      document.body.style.overflow = 'unset';
-      
-      // Force map resize after animation completes
-      setTimeout(() => {
-        if (map) {
-          google.maps.event.trigger(map, 'resize');
-          // Restore original zoom level
-          if (mapState.center && mapState.zoom) {
-            map.setCenter(mapState.center);
-            map.setZoom(mapState.zoom);
-          }
-        }
-      }, 400); // Match animation duration
-    }
-  };
-
-  // Initialize map
-  const initializeMap = useCallback(() => {
-    // Prevent multiple initializations
-    if (isInitializing || map) {
-      console.log('Map initialization already in progress or map exists');
-      return;
-    }
-
-    const ref = mapRef.current;
-    if (!ref || !config?.googleMapsApiKey) {
-      console.log('Map ref or API key not available');
-      return;
-    }
-    
-    // Check if ref is a valid DOM element
-    if (!(ref instanceof Element)) {
-      console.error('Map ref is not a valid DOM element');
-      return;
-    }
-    
-    const rect = ref.getBoundingClientRect();
-    console.log('Map ref:', ref, 'Bounding rect:', rect);
-    if (rect.width < 50 || rect.height < 50) {
-      setMapError(true);
-      setIsLoading(false);
-      return;
-    }
-
-    // Set initializing flag before any async operations
     setIsInitializing(true);
-    console.log('Initializing Google Maps with API key:', config.googleMapsApiKey.substring(0, 20) + '...');
+    console.log('Initializing map...');
 
     try {
-      // Check if Google Maps is properly loaded
-      if (!window.google || !window.google.maps) {
-        console.error('Google Maps not properly loaded');
-        setIsLoading(false);
-        setIsInitializing(false);
-        return;
-      }
-
-      // Check if map already exists in this ref
-      if (ref.querySelector('.gm-style')) {
-        console.log('Map already exists in this ref');
-        setIsInitializing(false);
-        return;
-      }
-
-      const mapInstance = new google.maps.Map(ref, {
-        zoom: isFullscreen ? 3 : 2, // More zoomed in when fullscreen
-        center: { lat: 20, lng: 0 },
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        disableDefaultUI: true, // Disable all default UI controls
+      // Create map with modern styling
+      const mapInstance = new google.maps.Map(mapRef.current, {
+        center: { lat: 40.7128, lng: -74.0060 }, // New York City
+        zoom: 3,
+        mapId: config.googleMapsMapId,
+        disableDefaultUI: true,
         zoomControl: false,
-        mapTypeControl: false,
-        scaleControl: false,
         streetViewControl: false,
-        rotateControl: false,
+        mapTypeControl: false,
         fullscreenControl: false,
-        styles: isDarkMode ? [
-          { elementType: "geometry", stylers: [{ color: "#212121" }] },
-          { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-          { elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-          { elementType: "labels.text.stroke", stylers: [{ color: "#212121" }] },
-          { featureType: "administrative", elementType: "geometry", stylers: [{ color: "#757575" }] },
-          { featureType: "administrative.country", elementType: "labels.text.fill", stylers: [{ color: "#9CA3AF" }] },
-          { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
-          { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#BDBDBD" }] },
-          { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-          { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#181818" }] },
-          { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
-          { featureType: "poi.park", elementType: "labels.text.stroke", stylers: [{ color: "#1B1B1B" }] },
-          { featureType: "road", elementType: "geometry.fill", stylers: [{ color: "#2C2C2C" }] },
-          { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#8A8A8A" }] },
-          { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#373737" }] },
-          { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#3C3C3C" }] },
-          { featureType: "road.highway.controlled_access", elementType: "geometry", stylers: [{ color: "#4E4E4E" }] },
-          { featureType: "road.local", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
-          { featureType: "transit", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-          { featureType: "water", elementType: "geometry", stylers: [{ color: "#000000" }] },
-          { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#3D3D3D" }] },
-          // Remove bottom right information
-          { featureType: "poi.business", stylers: [{ visibility: "off" }] },
-          { featureType: "transit", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-          { featureType: "transit", elementType: "geometry", stylers: [{ visibility: "off" }] }
-        ] : [
-          // Light mode styles - also remove bottom right information
-          { featureType: "poi.business", stylers: [{ visibility: "off" }] },
-          { featureType: "transit", elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-          { featureType: "transit", elementType: "geometry", stylers: [{ visibility: "off" }] }
+        gestureHandling: 'cooperative',
+        styles: [
+          {
+            featureType: "all",
+            elementType: "labels.text.fill",
+            stylers: [{ color: isDarkMode ? "#f3f4f6" : "#18181b" }]
+          },
+          {
+            featureType: "all",
+            elementType: "labels.text.stroke",
+            stylers: [{ color: isDarkMode ? "#1f2937" : "#ffffff" }]
+          },
+          {
+            featureType: "administrative",
+            elementType: "geometry.fill",
+            stylers: [{ color: isDarkMode ? "#374151" : "#f9fafb" }]
+          },
+          {
+            featureType: "landscape",
+            elementType: "geometry",
+            stylers: [{ color: isDarkMode ? "#1f2937" : "#f3f4f6" }]
+          },
+          {
+            featureType: "poi",
+            elementType: "geometry",
+            stylers: [{ color: isDarkMode ? "#374151" : "#e5e7eb" }]
+          },
+          {
+            featureType: "road",
+            elementType: "geometry",
+            stylers: [{ color: isDarkMode ? "#374151" : "#ffffff" }]
+          },
+          {
+            featureType: "transit",
+            elementType: "geometry",
+            stylers: [{ color: isDarkMode ? "#374151" : "#e5e7eb" }]
+          },
+          {
+            featureType: "water",
+            elementType: "geometry",
+            stylers: [{ color: isDarkMode ? "#1e3a8a" : "#dbeafe" }]
+          }
         ]
       });
 
-      // Add sample listener markers with animation
-      const sampleListeners = [
-        { id: "1", city: "New York", country: "USA", lat: 40.7128, lng: -74.006, isActive: true },
-        { id: "2", city: "London", country: "UK", lat: 51.5074, lng: -0.1278, isActive: true },
-        { id: "3", city: "Tokyo", country: "Japan", lat: 35.6762, lng: 139.6503, isActive: true },
-        { id: "4", city: "Berlin", country: "Germany", lat: 52.5200, lng: 13.4050, isActive: true },
-        { id: "5", city: "San Francisco", country: "USA", lat: 37.7749, lng: -122.4194, isActive: true },
+      setMap(mapInstance);
+      setIsLoading(false);
+      setMapError(false);
+
+      // Add map event listeners
+      mapInstance.addListener('bounds_changed', () => {
+        setMapState({
+          center: mapInstance.getCenter(),
+          zoom: mapInstance.getZoom() || 3
+        });
+      });
+
+      // Create sample markers for demonstration
+      const sampleLocations = [
+        { lat: 40.7128, lng: -74.0060, title: "New York Listener" },
+        { lat: 34.0522, lng: -118.2437, title: "Los Angeles Listener" },
+        { lat: 51.5074, lng: -0.1278, title: "London Listener" },
+        { lat: 48.8566, lng: 2.3522, title: "Paris Listener" },
+        { lat: 35.6762, lng: 139.6503, title: "Tokyo Listener" },
+        { lat: -33.8688, lng: 151.2093, title: "Sydney Listener" },
+        { lat: -23.5505, lng: -46.6333, title: "São Paulo Listener" },
+        { lat: 55.7558, lng: 37.6176, title: "Moscow Listener" },
+        { lat: 19.0760, lng: 72.8777, title: "Mumbai Listener" },
+        { lat: 39.9042, lng: 116.4074, title: "Beijing Listener" }
       ];
 
-      const mapMarkers: google.maps.Marker[] = [];
-      const mapInfoWindows: google.maps.InfoWindow[] = [];
-      const mapPulsingOverlays: google.maps.OverlayView[] = [];
+      const newMarkers: google.maps.Marker[] = [];
+      sampleLocations.forEach((location, index) => {
+        const { marker } = createAnimatedMarker(location, location.title, mapInstance);
+        newMarkers.push(marker);
+        
+        // Stagger marker creation for visual effect
+        setTimeout(() => {
+          marker.setMap(mapInstance);
+        }, index * 200);
+      });
+
+      setMarkers(newMarkers);
 
       // Add user location marker if available
       if (userLocation) {
-        const userMarkerData = createAnimatedMarker(
-          userLocation,
-          "Your Location",
-          mapInstance,
-          true // isUserLocation
+        const { marker: userMarker } = createAnimatedMarker(
+          userLocation, 
+          "Your Location", 
+          mapInstance, 
+          true
         );
-        mapMarkers.push(userMarkerData.marker);
-        mapInfoWindows.push(userMarkerData.infoWindow);
-        mapPulsingOverlays.push(userMarkerData.pulsingOverlay);
+        setMarkers(prev => [...prev, userMarker]);
       }
 
-      // Add sample listener markers
-      sampleListeners.forEach((listener) => {
-        try {
-          const markerData = createAnimatedMarker(
-            { lat: listener.lat, lng: listener.lng },
-            `${listener.city}, ${listener.country}`,
-            mapInstance,
-            false // Not user location
-          );
-
-          mapMarkers.push(markerData.marker);
-          mapInfoWindows.push(markerData.infoWindow);
-          mapPulsingOverlays.push(markerData.pulsingOverlay);
-        } catch (error) {
-          console.error('Error creating marker:', error);
-        }
-      });
-
-      setMap(mapInstance);
-      setMarkers(mapMarkers);
-      setIsLoading(false);
-      setIsInitializing(false);
-      console.log('Google Maps initialized successfully');
-      
-      // Force a resize after a short delay to ensure proper rendering
-      setTimeout(() => {
-        if (mapInstance) {
-          google.maps.event.trigger(mapInstance, 'resize');
-        }
-      }, 100);
     } catch (error) {
-      console.error("Error initializing map:", error);
-      setIsLoading(false);
+      console.error('Error initializing map:', error);
       setMapError(true);
-      setIsInitializing(false);
-    }
-  }, [config?.googleMapsApiKey, isDarkMode, colors.primary, isInitializing, map, userLocation]);
-
-  // Load Google Maps API
-  useEffect(() => {
-    if (!config?.googleMapsApiKey) {
-      console.log('No Google Maps API key available');
-      return;
-    }
-
-    // Prevent multiple script loads
-    if (window.google && window.google.maps && window.google.maps.Map) {
-      console.log('Google Maps already loaded, initializing...');
-      // Add a small delay to ensure DOM is ready
-      setTimeout(() => {
-        initializeMap();
-      }, 100);
-      return;
-    }
-
-    // Check if script is already added
-    const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
-    if (existingScript) {
-      console.log('Google Maps script already exists, waiting for load...');
-      // Wait a bit and try again
-      setTimeout(() => {
-        if (window.google && window.google.maps && window.google.maps.Map) {
-          initializeMap();
-        }
-      }, 1000);
-      return;
-    }
-
-    console.log('Loading Google Maps script...');
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=places&callback=initMap&loading=async`;
-    script.async = true;
-    script.defer = true;
-    
-    // Create a global callback function
-    (window as any).initMap = () => {
-      console.log('Google Maps script loaded successfully');
-      setTimeout(() => {
-        initializeMap();
-      }, 200);
-    };
-    
-    script.onerror = (error) => {
-      console.error('Error loading Google Maps script:', error);
       setIsLoading(false);
-      setMapError(true);
-      setIsInitializing(false);
-    };
-    
-    script.onload = () => {
-      console.log('Google Maps script loaded successfully');
-      // Add a delay to ensure the API is fully loaded
-      setTimeout(() => {
-        if (window.google && window.google.maps && window.google.maps.Map) {
-          initializeMap();
-        } else {
-          console.error('Google Maps API not available after script load');
-          setMapError(true);
-          setIsLoading(false);
-          setIsInitializing(false);
-        }
-      }, 500);
-    };
-    document.head.appendChild(script);
-  }, [config, initializeMap]);
-
-  // Map control handlers
-  const handleZoomIn = () => {
-    if (map) {
-      map.setZoom((map.getZoom() || 2) + 1);
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (map) {
-      map.setZoom((map.getZoom() || 2) - 1);
-    }
-  };
-
-  const handleMyLocation = () => {
-    if (map && userLocation) {
-      map.setCenter(userLocation);
-      map.setZoom(10);
-    } else {
-      handleLocationPermission();
-    }
-  };
-
-  const handleReset = () => {
-    if (map) {
-      map.setCenter({ lat: 20, lng: 0 });
-      map.setZoom(2);
-    }
-  };
-
-  // Handle location permission and get user location
-  const handleLocationPermission = async () => {
-    setWeatherLoading(true);
-    
-    try {
-      console.log('Requesting location permission...');
-      
-      if (!navigator.geolocation) {
-        throw new Error('Geolocation is not supported by this browser');
-      }
-      
-      // Check current permission status
-      const permission = await navigator.permissions?.query({ name: 'geolocation' });
-      
-      if (permission?.state === 'denied') {
-        // Permission already denied, show message to enable in browser settings
-        setWeatherLoading(false);
-        setLocationPermission('denied');
-        setWeather({
-          location: "Please Enable Location Permissions",
-          temperature: 72,
-          description: "Enable in browser settings",
-          icon: "01d",
-          humidity: 45,
-          windSpeed: 5,
-          feelsLike: 75
-        });
-        errorToast({
-          title: "Location Permission Denied",
-          description: "Please enable location permissions in your browser settings to see your location on the map.",
-        });
-        return;
-      }
-      
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 15000,
-          maximumAge: 300000 // 5 minutes cache
-        });
-      });
-      
-      const newUserLocation = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-      
-      console.log('User location obtained:', newUserLocation);
-      setUserLocation(newUserLocation);
-      
-      // Store location permission
-      localStorage.setItem('locationPermission', 'granted');
-      setLocationPermission('granted');
-      
-      // Fetch weather for user location
-      await fetchWeather(newUserLocation.lat, newUserLocation.lng);
-      
-      // If map is already initialized, add user marker and center map
-      if (map) {
-        console.log('Adding user location marker to existing map...');
-        const userMarkerData = createAnimatedMarker(
-          newUserLocation,
-          "Your Location",
-          map,
-          true // isUserLocation
-        );
-        setMarkers(prev => [...prev, userMarkerData.marker]);
-        
-        // Center map on user location
-        map.setCenter(newUserLocation);
-        map.setZoom(10);
-      }
-    } catch (error) {
-      console.error('Error getting user location:', error);
-      
-      // More specific error handling
-      if (error instanceof GeolocationPositionError) {
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            console.log('User denied location access');
-            localStorage.setItem('locationPermission', 'denied');
-            setLocationPermission('denied');
-            setWeather({
-              location: "Please Enable Location Permissions",
-              temperature: 72,
-              description: "Enable in browser settings",
-              icon: "01d",
-              humidity: 45,
-              windSpeed: 5,
-              feelsLike: 75
-            });
-            errorToast({
-              title: "Location Access Denied",
-              description: "Location access was denied. Please enable location permissions to see your location on the map.",
-            });
-            break;
-          case error.POSITION_UNAVAILABLE:
-            console.log('Location information unavailable');
-            localStorage.setItem('locationPermission', 'denied');
-            setLocationPermission('denied');
-            setWeather({
-              location: "Location Unavailable",
-              temperature: 72,
-              description: "Try again later",
-              icon: "01d",
-              humidity: 45,
-              windSpeed: 5,
-              feelsLike: 75
-            });
-            errorToast({
-              title: "Location Unavailable",
-              description: "Location information is currently unavailable. Please try again later.",
-            });
-            break;
-          case error.TIMEOUT:
-            console.log('Location request timed out');
-            localStorage.setItem('locationPermission', 'denied');
-            setLocationPermission('denied');
-            setWeather({
-              location: "Location Timeout",
-              temperature: 72,
-              description: "Try again",
-              icon: "01d",
-              humidity: 45,
-              windSpeed: 5,
-              feelsLike: 75
-            });
-            break;
-          default:
-            console.log('Unknown geolocation error');
-            localStorage.setItem('locationPermission', 'denied');
-            setLocationPermission('denied');
-            setWeather({
-              location: "Location Error",
-              temperature: 72,
-              description: "Try again",
-              icon: "01d",
-              humidity: 45,
-              windSpeed: 5,
-              feelsLike: 75
-            });
-            break;
-        }
-      } else {
-        localStorage.setItem('locationPermission', 'denied');
-        setLocationPermission('denied');
-        setWeather({
-          location: "Location Error",
-          temperature: 72,
-          description: "Try again",
-          icon: "01d",
-          humidity: 45,
-          windSpeed: 5,
-          feelsLike: 75
-        });
-      }
     } finally {
-      setWeatherLoading(false);
+      setIsInitializing(false);
+    }
+  }, [userLocation, isDarkMode, colors.primary, config.googleMapsMapId, isInitializing]);
+
+  // Initialize fullscreen map
+  const initializeFullscreenMap = useCallback(async () => {
+    if (!fullscreenMapRef.current || !window.google) return;
+
+    try {
+      const fullscreenMapInstance = new google.maps.Map(fullscreenMapRef.current, {
+        center: mapState.center || { lat: 40.7128, lng: -74.0060 },
+        zoom: mapState.zoom || 3,
+        mapId: config.googleMapsMapId,
+        disableDefaultUI: true,
+        zoomControl: false,
+        streetViewControl: false,
+        mapTypeControl: false,
+        fullscreenControl: false,
+        gestureHandling: 'cooperative',
+        styles: [
+          {
+            featureType: "all",
+            elementType: "labels.text.fill",
+            stylers: [{ color: isDarkMode ? "#f3f4f6" : "#18181b" }]
+          },
+          {
+            featureType: "all",
+            elementType: "labels.text.stroke",
+            stylers: [{ color: isDarkMode ? "#1f2937" : "#ffffff" }]
+          },
+          {
+            featureType: "administrative",
+            elementType: "geometry.fill",
+            stylers: [{ color: isDarkMode ? "#374151" : "#f9fafb" }]
+          },
+          {
+            featureType: "landscape",
+            elementType: "geometry",
+            stylers: [{ color: isDarkMode ? "#1f2937" : "#f3f4f6" }]
+          },
+          {
+            featureType: "poi",
+            elementType: "geometry",
+            stylers: [{ color: isDarkMode ? "#374151" : "#e5e7eb" }]
+          },
+          {
+            featureType: "road",
+            elementType: "geometry",
+            stylers: [{ color: isDarkMode ? "#374151" : "#ffffff" }]
+          },
+          {
+            featureType: "transit",
+            elementType: "geometry",
+            stylers: [{ color: isDarkMode ? "#374151" : "#e5e7eb" }]
+          },
+          {
+            featureType: "water",
+            elementType: "geometry",
+            stylers: [{ color: isDarkMode ? "#1e3a8a" : "#dbeafe" }]
+          }
+        ]
+      });
+
+      setFullscreenMap(fullscreenMapInstance);
+
+      // Copy markers to fullscreen map
+      markers.forEach(marker => {
+        const newMarker = new google.maps.Marker({
+          position: marker.getPosition()!,
+          map: fullscreenMapInstance,
+          title: marker.getTitle(),
+          icon: marker.getIcon()
+        });
+      });
+
+    } catch (error) {
+      console.error('Error initializing fullscreen map:', error);
+    }
+  }, [mapState, isDarkMode, colors.primary, config.googleMapsMapId, markers]);
+
+  // Initialize map when Google Maps API is loaded
+  useEffect(() => {
+    if (window.google && !map && !isInitializing) {
+      initializeMap();
+    }
+  }, [initializeMap, map, isInitializing]);
+
+  // Initialize fullscreen map when entering fullscreen
+  useEffect(() => {
+    if (isFullscreen && !fullscreenMap) {
+      initializeFullscreenMap();
+    }
+  }, [isFullscreen, fullscreenMap, initializeFullscreenMap]);
+
+  // Handle fullscreen toggle
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
+
+  // Map control functions
+  const zoomIn = () => {
+    if (map) {
+      map.setZoom((map.getZoom() || 3) + 1);
     }
   };
 
-  if (!config) {
+  const zoomOut = () => {
+    if (map) {
+      map.setZoom(Math.max((map.getZoom() || 3) - 1, 1));
+    }
+  };
+
+  const resetMap = () => {
+    if (map) {
+      map.setCenter({ lat: 40.7128, lng: -74.0060 });
+      map.setZoom(3);
+    }
+  };
+
+  // Add CSS for pulsing animation
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes modernPulse {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.6;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.5);
+          opacity: 0.3;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.6;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
+
+  // Render loading state
+  if (isLoading) {
     return (
-      <div className="h-96 flex items-center justify-center">
-        <div className="text-center">
-          <p className={isDarkMode ? "text-white" : "text-black"}>Loading map...</p>
+      <div className="relative w-full h-[600px] bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 rounded-2xl overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
+            <p className="text-lg font-semibold text-gray-600 dark:text-gray-300">
+              Loading Interactive Map...
+            </p>
+          </div>
         </div>
       </div>
     );
   }
 
+  // Render error state
   if (mapError) {
     return (
-      <div className="h-96 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-500 font-bold mb-4">Map temporarily unavailable</p>
-          <p className="text-gray-600 mb-4">Google Maps API key needs domain configuration</p>
-          <div className="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-400 rounded-full mb-4 flex items-center justify-center">
-                <span className="text-2xl">🗺️</span>
-              </div>
-              <p className="text-gray-600">Interactive Map</p>
-              <p className="text-sm text-gray-500">Configure API key domain restrictions</p>
-              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-800 font-medium">To fix this:</p>
-                <ol className="text-xs text-blue-700 mt-2 text-left">
-                  <li>1. Go to Google Cloud Console</li>
-                  <li>2. Navigate to APIs & Services &gt; Credentials</li>
-                  <li>3. Find your API key and click on it</li>
-                  <li>4. Add these domains to restrictions:</li>
-                  <li className="ml-4">• https://spandex-salvation-radio.com/</li>
-                  <li className="ml-4">• https://www.spandex-salvation-radio.com/</li>
-                  <li className="ml-4">• https://spandex-salvation-radio-site.web.app/</li>
-                </ol>
-              </div>
+      <div className="relative w-full h-[600px] bg-gradient-to-br from-red-50 to-pink-100 dark:from-gray-900 dark:to-gray-800 rounded-2xl overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <MapPin className="w-8 h-8 text-red-500" />
             </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              Map Loading Error
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              Unable to load the interactive map. Please try refreshing the page.
+            </p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="bg-primary hover:bg-primary/90"
+            >
+              Refresh Page
+            </Button>
           </div>
         </div>
       </div>
@@ -1023,496 +763,238 @@ const FullWidthGlobeMapFixed = () => {
 
   return (
     <>
-      {/* Fullscreen Overlay Background */}
-      {isFullscreen && (
-        <div 
-          className="fixed bg-black/60 backdrop-blur-sm z-[9998] transition-all duration-500 ease-in-out"
-          style={{ 
-            top: '4rem', // Below navigation bar
-            bottom: '5rem', // Above floating player
-            left: 0,
-            right: 0,
-            opacity: isFullscreen ? 1 : 0
-          }}
-        />
-      )}
-
-      <section className={`${isDarkMode ? "bg-black" : "bg-white"} py-20`}>
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header - Hidden when fullscreen */}
-          <div className={`text-center mb-16 transition-all duration-500 ease-in-out ${
-            isFullscreen ? 'opacity-0 invisible' : 'opacity-100 visible'
-          }`}>
-            <h2 className={`font-orbitron font-black text-3xl md:text-4xl mb-4 ${isDarkMode ? "text-white" : "text-black"}`}>
-              GLOBAL LISTENERS
-            </h2>
-            <p className={`text-lg font-semibold ${isDarkMode ? "text-gray-400" : "text-gray-600"} mb-4`}>
-              See where metal fans are tuning in from around the world in real-time.
-            </p>
-
-            {/* Modern Glass Weather Display */}
-            <div className="mb-6 relative max-w-lg mx-auto">
-              {/* Glass/Blur Background Container */}
-              <div
-                className="relative rounded-2xl backdrop-blur-md border border-primary/10 shadow-2xl overflow-hidden transition-all duration-500 ease-in-out"
-                style={{
-                  background: `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}80, ${adaptiveTheme.overlayColor}60)`,
-                  backdropFilter: 'blur(20px)',
-                  WebkitBackdropFilter: 'blur(20px)',
-                  boxShadow: `0 8px 32px ${adaptiveTheme.accentColor}20, 0 0 0 1px ${adaptiveTheme.accentColor}10`
-                }}
-              >
-                {/* Modern Glass Enable Location Overlay - Pill-shaped covering entire location field */}
-                {(locationPermission === 'denied' || locationPermission === 'prompt') && (
-                  <div 
-                    className="absolute inset-0 z-10 flex items-center justify-center transition-all duration-500 ease-in-out"
-                    style={{
-                      borderRadius: '1rem', // Match parent container rounding
-                      overflow: 'hidden'
-                    }}
-                  >
-                    <Button
-                      onClick={handleLocationPermission}
-                      className="w-full h-full backdrop-blur-md border-0 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:backdrop-blur-lg"
-                      style={{
-                        // Match "View All Archives" button styling
-                        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
-                          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.25)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.15)')})`
-                          : 'rgba(255, 255, 255, 0.20)',
-                        backdropFilter: 'blur(32px) saturate(200%)',
-                        WebkitBackdropFilter: 'blur(32px) saturate(200%)',
-                        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                          ? `0 12px 48px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`
-                          : `0 12px 48px ${colors.primary}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`,
-                        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
-                          ? adaptiveTheme.textColor 
-                          : colors.text,
-                        borderRadius: '9999px', // True pill shape (100% rounded corners)
-                        fontSize: '0.875rem',
-                        fontWeight: '600',
-                        letterSpacing: '0.025em',
-                        minHeight: '48px', // Match button height
-                        padding: '12px 24px' // Match button padding
-                      }}
-                    >
-                      <div className="flex items-center justify-center gap-3">
-                        {weatherLoading ? (
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                          <Sun 
-                            className="w-5 h-5" 
-                            style={{ 
-                              color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                                ? adaptiveTheme.accentColor
-                                : colors.primary
-                            }} 
-                          />
-                        )}
-                        <span className="tracking-wide">
-                          {weatherLoading ? 'Checking Location...' : 'Enable Location for Weather'}
-                        </span>
-                      </div>
-                    </Button>
-                  </div>
-                )}
-
-                {/* Main Content - Hide when enable location button is showing */}
-                <div className={`p-6 space-y-4 transition-opacity duration-300 ${
-                  (locationPermission === 'denied' || locationPermission === 'prompt') ? 'opacity-0 invisible' : 'opacity-100 visible'
-                }`}>
-                  {/* Location Header */}
-                  <div className="flex items-center justify-center gap-2">
-                    <MapPin 
-                      className="w-5 h-5" 
-                      style={{ color: adaptiveTheme.accentColor }} 
-                    />
-                    <span 
-                      className="text-lg font-semibold tracking-wide"
-                      style={{ color: adaptiveTheme.textColor }}
-                    >
-                      {weather?.location || "Getting your location..."}
-                    </span>
-                  </div>
-                  
-                  {/* Weather Info */}
-                  <div className="flex items-center justify-center gap-4">
-                    {/* Weather Icon */}
-                    {weather && (
-                      <div className="flex items-center justify-center">
-                        {weatherLoading ? (
-                          <Loader2 
-                            className="w-12 h-12 animate-spin" 
-                            style={{ color: adaptiveTheme.accentColor }} 
-                          />
-                        ) : (
-                          <div className="relative">
-                            <img
-                              src={`/attached_assets/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
-                              alt={weather.description}
-                              className="w-16 h-16 object-contain drop-shadow-lg"
-                              style={{ 
-                                filter: `drop-shadow(0 4px 8px ${adaptiveTheme.accentColor}30)`
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    
-                    {/* Temperature and Description */}
-                    <div className="flex flex-col items-center">
-                      <span 
-                        className="text-2xl font-bold tracking-tight"
-                        style={{ color: adaptiveTheme.textColor }}
-                      >
-                        {weather ? `${Math.round(weather.temperature)}°F` : "Loading..."}
-                      </span>
-                      <span 
-                        className="text-sm font-medium opacity-80 capitalize"
-                        style={{ color: adaptiveTheme.textColor }}
-                      >
-                        {weather?.description || "Loading weather..."}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Map Container with smooth fullscreen transition */}
-          <div 
-            className={`relative transition-all duration-500 ease-in-out transform map-container ${
-              isFullscreen 
-                ? 'fixed z-[9999] rounded-none' 
-                : 'w-full rounded-xl shadow-2xl border-2'
-            }`}
-            style={{ 
-              borderColor: colors.primary,
-              backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              top: isFullscreen ? '4rem' : 'auto', // Below navigation bar
-              bottom: isFullscreen ? '5rem' : 'auto', // Above floating player
-              left: isFullscreen ? '0' : 'auto',
-              right: isFullscreen ? '0' : 'auto',
-              height: isFullscreen ? 'calc(100vh - 9rem)' : '26rem', // Full height minus nav and player, taller normal view to crop attribution
-              width: isFullscreen ? '100vw' : 'auto',
-              margin: isFullscreen ? '0' : 'auto',
-              overflow: 'hidden'
-            }}
+      {/* Main Map Container */}
+      <div className="relative w-full">
+        {/* Map Controls Overlay */}
+        <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+          <Button
+            onClick={zoomIn}
+            size="sm"
+            variant="secondary"
+            className="w-10 h-10 p-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800"
           >
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-20">
-                <div className="text-center">
-                  <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-2"></div>
-                  <p className="text-white font-semibold">Loading Map...</p>
+            <ZoomIn className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={zoomOut}
+            size="sm"
+            variant="secondary"
+            className="w-10 h-10 p-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800"
+          >
+            <ZoomOut className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={resetMap}
+            size="sm"
+            variant="secondary"
+            className="w-10 h-10 p-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800"
+          >
+            <RotateCcw className="w-4 h-4" />
+          </Button>
+          <Button
+            onClick={toggleFullscreen}
+            size="sm"
+            variant="secondary"
+            className="w-10 h-10 p-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800"
+          >
+            {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+          </Button>
+        </div>
+
+        {/* Location Button */}
+        <div className="absolute top-4 left-4 z-10">
+          <Button
+            onClick={handleLocationPermission}
+            size="sm"
+            variant="secondary"
+            className={`px-4 py-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 hover:bg-white dark:hover:bg-gray-800 ${
+              locationPermission === 'granted' ? 'text-green-600 dark:text-green-400' : 
+              locationPermission === 'denied' ? 'text-red-600 dark:text-red-400' : 
+              'text-gray-600 dark:text-gray-300'
+            }`}
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            {locationPermission === 'granted' ? 'Location Enabled' : 
+             locationPermission === 'denied' ? 'Location Denied' : 
+             'Enable Location'}
+          </Button>
+        </div>
+
+        {/* Main Map */}
+        <div 
+          ref={mapRef}
+          className="w-full h-[600px] rounded-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 shadow-xl"
+        />
+
+        {/* Weather Card Overlay */}
+        {weather && (
+          <div className="absolute bottom-4 left-4 z-10">
+            <Card className="w-80 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-xl">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="w-8 h-8">
+                    <img 
+                      src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
+                      alt={weather.description}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  {weather.location}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-2xl font-bold text-primary">
+                      {weather.temperature}°F
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      {weather.description}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Feels like: {weather.feelsLike}°F
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Humidity: {weather.humidity}%
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Wind: {weather.windSpeed} mph
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {/* Live Stats Cards */}
+        <div className="absolute bottom-4 right-4 z-10 space-y-2">
+          {/* Active Listeners Card */}
+          <Card className="w-64 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-xl">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
+                  <Users className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Active Listeners</p>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    {statsLoading ? (
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                    ) : (
+                      <AnimatedCounter 
+                        value={liveStats?.activeListeners || 0} 
+                        duration={1000}
+                      />
+                    )}
+                  </p>
                 </div>
               </div>
-            )}
-            
-            {/* Map Element */}
-            <div 
-              ref={mapRef}
-              className="w-full h-full transition-all duration-500 ease-in-out"
-              style={{
-                backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-                overflow: "hidden"
-              }}
-            />
+            </CardContent>
+          </Card>
 
-            {/* Expand/Close Button - Always in top-left of map */}
-            <Button
-              onClick={toggleFullscreen}
-              size="sm"
-              className={`absolute ${isFullscreen ? 'top-8 left-8' : 'top-4 left-4'} z-[10000] border-0 shadow-lg transition-all duration-300 hover:scale-105 ${
-                isFullscreen 
-                  ? 'bg-red-600 hover:bg-red-700 text-white' 
-                  : 'bg-gray-800 hover:bg-gray-700 text-white'
-              }`}
-            >
-              {isFullscreen ? (
-                <>
-                  <Minimize2 className="w-4 h-4 mr-1" />
-                  Close
-                </>
-              ) : (
-                <>
-                  <Maximize2 className="w-4 h-4 mr-1" />
-                  Expand
-                </>
-              )}
-            </Button>
+          {/* Countries Card */}
+          <Card className="w-64 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-xl">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                  <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Countries</p>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    {statsLoading ? (
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                    ) : (
+                      <AnimatedCounter 
+                        value={liveStats?.countries || 0} 
+                        duration={1000}
+                      />
+                    )}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Map Controls - Always in top-right of map */}
-            <div className={`absolute top-4 right-4 flex flex-col gap-2 z-10 transition-all duration-500 ease-in-out ${
-              isFullscreen ? 'scale-110' : 'scale-100'
-            }`}>
-              <Button onClick={handleZoomIn} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
+          {/* Total Listeners Card */}
+          <Card className="w-64 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-xl">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
+                  <Activity className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Total Listeners</p>
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                    {statsLoading ? (
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                    ) : (
+                      <AnimatedCounter 
+                        value={liveStats?.totalListeners || 0} 
+                        duration={1000}
+                      />
+                    )}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Fullscreen Map Modal */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-50 bg-black">
+          <div className="relative w-full h-full">
+            {/* Fullscreen Controls */}
+            <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+              <Button
+                onClick={zoomIn}
+                size="sm"
+                variant="secondary"
+                className="w-10 h-10 p-0 bg-white/90 backdrop-blur-sm border border-gray-200 hover:bg-white"
+              >
                 <ZoomIn className="w-4 h-4" />
               </Button>
-              <Button onClick={handleZoomOut} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
+              <Button
+                onClick={zoomOut}
+                size="sm"
+                variant="secondary"
+                className="w-10 h-10 p-0 bg-white/90 backdrop-blur-sm border border-gray-200 hover:bg-white"
+              >
                 <ZoomOut className="w-4 h-4" />
               </Button>
-              <Button onClick={handleMyLocation} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
-                <MapPin className="w-4 h-4" />
-              </Button>
-              <Button onClick={handleReset} size="sm" className="p-2 bg-gray-800 hover:bg-gray-700 text-white border-0 shadow-lg transition-all duration-300 hover:scale-105">
+              <Button
+                onClick={resetMap}
+                size="sm"
+                variant="secondary"
+                className="w-10 h-10 p-0 bg-white/90 backdrop-blur-sm border border-gray-200 hover:bg-white"
+              >
                 <RotateCcw className="w-4 h-4" />
               </Button>
+              <Button
+                onClick={toggleFullscreen}
+                size="sm"
+                variant="secondary"
+                className="w-10 h-10 p-0 bg-white/90 backdrop-blur-sm border border-gray-200 hover:bg-white"
+              >
+                <Minimize2 className="w-4 h-4" />
+              </Button>
             </div>
 
-            {/* Weather Info - No longer in fullscreen */}
-          </div>
-
-          {/* Live Statistics & Active Locations - Hidden when fullscreen */}
-          <div className={`w-full max-w-7xl mx-auto mb-8 mt-8 transition-all duration-500 ease-in-out ${
-            isFullscreen ? 'opacity-0 invisible' : 'opacity-100 visible'
-          }`}>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                
-                {/* Live Statistics Section - Redesigned */}
-                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] stats-container"
-                  style={{
-                    background: isDarkMode 
-                      ? `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%)`
-                      : `linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%)`,
-                    borderColor: colors.primary,
-                    boxShadow: `0 0 20px ${colors.primary}20`
-                  }}>
-                  <CardHeader className="text-center pb-4">
-                    <CardTitle 
-                      className="text-2xl lg:text-3xl font-black tracking-wide flex items-center justify-center gap-3"
-                      style={{ 
-                        color: colors.primary,
-                        textShadow: isDarkMode ? `0 0 10px ${colors.primary}40` : 'none'
-                      }}
-                    >
-                      <Activity className="w-8 h-8" />
-                      LIVE STATISTICS
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-2">
-                    <div className="grid grid-cols-1 gap-4">
-                      
-                      {/* Active Listeners */}
-                      <div className="text-center p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
-                        style={{
-                          background: isDarkMode 
-                            ? `linear-gradient(135deg, ${colors.primary}15 0%, ${colors.primary}08 100%)`
-                            : `linear-gradient(135deg, ${colors.primary}20 0%, ${colors.primary}10 100%)`,
-                          border: `2px solid ${colors.primary}40`,
-                          boxShadow: `0 8px 32px ${colors.primary}15`
-                        }}>
-                        <div className="flex items-center justify-center gap-2 mb-3">
-                          <Users 
-                            className="w-6 h-6" 
-                            style={{ color: colors.primary }}
-                          />
-                          <div className={`text-sm font-bold tracking-wide ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
-                            ACTIVE LISTENERS
-                          </div>
-                        </div>
-                        {statsLoading ? (
-                          <div className="animate-pulse text-5xl lg:text-6xl font-black" style={{ color: colors.primary }}>
-                            --
-                          </div>
-                        ) : (
-                          <AnimatedCounter
-                            value={liveStats?.activeListeners || 42}
-                            className="text-5xl lg:text-6xl font-black"
-                            style={{ 
-                              color: colors.primary,
-                              textShadow: isDarkMode ? `0 4px 15px ${colors.primary}60` : `0 2px 8px ${colors.primary}30`
-                            }}
-                          />
-                        )}
-                        <div className="flex justify-center mt-3">
-                          <div 
-                            className="w-3 h-3 rounded-full animate-pulse"
-                            style={{ 
-                              backgroundColor: colors.primary, 
-                              boxShadow: `0 0 15px ${colors.primary}80, 0 0 30px ${colors.primary}40`
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Countries */}
-                      <div className="text-center p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
-                        style={{
-                          background: isDarkMode 
-                            ? `linear-gradient(135deg, ${colors.secondary}15 0%, ${colors.secondary}08 100%)`
-                            : `linear-gradient(135deg, ${colors.secondary}20 0%, ${colors.secondary}10 100%)`,
-                          border: `2px solid ${colors.secondary}40`,
-                          boxShadow: `0 8px 32px ${colors.secondary}15`
-                        }}>
-                        <div className="flex items-center justify-center gap-2 mb-3">
-                          <Globe 
-                            className="w-6 h-6" 
-                            style={{ color: colors.secondary }}
-                          />
-                          <div className={`text-sm font-bold tracking-wide ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
-                            COUNTRIES
-                          </div>
-                        </div>
-                        {statsLoading ? (
-                          <div className="animate-pulse text-5xl lg:text-6xl font-black" style={{ color: colors.secondary }}>
-                            --
-                          </div>
-                        ) : (
-                          <AnimatedCounter
-                            value={liveStats?.countries || 15}
-                            className="text-5xl lg:text-6xl font-black"
-                            style={{ 
-                              color: colors.secondary,
-                              textShadow: isDarkMode ? `0 4px 15px ${colors.secondary}60` : `0 2px 8px ${colors.secondary}30`
-                            }}
-                          />
-                        )}
-                        <div className="flex justify-center mt-3">
-                          <div 
-                            className="w-3 h-3 rounded-full animate-pulse"
-                            style={{ 
-                              backgroundColor: colors.secondary, 
-                              boxShadow: `0 0 15px ${colors.secondary}80, 0 0 30px ${colors.secondary}40`
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                      {/* Total Listeners */}
-                      <div className="text-center p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
-                        style={{
-                          background: isDarkMode 
-                            ? `linear-gradient(135deg, ${colors.accent}15 0%, ${colors.accent}08 100%)`
-                            : `linear-gradient(135deg, ${colors.accent}20 0%, ${colors.accent}10 100%)`,
-                          border: `2px solid ${colors.accent}40`,
-                          boxShadow: `0 8px 32px ${colors.accent}15`
-                        }}>
-                        <div className="flex items-center justify-center gap-2 mb-3">
-                          <Activity 
-                            className="w-6 h-6" 
-                            style={{ color: colors.accent }}
-                          />
-                          <div className={`text-sm font-bold tracking-wide ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
-                            TOTAL LISTENERS
-                          </div>
-                        </div>
-                        {statsLoading ? (
-                          <div className="animate-pulse text-5xl lg:text-6xl font-black" style={{ color: colors.accent }}>
-                            ----
-                          </div>
-                        ) : (
-                          <AnimatedCounter
-                            value={liveStats?.totalListeners || 1247}
-                            className="text-5xl lg:text-6xl font-black"
-                            style={{ 
-                              color: colors.accent,
-                              textShadow: isDarkMode ? `0 4px 15px ${colors.accent}60` : `0 2px 8px ${colors.accent}30`
-                            }}
-                          />
-                        )}
-                        <div className="flex justify-center mt-3">
-                          <div 
-                            className="w-3 h-3 rounded-full animate-pulse"
-                            style={{ 
-                              backgroundColor: colors.accent, 
-                              boxShadow: `0 0 15px ${colors.accent}80, 0 0 30px ${colors.accent}40`
-                            }}
-                          />
-                        </div>
-                      </div>
-
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Active Locations Section - Redesigned */}
-                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] stats-container"
-                  style={{
-                    background: isDarkMode 
-                      ? `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%)`
-                      : `linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%)`,
-                    borderColor: colors.primary,
-                    boxShadow: `0 0 20px ${colors.primary}20`
-                  }}>
-                  <CardHeader className="text-center pb-4">
-                    <CardTitle 
-                      className="text-2xl lg:text-3xl font-black tracking-wide flex items-center justify-center gap-3"
-                      style={{ 
-                        color: colors.primary,
-                        textShadow: isDarkMode ? `0 0 10px ${colors.primary}40` : 'none'
-                      }}
-                    >
-                      <MapPin className="w-8 h-8" />
-                      ACTIVE LOCATIONS
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="py-2">
-                    <div className="space-y-4">
-                      {[
-                        { name: "New York, USA", listeners: 4 },
-                        { name: "London, UK", listeners: 19 },
-                        { name: "Tokyo, Japan", listeners: 43 },
-                        { name: "Berlin, Germany", listeners: 17 },
-                        { name: "San Francisco, USA", listeners: 33 },
-                        { name: "Sydney, Australia", listeners: 28 }
-                      ].map((location, index) => (
-                        <div 
-                          key={index} 
-                          className="p-4 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
-                          style={{
-                            background: isDarkMode 
-                              ? `linear-gradient(135deg, ${colors.primary}12 0%, ${colors.primary}06 100%)`
-                              : `linear-gradient(135deg, ${colors.primary}18 0%, ${colors.primary}08 100%)`,
-                            border: `2px solid ${colors.primary}30`,
-                            boxShadow: `0 4px 20px ${colors.primary}10`
-                          }}
-                        >
-                          <div className="flex items-center justify-center">
-                            <div className="flex items-center space-x-3 flex-1 justify-center">
-                              <div 
-                                className="w-4 h-4 rounded-full animate-pulse flex-shrink-0"
-                                style={{ 
-                                  backgroundColor: colors.primary,
-                                  boxShadow: `0 0 15px ${colors.primary}90, 0 0 30px ${colors.primary}50`
-                                }}
-                              />
-                              <span 
-                                className="font-black text-lg text-center"
-                                style={{ 
-                                  color: isDarkMode ? colors.text : colors.textSecondary,
-                                  textShadow: isDarkMode ? `0 2px 4px rgba(0,0,0,0.6)` : 'none'
-                                }}
-                              >
-                                {location.name}
-                              </span>
-                            </div>
-                            <div className="ml-4">
-                              <AnimatedCounter
-                                value={location.listeners}
-                                className="text-xl font-black px-4 py-2 rounded-full"
-                                style={{
-                                  backgroundColor: `${colors.primary}25`,
-                                  color: colors.primary,
-                                  textShadow: isDarkMode ? `0 0 10px ${colors.primary}50` : 'none',
-                                  border: `2px solid ${colors.primary}50`,
-                                  boxShadow: `0 4px 15px ${colors.primary}20`
-                                }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-            </div>
+            {/* Fullscreen Map */}
+            <div 
+              ref={fullscreenMapRef}
+              className="w-full h-full"
+            />
           </div>
         </div>
-      </section>
+      )}
     </>
   );
 };
 
-export default FullWidthGlobeMapFixed;
+export default FullWidthGlobeMapFixed; 
