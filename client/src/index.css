@@ -90,8 +90,64 @@
   0% {
     background-position: 0% 50%;
   }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Enhanced moving gradient animation for circular motion */
+@keyframes movingGradientBorderCircular {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+/* Slow rotating gradient animation */
+@keyframes slowRotatingGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  12.5% {
+    background-position: 25% 25%;
+  }
+  25% {
+    background-position: 50% 0%;
+  }
+  37.5% {
+    background-position: 75% 25%;
+  }
   50% {
     background-position: 100% 50%;
+  }
+  62.5% {
+    background-position: 75% 75%;
+  }
+  75% {
+    background-position: 50% 100%;
+  }
+  87.5% {
+    background-position: 25% 75%;
   }
   100% {
     background-position: 0% 50%;

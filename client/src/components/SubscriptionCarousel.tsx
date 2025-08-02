@@ -200,9 +200,9 @@ export default function SubscriptionCarousel() {
               className="relative overflow-hidden transition-all duration-500"
               style={{
                 borderRadius: "24px", // Fully rounded border wrapper
-                background: `linear-gradient(45deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}, ${currentTier.gradientStart})`,
+                background: `linear-gradient(45deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
                 backgroundSize: '400% 400%',
-                animation: 'movingGradientBorder 4s ease-in-out infinite',
+                animation: 'slowRotatingGradient 8s linear infinite',
                 transform: hoveredTier === currentTier.id ? 'scale(1.05)' : 'scale(1)', // Move transform to border wrapper
                 padding: '5px', // Increased border width by 2.5px (from 2.5px to 5px)
               }}
