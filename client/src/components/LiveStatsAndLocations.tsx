@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Button } from "@/components/ui/button";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { MapPin, Activity, Users, Globe, Loader2, RotateCcw, Settings } from "lucide-react";
+import { MapPin, Activity, Users, Globe, Loader2, Settings } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useQuery } from "@tanstack/react-query";
@@ -15,35 +14,14 @@ interface LiveStats {
   totalListeners: number;
 }
 
-interface ActiveListener {
-  id: string;
-  location: {
-    lat: number;
-    lng: number;
-    country: string;
-    city?: string;
-  };
-  isActiveListening: boolean;
-}
-
-interface Config {
-  googleMapsApiKey: string;
+interface CountryListener {
+  country: string;
+  count: number;
 }
 
 const LiveStatsAndLocations = () => {
   const { isDarkMode, colors } = useTheme();
   const { isLiveDataEnabled, setIsLiveDataEnabled, isAdmin } = useAdmin();
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
-  const [overlays, setOverlays] = useState<google.maps.OverlayView[]>([]);
-  const [isMapLoading, setIsMapLoading] = useState(true);
-  const [countryStats, setCountryStats] = useState<Record<string, number>>({});
-
-  // Hardcoded config for Google Maps
-  const config: Config = {
-    googleMapsApiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
-  };
 
   // Fetch live statistics
   const { data: liveStats, isLoading: statsLoading } = useQuery<LiveStats>({
@@ -51,188 +29,14 @@ const LiveStatsAndLocations = () => {
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 
-  // Fetch active listeners with locations
-  const { data: activeListeners = [], isLoading: listenersLoading } = useQuery<ActiveListener[]>({
-    queryKey: ['/api/active-listeners'],
+  // Fetch active listeners count by country
+  const { data: countryListeners = [], isLoading: listenersLoading } = useQuery<CountryListener[]>({
+    queryKey: ['/api/active-listeners-by-country'],
     refetchInterval: isLiveDataEnabled ? 5000 : false, // Refresh every 5 seconds if live data enabled
     enabled: isLiveDataEnabled,
   });
 
-  // Initialize Google Maps
-  const initializeMap = useCallback(() => {
-    if (!mapRef.current || map) return;
-    
-    setIsMapLoading(true);
-    
-    const mapInstance = new google.maps.Map(mapRef.current, {
-      center: { lat: 20, lng: 0 }, // Center on world
-      zoom: 2,
-      styles: isDarkMode ? [
-        { elementType: "geometry", stylers: [{ color: "#212121" }] },
-        { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-        { elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-        { elementType: "labels.text.stroke", stylers: [{ color: "#212121" }] },
-        { featureType: "administrative", elementType: "geometry", stylers: [{ color: "#757575" }] },
-        { featureType: "administrative.country", elementType: "labels.text.fill", stylers: [{ color: colors.primary }] },
-        { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
-        { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#bdbdbd" }] },
-        { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-        { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#181818" }] },
-        { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
-        { featureType: "poi.park", elementType: "labels.text.stroke", stylers: [{ color: "#1b1b1b" }] },
-        { featureType: "road", elementType: "geometry.fill", stylers: [{ color: "#2c2c2c" }] },
-        { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#8a8a8a" }] },
-        { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#373737" }] },
-        { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#3c3c3c" }] },
-        { featureType: "road.highway.controlled_access", elementType: "geometry", stylers: [{ color: "#4e4e4e" }] },
-        { featureType: "road.local", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
-        { featureType: "transit", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
-        { featureType: "water", elementType: "geometry", stylers: [{ color: "#000000" }] },
-        { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#3d3d3d" }] }
-      ] : [
-        { featureType: "administrative.country", elementType: "labels.text.fill", stylers: [{ color: colors.primary }] }
-      ],
-      disableDefaultUI: true,
-      zoomControl: true,
-      gestureHandling: 'cooperative',
-    });
 
-    setMap(mapInstance);
-    setIsMapLoading(false);
-  }, [isDarkMode, colors.primary, map]);
-
-  // Create pulsing markers for active listeners
-  const createPulsingMarker = useCallback((position: google.maps.LatLngLiteral, listener: ActiveListener) => {
-    if (!map) return null;
-
-    // Create marker
-    const marker = new google.maps.Marker({
-      position,
-      map,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        fillColor: colors.primary,
-        fillOpacity: 0.8,
-        scale: 6,
-        strokeColor: colors.primary,
-        strokeWeight: 2,
-      },
-    });
-
-    // Create pulsing overlay
-    const pulsingOverlay = new google.maps.OverlayView();
-    pulsingOverlay.setMap(map);
-    
-    pulsingOverlay.onAdd = function() {
-      const div = document.createElement('div');
-      div.className = 'pulsing-listener-dot';
-      div.style.cssText = `
-        position: absolute;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        background: ${colors.primary};
-        animation: livePulse 2s ease-in-out infinite;
-        transform: translate(-50%, -50%);
-        pointer-events: none;
-        z-index: 10;
-        opacity: 0.7;
-        box-shadow: 0 0 10px 2px ${colors.primary}40;
-      `;
-      
-      // Add fade-in animation
-      div.style.animation = 'fadeInPulse 0.5s ease-in, livePulse 2s ease-in-out infinite 0.5s';
-      
-      this.div_ = div;
-      const panes = this.getPanes();
-      panes.overlayImage.appendChild(div);
-    };
-    
-    pulsingOverlay.draw = function() {
-      const projection = this.getProjection();
-      const point = projection.fromLatLngToDivPixel(position);
-      if (point) {
-        this.div_.style.left = point.x + 'px';
-        this.div_.style.top = point.y + 'px';
-      }
-    };
-
-    // Create info window
-    const infoWindow = new google.maps.InfoWindow({
-      content: `
-        <div style="color: ${isDarkMode ? '#fff' : '#000'}; padding: 8px;">
-          <strong>${listener.location.city || listener.location.country}</strong><br/>
-          <small>🎵 Listening Live</small>
-        </div>
-      `,
-    });
-
-    marker.addListener('click', () => {
-      infoWindow.open(map, marker);
-    });
-
-    return { marker, overlay: pulsingOverlay, infoWindow };
-  }, [map, colors.primary, isDarkMode]);
-
-  // Update markers when active listeners change
-  useEffect(() => {
-    if (!map || !isLiveDataEnabled) return;
-
-    // Clear existing markers and overlays
-    markers.forEach(marker => marker.setMap(null));
-    overlays.forEach(overlay => overlay.setMap(null));
-    
-    const newMarkers: google.maps.Marker[] = [];
-    const newOverlays: google.maps.OverlayView[] = [];
-    const newCountryStats: Record<string, number> = {};
-
-    // Create markers for active listeners
-    activeListeners.forEach(listener => {
-      if (listener.location && listener.isActiveListening) {
-        const position = {
-          lat: listener.location.lat,
-          lng: listener.location.lng,
-        };
-
-        const markerData = createPulsingMarker(position, listener);
-        if (markerData) {
-          newMarkers.push(markerData.marker);
-          newOverlays.push(markerData.overlay);
-        }
-
-        // Count by country
-        const country = listener.location.country;
-        newCountryStats[country] = (newCountryStats[country] || 0) + 1;
-      }
-    });
-
-    setMarkers(newMarkers);
-    setOverlays(newOverlays);
-    setCountryStats(newCountryStats);
-  }, [activeListeners, map, isLiveDataEnabled, createPulsingMarker]);
-
-  // Initialize Google Maps when component mounts
-  useEffect(() => {
-    const loadGoogleMaps = () => {
-      if (window.google && window.google.maps) {
-        initializeMap();
-      } else {
-        // Load Google Maps script if not already loaded
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=places`;
-        script.async = true;
-        script.defer = true;
-        script.onload = () => {
-          if (window.google && window.google.maps) {
-            initializeMap();
-          }
-        };
-        document.head.appendChild(script);
-      }
-    };
-
-    loadGoogleMaps();
-  }, [initializeMap, config.googleMapsApiKey]);
 
   return (
     <div className="w-full space-y-6">
@@ -350,55 +154,86 @@ const LiveStatsAndLocations = () => {
           </CardContent>
         </Card>
 
-        {/* Right Side - Active Locations Map */}
+        {/* Right Side - Active Locations List */}
         <Card className="bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm border-border/50 flex flex-col">
           <CardHeader className="pb-4">
             <CardTitle className={`text-center text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
               ACTIVE LOCATIONS
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col p-4">
-            {/* Map Container */}
-            <div className="flex-1 relative rounded-lg overflow-hidden">
-              {isMapLoading && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/50 z-10">
-                  <Loader2 className="w-8 h-8 animate-spin text-primary mb-2" />
-                  <p className="text-sm text-muted-foreground">Loading World Map...</p>
+          <CardContent className="flex-1 flex flex-col space-y-4">
+            {/* Live Data Status */}
+            {isLiveDataEnabled && (
+              <div className="flex justify-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-semibold border border-primary/30">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                  LIVE DATA
                 </div>
-              )}
-              <div 
-                ref={mapRef} 
-                className="w-full h-full min-h-[400px]"
-                style={{ background: isDarkMode ? '#212121' : '#f5f5f5' }}
-              />
-              
-              {/* Live Data Overlay */}
-              {isLiveDataEnabled && !listenersLoading && (
-                <div className="absolute top-4 right-4 z-10">
-                  <div className="bg-primary/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-primary/30">
-                    <div className="flex items-center gap-2 text-primary text-sm font-semibold">
-                      <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                      {activeListeners.length} Live
-                    </div>
+              </div>
+            )}
+
+            {/* Country List */}
+            <div className="flex-1 overflow-y-auto">
+              {!isLiveDataEnabled ? (
+                <div className="flex flex-col items-center justify-center h-full text-center space-y-3">
+                  <Globe className="w-12 h-12 text-muted-foreground/50" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Enable live data to see active locations</p>
+                    {isAdmin && (
+                      <p className="text-xs text-muted-foreground/70 mt-1">Use admin controls above to toggle live Firebase data</p>
+                    )}
                   </div>
                 </div>
-              )}
-
-              {/* Country Stats */}
-              {isLiveDataEnabled && Object.keys(countryStats).length > 0 && (
-                <div className="absolute bottom-4 left-4 right-4 z-10">
-                  <div className="bg-card/90 backdrop-blur-sm rounded-lg p-3 border border-border/50 max-h-32 overflow-y-auto">
-                    <div className="text-xs font-semibold text-muted-foreground mb-2">BY COUNTRY</div>
-                    <div className="grid grid-cols-2 gap-1 text-xs">
-                      {Object.entries(countryStats)
-                        .sort(([,a], [,b]) => b - a)
-                        .slice(0, 6)
-                        .map(([country, count]) => (
-                          <div key={country} className="flex justify-between">
-                            <span className="truncate">{country}</span>
-                            <span className="text-primary font-semibold">{count}</span>
-                          </div>
-                        ))}
+              ) : listenersLoading ? (
+                <div className="flex flex-col items-center justify-center h-full">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary mb-2" />
+                  <p className="text-sm text-muted-foreground">Loading country data...</p>
+                </div>
+              ) : countryListeners.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center space-y-3">
+                  <MapPin className="w-12 h-12 text-muted-foreground/50" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">No active listeners found</p>
+                    <p className="text-xs text-muted-foreground/70 mt-1">Users need to have isActiveListening=true and location data</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 text-center">
+                    Countries with Active Listeners
+                  </div>
+                  {countryListeners.map((country, index) => (
+                    <div 
+                      key={country.country} 
+                      className="flex items-center justify-between p-3 rounded-lg bg-card/40 border border-border/30 hover:bg-card/60 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/20 text-primary text-xs font-bold">
+                          {index + 1}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-primary" />
+                          <span className="font-medium">{country.country}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl font-black text-primary">{country.count}</span>
+                        <span className="text-xs text-muted-foreground">
+                          listener{country.count !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Summary at bottom */}
+                  <div className="mt-4 pt-3 border-t border-border/30">
+                    <div className="text-center text-xs text-muted-foreground">
+                      <span className="font-semibold text-primary">
+                        {countryListeners.reduce((sum, country) => sum + country.count, 0)}
+                      </span> total active listeners across{' '}
+                      <span className="font-semibold text-primary">
+                        {countryListeners.length}
+                      </span> {countryListeners.length === 1 ? 'country' : 'countries'}
                     </div>
                   </div>
                 </div>
@@ -408,22 +243,7 @@ const LiveStatsAndLocations = () => {
         </Card>
       </div>
 
-      {/* CSS for animations */}
-      <style>{`
-        @keyframes livePulse {
-          0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
-          50% { transform: translate(-50%, -50%) scale(1.3); opacity: 0.4; }
-        }
-        
-        @keyframes fadeInPulse {
-          0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-          100% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
-        }
-        
-        .pulsing-listener-dot {
-          transition: opacity 0.5s ease-out;
-        }
-      `}</style>
+
     </div>
   );
 };
