@@ -55,7 +55,7 @@ Key entities include:
 - **Countdown Timer**: Configured to countdown to August 10th, 2025 at 12:00 PM for the first broadcast launch.
 - **E-commerce**: Direct checkout system for merchandise with "Buy Now" buttons and order confirmation.
 - **Security**: Enhanced security headers (CSP, HSTS), XSS vulnerability fixes, and regular dependency updates.
-- **Deployment**: Optimized for Replit autoscale deployment with Vite for frontend builds and ESBuild for backend bundling.
+- **Deployment**: Successfully deployed to Firebase Hosting with custom domain. Live at spandex-salvation-radio.com (deployed August 2, 2025).
 
 ## External Dependencies
 
@@ -69,3 +69,21 @@ Key entities include:
 - **Payment Processing**: Stripe (placeholder for integration)
 - **Social Media**: Direct links for sharing.
 - **Security**: Google reCAPTCHA Enterprise (for SMS fraud detection)
+
+## Recent Deployment Status
+
+### Firebase Hosting Deployment (August 2, 2025)
+- ✅ **Successful Build**: Client build completed (1.05MB main bundle)
+- ✅ **Firebase Deploy**: 66 files uploaded successfully
+- ✅ **Live URLs**: 
+  - Primary: https://spandex-salvation-radio.com
+  - Firebase: https://spandex-salvation-radio-site.web.app
+- ✅ **Site Verification**: Confirmed working with proper meta title
+- ✅ **Focus Ring Removal**: All white border/focus issues resolved with comprehensive CSS
+- ✅ **Domain Configuration**: Custom domain properly configured and active
+
+### Technical Notes
+- Build size optimized with asset splitting
+- All CSS focus ring elimination working perfectly  
+- Firebase hosting configuration includes proper caching headers
+- Site fully accessible and responsive
