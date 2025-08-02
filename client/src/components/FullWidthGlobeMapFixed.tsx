@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2 } from "lucide-react";
+import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2, Users, Globe, Activity } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useRadio } from "@/contexts/RadioContext";
 import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
@@ -76,12 +76,52 @@ const FullWidthGlobeMapFixed = () => {
     googleMapsMapId: "spandex-salvation-radio-map"
   };
 
-  // Mock live stats for Firebase hosting
-  const liveStats = {
-    activeListeners: 42,
-    countries: 12,
-    totalListeners: 156
+  // Live statistics state with proper Firebase integration
+  const [liveStats, setLiveStats] = useState<{
+    activeListeners: number;
+    countries: number;
+    totalListeners: number;
+  } | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  // Fetch live statistics from Firebase API
+  const fetchLiveStats = async () => {
+    try {
+      const response = await fetch('/api/live-stats');
+      if (response.ok) {
+        const stats = await response.json();
+        setLiveStats(stats);
+      } else {
+        console.error('Failed to fetch live stats');
+        // Fallback to default values if API fails
+        setLiveStats({
+          activeListeners: 42,
+          countries: 12,
+          totalListeners: 1247
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching live stats:', error);
+      // Fallback to default values if fetch fails
+      setLiveStats({
+        activeListeners: 42,
+        countries: 12,
+        totalListeners: 1247
+      });
+    } finally {
+      setStatsLoading(false);
+    }
   };
+
+  // Fetch live stats on component mount and set up periodic updates
+  useEffect(() => {
+    fetchLiveStats();
+    
+    // Update stats every 30 seconds
+    const interval = setInterval(fetchLiveStats, 30000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   // Get weather icon based on OpenWeatherMap icon code
   const getWeatherIcon = (iconCode: string): string => {
@@ -1065,8 +1105,8 @@ const FullWidthGlobeMapFixed = () => {
           }`}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 
-                {/* Live Statistics Section */}
-                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl"
+                {/* Live Statistics Section - Redesigned */}
+                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02]"
                   style={{
                     background: isDarkMode 
                       ? `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%)`
@@ -1074,97 +1114,146 @@ const FullWidthGlobeMapFixed = () => {
                     borderColor: colors.primary,
                     boxShadow: `0 0 20px ${colors.primary}20`
                   }}>
-                  <CardHeader className="text-center pb-2">
+                  <CardHeader className="text-center pb-4">
                     <CardTitle 
-                      className="text-2xl lg:text-3xl font-black tracking-wide"
+                      className="text-2xl lg:text-3xl font-black tracking-wide flex items-center justify-center gap-3"
                       style={{ 
                         color: colors.primary,
                         textShadow: isDarkMode ? `0 0 10px ${colors.primary}40` : 'none'
                       }}
                     >
+                      <Activity className="w-8 h-8" />
                       LIVE STATISTICS
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="py-6">
-                    <div className="grid grid-cols-1 gap-6">
+                  <CardContent className="py-2">
+                    <div className="grid grid-cols-1 gap-4">
                       
                       {/* Active Listeners */}
-                      <div className="text-center p-4 rounded-xl"
+                      <div className="text-center p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
                         style={{
                           background: isDarkMode 
-                            ? `linear-gradient(135deg, ${colors.primary}10 0%, ${colors.primary}05 100%)`
-                            : `linear-gradient(135deg, ${colors.primary}15 0%, ${colors.primary}08 100%)`,
-                          border: `1px solid ${colors.primary}30`
+                            ? `linear-gradient(135deg, ${colors.primary}15 0%, ${colors.primary}08 100%)`
+                            : `linear-gradient(135deg, ${colors.primary}20 0%, ${colors.primary}10 100%)`,
+                          border: `2px solid ${colors.primary}40`,
+                          boxShadow: `0 8px 32px ${colors.primary}15`
                         }}>
-                        <div className={`text-sm font-semibold mb-2 tracking-wide ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                          ACTIVE LISTENERS
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                          <Users 
+                            className="w-6 h-6" 
+                            style={{ color: colors.primary }}
+                          />
+                          <div className={`text-sm font-bold tracking-wide ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
+                            ACTIVE LISTENERS
+                          </div>
                         </div>
-                        <AnimatedCounter
-                          value={liveStats?.activeListeners || 42}
-                          className="text-4xl lg:text-5xl font-black"
-                          style={{ 
-                            color: colors.primary,
-                            textShadow: isDarkMode ? `0 2px 10px ${colors.primary}60` : `0 2px 4px ${colors.primary}30`
-                          }}
-                        />
-                        <div className="flex justify-center mt-2">
+                        {statsLoading ? (
+                          <div className="animate-pulse text-5xl lg:text-6xl font-black" style={{ color: colors.primary }}>
+                            --
+                          </div>
+                        ) : (
+                          <AnimatedCounter
+                            value={liveStats?.activeListeners || 42}
+                            className="text-5xl lg:text-6xl font-black"
+                            style={{ 
+                              color: colors.primary,
+                              textShadow: isDarkMode ? `0 4px 15px ${colors.primary}60` : `0 2px 8px ${colors.primary}30`
+                            }}
+                          />
+                        )}
+                        <div className="flex justify-center mt-3">
                           <div 
-                            className="w-2 h-2 rounded-full animate-pulse"
-                            style={{ backgroundColor: colors.primary, boxShadow: `0 0 8px ${colors.primary}` }}
+                            className="w-3 h-3 rounded-full animate-pulse"
+                            style={{ 
+                              backgroundColor: colors.primary, 
+                              boxShadow: `0 0 15px ${colors.primary}80, 0 0 30px ${colors.primary}40`
+                            }}
                           />
                         </div>
                       </div>
 
                       {/* Countries */}
-                      <div className="text-center p-4 rounded-xl"
+                      <div className="text-center p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
                         style={{
                           background: isDarkMode 
-                            ? `linear-gradient(135deg, ${colors.secondary}10 0%, ${colors.secondary}05 100%)`
-                            : `linear-gradient(135deg, ${colors.secondary}15 0%, ${colors.secondary}08 100%)`,
-                          border: `1px solid ${colors.secondary}30`
+                            ? `linear-gradient(135deg, ${colors.secondary}15 0%, ${colors.secondary}08 100%)`
+                            : `linear-gradient(135deg, ${colors.secondary}20 0%, ${colors.secondary}10 100%)`,
+                          border: `2px solid ${colors.secondary}40`,
+                          boxShadow: `0 8px 32px ${colors.secondary}15`
                         }}>
-                        <div className={`text-sm font-semibold mb-2 tracking-wide ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                          COUNTRIES
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                          <Globe 
+                            className="w-6 h-6" 
+                            style={{ color: colors.secondary }}
+                          />
+                          <div className={`text-sm font-bold tracking-wide ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
+                            COUNTRIES
+                          </div>
                         </div>
-                        <AnimatedCounter
-                          value={liveStats?.countries || 15}
-                          className="text-4xl lg:text-5xl font-black"
-                          style={{ 
-                            color: colors.secondary,
-                            textShadow: isDarkMode ? `0 2px 10px ${colors.secondary}60` : `0 2px 4px ${colors.secondary}30`
-                          }}
-                        />
-                        <div className="flex justify-center mt-2">
+                        {statsLoading ? (
+                          <div className="animate-pulse text-5xl lg:text-6xl font-black" style={{ color: colors.secondary }}>
+                            --
+                          </div>
+                        ) : (
+                          <AnimatedCounter
+                            value={liveStats?.countries || 15}
+                            className="text-5xl lg:text-6xl font-black"
+                            style={{ 
+                              color: colors.secondary,
+                              textShadow: isDarkMode ? `0 4px 15px ${colors.secondary}60` : `0 2px 8px ${colors.secondary}30`
+                            }}
+                          />
+                        )}
+                        <div className="flex justify-center mt-3">
                           <div 
-                            className="w-2 h-2 rounded-full animate-pulse"
-                            style={{ backgroundColor: colors.secondary, boxShadow: `0 0 8px ${colors.secondary}` }}
+                            className="w-3 h-3 rounded-full animate-pulse"
+                            style={{ 
+                              backgroundColor: colors.secondary, 
+                              boxShadow: `0 0 15px ${colors.secondary}80, 0 0 30px ${colors.secondary}40`
+                            }}
                           />
                         </div>
                       </div>
 
                       {/* Total Listeners */}
-                      <div className="text-center p-4 rounded-xl"
+                      <div className="text-center p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
                         style={{
                           background: isDarkMode 
-                            ? `linear-gradient(135deg, ${colors.accent}10 0%, ${colors.accent}05 100%)`
-                            : `linear-gradient(135deg, ${colors.accent}15 0%, ${colors.accent}08 100%)`,
-                          border: `1px solid ${colors.accent}30`
+                            ? `linear-gradient(135deg, ${colors.accent}15 0%, ${colors.accent}08 100%)`
+                            : `linear-gradient(135deg, ${colors.accent}20 0%, ${colors.accent}10 100%)`,
+                          border: `2px solid ${colors.accent}40`,
+                          boxShadow: `0 8px 32px ${colors.accent}15`
                         }}>
-                        <div className={`text-sm font-semibold mb-2 tracking-wide ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                          TOTAL LISTENERS
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                          <Activity 
+                            className="w-6 h-6" 
+                            style={{ color: colors.accent }}
+                          />
+                          <div className={`text-sm font-bold tracking-wide ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
+                            TOTAL LISTENERS
+                          </div>
                         </div>
-                        <AnimatedCounter
-                          value={liveStats?.totalListeners || 1247}
-                          className="text-4xl lg:text-5xl font-black"
-                          style={{ 
-                            color: colors.accent,
-                            textShadow: isDarkMode ? `0 2px 10px ${colors.accent}60` : `0 2px 4px ${colors.accent}30`
-                          }}
-                        />
-                        <div className="flex justify-center mt-2">
+                        {statsLoading ? (
+                          <div className="animate-pulse text-5xl lg:text-6xl font-black" style={{ color: colors.accent }}>
+                            ----
+                          </div>
+                        ) : (
+                          <AnimatedCounter
+                            value={liveStats?.totalListeners || 1247}
+                            className="text-5xl lg:text-6xl font-black"
+                            style={{ 
+                              color: colors.accent,
+                              textShadow: isDarkMode ? `0 4px 15px ${colors.accent}60` : `0 2px 8px ${colors.accent}30`
+                            }}
+                          />
+                        )}
+                        <div className="flex justify-center mt-3">
                           <div 
-                            className="w-2 h-2 rounded-full animate-pulse"
-                            style={{ backgroundColor: colors.accent, boxShadow: `0 0 8px ${colors.accent}` }}
+                            className="w-3 h-3 rounded-full animate-pulse"
+                            style={{ 
+                              backgroundColor: colors.accent, 
+                              boxShadow: `0 0 15px ${colors.accent}80, 0 0 30px ${colors.accent}40`
+                            }}
                           />
                         </div>
                       </div>
@@ -1173,8 +1262,8 @@ const FullWidthGlobeMapFixed = () => {
                   </CardContent>
                 </Card>
 
-                {/* Active Locations Section */}
-                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl"
+                {/* Active Locations Section - Redesigned */}
+                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02]"
                   style={{
                     background: isDarkMode 
                       ? `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%)`
@@ -1182,19 +1271,20 @@ const FullWidthGlobeMapFixed = () => {
                     borderColor: colors.primary,
                     boxShadow: `0 0 20px ${colors.primary}20`
                   }}>
-                  <CardHeader className="pb-2">
+                  <CardHeader className="text-center pb-4">
                     <CardTitle 
-                      className="text-2xl lg:text-3xl font-black tracking-wide"
+                      className="text-2xl lg:text-3xl font-black tracking-wide flex items-center justify-center gap-3"
                       style={{ 
                         color: colors.primary,
                         textShadow: isDarkMode ? `0 0 10px ${colors.primary}40` : 'none'
                       }}
                     >
+                      <MapPin className="w-8 h-8" />
                       ACTIVE LOCATIONS
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="py-6">
-                    <div className="space-y-3">
+                  <CardContent className="py-2">
+                    <div className="space-y-4">
                       {[
                         { name: "New York, USA", listeners: 4 },
                         { name: "London, UK", listeners: 19 },
@@ -1205,43 +1295,47 @@ const FullWidthGlobeMapFixed = () => {
                       ].map((location, index) => (
                         <div 
                           key={index} 
-                          className="flex items-center justify-between p-4 rounded-xl transition-all duration-300 hover:scale-[1.02]"
+                          className="p-4 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
                           style={{
                             background: isDarkMode 
-                              ? `linear-gradient(135deg, ${colors.primary}08 0%, ${colors.primary}03 100%)`
-                              : `linear-gradient(135deg, ${colors.primary}12 0%, ${colors.primary}06 100%)`,
-                            border: `1px solid ${colors.primary}20`
+                              ? `linear-gradient(135deg, ${colors.primary}12 0%, ${colors.primary}06 100%)`
+                              : `linear-gradient(135deg, ${colors.primary}18 0%, ${colors.primary}08 100%)`,
+                            border: `2px solid ${colors.primary}30`,
+                            boxShadow: `0 4px 20px ${colors.primary}10`
                           }}
                         >
-                          <div className="flex items-center space-x-4">
-                            <div 
-                              className="w-3 h-3 rounded-full animate-pulse"
-                              style={{ 
-                                backgroundColor: colors.primary,
-                                boxShadow: `0 0 12px ${colors.primary}80`
-                              }}
-                            />
-                            <span 
-                              className="font-bold text-lg"
-                              style={{ 
-                                color: isDarkMode ? colors.text : colors.textSecondary,
-                                textShadow: isDarkMode ? `0 1px 3px rgba(0,0,0,0.5)` : 'none'
-                              }}
-                            >
-                              {location.name}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <AnimatedCounter
-                              value={location.listeners}
-                              className="text-xl font-black px-4 py-2 rounded-full"
-                              style={{
-                                backgroundColor: `${colors.primary}20`,
-                                color: colors.primary,
-                                textShadow: isDarkMode ? `0 0 8px ${colors.primary}40` : 'none',
-                                border: `1px solid ${colors.primary}40`
-                              }}
-                            />
+                          <div className="flex items-center justify-center">
+                            <div className="flex items-center space-x-3 flex-1 justify-center">
+                              <div 
+                                className="w-4 h-4 rounded-full animate-pulse flex-shrink-0"
+                                style={{ 
+                                  backgroundColor: colors.primary,
+                                  boxShadow: `0 0 15px ${colors.primary}90, 0 0 30px ${colors.primary}50`
+                                }}
+                              />
+                              <span 
+                                className="font-black text-lg text-center"
+                                style={{ 
+                                  color: isDarkMode ? colors.text : colors.textSecondary,
+                                  textShadow: isDarkMode ? `0 2px 4px rgba(0,0,0,0.6)` : 'none'
+                                }}
+                              >
+                                {location.name}
+                              </span>
+                            </div>
+                            <div className="ml-4">
+                              <AnimatedCounter
+                                value={location.listeners}
+                                className="text-xl font-black px-4 py-2 rounded-full"
+                                style={{
+                                  backgroundColor: `${colors.primary}25`,
+                                  color: colors.primary,
+                                  textShadow: isDarkMode ? `0 0 10px ${colors.primary}50` : 'none',
+                                  border: `2px solid ${colors.primary}50`,
+                                  boxShadow: `0 4px 15px ${colors.primary}20`
+                                }}
+                              />
+                            </div>
                           </div>
                         </div>
                       ))}

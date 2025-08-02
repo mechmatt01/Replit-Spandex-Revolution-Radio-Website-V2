@@ -1,0 +1,27 @@
+So, first, let’s review what exactly should be included in a user profile when signing up I want the database to create a random 10 alphanumeric key for the user and the database should be setup like…
+
+“Users” > “User: {ALPHANUMERIC HERE HERE}” > User Profile Data
+
+For the User Profile Data... 
+- FirstName (Text String)
+- LastName (Text String)
+- UserProfileImage (URL)
+- EmailAddress (Text String)
+- PhoneNumber (Numbers)
+- Location (Coordinates)
+- IsActiveListening (Boolean) 
+- ActiveSubscription (Boolean)
+- RenewalDate (Timestamp)
+- UserID (String)
+
+There may be more later but this is for now… if you can not get access to some of this information upon sign up which it should include in the sign up process asking for the users First Name, Last Name, Email Address and Phone Number then if not avaialable for some reason please leave blank but create the key still with no value.
+
+- As for this data I want the “PhoneNumber” to be verified with a code sent to user using Google’s Firebase authentication as well as their email address verified with a code sent to their email and verified as well.
+- For the “IsActiveListening”, this should be defaulted as “False” and updated to “True” every time the user is logged in, and is activley tuned into the live radio broadcast. Basically when they click “Play Live” in the main player or Play in the floating player. And when clicking pause in the main player or pause in the floating player change/update this value of the key to “False”. When this key changes the key to “IsActiveListening” to “True” the live map should display the user with a flashing little dot on the map at the location the users around the world are currently listening and get their location using the “Location” keys for each user that has “IsActiveListening” set to “True” currently and live update the map with new dots fading when a users is set to “False” and fading in when set to “True”
+- The “Location” key should come from their current location and permission asked by Chrome, or whatever browser or the iPhone location in Safari etc. and should update every time they login/enter the site again if the location has detected a change from what it was/is currently and also set when they create the account for the first time/login each time
+- The “ActiveSubscription” key should be set to “False” by default for each user and changes to “True” when the user has an active subscription
+- The “RenewalDate” timestamp should update monthly to their next renewal date for the subscription if one is active… if not this does not have to be in their profile as a key even or if so set it as null until they subscribe and update it after each billing cycle to the next one
+- As for the “ProfileImage” if it is their own image uploaded get the URL from the uploaded image which should be stored in the datastore in Firebase in a folder called “User: {ALPHANUMERIC HERE HERE}” the same as the database collection name for each user and in this their profile image should be set with the URL in the “ProfileImage” key, if this is an avater then set it to the avaters URLs selected which all should be stored in a seperate folder in the data store called “Avatars” and each with their own URL. If logged into through Google you can also try and get the current Google Profile URL and use that and set that here too instead unless changed by the user of course
+- The “UserID” should be set to the value of the 10 length alphanumeric key that the user is identified by
+
+As for the live map, when it changes the key to “IsActiveListening” to “True” it should display the user with a flashing little dot on the map at the location the users around the world are currently listening and get their location using the “Location” keys for each user that has “IsActiveListening” set to “True” currently and live update the map with new dots fading when a users is set to “False” and fading in when set to “True”
