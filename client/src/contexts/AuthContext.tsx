@@ -71,7 +71,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const result = await getUserProfile(userID);
       if (result.success && result.profile) {
-        setUser(result.profile);
+        setUser({
+          ...result.profile,
+          EmailVerified: result.profile.EmailVerified || false,
+          PhoneVerified: result.profile.PhoneVerified || false,
+          CreatedAt: result.profile.CreatedAt || new Date().toISOString(),
+          UpdatedAt: result.profile.UpdatedAt || new Date().toISOString()
+        });
         return result.profile;
       }
       return null;
@@ -103,7 +109,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('isLoggedIn', 'true');
       
       // Set user state
-      setUser(result.profile);
+      setUser({
+        ...result.profile,
+        EmailVerified: result.profile.EmailVerified || false,
+        PhoneVerified: result.profile.PhoneVerified || false,
+        CreatedAt: result.profile.CreatedAt || new Date().toISOString(),
+        UpdatedAt: result.profile.UpdatedAt || new Date().toISOString()
+      });
       
       // Update location if available
       try {
@@ -164,7 +176,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('isLoggedIn', 'true');
       
       // Set user state
-      setUser(result.profile);
+      setUser({
+        ...result.profile,
+        EmailVerified: result.profile.EmailVerified || false,
+        PhoneVerified: result.profile.PhoneVerified || false,
+        CreatedAt: result.profile.CreatedAt || new Date().toISOString(),
+        UpdatedAt: result.profile.UpdatedAt || new Date().toISOString()
+      });
       
       // Update location if available
       try {

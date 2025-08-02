@@ -26,7 +26,8 @@ export default function Schedule() {
       dayOfWeek: "Monday",
       time: "9:00 AM",
       duration: 120,
-      description: "Start your week with the best metal hits"
+      description: "Start your week with the best metal hits",
+      isActive: true
     },
     {
       id: 2, 
@@ -35,7 +36,8 @@ export default function Schedule() {
       dayOfWeek: "Tuesday",
       time: "7:00 PM",
       duration: 180,
-      description: "Pure thrash metal madness"
+      description: "Pure thrash metal madness",
+      isActive: true
     },
     {
       id: 3,
@@ -44,7 +46,8 @@ export default function Schedule() {
       dayOfWeek: "Wednesday", 
       time: "8:00 PM",
       duration: 150,
-      description: "The heaviest death metal around"
+      description: "The heaviest death metal around",
+      isActive: true
     }
   ];
 
@@ -55,7 +58,8 @@ export default function Schedule() {
       host: "DJ Classic",
       date: new Date(),
       duration: 60,
-      description: "The best classic metal tracks"
+      description: "The best classic metal tracks",
+      audioUrl: "/audio/classic-metal-hour.mp3"
     }
   ];
 

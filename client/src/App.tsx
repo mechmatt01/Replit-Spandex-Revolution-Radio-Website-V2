@@ -34,23 +34,23 @@ function VerificationGate({ children }: { children: React.ReactNode }) {
   if (!user) return <>{children}</>; // Not logged in, allow access to public routes
 
   // If not verified, show the appropriate modal and block app
-  if (!user.isEmailVerified) {
+  if (!user.EmailVerified) {
     return (
       <VerificationModal
         isOpen={true}
         onClose={() => setShowEmailModal(false)}
         type="email"
-        contactInfo={user.email}
+        contactInfo={user.EmailAddress}
       />
     );
   }
-  if (!user.isPhoneVerified) {
+  if (!user.PhoneVerified) {
     return (
       <VerificationModal
         isOpen={true}
         onClose={() => setShowPhoneModal(false)}
         type="phone"
-        contactInfo={user.phoneNumber}
+        contactInfo={user.PhoneNumber}
       />
     );
   }

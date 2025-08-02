@@ -50,7 +50,7 @@ try {
   isFirebaseAvailable = false;
 }
 
-const db = isFirebaseAvailable ? getFirestore(firebaseApp) : null;
+export const db = isFirebaseAvailable ? getFirestore(firebaseApp) : null;
 
 /**
  * Firebase-based Live Statistics Storage

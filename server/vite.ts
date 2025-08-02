@@ -1,5 +1,6 @@
 import { createServer, createLogger } from "vite";
-import type { Express, Server } from "express";
+import type { Express } from "express";
+import type { Server } from "http";
 import express from "express";
 import path from "path";
 import fs from "fs";
@@ -58,7 +59,10 @@ export async function setupVite(app: Express, server: Server) {
           }
         },
       },
-      server: serverOptions,
+      server: {
+        ...serverOptions,
+        allowedHosts: true
+      },
       appType: "custom",
     });
 

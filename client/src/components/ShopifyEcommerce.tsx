@@ -597,7 +597,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
           <div className="flex justify-between items-start mb-6">
             <h3 
               className="font-black text-2xl"
-              style={{ color: currentTheme === 'light-mode' ? '#000000' : '#ffffff' }}
+              style={{ color: '#ffffff' }}
             >
               {product.title}
             </h3>
@@ -622,7 +622,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
             <div>
               <p 
                 className="font-semibold mb-4"
-                style={{ color: colors.textMuted }}
+                style={{ color: '#9ca3af' }}
               >
                 {product.description}
               </p>
