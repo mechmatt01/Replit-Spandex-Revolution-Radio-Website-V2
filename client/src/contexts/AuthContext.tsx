@@ -6,6 +6,7 @@ import {
   ReactNode,
 } from "react";
 import { auth, handleRedirectResult, signInWithGoogle, createUserProfile, getUserProfile, updateUserProfile, uploadProfileImage, updateListeningStatus, updateUserLocation, loginUser, registerUser } from "@/lib/firebase";
+import { getRedirectResult } from "firebase/auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 
@@ -418,28 +419,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('isLoggedIn', 'true');
         
         try {
-          // Create or get user profile
-          const profileResult = await createUserProfile(firebaseUser);
-          console.log('[AuthContext] Profile creation result:', profileResult);
-          if (profileResult.success && profileResult.profile) {
-            setUser(profileResult.profile);
-            localStorage.setItem('userID', profileResult.userID);
-            localStorage.setItem('userProfile', JSON.stringify(profileResult.profile));
-            console.log('[AuthContext] Firebase profile set:', profileResult.profile);
-            
-            toast({
-              title: "Welcome Back!",
-              description: `Welcome to Spandex Salvation Radio, ${profileResult.profile.FirstName}!`,
-              variant: "default",
-            });
+          // Only create profile if this is a fresh sign-in (not just auth state change)
+          const redirectResult = await getRedirectResult(auth);
+          if (redirectResult) {
+            // This is a fresh Google sign-in, create new profile
+            const profileResult = await createUserProfile(firebaseUser);
+            console.log('[AuthContext] Profile creation result:', profileResult);
+            if (profileResult.success && profileResult.profile) {
+              setUser(profileResult.profile);
+              localStorage.setItem('userID', profileResult.userID);
+              localStorage.setItem('userProfile', JSON.stringify(profileResult.profile));
+              console.log('[AuthContext] Firebase profile set:', profileResult.profile);
+              
+              toast({
+                title: "Welcome Back!",
+                description: `Welcome to Spandex Salvation Radio, ${profileResult.profile.FirstName}!`,
+                variant: "default",
+              });
+            }
+          } else {
+            // This is just an auth state change, don't create profile automatically
+            console.log('[AuthContext] Auth state change detected, not creating new profile');
           }
         } catch (error) {
-          console.error('[AuthContext] Error creating/loading profile:', error);
-          toast({
-            title: "Profile Error",
-            description: "Failed to load user profile",
-            variant: "error",
-          });
+          console.error('[AuthContext] Error handling auth state change:', error);
+          // Don't show error toast for normal auth state changes
         }
       } else {
         console.log('[AuthContext] No user authenticated, clearing state');
@@ -452,38 +456,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
     });
 
-    // Handle redirect result from Google sign in
-    console.log('[AuthContext] Checking for redirect result...');
-    handleRedirectResult().then((result) => {
-      console.log('[AuthContext] handleRedirectResult result:', result);
-      if (result.success && result.user) {
-        console.log('[AuthContext] Successful redirect result, setting user state');
-        setFirebaseUser(result.user);
-        if (result.profileResult?.profile) {
-          setUser(result.profileResult.profile);
-          localStorage.setItem('userID', result.profileResult.userID);
-          localStorage.setItem('userProfile', JSON.stringify(result.profileResult.profile));
-          localStorage.setItem('isLoggedIn', 'true');
-          
-          toast({
-            title: "Google Sign-In Successful",
-            description: `Welcome to Spandex Salvation Radio, ${result.profileResult.profile.FirstName}!`,
-            variant: "default",
-          });
+    // Handle redirect result from Google sign in only if there are URL parameters
+    if (window.location.search.length > 0) {
+      console.log('[AuthContext] URL parameters detected, checking for redirect result...');
+      handleRedirectResult().then((result) => {
+        console.log('[AuthContext] handleRedirectResult result:', result);
+        if (result.success && result.user) {
+          console.log('[AuthContext] Successful redirect result, setting user state');
+          setFirebaseUser(result.user);
+          if (result.profileResult?.profile) {
+            setUser(result.profileResult.profile);
+            localStorage.setItem('userID', result.profileResult.userID);
+            localStorage.setItem('userProfile', JSON.stringify(result.profileResult.profile));
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            toast({
+              title: "Google Sign-In Successful",
+              description: `Welcome to Spandex Salvation Radio, ${result.profileResult.profile.FirstName}!`,
+              variant: "default",
+            });
+          }
+          setLoading(false);
+          console.log('[AuthContext] User state set after Google redirect:', result.user);
+        } else {
+          console.log('[AuthContext] No successful redirect result, error:', result.error);
+          if (result.error && result.error !== 'No redirect result') {
+            toast({
+              title: "Google Sign-In Failed",
+              description: result.error,
+              variant: "error",
+            });
+          }
         }
-        setLoading(false);
-        console.log('[AuthContext] User state set after Google redirect:', result.user);
-      } else {
-        console.log('[AuthContext] No successful redirect result, error:', result.error);
-        if (result.error) {
-          toast({
-            title: "Google Sign-In Failed",
-            description: result.error,
-            variant: "error",
-          });
-        }
-      }
-    });
+      });
+    } else {
+      console.log('[AuthContext] No URL parameters, skipping redirect result check');
+    }
 
     setLoading(false);
 

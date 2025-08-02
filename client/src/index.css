@@ -1236,7 +1236,7 @@ html *:focus-visible {
 
 /* Global theme-aware interactive elements */
 .card, .feature-card, [class*="feature"], [class*="show"] {
-  border: 1px solid hsl(var(--border));
+  border: 2px solid hsl(var(--border));
   transition: all 0.3s ease;
 }
 
@@ -1317,12 +1317,12 @@ html *:focus-visible {
 }
 
 /* Feature and show specific styling with enhanced glow effects */
-.feature-container, .show-container {
+.feature-container, .show-container, .map-container {
   border: 2px solid hsl(var(--border));
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.feature-container:hover, .show-container:hover {
+.feature-container:hover, .show-container:hover, .map-container:hover {
   border-color: hsl(var(--primary));
   box-shadow: 
     0 0 30px hsl(var(--primary) / 0.6),

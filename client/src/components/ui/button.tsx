@@ -9,15 +9,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "border-2 border-primary bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 hover:border-primary hover:glow-primary",
+        default: "border-0 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 hover:border-2 hover:border-primary hover:glow-primary",
         destructive:
-          "border-2 border-destructive bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-xl hover:shadow-destructive/30 hover:border-destructive",
+          "border-0 bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-xl hover:shadow-destructive/30 hover:border-2 hover:border-destructive",
         outline:
           "border-2 border-primary bg-transparent text-primary hover:bg-primary/10 hover:text-primary hover:shadow-lg hover:shadow-primary/20 hover:border-primary hover:glow-primary",
         secondary:
-          "border-2 border-primary bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-lg hover:shadow-primary/20 hover:border-primary hover:glow-primary",
-        ghost: "border-2 border-primary/50 bg-transparent hover:border-primary hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-primary/10 hover:glow-primary focus:border-primary",
-        link: "text-primary underline-offset-4 hover:underline hover:scale-100 border-2 border-primary/30 hover:border-primary/60 hover:glow-primary focus:border-primary/60",
+          "border-0 bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-lg hover:shadow-primary/20 hover:border-2 hover:border-primary hover:glow-primary",
+        ghost: "border-0 bg-transparent hover:border-2 hover:border-primary hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-primary/10 hover:glow-primary focus:border-2 focus:border-primary",
+        link: "text-primary underline-offset-4 hover:underline hover:scale-100 border-0 hover:border-2 hover:border-primary/60 hover:glow-primary focus:border-2 focus:border-primary/60",
       },
       size: {
         default: "h-10 px-4 py-2",
