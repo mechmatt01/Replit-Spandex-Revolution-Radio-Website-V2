@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { useTheme } from "@/contexts/ThemeContext";
+import { Button } from "../components/ui/button";
+import { useTheme } from "../contexts/ThemeContext";
 import FadeInView from "./FadeInView";
 import StaggeredAnimation from "./StaggeredAnimation";
 

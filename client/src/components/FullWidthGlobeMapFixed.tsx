@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2, Users, Globe, Activity, Sun } from "lucide-react";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useToast } from "@/hooks/use-toast";
-import { useRadio } from "@/contexts/RadioContext";
-import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
-import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
+import { useTheme } from "../contexts/ThemeContext";
+import { useToast } from "../hooks/use-toast";
+import { useRadio } from "../contexts/RadioContext";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
+import { useAdaptiveTheme } from "../hooks/useAdaptiveTheme";
 import { AnimatedCounter } from "./AnimatedCounter";
 
 // Types

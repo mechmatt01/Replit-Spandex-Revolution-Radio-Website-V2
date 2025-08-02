@@ -1,20 +1,20 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Check, VolumeX, Users, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
-import { useTheme } from "@/contexts/ThemeContext";
+} from "../components/ui/dialog";
+import { useToast } from "../hooks/use-toast";
+import { apiRequest } from "../lib/queryClient";
+import { useTheme } from "../contexts/ThemeContext";
 import type { InsertSubscription } from "@shared/schema";
 
 const subscriptionTiers = [

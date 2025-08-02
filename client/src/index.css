@@ -18,6 +18,52 @@
   --background-rgb: 31, 41, 55;
 }
 
+/* Remove ALL white borders and outlines from the entire application */
+* {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Override any component borders */
+.border,
+.border-t,
+.border-b,
+.border-l,
+.border-r,
+.border-x,
+.border-y,
+.border-solid,
+.border-dashed,
+.border-dotted {
+  border: none !important;
+}
+
+/* Remove borders from common UI elements */
+button,
+input,
+textarea,
+select,
+div,
+section,
+article,
+nav,
+header,
+footer,
+main,
+aside {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Override focus states to remove borders */
+*:focus,
+*:focus-visible,
+*:focus-within {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* Mobile Safari Navigation Fix */
 .safe-area-inset-top {
   padding-top: env(safe-area-inset-top);

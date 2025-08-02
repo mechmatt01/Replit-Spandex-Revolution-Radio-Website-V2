@@ -1,10 +1,10 @@
 import { useState } from "react";
-import RadioCoPlayer from "@/components/RadioCoPlayer";
-import Navigation from "@/components/Navigation";
-import StickyPlayer from "@/components/StickyPlayer";
+import RadioCoPlayer from "../components/RadioCoPlayer";
+import Navigation from "../components/Navigation";
+import StickyPlayer from "../components/StickyPlayer";
 import { ChevronDown } from "lucide-react";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useRadio } from "@/contexts/RadioContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { useRadio } from "../contexts/RadioContext";
 
 type Station = "95.5 The Beat" | "Hot 97" | "Power 106" | "SomaFM Metal";
 

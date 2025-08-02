@@ -4,25 +4,25 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "../components/ui/dialog";
+import { Button } from "../components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Upload, User, Camera, Crown, Star } from "lucide-react";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { useTheme } from "../contexts/ThemeContext";
+import { useToast } from "../hooks/use-toast";
+import { apiRequest } from "../lib/queryClient";
 
 // Import premium avatars
-import BassBatAvatar from "@assets/../Avatars/Bass-Bat.jpg";
-import DrumDragonAvatar from "@assets/../Avatars/Drum-Dragon.jpeg";
-import GuitarGoblinAvatar from "@assets/../Avatars/Guitar-Goblin.jpeg";
-import HeadbangerHamsterAvatar from "@assets/../Avatars/Headbanger-Hamster.jpeg";
-import MetalQueenAvatar from "@assets/../Avatars/Metal-Queen.jpeg";
-import MetalCatAvatar from "@assets/../Avatars/Metal Cat.jpeg";
-import MoshPitMonsterAvatar from "@assets/../Avatars/Mosh-Pit-Monster.jpeg";
-import PunkPandaAvatar from "@assets/../Avatars/Punk-Panda.jpeg";
-import RebelRaccoonAvatar from "@assets/../Avatars/Rebel-Raccoon.jpeg";
-import RockUnicornAvatar from "@assets/../Avatars/Rock-Unicorn.jpeg";
+// import BassBatAvatar from "../../attached_assets/../Avatars/Bass-Bat.jpg";
+// import DrumDragonAvatar from "../../attached_assets/../Avatars/Drum-Dragon.jpeg";
+// import GuitarGoblinAvatar from "../../attached_assets/../Avatars/Guitar-Goblin.jpeg";
+// import HeadbangerHamsterAvatar from "../../attached_assets/../Avatars/Headbanger-Hamster.jpeg";
+// import MetalQueenAvatar from "../../attached_assets/../Avatars/Metal-Queen.jpeg";
+// import MetalCatAvatar from "../../attached_assets/../Avatars/Metal Cat.jpeg";
+// import MoshPitMonsterAvatar from "../../attached_assets/../Avatars/Mosh-Pit-Monster.jpeg";
+// import PunkPandaAvatar from "../../attached_assets/../Avatars/Punk-Panda.jpeg";
+// import RebelRaccoonAvatar from "../../attached_assets/../Avatars/Rebel-Raccoon.jpeg";
+// import RockUnicornAvatar from "../../attached_assets/../Avatars/Rock-Unicorn.jpeg";
 
 interface AvatarSelectorProps {
   isOpen: boolean;

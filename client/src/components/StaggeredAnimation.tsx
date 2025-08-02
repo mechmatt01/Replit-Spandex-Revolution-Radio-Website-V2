@@ -1,5 +1,5 @@
-import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-import { useScrollVelocity, getAdaptiveAnimationDuration } from "@/hooks/use-scroll-velocity";
+import { useIntersectionObserver } from "../hooks/use-intersection-observer";
+import { useScrollVelocity, getAdaptiveAnimationDuration } from "../hooks/use-scroll-velocity";
 import { useRef, ReactNode, Children, cloneElement, ReactElement, useEffect, useState } from "react";
 
 interface StaggeredAnimationProps {

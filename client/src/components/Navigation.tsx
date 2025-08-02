@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, ChevronDown, User, Calendar, Music, Send, Phone, MapPin, Heart, UserPlus, LogOut, CreditCard, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "../components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "../components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,13 +18,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "../components/ui/alert-dialog";
 import { useLocation } from "wouter";
 import MetalThemeSwitcher from "./MetalThemeSwitcher";
 import AuthModal from "./AuthModal";
 import { useTheme } from "../contexts/ThemeContext";
-import { useAuth } from "@/contexts/AuthContext";
-import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
+import { useAuth } from "../contexts/AuthContext";
+// // import MusicLogoPath from "../../attached_assets/MusicLogoIcon@3x.png";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);

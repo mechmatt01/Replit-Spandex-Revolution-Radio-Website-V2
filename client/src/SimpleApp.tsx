@@ -1,13 +1,20 @@
-import TestPage from "./TestPage";
+import { useState } from "react";
 
-function SimpleApp() {
+export default function SimpleApp() {
+  const [count, setCount] = useState(0);
+  
   return (
-    <div style={{ padding: '20px', color: 'white', backgroundColor: 'black' }}>
-      <h1>Simple App Test</h1>
-      <p>If you can see this, the basic React setup is working!</p>
-      <TestPage />
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <h1>Spandex Salvation Radio</h1>
+      <p>The application is starting...</p>
+      <button onClick={() => setCount(count + 1)}>
+        Count: {count}
+      </button>
+      <div style={{ marginTop: '20px' }}>
+        <p>✅ React is working</p>
+        <p>✅ TypeScript is working</p>
+        <p>🔄 Loading full application...</p>
+      </div>
     </div>
   );
 }
-
-export default SimpleApp;

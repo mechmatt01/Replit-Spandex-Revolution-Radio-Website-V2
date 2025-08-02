@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "../components/ui/popover";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useAuth } from "@/contexts/AuthContext";
+} from "../components/ui/dialog";
+import { useAuth } from "../contexts/AuthContext";
 import {
   Palette,
   Sun,
@@ -32,7 +32,7 @@ import {
   useTheme,
   METAL_THEMES,
   type MetalTheme,
-} from "@/contexts/ThemeContext";
+} from "../contexts/ThemeContext";
 
 const THEME_ICONS: Record<MetalTheme, React.ReactNode> = {
   "classic-metal": <Flame className="w-4 h-4" />,

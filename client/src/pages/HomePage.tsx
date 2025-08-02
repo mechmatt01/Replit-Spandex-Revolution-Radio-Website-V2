@@ -1,23 +1,24 @@
-import Navigation from "@/components/Navigation";
-import Hero from "@/components/Hero";
-import Features from "@/components/Features";
-import About from "@/components/About";
-import Schedule from "@/components/Schedule";
-import Submissions from "@/components/Submissions";
-import FullWidthGlobeMap from "@/components/FullWidthGlobeMapFixed";
-import Contact from "@/components/Contact";
-import SubscriptionCarousel from "@/components/SubscriptionCarousel";
-import ShopifyEcommerce from "@/components/ShopifyEcommerce";
-import FadeInView from "@/components/FadeInView";
-import StaggeredAnimation from "@/components/StaggeredAnimation";
+import Navigation from "../components/Navigation";
+import Hero from "../components/Hero";
+import Features from "../components/Features";
+import About from "../components/About";
+import Schedule from "../components/Schedule";
+import Submissions from "../components/Submissions";
+import FullWidthGlobeMap from "../components/FullWidthGlobeMapFixed";
+import Contact from "../components/Contact";
+import SubscriptionCarousel from "../components/SubscriptionCarousel";
+import ShopifyEcommerce from "../components/ShopifyEcommerce";
+import FadeInView from "../components/FadeInView";
+import StaggeredAnimation from "../components/StaggeredAnimation";
+import StatsAndLocations from "../components/StatsAndLocations";
 
 
 
 import { useState, useEffect } from "react";
-import Footer from "@/components/Footer";
-import StickyPlayer from "@/components/StickyPlayer";
-import ChatButton from "@/components/ChatButton";
-import { useTheme } from "@/contexts/ThemeContext";
+import Footer from "../components/Footer";
+import StickyPlayer from "../components/StickyPlayer";
+import ChatButton from "../components/ChatButton";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function HomePage() {
   const [isScrollingEnabled, setIsScrollingEnabled] = useState(true);
@@ -68,6 +69,10 @@ export default function HomePage() {
       
       <FadeInView direction="up" delay={0}>
         <About />
+      </FadeInView>
+      
+      <FadeInView direction="up" delay={0}>
+        <StatsAndLocations />
       </FadeInView>
       
       <FadeInView direction="up" delay={0}>

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { ShoppingCart, Star, Heart, Share, Eye } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/hooks/use-toast";
-import { useTheme } from "@/contexts/ThemeContext";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Badge } from "../components/ui/badge";
+import { useToast } from "../hooks/use-toast";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface Product {
   id: string;

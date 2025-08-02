@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, Clock, Play, X } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useRadio } from "@/contexts/RadioContext";
+import { Card, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
+import { useTheme } from "../contexts/ThemeContext";
+import { useRadio } from "../contexts/RadioContext";
 import type { ShowSchedule, PastShow } from "@shared/schema";
 import SkeletonLoader from "./SkeletonLoader";
 import FadeInView from "./FadeInView";

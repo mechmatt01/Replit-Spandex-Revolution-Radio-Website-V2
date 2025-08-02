@@ -1,10 +1,10 @@
 import { Volume2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useRadio } from "@/contexts/RadioContext";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
-import ScrollingText from "@/components/ScrollingText";
-import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
+import { Button } from "../components/ui/button";
+import { useRadio } from "../contexts/RadioContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { useAdaptiveTheme } from "../hooks/useAdaptiveTheme";
+import ScrollingText from "../components/ScrollingText";
+import InteractiveAlbumArt from "../components/InteractiveAlbumArt";
 import { useState, useEffect } from "react";
 
 export default function StickyPlayer() {

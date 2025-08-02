@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "../contexts/AuthContext";
+import { apiRequest } from "../lib/queryClient";
 
 interface LocationData {
   lat: number;

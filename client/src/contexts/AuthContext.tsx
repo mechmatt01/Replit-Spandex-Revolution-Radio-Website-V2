@@ -5,10 +5,10 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { auth, handleRedirectResult, signInWithGoogle, createUserProfile, getUserProfile, updateUserProfile, uploadProfileImage, updateListeningStatus, updateUserLocation, loginUser, registerUser } from "@/lib/firebase";
+import { auth, handleRedirectResult, signInWithGoogle, createUserProfile, getUserProfile, updateUserProfile, uploadProfileImage, updateListeningStatus, updateUserLocation, loginUser, registerUser } from "../lib/firebase";
 import { getRedirectResult } from "firebase/auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../hooks/use-toast";
 
 interface User {
   UserID: string;

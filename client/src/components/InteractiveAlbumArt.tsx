@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useTheme } from "@/contexts/ThemeContext";
-import ThemedMusicLogo from "@/components/ThemedMusicLogo";
+import { useTheme } from "../contexts/ThemeContext";
+import ThemedMusicLogo from "../components/ThemedMusicLogo";
 
 interface InteractiveAlbumArtProps {
   artwork?: string;

@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/contexts/AuthContext";
-import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useToast } from "@/hooks/use-toast";
-import { signInWithGoogle, signUpWithEmail, signInWithEmail, sendPasswordReset } from "@/firebase";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { useAuth } from "../contexts/AuthContext";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { useToast } from "../hooks/use-toast";
+import { signInWithGoogle, signUpWithEmail, signInWithEmail, sendPasswordReset } from "../firebase";
 import {
   Loader2,
   Mail,
@@ -19,7 +19,7 @@ import {
   UserPlus,
   Phone,
 } from "lucide-react";
-import GoogleLogoPath from "@assets/GoogleLogoIcon.png";
+// import GoogleLogoPath from "../../attached_assets/GoogleLogoIcon.png";
 
 interface AuthModalProps {
   isOpen: boolean;

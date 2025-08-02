@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useTheme } from "../contexts/ThemeContext";
 
 export default function DynamicMetaTags() {
   const { currentTheme, getColors } = useTheme();

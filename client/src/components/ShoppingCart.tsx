@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { ShoppingCart, X, Plus, Minus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { useTheme } from "@/contexts/ThemeContext";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface CartItem {
   productId: string;

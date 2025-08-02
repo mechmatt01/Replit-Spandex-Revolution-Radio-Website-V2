@@ -1,7 +1,7 @@
 import { Radio } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
-import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
+// import MusicLogoPath from "../../attached_assets/MusicLogoIcon@3x.png";
 import AdminPanel from "./AdminPanel";
 
 export default function Footer() {

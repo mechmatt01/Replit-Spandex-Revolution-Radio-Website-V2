@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Check, Star, Zap, Crown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useTheme } from "@/contexts/ThemeContext";
-import { cn } from "@/lib/utils";
+import { Button } from "../components/ui/button";
+import { useTheme } from "../contexts/ThemeContext";
+import { cn } from "../lib/utils";
 
 // Import package icons
-import RebelPackageIcon from "@assets/RebelPackageIcon.png";
-import LegendPackageIcon from "@assets/LegendPackageIcon.png";
-import IconPackageIcon from "@assets/IconPackageIcon.png";
+// import RebelPackageIcon from "../../attached_assets/RebelPackageIcon.png";
+// import LegendPackageIcon from "../../attached_assets/LegendPackageIcon.png";
+// import IconPackageIcon from "../../attached_assets/IconPackageIcon.png";
 
 interface SubscriptionTier {
   id: string;

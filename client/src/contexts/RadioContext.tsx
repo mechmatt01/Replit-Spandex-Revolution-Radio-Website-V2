@@ -8,7 +8,7 @@ import {
   useCallback,
 } from "react";
 import { useFirebaseAuth } from "./FirebaseAuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../hooks/use-toast";
 
 // Radio station interface
 interface RadioStation {

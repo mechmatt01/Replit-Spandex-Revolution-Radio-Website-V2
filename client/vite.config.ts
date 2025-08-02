@@ -10,6 +10,7 @@ export default defineConfig({
       "@shared": path.resolve(__dirname, "../shared"),
       "@assets": path.resolve(__dirname, "../attached_assets"),
     },
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.json']
   },
   css: {
     postcss: path.resolve(__dirname, '../postcss.config.js'),

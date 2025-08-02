@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, registerUser, loginUser, getUserProfile, updateUserProfile, updateListeningStatus, updateUserLocation } from '@/lib/firebase';
+import { auth, registerUser, loginUser, getUserProfile, updateUserProfile, updateListeningStatus, updateUserLocation } from '../lib/firebase';
 import { User as FirebaseUser, onAuthStateChanged } from 'firebase/auth';
 
 interface User {

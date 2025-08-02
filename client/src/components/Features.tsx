@@ -1,8 +1,8 @@
 import { Radio, Globe, Archive, Music, Crown, Shirt } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
+import { Button } from "../components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { useTheme } from "@/contexts/ThemeContext";
+import { useTheme } from "../contexts/ThemeContext";
 import type { StreamStats } from "@shared/schema";
 import { Calendar, MapPin, ShoppingBag, Users } from "lucide-react";
 import StaggeredAnimation from "./StaggeredAnimation";

@@ -6,15 +6,15 @@ import {
   Radio as RadioIcon,
   ChevronDown,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import { useRadio } from "@/contexts/RadioContext";
-import { useTheme } from "@/contexts/ThemeContext";
-import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
-import ThemedMusicLogo from "@/components/ThemedMusicLogo";
-import ScrollingText from "@/components/ScrollingText";
-import InteractiveAlbumArt from "@/components/InteractiveAlbumArt";
-import { AdLogo } from "@/components/AdLogo";
+import { Button } from "../components/ui/button";
+import { Slider } from "../components/ui/slider";
+import { useRadio } from "../contexts/RadioContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { useAdaptiveTheme } from "../hooks/useAdaptiveTheme";
+import ThemedMusicLogo from "../components/ThemedMusicLogo";
+import ScrollingText from "../components/ScrollingText";
+import InteractiveAlbumArt from "../components/InteractiveAlbumArt";
+import { AdLogo } from "../components/AdLogo";
 import { useState, useRef, useEffect } from "react";
 
 // RadioStation interface moved to RadioContext
@@ -29,7 +29,7 @@ interface RadioStation {
   description: string;
   icon: string;
 }
-import MusicLogoPath from "@assets/MusicLogoIcon@3x.png";
+// import MusicLogoPath from "../../attached_assets/MusicLogoIcon@3x.png";
 
 // Radio stations data with authentic streaming URLs for current top charts hip-hop, rap, and pop music
 const radioStations: RadioStation[] = [

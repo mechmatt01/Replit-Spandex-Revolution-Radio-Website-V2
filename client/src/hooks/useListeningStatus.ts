@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { useAuth } from "@/contexts/AuthContext";
-import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "../contexts/AuthContext";
+import { apiRequest } from "../lib/queryClient";
 
 export function useListeningStatus() {
   const [isActiveListening, setIsActiveListening] = useState(false);

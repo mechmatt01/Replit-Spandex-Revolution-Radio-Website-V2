@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Play, Calendar, Music } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import RadioCoPlayer from "@/components/RadioCoPlayer";
+import { Button } from "../components/ui/button";
+import RadioCoPlayer from "../components/RadioCoPlayer";
 import { useTheme } from "../contexts/ThemeContext";
 
 export default function Hero() {
