@@ -1,0 +1,26 @@
+Has URL parameters: false
+index-ChikyaN4.js:3987 URL search params: 
+3index-ChikyaN4.js:1 Non-JSON response detected, skipping parse
+index-ChikyaN4.js:4160 Google Maps script already exists, waiting for load...
+index-ChikyaN4.js:464 Audio loadstart event triggered
+index-ChikyaN4.js:4082 Error fetching live stats: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+F @ index-ChikyaN4.js:4082Understand this error
+index-ChikyaN4.js:4160 Google Maps script onload event fired
+index-ChikyaN4.js:3987 Auth status check failed: SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+l @ index-ChikyaN4.js:3987Understand this error
+index-ChikyaN4.js:4160 Google Maps script already exists, waiting for load...
+stream.revma.ihrhls.com/zc6046:1  Failed to load resource: the server responded with a status of 404 (Not Found)Understand this error
+index-ChikyaN4.js:4160 Google Maps script loaded successfully
+index-ChikyaN4.js:464 Audio error: Event
+Le @ index-ChikyaN4.js:464Understand this error
+index-ChikyaN4.js:464 Stream 1 failed: Stream loading error
+le @ index-ChikyaN4.js:464Understand this warning
+index-ChikyaN4.js:464 Trying radio stream 2: https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac
+index-ChikyaN4.js:4160 Google Maps already loaded, initializing...
+index-ChikyaN4.js:464 Audio loadstart event triggered
+index-ChikyaN4.js:4160 Map ref: <div class=​"w-full h-full transition-all duration-500 ease-in-out" style=​"background-color:​ rgb(31, 41, 55)​;​ overflow:​ hidden;​ outline:​ none !important;​ box-shadow:​ none !important;​">​…​</div>​ Bounding rect: DOMRect
+index-ChikyaN4.js:4160 Initializing Google Maps with API key: AIzaSyCBoEZeDucpm7p9...
+main.js:182 As of February 21st, 2024, google.maps.Marker is deprecated. Please use google.maps.marker.AdvancedMarkerElement instead. At this time, google.maps.Marker is not scheduled to be discontinued, but google.maps.marker.AdvancedMarkerElement is recommended over google.maps.Marker. While google.maps.Marker will continue to receive bug fixes for any major regressions, existing bugs in google.maps.Marker will not be addressed. At least 12 months notice will be given before support is discontinued. Please see https://developers.google.com/maps/deprecations for additional details and https://developers.google.com/maps/documentation/javascript/advanced-markers/migration for the migration guide.
+(anonymous) @ main.js:182Understand this warning
+index-ChikyaN4.js:4160 Google Maps initialized successfully
+index-ChikyaN4.js:4160 Google Maps already loaded, initializing...

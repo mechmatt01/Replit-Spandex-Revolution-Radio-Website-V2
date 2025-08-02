@@ -8,6 +8,8 @@ import {
   streamStats,
   subscriptions,
   radioStations,
+  merchandise,
+  settings,
   type User,
   type UpsertUser,
   type RegisterUser,
@@ -25,6 +27,10 @@ import {
   type InsertSubscription,
   type RadioStation,
   type InsertRadioStation,
+  type Merchandise,
+  type InsertMerchandise,
+  type Setting,
+  type InsertSetting,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -107,6 +113,25 @@ export interface IStorage {
   updateRadioStation(id: number, updates: Partial<InsertRadioStation>): Promise<RadioStation | undefined>;
   deleteRadioStation(id: number): Promise<void>;
   updateStationSortOrder(id: number, sortOrder: number): Promise<RadioStation | undefined>;
+
+  // Merchandise
+  getMerchandise(): Promise<Merchandise[]>;
+  getActiveMerchandise(): Promise<Merchandise[]>;
+  getMerchandiseById(id: number): Promise<Merchandise | undefined>;
+  createMerchandise(merch: InsertMerchandise): Promise<Merchandise>;
+  updateMerchandise(id: number, updates: Partial<InsertMerchandise>): Promise<Merchandise | undefined>;
+  deleteMerchandise(id: number): Promise<void>;
+
+  // Settings
+  getSettings(): Promise<Setting[]>;
+  getSettingByKey(key: string): Promise<Setting | undefined>;
+  upsertSetting(setting: InsertSetting): Promise<Setting>;
+  updateSetting(key: string, value: string, updatedBy?: string): Promise<Setting | undefined>;
+
+  // User management (admin)
+  getAllUsers(): Promise<User[]>;
+  updateUserAdminStatus(id: string, isAdmin: boolean): Promise<User | undefined>;
+  deleteUser(id: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -521,6 +546,96 @@ export class DatabaseStorage implements IStorage {
       .where(eq(radioStations.id, id))
       .returning();
     return station;
+  }
+
+  // Merchandise
+  async getMerchandise(): Promise<Merchandise[]> {
+    return await db.select().from(merchandise).orderBy(merchandise.name);
+  }
+
+  async getActiveMerchandise(): Promise<Merchandise[]> {
+    return await db.select().from(merchandise).where(eq(merchandise.isActive, true)).orderBy(merchandise.name);
+  }
+
+  async getMerchandiseById(id: number): Promise<Merchandise | undefined> {
+    const [merch] = await db.select().from(merchandise).where(eq(merchandise.id, id));
+    return merch;
+  }
+
+  async createMerchandise(insertMerch: InsertMerchandise): Promise<Merchandise> {
+    const [merch] = await db.insert(merchandise).values(insertMerch as any).returning();
+    return merch;
+  }
+
+  async updateMerchandise(id: number, updates: Partial<InsertMerchandise>): Promise<Merchandise | undefined> {
+    const [merch] = await db.update(merchandise)
+      .set({ ...updates, updatedAt: new Date() } as any)
+      .where(eq(merchandise.id, id))
+      .returning();
+    return merch;
+  }
+
+  async deleteMerchandise(id: number): Promise<void> {
+    await db.delete(merchandise).where(eq(merchandise.id, id));
+  }
+
+  // Settings
+  async getSettings(): Promise<Setting[]> {
+    return await db.select().from(settings).orderBy(settings.key);
+  }
+
+  async getSettingByKey(key: string): Promise<Setting | undefined> {
+    const [setting] = await db.select().from(settings).where(eq(settings.key, key));
+    return setting;
+  }
+
+  async upsertSetting(insertSetting: InsertSetting): Promise<Setting> {
+    const [setting] = await db
+      .insert(settings)
+      .values({ ...insertSetting, updatedAt: new Date() } as any)
+      .onConflictDoUpdate({
+        target: settings.key,
+        set: { 
+          value: insertSetting.value,
+          description: insertSetting.description,
+          updatedBy: insertSetting.updatedBy,
+          updatedAt: new Date()
+        },
+      })
+      .returning();
+    return setting;
+  }
+
+  async updateSetting(key: string, value: string, updatedBy?: string): Promise<Setting | undefined> {
+    const [setting] = await db.update(settings)
+      .set({ 
+        value,
+        updatedBy,
+        updatedAt: new Date()
+      } as any)
+      .where(eq(settings.key, key))
+      .returning();
+    return setting;
+  }
+
+  // User management (admin)
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users).orderBy(desc(users.createdAt));
+  }
+
+  async updateUserAdminStatus(id: string, isAdmin: boolean): Promise<User | undefined> {
+    const [user] = await db.update(users)
+      .set({ 
+        isAdmin,
+        updatedAt: new Date()
+      } as any)
+      .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
   }
 }
 

@@ -69,6 +69,8 @@ import {
   insertContactSchema,
   insertSubscriptionSchema,
   insertNowPlayingSchema,
+  insertMerchandiseSchema,
+  insertSettingSchema,
 } from "@shared/schema";
 import { z } from "zod";
 import { 
@@ -3262,6 +3264,198 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Firebase login error:', error);
       res.status(500).json({ error: 'Login failed. Please try again.' });
+    }
+  });
+
+  // Merchandise API Routes
+  app.get("/api/merchandise", async (req, res) => {
+    try {
+      const merchandise = await storage.getMerchandise();
+      res.json(merchandise);
+    } catch (error) {
+      console.error("Failed to fetch merchandise:", error);
+      res.status(500).json({ error: "Failed to fetch merchandise" });
+    }
+  });
+
+  app.get("/api/merchandise/active", async (req, res) => {
+    try {
+      const merchandise = await storage.getActiveMerchandise();
+      res.json(merchandise);
+    } catch (error) {
+      console.error("Failed to fetch active merchandise:", error);
+      res.status(500).json({ error: "Failed to fetch active merchandise" });
+    }
+  });
+
+  app.get("/api/merchandise/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const merchandise = await storage.getMerchandiseById(id);
+      if (!merchandise) {
+        return res.status(404).json({ error: "Merchandise not found" });
+      }
+      res.json(merchandise);
+    } catch (error) {
+      console.error("Failed to fetch merchandise:", error);
+      res.status(500).json({ error: "Failed to fetch merchandise" });
+    }
+  });
+
+  app.post("/api/merchandise", async (req, res) => {
+    try {
+      const validatedData = insertMerchandiseSchema.parse(req.body);
+      const merchandise = await storage.createMerchandise(validatedData);
+      res.status(201).json(merchandise);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: error.errors });
+      } else {
+        console.error("Failed to create merchandise:", error);
+        res.status(500).json({ error: "Failed to create merchandise" });
+      }
+    }
+  });
+
+  app.put("/api/merchandise/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertMerchandiseSchema.partial().parse(req.body);
+      const merchandise = await storage.updateMerchandise(id, validatedData);
+      if (!merchandise) {
+        return res.status(404).json({ error: "Merchandise not found" });
+      }
+      res.json(merchandise);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: error.errors });
+      } else {
+        console.error("Failed to update merchandise:", error);
+        res.status(500).json({ error: "Failed to update merchandise" });
+      }
+    }
+  });
+
+  app.delete("/api/merchandise/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteMerchandise(id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Failed to delete merchandise:", error);
+      res.status(500).json({ error: "Failed to delete merchandise" });
+    }
+  });
+
+  // Settings API Routes
+  app.get("/api/settings", async (req, res) => {
+    try {
+      const settings = await storage.getSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Failed to fetch settings:", error);
+      res.status(500).json({ error: "Failed to fetch settings" });
+    }
+  });
+
+  app.get("/api/settings/:key", async (req, res) => {
+    try {
+      const key = req.params.key;
+      const setting = await storage.getSettingByKey(key);
+      if (!setting) {
+        return res.status(404).json({ error: "Setting not found" });
+      }
+      res.json(setting);
+    } catch (error) {
+      console.error("Failed to fetch setting:", error);
+      res.status(500).json({ error: "Failed to fetch setting" });
+    }
+  });
+
+  app.post("/api/settings", async (req, res) => {
+    try {
+      const validatedData = insertSettingSchema.parse(req.body);
+      const setting = await storage.upsertSetting(validatedData);
+      res.json(setting);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ error: error.errors });
+      } else {
+        console.error("Failed to upsert setting:", error);
+        res.status(500).json({ error: "Failed to upsert setting" });
+      }
+    }
+  });
+
+  app.put("/api/settings/:key", async (req, res) => {
+    try {
+      const key = req.params.key;
+      const { value, updatedBy } = req.body;
+      const setting = await storage.updateSetting(key, value, updatedBy);
+      if (!setting) {
+        return res.status(404).json({ error: "Setting not found" });
+      }
+      res.json(setting);
+    } catch (error) {
+      console.error("Failed to update setting:", error);
+      res.status(500).json({ error: "Failed to update setting" });
+    }
+  });
+
+  // User Management API Routes (Admin)
+  app.get("/api/admin/users", async (req, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+
+  app.put("/api/admin/users/:id/admin-status", async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { isAdmin } = req.body;
+      const user = await storage.updateUserAdminStatus(id, isAdmin);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.error("Failed to update user admin status:", error);
+      res.status(500).json({ error: "Failed to update user admin status" });
+    }
+  });
+
+  app.delete("/api/admin/users/:id", async (req, res) => {
+    try {
+      const id = req.params.id;
+      await storage.deleteUser(id);
+      res.status(204).send();
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+      res.status(500).json({ error: "Failed to delete user" });
+    }
+  });
+
+  // Stripe Checkout API for Merchandise
+  app.post("/api/create-payment-intent", async (req, res) => {
+    if (!stripe) {
+      return res.status(503).json({ message: "Stripe not configured" });
+    }
+    
+    try {
+      const { amount, metadata } = req.body;
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(amount * 100), // Convert to cents
+        currency: "usd",
+        metadata: metadata || {},
+      });
+      res.json({ clientSecret: paymentIntent.client_secret });
+    } catch (error: any) {
+      console.error("Payment intent creation error:", error);
+      res.status(500).json({ message: "Error creating payment intent: " + error.message });
     }
   });
 

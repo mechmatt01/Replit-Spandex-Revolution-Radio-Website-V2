@@ -175,6 +175,33 @@ export const countdownHistory = pgTable("countdown_history", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Merchandise table
+export const merchandise = pgTable("merchandise", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  price: integer("price").notNull(), // Price in cents
+  image: text("image"),
+  category: text("category").notNull(),
+  stock: integer("stock").default(0).notNull(),
+  featured: boolean("featured").default(false).notNull(),
+  stripePriceId: text("stripe_price_id"),
+  stripeProductId: text("stripe_product_id"),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Settings table for live data toggle and other settings
+export const settings = pgTable("settings", {
+  id: serial("id").primaryKey(),
+  key: text("key").notNull().unique(),
+  value: text("value").notNull(),
+  description: text("description"),
+  updatedBy: text("updated_by"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = z.object({
   username: z.string().optional(),
@@ -293,6 +320,26 @@ export const insertCountdownHistorySchema = z.object({
   changeReason: z.string().optional(),
 });
 
+export const insertMerchandiseSchema = z.object({
+  name: z.string().min(1, "Product name is required"),
+  description: z.string().optional(),
+  price: z.number().min(1, "Price must be greater than 0"),
+  image: z.string().optional(),
+  category: z.string().min(1, "Category is required"),
+  stock: z.number().min(0).default(0),
+  featured: z.boolean().default(false),
+  stripePriceId: z.string().optional(),
+  stripeProductId: z.string().optional(),
+  isActive: z.boolean().default(true),
+});
+
+export const insertSettingSchema = z.object({
+  key: z.string().min(1, "Setting key is required"),
+  value: z.string(),
+  description: z.string().optional(),
+  updatedBy: z.string().optional(),
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -337,3 +384,9 @@ export const insertRadioStationSchema = z.object({
 
 export type RadioStation = typeof radioStations.$inferSelect;
 export type InsertRadioStation = z.infer<typeof insertRadioStationSchema>;
+
+export type Merchandise = typeof merchandise.$inferSelect;
+export type InsertMerchandise = z.infer<typeof insertMerchandiseSchema>;
+
+export type Setting = typeof settings.$inferSelect;
+export type InsertSetting = z.infer<typeof insertSettingSchema>;
