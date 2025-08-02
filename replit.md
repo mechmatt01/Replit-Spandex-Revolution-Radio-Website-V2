@@ -51,6 +51,8 @@ Key entities include:
 
 - **Authentication**: Comprehensive Firebase Firestore authentication system with user profiles, random avatar assignment, password encryption, and Google OAuth integration.
 - **Streaming**: Supports multiple radio stations (e.g., Hot 97, SomaFM Metal), dynamic station switching, and real-time metadata fetching.
+- **Live Statistics**: Real Firebase integration with `/api/live-stats` endpoint providing dynamic listener counts, country statistics, and total listeners with automatic 30-second updates.
+- **Countdown Timer**: Configured to countdown to August 10th, 2025 at 12:00 PM for the first broadcast launch.
 - **E-commerce**: Direct checkout system for merchandise with "Buy Now" buttons and order confirmation.
 - **Security**: Enhanced security headers (CSP, HSTS), XSS vulnerability fixes, and regular dependency updates.
 - **Deployment**: Optimized for Replit autoscale deployment with Vite for frontend builds and ESBuild for backend bundling.
