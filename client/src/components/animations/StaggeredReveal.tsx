@@ -18,6 +18,8 @@ const StaggeredReveal: React.FC<StaggeredRevealProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const timeouts: NodeJS.Timeout[] = [];
+    
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasStarted) {
@@ -28,13 +30,15 @@ const StaggeredReveal: React.FC<StaggeredRevealProps> = ({
           
           // Stagger the animations
           children.forEach((_, index) => {
-            setTimeout(() => {
+            const timeout = setTimeout(() => {
               setVisibleItems(prev => {
                 const newState = [...prev];
                 newState[index] = true;
                 return newState;
               });
             }, delay + (index * staggerDelay));
+            
+            timeouts.push(timeout);
           });
         }
       },
@@ -48,7 +52,11 @@ const StaggeredReveal: React.FC<StaggeredRevealProps> = ({
       observer.observe(containerRef.current);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      // Clear all timeouts on cleanup
+      timeouts.forEach(timeout => clearTimeout(timeout));
+    };
   }, [children?.length || 0, delay, staggerDelay, hasStarted]);
 
   return (

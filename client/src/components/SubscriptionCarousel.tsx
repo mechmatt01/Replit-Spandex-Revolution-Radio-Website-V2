@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, Check, Star, Zap, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -92,15 +92,24 @@ export default function SubscriptionCarousel() {
   const { getColors, currentTheme } = useTheme();
   const colors = getColors();
 
+  const animationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const handlePrevious = useCallback(() => {
     if (!isAnimating) {
       console.log('Previous animation starting');
       setIsAnimating(true);
       setSlideDirection('right');
       setCurrentIndex((prev) => (prev - 1 + (subscriptionTiers?.length || 0)) % (subscriptionTiers?.length || 1));
-      setTimeout(() => {
+      
+      // Clear any existing timeout
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+      
+      animationTimeoutRef.current = setTimeout(() => {
         setIsAnimating(false);
         console.log('Previous animation complete');
+        animationTimeoutRef.current = null;
       }, 400);
     }
   }, [isAnimating]);
@@ -111,9 +120,16 @@ export default function SubscriptionCarousel() {
       setIsAnimating(true);
       setSlideDirection('left');
       setCurrentIndex((prev) => (prev + 1) % (subscriptionTiers?.length || 1));
-      setTimeout(() => {
+      
+      // Clear any existing timeout
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+      
+      animationTimeoutRef.current = setTimeout(() => {
         setIsAnimating(false);
         console.log('Next animation complete');
+        animationTimeoutRef.current = null;
       }, 400);
     }
   }, [isAnimating]);
@@ -138,9 +154,27 @@ export default function SubscriptionCarousel() {
     if (!isAnimating && index !== currentIndex) {
       setIsAnimating(true);
       setCurrentIndex(index);
-      setTimeout(() => setIsAnimating(false), 500);
+      
+      // Clear any existing timeout
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+      
+      animationTimeoutRef.current = setTimeout(() => {
+        setIsAnimating(false);
+        animationTimeoutRef.current = null;
+      }, 500);
     }
   };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (animationTimeoutRef.current) {
+        clearTimeout(animationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const currentTier = subscriptionTiers[currentIndex];
 

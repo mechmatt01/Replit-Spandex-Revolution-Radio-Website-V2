@@ -77,7 +77,7 @@ export default function StaggeredAnimation({
         
         return cloneElement(element, {
           ...element.props,
-          key: element.key || index,
+          key: element.key || `staggered-${index}`,
           style: {
             ...element.props.style,
             opacity: hasAnimated ? 1 : 0,

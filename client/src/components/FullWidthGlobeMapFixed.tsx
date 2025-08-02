@@ -486,9 +486,9 @@ const FullWidthGlobeMapFixed = () => {
 
   // Initialize map
   const initializeMap = useCallback(() => {
-    // Prevent multiple initializations
-    if (isInitializing || map) {
-      console.log('Map initialization already in progress or map exists');
+    // Prevent multiple initializations with more robust checking
+    if (isInitializing || map || mapRef.current?.querySelector('.gm-style')) {
+      console.log('Map initialization already in progress, map exists, or map container already has Google Maps content');
       return;
     }
 
@@ -693,18 +693,9 @@ const FullWidthGlobeMapFixed = () => {
     };
     
     script.onload = () => {
-      console.log('Google Maps script loaded successfully');
-      // Add a delay to ensure the API is fully loaded
-      setTimeout(() => {
-        if (window.google && window.google.maps && window.google.maps.Map) {
-          initializeMap();
-        } else {
-          console.error('Google Maps API not available after script load');
-          setMapError(true);
-          setIsLoading(false);
-          setIsInitializing(false);
-        }
-      }, 500);
+      console.log('Google Maps script onload event fired');
+      // The callback function will handle initialization
+      // No need to call initializeMap here since the callback will do it
     };
     document.head.appendChild(script);
   }, [config, initializeMap]);
