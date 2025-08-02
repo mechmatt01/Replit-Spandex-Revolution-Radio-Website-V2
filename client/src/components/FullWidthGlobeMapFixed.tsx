@@ -6,6 +6,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useRadio } from "@/contexts/RadioContext";
 import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
 import { AnimatedCounter } from "./AnimatedCounter";
+import { publicApiCall } from "../firebase";
 
 // Types
 interface Weather {
@@ -43,6 +44,93 @@ const weatherIconMap: { [key: string]: string } = {
   '11n': 'thunder.svg',
   '13d': 'snow.svg',
   '13n': 'snowy.svg',
+  '50d': 'fog.svg',
+  '50n': 'fog.svg',
+  // Additional mappings for better coverage
+  '05d': 'rainy-day.svg',
+  '05n': 'rainy-night.svg',
+  '06d': 'cloudy-day.svg',
+  '06n': 'cloudy-night.svg',
+  '07d': 'cloudy-day.svg',
+  '07n': 'cloudy-night.svg',
+  '08d': 'cloudy-day.svg',
+  '08n': 'cloudy-night.svg',
+  '12d': 'rainy-day.svg',
+  '12n': 'rainy-night.svg',
+  '13d': 'snowy.svg',
+  '13n': 'snowy.svg',
+  '14d': 'snowy.svg',
+  '14n': 'snowy.svg',
+  '15d': 'snowy.svg',
+  '15n': 'snowy.svg',
+  '16d': 'snowy.svg',
+  '16n': 'snowy.svg',
+  '17d': 'rainy-day.svg',
+  '17n': 'rainy-night.svg',
+  '18d': 'rainy-day.svg',
+  '18n': 'rainy-night.svg',
+  '19d': 'cloudy-day.svg',
+  '19n': 'cloudy-night.svg',
+  '20d': 'cloudy-day.svg',
+  '20n': 'cloudy-night.svg',
+  '21d': 'cloudy-day.svg',
+  '21n': 'cloudy-night.svg',
+  '22d': 'snowy.svg',
+  '22n': 'snowy.svg',
+  '23d': 'snowy.svg',
+  '23n': 'snowy.svg',
+  '24d': 'snowy.svg',
+  '24n': 'snowy.svg',
+  '25d': 'snowy.svg',
+  '25n': 'snowy.svg',
+  '26d': 'cloudy-day.svg',
+  '26n': 'cloudy-night.svg',
+  '27d': 'cloudy-day.svg',
+  '27n': 'cloudy-night.svg',
+  '28d': 'cloudy-day.svg',
+  '28n': 'cloudy-night.svg',
+  '29d': 'cloudy-day.svg',
+  '29n': 'cloudy-night.svg',
+  '30d': 'cloudy-day.svg',
+  '30n': 'cloudy-night.svg',
+  '31d': 'cloudy-day.svg',
+  '31n': 'cloudy-night.svg',
+  '32d': 'cloudy-day.svg',
+  '32n': 'cloudy-night.svg',
+  '33d': 'cloudy-night.svg',
+  '33n': 'cloudy-night.svg',
+  '34d': 'cloudy-day.svg',
+  '34n': 'cloudy-night.svg',
+  '35d': 'cloudy-day.svg',
+  '35n': 'cloudy-night.svg',
+  '36d': 'snowy.svg',
+  '36n': 'snowy.svg',
+  '37d': 'snowy.svg',
+  '37n': 'snowy.svg',
+  '38d': 'snowy.svg',
+  '38n': 'snowy.svg',
+  '39d': 'rainy-day.svg',
+  '39n': 'rainy-night.svg',
+  '40d': 'rainy-day.svg',
+  '40n': 'rainy-night.svg',
+  '41d': 'rainy-day.svg',
+  '41n': 'rainy-night.svg',
+  '42d': 'rainy-day.svg',
+  '42n': 'rainy-night.svg',
+  '43d': 'snowy.svg',
+  '43n': 'snowy.svg',
+  '44d': 'cloudy-day.svg',
+  '44n': 'cloudy-night.svg',
+  '45d': 'cloudy-day.svg',
+  '45n': 'cloudy-night.svg',
+  '46d': 'rainy-day.svg',
+  '46n': 'rainy-night.svg',
+  '47d': 'rainy-day.svg',
+  '47n': 'rainy-night.svg',
+  '48d': 'fog.svg',
+  '48n': 'fog.svg',
+  '49d': 'fog.svg',
+  '49n': 'fog.svg',
   '50d': 'fog.svg',
   '50n': 'fog.svg',
 };
@@ -87,22 +175,11 @@ const FullWidthGlobeMapFixed = () => {
   // Fetch live statistics from Firebase API
   const fetchLiveStats = async () => {
     try {
-      const response = await fetch('/api/live-stats');
-      if (response.ok) {
-        const stats = await response.json();
-        setLiveStats(stats);
-      } else {
-        console.error('Failed to fetch live stats');
-        // Fallback to default values if API fails
-        setLiveStats({
-          activeListeners: 42,
-          countries: 12,
-          totalListeners: 1247
-        });
-      }
+      const stats = await publicApiCall('/api/live-stats');
+      setLiveStats(stats);
     } catch (error) {
       console.error('Error fetching live stats:', error);
-      // Fallback to default values if fetch fails
+      // Fallback to default values if API fails
       setLiveStats({
         activeListeners: 42,
         countries: 12,
@@ -132,23 +209,8 @@ const FullWidthGlobeMapFixed = () => {
   const fetchWeather = async (lat: number, lng: number) => {
     setWeatherLoading(true);
     try {
-      const response = await fetch(`/api/weather?lat=${lat}&lon=${lng}`);
-      if (response.ok) {
-        const weatherData = await response.json();
-        setWeather(weatherData);
-      } else {
-        console.error('Failed to fetch weather data');
-        // Fallback to mock data
-        setWeather({
-          location: "Unknown Location",
-          temperature: 72,
-          description: "Partly Cloudy",
-          icon: "partly-cloudy-day",
-          humidity: 65,
-          windSpeed: 8,
-          feelsLike: 74
-        });
-      }
+      const weatherData = await publicApiCall(`/api/weather?lat=${lat}&lon=${lng}`);
+      setWeather(weatherData);
     } catch (error) {
       console.error('Error fetching weather:', error);
       // Fallback to mock data
@@ -227,7 +289,18 @@ const FullWidthGlobeMapFixed = () => {
       await requestUserLocation();
     } else if (locationPermission === 'prompt') {
       await requestUserLocation();
+    } else if (locationPermission === 'denied') {
+      // Try to request permission again
+      setLocationPermission('prompt');
+      await requestUserLocation();
     }
+  };
+
+  // Manual location request function
+  const requestLocationAccess = async () => {
+    console.log('Manually requesting location access...');
+    setLocationPermission('prompt');
+    await requestUserLocation();
   };
 
   // Initialize location and weather on component mount
@@ -655,9 +728,10 @@ const FullWidthGlobeMapFixed = () => {
   // Initialize map when Google Maps API is loaded
   useEffect(() => {
     if (window.google && !map && !isInitializing) {
+      console.log('Google Maps already loaded, initializing...');
       initializeMap();
     }
-  }, [initializeMap, map, isInitializing]);
+  }, [map, isInitializing]); // Removed initializeMap from dependencies to prevent loop
 
   // Initialize fullscreen map when entering fullscreen
   useEffect(() => {
@@ -831,7 +905,7 @@ const FullWidthGlobeMapFixed = () => {
           <div className="absolute bottom-4 left-4 z-10">
             <Card className="w-80 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-xl">
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="text-lg flex items-center gap-2" style={{ color: colors.text }}>
                   <div className="w-8 h-8">
                     <img 
                       src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
@@ -843,27 +917,46 @@ const FullWidthGlobeMapFixed = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-2xl font-bold text-primary">
-                      {weather.temperature}°F
+                {locationPermission === 'denied' && weather.location === "Enable location for weather" ? (
+                  <div className="space-y-3">
+                    <p style={{ color: colors.textMuted }} className="text-sm">
+                      Enable location access to get local weather
                     </p>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      {weather.description}
-                    </p>
+                    <Button 
+                      onClick={requestLocationAccess}
+                      size="sm"
+                      className="w-full"
+                      style={{ 
+                        backgroundColor: colors.primary,
+                        color: 'white'
+                      }}
+                    >
+                      Enable Location
+                    </Button>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Feels like: {weather.feelsLike}°F
-                    </p>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Humidity: {weather.humidity}%
-                    </p>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Wind: {weather.windSpeed} mph
-                    </p>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <p className="text-2xl font-bold" style={{ color: colors.primary }}>
+                        {weather.temperature}°F
+                      </p>
+                      <p style={{ color: colors.textMuted }}>
+                        {weather.description}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <p style={{ color: colors.textMuted }}>
+                        Feels like: {weather.feelsLike}°F
+                      </p>
+                      <p style={{ color: colors.textMuted }}>
+                        Humidity: {weather.humidity}%
+                      </p>
+                      <p style={{ color: colors.textMuted }}>
+                        Wind: {weather.windSpeed} mph
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -875,14 +968,14 @@ const FullWidthGlobeMapFixed = () => {
           <Card className="w-64 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-xl">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
-                  <Users className="w-5 h-5 text-green-600 dark:text-green-400" />
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${colors.primary}20` }}>
+                  <Users className="w-5 h-5" style={{ color: colors.primary }} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Active Listeners</p>
-                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                  <p className="text-sm" style={{ color: colors.textMuted }}>Active Listeners</p>
+                  <p className="text-2xl font-bold" style={{ color: colors.primary }}>
                     {statsLoading ? (
-                      <Loader2 className="w-6 h-6 animate-spin" />
+                      <Loader2 className="w-6 h-6 animate-spin" style={{ color: colors.primary }} />
                     ) : (
                       <AnimatedCounter 
                         value={liveStats?.activeListeners || 0} 
@@ -899,14 +992,14 @@ const FullWidthGlobeMapFixed = () => {
           <Card className="w-64 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-xl">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
-                  <Globe className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${colors.secondary || colors.primary}20` }}>
+                  <Globe className="w-5 h-5" style={{ color: colors.secondary || colors.primary }} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Countries</p>
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  <p className="text-sm" style={{ color: colors.textMuted }}>Countries</p>
+                  <p className="text-2xl font-bold" style={{ color: colors.secondary || colors.primary }}>
                     {statsLoading ? (
-                      <Loader2 className="w-6 h-6 animate-spin" />
+                      <Loader2 className="w-6 h-6 animate-spin" style={{ color: colors.secondary || colors.primary }} />
                     ) : (
                       <AnimatedCounter 
                         value={liveStats?.countries || 0} 
@@ -923,14 +1016,14 @@ const FullWidthGlobeMapFixed = () => {
           <Card className="w-64 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-xl">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: `${colors.primary}30` }}>
+                  <Activity className="w-5 h-5" style={{ color: colors.primary }} />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Total Listeners</p>
-                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  <p className="text-sm" style={{ color: colors.textMuted }}>Total Listeners</p>
+                  <p className="text-2xl font-bold" style={{ color: colors.primary }}>
                     {statsLoading ? (
-                      <Loader2 className="w-6 h-6 animate-spin" />
+                      <Loader2 className="w-6 h-6 animate-spin" style={{ color: colors.primary }} />
                     ) : (
                       <AnimatedCounter 
                         value={liveStats?.totalListeners || 0} 

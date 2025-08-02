@@ -91,10 +91,10 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
-                borderWidth: '2px',
+                borderColor: colors.primary,
+                borderWidth: '3px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
+                boxShadow: `${colors.primary}20 0px 8px 32px`,
                 transform: hoveredFeature === 'streaming' ? 'scale(1.05)' : 'scale(1)',
               }}
               onClick={scrollToRadioPlayer}
@@ -152,10 +152,10 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
-                borderWidth: '2px',
+                borderColor: colors.primary,
+                borderWidth: '3px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
+                boxShadow: `${colors.primary}20 0px 8px 32px`,
                 transform: hoveredFeature === 'archives' ? 'scale(1.05)' : 'scale(1)',
               }}
               onClick={() => scrollToSection("schedule")}
@@ -274,10 +274,10 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
-                borderWidth: '2px',
+                borderColor: colors.primary,
+                borderWidth: '3px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
+                boxShadow: `${colors.primary}20 0px 8px 32px`,
                 transform: hoveredFeature === 'rebellion' ? 'scale(1.05)' : 'scale(1)',
               }}
               onClick={() => scrollToSection("subscribe")}
@@ -350,10 +350,10 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
-                borderWidth: '2px',
+                borderColor: colors.primary,
+                borderWidth: '3px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
+                boxShadow: `${colors.primary}20 0px 8px 32px`,
                 transform: hoveredFeature === 'requests' ? 'scale(1.05)' : 'scale(1)',
               }}
               onClick={() => scrollToSection("submissions")}
@@ -426,10 +426,10 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
-                borderWidth: '2px',
+                borderColor: colors.primary,
+                borderWidth: '3px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
+                boxShadow: `${colors.primary}20 0px 8px 32px`,
                 transform: hoveredFeature === 'merch' ? 'scale(1.05)' : 'scale(1)',
               }}
               onClick={() => scrollToSection("shop")}

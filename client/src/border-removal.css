@@ -1,0 +1,218 @@
+/* AGGRESSIVE BORDER REMOVAL - OVERRIDE ALL BORDERS */
+*,
+*::before,
+*::after,
+html *,
+body *,
+div *,
+button *,
+input *,
+select *,
+textarea *,
+[class*="border"],
+[class*="Border"],
+[class*="BORDER"] {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+}
+
+/* Override ALL possible border classes with maximum specificity */
+.border,
+.border-0,
+.border-1,
+.border-2,
+.border-4,
+.border-8,
+.border-t,
+.border-b,
+.border-l,
+.border-r,
+.border-x,
+.border-y,
+.border-t-2,
+.border-b-2,
+.border-l-2,
+.border-r-2,
+.border-x-2,
+.border-y-2,
+.border-gray-200,
+.border-gray-600,
+.border-gray-700,
+.border-gray-800,
+.border-primary,
+.border-transparent,
+.border-t-transparent,
+.border-white,
+.border-white\/10,
+.border-white\/20,
+.border-white\/30 {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+/* Override inline border styles */
+[style*="border"] {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+/* Override CSS custom properties */
+:root {
+  --tw-border-opacity: 0 !important;
+  --border-opacity: 0 !important;
+  --color-border: transparent !important;
+  --border-color: transparent !important;
+}
+
+/* Override any element with border-related CSS variables */
+[style*="--border"],
+[style*="--color-border"],
+[style*="--tw-border"] {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+/* Override UI component borders specifically */
+[data-radix-button],
+[data-radix-tooltip-trigger],
+[data-radix-tooltip-content],
+[data-radix-select-trigger],
+[data-radix-select-content],
+[data-radix-popover-trigger],
+[data-radix-popover-content],
+[data-radix-dialog-trigger],
+[data-radix-dialog-content],
+[data-radix-dropdown-menu-trigger],
+[data-radix-dropdown-menu-content],
+[data-radix-checkbox],
+[data-radix-switch],
+[data-radix-slider],
+[data-radix-scroll-area],
+[data-radix-sheet],
+[data-radix-toggle],
+[data-radix-badge],
+[data-radix-input],
+[data-radix-textarea],
+[data-radix-select] {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+/* Override focus states */
+*:focus,
+*:focus-visible,
+*:focus-within {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  outline: none !important;
+}
+
+/* Override active states */
+*:active {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+/* Override hover states */
+*:hover {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+/* Override button component specifically */
+button,
+.btn,
+[role="button"],
+.button,
+[class*="button"],
+[class*="btn"],
+[data-radix-button] {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+/* Override button variants */
+button[class*="border"],
+.btn[class*="border"],
+[role="button"][class*="border"],
+.button[class*="border"] {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+/* Override button states */
+button:hover,
+button:focus,
+button:active,
+button:focus-visible,
+.btn:hover,
+.btn:focus,
+.btn:active,
+.btn:focus-visible,
+[role="button"]:hover,
+[role="button"]:focus,
+[role="button"]:active,
+[role="button"]:focus-visible {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+/* Force remove borders from everything else with maximum specificity */
+*:not(.feature-container):not(.show-container):not(.map-container):not([class*="feature-card"]):not([class*="show-card"]):not(.enhanced-glow) {
+  border: none !important;
+  border-color: transparent !important;
+  border-width: 0 !important;
+  border-style: none !important;
+}
+
+/* ONLY ALLOW BORDERS ON SPECIFIC ELEMENTS */
+.feature-container,
+.show-container,
+.map-container,
+[class*="feature-card"],
+[class*="show-card"],
+.enhanced-glow {
+  border: 3px solid hsl(var(--primary)) !important;
+  border-width: 3px !important;
+  border-style: solid !important;
+  border-color: hsl(var(--primary)) !important;
+}
+
+/* Enhanced glow for feature and show cards */
+.feature-container:hover,
+.show-container:hover,
+.map-container:hover,
+[class*="feature-card"]:hover,
+[class*="show-card"]:hover,
+.enhanced-glow:hover {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 
+    0 0 40px hsl(var(--primary) / 0.8),
+    0 0 80px hsl(var(--primary) / 0.4),
+    0 0 120px hsl(var(--primary) / 0.2),
+    inset 0 0 30px hsl(var(--primary) / 0.15) !important;
+  transform: translateY(-5px) scale(1.05) !important;
+} 

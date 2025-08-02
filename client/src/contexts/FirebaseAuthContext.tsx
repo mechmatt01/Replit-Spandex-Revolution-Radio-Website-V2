@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, registerUser, loginUser, getUserProfile, updateUserProfile, updateListeningStatus, updateUserLocation } from '@/lib/firebase';
 import { User as FirebaseUser, onAuthStateChanged } from 'firebase/auth';
+import { handleGoogleRedirect } from '../firebase';
 
 interface User {
   UserID: string;
@@ -57,6 +58,20 @@ export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ chil
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Handle Google redirect result first
+    const handleRedirect = async () => {
+      try {
+        const result = await handleGoogleRedirect();
+        if (result) {
+          console.log('Google redirect result:', result);
+        }
+      } catch (error) {
+        console.error('Error handling Google redirect:', error);
+      }
+    };
+
+    handleRedirect();
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setFirebaseUser(firebaseUser);
       

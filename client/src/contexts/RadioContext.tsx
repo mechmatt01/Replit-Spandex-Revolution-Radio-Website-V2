@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useFirebaseAuth } from "./FirebaseAuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { publicApiCall } from "../firebase";
 
 // Radio station interface
 interface RadioStation {
@@ -589,38 +590,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       
       console.log(`[RadioContext] Calling metadata endpoint: ${metadataEndpoint}`);
       
-      const response = await fetch(metadataEndpoint);
-      console.log(`[RadioContext] Metadata response status: ${response.status}`);
-      
-      const contentType = response.headers.get("content-type");
-      console.log(`[RadioContext] Metadata response content-type: ${contentType}`);
-      
-      if (!response.ok) {
-        console.warn(`[RadioContext] Metadata endpoint returned error: ${response.status} ${response.statusText}`);
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      
-      if (!contentType || !contentType.includes("application/json")) {
-        console.warn("[RadioContext] Metadata endpoint did not return JSON:", metadataEndpoint);
-        // Fallback to static metadata
-        const fallbackTrack: TrackInfo = {
-          title: station.name,
-          artist: station.description,
-          album: `${station.frequency} • ${station.location}`,
-          artwork: getDefaultArtwork(station.name, station.description),
-          isAd: false,
-          stationName: station.name,
-          frequency: station.frequency,
-          location: station.location,
-          genre: station.genre,
-          lastUpdated: new Date(),
-        };
-        setCurrentTrack(fallbackTrack);
-        console.log(`[RadioContext] Using fallback metadata: "${fallbackTrack.title}" by ${fallbackTrack.artist}`);
-        return;
-      }
-      
-      const metadata = await response.json();
+      // Use public API call instead of direct fetch
+      const metadata = await publicApiCall(metadataEndpoint);
       console.log(`[RadioContext] Received metadata:`, metadata);
         
       const newTrackInfo: TrackInfo = {

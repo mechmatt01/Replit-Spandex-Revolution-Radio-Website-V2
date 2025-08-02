@@ -4,6 +4,8 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   sendEmailVerification,
   sendPasswordResetEmail,
@@ -44,13 +46,32 @@ export const storage = getStorage(app);
 // Google Auth Provider
 export const googleProvider = new GoogleAuthProvider();
 
+// Configure Google Auth Provider
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+
 // Authentication functions
 export const signInWithGoogle = async () => {
   try {
-    const result = await signInWithPopup(auth, googleProvider);
-    return result;
+    // Use redirect instead of popup to avoid redirect issues
+    await signInWithRedirect(auth, googleProvider);
   } catch (error) {
     console.error('Google sign-in error:', error);
+    throw error;
+  }
+};
+
+// Handle redirect result
+export const handleGoogleRedirect = async () => {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result) {
+      return result;
+    }
+    return null;
+  } catch (error) {
+    console.error('Google redirect error:', error);
     throw error;
   }
 };
@@ -106,9 +127,9 @@ export const getIdToken = async (): Promise<string | null> => {
 export const authenticatedApiCall = async (url: string, options: RequestInit = {}) => {
   const token = await getIdToken();
   
-  const headers = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...(options.headers as Record<string, string> || {}),
   };
   
   if (token) {
@@ -121,7 +142,29 @@ export const authenticatedApiCall = async (url: string, options: RequestInit = {
   });
   
   if (!response.ok) {
-    throw new Error(`API call failed: ${response.statusText}`);
+    console.error(`API call failed: ${response.status} ${response.statusText}`);
+    console.error('Response headers:', Object.fromEntries(response.headers.entries()));
+    throw new Error(`API call failed: ${response.status} ${response.statusText}`);
+  }
+  
+  return response.json();
+};
+
+// Public API call helper (no authentication required)
+export const publicApiCall = async (url: string, options: RequestInit = {}) => {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(options.headers as Record<string, string> || {}),
+  };
+  
+  const response = await fetch(url, {
+    ...options,
+    headers,
+  });
+  
+  if (!response.ok) {
+    console.error(`Public API call failed: ${response.status} ${response.statusText}`);
+    throw new Error(`Public API call failed: ${response.status} ${response.statusText}`);
   }
   
   return response.json();

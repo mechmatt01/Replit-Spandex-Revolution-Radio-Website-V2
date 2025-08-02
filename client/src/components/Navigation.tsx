@@ -850,18 +850,20 @@ export default function Navigation() {
                       style={{ 
                         color: colors.primary,
                         background: 'rgba(255, 255, 255, 0.1)',
-                        border: `2px solid ${colors.primary}`,
+                        border: 'none',
                         backdropFilter: 'blur(10px)',
                         transform: 'scale(1)'
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = 'scale(1.05)';
                         e.currentTarget.style.background = `${colors.primary}15`;
+                        e.currentTarget.style.border = `2px solid ${colors.primary}`;
                         e.currentTarget.style.boxShadow = `0 8px 25px -8px ${colors.primary}40`;
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.transform = 'scale(1)';
                         e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                        e.currentTarget.style.border = 'none';
                         e.currentTarget.style.boxShadow = '0 4px 15px -4px rgba(0,0,0,0.2)';
                       }}
                     >
@@ -899,17 +901,19 @@ export default function Navigation() {
                       style={{
                         color: colors.primary,
                         backgroundColor: 'transparent',
-                        border: `1px solid ${colors.primary}`,
+                        border: 'none',
                         display: 'flex',
                         textDecoration: 'none'
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = colors.primary + '20';
                         e.currentTarget.style.color = 'white';
+                        e.currentTarget.style.border = `1px solid ${colors.primary}`;
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.backgroundColor = 'transparent';
                         e.currentTarget.style.color = colors.primary;
+                        e.currentTarget.style.border = 'none';
                       }}
                     >
                       <LogOut size={16} style={{ color: colors.primary }} />
@@ -952,7 +956,13 @@ export default function Navigation() {
               style={{
                 backgroundColor: 'transparent',
                 color: colors.text,
-                border: `1px solid ${colors.primary}40`,
+                border: 'none',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.border = `1px solid ${colors.primary}40`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.border = 'none';
               }}
             >
               Cancel
@@ -963,7 +973,13 @@ export default function Navigation() {
               style={{
                 backgroundColor: '#EF4444',
                 color: 'white',
-                border: '1px solid #EF4444',
+                border: 'none',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.border = '1px solid #EF4444';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.border = 'none';
               }}
             >
               Logout

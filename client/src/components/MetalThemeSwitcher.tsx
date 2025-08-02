@@ -97,10 +97,17 @@ export default function MetalThemeSwitcher() {
           <Button
             variant="ghost"
             size="sm"
-            className="flex items-center gap-2 hover:bg-opacity-20 theme-button-border"
+            className="flex items-center gap-2 hover:bg-opacity-20"
             style={{
               color: currentTheme === 'light-mode' ? '#000000' : colors.text,
               backgroundColor: "transparent",
+              border: 'none',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.border = `1px solid ${colors.primary}`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.border = 'none';
             }}
           >
             <Palette className="w-4 h-4" style={{ color: colors.primary }} />
