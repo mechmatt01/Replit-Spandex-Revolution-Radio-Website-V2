@@ -13,7 +13,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useRecaptcha } from "./RecaptchaV3";
-import { auth } from "@/lib/firebase";
+import { auth } from "@/firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
 
 interface VerificationModalProps {

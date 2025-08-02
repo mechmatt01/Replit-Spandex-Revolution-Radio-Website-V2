@@ -636,6 +636,15 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
           appearance: none !important;
         }
         
+        /* Preserve borders for enhanced-glow elements */
+        .enhanced-glow,
+        .enhanced-glow:focus,
+        .enhanced-glow:focus-visible,
+        .enhanced-glow:active {
+          border: 2px solid var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
+          box-shadow: var(--theme-border, rgba(192, 192, 192, 0.125)) 0px 8px 32px !important;
+        }
+        
         /* Target specific white outlines */
         button:focus,
         button:focus-visible,
@@ -657,27 +666,32 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       
       // JavaScript-based focus ring elimination (nuclear option)
       const removeFocusRings = () => {
-        const elements = document.querySelectorAll('*');
+        const elements = document.querySelectorAll('*:not(.enhanced-glow)');
         elements.forEach((element: Element) => {
           const htmlElement = element as HTMLElement;
           
           // Remove existing event listeners to prevent duplicates
           const focusHandler = (e: Event) => {
             const target = e.target as HTMLElement;
-            target.style.outline = 'none';
-            target.style.border = 'none';
-            target.style.boxShadow = 'none';
-            target.style.setProperty('outline', 'none', 'important');
-            target.style.setProperty('border', 'none', 'important');
-            target.style.setProperty('box-shadow', 'none', 'important');
+            // Don't override styles for enhanced-glow elements
+            if (!target.classList.contains('enhanced-glow')) {
+              target.style.outline = 'none';
+              target.style.border = 'none';
+              target.style.boxShadow = 'none';
+              target.style.setProperty('outline', 'none', 'important');
+              target.style.setProperty('border', 'none', 'important');
+              target.style.setProperty('box-shadow', 'none', 'important');
+            }
           };
           
           htmlElement.addEventListener('focus', focusHandler, { passive: true });
           htmlElement.addEventListener('focusin', focusHandler, { passive: true });
           
-          // Apply immediately
-          htmlElement.style.outline = 'none';
-          htmlElement.style.setProperty('outline', 'none', 'important');
+          // Apply immediately (but not to enhanced-glow elements)
+          if (!htmlElement.classList.contains('enhanced-glow')) {
+            htmlElement.style.outline = 'none';
+            htmlElement.style.setProperty('outline', 'none', 'important');
+          }
         });
       };
       
@@ -688,12 +702,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       
       // Additional JavaScript-based focus ring elimination
       setTimeout(() => {
-        const allElements = document.querySelectorAll('*');
+        const allElements = document.querySelectorAll('*:not(.enhanced-glow)');
         allElements.forEach(element => {
           element.addEventListener('focus', (e) => {
-            e.target.style.outline = 'none';
-            e.target.style.boxShadow = 'none';
-            e.target.style.border = 'none';
+            const target = e.target as HTMLElement;
+            // Don't override styles for enhanced-glow elements
+            if (!target.classList.contains('enhanced-glow')) {
+              target.style.outline = 'none';
+              target.style.boxShadow = 'none';
+              target.style.border = 'none';
+            }
           });
         });
       }, 100);
@@ -729,6 +747,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       // Always set these safe variables
       root.style.setProperty("--destructive", "0 84% 60%");
       root.style.setProperty("--destructive-foreground", "0 0% 98%");
+      root.style.setProperty("--theme-border", colors.border);
 
       // Apply theme class
       root.classList.remove("light", "dark");

@@ -59,6 +59,15 @@ export default function Footer() {
               Your home for old-school metal music. Broadcasting the rebellion
               since 2025.
             </p>
+            <a
+              href="mailto:support@spandexsalvationradio.com"
+              className="text-sm transition-colors duration-300 block mt-2"
+              style={{ color: colors.textMuted }}
+              onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+              onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+            >
+              support@spandexsalvationradio.com
+            </a>
           </div>
 
           {/* Quick Links */}
@@ -73,7 +82,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("hero")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent"
                   style={{ color: colors.textMuted }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
                   onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}

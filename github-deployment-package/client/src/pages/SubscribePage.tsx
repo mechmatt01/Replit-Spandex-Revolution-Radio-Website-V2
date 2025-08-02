@@ -165,46 +165,106 @@ export default function SubscribePage() {
 
         {/* Features Showcase */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <Card className="text-center p-6">
+          <Card 
+            className="text-center p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 cursor-pointer"
+            style={{
+              backgroundColor: colors.surface,
+              borderColor: `${colors.primary}80`,
+              boxShadow: `0 8px 32px ${colors.primary}20`,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = `${colors.primary}80`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
+            }}
+          >
             <Music
               className="h-12 w-12 mx-auto mb-4"
               style={{ color: colors.primary }}
             />
-            <h3 className="font-bold mb-2">Premium Audio</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="font-bold mb-2" style={{ color: colors.text }}>Premium Audio</h3>
+            <p className="text-sm" style={{ color: colors.textMuted }}>
               High-quality streaming with zero ads
             </p>
           </Card>
 
-          <Card className="text-center p-6">
+          <Card 
+            className="text-center p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 cursor-pointer"
+            style={{
+              backgroundColor: colors.surface,
+              borderColor: `${colors.primary}80`,
+              boxShadow: `0 8px 32px ${colors.primary}20`,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = `${colors.primary}80`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
+            }}
+          >
             <MessageCircle
               className="h-12 w-12 mx-auto mb-4"
               style={{ color: colors.primary }}
             />
-            <h3 className="font-bold mb-2">Live Chat</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="font-bold mb-2" style={{ color: colors.text }}>Live Chat</h3>
+            <p className="text-sm" style={{ color: colors.textMuted }}>
               Connect with the metal community
             </p>
           </Card>
 
-          <Card className="text-center p-6">
+          <Card 
+            className="text-center p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 cursor-pointer"
+            style={{
+              backgroundColor: colors.surface,
+              borderColor: `${colors.primary}80`,
+              boxShadow: `0 8px 32px ${colors.primary}20`,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = `${colors.primary}80`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
+            }}
+          >
             <Crown
               className="h-12 w-12 mx-auto mb-4"
               style={{ color: colors.primary }}
             />
-            <h3 className="font-bold mb-2">Exclusive Content</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="font-bold mb-2" style={{ color: colors.text }}>Exclusive Content</h3>
+            <p className="text-sm" style={{ color: colors.textMuted }}>
               Access to special shows and interviews
             </p>
           </Card>
 
-          <Card className="text-center p-6">
+          <Card 
+            className="text-center p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 cursor-pointer"
+            style={{
+              backgroundColor: colors.surface,
+              borderColor: `${colors.primary}80`,
+              boxShadow: `0 8px 32px ${colors.primary}20`,
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = `${colors.primary}80`;
+              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
+            }}
+          >
             <Star
               className="h-12 w-12 mx-auto mb-4"
               style={{ color: colors.primary }}
             />
-            <h3 className="font-bold mb-2">VIP Access</h3>
-            <p className="text-sm text-muted-foreground">
+            <h3 className="font-bold mb-2" style={{ color: colors.text }}>VIP Access</h3>
+            <p className="text-sm" style={{ color: colors.textMuted }}>
               Priority requests and early access
             </p>
           </Card>

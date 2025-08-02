@@ -99,7 +99,7 @@ export default function About() {
             <FadeInView direction="up" delay={600}>
               <Button
                 onClick={scrollToSubscribe}
-                className="px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
+                className="px-6 py-3 rounded-full font-semibold transition-all duration-300"
                 style={{
                   backgroundColor: colors.primary,
                   color: colors.primaryText || "white",

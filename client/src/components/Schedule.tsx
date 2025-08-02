@@ -284,11 +284,11 @@ export default function Schedule() {
                   </div>
                   
                   <Card
-                    className="relative group cursor-pointer transition-all duration-300 border-2 p-4"
+                    className="relative group cursor-pointer transition-all duration-300 border-2 p-4 enhanced-glow show-container"
                     style={{
                       backgroundColor: colors.background,
-                      borderColor: colors.primary,
-                      boxShadow: `0 8px 32px ${colors.primary}20`,
+                      borderColor: colors.border,
+                      boxShadow: `${colors.border}20 0px 8px 32px`,
                       height: "160px",
                       transform: hoveredShow === `weekly-${show.id}` ? 'scale(1.05)' : 'scale(1)',
                     }}
@@ -370,11 +370,11 @@ export default function Schedule() {
                     </div>
                     
                     <Card
-                      className="relative group cursor-pointer transition-all duration-300 border-2 p-4"
+                      className="relative group cursor-pointer transition-all duration-300 border-2 p-4 enhanced-glow show-container"
                       style={{
                         backgroundColor: colors.background,
-                        borderColor: colors.primary,
-                        boxShadow: `0 8px 32px ${colors.primary}20`,
+                        borderColor: colors.border,
+                        boxShadow: `${colors.border}20 0px 8px 32px`,
                         height: "160px",
                         transform: hoveredShow === `past-${show.id}` ? 'scale(1.05)' : 'scale(1)',
                       }}
@@ -514,7 +514,7 @@ export default function Schedule() {
           }}
         >
           <div
-            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full relative"
+            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full relative show-popup-content"
             style={{
               borderColor: colors.primary,
               backgroundColor: colors.background,
@@ -543,6 +543,8 @@ export default function Schedule() {
                 e.currentTarget.style.backgroundColor = `${colors.primary}20`;
                 e.currentTarget.style.color = colors.primary;
               }}
+              title="Close show details"
+              aria-label="Close show details"
             >
               <X className="h-5 w-5" />
             </button>
@@ -604,7 +606,7 @@ export default function Schedule() {
           }}
         >
           <div
-            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full relative"
+            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full relative show-popup-content"
             style={{
               borderColor: colors.primary,
               backgroundColor: colors.background,
@@ -633,6 +635,8 @@ export default function Schedule() {
                 e.currentTarget.style.backgroundColor = `${colors.primary}20`;
                 e.currentTarget.style.color = colors.primary;
               }}
+              title="Close show details"
+              aria-label="Close show details"
             >
               <X className="h-5 w-5" />
             </button>

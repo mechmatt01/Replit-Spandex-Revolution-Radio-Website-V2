@@ -103,10 +103,9 @@ export default function LiveChat({
     return (
       <div className="fixed bottom-20 right-4 z-40">
         <Card
-          className="w-80 shadow-lg border-2 backdrop-blur-sm"
+          className="w-80 shadow-lg backdrop-blur-sm"
           style={{
             background: `linear-gradient(135deg, ${colors.primary}15, ${colors.primary}05)`,
-            borderColor: colors.primary,
           }}
         >
           <CardContent className="p-4">
@@ -173,7 +172,7 @@ export default function LiveChat({
       {/* Chat Window */}
       {isOpen && (
         <div className="fixed bottom-20 right-4 w-80 h-96 z-50">
-          <Card className="h-full bg-dark-surface border-dark-border shadow-2xl">
+          <Card className="h-full bg-dark-surface shadow-2xl">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

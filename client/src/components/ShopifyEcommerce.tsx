@@ -299,7 +299,6 @@ export default function ShopifyEcommerce() {
               className="transition-all duration-300"
               style={{ 
                 backgroundColor: currentTheme === 'light-mode' ? 'rgba(255, 255, 255, 0.9)' : 'rgba(30, 30, 30, 0.5)',
-                borderColor: colors.primary
               }}
             >
               <CardContent className="p-4">
@@ -679,7 +678,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                         product.variants?.find((v) => v.id === e.target.value)!,
                       )
                     }
-                    className="w-full p-2 bg-dark-bg border-dark-border text-white placeholder-gray-500 focus:border-primary rounded text-center"
+                    className="w-full p-2 bg-dark-bg text-white placeholder-gray-500 rounded text-center"
                     style={{ textAlign: 'center' }}
                   >
                     {(product.variants || []).map((variant) => (

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2 } from "lucide-react";
+import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2, Users, Globe, Activity } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useRadio } from "@/contexts/RadioContext";
+import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
 import { AnimatedCounter } from "./AnimatedCounter";
 
 // Types
@@ -23,30 +25,32 @@ interface Config {
   googleMapsMapId: string;
 }
 
-// Weather icon mapping
+// Weather icon mapping - Updated to match actual files in animated_weather_icons folder
 const weatherIconMap: { [key: string]: string } = {
   '01d': 'clear-day.svg',
   '01n': 'clear-night.svg',
   '02d': 'partly-cloudy-day.svg',
   '02n': 'partly-cloudy-night.svg',
-  '03d': 'cloudy-day-1.svg',
-  '03n': 'cloudy-night-1.svg',
-  '04d': 'cloudy-day-2.svg',
-  '04n': 'cloudy-night-2.svg',
-  '09d': 'rainy-1-day.svg',
-  '09n': 'rainy-1-night.svg',
-  '10d': 'rainy-2.svg',
-  '10n': 'rainy-3.svg',
+  '03d': 'cloudy-day.svg',
+  '03n': 'cloudy-night.svg',
+  '04d': 'cloudy.svg',
+  '04n': 'cloudy.svg',
+  '09d': 'rainy-day.svg',
+  '09n': 'rainy-night.svg',
+  '10d': 'rain.svg',
+  '10n': 'rainy.svg',
   '11d': 'thunder.svg',
   '11n': 'thunder.svg',
-  '13d': 'snowy-1.svg',
-  '13n': 'snowy-2.svg',
+  '13d': 'snow.svg',
+  '13n': 'snowy.svg',
   '50d': 'fog.svg',
   '50n': 'fog.svg',
 };
 
 const FullWidthGlobeMapFixed = () => {
   const { isDarkMode, colors } = useTheme();
+  const { currentTrack } = useRadio();
+  const { adaptiveTheme } = useAdaptiveTheme(currentTrack?.artwork || '');
   const mapRef = useRef<HTMLDivElement>(null);
   const fullscreenMapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -72,12 +76,52 @@ const FullWidthGlobeMapFixed = () => {
     googleMapsMapId: "spandex-salvation-radio-map"
   };
 
-  // Mock live stats for Firebase hosting
-  const liveStats = {
-    activeListeners: 42,
-    countries: 12,
-    totalListeners: 156
+  // Live statistics state with proper Firebase integration
+  const [liveStats, setLiveStats] = useState<{
+    activeListeners: number;
+    countries: number;
+    totalListeners: number;
+  } | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  // Fetch live statistics from Firebase API
+  const fetchLiveStats = async () => {
+    try {
+      const response = await fetch('/api/live-stats');
+      if (response.ok) {
+        const stats = await response.json();
+        setLiveStats(stats);
+      } else {
+        console.error('Failed to fetch live stats');
+        // Fallback to default values if API fails
+        setLiveStats({
+          activeListeners: 42,
+          countries: 12,
+          totalListeners: 1247
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching live stats:', error);
+      // Fallback to default values if fetch fails
+      setLiveStats({
+        activeListeners: 42,
+        countries: 12,
+        totalListeners: 1247
+      });
+    } finally {
+      setStatsLoading(false);
+    }
   };
+
+  // Fetch live stats on component mount and set up periodic updates
+  useEffect(() => {
+    fetchLiveStats();
+    
+    // Update stats every 30 seconds
+    const interval = setInterval(fetchLiveStats, 30000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   // Get weather icon based on OpenWeatherMap icon code
   const getWeatherIcon = (iconCode: string): string => {
@@ -175,30 +219,60 @@ const FullWidthGlobeMapFixed = () => {
   // Initialize location and weather on component mount
   useEffect(() => {
     const initializeLocation = async () => {
-      // Check if we have stored location permission
+      console.log('Initializing location services...');
+      
+      // Check if geolocation is supported
+      if (!navigator.geolocation) {
+        console.log('Geolocation not supported');
+        setLocationPermission('denied');
+        setWeather({
+          location: "Location not supported",
+          temperature: 72,
+          description: "Geolocation unavailable",
+          icon: "01d",
+          humidity: 45,
+          windSpeed: 5,
+          feelsLike: 75
+        });
+        return;
+      }
+
+      // Check stored permission
       const storedPermission = localStorage.getItem('locationPermission');
       console.log('Stored location permission:', storedPermission);
       
       if (storedPermission === 'granted') {
         setLocationPermission('granted');
-        // Try to get current location if permission was previously granted
         try {
           await handleLocationPermission();
         } catch (error) {
           console.log('Failed to get location despite previous permission:', error);
+          setLocationPermission('prompt');
         }
       } else if (storedPermission === 'denied') {
         setLocationPermission('denied');
+        // Show fallback weather data
+        setWeather({
+          location: "Enable location for weather",
+          temperature: 72,
+          description: "Location access needed",
+          icon: "01d",
+          humidity: 45,
+          windSpeed: 5,
+          feelsLike: 75
+        });
       } else {
-        // No stored permission, set to prompt state
+        // No stored permission - set to prompt state
         setLocationPermission('prompt');
-        
-        // Try to get location without showing permission denied state initially
-        try {
-          await handleLocationPermission();
-        } catch (error) {
-          console.log('Initial location request failed:', error);
-        }
+        setWeather({
+          location: "Enable location for weather",
+          temperature: 72,
+          description: "Tap to enable location",
+          icon: "01d",
+          humidity: 45,
+          windSpeed: 5,
+          feelsLike: 75
+        });
       }
     };
     
@@ -339,7 +413,7 @@ const FullWidthGlobeMapFixed = () => {
         height: ${isUserLocation ? '20px' : '16px'};
         border-radius: 50%;
         background: ${isUserLocation ? 'radial-gradient(circle, #4285F4 0%, #2563eb 100%)' : `radial-gradient(circle, ${colors.primary} 0%, ${colors.primary}dd 100%)`};
-        border: 0px solid transparent;
+        border: 0px solid ${isUserLocation ? '#4285F4' : colors.primary};
         animation: modernPulse 3s ease-in-out infinite;
         transform: translate(-50%, -50%);
         pointer-events: none;
@@ -366,7 +440,7 @@ const FullWidthGlobeMapFixed = () => {
     return { marker, infoWindow, pulsingOverlay };
   };
 
-  // Toggle fullscreen map view with smooth animation
+  // Toggle fullscreen map view with smooth animation and scroll prevention
   const toggleFullscreen = () => {
     if (!map) return;
     
@@ -376,29 +450,31 @@ const FullWidthGlobeMapFixed = () => {
       const currentZoom = map.getZoom();
       setMapState({ center: currentCenter, zoom: currentZoom });
       
-      // Expand to fullscreen
+      // Expand to fullscreen and prevent page scrolling
       setIsFullscreen(true);
+      document.body.style.overflow = 'hidden';
       
       // Force map resize after animation completes
       setTimeout(() => {
         if (map) {
           google.maps.event.trigger(map, 'resize');
-          // Restore center and zoom after resize
-          if (mapState.center && mapState.zoom) {
+          // Set more zoomed in view for fullscreen
+          if (mapState.center) {
             map.setCenter(mapState.center);
-            map.setZoom(mapState.zoom);
+            map.setZoom(4); // More zoomed in for fullscreen
           }
         }
       }, 400); // Match animation duration
     } else {
-      // Collapse from fullscreen
+      // Collapse from fullscreen and re-enable page scrolling
       setIsFullscreen(false);
+      document.body.style.overflow = 'unset';
       
       // Force map resize after animation completes
       setTimeout(() => {
         if (map) {
           google.maps.event.trigger(map, 'resize');
-          // Restore center and zoom after resize
+          // Restore original zoom level
           if (mapState.center && mapState.zoom) {
             map.setCenter(mapState.center);
             map.setZoom(mapState.zoom);
@@ -457,7 +533,7 @@ const FullWidthGlobeMapFixed = () => {
       }
 
       const mapInstance = new google.maps.Map(ref, {
-        zoom: 2,
+        zoom: isFullscreen ? 3 : 2, // More zoomed in when fullscreen
         center: { lat: 20, lng: 0 },
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: true, // Disable all default UI controls
@@ -794,10 +870,12 @@ const FullWidthGlobeMapFixed = () => {
       {/* Fullscreen Overlay Background */}
       {isFullscreen && (
         <div 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] transition-all duration-500 ease-in-out"
+          className="fixed bg-black/60 backdrop-blur-sm z-[9998] transition-all duration-500 ease-in-out"
           style={{ 
             top: '4rem', // Below navigation bar
             bottom: '5rem', // Above floating player
+            left: 0,
+            right: 0,
             opacity: isFullscreen ? 1 : 0
           }}
         />
@@ -816,53 +894,123 @@ const FullWidthGlobeMapFixed = () => {
               See where metal fans are tuning in from around the world in real-time.
             </p>
 
-            {/* Weather Display with Animated Icons */}
-            <div className="mb-4">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <MapPin className={`w-5 h-5 ${isDarkMode ? "text-gray-400" : "text-gray-600"}`} />
-                <span className={`text-lg font-semibold ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                  {weather?.location || "Loading location..."}
-                </span>
+            {/* Modern Glass Weather Display */}
+            <div className="mb-6 relative max-w-lg mx-auto">
+              {/* Glass/Blur Background Container */}
+              <div
+                className="relative rounded-2xl backdrop-blur-md border border-primary/10 shadow-2xl overflow-hidden transition-all duration-500 ease-in-out"
+                style={{
+                  background: `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}80, ${adaptiveTheme.overlayColor}60)`,
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  boxShadow: `0 8px 32px ${adaptiveTheme.accentColor}20, 0 0 0 1px ${adaptiveTheme.accentColor}10`
+                }}
+              >
+                {/* Modern Glass Enable Location Overlay - Pill-shaped covering entire location field */}
                 {(locationPermission === 'denied' || locationPermission === 'prompt') && (
-                  <Button
-                    onClick={handleLocationPermission}
-                    size="sm"
-                    className={`ml-2 transition-colors duration-300 text-xs ${
-                      isDarkMode 
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                        : 'bg-gray-600 hover:bg-gray-700 text-white'
-                    }`}
+                  <div 
+                    className="absolute inset-0 z-10 flex items-center justify-center transition-all duration-500 ease-in-out"
+                    style={{
+                      borderRadius: '1rem', // Match parent container rounding
+                      overflow: 'hidden'
+                    }}
                   >
-                    Enable Location
-                  </Button>
-                )}
-              </div>
-              
-              <div className="flex items-center justify-center gap-3">
-                {/* Weather Icon */}
-                {weather && (
-                  <div className="flex items-center justify-center">
-                    {weatherLoading ? (
-                      <Loader2 className="w-8 h-8 animate-spin text-gray-400" />
-                    ) : (
-                      <img
-                        src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
-                        alt={weather.description}
-                        className="w-12 h-12 object-contain animate-pulse"
-                        style={{ filter: isDarkMode ? 'brightness(0.8)' : 'none' }}
-                      />
-                    )}
+                    <Button
+                      onClick={handleLocationPermission}
+                      className="w-full h-full backdrop-blur-md border-0 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:backdrop-blur-lg"
+                      style={{
+                        // Match floating player's glass/blur styling exactly
+                        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
+                          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.25)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.15)')})`
+                          : 'rgba(255, 255, 255, 0.20)',
+                        backdropFilter: 'blur(32px) saturate(200%)',
+                        WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+                        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
+                          ? `0 12px 48px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`
+                          : `0 12px 48px ${colors.primary}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`,
+                        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
+                          ? adaptiveTheme.textColor 
+                          : colors.text,
+                        borderRadius: '9999px', // True pill shape (100% rounded corners)
+                        fontSize: '0.875rem',
+                        fontWeight: '600',
+                        letterSpacing: '0.025em'
+                      }}
+                    >
+                      <div className="flex items-center justify-center gap-3">
+                        <MapPin 
+                          className="w-5 h-5" 
+                          style={{ 
+                            color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
+                              ? adaptiveTheme.accentColor
+                              : colors.primary
+                          }} 
+                        />
+                        <span className="tracking-wide">Enable Location for Weather</span>
+                      </div>
+                    </Button>
                   </div>
                 )}
-                
-                {/* Temperature and Description */}
-                <div className="flex flex-col items-center">
-                  <span className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                    {weather ? `${Math.round(weather.temperature)}°F` : "Loading..."}
-                  </span>
-                  <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                    {weather?.description || "Loading weather..."}
-                  </span>
+
+                {/* Main Content - Hide when enable location button is showing */}
+                <div className={`p-6 space-y-4 transition-opacity duration-300 ${
+                  (locationPermission === 'denied' || locationPermission === 'prompt') ? 'opacity-0 invisible' : 'opacity-100 visible'
+                }`}>
+                  {/* Location Header */}
+                  <div className="flex items-center justify-center gap-2">
+                    <MapPin 
+                      className="w-5 h-5" 
+                      style={{ color: adaptiveTheme.accentColor }} 
+                    />
+                    <span 
+                      className="text-lg font-semibold tracking-wide"
+                      style={{ color: adaptiveTheme.textColor }}
+                    >
+                      {weather?.location || "Getting your location..."}
+                    </span>
+                  </div>
+                  
+                  {/* Weather Info */}
+                  <div className="flex items-center justify-center gap-4">
+                    {/* Weather Icon */}
+                    {weather && (
+                      <div className="flex items-center justify-center">
+                        {weatherLoading ? (
+                          <Loader2 
+                            className="w-12 h-12 animate-spin" 
+                            style={{ color: adaptiveTheme.accentColor }} 
+                          />
+                        ) : (
+                          <div className="relative">
+                            <img
+                              src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
+                              alt={weather.description}
+                              className="w-16 h-16 object-contain drop-shadow-lg"
+                              style={{ 
+                                filter: `drop-shadow(0 4px 8px ${adaptiveTheme.accentColor}30)`
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Temperature and Description */}
+                    <div className="flex flex-col items-center">
+                      <span 
+                        className="text-2xl font-bold tracking-tight"
+                        style={{ color: adaptiveTheme.textColor }}
+                      >
+                        {weather ? `${Math.round(weather.temperature)}°F` : "Loading..."}
+                      </span>
+                      <span 
+                        className="text-sm font-medium opacity-80 capitalize"
+                        style={{ color: adaptiveTheme.textColor }}
+                      >
+                        {weather?.description || "Loading weather..."}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -870,17 +1018,20 @@ const FullWidthGlobeMapFixed = () => {
 
           {/* Map Container with smooth fullscreen transition */}
           <div 
-            className={`relative transition-all duration-500 ease-in-out transform ${
+            className={`relative transition-all duration-500 ease-in-out transform map-container ${
               isFullscreen 
-                ? 'fixed inset-x-0 z-[9999] rounded-none' 
+                ? 'fixed z-[9999] rounded-none' 
                 : 'w-full rounded-xl shadow-2xl border-2'
             }`}
             style={{ 
-              borderColor: isFullscreen ? 'transparent' : colors.primary,
+              borderColor: colors.primary,
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
-              top: isFullscreen ? '4rem' : 'auto', // Below navigation
+              top: isFullscreen ? '4rem' : 'auto', // Below navigation bar
               bottom: isFullscreen ? '5rem' : 'auto', // Above floating player
-              height: isFullscreen ? 'calc(100vh - 9rem)' : '24rem', // Full height minus nav and player
+              left: isFullscreen ? '0' : 'auto',
+              right: isFullscreen ? '0' : 'auto',
+              height: isFullscreen ? 'calc(100vh - 9rem)' : '26rem', // Full height minus nav and player, taller normal view to crop attribution
+              width: isFullscreen ? '100vw' : 'auto',
               margin: isFullscreen ? '0' : 'auto',
               overflow: 'hidden'
             }}
@@ -908,7 +1059,7 @@ const FullWidthGlobeMapFixed = () => {
             <Button
               onClick={toggleFullscreen}
               size="sm"
-              className={`absolute top-4 left-4 z-10 border-0 shadow-lg transition-all duration-300 hover:scale-105 ${
+              className={`absolute ${isFullscreen ? 'top-8 left-8' : 'top-4 left-4'} z-[10000] border-0 shadow-lg transition-all duration-300 hover:scale-105 ${
                 isFullscreen 
                   ? 'bg-red-600 hover:bg-red-700 text-white' 
                   : 'bg-gray-800 hover:bg-gray-700 text-white'
@@ -954,8 +1105,8 @@ const FullWidthGlobeMapFixed = () => {
           }`}>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 
-                {/* Live Statistics Section */}
-                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl"
+                {/* Live Statistics Section - Redesigned */}
+                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] stats-container"
                   style={{
                     background: isDarkMode 
                       ? `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%)`
@@ -963,97 +1114,146 @@ const FullWidthGlobeMapFixed = () => {
                     borderColor: colors.primary,
                     boxShadow: `0 0 20px ${colors.primary}20`
                   }}>
-                  <CardHeader className="text-center pb-2">
+                  <CardHeader className="text-center pb-4">
                     <CardTitle 
-                      className="text-2xl lg:text-3xl font-black tracking-wide"
+                      className="text-2xl lg:text-3xl font-black tracking-wide flex items-center justify-center gap-3"
                       style={{ 
                         color: colors.primary,
                         textShadow: isDarkMode ? `0 0 10px ${colors.primary}40` : 'none'
                       }}
                     >
+                      <Activity className="w-8 h-8" />
                       LIVE STATISTICS
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="py-6">
-                    <div className="grid grid-cols-1 gap-6">
+                  <CardContent className="py-2">
+                    <div className="grid grid-cols-1 gap-4">
                       
                       {/* Active Listeners */}
-                      <div className="text-center p-4 rounded-xl"
+                      <div className="text-center p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
                         style={{
                           background: isDarkMode 
-                            ? `linear-gradient(135deg, ${colors.primary}10 0%, ${colors.primary}05 100%)`
-                            : `linear-gradient(135deg, ${colors.primary}15 0%, ${colors.primary}08 100%)`,
-                          border: `1px solid ${colors.primary}30`
+                            ? `linear-gradient(135deg, ${colors.primary}15 0%, ${colors.primary}08 100%)`
+                            : `linear-gradient(135deg, ${colors.primary}20 0%, ${colors.primary}10 100%)`,
+                          border: `2px solid ${colors.primary}40`,
+                          boxShadow: `0 8px 32px ${colors.primary}15`
                         }}>
-                        <div className={`text-sm font-semibold mb-2 tracking-wide ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                          ACTIVE LISTENERS
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                          <Users 
+                            className="w-6 h-6" 
+                            style={{ color: colors.primary }}
+                          />
+                          <div className={`text-sm font-bold tracking-wide ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
+                            ACTIVE LISTENERS
+                          </div>
                         </div>
-                        <AnimatedCounter
-                          value={liveStats?.activeListeners || 42}
-                          className="text-4xl lg:text-5xl font-black"
-                          style={{ 
-                            color: colors.primary,
-                            textShadow: isDarkMode ? `0 2px 10px ${colors.primary}60` : `0 2px 4px ${colors.primary}30`
-                          }}
-                        />
-                        <div className="flex justify-center mt-2">
+                        {statsLoading ? (
+                          <div className="animate-pulse text-5xl lg:text-6xl font-black" style={{ color: colors.primary }}>
+                            --
+                          </div>
+                        ) : (
+                          <AnimatedCounter
+                            value={liveStats?.activeListeners || 42}
+                            className="text-5xl lg:text-6xl font-black"
+                            style={{ 
+                              color: colors.primary,
+                              textShadow: isDarkMode ? `0 4px 15px ${colors.primary}60` : `0 2px 8px ${colors.primary}30`
+                            }}
+                          />
+                        )}
+                        <div className="flex justify-center mt-3">
                           <div 
-                            className="w-2 h-2 rounded-full animate-pulse"
-                            style={{ backgroundColor: colors.primary, boxShadow: `0 0 8px ${colors.primary}` }}
+                            className="w-3 h-3 rounded-full animate-pulse"
+                            style={{ 
+                              backgroundColor: colors.primary, 
+                              boxShadow: `0 0 15px ${colors.primary}80, 0 0 30px ${colors.primary}40`
+                            }}
                           />
                         </div>
                       </div>
 
                       {/* Countries */}
-                      <div className="text-center p-4 rounded-xl"
+                      <div className="text-center p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
                         style={{
                           background: isDarkMode 
-                            ? `linear-gradient(135deg, ${colors.secondary}10 0%, ${colors.secondary}05 100%)`
-                            : `linear-gradient(135deg, ${colors.secondary}15 0%, ${colors.secondary}08 100%)`,
-                          border: `1px solid ${colors.secondary}30`
+                            ? `linear-gradient(135deg, ${colors.secondary}15 0%, ${colors.secondary}08 100%)`
+                            : `linear-gradient(135deg, ${colors.secondary}20 0%, ${colors.secondary}10 100%)`,
+                          border: `2px solid ${colors.secondary}40`,
+                          boxShadow: `0 8px 32px ${colors.secondary}15`
                         }}>
-                        <div className={`text-sm font-semibold mb-2 tracking-wide ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                          COUNTRIES
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                          <Globe 
+                            className="w-6 h-6" 
+                            style={{ color: colors.secondary }}
+                          />
+                          <div className={`text-sm font-bold tracking-wide ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
+                            COUNTRIES
+                          </div>
                         </div>
-                        <AnimatedCounter
-                          value={liveStats?.countries || 15}
-                          className="text-4xl lg:text-5xl font-black"
-                          style={{ 
-                            color: colors.secondary,
-                            textShadow: isDarkMode ? `0 2px 10px ${colors.secondary}60` : `0 2px 4px ${colors.secondary}30`
-                          }}
-                        />
-                        <div className="flex justify-center mt-2">
+                        {statsLoading ? (
+                          <div className="animate-pulse text-5xl lg:text-6xl font-black" style={{ color: colors.secondary }}>
+                            --
+                          </div>
+                        ) : (
+                          <AnimatedCounter
+                            value={liveStats?.countries || 15}
+                            className="text-5xl lg:text-6xl font-black"
+                            style={{ 
+                              color: colors.secondary,
+                              textShadow: isDarkMode ? `0 4px 15px ${colors.secondary}60` : `0 2px 8px ${colors.secondary}30`
+                            }}
+                          />
+                        )}
+                        <div className="flex justify-center mt-3">
                           <div 
-                            className="w-2 h-2 rounded-full animate-pulse"
-                            style={{ backgroundColor: colors.secondary, boxShadow: `0 0 8px ${colors.secondary}` }}
+                            className="w-3 h-3 rounded-full animate-pulse"
+                            style={{ 
+                              backgroundColor: colors.secondary, 
+                              boxShadow: `0 0 15px ${colors.secondary}80, 0 0 30px ${colors.secondary}40`
+                            }}
                           />
                         </div>
                       </div>
 
                       {/* Total Listeners */}
-                      <div className="text-center p-4 rounded-xl"
+                      <div className="text-center p-6 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
                         style={{
                           background: isDarkMode 
-                            ? `linear-gradient(135deg, ${colors.accent}10 0%, ${colors.accent}05 100%)`
-                            : `linear-gradient(135deg, ${colors.accent}15 0%, ${colors.accent}08 100%)`,
-                          border: `1px solid ${colors.accent}30`
+                            ? `linear-gradient(135deg, ${colors.accent}15 0%, ${colors.accent}08 100%)`
+                            : `linear-gradient(135deg, ${colors.accent}20 0%, ${colors.accent}10 100%)`,
+                          border: `2px solid ${colors.accent}40`,
+                          boxShadow: `0 8px 32px ${colors.accent}15`
                         }}>
-                        <div className={`text-sm font-semibold mb-2 tracking-wide ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                          TOTAL LISTENERS
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                          <Activity 
+                            className="w-6 h-6" 
+                            style={{ color: colors.accent }}
+                          />
+                          <div className={`text-sm font-bold tracking-wide ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}>
+                            TOTAL LISTENERS
+                          </div>
                         </div>
-                        <AnimatedCounter
-                          value={liveStats?.totalListeners || 1247}
-                          className="text-4xl lg:text-5xl font-black"
-                          style={{ 
-                            color: colors.accent,
-                            textShadow: isDarkMode ? `0 2px 10px ${colors.accent}60` : `0 2px 4px ${colors.accent}30`
-                          }}
-                        />
-                        <div className="flex justify-center mt-2">
+                        {statsLoading ? (
+                          <div className="animate-pulse text-5xl lg:text-6xl font-black" style={{ color: colors.accent }}>
+                            ----
+                          </div>
+                        ) : (
+                          <AnimatedCounter
+                            value={liveStats?.totalListeners || 1247}
+                            className="text-5xl lg:text-6xl font-black"
+                            style={{ 
+                              color: colors.accent,
+                              textShadow: isDarkMode ? `0 4px 15px ${colors.accent}60` : `0 2px 8px ${colors.accent}30`
+                            }}
+                          />
+                        )}
+                        <div className="flex justify-center mt-3">
                           <div 
-                            className="w-2 h-2 rounded-full animate-pulse"
-                            style={{ backgroundColor: colors.accent, boxShadow: `0 0 8px ${colors.accent}` }}
+                            className="w-3 h-3 rounded-full animate-pulse"
+                            style={{ 
+                              backgroundColor: colors.accent, 
+                              boxShadow: `0 0 15px ${colors.accent}80, 0 0 30px ${colors.accent}40`
+                            }}
                           />
                         </div>
                       </div>
@@ -1062,8 +1262,8 @@ const FullWidthGlobeMapFixed = () => {
                   </CardContent>
                 </Card>
 
-                {/* Active Locations Section */}
-                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl"
+                {/* Active Locations Section - Redesigned */}
+                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] stats-container"
                   style={{
                     background: isDarkMode 
                       ? `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%)`
@@ -1071,19 +1271,20 @@ const FullWidthGlobeMapFixed = () => {
                     borderColor: colors.primary,
                     boxShadow: `0 0 20px ${colors.primary}20`
                   }}>
-                  <CardHeader className="pb-2">
+                  <CardHeader className="text-center pb-4">
                     <CardTitle 
-                      className="text-2xl lg:text-3xl font-black tracking-wide"
+                      className="text-2xl lg:text-3xl font-black tracking-wide flex items-center justify-center gap-3"
                       style={{ 
                         color: colors.primary,
                         textShadow: isDarkMode ? `0 0 10px ${colors.primary}40` : 'none'
                       }}
                     >
+                      <MapPin className="w-8 h-8" />
                       ACTIVE LOCATIONS
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="py-6">
-                    <div className="space-y-3">
+                  <CardContent className="py-2">
+                    <div className="space-y-4">
                       {[
                         { name: "New York, USA", listeners: 4 },
                         { name: "London, UK", listeners: 19 },
@@ -1094,43 +1295,47 @@ const FullWidthGlobeMapFixed = () => {
                       ].map((location, index) => (
                         <div 
                           key={index} 
-                          className="flex items-center justify-between p-4 rounded-xl transition-all duration-300 hover:scale-[1.02]"
+                          className="p-4 rounded-2xl transition-all duration-300 hover:scale-[1.03]"
                           style={{
                             background: isDarkMode 
-                              ? `linear-gradient(135deg, ${colors.primary}08 0%, ${colors.primary}03 100%)`
-                              : `linear-gradient(135deg, ${colors.primary}12 0%, ${colors.primary}06 100%)`,
-                            border: `1px solid ${colors.primary}20`
+                              ? `linear-gradient(135deg, ${colors.primary}12 0%, ${colors.primary}06 100%)`
+                              : `linear-gradient(135deg, ${colors.primary}18 0%, ${colors.primary}08 100%)`,
+                            border: `2px solid ${colors.primary}30`,
+                            boxShadow: `0 4px 20px ${colors.primary}10`
                           }}
                         >
-                          <div className="flex items-center space-x-4">
-                            <div 
-                              className="w-3 h-3 rounded-full animate-pulse"
-                              style={{ 
-                                backgroundColor: colors.primary,
-                                boxShadow: `0 0 12px ${colors.primary}80`
-                              }}
-                            />
-                            <span 
-                              className="font-bold text-lg"
-                              style={{ 
-                                color: isDarkMode ? colors.text : colors.textSecondary,
-                                textShadow: isDarkMode ? `0 1px 3px rgba(0,0,0,0.5)` : 'none'
-                              }}
-                            >
-                              {location.name}
-                            </span>
-                          </div>
-                          <div className="flex items-center">
-                            <AnimatedCounter
-                              value={location.listeners}
-                              className="text-xl font-black px-4 py-2 rounded-full"
-                              style={{
-                                backgroundColor: `${colors.primary}20`,
-                                color: colors.primary,
-                                textShadow: isDarkMode ? `0 0 8px ${colors.primary}40` : 'none',
-                                border: `1px solid ${colors.primary}40`
-                              }}
-                            />
+                          <div className="flex items-center justify-center">
+                            <div className="flex items-center space-x-3 flex-1 justify-center">
+                              <div 
+                                className="w-4 h-4 rounded-full animate-pulse flex-shrink-0"
+                                style={{ 
+                                  backgroundColor: colors.primary,
+                                  boxShadow: `0 0 15px ${colors.primary}90, 0 0 30px ${colors.primary}50`
+                                }}
+                              />
+                              <span 
+                                className="font-black text-lg text-center"
+                                style={{ 
+                                  color: isDarkMode ? colors.text : colors.textSecondary,
+                                  textShadow: isDarkMode ? `0 2px 4px rgba(0,0,0,0.6)` : 'none'
+                                }}
+                              >
+                                {location.name}
+                              </span>
+                            </div>
+                            <div className="ml-4">
+                              <AnimatedCounter
+                                value={location.listeners}
+                                className="text-xl font-black px-4 py-2 rounded-full"
+                                style={{
+                                  backgroundColor: `${colors.primary}25`,
+                                  color: colors.primary,
+                                  textShadow: isDarkMode ? `0 0 10px ${colors.primary}50` : 'none',
+                                  border: `2px solid ${colors.primary}50`,
+                                  boxShadow: `0 4px 15px ${colors.primary}20`
+                                }}
+                              />
+                            </div>
                           </div>
                         </div>
                       ))}

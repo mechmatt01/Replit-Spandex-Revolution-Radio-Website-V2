@@ -1,43 +1,25 @@
-import express, { type Express } from "express";
-import fs from "fs";
+import { createServer, createLogger } from "vite";
+import type { Express, Server } from "express";
+import express from "express";
 import path from "path";
-import { createServer as createViteServer, createLogger } from "vite";
-import { type Server } from "http";
-// Conditional vite config loading for production compatibility
-let viteConfig: any = {};
-
-// Only load vite config in development
-if (process.env.NODE_ENV === "development") {
-  try {
-    const viteConfigModule = await import("../vite.config.js");
-    viteConfig = viteConfigModule.default || {};
-  } catch (error) {
-    console.warn("Could not load vite.config.js:", error.message);
-  }
-}
-
-// Fallback config for production
-if (!viteConfig || Object.keys(viteConfig).length === 0) {
-  viteConfig = {
-    plugins: [],
-    resolve: {
-      alias: {
-        "@": "./client/src",
-        "@shared": "./shared",
-        "@assets": "./attached_assets",
-      },
-    },
-    root: "./client",
-    publicDir: "./client/public",
-    build: {
-      outDir: "./client/dist",
-      emptyOutDir: true,
-    },
-  };
-}
+import fs from "fs";
+import { fileURLToPath } from "url";
 import { nanoid } from "nanoid";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const viteLogger = createLogger();
+
+const viteConfig = {
+  root: path.resolve(__dirname, "..", "client"),
+  build: {
+    outDir: path.resolve(__dirname, "..", "client", "dist"),
+  },
+  server: {
+    port: 5173,
+  },
+};
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -64,7 +46,7 @@ export async function setupVite(app: Express, server: Server) {
       allowedHosts: true,
     };
 
-    const vite = await createViteServer({
+    const vite = await createServer({
       ...viteConfig,
       configFile: false,
       customLogger: {
@@ -86,7 +68,7 @@ export async function setupVite(app: Express, server: Server) {
 
       try {
         const clientTemplate = path.resolve(
-          import.meta.dirname,
+          __dirname,
           "..",
           "client",
           "index.html",

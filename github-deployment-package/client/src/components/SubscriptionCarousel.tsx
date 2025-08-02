@@ -70,8 +70,8 @@ const subscriptionTiers: SubscriptionTier[] = [
     priceId: "price_icon_monthly",
     icon: IconPackageIcon,
     iconElement: <Crown className="w-16 h-16" />,
-    gradientStart: "#FF50C3",
-    gradientEnd: "#B66BFF",
+    gradientStart: "#00D4FF",
+    gradientEnd: "#5200FF",
     description: "The ultimate metal experience",
     features: [
       "Everything in Legend tier",
@@ -195,27 +195,35 @@ export default function SubscriptionCarousel() {
               />
             </div>
 
-            {/* Main Card */}
+            {/* Moving Gradient Border Wrapper */}
             <div
-              className="relative backdrop-blur-xl rounded-3xl p-6 transform transition-all duration-500 hover:scale-105 overflow-hidden flex flex-col subscription-card"
+              className="relative overflow-hidden transition-all duration-500"
               style={{
-                border: currentTier.popular ? "8px solid transparent" : "5px solid transparent",
-                borderRadius: "24px",
-                backgroundColor: currentTheme === 'light-mode' ? '#ffffff' : 'rgba(0, 0, 0, 0.8)',
-                background: currentTier.popular 
-                  ? `linear-gradient(${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}, ${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}) padding-box, linear-gradient(90deg, ${currentTier.gradientStart} 0%, ${currentTier.gradientEnd} 25%, ${currentTier.gradientStart} 50%, ${currentTier.gradientEnd} 75%, ${currentTier.gradientStart} 100%) border-box`
-                  : `linear-gradient(${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}, ${currentTheme === 'light-mode' ? '#ffffff' : 'var(--background)'}) padding-box, linear-gradient(90deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}) border-box`,
-                backgroundSize: currentTier.popular ? "300% 300%" : "100% 100%",
-                animation: currentTier.popular ? "gradientFlow 6s ease-in-out infinite" : "none",
-                boxShadow: currentTier.popular 
-                  ? `0 0 60px ${currentTier.gradientStart}60, 0 0 120px ${currentTier.gradientEnd}40, 0 0 160px ${currentTier.gradientStart}20`
-                  : `0 20px 40px ${currentTier.gradientStart}40`,
-                minHeight: "600px", // Minimum height for mobile devices
-                height: "auto" // Auto height to prevent content cutoff
+                borderRadius: "24px", // Fully rounded border wrapper
+                background: `linear-gradient(45deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                backgroundSize: '400% 400%',
+                animation: 'slowRotatingGradient 8s linear infinite',
+                transform: hoveredTier === currentTier.id ? 'scale(1.05)' : 'scale(1)', // Move transform to border wrapper
+                padding: '5px', // Increased border width by 2.5px (from 2.5px to 5px)
               }}
-              onMouseEnter={() => setHoveredTier(currentTier.id)}
-              onMouseLeave={() => setHoveredTier(null)}
             >
+              {/* Main Card */}
+              <div
+                className="relative backdrop-blur-xl p-6 overflow-hidden flex flex-col subscription-card"
+                style={{
+                  borderRadius: "19px", // Adjusted to match increased border wrapper padding (24px - 5px = 19px)
+                  backgroundColor: colors.background, // Use theme background color instead of surface
+                  background: colors.background,
+                  boxShadow: currentTier.popular 
+                    ? `0 0 60px ${currentTier.gradientStart}60, 0 0 120px ${currentTier.gradientEnd}40, 0 0 160px ${currentTier.gradientStart}20, inset 0 0 0 1px ${currentTier.gradientStart}40`
+                    : `0 20px 40px ${currentTier.gradientStart}40, inset 0 0 0 1px ${currentTier.gradientStart}30`,
+                  minHeight: "600px", // Minimum height for mobile devices
+                  height: "auto", // Auto height to prevent content cutoff
+                  transition: "none", // Remove individual card transition since it's handled by border wrapper
+                }}
+                onMouseEnter={() => setHoveredTier(currentTier.id)}
+                onMouseLeave={() => setHoveredTier(null)}
+              >
 
 
               {/* Package Icon with Animation */}
@@ -390,6 +398,7 @@ export default function SubscriptionCarousel() {
                 </Button>
               </div>
             </div>
+            </div> {/* Close Moving Gradient Border Wrapper */}
           </div>
         </div>
 

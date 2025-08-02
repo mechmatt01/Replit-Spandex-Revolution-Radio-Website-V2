@@ -97,7 +97,7 @@ export default function MetalThemeSwitcher() {
           <Button
             variant="ghost"
             size="sm"
-            className="flex items-center gap-2 hover:bg-opacity-20"
+            className="flex items-center gap-2 hover:bg-opacity-20 theme-button-border"
             style={{
               color: currentTheme === 'light-mode' ? '#000000' : colors.text,
               backgroundColor: "transparent",
@@ -378,7 +378,7 @@ export default function MetalThemeSwitcher() {
                       <Button
                         onClick={() => setShowPremiumDialog(false)}
                         variant="ghost"
-                        className="flex-1 text-white border border-white/30 hover:bg-white/20 font-semibold px-4 py-2 text-sm"
+                        className="flex-1 text-white border border-primary/30 hover:bg-white/20 font-semibold px-4 py-2 text-sm"
                         style={{
                           backgroundColor: "rgba(255, 255, 255, 0.1)",
                           backdropFilter: "blur(10px)",
@@ -404,7 +404,7 @@ export default function MetalThemeSwitcher() {
                     </div>
 
                     {/* TEMPORARY TESTING BUTTON - REMOVE BEFORE DEPLOYMENT */}
-                    <div className="mt-3 pt-3 border-t border-white/20">
+                    <div className="mt-3 pt-3 border-t border-primary/20">
                       <Button
                         onClick={() => {
                           setTheme("glassmorphism-premium" as MetalTheme);

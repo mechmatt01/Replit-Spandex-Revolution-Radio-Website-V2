@@ -146,10 +146,9 @@ export default function Contact() {
         <div className="flex justify-center items-center min-h-[500px]">
           <div className="w-full max-w-lg">
             <Card
-              className="transition-all duration-300 mx-auto"
+              className="transition-all duration-300 mx-auto border-0"
               style={{ 
-                backgroundColor: colors.card,
-                borderColor: colors.primary
+                backgroundColor: colors.card
               }}
             >
               <CardContent className="p-8">

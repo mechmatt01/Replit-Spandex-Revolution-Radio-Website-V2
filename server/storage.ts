@@ -1,3 +1,7 @@
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
+import crypto from "crypto";
+import { generateUserKey } from "./firebase";
 import {
   users,
   submissions,
@@ -26,8 +30,6 @@ import {
   type RadioStation,
   type InsertRadioStation,
 } from "@shared/schema";
-import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -119,21 +121,36 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values(userData as any)
-      .onConflictDoUpdate({
-        target: users.id,
-        set: userData,
-      })
-      .returning();
-    return user;
+    const existingUser = await this.getUser(userData.id);
+    if (existingUser) {
+      return await this.updateUser(userData.id, userData);
+    } else {
+      // Generate a unique user key for new users
+      let userKey = generateUserKey();
+      let attempts = 0;
+      
+      // Ensure the user key is unique
+      while (attempts < 10) {
+        const existingUserWithKey = await db.query.users.findFirst({
+          where: eq(users.userKey, userKey),
+        });
+        if (!existingUserWithKey) {
+          break;
+        }
+        userKey = generateUserKey();
+        attempts++;
+      }
+      
+      return await this.createUser({ ...userData, userKey });
+    }
   }
 
-  // Other operations
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user || undefined;
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, email));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
@@ -141,7 +158,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(users)
       .where(eq(users.username, username));
-    return user || undefined;
+    return user;
   }
 
   async getUserByGoogleId(googleId: string): Promise<User | undefined> {
@@ -149,7 +166,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(users)
       .where(eq(users.googleId, googleId));
-    return user || undefined;
+    return user;
   }
 
   async updateListeningStatus(
@@ -158,19 +175,14 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ isActiveListening } as any)
+      .set({ isActiveListening })
       .where(eq(users.id, id))
       .returning();
     return user;
   }
 
   async createUser(userData: any): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values({
-        ...userData,
-      })
-      .returning();
+    const [user] = await db.insert(users).values(userData).returning();
     return user;
   }
 
@@ -183,7 +195,7 @@ export class DatabaseStorage implements IStorage {
       .set(updates)
       .where(eq(users.id, id))
       .returning();
-    return user || undefined;
+    return user;
   }
 
   async updateUserLocation(
@@ -192,12 +204,10 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({
-        location,
-      } as any)
+      .set({ location })
       .where(eq(users.id, id))
       .returning();
-    return user || undefined;
+    return user;
   }
 
   async getActiveListeners(): Promise<User[]> {
@@ -208,21 +218,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   async verifyPhone(userId: string, code: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, userId));
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .where(eq(users.phoneVerificationCode, code));
 
-    if (!user) {
-      return undefined;
+    if (user) {
+      const [updatedUser] = await db
+        .update(users)
+        .set({ phoneVerified: true })
+        .where(eq(users.id, userId))
+        .returning();
+      return updatedUser;
     }
 
-    const [updatedUser] = await db
-      .update(users)
-      .set({
-        isPhoneVerified: true,
-      } as any)
-      .where(eq(users.id, userId))
-      .returning();
-
-    return updatedUser || undefined;
+    return undefined;
   }
 
   async verifyEmail(token: string): Promise<User | undefined> {
@@ -231,20 +242,16 @@ export class DatabaseStorage implements IStorage {
       .from(users)
       .where(eq(users.emailVerificationToken, token));
 
-    if (!user) {
-      return undefined;
+    if (user) {
+      const [updatedUser] = await db
+        .update(users)
+        .set({ emailVerified: true })
+        .where(eq(users.id, user.id))
+        .returning();
+      return updatedUser;
     }
 
-    const [updatedUser] = await db
-      .update(users)
-      .set({
-        isEmailVerified: true,
-        emailVerificationToken: null,
-      } as any)
-      .where(eq(users.id, user.id))
-      .returning();
-
-    return updatedUser || undefined;
+    return undefined;
   }
 
   async updatePassword(
@@ -253,12 +260,10 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({
-        passwordHash: hashedPassword,
-      } as any)
+      .set({ password: hashedPassword })
       .where(eq(users.id, id))
       .returning();
-    return user || undefined;
+    return user;
   }
 
   async updateStripeInfo(
@@ -274,7 +279,7 @@ export class DatabaseStorage implements IStorage {
       } as any)
       .where(eq(users.id, id))
       .returning();
-    return user || undefined;
+    return user;
   }
 
   async getSubmissions(): Promise<Submission[]> {
@@ -289,7 +294,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(submissions)
       .where(eq(submissions.id, id));
-    return submission || undefined;
+    return submission;
   }
 
   async createSubmission(
@@ -306,7 +311,8 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(submissions)
-      .where(eq(submissions.userId, userId));
+      .where(eq(submissions.userId, userId))
+      .orderBy(desc(submissions.createdAt));
   }
 
   async updateSubmissionStatus(
@@ -315,14 +321,14 @@ export class DatabaseStorage implements IStorage {
   ): Promise<Submission | undefined> {
     const [submission] = await db
       .update(submissions)
-      .set({ status } as any)
+      .set({ status })
       .where(eq(submissions.id, id))
       .returning();
-    return submission || undefined;
+    return submission;
   }
 
   async getContacts(): Promise<Contact[]> {
-    return await db.select().from(contacts).orderBy(desc(contacts.createdAt));
+    return await db.select().from(contacts);
   }
 
   async createContact(insertContact: InsertContact): Promise<Contact> {
@@ -363,7 +369,7 @@ export class DatabaseStorage implements IStorage {
       .set(updateData)
       .where(eq(showSchedules.id, id))
       .returning();
-    return schedule || undefined;
+    return schedule;
   }
 
   async getPastShows(): Promise<PastShow[]> {
@@ -374,56 +380,31 @@ export class DatabaseStorage implements IStorage {
     const [track] = await db
       .select()
       .from(nowPlaying)
-      .orderBy(desc(nowPlaying.id))
+      .orderBy(desc(nowPlaying.createdAt))
       .limit(1);
-    return track || undefined;
+    return track;
   }
 
   async updateNowPlaying(track: InsertNowPlaying): Promise<NowPlaying> {
-    const existingTrack = await this.getCurrentTrack();
-    if (existingTrack) {
-      const [updated] = await db
-        .update(nowPlaying)
-        .set({
-          title: track.title,
-          artist: track.artist,
-          album: track.album,
-          artwork: track.artwork,
-          isAd: track.isAd,
-          duration: track.duration,
-          currentTime: track.currentTime,
-          isLive: track.isLive,
-          updatedAt: new Date(),
-        } as any)
-        .where(eq(nowPlaying.id, existingTrack.id))
-        .returning();
-      return updated;
-    } else {
-      const [newTrack] = await db.insert(nowPlaying).values({
-        title: track.title,
-        artist: track.artist,
-        album: track.album,
-        artwork: track.artwork,
-        isAd: track.isAd,
-        duration: track.duration,
-        currentTime: track.currentTime,
-        isLive: track.isLive,
-      } as any).returning();
-      return newTrack;
-    }
+    const [newTrack] = await db
+      .insert(nowPlaying)
+      .values(track as any)
+      .returning();
+    return newTrack;
   }
 
   async getStreamStats(): Promise<StreamStats | undefined> {
     const [stats] = await db
       .select()
       .from(streamStats)
-      .orderBy(desc(streamStats.id))
+      .orderBy(desc(streamStats.createdAt))
       .limit(1);
-    return stats || undefined;
+    return stats;
   }
 
   async updateStreamStats(stats: Partial<StreamStats>): Promise<StreamStats> {
     const existingStats = await this.getStreamStats();
+
     if (existingStats) {
       const [updatedStats] = await db
         .update(streamStats)

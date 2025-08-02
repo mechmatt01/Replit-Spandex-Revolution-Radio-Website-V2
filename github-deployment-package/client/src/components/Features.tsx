@@ -7,6 +7,7 @@ import type { StreamStats } from "@shared/schema";
 import { Calendar, MapPin, ShoppingBag, Users } from "lucide-react";
 import StaggeredAnimation from "./StaggeredAnimation";
 import SkeletonLoader from "./SkeletonLoader";
+import { useState } from "react";
 
 
 export default function Features() {
@@ -15,6 +16,7 @@ export default function Features() {
   });
   const { getColors, isDarkMode, currentTheme } = useTheme();
   const colors = getColors();
+  const [hoveredFeature, setHoveredFeature] = useState<string | null>(null);
   
   // Use primary color for borders to ensure theme consistency
   const borderColor = colors.primary;
@@ -73,23 +75,32 @@ export default function Features() {
           direction="up"
         >
             {/* Feature 1: 24/7 Live Streaming */}
-          <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
-            style={{
-              backgroundColor: colors.background,
-              borderColor: `${colors.primary}80`,
-              boxShadow: `0 8px 32px ${colors.primary}20`,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = `${colors.primary}80`;
-              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
-            }}
-            onClick={scrollToRadioPlayer}
-          >
+          <div className="relative">
+            {/* Glow Effect */}
+            <div className="absolute inset-2 rounded-2xl overflow-hidden">
+              <div
+                className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary || colors.primary})`,
+                  opacity: hoveredFeature === 'streaming' ? 0.3 : 0,
+                }}
+              />
+            </div>
+            
+            <Card
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              style={{
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                boxShadow: `${colors.border}20 0px 8px 32px`,
+                transform: hoveredFeature === 'streaming' ? 'scale(1.05)' : 'scale(1)',
+              }}
+              onClick={scrollToRadioPlayer}
+              onMouseEnter={() => setHoveredFeature('streaming')}
+              onMouseLeave={() => setHoveredFeature(null)}
+            >
             <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
@@ -122,25 +133,35 @@ export default function Features() {
               </div>
             </CardContent>
           </Card>
+          </div>
 
           {/* Feature 2: Show Archives */}
-          <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
-            style={{
-              backgroundColor: colors.background,
-              borderColor: `${colors.primary}80`,
-              boxShadow: `0 8px 32px ${colors.primary}20`,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = `${colors.primary}80`;
-              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
-            }}
-            onClick={() => scrollToSection("schedule")}
-          >
+          <div className="relative">
+            {/* Glow Effect */}
+            <div className="absolute inset-2 rounded-2xl overflow-hidden">
+              <div
+                className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.primary}, ${colors.accent || colors.primary})`,
+                  opacity: hoveredFeature === 'archives' ? 0.3 : 0,
+                }}
+              />
+            </div>
+            
+            <Card
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              style={{
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                boxShadow: `${colors.border}20 0px 8px 32px`,
+                transform: hoveredFeature === 'archives' ? 'scale(1.05)' : 'scale(1)',
+              }}
+              onClick={() => scrollToSection("schedule")}
+              onMouseEnter={() => setHoveredFeature('archives')}
+              onMouseLeave={() => setHoveredFeature(null)}
+            >
             <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
@@ -173,25 +194,35 @@ export default function Features() {
               </div>
             </CardContent>
           </Card>
+          </div>
 
           {/* Feature 3: Global Listener Map */}
-          <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
-            style={{
-              backgroundColor: colors.background,
-              borderColor: `${colors.primary}80`,
-              boxShadow: `0 8px 32px ${colors.primary}20`,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = `${colors.primary}80`;
-              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
-            }}
-            onClick={() => scrollToSection("map")}
-          >
+          <div className="relative">
+            {/* Glow Effect */}
+            <div className="absolute inset-2 rounded-2xl overflow-hidden">
+              <div
+                className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.secondary || colors.primary}, ${colors.primary})`,
+                  opacity: hoveredFeature === 'map' ? 0.3 : 0,
+                }}
+              />
+            </div>
+            
+            <Card
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              style={{
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                boxShadow: `${colors.border}20 0px 8px 32px`,
+                transform: hoveredFeature === 'map' ? 'scale(1.05)' : 'scale(1)',
+              }}
+              onClick={() => scrollToSection("map")}
+              onMouseEnter={() => setHoveredFeature('map')}
+              onMouseLeave={() => setHoveredFeature(null)}
+            >
             <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
@@ -224,25 +255,35 @@ export default function Features() {
               </div>
             </CardContent>
           </Card>
+          </div>
 
           {/* Feature 4: Hairspray Rebellion */}
-          <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
-            style={{
-              backgroundColor: colors.background,
-              borderColor: `${colors.primary}80`,
-              boxShadow: `0 8px 32px ${colors.primary}20`,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = `${colors.primary}80`;
-              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
-            }}
-            onClick={() => scrollToSection("subscribe")}
-          >
+          <div className="relative">
+            {/* Glow Effect */}
+            <div className="absolute inset-2 rounded-2xl overflow-hidden">
+              <div
+                className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.accent || colors.primary}, ${colors.primary})`,
+                  opacity: hoveredFeature === 'rebellion' ? 0.3 : 0,
+                }}
+              />
+            </div>
+            
+            <Card
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              style={{
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                boxShadow: `${colors.border}20 0px 8px 32px`,
+                transform: hoveredFeature === 'rebellion' ? 'scale(1.05)' : 'scale(1)',
+              }}
+              onClick={() => scrollToSection("subscribe")}
+              onMouseEnter={() => setHoveredFeature('rebellion')}
+              onMouseLeave={() => setHoveredFeature(null)}
+            >
             <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
@@ -290,25 +331,35 @@ export default function Features() {
               </div>
             </CardContent>
           </Card>
+          </div>
 
           {/* Feature 5: Song Requests */}
-          <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
-            style={{
-              backgroundColor: colors.background,
-              borderColor: `${colors.primary}80`,
-              boxShadow: `0 8px 32px ${colors.primary}20`,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = `${colors.primary}80`;
-              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
-            }}
-            onClick={() => scrollToSection("submissions")}
-          >
+          <div className="relative">
+            {/* Glow Effect */}
+            <div className="absolute inset-2 rounded-2xl overflow-hidden">
+              <div
+                className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary || colors.primary})`,
+                  opacity: hoveredFeature === 'requests' ? 0.3 : 0,
+                }}
+              />
+            </div>
+            
+            <Card
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              style={{
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                boxShadow: `${colors.border}20 0px 8px 32px`,
+                transform: hoveredFeature === 'requests' ? 'scale(1.05)' : 'scale(1)',
+              }}
+              onClick={() => scrollToSection("submissions")}
+              onMouseEnter={() => setHoveredFeature('requests')}
+              onMouseLeave={() => setHoveredFeature(null)}
+            >
             <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
@@ -356,25 +407,35 @@ export default function Features() {
               </div>
             </CardContent>
           </Card>
+          </div>
 
           {/* Feature 6: Merch Store */}
-          <Card
-            className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full"
-            style={{
-              backgroundColor: colors.background,
-              borderColor: `${colors.primary}80`,
-              boxShadow: `0 8px 32px ${colors.primary}20`,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = colors.primary;
-              e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = `${colors.primary}80`;
-              e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
-            }}
-            onClick={() => scrollToSection("merch")}
-          >
+          <div className="relative">
+            {/* Glow Effect */}
+            <div className="absolute inset-2 rounded-2xl overflow-hidden">
+              <div
+                className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.secondary || colors.primary}, ${colors.accent || colors.primary})`,
+                  opacity: hoveredFeature === 'merch' ? 0.3 : 0,
+                }}
+              />
+            </div>
+            
+            <Card
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              style={{
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                boxShadow: `${colors.border}20 0px 8px 32px`,
+                transform: hoveredFeature === 'merch' ? 'scale(1.05)' : 'scale(1)',
+              }}
+              onClick={() => scrollToSection("shop")}
+              onMouseEnter={() => setHoveredFeature('merch')}
+              onMouseLeave={() => setHoveredFeature(null)}
+            >
             <CardContent className="p-0 flex flex-col h-full">
               <div
                 className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
@@ -422,6 +483,7 @@ export default function Features() {
               </div>
             </CardContent>
           </Card>
+          </div>
         </StaggeredAnimation>
       </div>
     </section>

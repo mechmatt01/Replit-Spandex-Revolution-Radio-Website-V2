@@ -301,17 +301,8 @@ export default function AvatarSelector({
                 {FREE_AVATAR_OPTIONS.map((avatar) => (
                   <div
                     key={avatar.id}
-                    className={`relative cursor-pointer rounded-lg border-2 p-2 transition-all duration-200 hover:scale-105 ${
-                      selectedAvatar === avatar.url
-                        ? "border-primary"
-                        : "border-gray-600"
-                    }`}
-                    style={{
-                      borderColor:
-                        selectedAvatar === avatar.url
-                          ? colors.primary
-                          : "#4B5563",
-                    }}
+                    className={`relative cursor-pointer rounded-lg p-2 transition-all duration-200 hover:scale-105`}
+                    style={{}}
                     onClick={() => setSelectedAvatar(avatar.url)}
                   >
                     <div className="aspect-square rounded-lg overflow-hidden bg-gray-800">
@@ -419,11 +410,9 @@ export default function AvatarSelector({
             <div className="space-y-6">
               <div className="text-center">
                 <div
-                  className="mx-auto w-32 h-32 rounded-full border-2 border-dashed border-gray-600 flex items-center justify-center cursor-pointer hover:border-primary transition-colors"
+                  className="mx-auto w-32 h-32 rounded-full flex items-center justify-center cursor-pointer transition-colors"
                   onClick={() => fileInputRef.current?.click()}
-                  style={{
-                    borderColor: selectedAvatar ? colors.primary : "#4B5563",
-                  }}
+                  style={{}}
                 >
                   {selectedAvatar && selectedAvatar.startsWith("data:") ? (
                     <img

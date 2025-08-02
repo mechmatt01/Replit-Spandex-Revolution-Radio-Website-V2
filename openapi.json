@@ -1,0 +1,221 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Spandex Salvation Radio API",
+    "description": "API for Spandex Salvation Radio website",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Spandex Salvation Radio",
+      "url": "https://www.spandex-salvation-radio.com"
+    }
+  },
+  "host": "www.spandex-salvation-radio.com",
+  "basePath": "/api",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "securityDefinitions": {
+    "firebase": {
+      "authorizationUrl": "",
+      "flow": "implicit",
+      "type": "oauth2",
+      "x-google-issuer": "https://securetoken.google.com/spandex-salvation-radio-site",
+      "x-google-jwks_uri": "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com",
+      "x-google-audiences": "spandex-salvation-radio-site"
+    }
+  },
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "User login",
+        "description": "Authenticate user with Firebase",
+        "security": [{"firebase": []}],
+        "tags": ["Authentication"],
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "description": "JWT token"
+                },
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "id": {"type": "string"},
+                    "email": {"type": "string"},
+                    "displayName": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "401": {"description": "Authentication failed"},
+          "500": {"description": "Internal server error"}
+        }
+      }
+    },
+    "/radio/stations": {
+      "get": {
+        "summary": "Get radio stations",
+        "description": "Retrieve list of available radio stations",
+        "tags": ["Radio"],
+        "responses": {
+          "200": {
+            "description": "List of radio stations",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {"type": "string"},
+                  "name": {"type": "string"},
+                  "streamUrl": {"type": "string"},
+                  "genre": {"type": "string"}
+                }
+              }
+            }
+          },
+          "500": {"description": "Internal server error"}
+        }
+      }
+    },
+    "/weather/current": {
+      "get": {
+        "summary": "Get current weather",
+        "description": "Get current weather for user's location",
+        "tags": ["Weather"],
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "type": "number",
+            "description": "Latitude"
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "type": "number",
+            "description": "Longitude"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current weather data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "temperature": {"type": "number"},
+                "condition": {"type": "string"},
+                "icon": {"type": "string"}
+              }
+            }
+          },
+          "400": {"description": "Invalid coordinates"},
+          "500": {"description": "Internal server error"}
+        }
+      }
+    },
+    "/user/profile": {
+      "get": {
+        "summary": "Get user profile",
+        "description": "Retrieve current user's profile",
+        "security": [{"firebase": []}],
+        "tags": ["User"],
+        "responses": {
+          "200": {
+            "description": "User profile data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {"type": "string"},
+                "email": {"type": "string"},
+                "displayName": {"type": "string"},
+                "avatar": {"type": "string"}
+              }
+            }
+          },
+          "401": {"description": "Unauthorized"},
+          "500": {"description": "Internal server error"}
+        }
+      },
+      "put": {
+        "summary": "Update user profile",
+        "description": "Update current user's profile",
+        "security": [{"firebase": []}],
+        "tags": ["User"],
+        "parameters": [
+          {
+            "name": "profile",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "displayName": {"type": "string"},
+                "avatar": {"type": "string"}
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {"description": "Profile updated successfully"},
+          "401": {"description": "Unauthorized"},
+          "500": {"description": "Internal server error"}
+        }
+      }
+    },
+    "/admin/users": {
+      "get": {
+        "summary": "Get all users (Admin only)",
+        "description": "Retrieve list of all users - requires admin privileges",
+        "security": [{"firebase": []}],
+        "tags": ["Admin"],
+        "responses": {
+          "200": {
+            "description": "List of users",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {"type": "string"},
+                  "email": {"type": "string"},
+                  "displayName": {"type": "string"},
+                  "role": {"type": "string"}
+                }
+              }
+            }
+          },
+          "401": {"description": "Unauthorized"},
+          "403": {"description": "Forbidden - requires admin role"},
+          "500": {"description": "Internal server error"}
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication endpoints"
+    },
+    {
+      "name": "Radio",
+      "description": "Radio streaming endpoints"
+    },
+    {
+      "name": "Weather",
+      "description": "Weather data endpoints"
+    },
+    {
+      "name": "User",
+      "description": "User profile management"
+    },
+    {
+      "name": "Admin",
+      "description": "Administrative functions"
+    }
+  ]
+} 

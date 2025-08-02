@@ -1,337 +1,215 @@
-import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-import bcrypt from 'bcryptjs';
+import express, { Request, Response, NextFunction } from 'express';
+import { auth, generateUserKey, sendEmailVerification, sendPhoneVerification } from './firebase';
+// import { storage } from './storage';
 
-// Initialize Firebase Admin (if not already initialized)
-if (!getApps().length) {
+// Extend Express Request to include user
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
+
+// Middleware to verify Firebase ID token
+export const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const serviceAccount = require('../firebase-service-account.json');
-    initializeApp({
-      credential: cert(serviceAccount),
-      storageBucket: 'spandex-salvation-radio-site.firebasestorage.app'
-    });
-  } catch (error) {
-    console.error('Firebase Admin initialization error:', error);
-    throw error;
-  }
-}
-
-export const db = getFirestore();
-
-// Available avatars in Firebase Storage
-const AVATAR_OPTIONS = [
-  'gs://spandex-salvation-radio-site.firebasestorage.app/Avatars/Bass-Bat.png',
-  'gs://spandex-salvation-radio-site.firebasestorage.app/Avatars/Drum-Dragon.png',
-  'gs://spandex-salvation-radio-site.firebasestorage.app/Avatars/Headbanger-Hamster.png',
-  'gs://spandex-salvation-radio-site.firebasestorage.app/Avatars/Metal-Queen.png',
-  'gs://spandex-salvation-radio-site.firebasestorage.app/Avatars/Metal Cat.png',
-  'gs://spandex-salvation-radio-site.firebasestorage.app/Avatars/Mosh-Pit-Monster.png',
-  'gs://spandex-salvation-radio-site.firebasestorage.app/Avatars/Rebel-Raccoon.png',
-  'gs://spandex-salvation-radio-site.firebasestorage.app/Avatars/Rock-Unicorn.png'
-];
-
-// Generate random 10-character alphanumeric string
-export function generateUserKey(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < 10; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-// Get random avatar URL
-export function getRandomAvatar(): string {
-  return AVATAR_OPTIONS[Math.floor(Math.random() * AVATAR_OPTIONS.length)];
-}
-
-// Hash password
-export async function hashPassword(password: string): Promise<string> {
-  return await bcrypt.hash(password, 10);
-}
-
-// Verify password
-export async function verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
-  return await bcrypt.compare(password, hashedPassword);
-}
-
-export interface UserProfileData {
-  FirstName: string;
-  LastName: string;
-  UserProfileImage: string;
-  EmailAddress: string;
-  PhoneNumber: string;
-  Location?: { lat: number; lng: number; address?: string };
-  IsActiveListening: boolean;
-  ActiveSubscription: boolean;
-  RenewalDate?: Date;
-  UserID: string;
-  PasswordHash?: string; // Only for non-Google users
-  GoogleID?: string; // Only for Google users
-  CreatedAt: Date;
-  LastLoginAt?: Date;
-}
-
-// Create new user account in Firestore
-export async function createFirestoreUser(userData: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber?: string;
-  password?: string;
-  googleId?: string;
-}): Promise<{ userKey: string; userData: UserProfileData }> {
-  const userKey = generateUserKey();
-  const profileImageUrl = getRandomAvatar();
-
-  const userProfileData: UserProfileData = {
-    FirstName: userData.firstName,
-    LastName: userData.lastName,
-    UserProfileImage: profileImageUrl,
-    EmailAddress: userData.email,
-    PhoneNumber: userData.phoneNumber || '',
-    Location: undefined,
-    IsActiveListening: false,
-    ActiveSubscription: false,
-    RenewalDate: undefined,
-    UserID: userKey,
-    CreatedAt: new Date(),
-    LastLoginAt: new Date()
-  };
-
-  // Add password hash for non-Google users
-  if (userData.password) {
-    userProfileData.PasswordHash = await hashPassword(userData.password);
-  }
-
-  // Add Google ID for Google users
-  if (userData.googleId) {
-    userProfileData.GoogleID = userData.googleId;
-  }
-
-  // Save to Firestore under Users > User:{userKey}
-  await db.collection('Users').doc(`User:${userKey}`).set(userProfileData);
-
-  return { userKey, userData: userProfileData };
-}
-
-// Authenticate user (email/password login)
-export async function authenticateUser(email: string, password: string): Promise<UserProfileData | null> {
-  try {
-    // Query all users to find matching email
-    const usersSnapshot = await db.collection('Users').get();
-
-    for (const doc of usersSnapshot.docs) {
-      const userData = doc.data() as UserProfileData;
-
-      if (userData.EmailAddress === email && userData.PasswordHash) {
-        const isValidPassword = await verifyPassword(password, userData.PasswordHash);
-
-        if (isValidPassword) {
-          // Update last login
-          await doc.ref.update({ LastLoginAt: new Date() });
-          return userData;
-        }
-      }
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ error: 'No token provided' });
     }
 
-    return null;
-  } catch (error) {
-    console.error('Authentication error:', error);
-    return null;
-  }
-}
-
-// Get user by email
-export async function getUserByEmail(email: string): Promise<UserProfileData | null> {
-  try {
-    const usersSnapshot = await db.collection('Users').get();
-
-    for (const doc of usersSnapshot.docs) {
-      const userData = doc.data() as UserProfileData;
-      if (userData.EmailAddress === email) {
-        return userData;
-      }
+    const idToken = authHeader.split('Bearer ')[1];
+    const decodedToken = await auth.verifyIdToken(idToken);
+    
+    // Get or create user in our database
+    let user = await storage.getUser(decodedToken.uid);
+    
+    if (!user) {
+      // Create new user with alphanumeric key
+      const userKey = generateUserKey();
+      user = await storage.createUser({
+        id: decodedToken.uid,
+        userKey,
+        email: decodedToken.email || '',
+        firstName: decodedToken.name?.split(' ')[0] || '',
+        lastName: decodedToken.name?.split(' ').slice(1).join(' ') || '',
+        profileImageUrl: decodedToken.picture || '',
+        isEmailVerified: decodedToken.email_verified || false,
+        isActiveListening: false,
+        activeSubscription: false,
+        isFirstLogin: true,
+      });
     }
 
-    return null;
+    req.user = user;
+    next();
   } catch (error) {
-    console.error('Error fetching user by email:', error);
-    return null;
+    console.error('Token verification error:', error);
+    res.status(401).json({ error: 'Invalid token' });
   }
-}
+};
 
-// Get user by Google ID
-export async function getUserByGoogleId(googleId: string): Promise<UserProfileData | null> {
-  try {
-    const usersSnapshot = await db.collection('Users').get();
+// Middleware to check if user is authenticated
+export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+  next();
+};
 
-    for (const doc of usersSnapshot.docs) {
-      const userData = doc.data() as UserProfileData;
-      if (userData.GoogleID === googleId) {
-        return userData;
-      }
+// API Routes for Firebase Authentication
+export const setupFirebaseAuth = (app: express.Application) => {
+  // Get current user profile
+  app.get('/api/auth/user', verifyToken, requireAuth, async (req: Request, res: Response) => {
+    try {
+      res.json({ user: req.user });
+    } catch (error) {
+      console.error('Error getting user:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  });
 
-    return null;
-  } catch (error) {
-    console.error('Error fetching user by Google ID:', error);
-    return null;
-  }
-}
+  // Update user profile
+  app.put('/api/auth/user', verifyToken, requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { firstName, lastName, phoneNumber, location } = req.body;
+      
+      const updatedUser = await storage.updateUser(req.user.id, {
+        firstName,
+        lastName,
+        phoneNumber,
+        location,
+      });
 
-// Update user profile
-export async function updateUserProfile(userKey: string, updates: Partial<UserProfileData>): Promise<boolean> {
-  try {
-    await db.collection('Users').doc(`User:${userKey}`).update(updates);
-    return true;
-  } catch (error) {
-    console.error('Error updating user profile:', error);
-    return false;
-  }
-}
-
-// Check if email already exists
-export async function emailExists(email: string): Promise<boolean> {
-  const user = await getUserByEmail(email);
-  return user !== null;
-}
-
-// Generate random 10-character alphanumeric user ID
-function generateUserID(): string {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < 10; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-// Register a new user
-export async function registerFirebaseUser(userData: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  password: string;
-}) {
-  try {
-    console.log('[Firebase Auth] Starting registration for:', userData.email);
-
-    // Check if user already exists
-    const existingUsers = await db.collection('Users').where('EmailAddress', '==', userData.email).get();
-    if (!existingUsers.empty) {
-      console.log('[Firebase Auth] User already exists:', userData.email);
-      return { success: false, error: 'An account with this email already exists. Please try logging in instead.' };
+      res.json({ user: updatedUser });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  });
 
-    // Generate a random 10-character alphanumeric user ID
-    let userID = generateUserID();
-
-    // Ensure userID is unique
-    let userExists = true;
-    while (userExists) {
-      const existingUser = await db.collection('Users').doc(userID).get();
-      if (!existingUser.exists) {
-        userExists = false;
+  // Send email verification
+  app.post('/api/auth/send-email-verification', verifyToken, requireAuth, async (req: Request, res: Response) => {
+    try {
+      const success = await sendEmailVerification(req.user.email);
+      if (success) {
+        res.json({ message: 'Email verification sent' });
       } else {
-        userID = generateUserID();
+        res.status(400).json({ error: 'Failed to send email verification' });
       }
+    } catch (error) {
+      console.error('Error sending email verification:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  });
 
-    console.log('[Firebase Auth] Generated unique UserID:', userID);
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(userData.password, 12);
-
-    // Get random avatar
-    const randomAvatarUrl = getRandomAvatar();
-
-    // Create user profile data
-    const userProfile = {
-      FirstName: userData.firstName || '',
-      LastName: userData.lastName || '',
-      UserProfileImage: randomAvatarUrl,
-      EmailAddress: userData.email,
-      PhoneNumber: userData.phoneNumber || '',
-      Location: null, // Will be set later when user allows location access
-      IsActiveListening: false,
-      ActiveSubscription: false,
-      RenewalDate: null,
-      UserID: userID,
-      Password: hashedPassword,
-      CreatedAt: new Date().toISOString(),
-      UpdatedAt: new Date().toISOString()
-    };
-
-    // Save to Firestore under Users/{UserID}
-    await db.collection('Users').doc(userID).set(userProfile);
-    console.log('[Firebase Auth] User profile created successfully with ID:', userID);
-
-    // Remove password from response
-    const { Password, ...profileWithoutPassword } = userProfile;
-
-    return {
-      success: true,
-      userID,
-      profile: profileWithoutPassword
-    };
-
-  } catch (error: any) {
-    console.error('[Firebase Auth] Registration error:', error);
-    return { 
-      success: false, 
-      error: error.message || 'Registration failed. Please try again.' 
-    };
-  }
-}
-
-// Login user with email and password
-export async function loginFirebaseUser(email: string, password: string) {
-  try {
-    console.log('[Firebase Auth] Attempting login for:', email);
-
-    // Find user by email
-    const userQuery = await db.collection('Users').where('EmailAddress', '==', email).get();
-
-    if (userQuery.empty) {
-      console.log('[Firebase Auth] User not found:', email);
-      return { success: false, error: 'No account found with this email address. Please check your email or create a new account.' };
+  // Send phone verification
+  app.post('/api/auth/send-phone-verification', verifyToken, requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { phoneNumber } = req.body;
+      
+      // Update user's phone number
+      await storage.updateUser(req.user.id, { phoneNumber });
+      
+      // Generate and send verification code
+      const verificationCode = await sendPhoneVerification(phoneNumber);
+      
+      if (verificationCode) {
+        // Store verification code in database
+        await storage.updateUser(req.user.id, { phoneVerificationCode: verificationCode });
+        res.json({ message: 'Phone verification code sent' });
+      } else {
+        res.status(400).json({ error: 'Failed to send phone verification' });
+      }
+    } catch (error) {
+      console.error('Error sending phone verification:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  });
 
-    const userDoc = userQuery.docs[0];
-    const userData = userDoc.data();
-
-    // Verify password
-    const isPasswordValid = await bcrypt.compare(password, userData.Password);
-
-    if (!isPasswordValid) {
-      console.log('[Firebase Auth] Invalid password for:', email);
-      return { success: false, error: 'Incorrect password. Please try again.' };
+  // Verify phone number
+  app.post('/api/auth/verify-phone', verifyToken, requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { code } = req.body;
+      const verifiedUser = await storage.verifyPhone(req.user.id, code);
+      
+      if (verifiedUser) {
+        res.json({ message: 'Phone number verified', user: verifiedUser });
+      } else {
+        res.status(400).json({ error: 'Invalid verification code' });
+      }
+    } catch (error) {
+      console.error('Error verifying phone:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  });
 
-    // Update last login time
-    await db.collection('Users').doc(userData.UserID).update({
-      UpdatedAt: new Date().toISOString(),
-      LastLoginAt: new Date().toISOString()
-    });
+  // Update listening status
+  app.put('/api/auth/listening-status', verifyToken, requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { isActiveListening } = req.body;
+      const updatedUser = await storage.updateListeningStatus(req.user.id, isActiveListening);
+      
+      res.json({ user: updatedUser });
+    } catch (error) {
+      console.error('Error updating listening status:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
-    console.log('[Firebase Auth] Login successful for:', email);
+  // Update user location
+  app.put('/api/auth/location', verifyToken, requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { location } = req.body;
+      const updatedUser = await storage.updateUserLocation(req.user.id, location);
+      
+      res.json({ user: updatedUser });
+    } catch (error) {
+      console.error('Error updating location:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
-    // Remove password from response
-    const { Password, ...profileWithoutPassword } = userData;
+  // Get active listeners for map
+  app.get('/api/auth/active-listeners', async (req: Request, res: Response) => {
+    try {
+      const { getFirestore, collection, query, where, getDocs } = require('firebase-admin/firestore');
+      const db = getFirestore();
+      
+      // Get all users with IsActiveListening: true
+      const usersSnapshot = await getDocs(query(collection(db, 'Users'), where('IsActiveListening', '==', true)));
+      
+      const listeners = [];
+      usersSnapshot.forEach((doc: any) => {
+        const data = doc.data();
+        if (data.Location && typeof data.Location.lat === 'number' && typeof data.Location.lng === 'number') {
+          listeners.push({
+            id: doc.id,
+            ...data,
+          });
+        }
+      });
+      
+      res.json({ listeners });
+    } catch (error) {
+      console.error('Error getting active listeners:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
-    return {
-      success: true,
-      userID: userData.UserID,
-      profile: profileWithoutPassword
-    };
-
-  } catch (error: any) {
-    console.error('[Firebase Auth] Login error:', error);
-    return { 
-      success: false, 
-      error: error.message || 'Login failed. Please try again.' 
-    };
-  }
-}
+  // Upload profile image
+  app.post('/api/auth/upload-profile-image', verifyToken, requireAuth, async (req: Request, res: Response) => {
+    try {
+      // This would handle file upload to Firebase Storage
+      // For now, we'll just update the profile image URL
+      const { imageUrl } = req.body;
+      const updatedUser = await storage.updateUser(req.user.id, { profileImageUrl: imageUrl });
+      
+      res.json({ user: updatedUser });
+    } catch (error) {
+      console.error('Error uploading profile image:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+};

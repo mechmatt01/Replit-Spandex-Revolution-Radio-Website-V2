@@ -181,12 +181,12 @@ export function AccessibilityProvider({ children }: AccessibilityProviderProps) 
         .high-contrast * {
           background-color: white !important;
           color: black !important;
-          border-color: black !important;
+          /* border-color: black !important; */
         }
         .high-contrast button {
           background-color: black !important;
           color: white !important;
-          border: 2px solid white !important;
+          /* border: 2px solid white !important; */
         }
         .high-contrast a {
           color: blue !important;

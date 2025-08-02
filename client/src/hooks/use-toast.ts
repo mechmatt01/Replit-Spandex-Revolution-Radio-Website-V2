@@ -2,14 +2,15 @@ import * as React from "react";
 
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast";
 
-const TOAST_LIMIT = 1;
-const TOAST_REMOVE_DELAY = 1000000;
+const TOAST_LIMIT = 3;
+const TOAST_REMOVE_DELAY = 5000;
 
 type ToasterToast = ToastProps & {
   id: string;
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: ToastActionElement;
+  variant?: "default" | "destructive" | "error";
 };
 
 const actionTypes = {
@@ -165,6 +166,43 @@ function toast({ ...props }: Toast) {
   };
 }
 
+// Helper functions for different toast types
+function successToast({ title, description, ...props }: Toast) {
+  return toast({
+    title,
+    description,
+    variant: "default",
+    ...props,
+  });
+}
+
+function errorToast({ title, description, ...props }: Toast) {
+  return toast({
+    title,
+    description,
+    variant: "error",
+    ...props,
+  });
+}
+
+function infoToast({ title, description, ...props }: Toast) {
+  return toast({
+    title,
+    description,
+    variant: "default",
+    ...props,
+  });
+}
+
+function warningToast({ title, description, ...props }: Toast) {
+  return toast({
+    title,
+    description,
+    variant: "default",
+    ...props,
+  });
+}
+
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 
@@ -181,8 +219,12 @@ function useToast() {
   return {
     ...state,
     toast,
+    successToast,
+    errorToast,
+    infoToast,
+    warningToast,
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
   };
 }
 
-export { useToast, toast };
+export { useToast, toast, successToast, errorToast, infoToast, warningToast };

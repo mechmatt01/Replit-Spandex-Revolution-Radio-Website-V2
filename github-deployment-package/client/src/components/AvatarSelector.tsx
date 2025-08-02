@@ -7,10 +7,22 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, User, Camera } from "lucide-react";
+import { Upload, User, Camera, Crown, Star } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+
+// Import premium avatars
+import BassBatAvatar from "@assets/../Avatars/Bass-Bat.jpg";
+import DrumDragonAvatar from "@assets/../Avatars/Drum-Dragon.jpeg";
+import GuitarGoblinAvatar from "@assets/../Avatars/Guitar-Goblin.jpeg";
+import HeadbangerHamsterAvatar from "@assets/../Avatars/Headbanger-Hamster.jpeg";
+import MetalQueenAvatar from "@assets/../Avatars/Metal-Queen.jpeg";
+import MetalCatAvatar from "@assets/../Avatars/Metal Cat.jpeg";
+import MoshPitMonsterAvatar from "@assets/../Avatars/Mosh-Pit-Monster.jpeg";
+import PunkPandaAvatar from "@assets/../Avatars/Punk-Panda.jpeg";
+import RebelRaccoonAvatar from "@assets/../Avatars/Rebel-Raccoon.jpeg";
+import RockUnicornAvatar from "@assets/../Avatars/Rock-Unicorn.jpeg";
 
 interface AvatarSelectorProps {
   isOpen: boolean;
@@ -19,23 +31,132 @@ interface AvatarSelectorProps {
   onAvatarUpdate: (avatarUrl: string) => void;
 }
 
-// Pre-made avatar options (these would be stored in Firebase storage)
-const AVATAR_OPTIONS = [
-  { id: "metal-1", url: "/avatars/metal-skull.png", name: "Metal Skull" },
-  { id: "metal-2", url: "/avatars/metal-guitar.png", name: "Guitar Hero" },
-  { id: "metal-3", url: "/avatars/metal-horns.png", name: "Metal Horns" },
-  { id: "metal-4", url: "/avatars/metal-flames.png", name: "Flaming Metal" },
-  { id: "rock-1", url: "/avatars/rock-star.png", name: "Rock Star" },
-  { id: "rock-2", url: "/avatars/rock-band.png", name: "Band Member" },
-  { id: "vintage-1", url: "/avatars/vintage-vinyl.png", name: "Vinyl Lover" },
-  { id: "vintage-2", url: "/avatars/vintage-radio.png", name: "Radio Head" },
+// Pre-made avatar options
+
+// Free tier avatars
+const FREE_AVATAR_OPTIONS = [
   {
-    id: "spandex-1",
-    url: "/avatars/spandex-warrior.png",
-    name: "Spandex Warrior",
+    id: "metal-drummer-cat",
+    name: "Metal Drummer Cat",
+    url: "https://i.imgur.com/8X9KJjg.png",
+    description: "A fierce feline behind the drums",
+    tier: "free"
   },
-  { id: "spandex-2", url: "/avatars/spandex-legend.png", name: "Metal Legend" },
+  {
+    id: "skull-guitarist",
+    name: "Skull Guitarist",
+    url: "https://i.imgur.com/4K2Lp8M.png", 
+    description: "Eternal rock spirit shredding",
+    tier: "free"
+  },
+  {
+    id: "wolf-singer",
+    name: "Wolf Singer",
+    url: "https://i.imgur.com/7N3Qr9T.png",
+    description: "Howling lead vocals",
+    tier: "free"
+  },
+  {
+    id: "bear-bassist",
+    name: "Bear Bassist",
+    url: "https://i.imgur.com/5M8Zt6W.png",
+    description: "Heavy bass lines from the wild",
+    tier: "free"
+  },
+  {
+    id: "rock-owl-guitarist",
+    name: "Rock Owl Guitarist",
+    url: "https://i.imgur.com/9P4Kr7X.png",
+    description: "Wise riffs and solos",
+    tier: "free"
+  }
 ];
+
+// Premium avatars with jumping elements effect
+const PREMIUM_AVATAR_OPTIONS = [
+  {
+    id: "bass-bat",
+    name: "Bass Bat",
+    url: BassBatAvatar,
+    description: "Night hunter with thunderous bass",
+    tier: "premium",
+    jumpingElements: true
+  },
+  {
+    id: "drum-dragon",
+    name: "Drum Dragon",
+    url: DrumDragonAvatar,
+    description: "Fire-breathing percussionist",
+    tier: "premium",
+    jumpingElements: true
+  },
+  {
+    id: "guitar-goblin",
+    name: "Guitar Goblin",
+    url: GuitarGoblinAvatar,
+    description: "Mischievous shredder from the depths",
+    tier: "premium",
+    jumpingElements: true
+  },
+  {
+    id: "headbanger-hamster",
+    name: "Headbanger Hamster",
+    url: HeadbangerHamsterAvatar,
+    description: "Tiny but mighty metalhead",
+    tier: "premium",
+    jumpingElements: true
+  },
+  {
+    id: "metal-queen",
+    name: "Metal Queen",
+    url: MetalQueenAvatar,
+    description: "Royalty of the metal realm",
+    tier: "premium",
+    jumpingElements: true
+  },
+  {
+    id: "metal-cat",
+    name: "Metal Cat",
+    url: MetalCatAvatar,
+    description: "Feline fury unleashed",
+    tier: "premium",
+    jumpingElements: true
+  },
+  {
+    id: "mosh-pit-monster",
+    name: "Mosh Pit Monster",
+    url: MoshPitMonsterAvatar,
+    description: "Chaos incarnate in the pit",
+    tier: "premium",
+    jumpingElements: true
+  },
+  {
+    id: "punk-panda",
+    name: "Punk Panda",
+    url: PunkPandaAvatar,
+    description: "Rebellious bamboo eater",
+    tier: "premium",
+    jumpingElements: true
+  },
+  {
+    id: "rebel-raccoon",
+    name: "Rebel Raccoon",
+    url: RebelRaccoonAvatar,
+    description: "Trash panda turned rock star",
+    tier: "premium",
+    jumpingElements: true
+  },
+  {
+    id: "rock-unicorn",
+    name: "Rock Unicorn",
+    url: RockUnicornAvatar,
+    description: "Magical metal mayhem",
+    tier: "premium",
+    jumpingElements: true
+  }
+];
+
+const AVATAR_OPTIONS = [...FREE_AVATAR_OPTIONS, ...PREMIUM_AVATAR_OPTIONS];
 
 export default function AvatarSelector({
   isOpen,
@@ -170,51 +291,118 @@ export default function AvatarSelector({
           </TabsList>
 
           <TabsContent value="avatars">
-            <div className="grid grid-cols-5 gap-4 mb-6">
-              {AVATAR_OPTIONS.map((avatar) => (
-                <div
-                  key={avatar.id}
-                  className={`relative cursor-pointer rounded-lg border-2 p-2 transition-all duration-200 hover:scale-105 ${
-                    selectedAvatar === avatar.url
-                      ? "border-primary"
-                      : "border-gray-600"
-                  }`}
-                  style={{
-                    borderColor:
-                      selectedAvatar === avatar.url
-                        ? colors.primary
-                        : "#4B5563",
-                  }}
-                  onClick={() => setSelectedAvatar(avatar.url)}
-                >
-                  <div className="aspect-square rounded-lg overflow-hidden bg-gray-800">
-                    <img
-                      src={avatar.url}
-                      alt={avatar.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        // Fallback for missing avatar images
-                        const target = e.target as HTMLImageElement;
-                        target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(avatar.name)}&background=f97316&color=fff&size=128`;
-                      }}
-                    />
-                  </div>
-                  <p
-                    className="text-xs text-center mt-2 truncate"
-                    style={{ color: colors.text }}
+            {/* Free Avatars Section */}
+            <div className="mb-8">
+              <h3 className="flex items-center gap-2 text-lg font-bold mb-4" style={{ color: colors.text }}>
+                <User className="h-5 w-5" />
+                Free Avatars
+              </h3>
+              <div className="grid grid-cols-5 gap-4">
+                {FREE_AVATAR_OPTIONS.map((avatar) => (
+                  <div
+                    key={avatar.id}
+                    className={`relative cursor-pointer rounded-lg p-2 transition-all duration-200 hover:scale-105`}
+                    style={{}}
+                    onClick={() => setSelectedAvatar(avatar.url)}
                   >
-                    {avatar.name}
-                  </p>
-                  {selectedAvatar === avatar.url && (
-                    <div
-                      className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: colors.primary }}
-                    >
-                      <span className="text-xs text-white">✓</span>
+                    <div className="aspect-square rounded-lg overflow-hidden bg-gray-800">
+                      <img
+                        src={avatar.url}
+                        alt={avatar.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(avatar.name)}&background=f97316&color=fff&size=128`;
+                        }}
+                      />
                     </div>
-                  )}
-                </div>
-              ))}
+                    <p className="text-xs text-center mt-2 truncate" style={{ color: colors.text }}>
+                      {avatar.name}
+                    </p>
+                    {selectedAvatar === avatar.url && (
+                      <div
+                        className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: colors.primary }}
+                      >
+                        <span className="text-xs text-white">✓</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Premium Avatars Section */}
+            <div className="mb-6">
+              <h3 className="flex items-center gap-2 text-lg font-bold mb-4" style={{ color: colors.primary }}>
+                <Crown className="h-5 w-5" />
+                Premium Avatars
+                <Star className="h-4 w-4 text-yellow-400" />
+              </h3>
+              <div className="grid grid-cols-5 gap-4">
+                {PREMIUM_AVATAR_OPTIONS.map((avatar) => (
+                  <div
+                    key={avatar.id}
+                    className={`relative cursor-pointer rounded-lg border-2 p-2 transition-all duration-200 hover:scale-105 ${
+                      selectedAvatar === avatar.url
+                        ? "border-primary"
+                        : "border-yellow-600"
+                    }`}
+                    style={{
+                      borderColor:
+                        selectedAvatar === avatar.url
+                          ? colors.primary
+                          : "#D97706",
+                      background: "linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05))",
+                    }}
+                    onClick={() => setSelectedAvatar(avatar.url)}
+                  >
+                    {/* Premium Crown Badge */}
+                    <div className="absolute -top-2 -right-2 z-20">
+                      <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1">
+                        <Crown className="h-3 w-3 text-black" />
+                      </div>
+                    </div>
+
+                    {/* Avatar Container with Jumping Elements Effect */}
+                    <div className={`aspect-square rounded-lg ${avatar.jumpingElements ? 'premium-avatar-container' : 'overflow-hidden'} bg-gradient-to-br from-gray-800 to-gray-900 relative`}>
+                      <img
+                        src={avatar.url}
+                        alt={avatar.name}
+                        className="w-full h-full object-cover rounded-lg"
+                        style={{
+                          clipPath: avatar.jumpingElements 
+                            ? "polygon(5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%, 0% 5%)"
+                            : undefined
+                        }}
+                      />
+                      
+                      {/* Jumping Elements for Premium Avatars */}
+                      {avatar.jumpingElements && (
+                        <>
+                          <div className="jumping-element top-0 left-0 text-yellow-400 text-lg">🤘</div>
+                          <div className="jumping-element top-0 right-0 text-orange-500 text-lg">⚡</div>
+                          <div className="jumping-element bottom-0 left-0 text-red-500 text-lg">🔥</div>
+                          <div className="jumping-element bottom-0 right-0 text-purple-500 text-lg">💀</div>
+                        </>
+                      )}
+                    </div>
+                    
+                    <p className="text-xs text-center mt-2 truncate font-semibold" style={{ color: "#FFA500" }}>
+                      {avatar.name}
+                    </p>
+                    
+                    {selectedAvatar === avatar.url && (
+                      <div
+                        className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: colors.primary }}
+                      >
+                        <span className="text-xs text-white">✓</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </TabsContent>
 
@@ -222,11 +410,9 @@ export default function AvatarSelector({
             <div className="space-y-6">
               <div className="text-center">
                 <div
-                  className="mx-auto w-32 h-32 rounded-full border-2 border-dashed border-gray-600 flex items-center justify-center cursor-pointer hover:border-primary transition-colors"
+                  className="mx-auto w-32 h-32 rounded-full flex items-center justify-center cursor-pointer transition-colors"
                   onClick={() => fileInputRef.current?.click()}
-                  style={{
-                    borderColor: selectedAvatar ? colors.primary : "#4B5563",
-                  }}
+                  style={{}}
                 >
                   {selectedAvatar && selectedAvatar.startsWith("data:") ? (
                     <img

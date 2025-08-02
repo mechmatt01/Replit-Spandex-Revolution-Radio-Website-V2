@@ -73,7 +73,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("hero")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent"
                   style={{ color: colors.textMuted }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
                   onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}

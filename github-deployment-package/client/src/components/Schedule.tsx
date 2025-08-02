@@ -15,50 +15,47 @@ export default function Schedule() {
   const { setCurrentTrack } = useRadio();
   const [selectedPastShow, setSelectedPastShow] = useState<PastShow | null>(null);
   const [selectedWeeklyShow, setSelectedWeeklyShow] = useState<ShowSchedule | null>(null);
+  const [hoveredShow, setHoveredShow] = useState<string | null>(null);
 
   // Use mock data for Firebase hosting
   const weeklyShows: ShowSchedule[] = [
     {
-      id: "1",
+      id: 1,
       title: "Morning Metal",
       host: "DJ Metalhead",
       dayOfWeek: "Monday",
       time: "9:00 AM",
       duration: 120,
-      description: "Start your week with the best metal hits",
-      genre: "Heavy Metal"
+      description: "Start your week with the best metal hits"
     },
     {
-      id: "2", 
+      id: 2, 
       title: "Thrash Tuesday",
       host: "DJ Thrash",
       dayOfWeek: "Tuesday",
       time: "7:00 PM",
       duration: 180,
-      description: "Pure thrash metal madness",
-      genre: "Thrash Metal"
+      description: "Pure thrash metal madness"
     },
     {
-      id: "3",
+      id: 3,
       title: "Death Metal Wednesday",
       host: "DJ Death",
       dayOfWeek: "Wednesday", 
       time: "8:00 PM",
       duration: 150,
-      description: "The heaviest death metal around",
-      genre: "Death Metal"
+      description: "The heaviest death metal around"
     }
   ];
 
   const pastShows: PastShow[] = [
     {
-      id: "1",
+      id: 1,
       title: "Classic Metal Hour",
       host: "DJ Classic",
       date: new Date(),
       duration: 60,
-      description: "The best classic metal tracks",
-      genre: "Classic Metal"
+      description: "The best classic metal tracks"
     }
   ];
 
@@ -274,25 +271,31 @@ export default function Schedule() {
                 ))
               ) : (
                 (filteredWeeklyShows || []).map((show) => (
-                <Card
-                  key={show.id}
-                  className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
-                  style={{
-                    backgroundColor: colors.background,
-                    borderColor: `${colors.primary}80`,
-                    boxShadow: `0 8px 32px ${colors.primary}20`,
-                    height: "160px",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = colors.primary;
-                    e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = `${colors.primary}80`;
-                    e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
-                  }}
-                  onClick={() => setSelectedWeeklyShow(show)}
-                >
+                <div key={show.id} className="relative">
+                  {/* Glow Effect */}
+                  <div className="absolute inset-2 rounded-2xl overflow-hidden">
+                    <div
+                      className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
+                      style={{
+                        background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary || colors.primary})`,
+                        opacity: hoveredShow === `weekly-${show.id}` ? 0.3 : 0,
+                      }}
+                    />
+                  </div>
+                  
+                  <Card
+                    className="relative group cursor-pointer transition-all duration-300 border-2 p-4 enhanced-glow show-container"
+                    style={{
+                      backgroundColor: colors.background,
+                      borderColor: colors.border,
+                      boxShadow: `${colors.border}20 0px 8px 32px`,
+                      height: "160px",
+                      transform: hoveredShow === `weekly-${show.id}` ? 'scale(1.05)' : 'scale(1)',
+                    }}
+                    onClick={() => setSelectedWeeklyShow(show)}
+                    onMouseEnter={() => setHoveredShow(`weekly-${show.id}`)}
+                    onMouseLeave={() => setHoveredShow(null)}
+                  >
                   <CardContent
                     className="p-0"
                     style={{
@@ -323,6 +326,7 @@ export default function Schedule() {
                     </div>
                   </CardContent>
                 </Card>
+                </div>
                 ))
               )}
             </div>
@@ -353,25 +357,31 @@ export default function Schedule() {
                   ))
                 ) : (
                   (pastShows || []).slice(0, 3).map((show) => (
-                  <Card
-                    key={show.id}
-                    className="group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-4"
-                    style={{
-                      backgroundColor: colors.background,
-                      borderColor: `${colors.primary}80`,
-                      boxShadow: `0 8px 32px ${colors.primary}20`,
-                      height: "160px",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = colors.primary;
-                      e.currentTarget.style.boxShadow = `0 15px 50px ${colors.primary}60`;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = `${colors.primary}80`;
-                      e.currentTarget.style.boxShadow = `0 8px 32px ${colors.primary}20`;
-                    }}
-                    onClick={() => setSelectedPastShow(show)}
-                  >
+                  <div key={show.id} className="relative">
+                    {/* Glow Effect */}
+                    <div className="absolute inset-2 rounded-2xl overflow-hidden">
+                      <div
+                        className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
+                        style={{
+                          background: `linear-gradient(135deg, ${colors.secondary || colors.primary}, ${colors.accent || colors.primary})`,
+                          opacity: hoveredShow === `past-${show.id}` ? 0.3 : 0,
+                        }}
+                      />
+                    </div>
+                    
+                    <Card
+                      className="relative group cursor-pointer transition-all duration-300 border-2 p-4 enhanced-glow show-container"
+                      style={{
+                        backgroundColor: colors.background,
+                        borderColor: colors.border,
+                        boxShadow: `${colors.border}20 0px 8px 32px`,
+                        height: "160px",
+                        transform: hoveredShow === `past-${show.id}` ? 'scale(1.05)' : 'scale(1)',
+                      }}
+                      onClick={() => setSelectedPastShow(show)}
+                      onMouseEnter={() => setHoveredShow(`past-${show.id}`)}
+                      onMouseLeave={() => setHoveredShow(null)}
+                    >
                     <CardContent
                       className="p-0"
                       style={{
@@ -457,6 +467,7 @@ export default function Schedule() {
                       </div>
                     </CardContent>
                   </Card>
+                  </div>
                   ))
                 )}
               </div>
@@ -467,25 +478,21 @@ export default function Schedule() {
         {/* Centered View All Archives Button - Outside grid for full page centering */}
         <div className="mt-12 flex justify-center w-full">
           <Button
-            variant="outline"
-            className="border-2 px-6 py-3 rounded-full font-bold transition-all duration-200 hover:scale-105"
+            className="px-6 py-3 rounded-full font-bold transition-all duration-300 border-0"
             style={{
-              borderColor: colors.primary,
-              color: colors.primary,
-              backgroundColor: "transparent",
+              backgroundColor: colors.primary,
+              color: colors.primaryText || "white",
               width: "25%",
               minWidth: "200px",
               maxWidth: "300px",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = colors.primary;
-              e.currentTarget.style.color = "white";
-              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.backgroundColor = colors.primaryDark || colors.primary;
+              e.currentTarget.style.transform = "scale(1.05)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.color = colors.primary;
-              e.currentTarget.style.borderColor = colors.primary;
+              e.currentTarget.style.backgroundColor = colors.primary;
+              e.currentTarget.style.transform = "scale(1)";
             }}
           >
             VIEW ALL ARCHIVES
@@ -507,7 +514,7 @@ export default function Schedule() {
           }}
         >
           <div
-            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full relative"
+            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full relative show-popup-content"
             style={{
               borderColor: colors.primary,
               backgroundColor: colors.background,
@@ -536,6 +543,8 @@ export default function Schedule() {
                 e.currentTarget.style.backgroundColor = `${colors.primary}20`;
                 e.currentTarget.style.color = colors.primary;
               }}
+              title="Close show details"
+              aria-label="Close show details"
             >
               <X className="h-5 w-5" />
             </button>
@@ -597,7 +606,7 @@ export default function Schedule() {
           }}
         >
           <div
-            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full relative"
+            className="bg-background/95 backdrop-blur-sm border-2 rounded-xl p-8 max-w-md w-full relative show-popup-content"
             style={{
               borderColor: colors.primary,
               backgroundColor: colors.background,
@@ -626,6 +635,8 @@ export default function Schedule() {
                 e.currentTarget.style.backgroundColor = `${colors.primary}20`;
                 e.currentTarget.style.color = colors.primary;
               }}
+              title="Close show details"
+              aria-label="Close show details"
             >
               <X className="h-5 w-5" />
             </button>

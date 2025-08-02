@@ -19,7 +19,7 @@ export default function FadeInView({
   children,
   threshold = 0.05,
   delay = 0,
-  duration = 300,
+  duration = 200,
   className = '',
   direction = 'up'
 }: FadeInViewProps) {
@@ -29,19 +29,20 @@ export default function FadeInView({
   const [elementId] = useState(() => `fade-${++animationCounter}`);
   const isVisible = useIntersectionObserver(ref, { 
     threshold, 
-    rootMargin: '200px 0px -50px 0px' // Start animation 200px before element comes into view (faster trigger)
+    rootMargin: '100px 0px -20px 0px' // More conservative trigger to prevent gaps
   });
   const { velocity } = useScrollVelocity();
 
   useEffect(() => {
     if (isVisible && !hasAnimated && !animatedElements.has(elementId)) {
-      // Calculate adaptive duration based on scroll velocity
-      const newDuration = getAdaptiveAnimationDuration(duration, velocity, 300, 800);
+      // Calculate adaptive duration based on scroll velocity - faster for fast scrolling
+      const newDuration = getAdaptiveAnimationDuration(duration, velocity, 100, 300);
       setAdaptiveDuration(newDuration);
       
-      // Add minimal base delay plus reduced staggered delay based on element order
-      const baseDelay = 0; // Immediate start for faster loading
-      const staggerDelay = (animationCounter - 1) * 10; // 10ms between elements (faster)
+      // Immediate animation for fast scrolling, minimal stagger for slow scrolling
+      const isHighVelocity = Math.abs(velocity) > 500;
+      const baseDelay = isHighVelocity ? 0 : 10; // No delay for fast scrolling
+      const staggerDelay = isHighVelocity ? 0 : Math.min((animationCounter - 1) * 2, 20); // Minimal stagger, max 20ms
       const totalDelay = baseDelay + staggerDelay + delay;
       
       setTimeout(() => {

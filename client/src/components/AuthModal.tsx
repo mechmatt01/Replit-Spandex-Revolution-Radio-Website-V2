@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
+import { signInWithGoogle, signUpWithEmail, signInWithEmail, sendPasswordReset } from "@/firebase";
 import {
   Loader2,
   Mail,
@@ -46,23 +47,25 @@ export default function AuthModal({
   const [loading, setLoading] = useState(false);
   const [recaptchaToken, setRecaptchaToken] = useState("");
 
-  const { isAuthenticated, signInWithGoogle } = useAuth();
-  const { register: firebaseRegister, login: firebaseLogin, loginWithGoogle } = useFirebaseAuth();
+  const { isAuthenticated, login, register, signInWithGoogle } = useAuth();
   const { getColors } = useTheme();
-  const { toast } = useToast();
+  const { successToast, errorToast, infoToast } = useToast();
   const colors = getColors();
 
   const handleGoogleAuth = async () => {
     try {
       setLoading(true);
       await signInWithGoogle();
-      // The redirect will happen automatically
+      
       onClose();
+              successToast({
+          title: "Success",
+          description: "Successfully signed in with Google!",
+        });
     } catch (error: any) {
-      toast({
+      errorToast({
         title: "Sign In Failed",
         description: error.message || "Failed to sign in with Google.",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -92,50 +95,38 @@ export default function AuthModal({
 
     try {
       if (mode === "login") {
-        // Use Firebase Firestore login
-        const result = await firebaseLogin(email, password);
+        // Use our new login system
+        await login(email, password);
         
-        if (!result.success) {
-          throw new Error(result.message || "Login failed");
-        }
-
-        toast({
+        successToast({
           title: "Welcome back!",
-          description: "You've successfully logged in with Firebase Firestore.",
+          description: "You've successfully logged in.",
         });
         
-        // Close modal and refresh to update authentication state
         onClose();
-        window.location.reload();
+        resetForm();
       } else {
-        // Use Firebase Firestore registration
-        const result = await firebaseRegister({
+        // Use our new registration system
+        await register(
           firstName,
           lastName,
           email,
-          phoneNumber: phoneNumber.replace(/[^\d]/g, ""),
+          phoneNumber.replace(/[^\d]/g, ""),
           password,
-        });
+        );
 
-        if (!result.success) {
-          throw new Error(result.message || "Registration failed");
-        }
-
-        toast({
+        successToast({
           title: "Account created!",
-          description: `Welcome to Spandex Salvation Radio! User Key: ${result.userKey}`,
+          description: "Welcome to Spandex Salvation Radio! Please check your email for verification.",
         });
         
-        // Close modal and refresh to update authentication state
         onClose();
-        window.location.reload();
+        resetForm();
       }
-      resetForm();
     } catch (error: any) {
-      toast({
+      errorToast({
         title: mode === "login" ? "Login failed" : "Registration failed",
         description: error.message || "Please try again.",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -161,7 +152,7 @@ export default function AuthModal({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" style={{ zIndex: 9999 }} />
         <DialogPrimitive.Content
-          className="fixed left-[50%] top-[50%] grid w-full max-w-md translate-x-[-50%] translate-y-[-50%] gap-4 p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg backdrop-blur-md"
+          className="fixed left-[50%] top-[50%] grid w-full max-w-md translate-x-[-50%] translate-y-[-50%] gap-4 p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg backdrop-blur-md auth-modal-content"
           style={{
             backgroundColor: "rgba(0, 0, 0, 0.95)",
             borderColor: colors.primary + "40",

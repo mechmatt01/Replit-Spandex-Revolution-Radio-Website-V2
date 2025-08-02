@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2, Users, Globe, Activity } from "lucide-react";
+import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2, Users, Globe, Activity, Sun } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useToast } from "@/hooks/use-toast";
 import { useRadio } from "@/contexts/RadioContext";
+import { useFirebaseAuth } from "@/contexts/FirebaseAuthContext";
 import { useAdaptiveTheme } from "@/hooks/useAdaptiveTheme";
 import { AnimatedCounter } from "./AnimatedCounter";
 
@@ -50,7 +52,9 @@ const weatherIconMap: { [key: string]: string } = {
 const FullWidthGlobeMapFixed = () => {
   const { isDarkMode, colors } = useTheme();
   const { currentTrack } = useRadio();
+  const { user } = useFirebaseAuth();
   const { adaptiveTheme } = useAdaptiveTheme(currentTrack?.artwork || '');
+  const { successToast, errorToast, infoToast } = useToast();
   const mapRef = useRef<HTMLDivElement>(null);
   const fullscreenMapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -61,6 +65,12 @@ const FullWidthGlobeMapFixed = () => {
   const [mapError, setMapError] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
   const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
+  const [activeListeners, setActiveListeners] = useState<Array<{
+    id: string;
+    location: { lat: number; lng: number };
+    firstName: string;
+    lastName: string;
+  }>>([]);
   
   // Weather state
   const [weather, setWeather] = useState<Weather | null>(null);
@@ -83,6 +93,21 @@ const FullWidthGlobeMapFixed = () => {
     totalListeners: number;
   } | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
+
+  // Fetch active listeners from API
+  const fetchActiveListeners = async () => {
+    try {
+      const response = await fetch('/api/auth/active-listeners');
+      if (response.ok) {
+        const data = await response.json();
+        setActiveListeners(data.listeners.filter((listener: any) => 
+          listener.IsActiveListening && listener.Location
+        ));
+      }
+    } catch (error) {
+      console.error('Error fetching active listeners:', error);
+    }
+  };
 
   // Fetch live statistics from Firebase API
   const fetchLiveStats = async () => {
@@ -122,6 +147,32 @@ const FullWidthGlobeMapFixed = () => {
     
     return () => clearInterval(interval);
   }, []);
+
+  // Fetch active listeners periodically and update map markers
+  useEffect(() => {
+    fetchActiveListeners();
+    const interval = setInterval(fetchActiveListeners, 10000); // Update every 10 seconds
+    return () => clearInterval(interval);
+  }, [map]);
+
+  // Update listener markers when active listeners change
+  useEffect(() => {
+    if (!map) return;
+
+    // Clear existing listener markers
+    markers.forEach(marker => marker.setMap(null));
+    const newMarkers: google.maps.Marker[] = [];
+
+    // Create new markers for active listeners
+    activeListeners.forEach(listener => {
+      if (listener.location && listener.location.lat && listener.location.lng) {
+        const marker = createListenerMarker(listener, map);
+        newMarkers.push(marker);
+      }
+    });
+
+    setMarkers(newMarkers);
+  }, [activeListeners, map]);
 
   // Get weather icon based on OpenWeatherMap icon code
   const getWeatherIcon = (iconCode: string): string => {
@@ -413,7 +464,7 @@ const FullWidthGlobeMapFixed = () => {
         height: ${isUserLocation ? '20px' : '16px'};
         border-radius: 50%;
         background: ${isUserLocation ? 'radial-gradient(circle, #4285F4 0%, #2563eb 100%)' : `radial-gradient(circle, ${colors.primary} 0%, ${colors.primary}dd 100%)`};
-        border: 0px solid transparent;
+        border: 0px solid ${isUserLocation ? '#4285F4' : colors.primary};
         animation: modernPulse 3s ease-in-out infinite;
         transform: translate(-50%, -50%);
         pointer-events: none;
@@ -438,6 +489,35 @@ const FullWidthGlobeMapFixed = () => {
     };
 
     return { marker, infoWindow, pulsingOverlay };
+  };
+
+  // Create animated listener markers
+  const createListenerMarker = (listener: any, mapInstance: google.maps.Map) => {
+    const marker = new google.maps.Marker({
+      position: { lat: listener.Location.lat, lng: listener.Location.lng },
+      map: mapInstance,
+      title: `${listener.FirstName} ${listener.LastName}`,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: 4,
+        fillColor: '#FF6600',
+        fillOpacity: 0.8,
+        strokeColor: '#FF6600',
+        strokeWeight: 1,
+      },
+      animation: google.maps.Animation.BOUNCE,
+    });
+
+    // Add pulsing animation for active listeners
+    const pulseAnimation = () => {
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+      setTimeout(() => {
+        marker.setAnimation(null);
+      }, 500);
+    };
+    setInterval(pulseAnimation, 1500);
+
+    return marker;
   };
 
   // Toggle fullscreen map view with smooth animation and scroll prevention
@@ -740,11 +820,36 @@ const FullWidthGlobeMapFixed = () => {
 
   // Handle location permission and get user location
   const handleLocationPermission = async () => {
+    setWeatherLoading(true);
+    
     try {
       console.log('Requesting location permission...');
       
       if (!navigator.geolocation) {
         throw new Error('Geolocation is not supported by this browser');
+      }
+      
+      // Check current permission status
+      const permission = await navigator.permissions?.query({ name: 'geolocation' });
+      
+      if (permission?.state === 'denied') {
+        // Permission already denied, show message to enable in browser settings
+        setWeatherLoading(false);
+        setLocationPermission('denied');
+        setWeather({
+          location: "Please Enable Location Permissions",
+          temperature: 72,
+          description: "Enable in browser settings",
+          icon: "01d",
+          humidity: 45,
+          windSpeed: 5,
+          feelsLike: 75
+        });
+        errorToast({
+          title: "Location Permission Denied",
+          description: "Please enable location permissions in your browser settings to see your location on the map.",
+        });
+        return;
       }
       
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
@@ -795,31 +900,82 @@ const FullWidthGlobeMapFixed = () => {
             console.log('User denied location access');
             localStorage.setItem('locationPermission', 'denied');
             setLocationPermission('denied');
+            setWeather({
+              location: "Please Enable Location Permissions",
+              temperature: 72,
+              description: "Enable in browser settings",
+              icon: "01d",
+              humidity: 45,
+              windSpeed: 5,
+              feelsLike: 75
+            });
+            errorToast({
+              title: "Location Access Denied",
+              description: "Location access was denied. Please enable location permissions to see your location on the map.",
+            });
             break;
           case error.POSITION_UNAVAILABLE:
             console.log('Location information unavailable');
             localStorage.setItem('locationPermission', 'denied');
             setLocationPermission('denied');
+            setWeather({
+              location: "Location Unavailable",
+              temperature: 72,
+              description: "Try again later",
+              icon: "01d",
+              humidity: 45,
+              windSpeed: 5,
+              feelsLike: 75
+            });
+            errorToast({
+              title: "Location Unavailable",
+              description: "Location information is currently unavailable. Please try again later.",
+            });
             break;
           case error.TIMEOUT:
             console.log('Location request timed out');
             localStorage.setItem('locationPermission', 'denied');
             setLocationPermission('denied');
+            setWeather({
+              location: "Location Timeout",
+              temperature: 72,
+              description: "Try again",
+              icon: "01d",
+              humidity: 45,
+              windSpeed: 5,
+              feelsLike: 75
+            });
             break;
           default:
             console.log('Unknown geolocation error');
             localStorage.setItem('locationPermission', 'denied');
             setLocationPermission('denied');
+            setWeather({
+              location: "Location Error",
+              temperature: 72,
+              description: "Try again",
+              icon: "01d",
+              humidity: 45,
+              windSpeed: 5,
+              feelsLike: 75
+            });
             break;
         }
       } else {
         localStorage.setItem('locationPermission', 'denied');
         setLocationPermission('denied');
+        setWeather({
+          location: "Location Error",
+          temperature: 72,
+          description: "Try again",
+          icon: "01d",
+          humidity: 45,
+          windSpeed: 5,
+          feelsLike: 75
+        });
       }
-      
-      // Fallback to a default location for weather
-      const defaultLocation = { lat: 40.7128, lng: -74.0060 }; // New York
-      await fetchWeather(defaultLocation.lat, defaultLocation.lng);
+    } finally {
+      setWeatherLoading(false);
     }
   };
 
@@ -898,7 +1054,7 @@ const FullWidthGlobeMapFixed = () => {
             <div className="mb-6 relative max-w-lg mx-auto">
               {/* Glass/Blur Background Container */}
               <div
-                className="relative rounded-2xl backdrop-blur-md border border-white/10 shadow-2xl overflow-hidden transition-all duration-500 ease-in-out"
+                className="relative rounded-2xl backdrop-blur-md border border-primary/10 shadow-2xl overflow-hidden transition-all duration-500 ease-in-out"
                 style={{
                   background: `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}80, ${adaptiveTheme.overlayColor}60)`,
                   backdropFilter: 'blur(20px)',
@@ -919,7 +1075,7 @@ const FullWidthGlobeMapFixed = () => {
                       onClick={handleLocationPermission}
                       className="w-full h-full backdrop-blur-md border-0 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:backdrop-blur-lg"
                       style={{
-                        // Match floating player's glass/blur styling exactly
+                        // Match "View All Archives" button styling
                         background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
                           ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.25)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.15)')})`
                           : 'rgba(255, 255, 255, 0.20)',
@@ -934,19 +1090,27 @@ const FullWidthGlobeMapFixed = () => {
                         borderRadius: '9999px', // True pill shape (100% rounded corners)
                         fontSize: '0.875rem',
                         fontWeight: '600',
-                        letterSpacing: '0.025em'
+                        letterSpacing: '0.025em',
+                        minHeight: '48px', // Match button height
+                        padding: '12px 24px' // Match button padding
                       }}
                     >
                       <div className="flex items-center justify-center gap-3">
-                        <MapPin 
-                          className="w-5 h-5" 
-                          style={{ 
-                            color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                              ? adaptiveTheme.accentColor
-                              : colors.primary
-                          }} 
-                        />
-                        <span className="tracking-wide">Enable Location for Weather</span>
+                        {weatherLoading ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <Sun 
+                            className="w-5 h-5" 
+                            style={{ 
+                              color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
+                                ? adaptiveTheme.accentColor
+                                : colors.primary
+                            }} 
+                          />
+                        )}
+                        <span className="tracking-wide">
+                          {weatherLoading ? 'Checking Location...' : 'Enable Location for Weather'}
+                        </span>
                       </div>
                     </Button>
                   </div>
@@ -983,7 +1147,7 @@ const FullWidthGlobeMapFixed = () => {
                         ) : (
                           <div className="relative">
                             <img
-                              src={`/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
+                              src={`/attached_assets/animated_weather_icons/${getWeatherIcon(weather.icon)}`}
                               alt={weather.description}
                               className="w-16 h-16 object-contain drop-shadow-lg"
                               style={{ 
@@ -1018,13 +1182,13 @@ const FullWidthGlobeMapFixed = () => {
 
           {/* Map Container with smooth fullscreen transition */}
           <div 
-            className={`relative transition-all duration-500 ease-in-out transform ${
+            className={`relative transition-all duration-500 ease-in-out transform map-container ${
               isFullscreen 
                 ? 'fixed z-[9999] rounded-none' 
                 : 'w-full rounded-xl shadow-2xl border-2'
             }`}
             style={{ 
-              borderColor: isFullscreen ? 'transparent' : colors.primary,
+              borderColor: colors.primary,
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
               top: isFullscreen ? '4rem' : 'auto', // Below navigation bar
               bottom: isFullscreen ? '5rem' : 'auto', // Above floating player
@@ -1106,7 +1270,7 @@ const FullWidthGlobeMapFixed = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 
                 {/* Live Statistics Section - Redesigned */}
-                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02]"
+                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] stats-container"
                   style={{
                     background: isDarkMode 
                       ? `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%)`
@@ -1263,7 +1427,7 @@ const FullWidthGlobeMapFixed = () => {
                 </Card>
 
                 {/* Active Locations Section - Redesigned */}
-                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02]"
+                <Card className="backdrop-blur-xl shadow-2xl border-2 transition-all duration-300 hover:shadow-3xl hover:scale-[1.02] stats-container"
                   style={{
                     background: isDarkMode 
                       ? `linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(30,30,30,0.9) 100%)`

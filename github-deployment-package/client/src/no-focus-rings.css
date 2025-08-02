@@ -1,0 +1,128 @@
+/* NUCLEAR OPTION: ABSOLUTE FOCUS RING ELIMINATION */
+/* This CSS file has maximum specificity to override ALL focus rings */
+
+/* Universal focus ring elimination with maximum priority */
+html *,
+html *:before,
+html *:after,
+html *:focus,
+html *:focus-visible,
+html *:focus-within,
+html *:active,
+html button,
+html button:focus,
+html button:focus-visible,
+html input,
+html input:focus,
+html input:focus-visible,
+html select,
+html select:focus,
+html select:focus-visible,
+html textarea,
+html textarea:focus,
+html textarea:focus-visible,
+html [role="button"],
+html [role="button"]:focus,
+html [role="button"]:focus-visible,
+html [tabindex],
+html [tabindex]:focus,
+html [tabindex]:focus-visible,
+html audio,
+html audio:focus,
+html audio:focus-visible,
+html video,
+html video:focus,
+html video:focus-visible,
+html a,
+html a:focus,
+html a:focus-visible,
+html div,
+html div:focus,
+html div:focus-visible,
+html span,
+html span:focus,
+html span:focus-visible {
+  outline: 0 !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-color: transparent !important;
+  outline-style: none !important;
+  outline-offset: 0 !important;
+  box-shadow: 0 0 0 0 transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
+  --ring: transparent !important;
+}
+
+/* Eliminate any orange/yellow/white focus rings specifically */
+html *:focus,
+html *:focus-visible,
+html *:active {
+  border-color: transparent !important;
+  box-shadow: 0 0 0 0 rgba(0,0,0,0) !important;
+  outline: 0 !important;
+  outline-color: transparent !important;
+  outline-width: 0 !important;
+  outline-style: none !important;
+  /* Keep existing borders and backgrounds */
+}
+
+/* Completely eliminate white rings */
+html *:focus {
+  outline: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Override any possible white/light colored outlines */
+html * {
+  outline-color: transparent !important;
+  -webkit-focus-ring-color: transparent !important;
+}
+
+/* Browser-specific focus ring elimination */
+html *::-webkit-focus-ring-color {
+  color: transparent !important;
+  outline-color: transparent !important;
+}
+
+html *::-moz-focus-inner {
+  border: 0 !important;
+  padding: 0 !important;
+}
+
+html *:-moz-focusring {
+  outline: none !important;
+}
+
+/* Chrome/Safari/WebKit specific */
+html *:focus:not(:focus-visible) {
+  outline: none !important;
+}
+
+/* Edge specific */
+html *::-ms-focus-inner {
+  border: 0 !important;
+}
+
+/* Ensure no custom focus styles can override */
+html .focus\:ring-0:focus,
+html .focus\:ring-1:focus,
+html .focus\:ring-2:focus,
+html .focus\:ring-ring:focus,
+html .focus-visible\:ring-0:focus-visible,
+html .focus-visible\:ring-1:focus-visible,
+html .focus-visible\:ring-2:focus-visible,
+html .focus-visible\:ring-ring:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+}

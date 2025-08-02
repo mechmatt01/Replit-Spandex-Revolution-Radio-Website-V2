@@ -317,7 +317,7 @@ export default function StripePaymentProcessor() {
             className="bg-transparent transition-all duration-300 relative rounded-lg flex flex-col"
             style={{
               minHeight: "540px", // Same height for all tiers
-              border: `${tier.name === "LEGEND" ? "6px" : "5px"} solid transparent`, // Increased border for Legend
+              border: `${tier.name === "LEGEND" ? "6px" : "5px"} solid ${tier.gradientStart}`, // Fixed: Use gradient color instead of transparent
               background: `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,
               boxShadow: tier.name === "LEGEND" 
                 ? `0 0 30px ${tier.gradientStart}60, 0 0 60px ${tier.gradientEnd}40, inset 0 0 20px ${tier.gradientStart}20`
@@ -463,7 +463,7 @@ export default function StripePaymentProcessor() {
               className="rounded-lg flex flex-col transition-all duration-300 relative overflow-hidden"
               style={{ 
                 height: "540px", // All packages same height
-                border: tier.popular ? "6px solid transparent" : "5px solid transparent",
+                border: tier.popular ? `6px solid ${tier.gradientStart}` : `5px solid ${tier.gradientStart}`,
                 background: tier.popular 
                   ? `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, #E520C6, #F4654F) border-box`
                   : `linear-gradient(var(--background), var(--background)) padding-box, linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd}) border-box`,

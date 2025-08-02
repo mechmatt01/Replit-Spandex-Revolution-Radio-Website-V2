@@ -310,7 +310,7 @@ export default function Navigation() {
                     <TooltipTrigger asChild>
                       <button 
                         onClick={item.action}
-                        className="flex items-center space-x-2 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-md"
+                        className="flex items-center space-x-2 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-lg hover:scale-105 active:scale-95"
                         style={{ color: colors.text }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary + '20';
@@ -338,7 +338,7 @@ export default function Navigation() {
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="flex items-center space-x-1 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-md"
+                      className="flex items-center space-x-1 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-lg hover:scale-105 active:scale-95"
                       style={{ 
                         color: isDropdownOpen ? 'white' : colors.text,
                         backgroundColor: isDropdownOpen ? colors.primary : 'transparent'
@@ -393,7 +393,7 @@ export default function Navigation() {
                           <TooltipTrigger asChild>
                             <button
                               onClick={item.action}
-                              className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg w-full"
+                              className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg hover:scale-105 active:scale-95 w-full"
                               style={{ 
                                 color: dropdownTextColor
                               }}
@@ -519,11 +519,10 @@ export default function Navigation() {
 
                     <DropdownMenuContent 
                       align="end" 
-                      className="w-64 p-2 mt-2 shadow-2xl border-2"
+                      className="w-64 p-2 mt-2 shadow-2xl"
                       style={{
                         backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
                         backdropFilter: 'blur(10px)',
-                        borderColor: `${colors.primary}40`,
                       }}
                     >
                       {/* User Info */}
@@ -607,7 +606,7 @@ export default function Navigation() {
               <button
                 ref={menuRef}
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                className="p-2 rounded-lg transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95"
                 style={{ 
                   backgroundColor: isOpen ? colors.primary : 'transparent',
                   color: isOpen ? 'white' : colors.primary 
@@ -634,7 +633,7 @@ export default function Navigation() {
                 {/* Music Link */}
                 <a
                   href="/music"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
                   style={{ 
                     color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
@@ -657,7 +656,7 @@ export default function Navigation() {
                 {/* Schedule Link */}
                 <a
                   href="/#schedule"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
                   style={{ 
                     color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
@@ -680,7 +679,7 @@ export default function Navigation() {
                 {/* Support Us Link */}
                 <a
                   href="/#subscribe"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
                   style={{ 
                     color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
@@ -703,7 +702,7 @@ export default function Navigation() {
                 {/* Submissions Link */}
                 <a
                   href="/#submissions"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
                   style={{ 
                     color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
@@ -726,7 +725,7 @@ export default function Navigation() {
                 {/* Contact Link */}
                 <a
                   href="/#contact"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
                   style={{ 
                     color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
@@ -749,7 +748,7 @@ export default function Navigation() {
                 {/* Listen Map Link */}
                 <a
                   href="/#map"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent',
@@ -772,7 +771,7 @@ export default function Navigation() {
                 {/* Features Link */}
                 <a
                   href="/#features"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 no-underline"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
                   style={{ 
                     color: colors.text,
                     backgroundColor: 'transparent',

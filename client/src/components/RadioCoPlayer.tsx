@@ -214,13 +214,13 @@ export default function RadioCoPlayer() {
 
   return (
     <section
-      className="backdrop-blur-md rounded-2xl shadow-xl transition-all duration-700 ease-in-out border-0 mx-auto overflow-visible"
+                  className="backdrop-blur-md rounded-2xl shadow-xl transition-all duration-700 ease-in-out mx-auto overflow-visible"
       role="region"
       aria-label="Radio player controls"
       style={{
         background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
-          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.25)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.15)')})`
-          : 'rgba(255, 255, 255, 0.20)',
+          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.15)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.10)')})`
+          : 'rgba(255, 255, 255, 0.12)',
         backdropFilter: 'blur(32px) saturate(200%)',
         WebkitBackdropFilter: 'blur(32px) saturate(200%)',
         boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
@@ -235,10 +235,10 @@ export default function RadioCoPlayer() {
         minWidth: 'max-content',
         maxWidth: '72vw',
         // Dynamic padding - expand when volume slider is visible with smooth transition
-        paddingTop: '24px',
-        paddingLeft: '24px', 
-        paddingRight: '24px',
-        paddingBottom: isVolumeSliderVisible ? '120px' : '84px', // Extra space when slider is active, minimum space for volume button
+        paddingTop: '20px',
+        paddingLeft: '20px', 
+        paddingRight: '20px',
+        paddingBottom: isVolumeSliderVisible ? '100px' : '68px', // Reduced height - Extra space when slider is active, minimum space for volume button
         // Ensure it expands to accommodate the longest text element
         contain: 'layout'
       }}
@@ -285,7 +285,7 @@ export default function RadioCoPlayer() {
 
           {isStationDropdownOpen && (
             <div
-              className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto border shadow-xl z-20 scrollbar-thin"
+              className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto shadow-xl z-20 scrollbar-thin"
               style={{
                 background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
                   ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.95)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.90)')})`
@@ -527,7 +527,7 @@ export default function RadioCoPlayer() {
           {/* Live Metadata Indicator */}
           {currentTrack.lastUpdated && (
             <div className="mb-2 flex justify-center">
-              <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-green-400 bg-green-400/10 border border-green-400/20">
+              <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-green-400 bg-green-400/10">
                 <div className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></div>
                 LIVE
               </div>

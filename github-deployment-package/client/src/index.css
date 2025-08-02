@@ -73,6 +73,165 @@
   background-attachment: fixed;
 }
 
+/* Border pulse animation for popular subscription */
+@keyframes borderPulse {
+  0%, 100% {
+    border-color: var(--gradient-start);
+    box-shadow: 0 0 60px var(--gradient-start)60, 0 0 120px var(--gradient-end)40, 0 0 160px var(--gradient-start)20, inset 0 0 0 1px var(--gradient-start)40;
+  }
+  50% {
+    border-color: var(--gradient-end);
+    box-shadow: 0 0 80px var(--gradient-end)80, 0 0 140px var(--gradient-start)60, 0 0 180px var(--gradient-end)30, inset 0 0 0 1px var(--gradient-end)60;
+  }
+}
+
+/* Moving gradient border animation for subscription packages, features, and show elements */
+@keyframes movingGradientBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Enhanced moving gradient animation for circular motion */
+@keyframes movingGradientBorderCircular {
+  0% {
+    background-position: 0% 0%;
+  }
+  25% {
+    background-position: 100% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  75% {
+    background-position: 0% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+/* Slow rotating gradient animation */
+@keyframes slowRotatingGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  12.5% {
+    background-position: 25% 25%;
+  }
+  25% {
+    background-position: 50% 0%;
+  }
+  37.5% {
+    background-position: 75% 25%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  62.5% {
+    background-position: 75% 75%;
+  }
+  75% {
+    background-position: 50% 100%;
+  }
+  87.5% {
+    background-position: 25% 75%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Premium avatar jumping elements effect */
+@keyframes avatarPulse {
+  0%, 100% {
+    transform: scale(1) rotateZ(0deg);
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.3);
+  }
+  50% {
+    transform: scale(1.05) rotateZ(1deg);
+    box-shadow: 0 0 30px rgba(255, 165, 0, 0.6);
+  }
+}
+
+@keyframes elementJump {
+  0%, 100% {
+    transform: translateY(0px) rotateZ(0deg);
+  }
+  25% {
+    transform: translateY(-3px) rotateZ(-2deg);
+  }
+  75% {
+    transform: translateY(-1px) rotateZ(1deg);
+  }
+}
+
+/* Premium avatar container with overflow visible for jumping elements */
+.premium-avatar-container {
+  position: relative;
+  overflow: visible !important;
+  animation: avatarPulse 3s ease-in-out infinite;
+}
+
+.jumping-element {
+  position: absolute;
+  animation: elementJump 2s ease-in-out infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.jumping-element:nth-child(1) { animation-delay: 0s; }
+.jumping-element:nth-child(2) { animation-delay: 0.3s; }
+.jumping-element:nth-child(3) { animation-delay: 0.6s; }
+.jumping-element:nth-child(4) { animation-delay: 0.9s; }
+
+/* Hide Google Maps attribution and controls completely */
+.gm-style .gm-style-cc,
+.gm-style .gm-style-mtc,
+.gm-style .gmnoprint,
+.gm-bundled-control,
+.gm-style-cc,
+.gm-style-mtc,
+.gmnoprint,
+.gm-svpc,
+.gm-fullscreen-control,
+.gm-control-active {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+}
+
+/* Hide Google Maps keyboard shortcuts and info windows */
+.gm-style .gm-style-iw .gm-ui-hover-effect,
+.gm-iv-x,
+.gm-iv-t {
+  display: none !important;
+}
+
+/* Hide Google Maps report a map error and attribution */
+.gm-err-container,
+.gm-err-message,
+[title="Report a map error"],
+[aria-label="Map attribution"] {
+  display: none !important;
+}
+
 /* Ensure gradient text works consistently across all packages */
 .subscription-card h3 span {
   -webkit-background-clip: text !important;
@@ -129,73 +288,87 @@
   animation: fadeIn 0.3s ease-in-out;
 }
 
-/* COMPLETE FOCUS RING REMOVAL - No focus rings anywhere */
-* {
+/* NUCLEAR FOCUS RING ELIMINATION - MAX PRIORITY */
+html *,
+html *:before,
+html *:after,
+html *:focus,
+html *:focus-visible,
+html *:focus-within,
+html *:active,
+html button,
+html button:focus,
+html button:focus-visible,
+html input,
+html input:focus,
+html input:focus-visible,
+html select,
+html select:focus,
+html select:focus-visible,
+html textarea,
+html textarea:focus,
+html textarea:focus-visible,
+html [role="button"],
+html [role="button"]:focus,
+html [role="button"]:focus-visible,
+html [tabindex],
+html [tabindex]:focus,
+html [tabindex]:focus-visible,
+html audio,
+html audio:focus,
+html audio:focus-visible {
+  outline: 0 !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-color: transparent !important;
+  outline-style: none !important;
+  outline-offset: 0 !important;
+  box-shadow: 0 0 0 0 transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  --tw-shadow: none !important;
+  --tw-shadow-colored: none !important;
   --tw-ring-color: transparent !important;
-  --tw-ring-shadow: none !important;
-  --tw-ring-offset-shadow: none !important;
+  --ring: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
 }
 
-/* ULTIMATE FOCUS RING REMOVAL - NO FOCUS RINGS ANYWHERE ON THE SITE */
-*,
-*:before,
-*:after,
-*:focus,
-*:focus-visible,
-*:focus-within,
-*:active,
-button,
-button:focus,
-button:focus-visible,
-input,
-input:focus,
-input:focus-visible,
-select,
-select:focus,
-select:focus-visible,
-textarea,
-textarea:focus,
-textarea:focus-visible,
-[role="button"],
-[role="button"]:focus,
-[role="button"]:focus-visible,
-[tabindex],
-[tabindex]:focus,
-[tabindex]:focus-visible,
-[data-radix-select-trigger],
-[data-radix-select-trigger]:focus,
-[data-radix-select-trigger]:focus-visible,
-[data-radix-dropdown-menu-trigger],
-[data-radix-dropdown-menu-trigger]:focus,
-[data-radix-dropdown-menu-trigger]:focus-visible,
-[data-radix-checkbox-root],
-[data-radix-checkbox-root]:focus,
-[data-radix-checkbox-root]:focus-visible,
-[data-radix-toggle-root],
-[data-radix-toggle-root]:focus,
-[data-radix-toggle-root]:focus-visible,
-.focus\:ring-0:focus,
-.focus\:ring-1:focus,
-.focus\:ring-2:focus,
-.focus\:ring-ring:focus,
-.focus\:ring-orange-500:focus,
-.focus\:ring-metal-orange:focus,
-.focus-visible\:ring-0:focus-visible,
-.focus-visible\:ring-1:focus-visible,
-.focus-visible\:ring-2:focus-visible,
-.focus-visible\:ring-ring:focus-visible,
-.focus-visible\:ring-orange-500:focus-visible,
-.focus-visible\:ring-metal-orange:focus-visible,
-.ring-0,
-.ring-1,
-.ring-2,
-.ring-orange-500,
-.ring-metal-orange,
-.ring-ring,
-.ring-offset-background,
-.border-orange-500:focus,
-.focus\:border-orange-500:focus,
-.focus\:border-metal-orange:focus {
+/* Browser-specific white ring elimination */
+html *::-webkit-focus-ring-color {
+  color: transparent !important;
+  outline-color: transparent !important;
+}
+
+html *::-moz-focus-inner {
+  border: 0 !important;
+  padding: 0 !important;
+  outline: none !important;
+}
+
+html *:-moz-focusring {
+  outline: none !important;
+  outline-color: transparent !important;
+}
+
+/* Additional white ring protection */
+html *:focus:not(:focus-visible) {
+  outline: none !important;
+  border: none !important;
+}
+
+html *:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* ZERO FOCUS RINGS - COMPLETELY ELIMINATED */
+*:not(.enhanced-glow) {
   outline: none !important;
   box-shadow: none !important;
   --tw-ring-shadow: none !important;
@@ -420,6 +593,19 @@ textarea:focus-visible,
   }
 }
 
+/* Moving Gradient Border Animation for Premium Packages */
+@keyframes movingGradientBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 @keyframes gradientShift {
   0% {
     background-position: 0% 50%;
@@ -579,6 +765,165 @@ textarea:focus-visible,
 .interactive-hover:hover {
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Theme-aware borders and glow effects */
+.theme-border {
+  border: 2px solid hsl(var(--primary));
+  transition: all 0.3s ease;
+}
+
+.theme-border-hover:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+}
+
+/* Enhanced feature box theme styling with prominent borders and glow */
+.feature-box {
+  border: 2px solid hsl(var(--primary) / 0.8);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 0 8px 32px hsl(var(--primary) / 0.2);
+}
+
+.feature-box:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 
+    0 0 20px hsl(var(--primary) / 0.6),
+    0 8px 40px hsl(var(--primary) / 0.3);
+  transform: scale(1.05);
+}
+
+/* Enhanced glow effects for better visibility */
+.enhanced-glow {
+  position: relative;
+  overflow: visible;
+  border: 2px solid var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+}
+
+.enhanced-glow::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(45deg, 
+    transparent, 
+    rgba(255, 107, 53, 0.6), 
+    rgba(255, 165, 0, 0.6), 
+    rgba(255, 107, 53, 0.6), 
+    transparent);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  filter: blur(8px);
+}
+
+.enhanced-glow:hover::before {
+  opacity: 1;
+  animation: glow-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow-pulse {
+  0% {
+    filter: blur(8px);
+    opacity: 0.6;
+  }
+  100% {
+    filter: blur(12px);
+    opacity: 1;
+  }
+}
+
+/* Enhanced hover glow effect that's always visible */
+.enhanced-glow:hover {
+  box-shadow: 
+    0 0 30px var(--theme-border, rgba(192, 192, 192, 0.6)),
+    0 0 60px var(--theme-border, rgba(192, 192, 192, 0.3)),
+    0 8px 50px var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
+  filter: brightness(1.1) !important;
+  transform: scale(1.05) !important;
+  border-color: var(--theme-border, rgba(192, 192, 192, 0.8)) !important;
+}
+
+/* Force visible borders for feature cards - override any conflicting styles */
+.enhanced-glow {
+  border-width: 2px !important;
+  border-style: solid !important;
+  position: relative !important;
+}
+
+/* Ensure borders are always visible with proper opacity */
+.enhanced-glow[style*="borderColor"] {
+  border-color: var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
+}
+
+/* Remove any Tailwind border overrides that might conflict */
+.enhanced-glow.border-2 {
+  border-width: 2px !important;
+}
+
+/* Ensure card component styles don't override our borders */
+.enhanced-glow.rounded-lg {
+  border-radius: 0.5rem !important;
+}
+
+.feature-box:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 
+    0 0 20px hsl(var(--primary) / 0.4),
+    0 0 40px hsl(var(--primary) / 0.2),
+    inset 0 0 20px hsl(var(--primary) / 0.1);
+  transform: translateY(-2px);
+}
+
+/* Button theme styling with borders */
+.themed-button {
+  border: 2px solid hsl(var(--primary));
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  transition: all 0.3s ease;
+}
+
+.themed-button:hover {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.9);
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.6),
+    0 0 30px hsl(var(--primary) / 0.3);
+  transform: translateY(-1px);
+}
+
+/* Secondary button with border only */
+.themed-button-outline {
+  border: 2px solid hsl(var(--primary));
+  background: transparent;
+  color: hsl(var(--primary));
+  transition: all 0.3s ease;
+}
+
+.themed-button-outline:hover {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.5),
+    0 0 30px hsl(var(--primary) / 0.2);
+}
+
+/* Shows/schedule items theme styling */
+.show-item {
+  border: 1px solid hsl(var(--border));
+  transition: all 0.3s ease;
+}
+
+.show-item:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.3),
+    0 0 25px hsl(var(--primary) / 0.15);
+  transform: translateY(-1px);
 }
 
 @keyframes adPulse {
@@ -889,6 +1234,104 @@ textarea:focus-visible,
   outline-offset: 2px;
 }
 
+/* Global theme-aware interactive elements */
+.card, .feature-card, [class*="feature"], [class*="show"] {
+  border: 1px solid hsl(var(--border));
+  transition: all 0.3s ease;
+}
+
+.card:hover, .feature-card:hover, [class*="feature"]:hover, [class*="show"]:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.3),
+    0 0 25px hsl(var(--primary) / 0.15);
+  transform: scale(1.02);
+}
+
+/* Selective button borders - only for specific themed buttons */
+.theme-button, .theme-button-border {
+  border: 2px solid hsl(var(--primary));
+  transition: all 0.3s ease;
+}
+
+.theme-button:hover, .theme-button-border:hover {
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.4),
+    0 0 25px hsl(var(--primary) / 0.2);
+  transform: scale(1.05);
+}
+
+/* THEMED UTILITY CLASSES */
+.theme-glow-hover:hover {
+  box-shadow: 
+    0 0 20px hsl(var(--primary) / 0.4),
+    0 0 40px hsl(var(--primary) / 0.2),
+    0 5px 15px rgba(0, 0, 0, 0.1);
+  border-color: hsl(var(--primary)) !important;
+  transform: scale(1.05);
+}
+
+.theme-border-always {
+  border: 2px solid hsl(var(--primary)) !important;
+}
+
+.theme-border-subtle {
+  border: 1px solid hsl(var(--border));
+}
+
+.theme-border-subtle:hover {
+  border-color: hsl(var(--primary));
+}
+
+/* Button glow effects */
+.hover\:glow-primary:hover {
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.6),
+    0 0 30px hsl(var(--primary) / 0.3),
+    0 5px 15px rgba(0, 0, 0, 0.1);
+  border-color: hsl(var(--primary)) !important;
+  transform: scale(1.05);
+}
+
+/* Selective button styling - only apply to specific themed buttons */
+.theme-button, .theme-button-border {
+  border-width: 2px !important;
+  border-style: solid !important;
+  transition: all 0.3s ease !important;
+}
+
+.theme-button:not(.border-transparent), .theme-button-border:not(.border-transparent) {
+  border-color: hsl(var(--primary)) !important;
+}
+
+.theme-button.border-transparent, .theme-button-border.border-transparent {
+  border-color: hsl(var(--primary) / 0.3) !important;
+}
+
+.theme-button:hover, .theme-button-border:hover {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.4),
+    0 0 25px hsl(var(--primary) / 0.2) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Feature and show specific styling with enhanced glow effects */
+.feature-container, .show-container {
+  border: 2px solid hsl(var(--border));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-container:hover, .show-container:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 
+    0 0 30px hsl(var(--primary) / 0.6),
+    0 0 60px hsl(var(--primary) / 0.3),
+    0 0 90px hsl(var(--primary) / 0.15),
+    inset 0 0 20px hsl(var(--primary) / 0.1);
+  transform: translateY(-3px) scale(1.02);
+}
+
 /* FLOATING PLAYER FOCUS RING PREVENTION */
 /* Prevent focus rings on all elements inside floating player except the play button */
 .floating-player-no-focus *:not(button):focus,
@@ -896,7 +1339,6 @@ textarea:focus-visible,
 .floating-player-no-focus .focus-safe-area *:focus,
 .floating-player-no-focus .focus-safe-area *:focus-visible {
   outline: none !important;
-  border-color: transparent !important;
   box-shadow: none !important;
   --tw-ring-color: transparent !important;
 }
@@ -912,7 +1354,6 @@ textarea:focus-visible,
 .floating-player-no-focus input[type="range"]:focus,
 .floating-player-no-focus input[type="range"]:focus-visible {
   outline: none !important;
-  border: none !important;
   box-shadow: none !important;
   --tw-ring-color: transparent !important;
 }
@@ -927,4 +1368,38 @@ textarea:focus-visible,
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
   box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
+}
+
+/* Map and stats boxes - borders without glow */
+.map-container, .stats-container {
+  border: 2px solid hsl(var(--primary));
+  transition: all 0.3s ease;
+}
+
+.map-container:hover, .stats-container:hover {
+  border-color: hsl(var(--primary));
+  /* No glow effect for map and stats */
+}
+
+/* Remove borders from dropdown menus and other UI elements */
+[data-radix-popper-content-wrapper],
+[data-radix-dropdown-menu-content],
+[data-radix-select-content],
+[data-radix-popover-content],
+[data-radix-dialog-content],
+[data-radix-tooltip-content] {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Theme-dependent borders for auth modal and show popups */
+.auth-modal-content,
+.show-popup-content {
+  border: 2px solid hsl(var(--primary)) !important;
+  transition: all 0.3s ease;
+}
+
+.auth-modal-content:hover,
+.show-popup-content:hover {
+  border-color: hsl(var(--primary)) !important;
 }

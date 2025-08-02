@@ -10,6 +10,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { verifyAdminCredentials, initializeAdminCollection } from "@/lib/firebase";
 import { 
   Settings, 
   Music, 
@@ -55,6 +56,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [adminUsername, setAdminUsername] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [editingMerch, setEditingMerch] = useState<MerchItem | null>(null);
   const [editingShow, setEditingShow] = useState<ShowScheduleItem | null>(null);
   const [newMerchItem, setNewMerchItem] = useState<Partial<MerchItem>>({});
@@ -64,6 +66,11 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const modalRef = useRef<HTMLDivElement>(null);
+
+  // Initialize admin collection on component mount
+  useEffect(() => {
+    initializeAdminCollection();
+  }, []);
 
   // Handle click outside modal
   useEffect(() => {
@@ -99,9 +106,9 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     },
     {
       id: "2",
-      name: "Metal Horns Mug",
-      price: 15.99,
-      description: "Start your day with metal",
+      name: "Metal Headband",
+      price: 12.99,
+      description: "Rock out with this stylish headband",
       image: "/api/placeholder/300/300",
       category: "accessories",
       stock: 30,
@@ -110,21 +117,43 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   ];
 
   // Admin authentication
-  const handleAdminLogin = () => {
-    // In production, this would be a proper authentication check
-    if (adminUsername === "admin" && adminPassword === "metaladmin123") {
-      setIsAuthenticated(true);
+  const handleAdminLogin = async () => {
+    if (!adminUsername.trim() || !adminPassword.trim()) {
       toast({
-        title: "Admin Access Granted",
-        description: "Welcome to the admin panel",
-        variant: "default",
+        title: "Missing Credentials",
+        description: "Please enter both username and password",
+        variant: "error",
       });
-    } else {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const isValid = await verifyAdminCredentials(adminUsername, adminPassword);
+      
+      if (isValid) {
+        setIsAuthenticated(true);
+        toast({
+          title: "Admin Access Granted",
+          description: "Welcome to the admin panel",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Access Denied",
+          description: "Invalid admin credentials",
+          variant: "error",
+        });
+      }
+    } catch (error) {
+      console.error('Admin login error:', error);
       toast({
-        title: "Access Denied",
-        description: "Invalid admin credentials",
-        variant: "destructive",
+        title: "Login Error",
+        description: "An error occurred during login. Please try again.",
+        variant: "error",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -139,13 +168,14 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       toast({
         title: "Show Updated",
         description: "Show schedule has been updated successfully",
+        variant: "default",
       });
     },
     onError: (error) => {
       toast({
         title: "Update Failed",
         description: "Failed to update show schedule",
-        variant: "destructive",
+        variant: "error",
       });
     },
   });
@@ -161,13 +191,14 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
       toast({
         title: "Show Created",
         description: "New show has been added to the schedule",
+        variant: "default",
       });
     },
     onError: (error) => {
       toast({
         title: "Creation Failed",
         description: "Failed to create new show",
-        variant: "destructive",
+        variant: "error",
       });
     },
   });
@@ -198,7 +229,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
           <CardContent className="space-y-4">
             <div className="text-center">
               <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                Enter admin password below to access administrative site settings
+                Enter admin credentials below to access administrative site settings
               </p>
             </div>
             <div className="space-y-2">
@@ -210,6 +241,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 onChange={(e) => setAdminUsername(e.target.value)}
                 placeholder="Username"
                 className={`${isDarkMode ? "placeholder:text-gray-400" : "placeholder:text-gray-400"} placeholder:opacity-50`}
+                disabled={isLoading}
               />
             </div>
             <div className="space-y-2">
@@ -221,7 +253,8 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 onChange={(e) => setAdminPassword(e.target.value)}
                 placeholder="Password"
                 className={`${isDarkMode ? "placeholder:text-gray-400" : "placeholder:text-gray-400"} placeholder:opacity-50`}
-                onKeyDown={(e) => e.key === "Enter" && handleAdminLogin()}
+                onKeyDown={(e) => e.key === "Enter" && !isLoading && handleAdminLogin()}
+                disabled={isLoading}
               />
             </div>
             <div className="flex gap-2">
@@ -229,6 +262,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 variant="outline"
                 onClick={onClose}
                 className="flex-1 transition-all duration-300 hover:bg-red-500/10 hover:border-red-500 hover:text-red-500"
+                disabled={isLoading}
               >
                 Cancel
               </Button>
@@ -236,8 +270,9 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 onClick={handleAdminLogin}
                 className="flex-1 transition-all duration-300 hover:scale-105"
                 style={{ backgroundColor: colors.primary }}
+                disabled={isLoading}
               >
-                Login
+                {isLoading ? "Logging in..." : "Login"}
               </Button>
             </div>
           </CardContent>
@@ -248,410 +283,318 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <Card className={`w-full max-w-7xl h-[90vh] ${isDarkMode ? "bg-gray-900" : "bg-white"}`}>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>
-            Admin Control Panel
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onClose}
-            className={`${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
-          >
-            <X className="w-4 h-4" />
-          </Button>
-        </CardHeader>
-        <CardContent className="p-0 h-full">
-          <div className="flex h-full">
-            {/* Sidebar */}
-            <div className={`w-64 ${isDarkMode ? "bg-gray-800" : "bg-gray-100"} p-4 space-y-2`}>
-              <Button
-                variant={activeSection === "overview" ? "default" : "ghost"}
-                onClick={() => setActiveSection("overview")}
-                className="w-full justify-start"
-              >
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Overview
-              </Button>
-              <Button
-                variant={activeSection === "shows" ? "default" : "ghost"}
-                onClick={() => setActiveSection("shows")}
-                className="w-full justify-start"
-              >
-                <Calendar className="w-4 h-4 mr-2" />
-                Show Management
-              </Button>
-              <Button
-                variant={activeSection === "merch" ? "default" : "ghost"}
-                onClick={() => setActiveSection("merch")}
-                className="w-full justify-start"
-              >
-                <ShoppingBag className="w-4 h-4 mr-2" />
-                Merchandise
-              </Button>
-              <Button
-                variant={activeSection === "users" ? "default" : "ghost"}
-                onClick={() => setActiveSection("users")}
-                className="w-full justify-start"
-              >
-                <Users className="w-4 h-4 mr-2" />
-                User Management
-              </Button>
-              <Button
-                variant={activeSection === "settings" ? "default" : "ghost"}
-                onClick={() => setActiveSection("settings")}
-                className="w-full justify-start"
-              >
-                <Settings className="w-4 h-4 mr-2" />
-                Settings
-              </Button>
+      <div className={`w-full max-w-6xl max-h-[90vh] overflow-y-auto ${isDarkMode ? "bg-gray-900" : "bg-white"} rounded-lg shadow-2xl`}>
+        <div className="sticky top-0 z-10 p-6 border-b border-gray-200 dark:border-gray-700 bg-inherit">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Settings className="w-8 h-8" style={{ color: colors.primary }} />
+              <div>
+                <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  Admin Panel
+                </h2>
+                <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                  Manage your radio station
+                </p>
+              </div>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className={`${isDarkMode ? "text-white hover:bg-white/10" : "text-black hover:bg-black/10"}`}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
 
-            {/* Main Content */}
-            <div className="flex-1 p-6 overflow-y-auto">
-              {activeSection === "overview" && (
-                <div className="space-y-6">
-                  <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                    Dashboard Overview
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <Card className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                              Total Shows
-                            </p>
-                            <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                              {showSchedules?.length || 0}
-                            </p>
-                          </div>
-                          <Calendar className="w-8 h-8" style={{ color: colors.primary }} />
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                              Merch Items
-                            </p>
-                            <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                              {mockMerch?.length || 0}
-                            </p>
-                          </div>
-                          <ShoppingBag className="w-8 h-8" style={{ color: colors.primary }} />
-                        </div>
-                      </CardContent>
-                    </Card>
-                    <Card className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                              Active Users
-                            </p>
-                            <p className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                              42
-                            </p>
-                          </div>
-                          <Users className="w-8 h-8" style={{ color: colors.primary }} />
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </div>
-              )}
+        <div className="p-6">
+          {/* Navigation Tabs */}
+          <div className="flex space-x-1 mb-6 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
+            {[
+              { id: "overview", label: "Overview", icon: TrendingUp },
+              { id: "schedule", label: "Schedule", icon: Calendar },
+              { id: "merch", label: "Merchandise", icon: ShoppingBag },
+              { id: "users", label: "Users", icon: Users },
+              { id: "settings", label: "Settings", icon: Settings },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveSection(tab.id)}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                  activeSection === tab.id
+                    ? `${isDarkMode ? "bg-gray-700 text-white" : "bg-white text-black"} shadow-sm`
+                    : `${isDarkMode ? "text-gray-400 hover:text-white" : "text-gray-600 hover:text-black"}`
+                }`}
+              >
+                <tab.icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </button>
+            ))}
+          </div>
 
-              {activeSection === "shows" && (
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                      Show Management
-                    </h2>
-                    <Button
-                      onClick={() => setNewShowItem({ title: "", description: "", host: "", dayOfWeek: "", time: "", duration: "" })}
-                      style={{ backgroundColor: colors.primary }}
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Show
-                    </Button>
-                  </div>
+          {/* Content Sections */}
+          {activeSection === "overview" && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className={`text-sm font-medium ${isDarkMode ? "text-white" : "text-black"}`}>
+                      Active Listeners
+                    </CardTitle>
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>1,234</div>
+                    <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      +20.1% from last month
+                    </p>
+                  </CardContent>
+                </Card>
 
-                  {/* New Show Form */}
-                  {Object.keys(newShowItem || {}).length > 0 && (
-                    <Card className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
-                      <CardHeader>
-                        <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>
-                          Add New Show
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <Label htmlFor="show-title">Show Title</Label>
-                            <Input
-                              id="show-title"
-                              value={newShowItem.title || ""}
-                              onChange={(e) => setNewShowItem({ ...newShowItem, title: e.target.value })}
-                              placeholder="Enter show title"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="show-host">Host</Label>
-                            <Input
-                              id="show-host"
-                              value={newShowItem.host || ""}
-                              onChange={(e) => setNewShowItem({ ...newShowItem, host: e.target.value })}
-                              placeholder="Enter host name"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="show-day">Day of Week</Label>
-                            <Select
-                              value={newShowItem.dayOfWeek || ""}
-                              onValueChange={(value) => setNewShowItem({ ...newShowItem, dayOfWeek: value })}
-                            >
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select day" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="Monday">Monday</SelectItem>
-                                <SelectItem value="Tuesday">Tuesday</SelectItem>
-                                <SelectItem value="Wednesday">Wednesday</SelectItem>
-                                <SelectItem value="Thursday">Thursday</SelectItem>
-                                <SelectItem value="Friday">Friday</SelectItem>
-                                <SelectItem value="Saturday">Saturday</SelectItem>
-                                <SelectItem value="Sunday">Sunday</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <div>
-                            <Label htmlFor="show-time">Time</Label>
-                            <Input
-                              id="show-time"
-                              value={newShowItem.time || ""}
-                              onChange={(e) => setNewShowItem({ ...newShowItem, time: e.target.value })}
-                              placeholder="e.g., 7:00 PM"
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor="show-duration">Duration</Label>
-                            <Input
-                              id="show-duration"
-                              value={newShowItem.duration || ""}
-                              onChange={(e) => setNewShowItem({ ...newShowItem, duration: e.target.value })}
-                              placeholder="e.g., 2 hours"
-                            />
+                <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className={`text-sm font-medium ${isDarkMode ? "text-white" : "text-black"}`}>
+                      Revenue
+                    </CardTitle>
+                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>$12,345</div>
+                    <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      +15.3% from last month
+                    </p>
+                  </CardContent>
+                </Card>
+
+                <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className={`text-sm font-medium ${isDarkMode ? "text-white" : "text-black"}`}>
+                      Shows Today
+                    </CardTitle>
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                  </CardHeader>
+                  <CardContent>
+                    <div className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>8</div>
+                    <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      Next show in 2 hours
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                  <CardHeader>
+                    <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>Recent Activity</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {[
+                        { action: "New user registered", time: "2 minutes ago", user: "john@example.com" },
+                        { action: "Show updated", time: "15 minutes ago", user: "admin" },
+                        { action: "Merchandise added", time: "1 hour ago", user: "admin" },
+                      ].map((activity, index) => (
+                        <div key={index} className="flex items-center space-x-3">
+                          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                          <div className="flex-1">
+                            <p className={`text-sm ${isDarkMode ? "text-white" : "text-black"}`}>{activity.action}</p>
+                            <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              {activity.time} by {activity.user}
+                            </p>
                           </div>
                         </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                  <CardHeader>
+                    <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>Quick Actions</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button
+                        variant="outline"
+                        className="h-auto p-3 flex flex-col items-center space-y-2"
+                        onClick={() => setActiveSection("schedule")}
+                      >
+                        <Calendar className="w-5 h-5" />
+                        <span className="text-xs">Add Show</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="h-auto p-3 flex flex-col items-center space-y-2"
+                        onClick={() => setActiveSection("merch")}
+                      >
+                        <ShoppingBag className="w-5 h-5" />
+                        <span className="text-xs">Add Merch</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="h-auto p-3 flex flex-col items-center space-y-2"
+                      >
+                        <Users className="w-5 h-5" />
+                        <span className="text-xs">View Users</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="h-auto p-3 flex flex-col items-center space-y-2"
+                      >
+                        <Settings className="w-5 h-5" />
+                        <span className="text-xs">Settings</span>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
+          )}
+
+          {activeSection === "schedule" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  Show Schedule
+                </h3>
+                <Button
+                  onClick={() => setNewShowItem({})}
+                  className="flex items-center space-x-2"
+                  style={{ backgroundColor: colors.primary }}
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Show</span>
+                </Button>
+              </div>
+
+              <div className="grid gap-4">
+                {showSchedules?.map((show) => (
+                  <Card key={show.id} className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
                         <div>
-                          <Label htmlFor="show-description">Description</Label>
-                          <Textarea
-                            id="show-description"
-                            value={newShowItem.description || ""}
-                            onChange={(e) => setNewShowItem({ ...newShowItem, description: e.target.value })}
-                            placeholder="Enter show description"
-                            rows={3}
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => createShowMutation.mutate(newShowItem)}
-                            disabled={createShowMutation.isPending}
-                            style={{ backgroundColor: colors.primary }}
-                          >
-                            <Save className="w-4 h-4 mr-2" />
-                            Create Show
-                          </Button>
-                          <Button
-                            variant="outline"
-                            onClick={() => setNewShowItem({})}
-                          >
-                            Cancel
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Show List */}
-                  <div className="space-y-4">
-                    {(showSchedules || []).map((show) => (
-                      <Card key={show.id} className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
-                        <CardContent className="p-4">
-                          {editingShow?.id === show.id ? (
-                            <div className="space-y-4">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                  <Label>Show Title</Label>
-                                  <Input
-                                    value={editingShow.title}
-                                    onChange={(e) => setEditingShow({ ...editingShow, title: e.target.value })}
-                                  />
-                                </div>
-                                <div>
-                                  <Label>Host</Label>
-                                  <Input
-                                    value={editingShow.host}
-                                    onChange={(e) => setEditingShow({ ...editingShow, host: e.target.value })}
-                                  />
-                                </div>
-                                <div>
-                                  <Label>Day</Label>
-                                  <Input
-                                    value={editingShow.dayOfWeek}
-                                    onChange={(e) => setEditingShow({ ...editingShow, dayOfWeek: e.target.value })}
-                                  />
-                                </div>
-                                <div>
-                                  <Label>Time</Label>
-                                  <Input
-                                    value={editingShow.time}
-                                    onChange={(e) => setEditingShow({ ...editingShow, time: e.target.value })}
-                                  />
-                                </div>
-                              </div>
-                              <div>
-                                <Label>Description</Label>
-                                <Textarea
-                                  value={editingShow.description}
-                                  onChange={(e) => setEditingShow({ ...editingShow, description: e.target.value })}
-                                  rows={3}
-                                />
-                              </div>
-                              <div className="flex gap-2">
-                                <Button
-                                  onClick={() => updateShowMutation.mutate(editingShow)}
-                                  disabled={updateShowMutation.isPending}
-                                  style={{ backgroundColor: colors.primary }}
-                                >
-                                  <Save className="w-4 h-4 mr-2" />
-                                  Save
-                                </Button>
-                                <Button
-                                  variant="outline"
-                                  onClick={() => setEditingShow(null)}
-                                >
-                                  Cancel
-                                </Button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <h3 className={`font-bold text-lg ${isDarkMode ? "text-white" : "text-black"}`}>
-                                  {show.title}
-                                </h3>
-                                <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                                  {show.host} • {show.dayOfWeek} {show.time} • {show.duration}
-                                </p>
-                                <p className={`text-sm mt-2 ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
-                                  {show.description}
-                                </p>
-                              </div>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setEditingShow(show)}
-                              >
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {activeSection === "merch" && (
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                      Merchandise Management
-                    </h2>
-                    <Button
-                      onClick={() => setNewMerchItem({ name: "", price: 0, description: "", category: "", stock: 0 })}
-                      style={{ backgroundColor: colors.primary }}
-                    >
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Product
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {(mockMerch || []).map((item) => (
-                      <Card key={item.id} className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
-                        <CardContent className="p-4">
-                          <div className="aspect-square bg-gray-200 rounded-lg mb-4 flex items-center justify-center">
-                            <ShoppingBag className="w-16 h-16 text-gray-400" />
-                          </div>
-                          <h3 className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                            {item.name}
-                          </h3>
+                          <h4 className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
+                            {show.title}
+                          </h4>
                           <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                            {item.description}
+                            {show.host} • {show.dayOfWeek} at {show.time}
                           </p>
-                          <div className="flex justify-between items-center mt-2">
-                            <span className={`font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                              ${item.price}
-                            </span>
-                            <Badge variant={item.featured ? "default" : "outline"}>
-                              {item.featured ? "Featured" : "Standard"}
-                            </Badge>
-                          </div>
-                          <div className="flex gap-2 mt-4">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setEditingMerch(item)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="text-red-500"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              )}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditingShow(show)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
 
-              {activeSection === "users" && (
-                <div className="space-y-6">
-                  <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                    User Management
-                  </h2>
-                  <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+          {activeSection === "merch" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  Merchandise
+                </h3>
+                <Button
+                  onClick={() => setNewMerchItem({})}
+                  className="flex items-center space-x-2"
+                  style={{ backgroundColor: colors.primary }}
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Item</span>
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {mockMerch.map((item) => (
+                  <Card key={item.id} className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                    <CardContent className="p-4">
+                      <div className="aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg mb-3"></div>
+                      <h4 className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
+                        {item.name}
+                      </h4>
+                      <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                        ${item.price}
+                      </p>
+                      <div className="flex items-center justify-between mt-2">
+                        <Badge variant={item.featured ? "default" : "secondary"}>
+                          {item.featured ? "Featured" : "Regular"}
+                        </Badge>
+                        <span className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                          Stock: {item.stock}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeSection === "users" && (
+            <div className="space-y-6">
+              <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
+                User Management
+              </h3>
+              <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                <CardContent className="p-6">
+                  <p className={`text-center ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                     User management features coming soon...
                   </p>
-                </div>
-              )}
-
-              {activeSection === "settings" && (
-                <div className="space-y-6">
-                  <h2 className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"}`}>
-                    System Settings
-                  </h2>
-                  <p className={`${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
-                    System settings and configuration options coming soon...
-                  </p>
-                </div>
-              )}
+                </CardContent>
+              </Card>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          )}
+
+          {activeSection === "settings" && (
+            <div className="space-y-6">
+              <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
+                Admin Settings
+              </h3>
+              <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="site-title">Site Title</Label>
+                      <Input
+                        id="site-title"
+                        defaultValue="Spandex Salvation Radio"
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="stream-url">Stream URL</Label>
+                      <Input
+                        id="stream-url"
+                        defaultValue="https://stream.example.com/live"
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="contact-email">Contact Email</Label>
+                      <Input
+                        id="contact-email"
+                        defaultValue="admin@spandex-salvation-radio.com"
+                        className="mt-1"
+                      />
+                    </div>
+                    <Button style={{ backgroundColor: colors.primary }}>
+                      Save Settings
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

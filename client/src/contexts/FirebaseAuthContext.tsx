@@ -1,263 +1,177 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { auth, registerUser, loginUser, getUserProfile, updateUserProfile, updateListeningStatus, updateUserLocation } from '@/lib/firebase';
+import { User as FirebaseUser, onAuthStateChanged } from 'firebase/auth';
 
-export interface FirebaseUser {
-  userID: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber?: string;
-  profileImage: string;
-  location?: {
-    lat: number;
-    lng: number;
-    address?: string;
-  };
-  activeSubscription: boolean;
-  isActiveListening: boolean;
-  renewalDate?: Date;
-  createdAt: Date;
-  lastLoginAt?: Date;
+interface User {
+  UserID: string;
+  FirstName: string;
+  LastName: string;
+  UserProfileImage: string;
+  EmailAddress: string;
+  PhoneNumber: string;
+  Location: { lat: number; lng: number; country?: string } | null;
+  IsActiveListening: boolean;
+  ActiveSubscription: boolean;
+  RenewalDate: string | null;
+  EmailVerified: boolean;
+  PhoneVerified: boolean;
+  CreatedAt: string;
+  UpdatedAt: string;
 }
 
 interface FirebaseAuthContextType {
-  user: FirebaseUser | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  register: (data: {
+  user: User | null;
+  firebaseUser: FirebaseUser | null;
+  loading: boolean;
+  signOut: () => Promise<void>;
+  updateListeningStatus: (isActiveListening: boolean) => Promise<void>;
+  updateLocation: (location: { lat: number; lng: number; country?: string }) => Promise<void>;
+  updateProfile: (updates: Partial<User>) => Promise<void>;
+  registerUser: (userData: {
     firstName: string;
     lastName: string;
     email: string;
-    phoneNumber?: string;
-    password: string;
-  }) => Promise<{ success: boolean; message: string; userKey?: string }>;
-  login: (email: string, password: string) => Promise<{ success: boolean; message: string }>;
-  loginWithGoogle: (data: {
-    googleId: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  }) => Promise<{ success: boolean; message: string }>;
-  logout: () => Promise<void>;
-  updateProfile: (data: Partial<{
-    firstName: string;
-    lastName: string;
     phoneNumber: string;
-    location: { lat: number; lng: number; address?: string };
-    isActiveListening: boolean;
-    activeSubscription: boolean;
-  }>) => Promise<{ success: boolean; message: string }>;
-  refreshUser: () => Promise<void>;
+    password: string;
+  }) => Promise<{ success: boolean; userID?: string; profile?: User; error?: string }>;
+  loginUser: (email: string, password: string) => Promise<{ success: boolean; userID?: string; profile?: User; error?: string }>;
 }
 
 const FirebaseAuthContext = createContext<FirebaseAuthContextType | undefined>(undefined);
 
-export function useFirebaseAuth() {
+export const useFirebaseAuth = () => {
   const context = useContext(FirebaseAuthContext);
   if (context === undefined) {
     throw new Error('useFirebaseAuth must be used within a FirebaseAuthProvider');
   }
   return context;
-}
+};
 
 interface FirebaseAuthProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-export function FirebaseAuthProvider({ children }: FirebaseAuthProviderProps) {
-  const [user, setUser] = useState<FirebaseUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Check authentication status on mount
   useEffect(() => {
-    checkAuthStatus();
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setFirebaseUser(firebaseUser);
+      
+      if (firebaseUser) {
+        try {
+          // Get user profile from our database using the email
+          const userData = await loginUser(firebaseUser.email || '', '');
+          if (userData.success && userData.profile) {
+            setUser(userData.profile);
+          }
+        } catch (error) {
+          console.error('Error fetching user profile:', error);
+          setUser(null);
+        }
+      } else {
+        setUser(null);
+      }
+      
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const checkAuthStatus = async () => {
+  const signOut = async () => {
     try {
-      const response = await fetch('/api/auth/firebase/user', {
-        credentials: 'include'
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.authenticated && data.user) {
-          setUser(data.user);
-          setIsAuthenticated(true);
-        }
-      }
+      await auth.signOut();
+      setUser(null);
+      setFirebaseUser(null);
     } catch (error) {
-      console.error('Auth status check failed:', error);
-    } finally {
-      setIsLoading(false);
+      console.error('Error signing out:', error);
     }
   };
 
-  const register = async (data: {
+  const updateListeningStatus = async (isActiveListening: boolean) => {
+    if (!user) return;
+    
+    try {
+      const result = await updateListeningStatus(user.UserID, isActiveListening);
+      if (result.success) {
+        setUser({ ...user, IsActiveListening: isActiveListening });
+      }
+    } catch (error) {
+      console.error('Error updating listening status:', error);
+    }
+  };
+
+  const updateLocation = async (location: { lat: number; lng: number; country?: string }) => {
+    if (!user) return;
+    
+    try {
+      const result = await updateUserLocation(user.UserID);
+      if (result.success) {
+        setUser({ ...user, Location: location });
+      }
+    } catch (error) {
+      console.error('Error updating location:', error);
+    }
+  };
+
+  const updateProfile = async (updates: Partial<User>) => {
+    if (!user) return;
+    
+    try {
+      const result = await updateUserProfile(user.UserID, updates);
+      if (result.success) {
+        setUser({ ...user, ...updates });
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  };
+
+  const registerUserFunction = async (userData: {
     firstName: string;
     lastName: string;
     email: string;
-    phoneNumber?: string;
+    phoneNumber: string;
     password: string;
   }) => {
     try {
-      const response = await fetch('/api/auth/firebase/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        return { success: true, message: result.message, userKey: result.userKey };
-      } else {
-        return { success: false, message: result.message || 'Registration failed' };
+      const result = await registerUser(userData);
+      if (result.success && result.profile) {
+        setUser(result.profile);
       }
+      return result;
     } catch (error) {
-      console.error('Registration error:', error);
-      return { success: false, message: 'Registration failed due to network error' };
+      console.error('Error registering user:', error);
+      return { success: false, error: 'Registration failed' };
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const loginUserFunction = async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/firebase/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ email, password }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setUser(result.user);
-        setIsAuthenticated(true);
-        return { success: true, message: result.message };
-      } else {
-        return { success: false, message: result.message || 'Login failed' };
+      const result = await loginUser(email, password);
+      if (result.success && result.profile) {
+        setUser(result.profile);
       }
+      return result;
     } catch (error) {
-      console.error('Login error:', error);
-      return { success: false, message: 'Login failed due to network error' };
+      console.error('Error logging in user:', error);
+      return { success: false, error: 'Login failed' };
     }
   };
 
-  const loginWithGoogle = async (data: {
-    googleId: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  }) => {
-    try {
-      const response = await fetch('/api/auth/firebase/google', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setUser(result.user);
-        setIsAuthenticated(true);
-        return { success: true, message: result.message };
-      } else {
-        return { success: false, message: result.message || 'Google authentication failed' };
-      }
-    } catch (error) {
-      console.error('Google login error:', error);
-      return { success: false, message: 'Google authentication failed due to network error' };
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await fetch('/api/auth/firebase/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      setUser(null);
-      setIsAuthenticated(false);
-    }
-  };
-
-  const updateProfile = async (data: Partial<{
-    firstName: string;
-    lastName: string;
-    phoneNumber: string;
-    location: { lat: number; lng: number; address?: string };
-    isActiveListening: boolean;
-    activeSubscription: boolean;
-  }>) => {
-    try {
-      const response = await fetch('/api/auth/firebase/update-profile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        // Refresh user data after successful update
-        await refreshUser();
-        return { success: true, message: result.message };
-      } else {
-        return { success: false, message: result.message || 'Profile update failed' };
-      }
-    } catch (error) {
-      console.error('Profile update error:', error);
-      return { success: false, message: 'Profile update failed due to network error' };
-    }
-  };
-
-  const refreshUser = async () => {
-    try {
-      const response = await fetch('/api/auth/firebase/user', {
-        credentials: 'include'
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.authenticated && data.user) {
-          setUser(data.user);
-          setIsAuthenticated(true);
-        } else {
-          setUser(null);
-          setIsAuthenticated(false);
-        }
-      }
-    } catch (error) {
-      console.error('User refresh failed:', error);
-    }
-  };
-
-  const value = {
+  const value: FirebaseAuthContextType = {
     user,
-    isLoading,
-    isAuthenticated,
-    register,
-    login,
-    loginWithGoogle,
-    logout,
+    firebaseUser,
+    loading,
+    signOut,
+    updateListeningStatus,
+    updateLocation,
     updateProfile,
-    refreshUser,
+    registerUser: registerUserFunction,
+    loginUser: loginUserFunction,
   };
 
   return (
@@ -265,4 +179,4 @@ export function FirebaseAuthProvider({ children }: FirebaseAuthProviderProps) {
       {children}
     </FirebaseAuthContext.Provider>
   );
-}
+};

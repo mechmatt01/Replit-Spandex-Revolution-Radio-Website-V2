@@ -5,29 +5,42 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { User } from "@shared/schema";
-import { apiRequest } from "@/lib/queryClient";
 import { auth, handleRedirectResult, signInWithGoogle, createUserProfile, getUserProfile, updateUserProfile, uploadProfileImage, updateListeningStatus, updateUserLocation, loginUser, registerUser } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { useToast } from "@/hooks/use-toast";
+
+interface User {
+  UserID: string;
+  FirstName: string;
+  LastName: string;
+  UserProfileImage: string;
+  EmailAddress: string;
+  PhoneNumber: string;
+  Location: { lat: number; lng: number; country?: string } | null;
+  IsActiveListening: boolean;
+  ActiveSubscription: boolean;
+  RenewalDate: string | null;
+  EmailVerified: boolean;
+  PhoneVerified: boolean;
+  CreatedAt: string;
+  UpdatedAt: string;
+  LastActive?: string;
+}
 
 interface AuthContextType {
   user: User | null;
   firebaseUser: any | null;
-  firebaseProfile: any | null;
   loading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (
-    email: string,
-    password: string,
-    username: string,
     firstName: string,
     lastName: string,
+    email: string,
     phoneNumber: string,
-    recaptchaToken?: string,
+    password: string,
   ) => Promise<void>;
   logout: () => Promise<void>;
-  refreshUser: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   updateProfile: (updates: any) => Promise<boolean>;
   uploadProfileImage: (file: File) => Promise<boolean>;
@@ -50,71 +63,21 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<any | null>(null);
-  const [firebaseProfile, setFirebaseProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
-  // Handle Firebase user profile loading
-  const loadFirebaseProfile = async (userId: string) => {
+  // Load user profile from Firebase
+  const loadUserProfile = async (userID: string) => {
     try {
-      const result = await getUserProfile(userId);
-      if (result.success) {
-        setFirebaseProfile(result.profile);
+      const result = await getUserProfile(userID);
+      if (result.success && result.profile) {
+        setUser(result.profile);
         return result.profile;
       }
       return null;
     } catch (error) {
-      console.error('Error loading Firebase profile:', error);
+      console.error('Error loading user profile:', error);
       return null;
-    }
-  };
-
-  // Refresh user from Firebase only
-  const refreshUser = async () => {
-    try {
-      // Use Firebase auth state instead of server API
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        setUser({
-          id: currentUser.uid,
-          email: currentUser.email || '',
-          passwordHash: '', // Not available from Firebase auth
-          firstName: currentUser.displayName?.split(' ')[0] || '',
-          lastName: currentUser.displayName?.split(' ').slice(1).join(' ') || '',
-          profileImageUrl: currentUser.photoURL || '',
-          username: currentUser.displayName || '',
-          phoneNumber: currentUser.phoneNumber || '',
-          googleId: currentUser.uid,
-          location: null,
-          isActiveListening: false,
-          activeSubscription: false,
-          renewalDate: null,
-          isPhoneVerified: !!currentUser.phoneNumber,
-          showVerifiedBadge: false,
-          accountDeletionScheduled: false,
-          accountDeletionDate: null,
-          isEmailVerified: currentUser.emailVerified,
-          emailVerificationToken: null,
-          phoneVerificationCode: null,
-          resetPasswordToken: null,
-          resetPasswordExpires: null,
-          isAdmin: false,
-          stripeCustomerId: null,
-          stripeSubscriptionId: null,
-          subscriptionStatus: null,
-          subscriptionTier: null,
-          lastLoginAt: null,
-          isFirstLogin: true,
-          createdAt: new Date(currentUser.metadata.creationTime || new Date()),
-          updatedAt: new Date(currentUser.metadata.lastSignInTime || new Date()),
-        });
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('Error refreshing user:', error);
-      setUser(null);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -124,6 +87,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const result = await loginUser(email, password);
       
       if (!result.success) {
+        toast({
+          title: "Login Failed",
+          description: result.error || "Invalid email or password",
+          variant: "error",
+        });
         throw new Error(result.error || "Login failed");
       }
       
@@ -135,39 +103,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('isLoggedIn', 'true');
       
       // Set user state
-      setUser({
-        id: result.userID,
-        email: result.profile.EmailAddress,
-        username: `${result.profile.FirstName} ${result.profile.LastName}`.trim(),
-        firstName: result.profile.FirstName,
-        lastName: result.profile.LastName,
-        phoneNumber: result.profile.PhoneNumber,
-        isEmailVerified: true,
-        isPhoneVerified: !!result.profile.PhoneNumber,
-        createdAt: result.profile.CreatedAt || new Date().toISOString(),
-        updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
+      setUser(result.profile);
+      
+      // Update location if available
+      try {
+        await updateUserLocation(result.userID);
+        toast({
+          title: "Location Updated",
+          description: "Your location has been updated",
+          variant: "default",
+        });
+      } catch (error) {
+        console.log('Location not available or update failed');
+      }
+      
+      toast({
+        title: "Login Successful",
+        description: `Welcome back, ${result.profile.FirstName}!`,
+        variant: "default",
       });
       
-      setFirebaseProfile(result.profile);
-      
       console.log('[AuthContext] Login completed, user state updated');
-    } catch (error: any) {
+    } catch (error) {
       console.error('[AuthContext] Login error:', error);
-      throw new Error(error.message || "Login failed");
+      throw error;
     }
   };
 
   const register = async (
-    email: string,
-    password: string,
-    username: string,
     firstName: string,
     lastName: string,
+    email: string,
     phoneNumber: string,
-    recaptchaToken?: string,
+    password: string,
   ) => {
     try {
-      console.log('[AuthContext] Attempting email/password registration...');
+      console.log('[AuthContext] Attempting registration...');
       const result = await registerUser({
         firstName,
         lastName,
@@ -177,6 +148,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
       
       if (!result.success) {
+        toast({
+          title: "Registration Failed",
+          description: result.error || "Registration failed",
+          variant: "error",
+        });
         throw new Error(result.error || "Registration failed");
       }
       
@@ -188,86 +164,136 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('isLoggedIn', 'true');
       
       // Set user state
-      setUser({
-        id: result.userID,
-        email: result.profile.EmailAddress,
-        username: `${result.profile.FirstName} ${result.profile.LastName}`.trim(),
-        firstName: result.profile.FirstName,
-        lastName: result.profile.LastName,
-        phoneNumber: result.profile.PhoneNumber,
-        isEmailVerified: true,
-        isPhoneVerified: !!result.profile.PhoneNumber,
-        createdAt: result.profile.CreatedAt || new Date().toISOString(),
-        updatedAt: result.profile.UpdatedAt || new Date().toISOString(),
+      setUser(result.profile);
+      
+      // Update location if available
+      try {
+        await updateUserLocation(result.userID);
+        toast({
+          title: "Location Updated",
+          description: "Your location has been updated",
+          variant: "default",
+        });
+      } catch (error) {
+        console.log('Location not available or update failed');
+      }
+      
+      toast({
+        title: "Registration Successful",
+        description: `Welcome to Spandex Salvation Radio, ${firstName}!`,
+        variant: "default",
       });
       
-      setFirebaseProfile(result.profile);
-      
       console.log('[AuthContext] Registration completed, user state updated');
-    } catch (error: any) {
+    } catch (error) {
       console.error('[AuthContext] Registration error:', error);
-      throw new Error(error.message || "Registration failed");
+      throw error;
     }
   };
 
   const logout = async () => {
     try {
+      console.log('[AuthContext] Logging out...');
+      
+      // Update listening status to false before logout
+      if (user?.UserID) {
+        await updateListeningStatus(user.UserID, false);
+      }
+      
+      // Sign out from Firebase
       await signOut(auth);
+      
+      // Clear local state
       setUser(null);
       setFirebaseUser(null);
-      setFirebaseProfile(null);
       
       // Clear localStorage
       localStorage.removeItem('userID');
       localStorage.removeItem('userProfile');
       localStorage.removeItem('isLoggedIn');
+      
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out",
+        variant: "default",
+      });
+      
+      console.log('[AuthContext] Logout completed');
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('[AuthContext] Logout error:', error);
+      toast({
+        title: "Logout Error",
+        description: "An error occurred during logout",
+        variant: "error",
+      });
     }
   };
 
-  // Firebase Google Sign In
   const handleGoogleSignIn = async () => {
     try {
+      console.log('[AuthContext] Initiating Google sign-in...');
       await signInWithGoogle();
-    } catch (error) {
-      console.error('Google sign in error:', error);
+    } catch (error: any) {
+      console.error('[AuthContext] Google sign-in error:', error);
+      toast({
+        title: "Google Sign-In Failed",
+        description: error.message || "Failed to sign in with Google",
+        variant: "error",
+      });
       throw error;
     }
   };
 
-  // Update Firebase profile
   const updateProfile = async (updates: any) => {
     try {
-      if (firebaseProfile?.UserID) {
-        const result = await updateUserProfile(firebaseProfile.UserID, updates);
+      if (user?.UserID) {
+        const result = await updateUserProfile(user.UserID, updates);
         if (result.success) {
           // Reload the profile to reflect changes
-          await loadFirebaseProfile(firebaseProfile.UserID);
+          await loadUserProfile(user.UserID);
+          toast({
+            title: "Profile Updated",
+            description: "Your profile has been updated successfully",
+            variant: "default",
+          });
           return true;
         }
       }
       return false;
     } catch (error) {
       console.error('Error updating profile:', error);
+      toast({
+        title: "Update Failed",
+        description: "Failed to update profile",
+        variant: "error",
+      });
       return false;
     }
   };
 
-  // Upload profile image
   const handleUploadProfileImage = async (file: File) => {
     try {
-      if (firebaseProfile?.UserID) {
-        const result = await uploadProfileImage(firebaseProfile.UserID, file);
+      if (user?.UserID) {
+        const result = await uploadProfileImage(user.UserID, file);
         if (result.success) {
           // Reload the profile to reflect changes
-          await loadFirebaseProfile(firebaseProfile.UserID);
+          await loadUserProfile(user.UserID);
+          toast({
+            title: "Image Uploaded",
+            description: "Profile image updated successfully",
+            variant: "default",
+          });
           return true;
         }
       }
       return false;
     } catch (error) {
       console.error('Error uploading profile image:', error);
+      toast({
+        title: "Upload Failed",
+        description: "Failed to upload profile image",
+        variant: "error",
+      });
       return false;
     }
   };
@@ -275,24 +301,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Update listening status
   const handleUpdateListeningStatus = async (isListening: boolean) => {
     try {
-      if (firebaseProfile?.UserID) {
-        await updateListeningStatus(firebaseProfile.UserID, isListening);
+      if (user?.UserID) {
+        await updateListeningStatus(user.UserID, isListening);
+        // Update local state
+        setUser(prev => prev ? { ...prev, IsActiveListening: isListening } : null);
+        
+        toast({
+          title: isListening ? "Now Playing" : "Playback Stopped",
+          description: isListening ? "You're now listening to Spandex Salvation Radio" : "Playback has been stopped",
+          variant: "default",
+        });
       }
     } catch (error) {
       console.error('Error updating listening status:', error);
+      toast({
+        title: "Status Update Failed",
+        description: "Failed to update listening status",
+        variant: "error",
+      });
     }
   };
 
   // Update location
   const handleUpdateLocation = async () => {
     try {
-      if (firebaseProfile?.UserID) {
-        await updateUserLocation(firebaseProfile.UserID);
-        // Reload the profile to reflect changes
-        await loadFirebaseProfile(firebaseProfile.UserID);
+      if (user?.UserID) {
+        const result = await updateUserLocation(user.UserID);
+        if (result.success) {
+          // Reload the profile to reflect changes
+          await loadUserProfile(user.UserID);
+          toast({
+            title: "Location Updated",
+            description: "Your location has been updated",
+            variant: "default",
+          });
+        } else {
+          toast({
+            title: "Location Unavailable",
+            description: "Unable to get your location. Please check your browser settings.",
+            variant: "error",
+          });
+        }
       }
     } catch (error) {
       console.error('Error updating location:', error);
+      toast({
+        title: "Location Update Failed",
+        description: "Failed to update location",
+        variant: "error",
+      });
     }
   };
 
@@ -311,20 +368,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (wasLoggedIn === 'true' && userID && userProfile) {
       try {
         const profile = JSON.parse(userProfile);
-        setUser({
-          id: userID,
-          email: profile.EmailAddress,
-          username: `${profile.FirstName} ${profile.LastName}`.trim(),
-          firstName: profile.FirstName,
-          lastName: profile.LastName,
-          phoneNumber: profile.PhoneNumber,
-          isEmailVerified: true,
-          isPhoneVerified: !!profile.PhoneNumber,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        });
-        setFirebaseProfile(profile);
+        setUser(profile);
         console.log('[AuthContext] Restored user from localStorage:', profile);
+        
+        // Update location if available
+        updateUserLocation(userID).catch(() => {
+          console.log('Location not available for restored user');
+        });
       } catch (error) {
         console.error('[AuthContext] Error parsing stored profile:', error);
         // Clear invalid data
@@ -335,50 +385,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Set up Firebase auth state listener for Google OAuth
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log('[AuthContext] onAuthStateChanged fired. User:', user);
-      if (user) {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      console.log('[AuthContext] onAuthStateChanged fired. User:', firebaseUser);
+      if (firebaseUser) {
         console.log('[AuthContext] User authenticated via Google:', {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          emailVerified: user.emailVerified,
-          providerId: user.providerData[0]?.providerId
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          emailVerified: firebaseUser.emailVerified,
+          providerId: firebaseUser.providerData[0]?.providerId
         });
         
-        setFirebaseUser(user);
+        setFirebaseUser(firebaseUser);
         localStorage.setItem('isLoggedIn', 'true');
         
-        // Set the user state for the app
-        setUser({
-          id: user.uid,
-          email: user.email || '',
-          username: user.displayName || '',
-          firstName: user.displayName?.split(' ')[0] || '',
-          lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-          phoneNumber: user.phoneNumber || '',
-          isEmailVerified: user.emailVerified,
-          isPhoneVerified: !!user.phoneNumber,
-          createdAt: user.metadata.creationTime || new Date().toISOString(),
-          updatedAt: user.metadata.lastSignInTime || new Date().toISOString(),
-        });
-        
         try {
-          const profileResult = await createUserProfile(user);
+          // Create or get user profile
+          const profileResult = await createUserProfile(firebaseUser);
           console.log('[AuthContext] Profile creation result:', profileResult);
-          if (profileResult.success) {
-            setFirebaseProfile(profileResult.profile);
+          if (profileResult.success && profileResult.profile) {
+            setUser(profileResult.profile);
+            localStorage.setItem('userID', profileResult.userID);
+            localStorage.setItem('userProfile', JSON.stringify(profileResult.profile));
             console.log('[AuthContext] Firebase profile set:', profileResult.profile);
+            
+            toast({
+              title: "Welcome Back!",
+              description: `Welcome to Spandex Salvation Radio, ${profileResult.profile.FirstName}!`,
+              variant: "default",
+            });
           }
         } catch (error) {
           console.error('[AuthContext] Error creating/loading profile:', error);
+          toast({
+            title: "Profile Error",
+            description: "Failed to load user profile",
+            variant: "error",
+          });
         }
       } else {
         console.log('[AuthContext] No user authenticated, clearing state');
         setFirebaseUser(null);
-        setFirebaseProfile(null);
         setUser(null);
         localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userID');
+        localStorage.removeItem('userProfile');
       }
       setLoading(false);
     });
@@ -390,26 +441,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (result.success && result.user) {
         console.log('[AuthContext] Successful redirect result, setting user state');
         setFirebaseUser(result.user);
-        setUser({
-          id: result.user.uid,
-          email: result.user.email || '',
-          username: result.user.displayName || '',
-          firstName: result.user.displayName?.split(' ')[0] || '',
-          lastName: result.user.displayName?.split(' ').slice(1).join(' ') || '',
-          phoneNumber: result.user.phoneNumber || '',
-          isEmailVerified: result.user.emailVerified,
-          isPhoneVerified: !!result.user.phoneNumber,
-          createdAt: result.user.metadata.creationTime || new Date().toISOString(),
-          updatedAt: result.user.metadata.lastSignInTime || new Date().toISOString(),
-        });
         if (result.profileResult?.profile) {
-          setFirebaseProfile(result.profileResult.profile);
+          setUser(result.profileResult.profile);
+          localStorage.setItem('userID', result.profileResult.userID);
+          localStorage.setItem('userProfile', JSON.stringify(result.profileResult.profile));
+          localStorage.setItem('isLoggedIn', 'true');
+          
+          toast({
+            title: "Google Sign-In Successful",
+            description: `Welcome to Spandex Salvation Radio, ${result.profileResult.profile.FirstName}!`,
+            variant: "default",
+          });
         }
         setLoading(false);
-        localStorage.setItem('isLoggedIn', 'true');
         console.log('[AuthContext] User state set after Google redirect:', result.user);
       } else {
         console.log('[AuthContext] No successful redirect result, error:', result.error);
+        if (result.error) {
+          toast({
+            title: "Google Sign-In Failed",
+            description: result.error,
+            variant: "error",
+          });
+        }
       }
     });
 
@@ -425,13 +479,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       value={{
         user,
         firebaseUser,
-        firebaseProfile,
         loading,
         isAuthenticated: !!user || !!firebaseUser,
         login,
         register,
         logout,
-        refreshUser,
         signInWithGoogle: handleGoogleSignIn,
         updateProfile,
         uploadProfileImage: handleUploadProfileImage,

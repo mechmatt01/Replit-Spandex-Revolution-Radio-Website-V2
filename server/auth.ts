@@ -8,7 +8,7 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import type { Express, Request, Response, NextFunction } from "express";
-import { storage } from "./storage";
+// import { storage } from "./storage";
 import type { User, RegisterUser, LoginUser } from "@shared/schema";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-jwt-secret-key";

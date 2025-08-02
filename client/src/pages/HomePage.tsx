@@ -12,6 +12,7 @@ import FadeInView from "@/components/FadeInView";
 import StaggeredAnimation from "@/components/StaggeredAnimation";
 
 
+
 import { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
 import StickyPlayer from "@/components/StickyPlayer";
@@ -108,7 +109,7 @@ export default function HomePage() {
       </FadeInView>
       
       <FadeInView direction="up" delay={0}>
-        <section id="map">
+        <section id="map" className="py-8">
           <FullWidthGlobeMap />
         </section>
       </FadeInView>

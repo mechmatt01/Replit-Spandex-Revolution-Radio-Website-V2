@@ -97,7 +97,7 @@ export default function MetalThemeSwitcher() {
           <Button
             variant="ghost"
             size="sm"
-            className="flex items-center gap-2 hover:bg-opacity-20"
+            className="flex items-center gap-2 hover:bg-opacity-20 theme-button-border"
             style={{
               color: currentTheme === 'light-mode' ? '#000000' : colors.text,
               backgroundColor: "transparent",
@@ -170,12 +170,16 @@ export default function MetalThemeSwitcher() {
                     }}
                     onMouseEnter={(e) => {
                       if (!isActive && !isLocked) {
-                        e.currentTarget.style.backgroundColor = `${colors.primary}15`; // 15 = ~8% opacity
+                        // Special handling for glassmorphism theme to make hover more visible
+                        const hoverOpacity = themeKey === "glassmorphism-premium" ? "30" : "15";
+                        e.currentTarget.style.backgroundColor = `${themeColors.primary}${hoverOpacity}`;
+                        e.currentTarget.style.color = themeColors.text;
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!isActive) {
                         e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = colors.text;
                       }
                     }}
                   >
@@ -199,13 +203,25 @@ export default function MetalThemeSwitcher() {
                       {/* Theme Info */}
                       <div className="flex-1 text-left min-w-0">
                         <div className="flex items-center gap-2 justify-between">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-1">
                             <span
                               className="font-semibold text-sm"
                               style={{ color: isActive ? 'white' : themeColors.primary }}
                             >
                               {themeConfig.name}
                             </span>
+                            {isPremium && !isActive && (
+                              <Star
+                                className="w-4 h-4 flex-shrink-0"
+                                style={{
+                                  color: "#ffd700",
+                                  fill: "#ffd700",
+                                  filter: isLocked
+                                    ? "grayscale(100%) opacity(0.5)"
+                                    : "drop-shadow(0 0 1px rgba(255, 215, 0, 0.3))",
+                                }}
+                              />
+                            )}
                             {isActive && (
                               <Badge
                                 variant="secondary"
@@ -219,18 +235,7 @@ export default function MetalThemeSwitcher() {
                               </Badge>
                             )}
                           </div>
-                          {isPremium && (
-                            <Star
-                              className="w-4 h-4 flex-shrink-0"
-                              style={{
-                                color: "#ffd700",
-                                fill: "#ffd700",
-                                filter: isLocked
-                                  ? "grayscale(100%) opacity(0.5)"
-                                  : "drop-shadow(0 0 1px rgba(255, 215, 0, 0.3))",
-                              }}
-                            />
-                          )}
+
                         </div>
                         <p
                           className="text-xs mt-1 break-words leading-relaxed whitespace-pre-wrap overflow-hidden"
@@ -373,7 +378,7 @@ export default function MetalThemeSwitcher() {
                       <Button
                         onClick={() => setShowPremiumDialog(false)}
                         variant="ghost"
-                        className="flex-1 text-white border border-white/30 hover:bg-white/20 font-semibold px-4 py-2 text-sm"
+                        className="flex-1 text-white border border-primary/30 hover:bg-white/20 font-semibold px-4 py-2 text-sm"
                         style={{
                           backgroundColor: "rgba(255, 255, 255, 0.1)",
                           backdropFilter: "blur(10px)",
@@ -399,7 +404,7 @@ export default function MetalThemeSwitcher() {
                     </div>
 
                     {/* TEMPORARY TESTING BUTTON - REMOVE BEFORE DEPLOYMENT */}
-                    <div className="mt-3 pt-3 border-t border-white/20">
+                    <div className="mt-3 pt-3 border-t border-primary/20">
                       <Button
                         onClick={() => {
                           setTheme("glassmorphism-premium" as MetalTheme);

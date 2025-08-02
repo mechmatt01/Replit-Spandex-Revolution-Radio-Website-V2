@@ -26,7 +26,8 @@ export const sessions = pgTable(
 // User storage table.
 // (IMPORTANT) This table is mandatory for Replit Auth, don't drop it.
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey().notNull(),
+  id: varchar("id").primaryKey().notNull(), // Firebase UID
+  userKey: varchar("user_key").unique().notNull(), // 10-character alphanumeric key
   email: varchar("email").unique(),
   passwordHash: varchar("password_hash"), // Hashed password for authentication
   firstName: varchar("first_name"),
@@ -47,7 +48,7 @@ export const users = pgTable("users", {
   accountDeletionDate: timestamp("account_deletion_date"),
   isEmailVerified: boolean("is_email_verified").default(false).notNull(),
   emailVerificationToken: varchar("email_verification_token"),
-  phoneVerificationCode: varchar("phone_verification_code"), // <-- Add this line
+  phoneVerificationCode: varchar("phone_verification_code"),
   resetPasswordToken: varchar("reset_password_token"),
   resetPasswordExpires: timestamp("reset_password_expires"),
   isAdmin: boolean("is_admin").default(false).notNull(),

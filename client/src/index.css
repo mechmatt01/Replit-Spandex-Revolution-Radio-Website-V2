@@ -368,7 +368,7 @@ html *:focus-visible {
 }
 
 /* ZERO FOCUS RINGS - COMPLETELY ELIMINATED */
-* {
+*:not(.enhanced-glow) {
   outline: none !important;
   box-shadow: none !important;
   --tw-ring-shadow: none !important;
@@ -797,6 +797,8 @@ html *:focus-visible {
 .enhanced-glow {
   position: relative;
   overflow: visible;
+  border: 2px solid var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 
 .enhanced-glow::before {
@@ -835,6 +837,17 @@ html *:focus-visible {
   }
 }
 
+/* Enhanced hover glow effect that's always visible */
+.enhanced-glow:hover {
+  box-shadow: 
+    0 0 30px var(--theme-border, rgba(192, 192, 192, 0.6)),
+    0 0 60px var(--theme-border, rgba(192, 192, 192, 0.3)),
+    0 8px 50px var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
+  filter: brightness(1.1) !important;
+  transform: scale(1.05) !important;
+  border-color: var(--theme-border, rgba(192, 192, 192, 0.8)) !important;
+}
+
 /* Force visible borders for feature cards - override any conflicting styles */
 .enhanced-glow {
   border-width: 2px !important;
@@ -844,17 +857,7 @@ html *:focus-visible {
 
 /* Ensure borders are always visible with proper opacity */
 .enhanced-glow[style*="borderColor"] {
-  border-color: currentColor !important;
-}
-
-/* Enhanced hover glow effect that's always visible */
-.enhanced-glow:hover {
-  box-shadow: 
-    0 0 30px currentColor,
-    0 0 60px currentColor,
-    0 8px 50px rgba(255, 107, 53, 0.5) !important;
-  filter: brightness(1.1) !important;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  border-color: var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
 }
 
 /* Remove any Tailwind border overrides that might conflict */
@@ -1242,22 +1245,20 @@ html *:focus-visible {
   box-shadow: 
     0 0 15px hsl(var(--primary) / 0.3),
     0 0 25px hsl(var(--primary) / 0.15);
+  transform: scale(1.02);
 }
 
-/* Ensure all buttons have themed borders */
-button, [role="button"] {
-  border: 2px solid transparent;
+/* Selective button borders - only for specific themed buttons */
+.theme-button, .theme-button-border {
+  border: 2px solid hsl(var(--primary));
   transition: all 0.3s ease;
 }
 
-button:not(.ghost):not(.link), [role="button"]:not(.ghost):not(.link) {
-  border-color: hsl(var(--primary));
-}
-
-button:hover, [role="button"]:hover {
+.theme-button:hover, .theme-button-border:hover {
   box-shadow: 
     0 0 15px hsl(var(--primary) / 0.4),
     0 0 25px hsl(var(--primary) / 0.2);
+  transform: scale(1.05);
 }
 
 /* THEMED UTILITY CLASSES */
@@ -1267,6 +1268,7 @@ button:hover, [role="button"]:hover {
     0 0 40px hsl(var(--primary) / 0.2),
     0 5px 15px rgba(0, 0, 0, 0.1);
   border-color: hsl(var(--primary)) !important;
+  transform: scale(1.05);
 }
 
 .theme-border-always {
@@ -1288,32 +1290,33 @@ button:hover, [role="button"]:hover {
     0 0 30px hsl(var(--primary) / 0.3),
     0 5px 15px rgba(0, 0, 0, 0.1);
   border-color: hsl(var(--primary)) !important;
+  transform: scale(1.05);
 }
 
-/* Ensure all buttons have visible borders */
-button, [role="button"] {
+/* Selective button styling - only apply to specific themed buttons */
+.theme-button, .theme-button-border {
   border-width: 2px !important;
   border-style: solid !important;
   transition: all 0.3s ease !important;
 }
 
-/* Force button border visibility */
-button:not(.border-transparent), [role="button"]:not(.border-transparent) {
+.theme-button:not(.border-transparent), .theme-button-border:not(.border-transparent) {
   border-color: hsl(var(--primary)) !important;
 }
 
-button.border-transparent, [role="button"].border-transparent {
+.theme-button.border-transparent, .theme-button-border.border-transparent {
   border-color: hsl(var(--primary) / 0.3) !important;
 }
 
-button:hover, [role="button"]:hover {
+.theme-button:hover, .theme-button-border:hover {
   border-color: hsl(var(--primary)) !important;
   box-shadow: 
     0 0 15px hsl(var(--primary) / 0.4),
     0 0 25px hsl(var(--primary) / 0.2) !important;
+  transform: scale(1.05) !important;
 }
 
-/* Feature and show specific styling */
+/* Feature and show specific styling with enhanced glow effects */
 .feature-container, .show-container {
   border: 2px solid hsl(var(--border));
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1322,9 +1325,10 @@ button:hover, [role="button"]:hover {
 .feature-container:hover, .show-container:hover {
   border-color: hsl(var(--primary));
   box-shadow: 
-    0 0 25px hsl(var(--primary) / 0.5),
-    0 0 50px hsl(var(--primary) / 0.25),
-    inset 0 0 15px hsl(var(--primary) / 0.05);
+    0 0 30px hsl(var(--primary) / 0.6),
+    0 0 60px hsl(var(--primary) / 0.3),
+    0 0 90px hsl(var(--primary) / 0.15),
+    inset 0 0 20px hsl(var(--primary) / 0.1);
   transform: translateY(-3px) scale(1.02);
 }
 
@@ -1335,7 +1339,6 @@ button:hover, [role="button"]:hover {
 .floating-player-no-focus .focus-safe-area *:focus,
 .floating-player-no-focus .focus-safe-area *:focus-visible {
   outline: none !important;
-  border-color: transparent !important;
   box-shadow: none !important;
   --tw-ring-color: transparent !important;
 }
@@ -1351,7 +1354,6 @@ button:hover, [role="button"]:hover {
 .floating-player-no-focus input[type="range"]:focus,
 .floating-player-no-focus input[type="range"]:focus-visible {
   outline: none !important;
-  border: none !important;
   box-shadow: none !important;
   --tw-ring-color: transparent !important;
 }
@@ -1366,4 +1368,38 @@ textarea:focus-visible,
   outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
   box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
+}
+
+/* Map and stats boxes - borders without glow */
+.map-container, .stats-container {
+  border: 2px solid hsl(var(--primary));
+  transition: all 0.3s ease;
+}
+
+.map-container:hover, .stats-container:hover {
+  border-color: hsl(var(--primary));
+  /* No glow effect for map and stats */
+}
+
+/* Remove borders from dropdown menus and other UI elements */
+[data-radix-popper-content-wrapper],
+[data-radix-dropdown-menu-content],
+[data-radix-select-content],
+[data-radix-popover-content],
+[data-radix-dialog-content],
+[data-radix-tooltip-content] {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Theme-dependent borders for auth modal and show popups */
+.auth-modal-content,
+.show-popup-content {
+  border: 2px solid hsl(var(--primary)) !important;
+  transition: all 0.3s ease;
+}
+
+.auth-modal-content:hover,
+.show-popup-content:hover {
+  border-color: hsl(var(--primary)) !important;
 }

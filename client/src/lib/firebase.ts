@@ -94,7 +94,48 @@ export async function getUserLocation(): Promise<{ lat: number; lng: number } | 
   });
 }
 
+// Initialize Admin collection in Firestore
+export async function initializeAdminCollection() {
+  try {
+    const adminRef = doc(db, 'Admin', 'Information');
+    const adminDoc = await getDoc(adminRef);
+    
+    if (!adminDoc.exists()) {
+      // Create admin credentials
+      await setDoc(adminRef, {
+        Username: "adminAccess",
+        Password: "password123",
+        CreatedAt: new Date().toISOString(),
+        UpdatedAt: new Date().toISOString(),
+      });
+      console.log('Admin collection initialized successfully');
+    } else {
+      console.log('Admin collection already exists');
+    }
+  } catch (error) {
+    console.error('Error initializing admin collection:', error);
+  }
+}
 
+// Verify admin credentials
+export async function verifyAdminCredentials(username: string, password: string): Promise<boolean> {
+  try {
+    const adminRef = doc(db, 'Admin', 'Information');
+    const adminDoc = await getDoc(adminRef);
+    
+    if (!adminDoc.exists()) {
+      console.log('Admin collection not found, initializing...');
+      await initializeAdminCollection();
+      return false;
+    }
+    
+    const adminData = adminDoc.data();
+    return adminData.Username === username && adminData.Password === password;
+  } catch (error) {
+    console.error('Error verifying admin credentials:', error);
+    return false;
+  }
+}
 
 // Register new user with email/password
 export const registerUser = async (userData: {
@@ -161,6 +202,9 @@ export async function loginUser(email: string, password: string) {
       return { success: false, error: 'Invalid email or password' };
     }
 
+    // Update last active timestamp
+    await updateUserLastActive(userData.UserID);
+
     console.log('Login successful for user:', userData.UserID);
     return { 
       success: true, 
@@ -181,6 +225,19 @@ export async function loginUser(email: string, password: string) {
   } catch (error) {
     console.error('Error logging in user:', error);
     return { success: false, error };
+  }
+}
+
+// Update user's last active timestamp
+export async function updateUserLastActive(userID: string) {
+  try {
+    const docRef = doc(db, 'Users', `User: ${userID}`);
+    await updateDoc(docRef, {
+      LastActive: new Date().toISOString(),
+    });
+    console.log('User last active timestamp updated');
+  } catch (error) {
+    console.error('Error updating user last active:', error);
   }
 }
 
@@ -235,6 +292,7 @@ export async function createUserProfile(authUser: any, customUserID?: string) {
       GoogleUID: authUser.uid,
       CreatedAt: new Date().toISOString(),
       UpdatedAt: new Date().toISOString(),
+      LastActive: new Date().toISOString(),
     };
 
     // Save to Firebase Firestore
@@ -286,7 +344,10 @@ export async function uploadProfileImage(userID: string, file: File) {
 // Update listening status
 export async function updateListeningStatus(userID: string, isListening: boolean) {
   try {
-    await updateUserProfile(userID, { IsActiveListening: isListening });
+    await updateUserProfile(userID, { 
+      IsActiveListening: isListening,
+      LastActive: new Date().toISOString(),
+    });
     return { success: true };
   } catch (error) {
     console.error('Error updating listening status:', error);
@@ -299,7 +360,10 @@ export async function updateUserLocation(userID: string) {
   try {
     const location = await getUserLocation();
     if (location) {
-      await updateUserProfile(userID, { Location: location });
+      await updateUserProfile(userID, { 
+        Location: location,
+        LastActive: new Date().toISOString(),
+      });
       return { success: true };
     }
     return { success: false, error: 'Location not available' };

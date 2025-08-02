@@ -214,22 +214,33 @@ export default function RadioCoPlayer() {
 
   return (
     <section
-      className="backdrop-blur-md rounded-2xl p-6 shadow-xl transition-all duration-700 ease-in-out border-0"
+                  className="backdrop-blur-md rounded-2xl shadow-xl transition-all duration-700 ease-in-out mx-auto overflow-visible"
       role="region"
       aria-label="Radio player controls"
       style={{
-        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.08)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.05)')})`
-          : 'rgba(255, 255, 255, 0.08)',
-        backdropFilter: 'blur(24px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
-        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
-          ? `0 8px 32px ${adaptiveTheme.accentColor}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`
-          : `0 8px 32px ${colors.primary}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
-        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
+        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
+          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.15)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.10)')})`
+          : 'rgba(255, 255, 255, 0.12)',
+        backdropFilter: 'blur(32px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
+          ? `0 12px 48px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`
+          : `0 12px 48px ${colors.primary}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`,
+        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
           ? adaptiveTheme.textColor 
           : colors.text,
-        border: 'none'
+        border: 'none',
+        // Responsive width: Reduced by 20% as requested - now 26.666vw instead of 33.333vw
+        width: 'clamp(384px, 26.666vw, 72vw)',
+        minWidth: 'max-content',
+        maxWidth: '72vw',
+        // Dynamic padding - expand when volume slider is visible with smooth transition
+        paddingTop: '20px',
+        paddingLeft: '20px', 
+        paddingRight: '20px',
+        paddingBottom: isVolumeSliderVisible ? '100px' : '68px', // Reduced height - Extra space when slider is active, minimum space for volume button
+        // Ensure it expands to accommodate the longest text element
+        contain: 'layout'
       }}
     >
       {/* Hidden Audio Element */}
@@ -247,7 +258,7 @@ export default function RadioCoPlayer() {
             variant="outline"
             size="sm"
             onClick={() => setIsStationDropdownOpen(!isStationDropdownOpen)}
-            className="bg-card/90 backdrop-blur-sm hover:bg-card/95 transition-all duration-200 text-xs px-3 py-1"
+            className="bg-card/95 backdrop-blur-sm hover:bg-card/100 transition-all duration-200 text-xs px-3 py-1"
             style={{
               borderColor: colors.primary,
               borderWidth: "2px",
@@ -274,11 +285,21 @@ export default function RadioCoPlayer() {
 
           {isStationDropdownOpen && (
             <div
-              className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto bg-black/90 backdrop-blur-lg border shadow-xl z-20 scrollbar-thin"
+              className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto shadow-xl z-20 scrollbar-thin"
               style={{
-                borderColor: colors.primary + "40",
+                background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
+                  ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.95)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.90)')})`
+                  : 'rgba(0, 0, 0, 0.95)',
+                backdropFilter: 'blur(24px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+                borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
+                  ? adaptiveTheme.accentColor + "40"
+                  : colors.primary + "40",
                 borderRadius: "12px",
                 minWidth: "300px",
+                boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
+                  ? `0 8px 32px ${adaptiveTheme.accentColor}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`
+                  : `0 8px 32px ${colors.primary}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
               }}
             >
               <div className="p-2">
@@ -506,7 +527,7 @@ export default function RadioCoPlayer() {
           {/* Live Metadata Indicator */}
           {currentTrack.lastUpdated && (
             <div className="mb-2 flex justify-center">
-              <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-green-400 bg-green-400/10 border border-green-400/20">
+              <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-green-400 bg-green-400/10">
                 <div className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></div>
                 LIVE
               </div>

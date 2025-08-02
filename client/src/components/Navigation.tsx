@@ -463,26 +463,27 @@ export default function Navigation() {
                         style={{
                           backgroundColor: 'transparent',
                         }}
+                        title="User profile menu"
                       >
                         <div className="relative">
                           {/* Profile Image */}
                           <div
                             className="w-10 h-10 rounded-full bg-gradient-to-br flex items-center justify-center shadow-lg ring-2 ring-offset-2"
                             style={{
-                              background: (user as any)?.profileImageUrl 
-                                ? `url(${(user as any)?.profileImageUrl}) center/cover` 
+                              background: (user as any)?.UserProfileImage 
+                                ? `url(${(user as any)?.UserProfileImage}) center/cover` 
                                 : gradient,
                               '--ring-color': colors.primary,
                               '--ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
                             } as React.CSSProperties}
                           >
-                            {!(user as any)?.profileImageUrl && (
+                            {!(user as any)?.UserProfileImage && (
                               <User size={20} className="text-white" />
                             )}
                           </div>
 
                           {/* Verified Badge for Subscribers */}
-                          {(user as any)?.activeSubscription && (
+                          {(user as any)?.ActiveSubscription && (
                             <div 
                               className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center shadow-md"
                               style={{
@@ -519,11 +520,10 @@ export default function Navigation() {
 
                     <DropdownMenuContent 
                       align="end" 
-                      className="w-64 p-2 mt-2 shadow-2xl border-2"
+                      className="w-64 p-2 mt-2 shadow-2xl"
                       style={{
                         backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
                         backdropFilter: 'blur(10px)',
-                        borderColor: `${colors.primary}40`,
                       }}
                     >
                       {/* User Info */}
@@ -532,13 +532,13 @@ export default function Navigation() {
                           className="font-black text-sm"
                           style={{ color: !isDarkMode ? '#000000' : colors.text }}
                         >
-                          {(user as any)?.firstName || (user as any)?.email?.split('@')[0] || 'User'}
+                          {(user as any)?.FirstName || (user as any)?.EmailAddress?.split('@')[0] || 'User'}
                         </p>
                         <p 
                           className="text-xs opacity-70"
                           style={{ color: !isDarkMode ? '#000000' : colors.text }}
                         >
-                          {(user as any)?.email}
+                          {(user as any)?.EmailAddress}
                         </p>
                       </div>
 
@@ -557,7 +557,7 @@ export default function Navigation() {
                       </DropdownMenuItem>
 
                       {/* Subscription Management - Only if active */}
-                      {(user as any)?.activeSubscription && (
+                      {(user as any)?.ActiveSubscription && (
                         <DropdownMenuItem
                           onClick={() => setLocation("/profile?section=subscription")}
                           className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
