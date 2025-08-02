@@ -2378,6 +2378,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get active listeners with locations for map display
+  app.get("/api/active-listeners", async (req, res) => {
+    try {
+      const activeListeners = await firebaseLiveStatsStorage.getActiveListenersWithLocations();
+      res.json(activeListeners);
+    } catch (error) {
+      console.error('Error getting active listeners:', error);
+      res.json([]); // Return empty array if error
+    }
+  });
+
+  // Initialize total listeners in Data collection
+  app.post("/api/initialize-total-listeners", isAuthenticated, async (req, res) => {
+    try {
+      const { initialValue } = req.body;
+      await firebaseLiveStatsStorage.initializeTotalListeners(initialValue || 1000);
+      res.json({ success: true, message: 'Total listeners initialized' });
+    } catch (error) {
+      console.error('Error initializing total listeners:', error);
+      res.status(500).json({ error: 'Failed to initialize total listeners' });
+    }
+  });
+
+  // Update total listeners count (admin only)
+  app.put("/api/total-listeners", isAuthenticated, async (req, res) => {
+    try {
+      const { newTotal } = req.body;
+      if (typeof newTotal !== 'number' || newTotal < 0) {
+        return res.status(400).json({ error: 'Invalid total listeners value' });
+      }
+      
+      await firebaseLiveStatsStorage.updateTotalListeners(newTotal);
+      res.json({ success: true, totalListeners: newTotal });
+    } catch (error) {
+      console.error('Error updating total listeners:', error);
+      res.status(500).json({ error: 'Failed to update total listeners' });
+    }
+  });
+
   // Hot 97 stream status API with live data
   app.get("/api/radio-status", async (req, res) => {
     try {

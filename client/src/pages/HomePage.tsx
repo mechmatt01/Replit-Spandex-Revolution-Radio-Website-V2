@@ -4,7 +4,7 @@ import Features from "@/components/Features";
 import About from "@/components/About";
 import Schedule from "@/components/Schedule";
 import Submissions from "@/components/Submissions";
-import FullWidthGlobeMap from "@/components/FullWidthGlobeMapFixed";
+import LiveStatsAndLocations from "@/components/LiveStatsAndLocations";
 import Contact from "@/components/Contact";
 import SubscriptionCarousel from "@/components/SubscriptionCarousel";
 import ShopifyEcommerce from "@/components/ShopifyEcommerce";
@@ -108,8 +108,32 @@ export default function HomePage() {
       </FadeInView>
       
       <FadeInView direction="up" delay={0}>
-        <section id="map">
-          <FullWidthGlobeMap />
+        <section 
+          id="map" 
+          className="py-20"
+          style={{ backgroundColor: colors.background }}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 
+                className="font-orbitron font-black text-3xl md:text-4xl mb-4"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+                }}
+              >
+                Live Radio Statistics
+              </h2>
+              <p 
+                className="text-lg font-semibold"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                }}
+              >
+                Real-time listener data and active locations worldwide
+              </p>
+            </div>
+            <LiveStatsAndLocations />
+          </div>
         </section>
       </FadeInView>
       

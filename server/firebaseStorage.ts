@@ -59,6 +59,7 @@ const db = isFirebaseAvailable ? getFirestore(firebaseApp) : null;
 export class FirebaseLiveStatsStorage {
   private readonly collection = 'live_stats';
   private readonly usersCollection = 'users';
+  private readonly dataCollection = 'Data';
 
   /**
    * Get current live statistics
@@ -117,10 +118,10 @@ export class FirebaseLiveStatsStorage {
       
       const countries = uniqueCountries.size || 1; // Ensure at least 1 country
       
-      // Get total listeners from stats collection (or fallback to current active)
-      const statsDoc = await db!.collection(this.collection).doc('current').get();
-      const totalListeners = statsDoc.exists ? 
-        statsDoc.data()?.totalListeners || activeListeners : 
+      // Get total listeners from Data collection
+      const dataDoc = await db!.collection(this.dataCollection).doc('TotalListeners').get();
+      const totalListeners = dataDoc.exists ? 
+        dataDoc.data()?.value || Math.max(activeListeners, 1000) : 
         Math.max(activeListeners, 1000); // Ensure reasonable total
       
       return {
@@ -215,6 +216,127 @@ export class FirebaseLiveStatsStorage {
       }
     } catch (error) {
       console.error('Error incrementing total listeners:', error);
+    }
+  }
+
+  /**
+   * Get active listeners with their locations for map display
+   */
+  async getActiveListenersWithLocations(): Promise<Array<{
+    id: string;
+    location: {
+      lat: number;
+      lng: number;
+      country: string;
+      city?: string;
+    };
+    isActiveListening: boolean;
+  }>> {
+    // Check if Firebase is available first
+    if (!isFirebaseAvailable || !db) {
+      return [];
+    }
+
+    try {
+      // Check if collections exist first to avoid NOT_FOUND errors
+      const collectionExists = await this.checkCollectionExists(this.usersCollection);
+      if (!collectionExists) {
+        console.log('Users collection does not exist, returning empty active listeners');
+        return [];
+      }
+
+      // Get active listeners with location data
+      const snapshot = await db!.collection(this.usersCollection)
+        .where('isActiveListening', '==', true)
+        .limit(100) // Limit to prevent large queries
+        .get();
+      
+      const activeListeners = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          location: data.location || null,
+          isActiveListening: data.isActiveListening || false
+        };
+      }).filter(listener => 
+        listener.location && 
+        listener.location.lat && 
+        listener.location.lng && 
+        listener.location.country
+      );
+      
+      return activeListeners;
+    } catch (error) {
+      console.log('Error getting active listeners with locations:', error.message);
+      return [];
+    }
+  }
+
+  /**
+   * Initialize or get total listeners count from Data collection
+   */
+  async initializeTotalListeners(initialValue: number = 1000): Promise<void> {
+    try {
+      if (!isFirebaseAvailable || !db) {
+        console.log('Firebase not available - skipping total listeners initialization');
+        return;
+      }
+      
+      const docRef = db.collection(this.dataCollection).doc('TotalListeners');
+      const doc = await docRef.get();
+      
+      if (!doc.exists) {
+        await docRef.set({
+          value: initialValue,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now()
+        });
+        console.log(`Initialized TotalListeners with value: ${initialValue}`);
+      }
+    } catch (error) {
+      console.error('Error initializing total listeners:', error);
+    }
+  }
+
+  /**
+   * Update total listeners count
+   */
+  async updateTotalListeners(newTotal: number): Promise<void> {
+    try {
+      if (!isFirebaseAvailable || !db) {
+        console.log('Firebase not available - skipping total listeners update');
+        return;
+      }
+      
+      await db.collection(this.dataCollection).doc('TotalListeners').set({
+        value: newTotal,
+        updatedAt: Timestamp.now()
+      }, { merge: true });
+    } catch (error) {
+      console.error('Error updating total listeners:', error);
+    }
+  }
+
+  /**
+   * Get total listeners count from Data collection
+   */
+  async getTotalListeners(): Promise<number> {
+    try {
+      if (!isFirebaseAvailable || !db) {
+        return 1000; // Fallback value
+      }
+      
+      const doc = await db.collection(this.dataCollection).doc('TotalListeners').get();
+      if (doc.exists) {
+        return doc.data()?.value || 1000;
+      }
+      
+      // Initialize if doesn't exist
+      await this.initializeTotalListeners(1000);
+      return 1000;
+    } catch (error) {
+      console.log('Error getting total listeners:', error.message);
+      return 1000;
     }
   }
 }
