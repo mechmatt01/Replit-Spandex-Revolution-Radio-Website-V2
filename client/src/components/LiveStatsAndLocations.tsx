@@ -213,10 +213,26 @@ const LiveStatsAndLocations = () => {
 
   // Initialize Google Maps when component mounts
   useEffect(() => {
-    if (window.google && window.google.maps) {
-      initializeMap();
-    }
-  }, [initializeMap]);
+    const loadGoogleMaps = () => {
+      if (window.google && window.google.maps) {
+        initializeMap();
+      } else {
+        // Load Google Maps script if not already loaded
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${config.googleMapsApiKey}&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          if (window.google && window.google.maps) {
+            initializeMap();
+          }
+        };
+        document.head.appendChild(script);
+      }
+    };
+
+    loadGoogleMaps();
+  }, [initializeMap, config.googleMapsApiKey]);
 
   return (
     <div className="w-full space-y-6">
@@ -251,64 +267,75 @@ const LiveStatsAndLocations = () => {
         {/* Left Side - Live Statistics */}
         <Card className="bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm border-border/50 flex flex-col">
           <CardHeader className="pb-4">
-            <CardTitle className={`flex items-center gap-2 text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
-              <Activity className="w-6 h-6 text-primary" />
+            <CardTitle className={`text-center text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
               LIVE STATISTICS
             </CardTitle>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col justify-center space-y-8">
             {/* Active Listeners */}
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                  Live Now
-                </span>
-              </div>
-              {statsLoading ? (
-                <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-              ) : (
-                <div className="text-4xl font-black text-primary">
-                  <AnimatedCounter value={liveStats?.activeListeners || 0} />
+            <div className="text-center space-y-3">
+              <div className="flex flex-col items-center gap-3">
+                <div className="p-3 rounded-full bg-primary/20 border border-primary/30">
+                  <Activity className="w-6 h-6 text-primary" />
                 </div>
-              )}
-              <p className="text-sm text-muted-foreground">Active Listeners</p>
+                <div className="space-y-1">
+                  <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide block">
+                    Live Now
+                  </span>
+                  {statsLoading ? (
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                  ) : (
+                    <div className="text-4xl font-black text-primary">
+                      <AnimatedCounter value={liveStats?.activeListeners || 0} />
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground">Active Listeners</p>
+                </div>
+              </div>
             </div>
 
             {/* Countries */}
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Globe className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                  Countries
-                </span>
-              </div>
-              {statsLoading ? (
-                <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-              ) : (
-                <div className="text-4xl font-black text-primary">
-                  <AnimatedCounter value={liveStats?.countries || 0} />
+            <div className="text-center space-y-3">
+              <div className="flex flex-col items-center gap-3">
+                <div className="p-3 rounded-full bg-primary/20 border border-primary/30">
+                  <Globe className="w-6 h-6 text-primary" />
                 </div>
-              )}
-              <p className="text-sm text-muted-foreground">With Active Listeners</p>
+                <div className="space-y-1">
+                  <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide block">
+                    Countries
+                  </span>
+                  {statsLoading ? (
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                  ) : (
+                    <div className="text-4xl font-black text-primary">
+                      <AnimatedCounter value={liveStats?.countries || 0} />
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground">With Active Listeners</p>
+                </div>
+              </div>
             </div>
 
             {/* Total Listeners */}
-            <div className="text-center space-y-2">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Users className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                  Total Listeners
-                </span>
-              </div>
-              {statsLoading ? (
-                <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
-              ) : (
-                <div className="text-4xl font-black text-primary">
-                  <AnimatedCounter value={liveStats?.totalListeners || 0} />
+            <div className="text-center space-y-3">
+              <div className="flex flex-col items-center gap-3">
+                <div className="p-3 rounded-full bg-primary/20 border border-primary/30">
+                  <Users className="w-6 h-6 text-primary" />
                 </div>
-              )}
-              <p className="text-sm text-muted-foreground">All Time</p>
+                <div className="space-y-1">
+                  <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide block">
+                    Total Listeners
+                  </span>
+                  {statsLoading ? (
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                  ) : (
+                    <div className="text-4xl font-black text-primary">
+                      <AnimatedCounter value={liveStats?.totalListeners || 0} />
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground">All Time</p>
+                </div>
+              </div>
             </div>
 
             {/* Live Data Status */}
@@ -326,17 +353,17 @@ const LiveStatsAndLocations = () => {
         {/* Right Side - Active Locations Map */}
         <Card className="bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm border-border/50 flex flex-col">
           <CardHeader className="pb-4">
-            <CardTitle className={`flex items-center gap-2 text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
-              <MapPin className="w-6 h-6 text-primary" />
+            <CardTitle className={`text-center text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
               ACTIVE LOCATIONS
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col p-0">
+          <CardContent className="flex-1 flex flex-col p-4">
             {/* Map Container */}
             <div className="flex-1 relative rounded-lg overflow-hidden">
               {isMapLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-muted/50 z-10">
-                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/50 z-10">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary mb-2" />
+                  <p className="text-sm text-muted-foreground">Loading World Map...</p>
                 </div>
               )}
               <div 
