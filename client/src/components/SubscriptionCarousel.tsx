@@ -70,8 +70,8 @@ const subscriptionTiers: SubscriptionTier[] = [
     priceId: "price_icon_monthly",
     icon: IconPackageIcon,
     iconElement: <Crown className="w-16 h-16" />,
-    gradientStart: "#FF50C3",
-    gradientEnd: "#B66BFF",
+    gradientStart: "#00D4FF",
+    gradientEnd: "#5200FF",
     description: "The ultimate metal experience",
     features: [
       "Everything in Legend tier",
@@ -197,20 +197,21 @@ export default function SubscriptionCarousel() {
 
             {/* Moving Gradient Border Wrapper */}
             <div
-              className="relative p-1 overflow-hidden transition-all duration-500"
+              className="relative overflow-hidden transition-all duration-500"
               style={{
                 borderRadius: "24px", // Fully rounded border wrapper
                 background: `linear-gradient(45deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd}, ${currentTier.gradientStart})`,
                 backgroundSize: '400% 400%',
                 animation: 'movingGradientBorder 4s ease-in-out infinite',
                 transform: hoveredTier === currentTier.id ? 'scale(1.05)' : 'scale(1)', // Move transform to border wrapper
+                padding: '2.5px', // Increased border width by 1.5px (from 1px to 2.5px)
               }}
             >
               {/* Main Card */}
               <div
                 className="relative backdrop-blur-xl p-6 overflow-hidden flex flex-col subscription-card"
                 style={{
-                  borderRadius: "23px", // Fully rounded to match border wrapper
+                  borderRadius: "21.5px", // Adjusted to match increased border wrapper padding
                   backgroundColor: colors.background, // Use theme background color instead of surface
                   background: colors.background,
                   boxShadow: currentTier.popular 

@@ -418,10 +418,10 @@ const FullWidthGlobeMapFixed = () => {
       setTimeout(() => {
         if (map) {
           google.maps.event.trigger(map, 'resize');
-          // Restore center and zoom after resize
-          if (mapState.center && mapState.zoom) {
+          // Set more zoomed in view for fullscreen
+          if (mapState.center) {
             map.setCenter(mapState.center);
-            map.setZoom(mapState.zoom);
+            map.setZoom(4); // More zoomed in for fullscreen
           }
         }
       }, 400); // Match animation duration
@@ -434,7 +434,7 @@ const FullWidthGlobeMapFixed = () => {
       setTimeout(() => {
         if (map) {
           google.maps.event.trigger(map, 'resize');
-          // Restore center and zoom after resize
+          // Restore original zoom level
           if (mapState.center && mapState.zoom) {
             map.setCenter(mapState.center);
             map.setZoom(mapState.zoom);
@@ -493,7 +493,7 @@ const FullWidthGlobeMapFixed = () => {
       }
 
       const mapInstance = new google.maps.Map(ref, {
-        zoom: 2,
+        zoom: isFullscreen ? 3 : 2, // More zoomed in when fullscreen
         center: { lat: 20, lng: 0 },
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         disableDefaultUI: true, // Disable all default UI controls
@@ -912,8 +912,10 @@ const FullWidthGlobeMapFixed = () => {
                   </div>
                 )}
 
-                {/* Main Content */}
-                <div className="p-6 space-y-4">
+                {/* Main Content - Hide when enable location button is showing */}
+                <div className={`p-6 space-y-4 transition-opacity duration-300 ${
+                  (locationPermission === 'denied' || locationPermission === 'prompt') ? 'opacity-0 invisible' : 'opacity-100 visible'
+                }`}>
                   {/* Location Header */}
                   <div className="flex items-center justify-center gap-2">
                     <MapPin 
