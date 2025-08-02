@@ -67,14 +67,33 @@ app.use((req, res, next) => {
   const port = parseInt(process.env.PORT || "5000");
   const host = process.env.HOST || "0.0.0.0";
 
-  server.listen(
-    {
-      port,
-      host,
-      reusePort: true,
-    },
-    () => {
-      log(`serving on ${host}:${port}`);
-    },
-  );
+  // Kill any existing processes using the port
+  try {
+    const { exec } = require('child_process');
+    exec(`lsof -ti:${port} | xargs kill -9 2>/dev/null`, () => {
+      // Start server after cleaning up old processes
+      server.listen(
+        {
+          port,
+          host,
+          reusePort: true,
+        },
+        () => {
+          log(`serving on ${host}:${port}`);
+        },
+      );
+    });
+  } catch (error) {
+    // If lsof fails, just try to start the server
+    server.listen(
+      {
+        port,
+        host,
+        reusePort: true,
+      },
+      () => {
+        log(`serving on ${host}:${port}`);
+      },
+    );
+  }
 })();

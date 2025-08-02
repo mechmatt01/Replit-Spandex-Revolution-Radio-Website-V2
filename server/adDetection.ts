@@ -50,6 +50,7 @@ export interface AdDetectionResult {
   adType: 'music' | 'commercial' | 'blocked';
   originalTitle: string;
   originalArtist: string;
+  reason?: string;
 }
 
 /**
@@ -69,7 +70,8 @@ export function detectAdvertisement(title: string, artist: string): AdDetectionR
         isBlocked: true,
         adType: 'blocked',
         originalTitle: title,
-        originalArtist: artist
+        originalArtist: artist,
+        reason: `Blocked content: ${blocked}`
       };
     }
   }
@@ -91,7 +93,8 @@ export function detectAdvertisement(title: string, artist: string): AdDetectionR
           brandLogo: brandInfo.logo,
           adType: 'commercial',
           originalTitle: title,
-          originalArtist: artist
+          originalArtist: artist,
+          reason: `Brand commercial: ${brandInfo.name}`
         };
       }
     }
@@ -103,7 +106,8 @@ export function detectAdvertisement(title: string, artist: string): AdDetectionR
       isBlocked: false,
       adType: 'commercial',
       originalTitle: title,
-      originalArtist: artist
+      originalArtist: artist,
+      reason: 'Commercial keywords detected'
     };
   }
 
@@ -113,7 +117,8 @@ export function detectAdvertisement(title: string, artist: string): AdDetectionR
     isBlocked: false,
     adType: 'music',
     originalTitle: title,
-    originalArtist: artist
+    originalArtist: artist,
+    reason: 'Regular music content'
   };
 }
 
@@ -217,8 +222,33 @@ function getBrandDomain(brandName: string): string | null {
   return domainMap[brandName.toLowerCase()] || null;
 }
 
+/**
+ * Analyzes stream metadata for ad detection
+ */
+export function analyzeStreamMetadata(title: string, artist: string): AdDetectionResult {
+  return detectAdvertisement(title, artist);
+}
+
+/**
+ * Quick ad detection for real-time analysis
+ */
+export function quickAdDetection(title: string, artist: string): boolean {
+  const detection = detectAdvertisement(title, artist);
+  return detection.isAd;
+}
+
+/**
+ * Detects ad content in metadata
+ */
+export function detectAdContent(title: string, artist: string): AdDetectionResult {
+  return detectAdvertisement(title, artist);
+}
+
 export default {
   detectAdvertisement,
   getDisplayContent,
-  getClearbitLogo
+  getClearbitLogo,
+  analyzeStreamMetadata,
+  quickAdDetection,
+  detectAdContent
 };

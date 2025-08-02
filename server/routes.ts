@@ -1153,7 +1153,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           // Check for advertisement using comprehensive detection
           const { analyzeStreamMetadata } = await import("./adDetection");
-          const adAnalysis = analyzeStreamMetadata({ title, artist });
+          const adAnalysis = analyzeStreamMetadata(title, artist);
 
           let isAd = adAnalysis.isAd;
           let finalTitle = title;
@@ -1250,7 +1250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
             // Check for advertisement using comprehensive detection
             const { analyzeStreamMetadata } = await import("./adDetection");
-            const adAnalysis = analyzeStreamMetadata({ title, artist });
+            const adAnalysis = analyzeStreamMetadata(title, artist);
 
             let isAd = adAnalysis.isAd;
             let finalTitle = title;
@@ -2075,14 +2075,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         );
 
         // Check metadata for ad indicators
-        const metadataAnalysis = analyzeStreamMetadata({
-          title: titleString,
-          artist: artist,
-          description: data.icestats.source[0].server_description,
-        });
+        const metadataAnalysis = analyzeStreamMetadata(titleString, artist);
 
         // Quick keyword-based detection
-        const keywordDetection = quickAdDetection(titleString + " " + artist);
+        const keywordDetection = quickAdDetection(titleString, artist);
 
         // Determine if this is likely an ad
         const isAd = metadataAnalysis.isAd || keywordDetection;
@@ -2274,7 +2270,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const streamUrl =
         req.body.streamUrl || "http://168.119.74.185:9858/autodj";
 
-      const adDetection = await detectAdContent(streamUrl);
+      const adDetection = await detectAdContent(streamUrl, "");
       res.json(adDetection);
     } catch (error) {
       console.error("Error in advanced ad detection:", error);
@@ -2291,7 +2287,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         artist: "Advertisement"
       };
 
-      const adAnalysis = analyzeStreamMetadata(testMetadata);
+      const adAnalysis = analyzeStreamMetadata(testMetadata.title, testMetadata.artist);
 
       console.log("Test ad detection:", testMetadata);
       console.log("Analysis result:", adAnalysis);

@@ -204,6 +204,11 @@ export class FirebaseRadioStationStorage {
    * Get all radio stations ordered by sort order
    */
   async getRadioStations(): Promise<RadioStation[]> {
+    // Check if Firebase is available first
+    if (!isFirebaseAvailable || !db) {
+      return [];
+    }
+
     try {
       const snapshot = await db.collection(this.collection)
         .orderBy('sortOrder', 'asc')
@@ -217,6 +222,10 @@ export class FirebaseRadioStationStorage {
       })) as RadioStation[];
     } catch (error) {
       console.error('Error getting radio stations:', error);
+      // If collection doesn't exist, it will be created when first document is added
+      if ((error as any).code === 5 || (error as any).message?.includes('NOT_FOUND')) {
+        console.log('Radio stations collection does not exist yet, will be created when first station is added');
+      }
       return [];
     }
   }
@@ -225,6 +234,11 @@ export class FirebaseRadioStationStorage {
    * Get only active radio stations
    */
   async getActiveRadioStations(): Promise<RadioStation[]> {
+    // Check if Firebase is available first
+    if (!isFirebaseAvailable || !db) {
+      return [];
+    }
+
     try {
       const snapshot = await db.collection(this.collection)
         .where('isActive', '==', true)
@@ -293,6 +307,11 @@ export class FirebaseRadioStationStorage {
    * Create new radio station
    */
   async createRadioStation(insertStation: InsertRadioStation): Promise<RadioStation> {
+    // Check if Firebase is available first
+    if (!isFirebaseAvailable || !db) {
+      throw new Error('Firebase not available - cannot create radio station');
+    }
+
     try {
       // Generate new ID
       const newId = await this.generateNewId();
@@ -303,7 +322,7 @@ export class FirebaseRadioStationStorage {
         updatedAt: Timestamp.now(),
       };
 
-      await db.collection(this.collection).doc(newId.toString()).set(stationData);
+      await db!.collection(this.collection).doc(newId.toString()).set(stationData);
 
       return {
         id: newId,
@@ -313,6 +332,30 @@ export class FirebaseRadioStationStorage {
       } as RadioStation;
     } catch (error) {
       console.error('Error creating radio station:', error);
+      if ((error as any).code === 5 || (error as any).message?.includes('NOT_FOUND')) {
+        console.log('Collection will be created automatically when document is added');
+        // Try again - Firestore creates collections automatically
+        try {
+          const newId = await this.generateNewId();
+          const stationData = {
+            ...insertStation,
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now(),
+          };
+          
+          await db!.collection(this.collection).doc(newId.toString()).set(stationData);
+          
+          return {
+            id: newId,
+            ...stationData,
+            createdAt: stationData.createdAt.toDate(),
+            updatedAt: stationData.updatedAt.toDate(),
+          } as RadioStation;
+        } catch (retryError) {
+          console.error('Retry failed:', retryError);
+          throw retryError;
+        }
+      }
       throw error;
     }
   }
@@ -370,6 +413,11 @@ export class FirebaseRadioStationStorage {
    * Generate new ID for radio station
    */
   private async generateNewId(): Promise<number> {
+    // Check if Firebase is available first
+    if (!isFirebaseAvailable || !db) {
+      return Date.now(); // Use timestamp as fallback
+    }
+
     try {
       const snapshot = await db.collection(this.collection)
         .orderBy('__name__', 'desc')
@@ -383,6 +431,11 @@ export class FirebaseRadioStationStorage {
       return lastId + 1;
     } catch (error) {
       console.error('Error generating new ID:', error);
+      // If collection doesn't exist yet, start with ID 1
+      if ((error as any).code === 5 || (error as any).message?.includes('NOT_FOUND')) {
+        console.log('Collection does not exist yet, starting with ID 1');
+        return 1;
+      }
       return Date.now(); // Fallback to timestamp
     }
   }
@@ -391,10 +444,18 @@ export class FirebaseRadioStationStorage {
    * Initialize default radio stations
    */
   async initializeDefaultStations(): Promise<void> {
+    // Check if Firebase is available first
+    if (!isFirebaseAvailable || !db) {
+      console.log('Firebase not available - skipping default station initialization');
+      return;
+    }
+
     try {
       // Check if any stations exist
       const existing = await this.getRadioStations();
       if (existing.length > 0) return;
+
+      console.log('No existing stations found, creating default stations...');
 
       // Create default stations
       const defaultStations: InsertRadioStation[] = [
