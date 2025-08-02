@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { Button } from "@/components/ui/button";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { MapPin, Activity, Users, Globe, Loader2, RotateCcw, Settings } from "lucide-react";
+import { MapPin, Activity, Users, Globe, Loader2, Settings } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAdmin } from "@/contexts/AdminContext";
 import { useQuery } from "@tanstack/react-query";
@@ -26,24 +25,10 @@ interface ActiveListener {
   isActiveListening: boolean;
 }
 
-interface Config {
-  googleMapsApiKey: string;
-}
-
 const LiveStatsAndLocations = () => {
   const { isDarkMode, colors } = useTheme();
   const { isLiveDataEnabled, setIsLiveDataEnabled, isAdmin } = useAdmin();
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
-  const [overlays, setOverlays] = useState<google.maps.OverlayView[]>([]);
-  const [isMapLoading, setIsMapLoading] = useState(true);
   const [countryStats, setCountryStats] = useState<Record<string, number>>({});
-
-  // Hardcoded config for Google Maps
-  const config: Config = {
-    googleMapsApiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
-  };
 
   // Fetch live statistics
   const { data: liveStats, isLoading: statsLoading } = useQuery<LiveStats>({
@@ -323,7 +308,7 @@ const LiveStatsAndLocations = () => {
           </CardContent>
         </Card>
 
-        {/* Right Side - Active Locations Map */}
+        {/* Right Side - Active Locations List */}
         <Card className="bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm border-border/50 flex flex-col">
           <CardHeader className="pb-4">
             <CardTitle className={`flex items-center gap-2 text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
@@ -331,52 +316,93 @@ const LiveStatsAndLocations = () => {
               ACTIVE LOCATIONS
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex-1 flex flex-col p-0">
-            {/* Map Container */}
-            <div className="flex-1 relative rounded-lg overflow-hidden">
-              {isMapLoading && (
-                <div className="absolute inset-0 flex items-center justify-center bg-muted/50 z-10">
-                  <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <CardContent className="flex-1 flex flex-col">
+            {/* Loading State */}
+            {(listenersLoading && isLiveDataEnabled) && (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              </div>
+            )}
+
+            {/* Live Data Status */}
+            {isLiveDataEnabled && (
+              <div className="mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-semibold">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                  LIVE DATA - {activeListeners.length} Active
                 </div>
-              )}
-              <div 
-                ref={mapRef} 
-                className="w-full h-full min-h-[400px]"
-                style={{ background: isDarkMode ? '#212121' : '#f5f5f5' }}
-              />
-              
-              {/* Live Data Overlay */}
-              {isLiveDataEnabled && !listenersLoading && (
-                <div className="absolute top-4 right-4 z-10">
-                  <div className="bg-primary/20 backdrop-blur-sm rounded-lg px-3 py-2 border border-primary/30">
-                    <div className="flex items-center gap-2 text-primary text-sm font-semibold">
-                      <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                      {activeListeners.length} Live
-                    </div>
+              </div>
+            )}
+
+            {/* Countries List */}
+            <div className="flex-1 space-y-3">
+              {isLiveDataEnabled && Object.keys(countryStats).length > 0 ? (
+                <div className="space-y-2">
+                  <div className="text-sm font-semibold text-muted-foreground mb-3">
+                    LISTENERS BY COUNTRY
+                  </div>
+                  <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                    {Object.entries(countryStats)
+                      .sort(([,a], [,b]) => b - a)
+                      .map(([country, count]) => (
+                        <div 
+                          key={country} 
+                          className="flex items-center justify-between p-3 rounded-lg bg-muted/20 border border-border/30 hover:bg-muted/30 transition-colors"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+                            <span className="font-medium">{country}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-primary font-bold text-lg">
+                              {count}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {count === 1 ? 'listener' : 'listeners'}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                   </div>
                 </div>
-              )}
-
-              {/* Country Stats */}
-              {isLiveDataEnabled && Object.keys(countryStats).length > 0 && (
-                <div className="absolute bottom-4 left-4 right-4 z-10">
-                  <div className="bg-card/90 backdrop-blur-sm rounded-lg p-3 border border-border/50 max-h-32 overflow-y-auto">
-                    <div className="text-xs font-semibold text-muted-foreground mb-2">BY COUNTRY</div>
-                    <div className="grid grid-cols-2 gap-1 text-xs">
-                      {Object.entries(countryStats)
-                        .sort(([,a], [,b]) => b - a)
-                        .slice(0, 6)
-                        .map(([country, count]) => (
-                          <div key={country} className="flex justify-between">
-                            <span className="truncate">{country}</span>
-                            <span className="text-primary font-semibold">{count}</span>
-                          </div>
-                        ))}
-                    </div>
+              ) : !isLiveDataEnabled ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
+                  <Globe className="w-12 h-12 text-muted-foreground/50" />
+                  <div className="space-y-2">
+                    <p className="text-muted-foreground font-medium">Live Data Disabled</p>
+                    <p className="text-sm text-muted-foreground/70">
+                      Enable live data in admin mode to see active locations
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 text-center space-y-4">
+                  <MapPin className="w-12 h-12 text-muted-foreground/50" />
+                  <div className="space-y-2">
+                    <p className="text-muted-foreground font-medium">No Active Listeners</p>
+                    <p className="text-sm text-muted-foreground/70">
+                      No listeners are currently active with location data
+                    </p>
                   </div>
                 </div>
               )}
             </div>
+
+            {/* Total Summary */}
+            {isLiveDataEnabled && Object.keys(countryStats).length > 0 && (
+              <div className="mt-4 pt-4 border-t border-border/30">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Total Countries:</span>
+                  <span className="font-semibold text-primary">{Object.keys(countryStats).length}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm mt-1">
+                  <span className="text-muted-foreground">Total Active:</span>
+                  <span className="font-semibold text-primary">
+                    {Object.values(countryStats).reduce((sum, count) => sum + count, 0)}
+                  </span>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
