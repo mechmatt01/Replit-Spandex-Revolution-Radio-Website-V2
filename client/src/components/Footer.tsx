@@ -73,10 +73,12 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("hero")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
-                  style={{ color: colors.textMuted }}
+                  className="font-semibold transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+                  onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
                 >
                   Home
                 </button>
@@ -84,10 +86,12 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("schedule")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
-                  style={{ color: colors.textMuted }}
+                  className="font-semibold transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+                  onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
                 >
                   Schedule
                 </button>
@@ -95,10 +99,12 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
-                  style={{ color: colors.textMuted }}
+                  className="font-semibold transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+                  onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
                 >
                   Submissions
                 </button>
@@ -106,10 +112,12 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
-                  style={{ color: colors.textMuted }}
+                  className="font-semibold transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+                  onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
                 >
                   Contact
                 </button>
@@ -117,10 +125,12 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("subscribe")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
-                  style={{ color: colors.textMuted }}
+                  className="font-semibold transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+                  onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
                 >
                   Subscribe
                 </button>
@@ -140,10 +150,12 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => window.location.href = "/help"}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
-                  style={{ color: colors.textMuted }}
+                  className="font-semibold transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+                  onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
                 >
                   Help Center
                 </button>
@@ -151,10 +163,12 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("contact")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
-                  style={{ color: colors.textMuted }}
+                  className="font-semibold transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+                  onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
                 >
                   Technical Support
                 </button>
@@ -162,10 +176,12 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("submissions")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
-                  style={{ color: colors.textMuted }}
+                  className="font-semibold transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+                  onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
                 >
                   Submit Songs
                 </button>
@@ -173,10 +189,12 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => window.location.href = "/guidelines"}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
-                  style={{ color: colors.textMuted }}
+                  className="font-semibold transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+                  onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
                 >
                   Community Guidelines
                 </button>
@@ -184,10 +202,12 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => window.location.href = "/privacy"}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
-                  style={{ color: colors.textMuted }}
+                  className="font-semibold transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-                  onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
+                  onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
                 >
                   Privacy Policy
                 </button>
@@ -206,8 +226,10 @@ export default function Footer() {
             <ul className="space-y-3 text-sm">
               <li>
                 <div 
-                  className="flex items-center"
-                  style={{ color: colors.textMuted }}
+                  className="flex items-center font-semibold"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                 >
                   <span 
                     className="mr-3 flex-shrink-0"
@@ -220,8 +242,10 @@ export default function Footer() {
               </li>
               <li>
                 <div 
-                  className="flex items-center"
-                  style={{ color: colors.textMuted }}
+                  className="flex items-center font-semibold"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                 >
                   <span 
                     className="mr-3 flex-shrink-0 text-center w-4"
@@ -232,8 +256,10 @@ export default function Footer() {
               </li>
               <li>
                 <div 
-                  className="flex items-center"
-                  style={{ color: colors.textMuted }}
+                  className="flex items-center font-semibold"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                 >
                   <span 
                     className="mr-3 flex-shrink-0 text-center w-4"
@@ -244,8 +270,10 @@ export default function Footer() {
               </li>
               <li>
                 <div 
-                  className="flex items-center"
-                  style={{ color: colors.textMuted }}
+                  className="flex items-center font-semibold"
+                  style={{ 
+                    color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                  }}
                 >
                   <span 
                     className="mr-3 flex-shrink-0 text-center w-4"
@@ -269,50 +297,52 @@ export default function Footer() {
             >
               © 2025 Spandex Salvation Radio. All rights reserved.
             </div>
-            <a
-              href="/terms"
-              className="font-semibold transition-colors duration-300"
-              style={{ 
-                color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-              onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
-            >
-              Terms of Service
-            </a>
-            <a
-              href="/privacy"
-              className="font-semibold transition-colors duration-300"
-              style={{ 
-                color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-              onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="/cookies"
-              className="font-semibold transition-colors duration-300"
-              style={{ 
-                color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-              onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
-            >
-              Cookies
-            </a>
-            <button
-              onClick={() => setIsAdminPanelOpen(true)}
-              className="font-semibold transition-colors duration-300 bg-transparent border-0 p-0"
-              style={{ 
-                color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
-              onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
-            >
-              Admin
-            </button>
+            <div className="flex flex-wrap items-center gap-6">
+              <a
+                href="/terms"
+                className="font-semibold transition-colors duration-300"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
+              >
+                Terms of Service
+              </a>
+              <a
+                href="/privacy"
+                className="font-semibold transition-colors duration-300"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
+              >
+                Privacy Policy
+              </a>
+              <a
+                href="/cookies"
+                className="font-semibold transition-colors duration-300"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
+              >
+                Cookies
+              </a>
+              <button
+                onClick={() => setIsAdminPanelOpen(true)}
+                className="font-semibold transition-colors duration-300 bg-transparent border-0 p-0"
+                style={{ 
+                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
+                onMouseLeave={(e) => e.currentTarget.style.color = currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted}
+              >
+                Admin
+              </button>
+            </div>
           </div>
         </div>
       </div>
