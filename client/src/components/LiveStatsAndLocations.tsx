@@ -251,7 +251,7 @@ const LiveStatsAndLocations = () => {
         {/* Left Side - Live Statistics */}
         <Card className="bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm border-border/50 flex flex-col">
           <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-xl font-black">
+            <CardTitle className={`flex items-center gap-2 text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
               <Activity className="w-6 h-6 text-primary" />
               LIVE STATISTICS
             </CardTitle>
@@ -326,7 +326,7 @@ const LiveStatsAndLocations = () => {
         {/* Right Side - Active Locations Map */}
         <Card className="bg-gradient-to-br from-card/95 to-card/80 backdrop-blur-sm border-border/50 flex flex-col">
           <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2 text-xl font-black">
+            <CardTitle className={`flex items-center gap-2 text-xl font-black ${isDarkMode ? "text-white" : "text-black"}`}>
               <MapPin className="w-6 h-6 text-primary" />
               ACTIVE LOCATIONS
             </CardTitle>
