@@ -61,30 +61,13 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
+  // Serve the app on port 3500 for manual runs, port 5000 for Replit workflow
   // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5000");
+  const port = parseInt(process.env.PORT || "3500");
   const host = process.env.HOST || "0.0.0.0";
 
-  // Kill any existing processes using the port
-  try {
-    const { exec } = require('child_process');
-    exec(`lsof -ti:${port} | xargs kill -9 2>/dev/null`, () => {
-      // Start server after cleaning up old processes
-      server.listen(
-        {
-          port,
-          host,
-          reusePort: true,
-        },
-        () => {
-          log(`serving on ${host}:${port}`);
-        },
-      );
-    });
-  } catch (error) {
-    // If lsof fails, just try to start the server
+  // Enhanced port cleanup for manual runs
+  const startServer = () => {
     server.listen(
       {
         port,
@@ -95,5 +78,26 @@ app.use((req, res, next) => {
         log(`serving on ${host}:${port}`);
       },
     );
-  }
+  };
+
+  // Check if port is in use and handle gracefully
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`Port ${port} is busy, attempting to kill existing processes...`);
+      const { exec } = require('child_process');
+      exec(`lsof -ti:${port} | xargs kill -9 2>/dev/null`, (error) => {
+        if (error) {
+          console.log(`Could not kill processes on port ${port}. Please stop the Replit workflow or use a different port.`);
+          process.exit(1);
+        } else {
+          console.log(`Cleaned up port ${port}, retrying...`);
+          setTimeout(startServer, 1000); // Wait a second before retrying
+        }
+      });
+    } else {
+      throw err;
+    }
+  });
+
+  startServer();
 })();
