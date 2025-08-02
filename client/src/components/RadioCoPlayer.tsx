@@ -214,7 +214,7 @@ export default function RadioCoPlayer() {
 
   return (
     <section
-      className="backdrop-blur-md rounded-2xl p-6 shadow-xl transition-all duration-700 ease-in-out border-0 mx-auto"
+      className="backdrop-blur-md rounded-2xl shadow-xl transition-all duration-700 ease-in-out border-0 mx-auto overflow-visible"
       role="region"
       aria-label="Radio player controls"
       style={{
@@ -234,6 +234,11 @@ export default function RadioCoPlayer() {
         width: 'clamp(384px, 26.666vw, 72vw)',
         minWidth: 'max-content',
         maxWidth: '72vw',
+        // Dynamic padding - expand when volume slider is visible with smooth transition
+        paddingTop: '24px',
+        paddingLeft: '24px', 
+        paddingRight: '24px',
+        paddingBottom: isVolumeSliderVisible ? '120px' : '84px', // Extra space when slider is active, minimum space for volume button
         // Ensure it expands to accommodate the longest text element
         contain: 'layout'
       }}
