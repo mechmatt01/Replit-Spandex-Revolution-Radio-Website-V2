@@ -3,6 +3,17 @@
     "default": "spandex-salvation-radio-site",
     "radio-site": "spandex-salvation-radio-site"
   },
-  "targets": {},
+  "targets": {
+    "spandex-salvation-radio-site": {
+      "hosting": {
+        "main": [
+          "spandex-salvation-radio-site"
+        ],
+        "custom-domain": [
+          "spandex-salvation-radio-com"
+        ]
+      }
+    }
+  },
   "etags": {}
 }
