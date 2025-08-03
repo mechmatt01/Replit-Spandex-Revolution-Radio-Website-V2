@@ -6,6 +6,7 @@ import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Badge } from "../components/ui/badge";
+import { Switch } from "../components/ui/switch";
 import { useTheme } from "../contexts/ThemeContext";
 import { useToast } from "../hooks/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -23,7 +24,10 @@ import {
   Trash2,
   Plus,
   X,
-  Lock
+  Lock,
+  Radio,
+  TestTube,
+  Zap
 } from "lucide-react";
 
 interface AdminPanelProps {
@@ -51,6 +55,19 @@ interface ShowScheduleItem {
   duration: string;
 }
 
+interface RadioStation {
+  id: string;
+  name: string;
+  frequency: string;
+  location: string;
+  genre: string;
+  streamUrl: string;
+  fallbackUrl?: string;
+  description: string;
+  icon: string;
+  isActive: boolean;
+}
+
 export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [activeSection, setActiveSection] = useState("overview");
   const [adminUsername, setAdminUsername] = useState("");
@@ -59,8 +76,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [editingMerch, setEditingMerch] = useState<MerchItem | null>(null);
   const [editingShow, setEditingShow] = useState<ShowScheduleItem | null>(null);
+  const [editingStation, setEditingStation] = useState<RadioStation | null>(null);
   const [newMerchItem, setNewMerchItem] = useState<Partial<MerchItem>>({});
   const [newShowItem, setNewShowItem] = useState<Partial<ShowScheduleItem>>({});
+  const [newStationItem, setNewStationItem] = useState<Partial<RadioStation>>({});
   
   const { colors, isDarkMode } = useTheme();
   const { toast } = useToast();
@@ -75,6 +94,15 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     }
     return false;
   });
+
+  // Test/Live mode state
+  const [isTestMode, setIsTestMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('test-mode');
+      return saved ? JSON.parse(saved) : false;
+    }
+    return false;
+  });
   
   const toggleDebugMode = () => {
     const newValue = !isDebugMode;
@@ -82,6 +110,20 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
     if (typeof window !== 'undefined') {
       localStorage.setItem('debug-mode', JSON.stringify(newValue));
     }
+  };
+
+  const toggleTestMode = () => {
+    const newValue = !isTestMode;
+    setIsTestMode(newValue);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('test-mode', JSON.stringify(newValue));
+    }
+    
+    toast({
+      title: newValue ? "Test Mode Enabled" : "Live Mode Enabled",
+      description: newValue ? "Using mock data for testing" : "Using live data from Firebase",
+      variant: "default",
+    });
   };
 
   // Initialize admin collection on component mount
@@ -331,6 +373,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             {[
               { id: "overview", label: "Overview", icon: TrendingUp },
               { id: "schedule", label: "Schedule", icon: Calendar },
+              { id: "radio", label: "Radio", icon: Radio },
               { id: "merch", label: "Merchandise", icon: ShoppingBag },
               { id: "users", label: "Users", icon: Users },
               { id: "settings", label: "Settings", icon: Settings },
@@ -884,24 +927,24 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 </CardContent>
               </Card>
 
-              {/* Live Data Toggle */}
+              {/* Test/Live Mode Toggle */}
               <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
                 <CardHeader>
-                  <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>Live Data</CardTitle>
+                  <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>Test/Live Mode</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center justify-between">
                     <div>
                       <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
-                        Enable real-time data updates and live statistics
+                        Enable test mode to use mock data or live data from Firebase
                       </p>
                     </div>
-                    <Button
-                      variant="outline"
-                      style={{ backgroundColor: colors.primary }}
-                    >
-                      Live Data ON
-                    </Button>
+                    <Switch
+                      id="test-mode-switch"
+                      checked={isTestMode}
+                      onCheckedChange={toggleTestMode}
+                      className="data-[state=checked]:bg-blue-600"
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -957,6 +1000,288 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   </div>
                 </CardContent>
               </Card>
+            </div>
+          )}
+
+          {activeSection === "radio" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
+                  Radio Station Management
+                </h3>
+                <Button
+                  onClick={() => setEditingStation({})}
+                  style={{ backgroundColor: colors.primary }}
+                  className="flex items-center space-x-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Station
+                </Button>
+              </div>
+
+              {/* Radio Stations List */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[
+                  {
+                    id: "hot-97",
+                    name: "Hot 97",
+                    frequency: "97.1 FM",
+                    location: "New York, NY",
+                    genre: "Hip Hop & R&B",
+                    streamUrl: "https://stream.revma.ihrhls.com/zc6046",
+                    fallbackUrl: "https://stream.revma.ihrhls.com/zc6046-fallback",
+                    description: "New York's #1 Hip Hop & R&B",
+                    icon: "🔥",
+                    isActive: true,
+                  },
+                  {
+                    id: "power-106",
+                    name: "Power 105.1",
+                    frequency: "105.1 FM",
+                    location: "New York, NY",
+                    genre: "Hip Hop & R&B",
+                    streamUrl: "https://stream.revma.ihrhls.com/zc1481",
+                    fallbackUrl: "https://stream.revma.ihrhls.com/zc1481-fallback",
+                    description: "New York's Power 105.1",
+                    icon: "⚡",
+                    isActive: true,
+                  },
+                  {
+                    id: "beat-955",
+                    name: "95.5 The Beat",
+                    frequency: "95.5 FM",
+                    location: "Dallas, TX",
+                    genre: "Hip Hop & R&B",
+                    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC.aac",
+                    fallbackUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/KBFBFMAAC-fallback.aac",
+                    description: "Dallas' #1 Hip Hop & R&B",
+                    icon: "🎵",
+                    isActive: true,
+                  },
+                  {
+                    id: "hot-105",
+                    name: "Hot 105",
+                    frequency: "105.1 FM",
+                    location: "Miami, FL",
+                    genre: "Urban R&B",
+                    streamUrl: "https://stream.revma.ihrhls.com/zc5907",
+                    fallbackUrl: "https://stream.revma.ihrhls.com/zc5907-fallback",
+                    description: "Miami's Today's R&B and Old School",
+                    icon: "🌴",
+                    isActive: true,
+                  },
+                  {
+                    id: "q-93",
+                    name: "Q93",
+                    frequency: "93.3 FM",
+                    location: "New Orleans, LA",
+                    genre: "Hip Hop & R&B",
+                    streamUrl: "https://stream.revma.ihrhls.com/zc1037",
+                    fallbackUrl: "https://stream.revma.ihrhls.com/zc1037-fallback",
+                    description: "New Orleans Hip Hop & R&B",
+                    icon: "🎺",
+                    isActive: true,
+                  },
+                  {
+                    id: "somafm-metal",
+                    name: "SomaFM Metal",
+                    frequency: "Online",
+                    location: "San Francisco, CA",
+                    genre: "Metal",
+                    streamUrl: "https://ice1.somafm.com/metal-128-mp3",
+                    fallbackUrl: "https://ice1.somafm.com/metal-128-mp3-fallback",
+                    description: "Heavy Metal & Hard Rock",
+                    icon: "🤘",
+                    isActive: true,
+                  },
+                ].map((station) => (
+                  <Card key={station.id} className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-2xl">{station.icon}</span>
+                          <div>
+                            <CardTitle className={`text-sm ${isDarkMode ? "text-white" : "text-black"}`}>
+                              {station.name}
+                            </CardTitle>
+                            <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                              {station.frequency}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge variant={station.isActive ? "default" : "secondary"}>
+                          {station.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div>
+                          <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                            <strong>Location:</strong> {station.location}
+                          </p>
+                          <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                            <strong>Genre:</strong> {station.genre}
+                          </p>
+                          <p className={`text-xs ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
+                            <strong>Description:</strong> {station.description}
+                          </p>
+                        </div>
+                        <div className="flex space-x-2 pt-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setEditingStation(station)}
+                            className="flex-1"
+                          >
+                            <Edit className="w-3 h-3 mr-1" />
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1"
+                            style={{ backgroundColor: "#ef4444", color: "white" }}
+                          >
+                            <Trash2 className="w-3 h-3 mr-1" />
+                            Remove
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Edit/Add Station Modal */}
+              {editingStation && (
+                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                  <Card className={`w-full max-w-2xl ${isDarkMode ? "bg-gray-900" : "bg-white"}`}>
+                    <CardHeader>
+                      <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>
+                        {editingStation.id ? "Edit Station" : "Add New Station"}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="station-name">Station Name</Label>
+                            <Input
+                              id="station-name"
+                              defaultValue={editingStation.name}
+                              placeholder="Enter station name"
+                              className="mt-1"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="station-frequency">Frequency</Label>
+                            <Input
+                              id="station-frequency"
+                              defaultValue={editingStation.frequency}
+                              placeholder="e.g., 97.1 FM"
+                              className="mt-1"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="station-location">Location</Label>
+                            <Input
+                              id="station-location"
+                              defaultValue={editingStation.location}
+                              placeholder="e.g., New York, NY"
+                              className="mt-1"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="station-genre">Genre</Label>
+                            <Input
+                              id="station-genre"
+                              defaultValue={editingStation.genre}
+                              placeholder="e.g., Hip Hop & R&B"
+                              className="mt-1"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="station-description">Description</Label>
+                          <Textarea
+                            id="station-description"
+                            defaultValue={editingStation.description}
+                            placeholder="Enter station description"
+                            className="mt-1"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="station-icon">Icon (Emoji)</Label>
+                          <Input
+                            id="station-icon"
+                            defaultValue={editingStation.icon}
+                            placeholder="🔥"
+                            className="mt-1"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="station-stream-url">Stream URL</Label>
+                          <Input
+                            id="station-stream-url"
+                            defaultValue={editingStation.streamUrl}
+                            placeholder="https://stream.example.com/live"
+                            className="mt-1"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="station-fallback-url">Fallback URL (Optional)</Label>
+                          <Input
+                            id="station-fallback-url"
+                            defaultValue={editingStation.fallbackUrl}
+                            placeholder="https://stream.example.com/fallback"
+                            className="mt-1"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="station-active">Active Status</Label>
+                          <Select defaultValue={editingStation.isActive ? "true" : "false"}>
+                            <SelectTrigger className="mt-1">
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="true">Active</SelectItem>
+                              <SelectItem value="false">Inactive</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="flex space-x-3 pt-4">
+                          <Button 
+                            style={{ backgroundColor: colors.primary }}
+                            className="flex-1"
+                          >
+                            <Save className="w-4 h-4 mr-2" />
+                            {editingStation.id ? "Update Station" : "Add Station"}
+                          </Button>
+                          <Button 
+                            variant="outline"
+                            className="flex-1"
+                            style={{ backgroundColor: "#6b7280", color: "white" }}
+                            onClick={() => setEditingStation(null)}
+                          >
+                            <X className="w-4 h-4 mr-2" />
+                            Cancel
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
             </div>
           )}
         </div>

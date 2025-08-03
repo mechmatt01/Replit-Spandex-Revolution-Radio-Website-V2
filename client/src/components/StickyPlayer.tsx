@@ -5,7 +5,8 @@ import { useTheme } from "../contexts/ThemeContext";
 import { useAdaptiveTheme } from "../hooks/useAdaptiveTheme";
 import ScrollingText from "../components/ScrollingText";
 import InteractiveAlbumArt from "../components/InteractiveAlbumArt";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function StickyPlayer() {
   const {
@@ -21,6 +22,8 @@ export default function StickyPlayer() {
     isAdPlaying,
     adInfo,
   } = useRadio();
+
+  const { user, updateListeningStatus } = useAuth();
   const { getGradient, getColors, currentTheme } = useTheme();
   const colors = getColors();
   
@@ -30,7 +33,7 @@ export default function StickyPlayer() {
       ? currentTrack.artwork 
       : undefined
   );
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,27 +47,27 @@ export default function StickyPlayer() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      const documentHeight = document.documentElement.scrollHeight;
-      const windowHeight = window.innerHeight;
-      const footerOffset = 200; // Approximate footer height
-
-      // Check if near bottom of page
-      const isNearBottom =
-        currentScrollY + windowHeight >= documentHeight - footerOffset;
-
-      if (isNearBottom) {
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollY || currentScrollY < 100) {
-        // Scrolling up or near top
-        setIsVisible(true);
-      }
-
+      setIsVisible(currentScrollY > 100 && currentScrollY > lastScrollY);
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [lastScrollY]);
+
+  // Handle play/pause with listening status update
+  const handlePlayPause = async () => {
+    try {
+      await togglePlayback();
+      
+      // Update listening status based on new play state
+      if (user) {
+        await updateListeningStatus(!isPlaying);
+      }
+    } catch (error) {
+      console.error('Error toggling playback:', error);
+    }
+  };
 
   return (
     <div
@@ -259,7 +262,7 @@ export default function StickyPlayer() {
               </div>
             )}
             <Button
-              onClick={togglePlayback}
+              onClick={handlePlayPause}
               className="text-white w-10 h-10 rounded-full   flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl border-0"
               style={{
                 background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,

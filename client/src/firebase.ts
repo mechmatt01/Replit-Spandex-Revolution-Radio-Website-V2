@@ -133,7 +133,6 @@ import {
   createUserProfile as createUserProfileOriginal,
   getUserProfile as getUserProfileOriginal,
   updateUserProfile as updateUserProfileOriginal,
-  uploadProfileImage as uploadProfileImageOriginal,
   updateListeningStatus as updateListeningStatusOriginal,
   updateUserLocation as updateUserLocationOriginal,
   loginUser as loginUserOriginal,
@@ -146,7 +145,6 @@ export const handleRedirectResult = handleRedirectResultOriginal;
 export const createUserProfile = createUserProfileOriginal;
 export const getUserProfile = getUserProfileOriginal;
 export const updateUserProfile = updateUserProfileOriginal;
-export const uploadProfileImage = uploadProfileImageOriginal;
 export const updateListeningStatus = updateListeningStatusOriginal;
 export const updateUserLocation = updateUserLocationOriginal;
 export const loginUser = loginUserOriginal;

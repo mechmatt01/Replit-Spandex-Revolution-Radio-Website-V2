@@ -5,7 +5,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import { auth, handleRedirectResult, signInWithGoogle, createUserProfile, getUserProfile, updateUserProfile, uploadProfileImage, updateListeningStatus, updateUserLocation, loginUser, registerUser } from "../lib/firebase";
+import { auth, handleRedirectResult, signInWithGoogle, createUserProfile, getUserProfile, updateUserProfile, updateListeningStatus, updateUserLocation, updateUserLastLogin, getActiveListeners, getTotalListenersCount } from "../lib/firebase";
 import { getRedirectResult } from "firebase/auth";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useToast } from "../hooks/use-toast";
@@ -17,7 +17,7 @@ interface User {
   userProfileImage: string;
   emailAddress: string;
   phoneNumber: string;
-  location: { latitude: number; longitude: number } | null;
+  location: { latitude: number; longitude: number; country?: string } | null;
   isActiveListening: boolean;
   activeSubscription: boolean;
   renewalDate: string | null;
@@ -31,27 +31,19 @@ interface User {
 interface AuthContextType {
   user: User | null;
   firebaseUser: any | null;
-  loading: boolean;
+  firebaseProfile: any | null;
   isAuthenticated: boolean;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (
-    firstName: string,
-    lastName: string,
-    email: string,
-    phoneNumber: string,
-    password: string,
-  ) => Promise<void>;
-  logout: () => Promise<void>;
+  register: (email: string, password: string, firstName: string, lastName: string, phoneNumber: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
-  updateProfile: (updates: any) => Promise<boolean>;
-  uploadProfileImage: (file: File) => Promise<boolean>;
+  logout: () => Promise<void>;
   updateListeningStatus: (isListening: boolean) => Promise<void>;
-  updateLocation: () => Promise<void>;
+  updateUserLocation: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined,
-);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function useAuth() {
   const context = useContext(AuthContext);
@@ -64,463 +56,241 @@ export function useAuth() {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<any | null>(null);
+  const [firebaseProfile, setFirebaseProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  const { successToast, errorToast } = useToast();
 
-  // Load user profile from Firebase
-  const loadUserProfile = async (firebaseUid: string) => {
+  // Get user's current location
+  const getUserLocation = async (): Promise<{ latitude: number; longitude: number; country?: string } | null> => {
     try {
-      const result = await getUserProfile(firebaseUid);
-      if (result.success && result.profile) {
-        setUser({
-          ...result.profile,
-          isEmailVerified: result.profile.isEmailVerified || false,
-          isPhoneVerified: result.profile.isPhoneVerified || false,
-          createdAt: result.profile.createdAt || new Date().toISOString(),
-          updatedAt: result.profile.updatedAt || new Date().toISOString(),
-          lastLogin: result.profile.lastLogin || new Date().toISOString(),
-        });
-        return result.profile;
+      if (!navigator.geolocation) {
+        console.log('Geolocation is not supported by this browser');
+        return null;
       }
-      return null;
+
+      return new Promise((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            
+            // Try to get country from coordinates using reverse geocoding
+            try {
+              const response = await fetch(
+                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}`
+              );
+              const data = await response.json();
+              
+              let country = undefined;
+              if (data.results && data.results[0]) {
+                const addressComponents = data.results[0].address_components;
+                const countryComponent = addressComponents.find(
+                  (component: any) => component.types.includes('country')
+                );
+                if (countryComponent) {
+                  country = countryComponent.long_name;
+                }
+              }
+              
+              resolve({ latitude, longitude, country });
+            } catch (error) {
+              console.error('Error getting country from coordinates:', error);
+              resolve({ latitude, longitude });
+            }
+          },
+          (error) => {
+            console.error('Error getting location:', error);
+            resolve(null);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000,
+          }
+        );
+      });
     } catch (error) {
-      console.error('Error loading user profile:', error);
+      console.error('Error in getUserLocation:', error);
       return null;
     }
   };
+
+  // Update user's listening status
+  const handleUpdateListeningStatus = async (isListening: boolean) => {
+    if (!user) return;
+    
+    try {
+      const success = await updateListeningStatus(user.userID, isListening);
+      if (success) {
+        setUser(prev => prev ? { ...prev, isActiveListening: isListening } : null);
+      }
+    } catch (error) {
+      console.error('Error updating listening status:', error);
+    }
+  };
+
+  // Update user's location
+  const handleUpdateLocation = async () => {
+    if (!user) return;
+    
+    try {
+      const location = await getUserLocation();
+      if (location) {
+        const success = await updateUserLocation(user.userID, location);
+        if (success) {
+          setUser(prev => prev ? { ...prev, location } : null);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating user location:', error);
+    }
+  };
+
+  // Refresh user data
+  const refreshUser = async () => {
+    if (!user) return;
+    
+    try {
+      const updatedProfile = await getUserProfile(user.userID);
+      if (updatedProfile) {
+        setUser(updatedProfile);
+      }
+    } catch (error) {
+      console.error('Error refreshing user:', error);
+    }
+  };
+
+  useEffect(() => {
+    const checkAuthState = async () => {
+      try {
+        // Check for redirect result first
+        const result = await getRedirectResult(auth);
+        if (result) {
+          console.log('[AuthContext] Redirect result found:', result);
+          const userProfile = await createUserProfile(result.user);
+          if (userProfile.success && userProfile.profile) {
+            setUser(userProfile.profile);
+            setFirebaseUser(result.user);
+            setFirebaseProfile(userProfile.profile);
+            localStorage.setItem('isLoggedIn', 'true');
+          }
+        }
+
+        // Set up Firebase auth state listener
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+          console.log('[AuthContext] onAuthStateChanged fired. User:', firebaseUser);
+          
+          if (firebaseUser) {
+            console.log('[AuthContext] User authenticated:', {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName,
+              emailVerified: firebaseUser.emailVerified,
+              providerId: firebaseUser.providerData[0]?.providerId
+            });
+            
+            setFirebaseUser(firebaseUser);
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            // Try to get existing profile or create new one
+            let userProfile = await getUserProfile(firebaseUser.uid);
+            
+            if (!userProfile) {
+              // Create new profile
+              const createResult = await createUserProfile(firebaseUser);
+              if (createResult.success && createResult.profile) {
+                userProfile = createResult.profile;
+              }
+            } else {
+              // Update last login for existing user
+              await updateUserLastLogin(firebaseUser.uid);
+              userProfile.lastLogin = new Date().toISOString();
+            }
+            
+            if (userProfile) {
+              setUser(userProfile);
+              setFirebaseProfile(userProfile);
+              
+              // Update location if not set
+              if (!userProfile.location) {
+                handleUpdateLocation();
+              }
+            }
+          } else {
+            console.log('[AuthContext] No user authenticated, clearing state');
+            setFirebaseUser(null);
+            setFirebaseProfile(null);
+            setUser(null);
+            localStorage.removeItem('isLoggedIn');
+          }
+          setLoading(false);
+        });
+
+        return unsubscribe;
+      } catch (error) {
+        console.error('[AuthContext] Error in checkAuthState:', error);
+        setLoading(false);
+      }
+    };
+
+    checkAuthState();
+  }, []);
 
   const login = async (email: string, password: string) => {
-    try {
-      console.log('[AuthContext] Attempting email/password login...');
-      const result = await loginUser(email, password);
-      
-      if (!result.success) {
-        toast({
-          title: "Login Failed",
-          description: result.error || "Invalid email or password",
-          variant: "error",
-        });
-        throw new Error(result.error || "Login failed");
-      }
-      
-      console.log('[AuthContext] Login successful:', result.userID);
-      
-      // Store user data in localStorage
-      localStorage.setItem('userID', result.userID);
-      localStorage.setItem('userProfile', JSON.stringify(result.profile));
-      localStorage.setItem('isLoggedIn', 'true');
-      
-      // Set user state
-      setUser({
-        ...result.profile,
-        isEmailVerified: result.profile.isEmailVerified || false,
-        isPhoneVerified: result.profile.isPhoneVerified || false,
-        createdAt: result.profile.createdAt || new Date().toISOString(),
-        updatedAt: result.profile.updatedAt || new Date().toISOString(),
-        lastLogin: result.profile.lastLogin || new Date().toISOString(),
-      });
-      
-      // Update location if available
-      try {
-        await updateUserLocation(result.userID);
-        toast({
-          title: "Location Updated",
-          description: "Your location has been updated",
-          variant: "default",
-        });
-      } catch (error) {
-        console.log('Location not available or update failed');
-      }
-      
-      toast({
-        title: "Login Successful",
-        description: `Welcome back, ${result.profile.firstName}!`,
-        variant: "default",
-      });
-      
-      console.log('[AuthContext] Login completed, user state updated');
-    } catch (error) {
-      console.error('[AuthContext] Login error:', error);
-      throw error;
-    }
+    // Implementation for email/password login
+    throw new Error('Email/password login not implemented');
   };
 
-  const register = async (
-    firstName: string,
-    lastName: string,
-    email: string,
-    phoneNumber: string,
-    password: string,
-  ) => {
+  const register = async (email: string, password: string, firstName: string, lastName: string, phoneNumber: string) => {
+    // Implementation for email/password registration
+    throw new Error('Email/password registration not implemented');
+  };
+
+  const signInWithGoogle = async () => {
     try {
-      console.log('[AuthContext] Attempting registration...');
-      const result = await registerUser({
-        firstName,
-        lastName,
-        email,
-        phoneNumber,
-        password,
-      });
-      
-      if (!result.success) {
-        toast({
-          title: "Registration Failed",
-          description: result.error || "Registration failed",
-          variant: "error",
-        });
-        throw new Error(result.error || "Registration failed");
-      }
-      
-      console.log('[AuthContext] Registration successful:', result.userID);
-      
-      // Store user data in localStorage
-      localStorage.setItem('userID', result.userID);
-      localStorage.setItem('userProfile', JSON.stringify(result.profile));
-      localStorage.setItem('isLoggedIn', 'true');
-      
-      // Set user state
-      setUser({
-        ...result.profile,
-        isEmailVerified: result.profile.isEmailVerified || false,
-        isPhoneVerified: result.profile.isPhoneVerified || false,
-        createdAt: result.profile.createdAt || new Date().toISOString(),
-        updatedAt: result.profile.updatedAt || new Date().toISOString(),
-        lastLogin: result.profile.lastLogin || new Date().toISOString(),
-      });
-      
-      // Update location if available
-      try {
-        await updateUserLocation(result.userID);
-        toast({
-          title: "Location Updated",
-          description: "Your location has been updated",
-          variant: "default",
-        });
-      } catch (error) {
-        console.log('Location not available or update failed');
-      }
-      
-      toast({
-        title: "Registration Successful",
-        description: `Welcome to Spandex Salvation Radio, ${firstName}!`,
-        variant: "default",
-      });
-      
-      console.log('[AuthContext] Registration completed, user state updated');
+      await signInWithGoogle();
     } catch (error) {
-      console.error('[AuthContext] Registration error:', error);
-      throw error;
+      console.error('Error signing in with Google:', error);
+      errorToast({
+        title: "Sign In Failed",
+        description: "Failed to sign in with Google. Please try again.",
+      });
     }
   };
 
   const logout = async () => {
     try {
-      console.log('[AuthContext] Logging out...');
-      
-      // Update listening status to false before logout
-      if (user?.userID) {
-        await updateListeningStatus(user.userID, false);
-      }
-      
-      // Sign out from Firebase
       await signOut(auth);
-      
-      // Clear local state
       setUser(null);
       setFirebaseUser(null);
-      
-      // Clear localStorage
-      localStorage.removeItem('userID');
-      localStorage.removeItem('userProfile');
+      setFirebaseProfile(null);
       localStorage.removeItem('isLoggedIn');
-      
-      toast({
+      successToast({
         title: "Logged Out",
-        description: "You have been successfully logged out",
-        variant: "default",
+        description: "You have been successfully logged out.",
       });
-      
-      console.log('[AuthContext] Logout completed');
     } catch (error) {
-      console.error('[AuthContext] Logout error:', error);
-      toast({
-        title: "Logout Error",
-        description: "An error occurred during logout",
-        variant: "error",
+      console.error('Error logging out:', error);
+      errorToast({
+        title: "Logout Failed",
+        description: "Failed to log out. Please try again.",
       });
     }
   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      console.log('[AuthContext] Initiating Google sign-in...');
-      await signInWithGoogle();
-    } catch (error: any) {
-      console.error('[AuthContext] Google sign-in error:', error);
-      toast({
-        title: "Google Sign-In Failed",
-        description: error.message || "Failed to sign in with Google",
-        variant: "error",
-      });
-      throw error;
-    }
+  const value = {
+    user,
+    firebaseUser,
+    firebaseProfile,
+    isAuthenticated: !!user,
+    loading,
+    login,
+    register,
+    signInWithGoogle,
+    logout,
+    updateListeningStatus: handleUpdateListeningStatus,
+    updateUserLocation: handleUpdateLocation,
+    refreshUser,
   };
 
-  const updateProfile = async (updates: any) => {
-    try {
-      if (user?.userID) {
-        const result = await updateUserProfile(user.userID, updates);
-        if (result.success) {
-          // Reload the profile to reflect changes
-          await loadUserProfile(user.userID);
-          toast({
-            title: "Profile Updated",
-            description: "Your profile has been updated successfully",
-            variant: "default",
-          });
-          return true;
-        }
-      }
-      return false;
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast({
-        title: "Update Failed",
-        description: "Failed to update profile",
-        variant: "error",
-      });
-      return false;
-    }
-  };
-
-  const handleUploadProfileImage = async (file: File) => {
-    try {
-      if (user?.userID) {
-        const result = await uploadProfileImage(user.userID, file);
-        if (result.success) {
-          // Reload the profile to reflect changes
-          await loadUserProfile(user.userID);
-          toast({
-            title: "Image Uploaded",
-            description: "Profile image updated successfully",
-            variant: "default",
-          });
-          return true;
-        }
-      }
-      return false;
-    } catch (error) {
-      console.error('Error uploading profile image:', error);
-      toast({
-        title: "Upload Failed",
-        description: "Failed to upload profile image",
-        variant: "error",
-      });
-      return false;
-    }
-  };
-
-  // Update listening status
-  const handleUpdateListeningStatus = async (isListening: boolean) => {
-    try {
-      if (user?.userID) {
-        await updateListeningStatus(user.userID, isListening);
-        // Update local state
-        setUser(prev => prev ? { ...prev, isActiveListening: isListening } : null);
-        
-        toast({
-          title: isListening ? "Now Playing" : "Playback Stopped",
-          description: isListening ? "You're now listening to Spandex Salvation Radio" : "Playback has been stopped",
-          variant: "default",
-        });
-      }
-    } catch (error) {
-      console.error('Error updating listening status:', error);
-      toast({
-        title: "Status Update Failed",
-        description: "Failed to update listening status",
-        variant: "error",
-      });
-    }
-  };
-
-  // Update location
-  const handleUpdateLocation = async () => {
-    try {
-      if (user?.userID) {
-        const result = await updateUserLocation(user.userID);
-        if (result.success) {
-          // Reload the profile to reflect changes
-          await loadUserProfile(user.userID);
-          toast({
-            title: "Location Updated",
-            description: "Your location has been updated",
-            variant: "default",
-          });
-        } else {
-          toast({
-            title: "Location Unavailable",
-            description: "Unable to get your location. Please check your browser settings.",
-            variant: "error",
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error updating location:', error);
-      toast({
-        title: "Location Update Failed",
-        description: "Failed to update location",
-        variant: "error",
-      });
-    }
-  };
-
-  useEffect(() => {
-    console.log('[AuthContext] Setting up authentication listeners...');
-    
-    // Restore login state from localStorage
-    const wasLoggedIn = localStorage.getItem('isLoggedIn');
-    const userID = localStorage.getItem('userID');
-    const userProfile = localStorage.getItem('userProfile');
-    
-    console.log('[AuthContext] Previous login state:', wasLoggedIn);
-    console.log('[AuthContext] Stored userID:', userID);
-    console.log('[AuthContext] Stored userProfile:', userProfile);
-    
-    if (wasLoggedIn === 'true' && userID && userProfile) {
-      try {
-        const profile = JSON.parse(userProfile);
-        setUser(profile);
-        console.log('[AuthContext] Restored user from localStorage:', profile);
-        
-        // Update location if available
-        updateUserLocation(userID).catch(() => {
-          console.log('Location not available for restored user');
-        });
-      } catch (error) {
-        console.error('[AuthContext] Error parsing stored profile:', error);
-        // Clear invalid data
-        localStorage.removeItem('userID');
-        localStorage.removeItem('userProfile');
-        localStorage.removeItem('isLoggedIn');
-      }
-    }
-
-    // Set up Firebase auth state listener for Google OAuth
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      console.log('[AuthContext] onAuthStateChanged fired. User:', firebaseUser);
-      if (firebaseUser) {
-        console.log('[AuthContext] User authenticated via Google:', {
-          uid: firebaseUser.uid,
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-          emailVerified: firebaseUser.emailVerified,
-          providerId: firebaseUser.providerData[0]?.providerId
-        });
-        
-        setFirebaseUser(firebaseUser);
-        localStorage.setItem('isLoggedIn', 'true');
-        
-        try {
-          // Only create profile if this is a fresh sign-in (not just auth state change)
-          const redirectResult = await getRedirectResult(auth);
-          if (redirectResult) {
-            // This is a fresh Google sign-in, create new profile
-            const profileResult = await createUserProfile(firebaseUser);
-            console.log('[AuthContext] Profile creation result:', profileResult);
-            if (profileResult.success && profileResult.profile) {
-              setUser(profileResult.profile);
-              localStorage.setItem('userID', profileResult.userID);
-              localStorage.setItem('userProfile', JSON.stringify(profileResult.profile));
-              console.log('[AuthContext] Firebase profile set:', profileResult.profile);
-              
-              toast({
-                title: "Welcome Back!",
-                description: `Welcome to Spandex Salvation Radio, ${profileResult.profile.firstName}!`,
-                variant: "default",
-              });
-            }
-          } else {
-            // This is just an auth state change, don't create profile automatically
-            console.log('[AuthContext] Auth state change detected, not creating new profile');
-          }
-        } catch (error) {
-          console.error('[AuthContext] Error handling auth state change:', error);
-          // Don't show error toast for normal auth state changes
-        }
-      } else {
-        console.log('[AuthContext] No user authenticated, clearing state');
-        setFirebaseUser(null);
-        setUser(null);
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('userID');
-        localStorage.removeItem('userProfile');
-      }
-      setLoading(false);
-    });
-
-    // Handle redirect result from Google sign in only if there are URL parameters
-    if (window.location.search.length > 0) {
-      console.log('[AuthContext] URL parameters detected, checking for redirect result...');
-      handleRedirectResult().then((result) => {
-        console.log('[AuthContext] handleRedirectResult result:', result);
-        if (result.success && result.user) {
-          console.log('[AuthContext] Successful redirect result, setting user state');
-          setFirebaseUser(result.user);
-          if (result.profileResult?.profile) {
-            setUser(result.profileResult.profile);
-            localStorage.setItem('userID', result.profileResult.userID);
-            localStorage.setItem('userProfile', JSON.stringify(result.profileResult.profile));
-            localStorage.setItem('isLoggedIn', 'true');
-            
-            toast({
-              title: "Google Sign-In Successful",
-              description: `Welcome to Spandex Salvation Radio, ${result.profileResult.profile.firstName}!`,
-              variant: "default",
-            });
-          }
-          setLoading(false);
-          console.log('[AuthContext] User state set after Google redirect:', result.user);
-        } else {
-          console.log('[AuthContext] No successful redirect result, error:', result.error);
-          if (result.error && result.error !== 'No redirect result') {
-            toast({
-              title: "Google Sign-In Failed",
-              description: result.error,
-              variant: "error",
-            });
-          }
-        }
-      });
-    } else {
-      console.log('[AuthContext] No URL parameters, skipping redirect result check');
-    }
-
-    setLoading(false);
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        firebaseUser,
-        loading,
-        isAuthenticated: !!user || !!firebaseUser,
-        login,
-        register,
-        logout,
-        signInWithGoogle: handleGoogleSignIn,
-        updateProfile,
-        uploadProfileImage: handleUploadProfileImage,
-        updateListeningStatus: handleUpdateListeningStatus,
-        updateLocation: handleUpdateLocation,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

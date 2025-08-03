@@ -1,8 +1,9 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, sendEmailVerification, signInWithPhoneNumber } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, collection as firestoreCollection } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import bcrypt from 'bcryptjs';
+import { RecaptchaVerifier } from "firebase/auth";
 
 // NOTE: Google OAuth is currently in production mode and requires verification
 // This means only authorized test users can sign in until the app is verified
@@ -44,6 +45,25 @@ const defaultAvatars = [
   'https://firebasestorage.googleapis.com/v0/b/spandex-salvation-radio-site.appspot.com/o/Avatars%2FRebel-Raccoon.png?alt=media',
   'https://firebasestorage.googleapis.com/v0/b/spandex-salvation-radio-site.appspot.com/o/Avatars%2FRock-Unicorn.png?alt=media',
 ];
+
+// User profile interface matching the new requirements
+export interface UserProfile {
+  firstName: string;
+  lastName: string;
+  userProfileImage: string;
+  emailAddress: string;
+  phoneNumber: string;
+  location: { latitude: number; longitude: number; country?: string } | null;
+  isActiveListening: boolean;
+  activeSubscription: boolean;
+  renewalDate: string | null;
+  lastLogin: string;
+  userID: string;
+  isEmailVerified: boolean;
+  isPhoneVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
 // Generate 10-character alphanumeric user ID
 function generateUserID(): string {
@@ -223,145 +243,215 @@ export async function updateUserLastActive(userID: string) {
   }
 }
 
-export async function getUserProfile(userID: string) {
+// Create or update user profile with all required fields
+export async function createUserProfile(firebaseUser: any): Promise<{ success: boolean; profile?: UserProfile; error?: string }> {
   try {
-    const userDoc = await getDoc(doc(db, 'Users', `User: ${userID}`));
+    const userID = generateUserID();
+    const now = new Date().toISOString();
     
-    if (userDoc.exists()) {
-      return {
-        success: true,
-        profile: userDoc.data(),
-      };
-    } else {
-      return {
-        success: false,
-        error: 'User profile not found',
-      };
-    }
-  } catch (error) {
-    console.error('Error getting user profile:', error);
-    return {
-      success: false,
-      error: 'Failed to get user profile',
-    };
-  }
-}
-
-export async function createUserProfile(authUser: any, customUserID?: string) {
-  try {
-    const userID = customUserID || generateUserID();
-    const location = await getUserLocation();
-    
-    const userProfile = {
-      firstName: authUser.displayName?.split(' ')[0] || '',
-      lastName: authUser.displayName?.split(' ').slice(1).join(' ') || '',
-      userProfileImage: authUser.photoURL || getRandomDefaultAvatar(),
-      emailAddress: authUser.email || '',
-      phoneNumber: '',
-      location: location,
+    const userProfile: UserProfile = {
+      firstName: firebaseUser.displayName?.split(' ')[0] || '',
+      lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
+      userProfileImage: firebaseUser.photoURL || '',
+      emailAddress: firebaseUser.email || '',
+      phoneNumber: firebaseUser.phoneNumber || '',
+      location: null, // Will be set when user grants location permission
       isActiveListening: false,
       activeSubscription: false,
       renewalDate: null,
-      lastLogin: new Date().toISOString(),
+      lastLogin: now,
       userID: userID,
-      isEmailVerified: authUser.emailVerified || false,
+      isEmailVerified: firebaseUser.emailVerified || false,
       isPhoneVerified: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: now,
+      updatedAt: now,
     };
-    
+
+    // Store in Firestore with the userID as document ID
     await setDoc(doc(db, 'Users', `User: ${userID}`), userProfile);
     
-    return {
-      success: true,
-      profile: userProfile,
-    };
+    return { success: true, profile: userProfile };
   } catch (error) {
     console.error('Error creating user profile:', error);
-    return {
-      success: false,
-      error: 'Failed to create user profile',
-    };
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
 
-export async function updateUserProfile(userID: string, updates: any) {
+// Update user's listening status
+export async function updateListeningStatus(userID: string, isListening: boolean): Promise<boolean> {
+  try {
+    await updateDoc(doc(db, 'Users', `User: ${userID}`), {
+      isActiveListening: isListening,
+      updatedAt: new Date().toISOString(),
+    });
+    return true;
+  } catch (error) {
+    console.error('Error updating listening status:', error);
+    return false;
+  }
+}
+
+// Update user's location
+export async function updateUserLocation(userID: string, location: { latitude: number; longitude: number; country?: string }): Promise<boolean> {
+  try {
+    await updateDoc(doc(db, 'Users', `User: ${userID}`), {
+      location: location,
+      updatedAt: new Date().toISOString(),
+    });
+    return true;
+  } catch (error) {
+    console.error('Error updating user location:', error);
+    return false;
+  }
+}
+
+// Update user's last login
+export async function updateUserLastLogin(userID: string): Promise<boolean> {
+  try {
+    await updateDoc(doc(db, 'Users', `User: ${userID}`), {
+      lastLogin: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+    return true;
+  } catch (error) {
+    console.error('Error updating last login:', error);
+    return false;
+  }
+}
+
+// Get user profile by userID
+export async function getUserProfile(userID: string): Promise<UserProfile | null> {
+  try {
+    const docRef = doc(db, 'Users', `User: ${userID}`);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return docSnap.data() as UserProfile;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting user profile:', error);
+    return null;
+  }
+}
+
+// Update user profile
+export async function updateUserProfile(userID: string, updates: Partial<UserProfile>): Promise<boolean> {
   try {
     await updateDoc(doc(db, 'Users', `User: ${userID}`), {
       ...updates,
       updatedAt: new Date().toISOString(),
     });
-    
-    return { success: true };
+    return true;
   } catch (error) {
     console.error('Error updating user profile:', error);
-    return { success: false, error: 'Failed to update profile' };
+    return false;
   }
 }
 
-export async function uploadProfileImage(userID: string, file: File) {
+// Send email verification
+export async function sendEmailVerification(): Promise<boolean> {
   try {
-    const storageRef = ref(storage, `Users/User: ${userID}/profile-image`);
-    await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(storageRef);
-    
-    await updateUserProfile(userID, { userProfileImage: downloadURL });
-    
-    return { success: true, imageUrl: downloadURL };
+    const user = auth.currentUser;
+    if (user) {
+      await sendEmailVerification(user);
+      return true;
+    }
+    return false;
   } catch (error) {
-    console.error('Error uploading profile image:', error);
-    return { success: false, error: 'Failed to upload image' };
+    console.error('Error sending email verification:', error);
+    return false;
   }
 }
 
-export async function updateListeningStatus(userID: string, isListening: boolean) {
+// Send phone verification code
+export async function sendPhoneVerification(phoneNumber: string): Promise<boolean> {
   try {
-    const response = await fetch('/api/auth/listening-status', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ isActiveListening: isListening }),
+    const recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+      'size': 'invisible',
     });
     
-    const result = await response.json();
-    if (result.success) {
-      console.log(`Updated listening status for user ${userID}: ${isListening}`);
-      return { success: true };
-    } else {
-      return { success: false, error: result.error };
-    }
+    const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
+    // Store confirmation result for later verification
+    localStorage.setItem('phoneConfirmationResult', JSON.stringify(confirmationResult));
+    return true;
   } catch (error) {
-    console.error('Error updating listening status:', error);
-    return { success: false, error: 'Failed to update listening status' };
+    console.error('Error sending phone verification:', error);
+    return false;
   }
 }
 
-export async function updateUserLocation(userID: string) {
+// Verify phone code
+export async function verifyPhoneCode(code: string): Promise<boolean> {
   try {
-    const location = await getUserLocation();
+    const confirmationResultStr = localStorage.getItem('phoneConfirmationResult');
+    if (!confirmationResultStr) return false;
     
-    if (location) {
-      const response = await fetch('/api/auth/location', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ latitude: location.latitude, longitude: location.longitude }),
-      });
-      
-      const result = await response.json();
-      if (result.success) {
-        return { success: true, location };
-      } else {
-        return { success: false, error: result.error };
-      }
-    } else {
-      return { success: false, error: 'Location not available' };
+    const confirmationResult = JSON.parse(confirmationResultStr);
+    await confirmationResult.confirm(code);
+    
+    // Update user profile with verified phone
+    const user = auth.currentUser;
+    if (user) {
+      const userID = user.uid;
+      await updateUserProfile(userID, { isPhoneVerified: true });
     }
+    
+    localStorage.removeItem('phoneConfirmationResult');
+    return true;
   } catch (error) {
-    console.error('Error updating user location:', error);
-    return { success: false, error: 'Failed to update location' };
+    console.error('Error verifying phone code:', error);
+    return false;
+  }
+}
+
+// Get all active listeners for map display
+export async function getActiveListeners(): Promise<UserProfile[]> {
+  try {
+    const q = query(
+      collection(db, 'Users'),
+      where('isActiveListening', '==', true),
+      where('location', '!=', null)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    const activeListeners: UserProfile[] = [];
+    
+    querySnapshot.forEach((doc) => {
+      activeListeners.push(doc.data() as UserProfile);
+    });
+    
+    return activeListeners;
+  } catch (error) {
+    console.error('Error getting active listeners:', error);
+    return [];
+  }
+}
+
+// Get total listeners count from Data collection
+export async function getTotalListenersCount(): Promise<number> {
+  try {
+    const docRef = doc(db, 'Data', 'TotalListeners');
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return docSnap.data().count || 0;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error getting total listeners count:', error);
+    return 0;
+  }
+}
+
+// Update total listeners count
+export async function updateTotalListenersCount(count: number): Promise<boolean> {
+  try {
+    await setDoc(doc(db, 'Data', 'TotalListeners'), { count }, { merge: true });
+    return true;
+  } catch (error) {
+    console.error('Error updating total listeners count:', error);
+    return false;
   }
 }
 

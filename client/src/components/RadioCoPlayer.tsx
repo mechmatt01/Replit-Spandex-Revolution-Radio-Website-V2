@@ -5,6 +5,7 @@ import {
   VolumeX,
   Radio as RadioIcon,
   ChevronDown,
+  Loader2
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Slider } from "../components/ui/slider";
@@ -16,6 +17,7 @@ import ScrollingText from "../components/ScrollingText";
 import InteractiveAlbumArt from "../components/InteractiveAlbumArt";
 import { AdLogo } from "../components/AdLogo";
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 // RadioStation interface moved to RadioContext
 interface RadioStation {
@@ -118,6 +120,7 @@ export default function RadioCoPlayer() {
     adInfo,
   } = useRadio();
 
+  const { user, updateListeningStatus } = useAuth();
   const { getColors, getGradient, currentTheme } = useTheme();
   const colors = getColors();
 
@@ -190,6 +193,20 @@ export default function RadioCoPlayer() {
     };
   }, []);
 
+  // Handle play/pause with listening status update
+  const handlePlayPause = async () => {
+    try {
+      await togglePlayback();
+      
+      // Update listening status based on new play state
+      if (user) {
+        await updateListeningStatus(!isPlaying);
+      }
+    } catch (error) {
+      console.error('Error toggling playback:', error);
+    }
+  };
+
   const handleStationChange = async (station: RadioStation) => {
     if (station.id === selectedStation.id) return;
 
@@ -205,6 +222,11 @@ export default function RadioCoPlayer() {
       await changeStation(station);
       // Immediately auto-play the new station after switching
       await togglePlayback();
+      
+      // Update listening status if user is authenticated
+      if (user) {
+        await updateListeningStatus(true);
+      }
     } catch (err) {
       console.error("Failed to switch station:", err);
     }
@@ -621,7 +643,7 @@ export default function RadioCoPlayer() {
       <div className="flex flex-col items-center justify-center space-y-4 relative">
         <div className="flex items-center justify-center w-full">
           <Button
-            onClick={togglePlayback}
+            onClick={handlePlayPause}
             disabled={isLoading}
             className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 group shadow-lg hover:shadow-xl border-0"
             style={{
