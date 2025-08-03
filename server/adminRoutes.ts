@@ -29,19 +29,31 @@ export async function initializeAdminCollection() {
 // Verify admin credentials
 export async function verifyAdminCredentials(username: string, password: string): Promise<boolean> {
   try {
+    console.log('[Admin] Verifying credentials for username:', username);
+    
     const adminRef = db.doc('Admin/Information');
     const adminDoc = await adminRef.get();
     
     if (!adminDoc.exists) {
-      console.log('Admin collection not found, initializing...');
+      console.log('[Admin] Admin collection not found, initializing...');
       await initializeAdminCollection();
       return false;
     }
     
     const adminData = adminDoc.data();
-    return adminData.Username === username && adminData.Password === password;
+    console.log('[Admin] Retrieved admin data:', { 
+      storedUsername: adminData.Username, 
+      storedPassword: adminData.Password ? '***' : 'undefined',
+      providedUsername: username,
+      providedPassword: password ? '***' : 'undefined'
+    });
+    
+    const isValid = adminData.Username === username && adminData.Password === password;
+    console.log('[Admin] Credentials validation result:', isValid);
+    
+    return isValid;
   } catch (error) {
-    console.error('Error verifying admin credentials:', error);
+    console.error('[Admin] Error verifying admin credentials:', error);
     return false;
   }
 }

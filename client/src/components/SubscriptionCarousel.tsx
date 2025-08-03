@@ -5,9 +5,9 @@ import { useTheme } from "../contexts/ThemeContext";
 import { cn } from "../lib/utils";
 
 // Import package icons
-// import RebelPackageIcon from "../../attached_assets/RebelPackageIcon.png";
-// import LegendPackageIcon from "../../attached_assets/LegendPackageIcon.png";
-// import IconPackageIcon from "../../attached_assets/IconPackageIcon.png";
+import RebelPackageIcon from "../../../attached_assets/RebelPackageIcon.png";
+import LegendPackageIcon from "../../../attached_assets/LegendPackageIcon.png";
+import IconPackageIcon from "../../../attached_assets/IconPackageIcon.png";
 
 interface SubscriptionTier {
   id: string;

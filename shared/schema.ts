@@ -12,6 +12,30 @@ import {
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Firebase User Profile Schema
+export const UserProfileSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  userProfileImage: z.string().url().optional(),
+  emailAddress: z.string().email("Valid email is required"),
+  phoneNumber: z.string().optional(),
+  location: z.object({
+    latitude: z.number(),
+    longitude: z.number(),
+  }).optional(),
+  isActiveListening: z.boolean().default(false),
+  activeSubscription: z.boolean().default(false),
+  renewalDate: z.date().optional(),
+  lastLogin: z.date(),
+  userID: z.string().length(10, "User ID must be exactly 10 characters"),
+  isEmailVerified: z.boolean().default(false),
+  isPhoneVerified: z.boolean().default(false),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+export type UserProfile = z.infer<typeof UserProfileSchema>;
+
 // Session storage table for authentication
 export const sessions = pgTable(
   "sessions",
@@ -320,21 +344,65 @@ export type StreamStats = typeof streamStats.$inferSelect;
 export type Subscription = typeof subscriptions.$inferSelect;
 export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
 
+// Radio Station Schema
 export const insertRadioStationSchema = z.object({
-  name: z.string().min(1, "Station name is required"),
-  description: z.string().optional(),
-  streamUrl: z.string().url("Valid stream URL required"),
-  apiUrl: z.string().optional(),
-  apiType: z.enum(["triton", "streamtheworld", "somafm", "custom", "auto"]).default("auto"),
   stationId: z.string().min(1, "Station ID is required"),
-  frequency: z.string().optional(),
-  location: z.string().optional(),
+  name: z.string().min(1, "Station name is required"),
+  streamUrl: z.string().url("Valid stream URL is required"),
+  website: z.string().url("Valid website URL is required").optional(),
+  description: z.string().optional(),
   genre: z.string().optional(),
-  website: z.string().optional(),
-  logo: z.string().optional(),
-  isActive: z.boolean().default(true),
+  country: z.string().optional(),
+  city: z.string().optional(),
   sortOrder: z.number().default(0),
+  isActive: z.boolean().default(true),
 });
 
-export type RadioStation = typeof radioStations.$inferSelect;
-export type InsertRadioStation = z.infer<typeof insertRadioStationSchema>;
+export type RadioStation = z.infer<typeof insertRadioStationSchema>;
+
+// Contact Form Schema
+export const insertContactSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Valid email is required"),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+});
+
+export type Contact = z.infer<typeof insertContactSchema>;
+
+// Subscription Schema
+export const insertSubscriptionSchema = z.object({
+  userID: z.string().min(1, "User ID is required"),
+  packageType: z.enum(["Icon", "Legend", "Rebel"]),
+  amount: z.number().positive("Amount must be positive"),
+  currency: z.string().default("USD"),
+  status: z.enum(["active", "cancelled", "expired"]).default("active"),
+  startDate: z.date(),
+  endDate: z.date(),
+});
+
+export type Subscription = z.infer<typeof insertSubscriptionSchema>;
+
+// Now Playing Schema
+export const insertNowPlayingSchema = z.object({
+  stationId: z.string().min(1, "Station ID is required"),
+  artist: z.string().optional(),
+  title: z.string().optional(),
+  album: z.string().optional(),
+  artwork: z.string().url().optional(),
+  timestamp: z.date(),
+});
+
+export type NowPlaying = z.infer<typeof insertNowPlayingSchema>;
+
+// Submission Schema
+export const insertSubmissionSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Valid email is required"),
+  songTitle: z.string().min(1, "Song title is required"),
+  artist: z.string().min(1, "Artist is required"),
+  genre: z.string().optional(),
+  message: z.string().optional(),
+  status: z.enum(["pending", "approved", "rejected"]).default("pending"),
+});
+
+export type Submission = z.infer<typeof insertSubmissionSchema>;

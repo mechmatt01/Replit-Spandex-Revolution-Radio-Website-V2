@@ -1,7 +1,7 @@
 import { Radio } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
-// import MusicLogoPath from "../../attached_assets/MusicLogoIcon@3x.png";
+import MusicLogoPath from "../../../attached_assets/MusicLogoIcon@3x.png";
 import AdminPanel from "./AdminPanel";
 
 export default function Footer() {
@@ -59,15 +59,15 @@ export default function Footer() {
               Your home for old-school metal music. Broadcasting the rebellion
               since 2025.
             </p>
-            <a
-              href="mailto:support@spandexsalvationradio.com"
-              className="text-sm transition-colors duration-300 block mt-2"
+            <button
+              onClick={() => window.open('mailto:support@spandexsalvationradio.com', '_blank')}
+              className="text-sm transition-colors duration-300 block mt-2 text-left p-0 m-0 bg-transparent border-0 cursor-pointer"
               style={{ color: colors.textMuted }}
               onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
               onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
             >
-              support@spandexsalvationradio.com
-            </a>
+              Email Support
+            </button>
           </div>
 
           {/* Quick Links */}

@@ -67,7 +67,7 @@ async function loginFirebaseUser(email: string, password: string) {
     }
 
     // Find user by email
-    const userQuery = await db.collection('Users').where('EmailAddress', '==', email).get();
+    const userQuery = await db.collection('Users').where('emailAddress', '==', email).get();
 
     if (userQuery.empty) {
       console.log('[Firebase Auth] User not found:', email);
@@ -78,7 +78,7 @@ async function loginFirebaseUser(email: string, password: string) {
     const userData = userDoc.data();
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(password, userData.PasswordHash);
+    const isPasswordValid = await bcrypt.compare(password, userData.passwordHash);
 
     if (!isPasswordValid) {
       console.log('[Firebase Auth] Invalid password for:', email);
@@ -86,19 +86,19 @@ async function loginFirebaseUser(email: string, password: string) {
     }
 
     // Update last login time
-    await db.collection('Users').doc(`User: ${userData.UserID}`).update({
-      UpdatedAt: new Date().toISOString(),
-      LastActive: new Date().toISOString()
+    await db.collection('Users').doc(`User: ${userData.userID}`).update({
+      updatedAt: new Date().toISOString(),
+      lastLogin: new Date().toISOString()
     });
 
     console.log('[Firebase Auth] Login successful for:', email);
 
     // Remove password from response
-    const { PasswordHash, ...profileWithoutPassword } = userData;
+    const { passwordHash, ...profileWithoutPassword } = userData;
 
     return {
       success: true,
-      userID: userData.UserID,
+      userID: userData.userID,
       profile: profileWithoutPassword
     };
 
@@ -127,22 +127,22 @@ async function handleGoogleAuth(googleId: string, email: string, firstName: stri
     if (!userQuery.empty) {
       // User exists with Google ID
       userData = userQuery.docs[0].data();
-      console.log('[Google Auth] User found by Google ID:', userData.UserID);
+      console.log('[Google Auth] User found by Google ID:', userData.userID);
     } else {
       // Check if user exists by email
-      userQuery = await db.collection('Users').where('EmailAddress', '==', email).get();
+      userQuery = await db.collection('Users').where('emailAddress', '==', email).get();
       
       if (!userQuery.empty) {
         // User exists with email, link Google account
         userData = userQuery.docs[0].data();
-        await db.collection('Users').doc(`User: ${userData.UserID}`).update({
-          GoogleID: googleId,
-          EmailVerified: true,
-          UpdatedAt: new Date().toISOString(),
-          LastActive: new Date().toISOString()
+        await db.collection('Users').doc(`User: ${userData.userID}`).update({
+          googleId: googleId,
+          isEmailVerified: true,
+          updatedAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString()
         });
-        userData.GoogleID = googleId;
-        console.log('[Google Auth] Linked Google account to existing user:', userData.UserID);
+        userData.googleId = googleId;
+        console.log('[Google Auth] Linked Google account to existing user:', userData.userID);
       } else {
         // Create new user
         const generateUserID = () => {
@@ -156,22 +156,22 @@ async function handleGoogleAuth(googleId: string, email: string, firstName: stri
 
         const userID = generateUserID();
         userData = {
-          UserID: userID,
-          FirstName: firstName,
-          LastName: lastName,
-          EmailAddress: email,
-          GoogleID: googleId,
-          PhoneNumber: '',
-          UserProfileImage: '',
-          Location: null,
-          IsActiveListening: false,
-          ActiveSubscription: false,
-          RenewalDate: null,
-          EmailVerified: true,
-          PhoneVerified: false,
-          CreatedAt: new Date().toISOString(),
-          UpdatedAt: new Date().toISOString(),
-          LastActive: new Date().toISOString(),
+          userID: userID,
+          firstName: firstName,
+          lastName: lastName,
+          emailAddress: email,
+          googleId: googleId,
+          phoneNumber: '',
+          userProfileImage: '',
+          location: null,
+          isActiveListening: false,
+          activeSubscription: false,
+          renewalDate: null,
+          isEmailVerified: true,
+          isPhoneVerified: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          lastLogin: new Date().toISOString(),
         };
 
         await db.collection('Users').doc(`User: ${userID}`).set(userData);
@@ -180,15 +180,15 @@ async function handleGoogleAuth(googleId: string, email: string, firstName: stri
     }
 
     // Update last login time
-    await db.collection('Users').doc(`User: ${userData.UserID}`).update({
-      LastActive: new Date().toISOString()
+    await db.collection('Users').doc(`User: ${userData.userID}`).update({
+      lastLogin: new Date().toISOString()
     });
 
     console.log('[Google Auth] Google authentication successful for:', email);
 
     return {
       success: true,
-      userID: userData.UserID,
+      userID: userData.userID,
       profile: userData
     };
 
@@ -276,22 +276,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Create user document in Firestore
       const userData = {
-        UserID: userID,
-        FirstName: firstName,
-        LastName: lastName,
-        EmailAddress: email,
-        PhoneNumber: phoneNumber || '',
-        PasswordHash: hashedPassword,
-        UserProfileImage: '',
-        Location: null,
-        IsActiveListening: false,
-        ActiveSubscription: false,
-        RenewalDate: null,
-        EmailVerified: false,
-        PhoneVerified: false,
-        CreatedAt: new Date().toISOString(),
-        UpdatedAt: new Date().toISOString(),
-        LastActive: new Date().toISOString(),
+        userID: userID,
+        firstName: firstName,
+        lastName: lastName,
+        emailAddress: email,
+        phoneNumber: phoneNumber || '',
+        passwordHash: hashedPassword,
+        userProfileImage: '',
+        location: null,
+        isActiveListening: false,
+        activeSubscription: false,
+        renewalDate: null,
+        isEmailVerified: false,
+        isPhoneVerified: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
       };
 
       if (db) {
@@ -303,21 +303,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         success: true,
         userID,
         profile: {
-          UserID: userID,
-          FirstName: firstName,
-          LastName: lastName,
-          EmailAddress: email,
-          PhoneNumber: phoneNumber || '',
-          UserProfileImage: '',
-          Location: null,
-          IsActiveListening: false,
-          ActiveSubscription: false,
-          RenewalDate: null,
-          EmailVerified: false,
-          PhoneVerified: false,
-          CreatedAt: userData.CreatedAt,
-          UpdatedAt: userData.UpdatedAt,
-          LastActive: userData.LastActive,
+          userID: userID,
+          firstName: firstName,
+          lastName: lastName,
+          emailAddress: email,
+          phoneNumber: phoneNumber || '',
+          userProfileImage: '',
+          location: null,
+          isActiveListening: false,
+          activeSubscription: false,
+          renewalDate: null,
+          isEmailVerified: false,
+          isPhoneVerified: false,
+          createdAt: userData.createdAt,
+          updatedAt: userData.updatedAt,
+          lastLogin: userData.lastLogin,
         }
       });
     } catch (error) {
@@ -379,6 +379,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error('Google OAuth error:', error);
       res.status(500).json({ error: 'Google authentication failed. Please try again.' });
+    }
+  });
+
+  // Now Playing API with enhanced metadata and artwork
+  app.get("/api/now-playing", async (req, res) => {
+    try {
+      const stationId = req.query.station as string || "somafm-metal"; // Default to SomaFM Metal
+
+      console.log(`Fetching now playing for station: ${stationId}`);
+
+      // Import metadata fetcher dynamically
+      const { default: MetadataFetcher } = await import('./metadataFetcher.js');
+      const fetcher = MetadataFetcher.getInstance();
+      const metadata = await fetcher.getMetadata(stationId);
+
+      console.log(`Metadata fetcher returned:`, metadata);
+
+      if (metadata && metadata.title !== metadata.stationName) {
+        // Only use metadata if it's actual track data, not just station info
+        const nowPlayingData = {
+          id: 1,
+          title: metadata.title,
+          artist: metadata.artist,
+          album: metadata.album || null,
+          isLive: true,
+          timestamp: new Date().toISOString(),
+          artwork: metadata.artwork || null,
+          stationId,
+          stationName: metadata.stationName,
+          isAd: false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        console.log(`Now playing: "${metadata.title}" by ${metadata.artist} on ${metadata.stationName}`);
+        return res.json(nowPlayingData);
+      } else {
+        // If no valid track metadata was returned, fall back to station identification
+        console.log('No live track metadata available, showing station information');
+        
+        // Ultimate fallback with station-specific information
+        const stationInfo: { [key: string]: { name: string; artist: string; album: string } } = {
+          'hot-97': { name: 'Hot 97', artist: 'New York\'s #1 Hip Hop & R&B', album: '97.1 FM • New York, NY' },
+          'somafm-groovesalad': { name: 'SomaFM Groove Salad', artist: 'Ambient Beats and Grooves', album: 'Online • San Francisco, CA' },
+          'beat-955': { name: '95.5 The Beat', artist: 'Dallas\' #1 Hip Hop & R&B', album: '95.5 FM • Dallas, TX' },
+          'hot-105': { name: 'Hot 105', artist: 'Miami\'s Today\'s R&B and Old School', album: '105.1 FM • Miami, FL' },
+          'q-93': { name: 'Q93', artist: 'New Orleans Hip Hop & R&B', album: '93.3 FM • New Orleans, LA' },
+          'somafm-metal': { name: 'SomaFM Metal', artist: 'Heavy Metal & Hard Rock', album: 'Online • San Francisco, CA' }
+        };
+
+        const info = stationInfo[stationId] || stationInfo['somafm-groovesalad'];
+        const fallbackData = {
+          id: 1,
+          title: info.name,
+          artist: info.artist,
+          album: info.album,
+          duration: null,
+          artwork: null,
+          isAd: false,
+          isLive: true,
+          timestamp: new Date().toISOString(),
+          stationId,
+          stationName: info.name,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        };
+
+        return res.json(fallbackData);
+      }
+    } catch (error) {
+      console.error("Failed to fetch track data:", error);
+      return res.status(500).json({ error: 'Failed to fetch now playing data' });
     }
   });
 

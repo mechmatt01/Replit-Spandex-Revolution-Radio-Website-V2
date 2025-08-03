@@ -11,21 +11,21 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useToast } from "../hooks/use-toast";
 
 interface User {
-  UserID: string;
-  FirstName: string;
-  LastName: string;
-  UserProfileImage: string;
-  EmailAddress: string;
-  PhoneNumber: string;
-  Location: { lat: number; lng: number; country?: string } | null;
-  IsActiveListening: boolean;
-  ActiveSubscription: boolean;
-  RenewalDate: string | null;
-  EmailVerified: boolean;
-  PhoneVerified: boolean;
-  CreatedAt: string;
-  UpdatedAt: string;
-  LastActive?: string;
+  userID: string;
+  firstName: string;
+  lastName: string;
+  userProfileImage: string;
+  emailAddress: string;
+  phoneNumber: string;
+  location: { latitude: number; longitude: number } | null;
+  isActiveListening: boolean;
+  activeSubscription: boolean;
+  renewalDate: string | null;
+  isEmailVerified: boolean;
+  isPhoneVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastLogin: string;
 }
 
 interface AuthContextType {
@@ -68,16 +68,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
 
   // Load user profile from Firebase
-  const loadUserProfile = async (userID: string) => {
+  const loadUserProfile = async (firebaseUid: string) => {
     try {
-      const result = await getUserProfile(userID);
+      const result = await getUserProfile(firebaseUid);
       if (result.success && result.profile) {
         setUser({
           ...result.profile,
-          EmailVerified: result.profile.EmailVerified || false,
-          PhoneVerified: result.profile.PhoneVerified || false,
-          CreatedAt: result.profile.CreatedAt || new Date().toISOString(),
-          UpdatedAt: result.profile.UpdatedAt || new Date().toISOString()
+          isEmailVerified: result.profile.isEmailVerified || false,
+          isPhoneVerified: result.profile.isPhoneVerified || false,
+          createdAt: result.profile.createdAt || new Date().toISOString(),
+          updatedAt: result.profile.updatedAt || new Date().toISOString(),
+          lastLogin: result.profile.lastLogin || new Date().toISOString(),
         });
         return result.profile;
       }
@@ -112,10 +113,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Set user state
       setUser({
         ...result.profile,
-        EmailVerified: result.profile.EmailVerified || false,
-        PhoneVerified: result.profile.PhoneVerified || false,
-        CreatedAt: result.profile.CreatedAt || new Date().toISOString(),
-        UpdatedAt: result.profile.UpdatedAt || new Date().toISOString()
+        isEmailVerified: result.profile.isEmailVerified || false,
+        isPhoneVerified: result.profile.isPhoneVerified || false,
+        createdAt: result.profile.createdAt || new Date().toISOString(),
+        updatedAt: result.profile.updatedAt || new Date().toISOString(),
+        lastLogin: result.profile.lastLogin || new Date().toISOString(),
       });
       
       // Update location if available
@@ -132,7 +134,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       toast({
         title: "Login Successful",
-        description: `Welcome back, ${result.profile.FirstName}!`,
+        description: `Welcome back, ${result.profile.firstName}!`,
         variant: "default",
       });
       
@@ -179,10 +181,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Set user state
       setUser({
         ...result.profile,
-        EmailVerified: result.profile.EmailVerified || false,
-        PhoneVerified: result.profile.PhoneVerified || false,
-        CreatedAt: result.profile.CreatedAt || new Date().toISOString(),
-        UpdatedAt: result.profile.UpdatedAt || new Date().toISOString()
+        isEmailVerified: result.profile.isEmailVerified || false,
+        isPhoneVerified: result.profile.isPhoneVerified || false,
+        createdAt: result.profile.createdAt || new Date().toISOString(),
+        updatedAt: result.profile.updatedAt || new Date().toISOString(),
+        lastLogin: result.profile.lastLogin || new Date().toISOString(),
       });
       
       // Update location if available
@@ -215,8 +218,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('[AuthContext] Logging out...');
       
       // Update listening status to false before logout
-      if (user?.UserID) {
-        await updateListeningStatus(user.UserID, false);
+      if (user?.userID) {
+        await updateListeningStatus(user.userID, false);
       }
       
       // Sign out from Firebase
@@ -265,11 +268,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateProfile = async (updates: any) => {
     try {
-      if (user?.UserID) {
-        const result = await updateUserProfile(user.UserID, updates);
+      if (user?.userID) {
+        const result = await updateUserProfile(user.userID, updates);
         if (result.success) {
           // Reload the profile to reflect changes
-          await loadUserProfile(user.UserID);
+          await loadUserProfile(user.userID);
           toast({
             title: "Profile Updated",
             description: "Your profile has been updated successfully",
@@ -292,11 +295,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const handleUploadProfileImage = async (file: File) => {
     try {
-      if (user?.UserID) {
-        const result = await uploadProfileImage(user.UserID, file);
+      if (user?.userID) {
+        const result = await uploadProfileImage(user.userID, file);
         if (result.success) {
           // Reload the profile to reflect changes
-          await loadUserProfile(user.UserID);
+          await loadUserProfile(user.userID);
           toast({
             title: "Image Uploaded",
             description: "Profile image updated successfully",
@@ -320,10 +323,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Update listening status
   const handleUpdateListeningStatus = async (isListening: boolean) => {
     try {
-      if (user?.UserID) {
-        await updateListeningStatus(user.UserID, isListening);
+      if (user?.userID) {
+        await updateListeningStatus(user.userID, isListening);
         // Update local state
-        setUser(prev => prev ? { ...prev, IsActiveListening: isListening } : null);
+        setUser(prev => prev ? { ...prev, isActiveListening: isListening } : null);
         
         toast({
           title: isListening ? "Now Playing" : "Playback Stopped",
@@ -344,11 +347,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Update location
   const handleUpdateLocation = async () => {
     try {
-      if (user?.UserID) {
-        const result = await updateUserLocation(user.UserID);
+      if (user?.userID) {
+        const result = await updateUserLocation(user.userID);
         if (result.success) {
           // Reload the profile to reflect changes
-          await loadUserProfile(user.UserID);
+          await loadUserProfile(user.userID);
           toast({
             title: "Location Updated",
             description: "Your location has been updated",
@@ -433,7 +436,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               
               toast({
                 title: "Welcome Back!",
-                description: `Welcome to Spandex Salvation Radio, ${profileResult.profile.FirstName}!`,
+                description: `Welcome to Spandex Salvation Radio, ${profileResult.profile.firstName}!`,
                 variant: "default",
               });
             }
@@ -472,7 +475,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             
             toast({
               title: "Google Sign-In Successful",
-              description: `Welcome to Spandex Salvation Radio, ${result.profileResult.profile.FirstName}!`,
+              description: `Welcome to Spandex Salvation Radio, ${result.profileResult.profile.firstName}!`,
               variant: "default",
             });
           }

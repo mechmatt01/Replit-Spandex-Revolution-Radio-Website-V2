@@ -68,7 +68,7 @@ export default function StickyPlayer() {
 
   return (
     <div
-      className={`fixed bottom-2 left-4 backdrop-blur-md z-50 transition-all duration-700 rounded-2xl shadow-2xl border-0 floating-player-no-focus ${
+      className={`fixed bottom-2 left-4 backdrop-blur-md z-50 transition-all duration-1000 ease-in-out rounded-2xl shadow-2xl border-0 floating-player-no-focus ${
         isVisible
           ? "transform translate-y-0 opacity-100"
           : "transform translate-y-full opacity-0"
@@ -77,13 +77,13 @@ export default function StickyPlayer() {
         width: "320px", 
         maxWidth: "calc(100vw - 32px)",
         background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.12)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.08)')})`
+          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.20)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.12)')})`
           : 'rgba(0, 0, 0, 0.12)',
-        backdropFilter: 'blur(24px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+        backdropFilter: 'blur(32px) saturate(220%)',
+        WebkitBackdropFilter: 'blur(32px) saturate(220%)',
         boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
-          ? `0 12px 40px ${adaptiveTheme.accentColor}20, inset 0 1px 0 rgba(255, 255, 255, 0.15)`
-          : `0 12px 40px ${colors.primary}20, inset 0 1px 0 rgba(255, 255, 255, 0.15)`,
+          ? `0 14px 48px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 24px ${adaptiveTheme.accentColor}12`
+          : `0 14px 48px ${colors.primary}25, inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 24px ${colors.primary}12`,
         color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
           ? adaptiveTheme.textColor 
           : colors.text,
@@ -136,11 +136,11 @@ export default function StickyPlayer() {
                     ? currentTrack.title
                     : stationName
                 }
-                className="font-semibold text-sm whitespace-nowrap"
+                className="font-semibold text-xs whitespace-nowrap"
                 style={{ 
                   color: isAdPlaying ? '#f87171' : colors.text
                 }}
-                maxWidth="100%"
+                maxWidth="85%"
                 isFloating={true}
                 backgroundColor="transparent"
                 alignment="left"

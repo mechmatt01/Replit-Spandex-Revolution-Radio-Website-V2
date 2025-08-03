@@ -91,6 +91,15 @@ function getDefaultArtwork(title: string, artist: string): string {
 export function RadioProvider({ children }: { children: ReactNode }) {
   const { updateListeningStatus } = useFirebaseAuth();
   const { toast } = useToast();
+  
+  // Debug mode - get from localStorage to avoid context issues
+  const [isDebugMode, setIsDebugMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('debug-mode');
+      return saved ? JSON.parse(saved) : false;
+    }
+    return false;
+  });
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(() => {
     // Load volume from localStorage or default to 0.7
@@ -290,11 +299,13 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     } else {
       setError(errorMessage);
       setIsLoading(false);
-      toast({
-        title: "Playback Error",
-        description: errorMessage,
-        variant: "error",
-      });
+      if (isDebugMode) {
+        toast({
+          title: "Playback Error",
+          description: errorMessage,
+          variant: "error",
+        });
+      }
     }
   };
 
@@ -377,18 +388,22 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     // Update listening status to true when user starts playing
     try {
       await updateListeningStatus(true);
-      toast({
-        title: "Now Playing",
-        description: `You're now listening to ${currentStation?.name || 'Spandex Salvation Radio'}`,
-        variant: "default",
-      });
+      if (isDebugMode) {
+        toast({
+          title: "Now Playing",
+          description: `You're now listening to ${currentStation?.name || 'Spandex Salvation Radio'}`,
+          variant: "default",
+        });
+      }
     } catch (error) {
       console.error('Error updating listening status:', error);
-      toast({
-        title: "Status Update Failed",
-        description: "Failed to update listening status",
-        variant: "error",
-      });
+      if (isDebugMode) {
+        toast({
+          title: "Status Update Failed",
+          description: "Failed to update listening status",
+          variant: "error",
+        });
+      }
     }
   };
 
@@ -400,18 +415,22 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     // Update listening status to false when user pauses
     try {
       await updateListeningStatus(false);
-      toast({
-        title: "Playback Stopped",
-        description: "Playback has been stopped",
-        variant: "default",
-      });
+      if (isDebugMode) {
+        toast({
+          title: "Playback Stopped",
+          description: "Playback has been stopped",
+          variant: "default",
+        });
+      }
     } catch (error) {
       console.error('Error updating listening status:', error);
-      toast({
-        title: "Status Update Failed",
-        description: "Failed to update listening status",
-        variant: "error",
-      });
+      if (isDebugMode) {
+        toast({
+          title: "Status Update Failed",
+          description: "Failed to update listening status",
+          variant: "error",
+        });
+      }
     }
   };
 
@@ -438,11 +457,13 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     const audio = audioRef.current;
     if (audio && audio.src && !audio.paused) {
       setError("Unable to connect to radio stream");
-      toast({
-        title: "Connection Error",
-        description: "Unable to connect to radio stream",
-        variant: "error",
-      });
+      if (isDebugMode) {
+        toast({
+          title: "Connection Error",
+          description: "Unable to connect to radio stream",
+          variant: "error",
+        });
+      }
     }
   };
 

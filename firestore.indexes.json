@@ -19,7 +19,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "IsActiveListening",
+          "fieldPath": "isActiveListening",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "location",
           "order": "ASCENDING"
         }
       ]

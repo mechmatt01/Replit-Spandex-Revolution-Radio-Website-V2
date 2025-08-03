@@ -1,7 +1,6 @@
 import type { Express } from "express";
 import { firebaseRadioStorage } from "./firebaseStorage";
 import { universalAdDetector } from "./universalAdDetection";
-import { isAuthenticated } from "./replitAuth";
 import { insertRadioStationSchema } from "@shared/schema";
 import { storage } from "./storage";
 import { z } from "zod";
@@ -34,7 +33,7 @@ export function registerAdminRoutes(app: Express): void {
   };
 
   // Get all radio stations (admin only)
-  app.get("/api/admin/radio-stations", isAuthenticated, requireAdmin, async (req, res) => {
+  app.get("/api/admin/radio-stations", requireAdmin, async (req, res) => {
     try {
       const stations = await firebaseRadioStorage.getRadioStations();
       res.json(stations);
@@ -45,7 +44,7 @@ export function registerAdminRoutes(app: Express): void {
   });
 
   // Get single radio station (admin only)
-  app.get("/api/admin/radio-stations/:id", isAuthenticated, requireAdmin, async (req, res) => {
+  app.get("/api/admin/radio-stations/:id", requireAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const station = await firebaseRadioStorage.getRadioStationById(id);
@@ -62,7 +61,7 @@ export function registerAdminRoutes(app: Express): void {
   });
 
   // Create new radio station (admin only)
-  app.post("/api/admin/radio-stations", isAuthenticated, requireAdmin, async (req, res) => {
+  app.post("/api/admin/radio-stations", requireAdmin, async (req, res) => {
     try {
       const validatedData = insertRadioStationSchema.parse(req.body);
       
@@ -93,7 +92,7 @@ export function registerAdminRoutes(app: Express): void {
   });
 
   // Update radio station (admin only)
-  app.put("/api/admin/radio-stations/:id", isAuthenticated, requireAdmin, async (req, res) => {
+  app.put("/api/admin/radio-stations/:id", requireAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const validatedData = insertRadioStationSchema.partial().parse(req.body);
@@ -137,7 +136,7 @@ export function registerAdminRoutes(app: Express): void {
   });
 
   // Delete radio station (admin only)
-  app.delete("/api/admin/radio-stations/:id", isAuthenticated, requireAdmin, async (req, res) => {
+  app.delete("/api/admin/radio-stations/:id", requireAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       
@@ -157,7 +156,7 @@ export function registerAdminRoutes(app: Express): void {
   });
 
   // Update station sort order (admin only)
-  app.patch("/api/admin/radio-stations/:id/sort", isAuthenticated, requireAdmin, async (req, res) => {
+  app.patch("/api/admin/radio-stations/:id/sort", requireAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const { sortOrder } = req.body;
@@ -180,7 +179,7 @@ export function registerAdminRoutes(app: Express): void {
   });
 
   // Test station metadata API (admin only)
-  app.post("/api/admin/radio-stations/:id/test", isAuthenticated, requireAdmin, async (req, res) => {
+  app.post("/api/admin/radio-stations/:id/test", requireAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const station = await firebaseRadioStorage.getRadioStationById(id);
@@ -209,7 +208,7 @@ export function registerAdminRoutes(app: Express): void {
   });
 
   // Get advertisement detection results for a station
-  app.get("/api/admin/radio-stations/:id/ads", isAuthenticated, requireAdmin, async (req, res) => {
+  app.get("/api/admin/radio-stations/:id/ads", requireAdmin, async (req, res) => {
     try {
       const id = parseInt(req.params.id);
       const station = await firebaseRadioStorage.getRadioStationById(id);
@@ -235,7 +234,7 @@ export function registerAdminRoutes(app: Express): void {
   });
 
   // Initialize default stations (admin only)
-  app.post("/api/admin/radio-stations/initialize", isAuthenticated, requireAdmin, async (req, res) => {
+  app.post("/api/admin/radio-stations/initialize", requireAdmin, async (req, res) => {
     try {
       await firebaseRadioStorage.initializeDefaultStations();
       const stations = await firebaseRadioStorage.getRadioStations();

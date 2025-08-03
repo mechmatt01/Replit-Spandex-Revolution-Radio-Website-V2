@@ -1,53 +1,32 @@
 /* ULTIMATE FOCUS RING KILLER - MAXIMUM PRIORITY CSS */
 /* This file uses the highest CSS specificity to eliminate ALL focus rings */
 
-/* Universal selectors with maximum specificity */
-html body *,
-html body *:before,
-html body *:after,
-html body *:focus,
-html body *:focus-visible,
-html body *:focus-within,
-html body *:active,
-html body button,
-html body button:focus,
-html body button:focus-visible,
-html body button:active,
-html body input,
-html body input:focus,
-html body input:focus-visible,
-html body input:active,
-html body select,
-html body select:focus,
-html body select:focus-visible,
-html body select:active,
-html body textarea,
-html body textarea:focus,
-html body textarea:focus-visible,
-html body textarea:active,
-html body [role="button"],
-html body [role="button"]:focus,
-html body [role="button"]:focus-visible,
-html body [role="button"]:active,
-html body [tabindex],
-html body [tabindex]:focus,
-html body [tabindex]:focus-visible,
-html body [tabindex]:active,
-html body audio,
-html body audio:focus,
-html body audio:focus-visible,
-html body video,
-html body video:focus,
-html body video:focus-visible,
-html body div,
-html body div:focus,
-html body div:focus-visible,
-html body span,
-html body span:focus,
-html body span:focus-visible,
-html body a,
-html body a:focus,
-html body a:focus-visible {
+/* Universal selectors with maximum specificity - ONLY for focus states */
+html body *:focus:not(.enhanced-glow),
+html body *:focus-visible:not(.enhanced-glow),
+html body *:focus-within:not(.enhanced-glow),
+html body button:focus:not(.enhanced-glow),
+html body button:focus-visible:not(.enhanced-glow),
+html body input:focus:not(.enhanced-glow),
+html body input:focus-visible:not(.enhanced-glow),
+html body select:focus:not(.enhanced-glow),
+html body select:focus-visible:not(.enhanced-glow),
+html body textarea:focus:not(.enhanced-glow),
+html body textarea:focus-visible:not(.enhanced-glow),
+html body [role="button"]:focus:not(.enhanced-glow),
+html body [role="button"]:focus-visible:not(.enhanced-glow),
+html body [tabindex]:focus:not(.enhanced-glow),
+html body [tabindex]:focus-visible:not(.enhanced-glow),
+html body audio:focus:not(.enhanced-glow),
+html body audio:focus-visible:not(.enhanced-glow),
+html body video:focus:not(.enhanced-glow),
+html body video:focus-visible:not(.enhanced-glow),
+html body div:focus:not(.enhanced-glow),
+html body div:focus-visible:not(.enhanced-glow),
+html body span:focus:not(.enhanced-glow),
+html body span:focus-visible:not(.enhanced-glow),
+html body a:focus:not(.enhanced-glow),
+html body a:focus-visible:not(.enhanced-glow) {
   outline: 0 !important;
   outline: none !important;
   outline-width: 0 !important;
@@ -88,46 +67,19 @@ html body *:-moz-focusring {
   outline-color: transparent !important;
 }
 
-html body *:focus:not(:focus-visible) {
+/* Remove focus states but keep existing borders */
+html body *:focus:not(:focus-visible):not(.enhanced-glow) {
   outline: none !important;
-  border: none !important;
   box-shadow: none !important;
 }
 
-html body *:focus-visible {
-  outline: none !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-
-/* Override any possible white/light outlines from external libraries */
-html body .focus\:ring-0:focus,
-html body .focus\:ring-1:focus,
-html body .focus\:ring-2:focus,
-html body .focus\:ring-ring:focus,
-html body .focus-visible\:ring-0:focus-visible,
-html body .focus-visible\:ring-1:focus-visible,
-html body .focus-visible\:ring-2:focus-visible,
-html body .focus-visible\:ring-ring:focus-visible,
-html body .focus\:outline-none:focus,
-html body .focus-visible\:outline-none:focus-visible {
+html body *:focus-visible:not(.enhanced-glow) {
   outline: none !important;
   box-shadow: none !important;
-  border: none !important;
-  --tw-ring-shadow: none !important;
-  --tw-ring-offset-shadow: none !important;
 }
 
 /* Target specific white border issues - FIXED: Remove problematic border-color inheritance */
-html body * {
+html body *:not(.enhanced-glow) {
   outline: none !important;
   /* Removed border-color: inherit !important; which was causing white border issues */
-}
-
-/* Ensure no white rings can appear anywhere */
-html body *[style*="outline"],
-html body *[style*="border"] {
-  outline: none !important;
-  /* Don't remove all borders, just focus-related ones */
-  border-color: currentColor !important;
 }

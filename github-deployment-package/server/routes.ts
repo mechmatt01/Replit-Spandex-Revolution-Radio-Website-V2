@@ -2,7 +2,6 @@ import type { Express, Request, Response } from "express";
 import type { Session } from "express-session";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
 import { registerAdminRoutes } from "./adminRoutes";
 import { firebaseRadioStorage, firebaseLiveStatsStorage } from "./firebaseStorage";
 import { universalAdDetector } from "./universalAdDetection";
@@ -118,7 +117,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Auth middleware
-  await setupAuth(app);
+  // Firebase authentication is handled by middleware
 
   // Register admin routes
   registerAdminRoutes(app);

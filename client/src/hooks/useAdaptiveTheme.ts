@@ -106,7 +106,7 @@ export function useAdaptiveTheme(artworkUrl?: string) {
     };
   };
 
-  // Extract colors from image
+  // Extract colors from image with enhanced analysis
   const extractColorsFromImage = useCallback(async (imageUrl: string): Promise<ColorAnalysis | null> => {
     return new Promise((resolve) => {
       try {
@@ -123,8 +123,8 @@ export function useAdaptiveTheme(artworkUrl?: string) {
               return;
             }
 
-            // Resize for performance
-            const size = 50;
+            // Use larger size for better color analysis
+            const size = 150;
             canvas.width = size;
             canvas.height = size;
             
@@ -133,12 +133,16 @@ export function useAdaptiveTheme(artworkUrl?: string) {
             const imageData = ctx.getImageData(0, 0, size, size);
             const data = imageData.data;
             
-            // Sample colors and find dominant
-            const colorCounts: { [key: string]: number } = {};
+            // Enhanced color sampling with saturation weighting and edge detection
+            const colorCounts: { [key: string]: { count: number, r: number, g: number, b: number, saturation: number, brightness: number } } = {};
             let totalR = 0, totalG = 0, totalB = 0;
             let pixelCount = 0;
+            let maxSaturation = 0;
+            let mostSaturatedColor = { r: 0, g: 0, b: 0 };
+            let brightestColor = { r: 0, g: 0, b: 0 };
+            let maxBrightness = 0;
             
-            for (let i = 0; i < data.length; i += 16) { // Sample every 4th pixel
+            for (let i = 0; i < data.length; i += 4) { // Sample every pixel for better accuracy
               const r = data[i];
               const g = data[i + 1];
               const b = data[i + 2];
@@ -150,9 +154,35 @@ export function useAdaptiveTheme(artworkUrl?: string) {
                 totalB += b;
                 pixelCount++;
                 
-                // Group similar colors
-                const colorKey = `${Math.floor(r / 32)}-${Math.floor(g / 32)}-${Math.floor(b / 32)}`;
-                colorCounts[colorKey] = (colorCounts[colorKey] || 0) + 1;
+                // Calculate saturation and brightness
+                const max = Math.max(r, g, b);
+                const min = Math.min(r, g, b);
+                const saturation = max === 0 ? 0 : (max - min) / max;
+                const brightness = (r + g + b) / 3;
+                
+                // Track most saturated color
+                if (saturation > maxSaturation) {
+                  maxSaturation = saturation;
+                  mostSaturatedColor = { r, g, b };
+                }
+                
+                // Track brightest color
+                if (brightness > maxBrightness) {
+                  maxBrightness = brightness;
+                  brightestColor = { r, g, b };
+                }
+                
+                // Group similar colors with saturation weighting
+                const colorKey = `${Math.floor(r / 20)}-${Math.floor(g / 20)}-${Math.floor(b / 20)}`;
+                if (!colorCounts[colorKey]) {
+                  colorCounts[colorKey] = { count: 0, r: 0, g: 0, b: 0, saturation: 0, brightness: 0 };
+                }
+                colorCounts[colorKey].count++;
+                colorCounts[colorKey].r += r;
+                colorCounts[colorKey].g += g;
+                colorCounts[colorKey].b += b;
+                colorCounts[colorKey].saturation = Math.max(colorCounts[colorKey].saturation, saturation);
+                colorCounts[colorKey].brightness = Math.max(colorCounts[colorKey].brightness, brightness);
               }
             }
             
@@ -161,12 +191,40 @@ export function useAdaptiveTheme(artworkUrl?: string) {
               return;
             }
             
-            // Calculate average color
-            const avgR = Math.round(totalR / pixelCount);
-            const avgG = Math.round(totalG / pixelCount);
-            const avgB = Math.round(totalB / pixelCount);
+            // Find the most vibrant color cluster with better scoring
+            let bestColor = { r: 0, g: 0, b: 0 };
+            let bestScore = 0;
             
-            resolve(analyzeColor(avgR, avgG, avgB));
+            Object.values(colorCounts).forEach(color => {
+              const avgR = Math.round(color.r / color.count);
+              const avgG = Math.round(color.g / color.count);
+              const avgB = Math.round(color.b / color.count);
+              
+              // Enhanced scoring: consider saturation, brightness, and frequency
+              const saturation = color.saturation;
+              const brightness = color.brightness / 255; // Normalize to 0-1
+              const frequency = Math.log(color.count + 1);
+              
+              // Prefer colors that are both saturated and bright
+              const score = (saturation * 0.6 + brightness * 0.4) * frequency;
+              
+              if (score > bestScore) {
+                bestScore = score;
+                bestColor = { r: avgR, g: avgG, b: avgB };
+              }
+            });
+            
+            // Use the most vibrant color, with fallback priority
+            let finalColor;
+            if (maxSaturation > 0.4) {
+              finalColor = mostSaturatedColor;
+            } else if (maxBrightness > 200) {
+              finalColor = brightestColor;
+            } else {
+              finalColor = bestColor;
+            }
+            
+            resolve(analyzeColor(finalColor.r, finalColor.g, finalColor.b));
             
           } catch (error) {
             console.warn('Error analyzing image colors:', error);
@@ -188,21 +246,21 @@ export function useAdaptiveTheme(artworkUrl?: string) {
   const generateAdaptiveTheme = useCallback((colorAnalysis: ColorAnalysis): AdaptiveTheme => {
     const [r, g, b] = hexToRgb(colorAnalysis.dominant.replace('rgb(', '').replace(')', '').split(',').map(n => parseInt(n.trim())).map(n => n.toString(16).padStart(2, '0')).join(''));
     
-    // Very low opacity for glass-like effect
-    const backgroundOpacity = colorAnalysis.lightness > 0.6 ? 0.12 : 0.08;
+    // Enhanced glassmorphism with dynamic opacity based on color properties
+    const backgroundOpacity = colorAnalysis.lightness > 0.6 ? 0.25 : 0.20;
     const backgroundColor = `rgba(${r}, ${g}, ${b}, ${backgroundOpacity})`;
     
     // Get optimal text color
     const textColor = getOptimalTextColor([r, g, b]);
     
-    // Create accent color - more vibrant version
-    const accentR = Math.min(255, Math.max(0, colorAnalysis.isWarm ? r * 1.2 : r * 1.1));
-    const accentG = Math.min(255, Math.max(0, g * 1.1));
-    const accentB = Math.min(255, Math.max(0, colorAnalysis.isWarm ? b * 0.8 : b * 1.2));
+    // Create vibrant accent color with enhanced saturation
+    const accentR = Math.min(255, Math.max(0, colorAnalysis.isWarm ? r * 1.3 : r * 1.2));
+    const accentG = Math.min(255, Math.max(0, g * 1.2));
+    const accentB = Math.min(255, Math.max(0, colorAnalysis.isWarm ? b * 0.7 : b * 1.3));
     const accentColor = `rgb(${Math.round(accentR)}, ${Math.round(accentG)}, ${Math.round(accentB)})`;
     
-    // Create very subtle overlay for glass effect
-    const overlayOpacity = colorAnalysis.lightness > 0.5 ? 0.08 : 0.05;
+    // Create dynamic overlay for enhanced glass effect
+    const overlayOpacity = colorAnalysis.lightness > 0.5 ? 0.15 : 0.10;
     const overlayColor = textColor === '#ffffff' 
       ? `rgba(0, 0, 0, ${overlayOpacity})`
       : `rgba(255, 255, 255, ${overlayOpacity})`;

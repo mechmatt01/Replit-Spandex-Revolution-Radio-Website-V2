@@ -230,10 +230,10 @@ export default function RadioCoPlayer() {
           ? adaptiveTheme.textColor 
           : colors.text,
         border: 'none',
-        // Responsive width: Reduced by 20% as requested - now 26.666vw instead of 33.333vw
-        width: 'clamp(384px, 26.666vw, 72vw)',
-        minWidth: 'max-content',
-        maxWidth: '72vw',
+        // Fixed stable width - no more responsive changes that cause size fluctuations
+        width: 'clamp(400px, 30vw, 600px)',
+        minWidth: '400px',
+        maxWidth: '600px',
         // Dynamic padding - expand when volume slider is visible with smooth transition
         paddingTop: '20px',
         paddingLeft: '20px', 

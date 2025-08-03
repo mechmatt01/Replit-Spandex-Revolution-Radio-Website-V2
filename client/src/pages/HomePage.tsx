@@ -72,10 +72,6 @@ export default function HomePage() {
       </FadeInView>
       
       <FadeInView direction="up" delay={0}>
-        <StatsAndLocations />
-      </FadeInView>
-      
-      <FadeInView direction="up" delay={0}>
         <Schedule />
       </FadeInView>
       
@@ -117,6 +113,10 @@ export default function HomePage() {
         <section id="map" className="py-8">
           <FullWidthGlobeMap />
         </section>
+      </FadeInView>
+      
+      <FadeInView direction="up" delay={0}>
+        <StatsAndLocations />
       </FadeInView>
       
       <FadeInView direction="up" delay={0}>

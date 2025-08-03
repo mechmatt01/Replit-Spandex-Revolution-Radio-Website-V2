@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import ThemedMusicLogo from "../components/ThemedMusicLogo";
+import { artworkFallbackService } from "../lib/artworkFallback";
 
 interface InteractiveAlbumArtProps {
   artwork?: string;
@@ -27,6 +28,8 @@ export default function InteractiveAlbumArt({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [previousGradient, setPreviousGradient] = useState(getGradient());
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [fallbackArtwork, setFallbackArtwork] = useState<string | null>(null);
+  const [isSearchingFallback, setIsSearchingFallback] = useState(false);
 
   const sizeClasses = {
     sm: "w-10 h-10 sm:w-12 sm:h-12",
@@ -70,9 +73,24 @@ export default function InteractiveAlbumArt({
     setImageLoaded(true);
   };
 
-  const handleImageError = () => {
+  const handleImageError = async () => {
     setImageLoaded(false);
-    console.warn(`Failed to load artwork for "${title}" by ${artist}. Falling back to themed music logo.`);
+    console.warn(`Failed to load artwork for "${title}" by ${artist}. Searching for fallback...`);
+    
+    if (!isSearchingFallback) {
+      setIsSearchingFallback(true);
+      try {
+        const fallback = await artworkFallbackService.getArtworkWithFallback(artwork, title, artist);
+        if (fallback && fallback !== artwork) {
+          setFallbackArtwork(fallback);
+          console.log(`Found fallback artwork for "${title}" by ${artist}`);
+        }
+      } catch (error) {
+        console.warn('Fallback artwork search failed:', error);
+      } finally {
+        setIsSearchingFallback(false);
+      }
+    }
   };
 
   return (
@@ -116,7 +134,7 @@ export default function InteractiveAlbumArt({
       </div>
 
       {/* Album Artwork with Verification */}
-      {artwork && artwork.trim() && artwork !== "advertisement" && (
+      {((artwork && artwork.trim() && artwork !== "advertisement") || fallbackArtwork) && (
         <div
           className="absolute inset-0 transition-all duration-500"
           style={{
@@ -125,7 +143,7 @@ export default function InteractiveAlbumArt({
           }}
         >
           <img
-            src={artwork}
+            src={fallbackArtwork || artwork}
             alt={`${title} by ${artist}`}
             className="w-full h-full object-cover"
             onLoad={handleImageLoad}

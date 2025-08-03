@@ -73,7 +73,7 @@ export async function comparePassword(password: string, hash: string): Promise<b
 }
 
 // Get user's location
-export async function getUserLocation(): Promise<{ lat: number; lng: number } | null> {
+export async function getUserLocation(): Promise<{ latitude: number; longitude: number } | null> {
   return new Promise((resolve) => {
     if (!navigator.geolocation) {
       resolve(null);
@@ -83,8 +83,8 @@ export async function getUserLocation(): Promise<{ lat: number; lng: number } | 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         resolve({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
         });
       },
       () => {
@@ -120,24 +120,35 @@ export async function initializeAdminCollection() {
 // Verify admin credentials
 export async function verifyAdminCredentials(username: string, password: string): Promise<boolean> {
   try {
+    console.log('[Admin] Verifying credentials for username:', username);
+    
     const adminRef = doc(db, 'Admin', 'Information');
     const adminDoc = await getDoc(adminRef);
     
     if (!adminDoc.exists()) {
-      console.log('Admin collection not found, initializing...');
+      console.log('[Admin] Admin collection not found, initializing...');
       await initializeAdminCollection();
       return false;
     }
     
     const adminData = adminDoc.data();
-    return adminData.Username === username && adminData.Password === password;
+    console.log('[Admin] Retrieved admin data:', { 
+      storedUsername: adminData.Username, 
+      storedPassword: adminData.Password ? '***' : 'undefined',
+      providedUsername: username,
+      providedPassword: password ? '***' : 'undefined'
+    });
+    
+    const isValid = adminData.Username === username && adminData.Password === password;
+    console.log('[Admin] Credentials validation result:', isValid);
+    
+    return isValid;
   } catch (error) {
-    console.error('Error verifying admin credentials:', error);
+    console.error('[Admin] Error verifying admin credentials:', error);
     return false;
   }
 }
 
-// Register new user with email/password
 export const registerUser = async (userData: {
   firstName: string;
   lastName: string;
@@ -146,8 +157,8 @@ export const registerUser = async (userData: {
   password: string;
 }) => {
   try {
-    console.log('[Firebase] Attempting to register user:', userData.email);
-
+    console.log('[Firebase] Starting user registration...');
+    
     const response = await fetch('/api/auth/firebase/register', {
       method: 'POST',
       headers: {
@@ -155,221 +166,202 @@ export const registerUser = async (userData: {
       },
       body: JSON.stringify(userData),
     });
-
+    
     const result = await response.json();
-
-    if (!response.ok) {
-      console.error('[Firebase] Registration failed:', result);
-      return { success: false, error: result.error || 'Registration failed' };
+    
+    if (result.success) {
+      console.log('[Firebase] User registration successful');
+      return result;
+    } else {
+      console.log('[Firebase] Registration failed:', result.error);
+      return result;
     }
-
-    console.log('[Firebase] Registration successful:', result);
-    return { 
-      success: true, 
-      userID: result.userID,
-      profile: result.profile
-    };
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Firebase] Registration error:', error);
-    return { success: false, error: error.message || 'Registration failed' };
+    return {
+      success: false,
+      error: 'Failed to create user profile',
+    };
   }
 };
 
-// Login user with email/password
 export async function loginUser(email: string, password: string) {
   try {
-    console.log('Attempting login for:', email);
-
-    // Query Firestore to find user by email
-    const usersRef = collection(db, 'Users');
-    const q = query(usersRef, where('EmailAddress', '==', email));
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-      console.log('No user found with email:', email);
-      return { success: false, error: 'Invalid email or password' };
+    console.log('[Firebase] Attempting login for:', email);
+    
+    const response = await fetch('/api/auth/firebase/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      console.log('[Firebase] Login successful for:', email);
+      return result;
+    } else {
+      console.log('[Firebase] Login failed:', result.error);
+      return result;
     }
-
-    // Get the first matching user (should be unique)
-    const userDoc = querySnapshot.docs[0];
-    const userData = userDoc.data();
-
-    // Verify password
-    const isPasswordValid = await comparePassword(password, userData.PasswordHash);
-
-    if (!isPasswordValid) {
-      console.log('Invalid password for user:', email);
-      return { success: false, error: 'Invalid email or password' };
-    }
-
-    // Update last active timestamp
-    await updateUserLastActive(userData.UserID);
-
-    console.log('Login successful for user:', userData.UserID);
-    return { 
-      success: true, 
-      userID: userData.UserID,
-      profile: {
-        FirstName: userData.FirstName,
-        LastName: userData.LastName,
-        UserProfileImage: userData.UserProfileImage,
-        EmailAddress: userData.EmailAddress,
-        PhoneNumber: userData.PhoneNumber,
-        Location: userData.Location,
-        IsActiveListening: userData.IsActiveListening,
-        ActiveSubscription: userData.ActiveSubscription,
-        RenewalDate: userData.RenewalDate,
-        UserID: userData.UserID,
-      }
-    };
   } catch (error) {
-    console.error('Error logging in user:', error);
-    return { success: false, error };
+    console.error('[Firebase] Login error:', error);
+    return { success: false, error: 'Login failed. Please try again.' };
   }
 }
 
-// Update user's last active timestamp
 export async function updateUserLastActive(userID: string) {
   try {
-    const docRef = doc(db, 'Users', `User: ${userID}`);
-    await updateDoc(docRef, {
-      LastActive: new Date().toISOString(),
+    await updateDoc(doc(db, 'Users', `User: ${userID}`), {
+      lastLogin: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
-    console.log('User last active timestamp updated');
   } catch (error) {
     console.error('Error updating user last active:', error);
   }
 }
 
-// Get user profile by UserID
 export async function getUserProfile(userID: string) {
   try {
     const userDoc = await getDoc(doc(db, 'Users', `User: ${userID}`));
-
-    if (!userDoc.exists()) {
-      return { success: false, error: 'User not found' };
+    
+    if (userDoc.exists()) {
+      return {
+        success: true,
+        profile: userDoc.data(),
+      };
+    } else {
+      return {
+        success: false,
+        error: 'User profile not found',
+      };
     }
-
-    const userData = userDoc.data();
-    return { 
-      success: true, 
-      profile: {
-        FirstName: userData.FirstName,
-        LastName: userData.LastName,
-        UserProfileImage: userData.UserProfileImage,
-        EmailAddress: userData.EmailAddress,
-        PhoneNumber: userData.PhoneNumber,
-        Location: userData.Location,
-        IsActiveListening: userData.IsActiveListening,
-        ActiveSubscription: userData.ActiveSubscription,
-        RenewalDate: userData.RenewalDate,
-        UserID: userData.UserID,
-      }
-    };
   } catch (error) {
     console.error('Error getting user profile:', error);
-    return { success: false, error };
+    return {
+      success: false,
+      error: 'Failed to get user profile',
+    };
   }
 }
 
-// Create user profile in Firebase (for Google OAuth)
 export async function createUserProfile(authUser: any, customUserID?: string) {
   try {
     const userID = customUserID || generateUserID();
     const location = await getUserLocation();
-
+    
     const userProfile = {
-      FirstName: authUser.displayName?.split(' ')[0] || '',
-      LastName: authUser.displayName?.split(' ').slice(1).join(' ') || '',
-      UserProfileImage: authUser.photoURL || getRandomDefaultAvatar(),
-      EmailAddress: authUser.email || '',
-      PhoneNumber: authUser.phoneNumber || '',
-      Location: location ? { lat: location.lat, lng: location.lng } : null,
-      IsActiveListening: false,
-      ActiveSubscription: false,
-      RenewalDate: null,
-      UserID: userID,
-      GoogleUID: authUser.uid,
-      CreatedAt: new Date().toISOString(),
-      UpdatedAt: new Date().toISOString(),
-      LastActive: new Date().toISOString(),
+      firstName: authUser.displayName?.split(' ')[0] || '',
+      lastName: authUser.displayName?.split(' ').slice(1).join(' ') || '',
+      userProfileImage: authUser.photoURL || getRandomDefaultAvatar(),
+      emailAddress: authUser.email || '',
+      phoneNumber: '',
+      location: location,
+      isActiveListening: false,
+      activeSubscription: false,
+      renewalDate: null,
+      lastLogin: new Date().toISOString(),
+      userID: userID,
+      isEmailVerified: authUser.emailVerified || false,
+      isPhoneVerified: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
-
-    // Save to Firebase Firestore
+    
     await setDoc(doc(db, 'Users', `User: ${userID}`), userProfile);
-
-    console.log('User profile created successfully:', userID);
-    return { success: true, userID, profile: userProfile };
+    
+    return {
+      success: true,
+      profile: userProfile,
+    };
   } catch (error) {
     console.error('Error creating user profile:', error);
-    return { success: false, error };
+    return {
+      success: false,
+      error: 'Failed to create user profile',
+    };
   }
 }
 
-// Update user profile in Firebase
 export async function updateUserProfile(userID: string, updates: any) {
   try {
-    const docRef = doc(db, 'Users', `User: ${userID}`);
-    const updateData = {
+    await updateDoc(doc(db, 'Users', `User: ${userID}`), {
       ...updates,
-      UpdatedAt: new Date().toISOString(),
-    };
-
-    await updateDoc(docRef, updateData);
-    console.log('User profile updated successfully');
+      updatedAt: new Date().toISOString(),
+    });
+    
     return { success: true };
   } catch (error) {
     console.error('Error updating user profile:', error);
-    return { success: false, error };
+    return { success: false, error: 'Failed to update profile' };
   }
 }
 
-// Upload profile image to Firebase Storage
 export async function uploadProfileImage(userID: string, file: File) {
   try {
-    const storageRef = ref(storage, `User: ${userID}/profile-image`);
-    const snapshot = await uploadBytes(storageRef, file);
-    const downloadURL = await getDownloadURL(snapshot.ref);
-
-    // Update profile with new image URL
-    await updateUserProfile(userID, { UserProfileImage: downloadURL });
-
-    return { success: true, url: downloadURL };
+    const storageRef = ref(storage, `Users/User: ${userID}/profile-image`);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    
+    await updateUserProfile(userID, { userProfileImage: downloadURL });
+    
+    return { success: true, imageUrl: downloadURL };
   } catch (error) {
     console.error('Error uploading profile image:', error);
-    return { success: false, error };
+    return { success: false, error: 'Failed to upload image' };
   }
 }
 
-// Update listening status
 export async function updateListeningStatus(userID: string, isListening: boolean) {
   try {
-    await updateUserProfile(userID, { 
-      IsActiveListening: isListening,
-      LastActive: new Date().toISOString(),
+    const response = await fetch('/api/auth/listening-status', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ isActiveListening: isListening }),
     });
-    return { success: true };
+    
+    const result = await response.json();
+    if (result.success) {
+      console.log(`Updated listening status for user ${userID}: ${isListening}`);
+      return { success: true };
+    } else {
+      return { success: false, error: result.error };
+    }
   } catch (error) {
     console.error('Error updating listening status:', error);
-    return { success: false, error };
+    return { success: false, error: 'Failed to update listening status' };
   }
 }
 
-// Update location
 export async function updateUserLocation(userID: string) {
   try {
     const location = await getUserLocation();
+    
     if (location) {
-      await updateUserProfile(userID, { 
-        Location: location,
-        LastActive: new Date().toISOString(),
+      const response = await fetch('/api/auth/location', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ latitude: location.latitude, longitude: location.longitude }),
       });
-      return { success: true };
+      
+      const result = await response.json();
+      if (result.success) {
+        return { success: true, location };
+      } else {
+        return { success: false, error: result.error };
+      }
+    } else {
+      return { success: false, error: 'Location not available' };
     }
-    return { success: false, error: 'Location not available' };
   } catch (error) {
-    console.error('Error updating location:', error);
-    return { success: false, error };
+    console.error('Error updating user location:', error);
+    return { success: false, error: 'Failed to update location' };
   }
 }
 
@@ -464,8 +456,21 @@ export async function handleRedirectResult() {
       console.log('User display name:', user.displayName);
       console.log('User UID:', user.uid);
 
-      // Create or update user profile
-      const profileResult = await createUserProfile(user);
+      // Call server API to create or update user profile
+      const response = await fetch('/api/auth/firebase/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          googleId: user.uid,
+          email: user.email,
+          firstName: user.displayName?.split(' ')[0] || '',
+          lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+        }),
+      });
+
+      const profileResult = await response.json();
       console.log('Profile creation result:', profileResult);
       return { success: true, user, profileResult };
     }

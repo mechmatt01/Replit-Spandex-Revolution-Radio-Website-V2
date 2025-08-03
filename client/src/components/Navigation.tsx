@@ -24,7 +24,7 @@ import MetalThemeSwitcher from "./MetalThemeSwitcher";
 import AuthModal from "./AuthModal";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
-// // import MusicLogoPath from "../../attached_assets/MusicLogoIcon@3x.png";
+import MusicLogoPath from "../../../attached_assets/MusicLogoIcon@3x.png";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);

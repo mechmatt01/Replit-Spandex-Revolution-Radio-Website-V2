@@ -66,6 +66,23 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const modalRef = useRef<HTMLDivElement>(null);
+  
+  // Debug mode state
+  const [isDebugMode, setIsDebugMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('debug-mode');
+      return saved ? JSON.parse(saved) : false;
+    }
+    return false;
+  });
+  
+  const toggleDebugMode = () => {
+    const newValue = !isDebugMode;
+    setIsDebugMode(newValue);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('debug-mode', JSON.stringify(newValue));
+    }
+  };
 
   // Initialize admin collection on component mount
   useEffect(() => {
@@ -205,10 +222,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
   if (!isAuthenticated) {
     return (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <Card 
           ref={modalRef}
-          className={`w-full max-w-md relative ${isDarkMode ? "bg-gray-900" : "bg-white"}`}
+          className={`w-full max-w-md relative ${isDarkMode ? "bg-gray-900" : "bg-white"} mx-auto`}
         >
           <CardHeader className="relative">
             <Button
@@ -283,7 +300,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className={`w-full max-w-6xl max-h-[90vh] overflow-y-auto ${isDarkMode ? "bg-gray-900" : "bg-white"} rounded-lg shadow-2xl`}>
+      <div className={`w-full max-w-6xl max-h-[90vh] overflow-y-auto ${isDarkMode ? "bg-gray-900" : "bg-white"} rounded-lg shadow-2xl mx-auto`}>
         <div className="sticky top-0 z-10 p-6 border-b border-gray-200 dark:border-gray-700 bg-inherit">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -456,7 +473,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
-                  Show Schedule
+                  Shows Management
                 </h3>
                 <Button
                   onClick={() => setNewShowItem({})}
@@ -468,31 +485,176 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                 </Button>
               </div>
 
+              {/* Shows Tabs */}
+              <div className="flex space-x-2 border-b border-gray-200 dark:border-gray-700">
+                <button
+                  className={`px-4 py-2 text-sm font-medium ${
+                    isDarkMode 
+                      ? "text-white border-b-2 border-blue-500" 
+                      : "text-gray-600 border-b-2 border-blue-500"
+                  }`}
+                >
+                  Upcoming Shows
+                </button>
+                <button
+                  className={`px-4 py-2 text-sm font-medium ${
+                    isDarkMode 
+                      ? "text-gray-400 hover:text-white" 
+                      : "text-gray-500 hover:text-gray-700"
+                  }`}
+                >
+                  Past Shows
+                </button>
+              </div>
+
+              {/* Upcoming Shows */}
               <div className="grid gap-4">
                 {showSchedules?.map((show) => (
                   <Card key={show.id} className={isDarkMode ? "bg-gray-800" : "bg-white"}>
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
-                        <div>
+                        <div className="flex-1">
                           <h4 className={`font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
                             {show.title}
                           </h4>
                           <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                             {show.host} • {show.dayOfWeek} at {show.time}
                           </p>
+                          {show.description && (
+                            <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+                              {show.description}
+                            </p>
+                          )}
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setEditingShow(show)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setEditingShow(show)}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              // Handle delete show
+                              toast({
+                                title: "Delete Show",
+                                description: "Are you sure you want to delete this show?",
+                                variant: "error",
+                              });
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
+
+              {/* Add/Edit Show Modal */}
+              {(newShowItem.id !== undefined || editingShow) && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                  <div className={`p-6 rounded-lg max-w-md w-full mx-auto ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+                    <h3 className={`text-lg font-semibold mb-4 ${isDarkMode ? "text-white" : "text-black"}`}>
+                      {editingShow ? "Edit Show" : "Add New Show"}
+                    </h3>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="show-title">Show Title</Label>
+                        <Input
+                          id="show-title"
+                          placeholder="Enter show title"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="show-host">Host</Label>
+                        <Input
+                          id="show-host"
+                          placeholder="Enter host name"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="show-description">Description</Label>
+                        <Textarea
+                          id="show-description"
+                          placeholder="Enter show description"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="show-day">Day of Week</Label>
+                          <Select>
+                            <SelectTrigger className="mt-1">
+                              <SelectValue placeholder="Select day" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="monday">Monday</SelectItem>
+                              <SelectItem value="tuesday">Tuesday</SelectItem>
+                              <SelectItem value="wednesday">Wednesday</SelectItem>
+                              <SelectItem value="thursday">Thursday</SelectItem>
+                              <SelectItem value="friday">Friday</SelectItem>
+                              <SelectItem value="saturday">Saturday</SelectItem>
+                              <SelectItem value="sunday">Sunday</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="show-time">Time</Label>
+                          <Input
+                            id="show-time"
+                            type="time"
+                            className="mt-1"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="show-duration">Duration (minutes)</Label>
+                        <Input
+                          id="show-duration"
+                          type="number"
+                          placeholder="60"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div className="flex space-x-3 pt-4">
+                        <Button 
+                          style={{ backgroundColor: colors.primary }}
+                          className="flex-1"
+                        >
+                          <Save className="w-4 h-4 mr-2" />
+                          Save Show
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          className="flex-1"
+                          style={{ backgroundColor: "#6b7280", color: "white" }}
+                          onClick={() => {
+                            setEditingShow(null);
+                            setNewShowItem({});
+                          }}
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -500,7 +662,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
-                  Merchandise
+                  Products Management
                 </h3>
                 <Button
                   onClick={() => setNewMerchItem({})}
@@ -508,10 +670,11 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   style={{ backgroundColor: colors.primary }}
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add Item</span>
+                  <span>Add Product</span>
                 </Button>
               </div>
 
+              {/* Products Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {mockMerch.map((item) => (
                   <Card key={item.id} className={isDarkMode ? "bg-gray-800" : "bg-white"}>
@@ -523,7 +686,10 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                       <p className={`text-sm ${isDarkMode ? "text-gray-400" : "text-gray-600"}`}>
                         ${item.price}
                       </p>
-                      <div className="flex items-center justify-between mt-2">
+                      <p className={`text-xs mt-1 ${isDarkMode ? "text-gray-500" : "text-gray-500"}`}>
+                        {item.description}
+                      </p>
+                      <div className="flex items-center justify-between mt-3">
                         <Badge variant={item.featured ? "default" : "secondary"}>
                           {item.featured ? "Featured" : "Regular"}
                         </Badge>
@@ -531,10 +697,146 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                           Stock: {item.stock}
                         </span>
                       </div>
+                      <div className="flex space-x-2 mt-3">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditingMerch(item)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            toast({
+                              title: "Delete Product",
+                              description: "Are you sure you want to delete this product?",
+                              variant: "error",
+                            });
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
+
+              {/* Add/Edit Product Modal */}
+              {(newMerchItem.id !== undefined || editingMerch) && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                  <div className={`p-6 rounded-lg max-w-md w-full mx-auto ${isDarkMode ? "bg-gray-800" : "bg-white"}`}>
+                    <h3 className={`text-lg font-semibold mb-4 ${isDarkMode ? "text-white" : "text-black"}`}>
+                      {editingMerch ? "Edit Product" : "Add New Product"}
+                    </h3>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="product-name">Product Name</Label>
+                        <Input
+                          id="product-name"
+                          placeholder="Enter product name"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="product-price">Price ($)</Label>
+                        <Input
+                          id="product-price"
+                          type="number"
+                          step="0.01"
+                          placeholder="25.99"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="product-description">Description</Label>
+                        <Textarea
+                          id="product-description"
+                          placeholder="Enter product description"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="product-category">Category</Label>
+                        <Select>
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="clothing">Clothing</SelectItem>
+                            <SelectItem value="accessories">Accessories</SelectItem>
+                            <SelectItem value="music">Music</SelectItem>
+                            <SelectItem value="collectibles">Collectibles</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="product-stock">Stock Quantity</Label>
+                          <Input
+                            id="product-stock"
+                            type="number"
+                            placeholder="50"
+                            className="mt-1"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="product-featured">Featured</Label>
+                          <Select>
+                            <SelectTrigger className="mt-1">
+                              <SelectValue placeholder="Select status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="true">Featured</SelectItem>
+                              <SelectItem value="false">Regular</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="product-image">Product Image</Label>
+                        <Input
+                          id="product-image"
+                          type="file"
+                          accept="image/*"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div className="flex space-x-3 pt-4">
+                        <Button 
+                          style={{ backgroundColor: colors.primary }}
+                          className="flex-1"
+                        >
+                          <Save className="w-4 h-4 mr-2" />
+                          Save Product
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          className="flex-1"
+                          style={{ backgroundColor: "#6b7280", color: "white" }}
+                          onClick={() => {
+                            setEditingMerch(null);
+                            setNewMerchItem({});
+                          }}
+                        >
+                          <X className="w-4 h-4 mr-2" />
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -558,8 +860,58 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
               <h3 className={`text-lg font-semibold ${isDarkMode ? "text-white" : "text-black"}`}>
                 Admin Settings
               </h3>
+              
+              {/* Debug Mode Toggle */}
               <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
-                <CardContent className="p-6">
+                <CardHeader>
+                  <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>Debug Mode</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                        Enable debug mode to show detailed notifications and logs
+                      </p>
+                    </div>
+                    <Button
+                      variant={isDebugMode ? "default" : "outline"}
+                      onClick={toggleDebugMode}
+                      style={{ backgroundColor: isDebugMode ? colors.primary : undefined }}
+                    >
+                      {isDebugMode ? "Debug Mode ON" : "Debug Mode OFF"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Live Data Toggle */}
+              <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                <CardHeader>
+                  <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>Live Data</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className={`text-sm ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>
+                        Enable real-time data updates and live statistics
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      style={{ backgroundColor: colors.primary }}
+                    >
+                      Live Data ON
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Site Settings */}
+              <Card className={isDarkMode ? "bg-gray-800" : "bg-white"}>
+                <CardHeader>
+                  <CardTitle className={`${isDarkMode ? "text-white" : "text-black"}`}>Site Configuration</CardTitle>
+                </CardHeader>
+                <CardContent>
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="site-title">Site Title</Label>
@@ -585,9 +937,23 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                         className="mt-1"
                       />
                     </div>
-                    <Button style={{ backgroundColor: colors.primary }}>
-                      Save Settings
-                    </Button>
+                    <div className="flex space-x-3 pt-4">
+                      <Button 
+                        style={{ backgroundColor: colors.primary }}
+                        className="flex-1"
+                      >
+                        <Save className="w-4 h-4 mr-2" />
+                        Save Changes
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        className="flex-1"
+                        style={{ backgroundColor: "#6b7280", color: "white" }}
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        Cancel
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

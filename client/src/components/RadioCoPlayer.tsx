@@ -214,26 +214,26 @@ export default function RadioCoPlayer() {
 
   return (
     <section
-                  className="backdrop-blur-md rounded-2xl shadow-xl transition-all duration-700 ease-in-out mx-auto overflow-visible"
+                  className="backdrop-blur-md rounded-2xl shadow-xl transition-all duration-1000 ease-in-out mx-auto overflow-visible"
       role="region"
       aria-label="Radio player controls"
       style={{
         background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
-          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.15)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.10)')})`
+          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.25)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.15)')})`
           : 'rgba(255, 255, 255, 0.12)',
-        backdropFilter: 'blur(32px) saturate(200%)',
-        WebkitBackdropFilter: 'blur(32px) saturate(200%)',
+        backdropFilter: 'blur(40px) saturate(250%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(250%)',
         boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-          ? `0 12px 48px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`
-          : `0 12px 48px ${colors.primary}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`,
+          ? `0 16px 64px ${adaptiveTheme.accentColor}30, inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 32px ${adaptiveTheme.accentColor}15`
+          : `0 16px 64px ${colors.primary}30, inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 32px ${colors.primary}15`,
         color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
           ? adaptiveTheme.textColor 
           : colors.text,
         border: 'none',
-        // Responsive width: Reduced by 20% as requested - now 26.666vw instead of 33.333vw
-        width: 'clamp(384px, 26.666vw, 72vw)',
-        minWidth: 'max-content',
-        maxWidth: '72vw',
+        // Fixed stable width - no more responsive changes that cause size fluctuations
+        width: 'clamp(400px, 30vw, 600px)',
+        minWidth: '400px',
+        maxWidth: '600px',
         // Dynamic padding - expand when volume slider is visible with smooth transition
         paddingTop: '20px',
         paddingLeft: '20px', 
@@ -288,18 +288,18 @@ export default function RadioCoPlayer() {
               className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto shadow-xl z-20 scrollbar-thin"
               style={{
                 background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
-                  ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.95)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.90)')})`
+                  ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.95)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.92)')})`
                   : 'rgba(0, 0, 0, 0.95)',
-                backdropFilter: 'blur(24px) saturate(180%)',
-                WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+                backdropFilter: 'blur(32px) saturate(220%)',
+                WebkitBackdropFilter: 'blur(32px) saturate(220%)',
                 borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                  ? adaptiveTheme.accentColor + "40"
-                  : colors.primary + "40",
+                  ? adaptiveTheme.accentColor + "50"
+                  : colors.primary + "50",
                 borderRadius: "12px",
                 minWidth: "300px",
                 boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                  ? `0 8px 32px ${adaptiveTheme.accentColor}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`
-                  : `0 8px 32px ${colors.primary}15, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
+                  ? `0 12px 48px ${adaptiveTheme.accentColor}20, inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.08)`
+                  : `0 12px 48px ${colors.primary}20, inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.08)`,
               }}
             >
               <div className="p-2">
@@ -536,18 +536,20 @@ export default function RadioCoPlayer() {
 
           <div className="flex justify-center mb-2 w-full overflow-hidden">
             <div
-              className={`w-full max-w-full ${isTransitioning ? "song-change-shimmer" : ""}`}
+              className={`w-full max-w-[90%] ${isTransitioning ? "song-change-shimmer" : ""}`}
             >
               <ScrollingText
                 text={currentTrack.title}
-                className={`font-black whitespace-nowrap`}
+                className={`font-black whitespace-nowrap text-center`}
                 style={{ 
-                  fontSize: "32px", 
+                  fontSize: "28px", 
                   lineHeight: "1",
-                  color: isAdPlaying ? '#f87171' : colors.text
+                  color: isAdPlaying ? '#f87171' : colors.text,
+                  textAlign: "center"
                 }}
-                maxWidth="100%"
+                maxWidth="90%"
                 backgroundColor="transparent"
+                alignment="center"
               />
             </div>
           </div>
@@ -558,9 +560,10 @@ export default function RadioCoPlayer() {
             currentTrack.artist !==
               (selectedStation?.name || "95.5 The Beat") && (
               <p 
-                className="font-black text-2xl mb-1 transition-opacity duration-500"
+                className="font-black text-2xl mb-1 transition-opacity duration-500 text-center"
                 style={{
-                  color: isAdPlaying ? '#fca5a5' : colors.text
+                  color: isAdPlaying ? '#fca5a5' : colors.text,
+                  textAlign: "center"
                 }}
               >
                 {currentTrack.artist}
@@ -575,9 +578,10 @@ export default function RadioCoPlayer() {
             currentTrack.album !==
               (selectedStation?.name || "95.5 The Beat") && (
               <p 
-                className="text-sm font-medium mb-2 transition-opacity duration-500"
+                className="text-sm font-medium mb-2 transition-opacity duration-500 text-center"
                 style={{
-                  color: isAdPlaying ? '#fecaca' : colors.textMuted
+                  color: isAdPlaying ? '#fecaca' : colors.textMuted,
+                  textAlign: "center"
                 }}
               >
                 {currentTrack.album}
@@ -587,8 +591,8 @@ export default function RadioCoPlayer() {
           {/* Station Information */}
           {currentTrack.stationName && (
             <p 
-              className="text-sm font-medium mb-1 transition-opacity duration-500"
-              style={{ color: colors.textMuted }}
+              className="text-sm font-medium mb-1 transition-opacity duration-500 text-center"
+              style={{ color: colors.textMuted, textAlign: "center" }}
             >
               {currentTrack.stationName} • {currentTrack.frequency}
             </p>
@@ -597,8 +601,8 @@ export default function RadioCoPlayer() {
           {/* Genre Information */}
           {currentTrack.genre && (
             <p 
-              className="text-xs font-medium transition-opacity duration-500"
-              style={{ color: colors.textMuted }}
+              className="text-xs font-medium transition-opacity duration-500 text-center"
+              style={{ color: colors.textMuted, textAlign: "center" }}
             >
               {currentTrack.genre}
             </p>
@@ -606,7 +610,7 @@ export default function RadioCoPlayer() {
 
           {/* Ad Reason Display */}
           {isAdPlaying && adInfo.reason && (
-            <p className="text-red-300 text-xs font-medium mt-2 transition-opacity duration-500">
+            <p className="text-red-300 text-xs font-medium mt-2 transition-opacity duration-500 text-center">
               {adInfo.reason}
             </p>
           )}
@@ -632,7 +636,9 @@ export default function RadioCoPlayer() {
               <div 
                 className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin"
                 style={{ 
-                  borderColor: colors.primary, 
+                  borderLeftColor: colors.primary,
+                  borderRightColor: colors.primary,
+                  borderBottomColor: colors.primary,
                   borderTopColor: 'transparent' 
                 }}
               ></div>

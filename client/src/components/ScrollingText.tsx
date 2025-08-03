@@ -86,7 +86,7 @@ export default function ScrollingText({
           whiteSpace: "nowrap",
           animation:
             isScrolling && shouldScroll
-              ? "scrollLeftToRight 8s linear infinite"
+              ? "scrollLeftToRight 12s linear infinite"
               : "none",
           transform:
             isScrolling && shouldScroll ? "translateX(0)" : "translateX(0)",
