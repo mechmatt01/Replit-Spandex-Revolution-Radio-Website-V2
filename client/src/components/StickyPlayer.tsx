@@ -47,13 +47,19 @@ export default function StickyPlayer() {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      setIsVisible(currentScrollY > 100 && currentScrollY > lastScrollY);
-      setLastScrollY(currentScrollY);
+      const documentHeight = document.documentElement.scrollHeight;
+      const windowHeight = window.innerHeight;
+      const footerOffset = 200; // Approximate footer height where player should hide
+
+      const isNearBottom = currentScrollY + windowHeight >= documentHeight - footerOffset;
+
+      // Player is visible unless user is near bottom footer
+      setIsVisible(!isNearBottom);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   // Handle play/pause with listening status update
   const handlePlayPause = async () => {

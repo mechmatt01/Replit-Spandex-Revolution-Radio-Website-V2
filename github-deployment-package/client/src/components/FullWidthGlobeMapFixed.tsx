@@ -917,7 +917,7 @@ const FullWidthGlobeMapFixed = () => {
                   >
                     <Button
                       onClick={handleLocationPermission}
-                      className="w-full h-full backdrop-blur-md border-0 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:backdrop-blur-lg"
+                      className="px-6 py-3 rounded-full backdrop-blur-md border-0 shadow-xl transition-all duration-300 hover:scale-105 hover:backdrop-blur-lg"
                       style={{
                         // Match floating player's glass/blur styling exactly
                         background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor

@@ -91,7 +91,7 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
+                borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
                 boxShadow: `${colors.border}20 0px 8px 32px`,
@@ -152,7 +152,7 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
+                borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
                 boxShadow: `${colors.border}20 0px 8px 32px`,
@@ -213,7 +213,7 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
+                borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
                 boxShadow: `${colors.border}20 0px 8px 32px`,
@@ -274,7 +274,7 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
+                borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
                 boxShadow: `${colors.border}20 0px 8px 32px`,
@@ -350,7 +350,7 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
+                borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
                 boxShadow: `${colors.border}20 0px 8px 32px`,
@@ -426,7 +426,7 @@ export default function Features() {
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
               style={{
                 backgroundColor: colors.background,
-                borderColor: colors.border,
+                borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
                 boxShadow: `${colors.border}20 0px 8px 32px`,

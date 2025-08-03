@@ -1200,11 +1200,12 @@ const FullWidthGlobeMapFixed = () => {
             <div className="mb-6 relative max-w-lg mx-auto">
               {/* Glass/Blur Background Container */}
               <div
-                className="relative rounded-2xl backdrop-blur-md border border-primary/10 shadow-2xl overflow-hidden transition-all duration-500 ease-in-out"
+                className="relative rounded-2xl backdrop-blur-md border shadow-2xl overflow-hidden transition-all duration-500 ease-in-out"
                 style={{
                   background: `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}80, ${adaptiveTheme.overlayColor}60)`,
                   backdropFilter: 'blur(20px)',
                   WebkitBackdropFilter: 'blur(20px)',
+                  borderColor: adaptiveTheme.accentColor,
                   boxShadow: `0 8px 32px ${adaptiveTheme.accentColor}20, 0 0 0 1px ${adaptiveTheme.accentColor}10`
                 }}
               >
@@ -1219,7 +1220,7 @@ const FullWidthGlobeMapFixed = () => {
                   >
                     <Button
                       onClick={handleLocationPermission}
-                      className="w-full h-full backdrop-blur-md border-0 shadow-xl transition-all duration-300 hover:scale-[1.02] hover:backdrop-blur-lg"
+                      className="px-6 py-3 rounded-full backdrop-blur-md border-0 shadow-xl transition-all duration-300 hover:scale-105 hover:backdrop-blur-lg"
                       style={{
                         // Match "View All Archives" button styling
                         background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
