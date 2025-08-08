@@ -44,17 +44,17 @@ export default function VerificationModal({
 
   // Setup reCAPTCHA for phone verification
   useEffect(() => {
-    if (type === "phone" && isOpen && !window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+    if (type === "phone" && isOpen && !(window as any).recaptchaVerifier) {
+      (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
         size: 'invisible',
         callback: () => setRecaptchaReady(true),
-      }, auth);
+      });
       setRecaptchaReady(true);
     }
     return () => {
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-        window.recaptchaVerifier = null;
+      if ((window as any).recaptchaVerifier) {
+        (window as any).recaptchaVerifier.clear();
+        (window as any).recaptchaVerifier = null;
       }
     };
   }, [type, isOpen]);
@@ -63,7 +63,7 @@ export default function VerificationModal({
   useEffect(() => {
     if (type === "phone" && isOpen && recaptchaReady && !confirmationResult) {
       setSendingCode(true);
-      signInWithPhoneNumber(auth, contactInfo, window.recaptchaVerifier)
+      signInWithPhoneNumber(auth, contactInfo, (window as any).recaptchaVerifier)
         .then((result) => {
           setConfirmationResult(result);
           toast({ title: "Code Sent", description: `A verification code was sent to ${contactInfo}.` });
@@ -118,7 +118,7 @@ export default function VerificationModal({
     try {
       if (type === "phone") {
         // Resend SMS
-        signInWithPhoneNumber(auth, contactInfo, window.recaptchaVerifier)
+        signInWithPhoneNumber(auth, contactInfo, (window as any).recaptchaVerifier)
           .then((result) => {
             setConfirmationResult(result);
             toast({ title: "Code Sent", description: `A new verification code was sent to ${contactInfo}.` });

@@ -260,50 +260,27 @@ export const updateListeningStatusSchema = z.object({
   isActiveListening: z.boolean(),
 });
 
-export const insertSubmissionSchema = z.object({
-  userId: z.string().optional(),
-  songTitle: z.string(),
-  artistName: z.string(),
-  albumTitle: z.string().optional(),
-  releaseYear: z.number().optional(),
-  submitterName: z.string().optional(),
-  message: z.string().optional(),
-  status: z.string().optional(),
-});
-
-export const insertContactSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
-  email: z.string(),
-  subject: z.string(),
-  message: z.string(),
-});
-
+// Additional schema definitions
 export const insertShowScheduleSchema = z.object({
-  title: z.string(),
+  title: z.string().min(1, "Title is required"),
   description: z.string().optional(),
   host: z.string().optional(),
-  dayOfWeek: z.string(),
-  time: z.string(),
-  duration: z.string().optional(),
-});
-
-export const insertNowPlayingSchema = z.object({
-  title: z.string(),
-  artist: z.string(),
-  album: z.string().optional(),
-  artwork: z.string().optional(),
-  isAd: z.boolean().optional(),
+  dayOfWeek: z.string().min(1, "Day of week is required"),
+  time: z.string().min(1, "Time is required"),
   duration: z.number().optional(),
-  currentTime: z.number().optional(),
-  isLive: z.boolean().optional(),
+  isActive: z.boolean().default(true),
 });
 
-export const insertSubscriptionSchema = z.object({
-  email: z.string(),
-  plan: z.string(),
-  status: z.string().optional(),
+export const insertPastShowSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional(),
+  host: z.string().optional(),
+  date: z.date(),
+  duration: z.number().optional(),
+  audioUrl: z.string().url().optional(),
 });
+
+
 
 export const insertCountdownSettingsSchema = z.object({
   countdownText: z.string(),
@@ -328,6 +305,7 @@ export type UpsertUser = z.infer<typeof upsertUserSchema>;
 export type Submission = typeof submissions.$inferSelect;
 export type InsertSubmission = z.infer<typeof insertSubmissionSchema>;
 
+// Additional type exports
 export type Contact = typeof contacts.$inferSelect;
 export type InsertContact = z.infer<typeof insertContactSchema>;
 
@@ -344,6 +322,11 @@ export type StreamStats = typeof streamStats.$inferSelect;
 export type Subscription = typeof subscriptions.$inferSelect;
 export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
 
+export type RadioStation = typeof radioStations.$inferSelect;
+export type InsertRadioStation = z.infer<typeof insertRadioStationSchema>;
+
+
+
 // Radio Station Schema
 export const insertRadioStationSchema = z.object({
   stationId: z.string().min(1, "Station ID is required"),
@@ -358,7 +341,7 @@ export const insertRadioStationSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
-export type RadioStation = z.infer<typeof insertRadioStationSchema>;
+
 
 // Contact Form Schema
 export const insertContactSchema = z.object({
@@ -366,8 +349,6 @@ export const insertContactSchema = z.object({
   email: z.string().email("Valid email is required"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
-
-export type Contact = z.infer<typeof insertContactSchema>;
 
 // Subscription Schema
 export const insertSubscriptionSchema = z.object({
@@ -380,8 +361,6 @@ export const insertSubscriptionSchema = z.object({
   endDate: z.date(),
 });
 
-export type Subscription = z.infer<typeof insertSubscriptionSchema>;
-
 // Now Playing Schema
 export const insertNowPlayingSchema = z.object({
   stationId: z.string().min(1, "Station ID is required"),
@@ -391,8 +370,6 @@ export const insertNowPlayingSchema = z.object({
   artwork: z.string().url().optional(),
   timestamp: z.date(),
 });
-
-export type NowPlaying = z.infer<typeof insertNowPlayingSchema>;
 
 // Submission Schema
 export const insertSubmissionSchema = z.object({
@@ -405,4 +382,3 @@ export const insertSubmissionSchema = z.object({
   status: z.enum(["pending", "approved", "rejected"]).default("pending"),
 });
 
-export type Submission = z.infer<typeof insertSubmissionSchema>;

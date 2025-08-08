@@ -35,9 +35,9 @@ export default function LiveStatistics() {
         },
         {
           id: "2",
-          label: "Stream Uptime", 
+          label: "Stream Uptime (days)", 
           value: 847,
-          unit: "days",
+          unit: "",
           icon: "📡",
           trend: "up",
           percentage: 100,
@@ -47,17 +47,17 @@ export default function LiveStatistics() {
           id: "3",
           label: "Songs Played Today",
           value: 342,
-          unit: "tracks",
-          icon: "🎵",
+          unit: "",
+          icon: "🎸",
           trend: "up",
           percentage: 8.3,
           format: "number"
         },
         {
           id: "4",
-          label: "Peak Listeners",
+          label: "Peak Listeners Today",
           value: 5247,
-          unit: "today",
+          unit: "",
           icon: "📈",
           trend: "up",
           percentage: 15.7,
@@ -67,7 +67,7 @@ export default function LiveStatistics() {
           id: "5",
           label: "Active Countries",
           value: 67,
-          unit: "nations",
+          unit: "",
           icon: "🌍",
           trend: "stable",
           percentage: 2.1,
@@ -75,9 +75,9 @@ export default function LiveStatistics() {
         },
         {
           id: "6",
-          label: "Avg Session",
+          label: "Avg Session (Mins)",
           value: 47,
-          unit: "minutes",
+          unit: "",
           icon: "⏱️",
           trend: "up",
           percentage: 6.8,
@@ -134,13 +134,13 @@ export default function LiveStatistics() {
   const getTrendColor = (trend: string) => {
     switch (trend) {
       case "up":
-        return "#10B981"; // Green
+        return "#10B981"; // Green for up
       case "down":
-        return "#EF4444"; // Red
+        return "#EF4444"; // Red for down
       case "stable":
-        return colors.textMuted;
+        return "#6B7280"; // Gray for stable
       default:
-        return colors.textMuted;
+        return "#6B7280"; // Gray default
     }
   };
 
@@ -165,10 +165,11 @@ export default function LiveStatistics() {
 
   return (
     <div 
-      className="p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl"
+      className="p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl"
       style={{ 
         backgroundColor: colors.cardBackground,
-        border: 'none' // Remove white borders completely
+        border: 'none', // Remove white borders completely
+        minHeight: '600px' // Increase minimum height
       }}
     >
       <div className="flex items-center justify-between mb-6">
@@ -181,17 +182,17 @@ export default function LiveStatistics() {
         <div 
           className="flex items-center space-x-2 px-3 py-1 rounded-full"
           style={{ 
-            backgroundColor: colors.accent + '20',
+            backgroundColor: '#10B981',
             border: 'none' // Remove borders
           }}
         >
           <div 
             className="w-2 h-2 rounded-full animate-pulse"
-            style={{ backgroundColor: '#10B981' }}
+            style={{ backgroundColor: '#ffffff' }}
           ></div>
           <span 
             className="text-sm font-semibold"
-            style={{ color: colors.accent }}
+            style={{ color: '#ffffff' }}
           >
             LIVE
           </span>
@@ -213,11 +214,10 @@ export default function LiveStatistics() {
             <div className="flex items-center justify-between mb-2">
               <span className="text-lg">{stat.icon}</span>
               <span 
-                className="text-xs font-semibold flex items-center space-x-1"
+                className="text-base font-semibold"
                 style={{ color: getTrendColor(stat.trend) }}
               >
-                <span>{getTrendIcon(stat.trend)}</span>
-                <span>{Math.abs(stat.percentage).toFixed(1)}%</span>
+                {Math.abs(stat.percentage).toFixed(1)}%
               </span>
             </div>
 
@@ -229,7 +229,7 @@ export default function LiveStatistics() {
             </div>
 
             <div 
-              className="text-xs font-medium"
+              className="text-sm font-medium"
               style={{ color: colors.textMuted }}
             >
               {stat.label}
@@ -251,6 +251,12 @@ export default function LiveStatistics() {
         className="mt-6 text-center"
         style={{ border: 'none' }} // Remove border
       >
+        <div 
+          className="text-xs font-semibold mb-2"
+          style={{ color: colors.accent }}
+        >
+          Broadcasting Live 24/7 • 847 Days Strong
+        </div>
         <div 
           className="text-xs"
           style={{ color: colors.textMuted }}

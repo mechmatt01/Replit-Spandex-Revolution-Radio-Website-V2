@@ -175,8 +175,8 @@ export default function InteractiveAlbumArt({
         </div>
       )}
 
-      {/* Interactive border glow */}
-      <div
+      {/* Interactive border glow - REMOVED */}
+      {/* <div
         className="absolute inset-0 rounded-xl transition-all duration-300 pointer-events-none"
         style={{
           border: isHovered
@@ -184,7 +184,7 @@ export default function InteractiveAlbumArt({
             : "2px solid transparent",
           boxShadow: isHovered ? `inset 0 0 10px ${colors.primary}20` : "none",
         }}
-      />
+      /> */}
 
       {/* Loading shimmer effect */}
       {artwork && !imageLoaded && (

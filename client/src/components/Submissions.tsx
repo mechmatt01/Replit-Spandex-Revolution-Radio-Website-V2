@@ -17,18 +17,18 @@ import LiveChat from "../components/LiveChat";
 
 export default function Submissions() {
   const [formData, setFormData] = useState<InsertSubmission>({
+    name: "",
+    email: "",
     songTitle: "",
-    artistName: "",
-    albumTitle: "",
-    releaseYear: undefined,
-    submitterName: "",
+    artist: "",
+    genre: "",
     message: "",
   });
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const { getColors, currentTheme } = useTheme();
   const colors = getColors();
 
@@ -58,11 +58,11 @@ export default function Submissions() {
         description: "Your song request has been submitted for review.",
       });
       setFormData({
+        name: "",
+        email: "",
         songTitle: "",
-        artistName: "",
-        albumTitle: "",
-        releaseYear: undefined,
-        submitterName: "",
+        artist: "",
+        genre: "",
         message: "",
       });
       setAgreedToTerms(false);
@@ -141,8 +141,7 @@ export default function Submissions() {
               className="p-6 rounded-lg text-center transition-all duration-300 animate-in fade-in slide-in-from-top-4"
               style={{
                 backgroundColor: `${colors.primary}25`,
-                borderColor: `${colors.primary}30`,
-                border: `1px solid ${colors.primary}30`,
+                border: 'none',
               }}
             >
               <div
@@ -239,16 +238,16 @@ export default function Submissions() {
                   </div>
                   <div>
                     <Label
-                      htmlFor="artistName"
+                      htmlFor="artist"
                       className="text-gray-300 font-semibold"
                     >
                       Artist/Band *
                     </Label>
                     <Input
-                      id="artistName"
-                      value={formData.artistName}
+                      id="artist"
+                      value={formData.artist}
                       onChange={(e) =>
-                        handleInputChange("artistName", e.target.value)
+                        handleInputChange("artist", e.target.value)
                       }
                       placeholder="Enter artist name"
                       required
@@ -257,22 +256,44 @@ export default function Submissions() {
                   </div>
                 </div>
 
-                <div>
-                  <Label
-                    htmlFor="submitterName"
-                    className="text-gray-300 font-semibold"
-                  >
-                    Your Name
-                  </Label>
-                  <Input
-                    id="submitterName"
-                    value={formData.submitterName || ""}
-                    onChange={(e) =>
-                      handleInputChange("submitterName", e.target.value)
-                    }
-                    placeholder="Enter your name (optional)"
-                    className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-primary"
-                  />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label
+                      htmlFor="name"
+                      className="text-gray-300 font-semibold"
+                    >
+                      Your Name
+                    </Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
+                      placeholder="Enter your name"
+                      required
+                      className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-primary"
+                    />
+                  </div>
+                  <div>
+                    <Label
+                      htmlFor="email"
+                      className="text-gray-300 font-semibold"
+                    >
+                      Your Email
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
+                      placeholder="Enter your email"
+                      required
+                      className="bg-dark-bg border-dark-border text-white placeholder-gray-400/60 focus:border-primary"
+                    />
+                  </div>
                 </div>
 
                 <div>

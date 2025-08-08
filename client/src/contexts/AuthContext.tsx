@@ -247,13 +247,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
-      await signInWithGoogle();
+      const result = await signInWithGoogle();
+      
+      // The onAuthStateChanged listener will handle the user state update
+      // But we can also manually refresh the user data
+      if (result.user) {
+        await refreshUser();
+      }
+      
+      successToast({
+        title: "Success",
+        description: "Successfully signed in with Google!",
+      });
     } catch (error) {
       console.error('Error signing in with Google:', error);
       errorToast({
         title: "Sign In Failed",
         description: "Failed to sign in with Google. Please try again.",
       });
+      throw error;
     }
   };
 

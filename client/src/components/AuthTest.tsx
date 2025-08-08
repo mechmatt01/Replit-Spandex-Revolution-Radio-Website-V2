@@ -77,11 +77,11 @@ export default function AuthTest() {
               <div className="p-3 bg-green-100 border border-green-400 text-green-700 rounded">
                 <strong>Authenticated!</strong>
                 <br />
-                User: {user?.FirstName} {user?.LastName}
+                User: {user?.firstName} {user?.lastName}
                 <br />
-                Email: {user?.EmailAddress}
+                Email: {user?.emailAddress}
                 <br />
-                UserID: {user?.UserID}
+                UserID: {user?.userID}
               </div>
               <Button onClick={handleLogout} className="w-full">
                 Logout

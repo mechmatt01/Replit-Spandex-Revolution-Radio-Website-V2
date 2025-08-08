@@ -75,6 +75,28 @@ export default function StatsAndLocations() {
           </div>
         </div>
 
+        {/* Broadcasting Status */}
+        <div className="mb-8 text-center">
+          <div 
+            className="inline-flex items-center space-x-2 px-6 py-3 rounded-full"
+            style={{ 
+              backgroundColor: colors.cardBackground,
+              border: 'none' // Remove borders
+            }}
+          >
+            <div 
+              className="w-3 h-3 rounded-full animate-pulse"
+              style={{ backgroundColor: '#10B981' }}
+            ></div>
+            <span 
+              className="text-base font-semibold"
+              style={{ color: colors.text }}
+            >
+              Broadcasting Live 24/7 • 847 Days Strong
+            </span>
+          </div>
+        </div>
+
         {/* Desktop Grid Layout */}
         <div className="hidden md:grid md:grid-cols-2 gap-8">
           <LiveStatistics />
@@ -104,7 +126,7 @@ export default function StatsAndLocations() {
               className="text-sm font-semibold"
               style={{ color: colors.text }}
             >
-              Broadcasting Live 24/7 • 847 Days Strong
+              Real-time data • Updates every 30 seconds
             </span>
           </div>
         </div>

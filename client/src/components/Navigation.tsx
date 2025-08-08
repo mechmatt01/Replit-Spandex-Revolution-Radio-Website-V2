@@ -22,6 +22,7 @@ import {
 import { useLocation } from "wouter";
 import MetalThemeSwitcher from "./MetalThemeSwitcher";
 import AuthModal from "./AuthModal";
+import ChatButton from "./ChatButton";
 import { useTheme } from "../contexts/ThemeContext";
 import { useAuth } from "../contexts/AuthContext";
 import MusicLogoPath from "../../../attached_assets/MusicLogoIcon@3x.png";
@@ -32,6 +33,8 @@ export default function Navigation() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [onlineCount, setOnlineCount] = useState(0);
 
   useEffect(() => {
     const handleOpenAuthModal = (event: CustomEvent) => {
@@ -48,6 +51,10 @@ export default function Navigation() {
 
   const logout = () => {
     window.location.href = "/api/logout";
+  };
+
+  const handleChatClick = () => {
+    setIsChatOpen(!isChatOpen);
   };
 
   const menuRef = useRef<HTMLButtonElement>(null);
@@ -432,7 +439,7 @@ export default function Navigation() {
                     className="px-2 py-1 text-sm font-semibold rounded-md transition-all duration-200 hover:scale-105"
                     style={{
                       color: colors.text,
-                      border: `1px solid ${colors.primary}`,
+                      border: 'none',
                       backgroundColor: 'transparent',
                       height: '24px',
                       minWidth: '80px'
@@ -446,7 +453,7 @@ export default function Navigation() {
                     style={{
                       backgroundColor: colors.primary,
                       color: 'white',
-                      border: `1px solid ${colors.primary}`,
+                      border: 'none',
                       height: '24px',
                       minWidth: '80px'
                     }}
@@ -455,7 +462,10 @@ export default function Navigation() {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center">
+                <div className="flex items-center gap-2">
+                  {/* Chat Button for Premium Users */}
+                  <ChatButton onChatClick={handleChatClick} onlineCount={onlineCount} />
+                  
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button

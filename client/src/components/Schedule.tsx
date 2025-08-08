@@ -291,7 +291,7 @@ export default function Schedule() {
                     className="relative group cursor-pointer transition-all duration-300 border-2 p-4 enhanced-glow show-container"
                     style={{
                       backgroundColor: colors.background,
-                      borderColor: colors.border,
+                      borderColor: colors.primary,
                       boxShadow: `${colors.border}20 0px 8px 32px`,
                       height: "160px",
                       transform: hoveredShow === `weekly-${show.id}` ? 'scale(1.05)' : 'scale(1)',
@@ -377,7 +377,7 @@ export default function Schedule() {
                       className="relative group cursor-pointer transition-all duration-300 border-2 p-4 enhanced-glow show-container"
                       style={{
                         backgroundColor: colors.background,
-                        borderColor: colors.border,
+                        borderColor: colors.primary,
                         boxShadow: `${colors.border}20 0px 8px 32px`,
                         height: "160px",
                         transform: hoveredShow === `past-${show.id}` ? 'scale(1.05)' : 'scale(1)',

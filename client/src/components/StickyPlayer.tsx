@@ -91,12 +91,13 @@ export default function StickyPlayer() {
         backdropFilter: 'blur(32px) saturate(220%)',
         WebkitBackdropFilter: 'blur(32px) saturate(220%)',
         boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
-          ? `0 14px 48px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 24px ${adaptiveTheme.accentColor}12`
-          : `0 14px 48px ${colors.primary}25, inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 0 0 1px rgba(255, 255, 255, 0.12), 0 0 24px ${colors.primary}12`,
+          ? `0 14px 48px ${adaptiveTheme.accentColor}25, 0 0 24px ${adaptiveTheme.accentColor}12`
+          : `0 14px 48px ${colors.primary}25, 0 0 24px ${colors.primary}12`,
         color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
           ? adaptiveTheme.textColor 
           : colors.text,
-        border: 'none'
+        border: 'none',
+        outline: 'none'
       }}
       role="region"
       aria-label="Floating audio player"
@@ -111,7 +112,7 @@ export default function StickyPlayer() {
             title={currentTrack.title}
             artist={currentTrack.artist}
             size="sm"
-            className="w-12 h-12"
+            className="w-12 h-12 shadow-none"
             isAd={isAdPlaying}
           />
 

@@ -310,18 +310,19 @@ export default function RadioCoPlayer() {
               className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto shadow-xl z-20 scrollbar-thin"
               style={{
                 background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
-                  ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.95)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.92)')})`
-                  : 'rgba(0, 0, 0, 0.95)',
+                  ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.98)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.95)')})`
+                  : 'rgba(0, 0, 0, 0.98)',
                 backdropFilter: 'blur(32px) saturate(220%)',
                 WebkitBackdropFilter: 'blur(32px) saturate(220%)',
                 borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                  ? adaptiveTheme.accentColor + "50"
-                  : colors.primary + "50",
+                  ? adaptiveTheme.accentColor + "60"
+                  : colors.primary + "60",
                 borderRadius: "12px",
                 minWidth: "300px",
+                border: '2px solid',
                 boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                  ? `0 12px 48px ${adaptiveTheme.accentColor}20, inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.08)`
-                  : `0 12px 48px ${colors.primary}20, inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.08)`,
+                  ? `0 12px 48px ${adaptiveTheme.accentColor}30, 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 24px rgba(0, 0, 0, 0.3)`
+                  : `0 12px 48px ${colors.primary}30, 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 24px rgba(0, 0, 0, 0.3)`,
               }}
             >
               <div className="p-2">
@@ -343,19 +344,33 @@ export default function RadioCoPlayer() {
                       </div>
                       <div className="flex-1 min-w-0 flex items-center">
                         <div className="flex-1">
-                          <div className="font-semibold text-sm text-white truncate">
+                          <div 
+                            className="font-semibold text-sm truncate"
+                            style={{ 
+                              color: colors.text || '#ffffff',
+                              textShadow: '0 1px 2px rgba(0, 0, 0, 0.8)',
+                              fontWeight: '600'
+                            }}
+                          >
                             {selectedStation.name}
                           </div>
                           <div 
                             className="text-xs truncate"
-                            style={{ color: colors.textMuted }}
+                            style={{ 
+                              color: colors.textMuted || '#e5e7eb',
+                              textShadow: '0 1px 2px rgba(0, 0, 0, 0.6)'
+                            }}
                           >
                             {selectedStation.frequency} •{" "}
                             {selectedStation.location}
                           </div>
                           <div 
                             className="text-xs truncate"
-                            style={{ color: colors.textMuted, opacity: 0.8 }}
+                            style={{ 
+                              color: colors.textMuted || '#d1d5db',
+                              opacity: 0.9,
+                              textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)'
+                            }}
                           >
                             {selectedStation.description}
                           </div>
@@ -440,19 +455,30 @@ export default function RadioCoPlayer() {
                         <div className="flex-1 min-w-0">
                           <div 
                             className="font-semibold text-sm truncate"
-                            style={{ color: colors.text }}
+                            style={{ 
+                              color: colors.text || '#ffffff',
+                              textShadow: '0 1px 2px rgba(0, 0, 0, 0.7)',
+                              fontWeight: '600'
+                            }}
                           >
                             {station.name}
                           </div>
                           <div 
                             className="text-xs truncate"
-                            style={{ color: colors.textMuted }}
+                            style={{ 
+                              color: colors.textMuted || '#e5e7eb',
+                              textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)'
+                            }}
                           >
                             {station.frequency} • {station.location}
                           </div>
                           <div 
                             className="text-xs truncate"
-                            style={{ color: colors.textMuted, opacity: 0.8 }}
+                            style={{ 
+                              color: colors.textMuted || '#d1d5db',
+                              opacity: 0.9,
+                              textShadow: '0 1px 2px rgba(0, 0, 0, 0.4)'
+                            }}
                           >
                             {station.description}
                           </div>

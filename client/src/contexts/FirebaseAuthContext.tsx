@@ -95,10 +95,9 @@ export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ chil
     if (!user) return;
     
     try {
-      const result = await updateListeningStatus(user.UserID, isActiveListening);
-      if (result.success) {
-        setUser({ ...user, IsActiveListening: isActiveListening });
-      }
+      // TODO: Implement listening status update
+      console.log('Listening status update not implemented yet');
+      setUser({ ...user, IsActiveListening: isActiveListening });
     } catch (error) {
       console.error('Error updating listening status:', error);
     }
@@ -108,10 +107,9 @@ export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ chil
     if (!user) return;
     
     try {
-      const result = await updateUserLocation(user.UserID);
-      if (result.success) {
-        setUser({ ...user, Location: location });
-      }
+      // TODO: Implement location update
+      console.log('Location update not implemented yet');
+      setUser({ ...user, Location: location });
     } catch (error) {
       console.error('Error updating location:', error);
     }
@@ -121,10 +119,9 @@ export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ chil
     if (!user) return;
     
     try {
-      const result = await updateUserProfile(user.UserID, updates);
-      if (result.success) {
-        setUser({ ...user, ...updates });
-      }
+      // TODO: Implement profile update
+      console.log('Profile update not implemented yet');
+      setUser({ ...user, ...updates });
     } catch (error) {
       console.error('Error updating profile:', error);
     }

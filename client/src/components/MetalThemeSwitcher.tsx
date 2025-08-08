@@ -54,7 +54,7 @@ export default function MetalThemeSwitcher() {
   const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   const colors = getColors();
 
-  const hasActiveSubscription = user?.subscriptionStatus === "active";
+  const hasActiveSubscription = user?.activeSubscription === true;
 
   const handleThemeClick = (themeKey: string, themeConfig: any) => {
     if (themeConfig.isPremium && !hasActiveSubscription) {
@@ -411,13 +411,14 @@ export default function MetalThemeSwitcher() {
                           setShowPremiumDialog(false);
                           setIsOpen(false);
                         }}
-                        className="w-full font-semibold px-4 py-2 text-xs text-yellow-300"
+                        className="w-full font-semibold px-4 py-2 text-xs"
                         style={{
-                          background: "rgba(255, 215, 0, 0.2)",
+                          background: `${colors.accent}20`,
                           backdropFilter: "blur(15px)",
-                          border: "1px solid rgba(255, 215, 0, 0.4)",
+                          border: `1px solid ${colors.accent}40`,
                           borderRadius: "6px",
-                          boxShadow: "0 4px 20px rgba(255, 215, 0, 0.2)",
+                          boxShadow: `0 4px 20px ${colors.accent}20`,
+                          color: colors.accent,
                         }}
                       >
                         Preview Theme (Development Only)

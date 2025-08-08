@@ -1010,7 +1010,7 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
                   Radio Station Management
                 </h3>
                 <Button
-                  onClick={() => setEditingStation({})}
+                  onClick={() => setEditingStation(null)}
                   style={{ backgroundColor: colors.primary }}
                   className="flex items-center space-x-2"
                 >

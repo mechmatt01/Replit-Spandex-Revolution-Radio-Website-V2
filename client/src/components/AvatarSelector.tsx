@@ -13,16 +13,16 @@ import { useToast } from "../hooks/use-toast";
 import { apiRequest } from "../lib/queryClient";
 
 // Import premium avatars
-// import BassBatAvatar from "../../attached_assets/../Avatars/Bass-Bat.jpg";
-// import DrumDragonAvatar from "../../attached_assets/../Avatars/Drum-Dragon.jpeg";
-// import GuitarGoblinAvatar from "../../attached_assets/../Avatars/Guitar-Goblin.jpeg";
-// import HeadbangerHamsterAvatar from "../../attached_assets/../Avatars/Headbanger-Hamster.jpeg";
-// import MetalQueenAvatar from "../../attached_assets/../Avatars/Metal-Queen.jpeg";
-// import MetalCatAvatar from "../../attached_assets/../Avatars/Metal Cat.jpeg";
-// import MoshPitMonsterAvatar from "../../attached_assets/../Avatars/Mosh-Pit-Monster.jpeg";
-// import PunkPandaAvatar from "../../attached_assets/../Avatars/Punk-Panda.jpeg";
-// import RebelRaccoonAvatar from "../../attached_assets/../Avatars/Rebel-Raccoon.jpeg";
-// import RockUnicornAvatar from "../../attached_assets/../Avatars/Rock-Unicorn.jpeg";
+import BassBatAvatar from "../../Avatars/Premium_Avatars/Bass-Bat.jpeg";
+import DrumDragonAvatar from "../../Avatars/Premium_Avatars/Drum-Dragon.jpeg";
+import GuitarGoblinAvatar from "../../Avatars/Premium_Avatars/Guitar-Goblin.jpeg";
+import HeadbangerHamsterAvatar from "../../Avatars/Premium_Avatars/Headbanger-Hamster.jpeg";
+import MetalQueenAvatar from "../../Avatars/Premium_Avatars/Metal-Queen.jpeg";
+import MetalCatAvatar from "../../Avatars/Premium_Avatars/Metal-Cat.jpeg";
+import MoshPitMonsterAvatar from "../../Avatars/Premium_Avatars/Mosh-Pit-Monster.jpeg";
+import PunkPandaAvatar from "../../Avatars/Premium_Avatars/Punk-Panda.jpeg";
+import RebelRaccoonAvatar from "../../Avatars/Premium_Avatars/Rebel-Raccoon.jpeg";
+import RockUnicornAvatar from "../../Avatars/Premium_Avatars/Rock-Unicorn.jpeg";
 
 interface AvatarSelectorProps {
   isOpen: boolean;
@@ -337,7 +337,7 @@ export default function AvatarSelector({
               <h3 className="flex items-center gap-2 text-lg font-bold mb-4" style={{ color: colors.primary }}>
                 <Crown className="h-5 w-5" />
                 Premium Avatars
-                <Star className="h-4 w-4 text-yellow-400" />
+                <Star className="h-4 w-4" style={{ color: colors.accent }} />
               </h3>
               <div className="grid grid-cols-5 gap-4">
                 {PREMIUM_AVATAR_OPTIONS.map((avatar) => (
@@ -346,20 +346,20 @@ export default function AvatarSelector({
                     className={`relative cursor-pointer rounded-lg border-2 p-2 transition-all duration-200 hover:scale-105 ${
                       selectedAvatar === avatar.url
                         ? "border-primary"
-                        : "border-yellow-600"
+                        : ""
                     }`}
                     style={{
                       borderColor:
                         selectedAvatar === avatar.url
                           ? colors.primary
-                          : "#D97706",
-                      background: "linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.05))",
+                          : colors.accent,
+                      background: `linear-gradient(135deg, ${colors.accent}20, ${colors.accent}10)`,
                     }}
                     onClick={() => setSelectedAvatar(avatar.url)}
                   >
                     {/* Premium Crown Badge */}
                     <div className="absolute -top-2 -right-2 z-20">
-                      <div className="bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1">
+                      <div className="rounded-full p-1" style={{ background: `linear-gradient(to right, ${colors.accent}, ${colors.primary})` }}>
                         <Crown className="h-3 w-3 text-black" />
                       </div>
                     </div>
@@ -380,7 +380,7 @@ export default function AvatarSelector({
                       {/* Jumping Elements for Premium Avatars */}
                       {avatar.jumpingElements && (
                         <>
-                          <div className="jumping-element top-0 left-0 text-yellow-400 text-lg">🤘</div>
+                          <div className="jumping-element top-0 left-0 text-lg" style={{ color: colors.accent }}>🤘</div>
                           <div className="jumping-element top-0 right-0 text-orange-500 text-lg">⚡</div>
                           <div className="jumping-element bottom-0 left-0 text-red-500 text-lg">🔥</div>
                           <div className="jumping-element bottom-0 right-0 text-purple-500 text-lg">💀</div>
@@ -388,7 +388,7 @@ export default function AvatarSelector({
                       )}
                     </div>
                     
-                    <p className="text-xs text-center mt-2 truncate font-semibold" style={{ color: "#FFA500" }}>
+                    <p className="text-xs text-center mt-2 truncate font-semibold" style={{ color: colors.accent }}>
                       {avatar.name}
                     </p>
                     

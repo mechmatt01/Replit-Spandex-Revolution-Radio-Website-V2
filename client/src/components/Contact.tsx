@@ -34,10 +34,8 @@ import StaggeredAnimation from "./StaggeredAnimation";
 
 export default function Contact() {
   const [formData, setFormData] = useState<InsertContact>({
-    firstName: "",
-    lastName: "",
+    name: "",
     email: "",
-    subject: "",
     message: "",
   });
 
@@ -59,10 +57,8 @@ export default function Contact() {
       setOriginalMessage(formData.message);
       setShowSuccess(true);
       setFormData({
-        firstName: "",
-        lastName: "",
+        name: "",
         email: "",
-        subject: "",
         message: "",
       });
       setValidationErrors([]);
@@ -78,10 +74,8 @@ export default function Contact() {
 
     // Validate form
     const errors: string[] = [];
-    if (!formData.firstName.trim()) errors.push("First Name");
-    if (!formData.lastName.trim()) errors.push("Last Name");
+    if (!formData.name.trim()) errors.push("Name");
     if (!formData.email.trim()) errors.push("Email Address");
-    if (!formData.subject.trim() || formData.subject === "Select a subject") errors.push("Subject");
     if (!formData.message.trim()) errors.push("Message");
 
     // Validate email format
@@ -175,55 +169,29 @@ export default function Contact() {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <Label
-                            htmlFor="firstName"
-                            className="font-semibold"
-                            style={{ color: colors.textSecondary }}
-                          >
-                            First Name{validationErrors.includes("First Name") && <span className="text-red-500">*</span>}
-                          </Label>
-                          <Input
-                            id="firstName"
-                            value={formData.firstName}
-                            onChange={(e) =>
-                              handleInputChange("firstName", e.target.value)
-                            }
-                            placeholder="John"
-                            required
-                            className="transition-colors duration-300 placeholder:text-gray-400 placeholder:opacity-50"
-                            style={{
-                              backgroundColor: colors.surface,
-                              borderColor: colors.border,
-                              color: colors.text
-                            }}
-                          />
-                        </div>
-                        <div>
-                          <Label
-                            htmlFor="lastName"
-                            className="font-semibold"
-                            style={{ color: colors.textSecondary }}
-                          >
-                            Last Name{validationErrors.includes("Last Name") && <span className="text-red-500">*</span>}
-                          </Label>
-                          <Input
-                            id="lastName"
-                            value={formData.lastName}
-                            onChange={(e) =>
-                              handleInputChange("lastName", e.target.value)
-                            }
-                            placeholder="Doe"
-                            required
-                            className="transition-colors duration-300 placeholder:text-gray-400 placeholder:opacity-50"
-                            style={{
-                              backgroundColor: colors.surface,
-                              borderColor: colors.border,
-                              color: colors.text
-                            }}
-                          />
-                        </div>
+                      <div>
+                        <Label
+                          htmlFor="name"
+                          className="font-semibold"
+                          style={{ color: colors.textSecondary }}
+                        >
+                          Full Name{validationErrors.includes("Name") && <span className="text-red-500">*</span>}
+                        </Label>
+                        <Input
+                          id="name"
+                          value={formData.name}
+                          onChange={(e) =>
+                            handleInputChange("name", e.target.value)
+                          }
+                          placeholder="John Doe"
+                          required
+                          className="transition-colors duration-300 placeholder:text-gray-400 placeholder:opacity-50"
+                          style={{
+                            backgroundColor: colors.surface,
+                            border: 'none',
+                            color: colors.text
+                          }}
+                        />
                       </div>
 
                       <div>
@@ -246,57 +214,13 @@ export default function Contact() {
                           className="transition-colors duration-300 placeholder:text-gray-400 placeholder:opacity-50"
                           style={{
                             backgroundColor: colors.surface,
-                            borderColor: colors.border,
+                            border: 'none',
                             color: colors.text
                           }}
                         />
                       </div>
 
-                      <div>
-                        <Label
-                          htmlFor="subject"
-                          className="font-semibold"
-                          style={{ color: colors.textSecondary }}
-                        >
-                          Subject{validationErrors.includes("Subject") && <span className="text-red-500">*</span>}
-                        </Label>
-                        <Select
-                          value={formData.subject}
-                          onValueChange={(value) =>
-                            handleInputChange("subject", value)
-                          }
-                        >
-                          <SelectTrigger 
-                            className="transition-colors duration-300" 
-                            style={{
-                              backgroundColor: colors.surface,
-                              borderColor: colors.border,
-                              color: colors.text
-                            }}
-                            aria-label="Select message subject"
-                          >
-                            <SelectValue placeholder="Select a subject" />
-                          </SelectTrigger>
-                          <SelectContent 
-                            style={{
-                              backgroundColor: colors.surface,
-                              borderColor: colors.border
-                            }}
-                          >
-                            <SelectItem value="general">
-                              General Inquiry
-                            </SelectItem>
-                            <SelectItem value="technical">
-                              Technical Support
-                            </SelectItem>
-                            <SelectItem value="partnership">
-                              Partnership/Collaboration
-                            </SelectItem>
-                            <SelectItem value="feedback">Feedback</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
+
 
                       <div>
                         <Label
@@ -318,7 +242,7 @@ export default function Contact() {
                           className="resize-none transition-colors duration-300 placeholder:text-gray-400 placeholder:opacity-50"
                           style={{
                             backgroundColor: colors.surface,
-                            borderColor: colors.border,
+                            border: 'none',
                             color: colors.text
                           }}
                         />

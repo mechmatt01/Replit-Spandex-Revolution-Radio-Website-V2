@@ -393,7 +393,7 @@ function ProductCard({
       className="transition-all duration-300 group h-full flex flex-col"
       style={{ 
         backgroundColor: currentTheme === 'light-mode' ? '#ffffff' : 'rgba(30, 30, 30, 0.5)',
-        borderColor: colors.primary 
+        border: 'none'
       }}
     >
       <CardContent className="p-4 flex flex-col h-full">
@@ -469,9 +469,12 @@ function ProductCard({
                 key={i}
                 className={`h-4 w-4 ${
                   i < Math.floor(product.rating)
-                    ? "text-yellow-400 fill-current"
+                    ? "fill-current"
                     : "text-gray-600"
                 }`}
+                style={{
+                  color: i < Math.floor(product.rating) ? colors.accent : undefined
+                }}
               />
             ))}
             <span 
@@ -634,9 +637,12 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                       key={i}
                       className={`h-5 w-5 ${
                         i < Math.floor(product.rating)
-                          ? "text-yellow-400 fill-current"
+                          ? "fill-current"
                           : "text-gray-600"
                       }`}
+                      style={{
+                        color: i < Math.floor(product.rating) ? '#f59e0b' : undefined
+                      }}
                     />
                   ))}
                 </div>

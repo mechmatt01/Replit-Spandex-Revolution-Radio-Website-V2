@@ -14,6 +14,8 @@ import { AccessibilityProvider } from "./components/AccessibilityProvider";
 import DynamicMetaTags from "./components/DynamicMetaTags";
 import VerificationModal from "./components/VerificationModal";
 import ErrorBoundary from "./components/ErrorBoundary";
+import LiveChat from "./components/LiveChat";
+import { initializeChatCleanup } from "./lib/chat";
 
 import HomePage from "./pages/HomePage";
 import MusicPage from "./pages/MusicPage";
@@ -34,23 +36,23 @@ function VerificationGate({ children }: { children: React.ReactNode }) {
   if (!user) return <>{children}</>; // Not logged in, allow access to public routes
 
   // If not verified, show the appropriate modal and block app
-  if (!user.EmailVerified) {
+  if (!user.isEmailVerified) {
     return (
       <VerificationModal
         isOpen={true}
         onClose={() => setShowEmailModal(false)}
         type="email"
-        contactInfo={user.EmailAddress}
+        contactInfo={user.emailAddress}
       />
     );
   }
-  if (!user.PhoneVerified) {
+  if (!user.isPhoneVerified) {
     return (
       <VerificationModal
         isOpen={true}
         onClose={() => setShowPhoneModal(false)}
         type="phone"
-        contactInfo={user.PhoneNumber}
+        contactInfo={user.phoneNumber}
       />
     );
   }
@@ -76,6 +78,12 @@ function Router() {
 }
 
 function App() {
+  const [isChatEnabled, setIsChatEnabled] = useState(true);
+
+  // Initialize chat cleanup on app start
+  useEffect(() => {
+    initializeChatCleanup();
+  }, []);
 
   return (
     <ErrorBoundary>
@@ -91,6 +99,10 @@ function App() {
                       <Toaster />
                       <VerificationGate>
                         <Router />
+                        <LiveChat 
+                          isEnabled={isChatEnabled}
+                          onToggle={() => setIsChatEnabled(!isChatEnabled)}
+                        />
                       </VerificationGate>
                     </TooltipProvider>
                   </AdminProvider>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Music, AlertCircle } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface AdLogoProps {
   isAd?: boolean;
@@ -23,6 +24,8 @@ export function AdLogo({
   className = "w-12 h-12", 
   size = 48 
 }: AdLogoProps) {
+  const { getColors } = useTheme();
+  const colors = getColors();
   
   // Brand commercial with logo
   if (isAd && brandLogo && brandName) {
@@ -40,7 +43,8 @@ export function AdLogo({
         />
         <AlertCircle 
           size={size * 0.75} 
-          className="hidden text-yellow-500" 
+          className="hidden" 
+          style={{ color: colors.accent }}
         />
       </div>
     );
@@ -49,10 +53,10 @@ export function AdLogo({
   // Generic commercial
   if (isAd) {
     return (
-      <div className={`${className} flex items-center justify-center bg-yellow-500/20 rounded-full`}>
+      <div className={`${className} flex items-center justify-center rounded-full`} style={{ backgroundColor: `${colors.accent}20` }}>
         <AlertCircle 
           size={size * 0.6} 
-          className="text-yellow-500" 
+          style={{ color: colors.accent }}
         />
       </div>
     );

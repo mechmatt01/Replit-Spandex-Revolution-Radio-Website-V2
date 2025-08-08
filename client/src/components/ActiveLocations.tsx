@@ -130,10 +130,11 @@ export default function ActiveLocations() {
 
   return (
     <div 
-      className="p-6 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl"
+      className="p-8 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl overflow-hidden"
       style={{ 
         backgroundColor: colors.cardBackground,
-        border: 'none' // Remove white borders completely
+        border: 'none', // Remove white borders completely
+        minHeight: '600px' // Increase minimum height
       }}
     >
       <div className="flex items-center justify-between mb-6">
@@ -154,46 +155,53 @@ export default function ActiveLocations() {
         </div>
       </div>
 
-      <div className="space-y-3 max-h-80 overflow-y-auto">
+      <div className="space-y-3 max-h-80 overflow-y-auto px-4 py-2">
         {locations.map((location, index) => (
           <div 
             key={location.id}
-            className="flex items-center justify-between p-3 rounded-lg transition-all duration-200 hover:scale-105"
+            className="flex items-center justify-between p-3 rounded-lg transition-all duration-200 hover:scale-105 relative group"
             style={{ 
               backgroundColor: currentTheme === 'light-mode' 
                 ? 'rgba(0, 0, 0, 0.02)' 
                 : 'rgba(255, 255, 255, 0.05)',
-              border: 'none' // Remove borders completely
+              border: 'none', // Remove borders completely
+              transformOrigin: 'center',
+              zIndex: 1,
+              margin: '2px 0'
             }}
           >
-            <div className="flex items-center space-x-3">
-              <span className="text-2xl">{location.flag}</span>
-              <div>
+            <div className="flex items-center space-x-3 min-w-0 flex-1 overflow-hidden">
+              <span className="text-2xl flex-shrink-0">{location.flag}</span>
+              <div className="min-w-0 flex-1 overflow-hidden">
                 <div 
-                  className="font-semibold text-sm"
+                  className="font-semibold text-sm truncate"
                   style={{ color: colors.text }}
+                  title={location.city}
                 >
                   {location.city}
                 </div>
                 <div 
-                  className="text-xs"
+                  className="text-xs truncate"
                   style={{ color: colors.textMuted }}
+                  title={location.country}
                 >
                   {location.country}
                 </div>
               </div>
             </div>
 
-            <div className="text-right">
+            <div className="text-right flex-shrink-0 ml-3 min-w-0">
               <div 
-                className="font-bold text-sm"
+                className="font-bold text-sm truncate"
                 style={{ color: colors.accent }}
+                title={location.listeners.toLocaleString()}
               >
                 {location.listeners.toLocaleString()}
               </div>
               <div 
-                className="text-xs"
+                className="text-xs truncate"
                 style={{ color: colors.textMuted }}
+                title={location.localTime}
               >
                 {location.localTime}
               </div>

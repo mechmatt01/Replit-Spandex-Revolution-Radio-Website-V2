@@ -205,30 +205,54 @@ export const setupFirebaseAuth = (app: express.Application) => {
   // Get active listeners for map
   app.get('/api/auth/active-listeners', async (req: Request, res: Response) => {
     try {
+      if (!db) {
+        console.error('Database not available');
+        return res.status(500).json({ error: 'Database not available' });
+      }
+
       // First, let's try a simple query to see if the collection exists
       const allUsersQuery = await db.collection('Users').limit(5).get();
       console.log('Total users in collection:', allUsersQuery.size);
       
-      // Now try the composite query
-      const activeListenersQuery = await db.collection('Users')
-        .where('isActiveListening', '==', true)
-        .where('location', '!=', null)
-        .get();
+      // Now try the composite query with error handling
+      let activeListenersQuery;
+      try {
+        activeListenersQuery = await db.collection('Users')
+          .where('isActiveListening', '==', true)
+          .where('location', '!=', null)
+          .get();
+      } catch (queryError) {
+        console.error('Error with composite query, trying simpler query:', queryError);
+        // Fallback to simpler query
+        activeListenersQuery = await db.collection('Users')
+          .where('isActiveListening', '==', true)
+          .get();
+      }
       
-      const activeListeners = activeListenersQuery.docs.map(doc => {
-        const data = doc.data();
-        return {
-          userID: data.userID,
-          location: data.location,
-          firstName: data.firstName,
-          lastName: data.lastName,
-        };
-      });
+      const activeListeners = activeListenersQuery.docs
+        .map(doc => {
+          const data = doc.data();
+          // Only include users with valid location data
+          if (data.location && data.location.latitude && data.location.longitude) {
+            return {
+              userID: data.userID,
+              location: data.location,
+              firstName: data.firstName || 'Anonymous',
+              lastName: data.lastName || '',
+            };
+          }
+          return null;
+        })
+        .filter(listener => listener !== null); // Remove null entries
       
+      console.log('Active listeners found:', activeListeners.length);
       res.json({ activeListeners });
     } catch (error) {
       console.error('Error getting active listeners:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ 
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 

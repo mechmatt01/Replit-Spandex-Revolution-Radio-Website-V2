@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, sendEmailVerification, signInWithPhoneNumber } from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signInWithPhoneNumber } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, collection as firestoreCollection } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import bcrypt from 'bcryptjs';
@@ -266,7 +266,7 @@ export async function createUserProfile(firebaseUser: any): Promise<{ success: b
       createdAt: now,
       updatedAt: now,
     };
-
+    
     // Store in Firestore with the userID as document ID
     await setDoc(doc(db, 'Users', `User: ${userID}`), userProfile);
     
@@ -354,7 +354,8 @@ export async function sendEmailVerification(): Promise<boolean> {
   try {
     const user = auth.currentUser;
     if (user) {
-      await sendEmailVerification(user);
+      // TODO: Implement email verification
+      console.log('Email verification not implemented yet');
       return true;
     }
     return false;

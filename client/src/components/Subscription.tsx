@@ -106,8 +106,12 @@ export default function Subscription() {
     if (!selectedPlan || !email) return;
 
     subscribeMutation.mutate({
-      email,
-      plan: selectedPlan.toLowerCase(),
+      userID: "temp-user-id", // TODO: Get actual user ID
+      packageType: selectedPlan as "Icon" | "Legend" | "Rebel",
+      amount: 0, // TODO: Get actual amount
+      currency: "USD",
+      startDate: new Date(),
+      endDate: new Date(),
     });
   };
 

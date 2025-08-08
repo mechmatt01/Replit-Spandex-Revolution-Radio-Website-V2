@@ -77,7 +77,7 @@ const FullWidthGlobeMapFixed = () => {
   const { adaptiveTheme } = useAdaptiveTheme(currentTrack?.artwork || '');
   const { successToast, errorToast, infoToast } = useToast();
 
-  // Add CSS for Google Maps InfoWindow positioning
+  // Add CSS for Google Maps InfoWindow positioning and pulsing animations
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
@@ -123,6 +123,36 @@ const FullWidthGlobeMapFixed = () => {
         box-shadow: none !important;
         overflow: visible !important;
       }
+      
+      @keyframes modernPulse {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.8;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.2);
+          opacity: 0.4;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.8;
+        }
+      }
+      
+      @keyframes userLocationPulse {
+        0% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.9;
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.4);
+          opacity: 0.3;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0.9;
+        }
+      }
     `;
     document.head.appendChild(style);
     return () => {
@@ -152,12 +182,12 @@ const FullWidthGlobeMapFixed = () => {
   const [locationPermission, setLocationPermission] = useState<'granted' | 'denied' | 'prompt' | null>(null);
   const [mapState, setMapState] = useState<{ center: google.maps.LatLng | null; zoom: number | null }>({ center: null, zoom: null });
 
-  // Use hardcoded config for Firebase hosting
+  // Configuration object
   const config: Config = {
-    googleMapsApiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
-    googleMapsSigningSecret: "",
-    openWeatherApiKey: "bc23ce0746d4fc5c04d1d765589dadc5",
-    googleMapsMapId: "spandex-salvation-radio-map"
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
+    googleMapsSigningSecret: import.meta.env.VITE_GOOGLE_MAPS_SIGNING_SECRET || "",
+    openWeatherApiKey: import.meta.env.VITE_OPEN_WEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5",
+    googleMapsMapId: import.meta.env.VITE_GOOGLE_MAPS_MAP_ID || "spandex-salvation-radio-map",
   };
 
   // Live statistics state with proper Firebase integration
@@ -442,11 +472,11 @@ const FullWidthGlobeMapFixed = () => {
       title,
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
-        scale: isUserLocation ? 6 : 5, // Reduced by half
+        scale: isUserLocation ? 8 : 5, // Larger for user location
         fillColor: isUserLocation ? '#4285F4' : colors.primary,
-        fillOpacity: 0.7,
+        fillOpacity: 0.9,
         strokeColor: isUserLocation ? '#4285F4' : colors.primary,
-        strokeWeight: 0,
+        strokeWeight: isUserLocation ? 2 : 0,
       },
     });
 
@@ -465,7 +495,7 @@ const FullWidthGlobeMapFixed = () => {
         width: auto;
         font-family: 'Inter', sans-serif;
         position: relative;
-        border: 2px solid ${isUserLocation ? '#4285F4' : colors.primary};
+        border: none;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         word-wrap: break-word;
@@ -504,7 +534,7 @@ const FullWidthGlobeMapFixed = () => {
           word-wrap: break-word;
           overflow-wrap: break-word;
         ">
-          ${isUserLocation ? '📍 Your Location' : '🎧 Active Listener'}
+          ${isUserLocation ? '📍 Your Current Location' : '🎧 Active Listener'}
         </div>
         <div style="
           font-size: 14px; 
@@ -606,16 +636,16 @@ const FullWidthGlobeMapFixed = () => {
       div.className = 'pulsing-marker-overlay';
       div.style.cssText = `
         position: absolute;
-        width: ${isUserLocation ? '20px' : '16px'};
-        height: ${isUserLocation ? '20px' : '16px'};
+        width: ${isUserLocation ? '32px' : '16px'};
+        height: ${isUserLocation ? '32px' : '16px'};
         border-radius: 50%;
         background: ${isUserLocation ? 'radial-gradient(circle, #4285F4 0%, #2563eb 100%)' : `radial-gradient(circle, ${colors.primary} 0%, ${colors.primary}dd 100%)`};
-        border: 0px solid ${isUserLocation ? '#4285F4' : colors.primary};
-        animation: modernPulse 3s ease-in-out infinite;
+        border: ${isUserLocation ? '2px solid #4285F4' : 'none'};
+        animation: ${isUserLocation ? 'userLocationPulse' : 'modernPulse'} 3s ease-in-out infinite;
         transform: translate(-50%, -50%);
         pointer-events: none;
         z-index: 10;
-        opacity: 0.6;
+        opacity: ${isUserLocation ? '0.8' : '0.6'};
         box-shadow: 0 0 20px 4px ${isUserLocation ? '#4285F4' : colors.primary}40;
         backdrop-filter: blur(4px);
         -webkit-backdrop-filter: blur(4px);
@@ -820,7 +850,7 @@ const FullWidthGlobeMapFixed = () => {
       if (userLocation) {
         const userMarkerData = createAnimatedMarker(
           userLocation,
-          "Your Location",
+          "Your Current Location",
           mapInstance,
           true // isUserLocation
         );
@@ -1026,7 +1056,7 @@ const FullWidthGlobeMapFixed = () => {
         console.log('Adding user location marker to existing map...');
         const userMarkerData = createAnimatedMarker(
           newUserLocation,
-          "Your Location",
+          "Your Current Location",
           map,
           true // isUserLocation
         );
@@ -1200,12 +1230,12 @@ const FullWidthGlobeMapFixed = () => {
             <div className="mb-6 relative max-w-lg mx-auto">
               {/* Glass/Blur Background Container */}
               <div
-                className="relative rounded-2xl backdrop-blur-md border shadow-2xl overflow-hidden transition-all duration-500 ease-in-out"
+                className="relative rounded-2xl backdrop-blur-md shadow-2xl overflow-hidden transition-all duration-500 ease-in-out"
                 style={{
                   background: `linear-gradient(135deg, ${adaptiveTheme.backgroundColor}80, ${adaptiveTheme.overlayColor}60)`,
                   backdropFilter: 'blur(20px)',
                   WebkitBackdropFilter: 'blur(20px)',
-                  borderColor: adaptiveTheme.accentColor,
+                  border: 'none',
                   boxShadow: `0 8px 32px ${adaptiveTheme.accentColor}20, 0 0 0 1px ${adaptiveTheme.accentColor}10`
                 }}
               >
@@ -1231,13 +1261,14 @@ const FullWidthGlobeMapFixed = () => {
                         boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
                           ? `0 12px 48px ${adaptiveTheme.accentColor}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`
                           : `0 12px 48px ${colors.primary}25, inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.1)`,
-                        color: isDarkMode ? '#ffffff' : '#000000',
-                        borderRadius: '9999px', // True pill shape (100% rounded corners)
-                        fontSize: '0.875rem',
-                        fontWeight: '600',
-                        letterSpacing: '0.025em',
-                        minHeight: '48px', // Match button height
-                        padding: '12px 24px' // Match button padding
+                        color: isDarkMode ? '#ffffff' : '#000000'
+                        // Removed these to allow px-6 py-3 to control size
+                        // borderRadius: '9999px', // True pill shape (100% rounded corners)
+                        // fontSize: '0.875rem',
+                        // fontWeight: '600',
+                        // letterSpacing: '0.025em',
+                        // minHeight: '48px', // Match button height
+                        // padding: '12px 24px' // Match button padding
                       }}
                     >
                       <div className="flex items-center justify-center gap-3">
@@ -1330,10 +1361,10 @@ const FullWidthGlobeMapFixed = () => {
             className={`relative transition-all duration-500 ease-in-out transform map-container ${
               isFullscreen 
                 ? 'fixed z-[9999] rounded-none' 
-                : 'w-full rounded-xl shadow-2xl border-2'
+                : 'w-full rounded-xl shadow-2xl'
             }`}
             style={{ 
-              borderColor: colors.primary,
+              border: 'none',
               backgroundColor: isDarkMode ? "#1f2937" : "#f9fafb",
               top: isFullscreen ? '4rem' : 'auto', // Below navigation bar
               bottom: isFullscreen ? '5rem' : 'auto', // Above floating player
