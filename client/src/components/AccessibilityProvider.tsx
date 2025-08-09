@@ -40,28 +40,28 @@ export function AccessibilityProvider({ children }: AccessibilityProviderProps) 
   // Detect user preferences from system
   useEffect(() => {
     const detectPreferences = () => {
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const highContrast = window.matchMedia('(prefers-contrast: high)').matches;
-      const largeText = window.matchMedia('(min-resolution: 2dppx)').matches; // Approximate large text detection
+      const isHighContrast = window.matchMedia('(prefers-contrast: high)').matches;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const prefersColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
       setSettings(prev => ({
         ...prev,
-        reduceMotion,
-        highContrast,
+        reduceMotion: prefersReducedMotion,
+        highContrast: isHighContrast,
       }));
 
       // Apply global CSS variables based on preferences
       document.documentElement.style.setProperty(
         '--animation-duration',
-        reduceMotion ? '0.01ms' : '300ms'
+        prefersReducedMotion ? '0.01ms' : '300ms'
       );
       
       document.documentElement.style.setProperty(
         '--transition-duration',
-        reduceMotion ? '0.01ms' : '200ms'
+        prefersReducedMotion ? '0.01ms' : '200ms'
       );
 
-      if (highContrast) {
+      if (isHighContrast) {
         document.documentElement.classList.add('high-contrast');
       } else {
         document.documentElement.classList.remove('high-contrast');

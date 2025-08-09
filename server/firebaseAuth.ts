@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { auth } from './firebase';
-import { db } from './firebaseStorage';
+import { db, isFirebaseAvailable } from './firebaseStorage';
 import { UserProfileSchema, type UserProfile } from '../shared/schema';
 
 // Extend Express Request to include user
@@ -133,6 +133,15 @@ async function ensureAdminCollection() {
 export const setupFirebaseAuth = (app: express.Application) => {
   // Ensure admin collection exists
   ensureAdminCollection();
+  
+  // Health check endpoint
+  app.get('/api/health', (req: Request, res: Response) => {
+    res.json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      firebase: isFirebaseAvailable ? 'connected' : 'disconnected'
+    });
+  });
   // Get current user profile
   app.get('/api/auth/user', verifyToken, requireAuth, async (req: Request, res: Response) => {
     try {
@@ -205,9 +214,24 @@ export const setupFirebaseAuth = (app: express.Application) => {
   // Get active listeners for map
   app.get('/api/auth/active-listeners', async (req: Request, res: Response) => {
     try {
+      // Add a small delay to ensure Firebase is fully initialized
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       if (!db) {
-        console.error('Database not available');
-        return res.status(500).json({ error: 'Database not available' });
+        console.warn('Database not available, returning empty array');
+        return res.json([]);
+      }
+
+      // Check if billing is enabled first
+      try {
+        const testQuery = await db.collection('Users').limit(1).get();
+      } catch (billingError: any) {
+        if (billingError.code === 7 && billingError.message?.includes('billing')) {
+          console.warn('⚠️  Firebase billing not enabled. Returning empty active listeners.');
+          return res.json([]);
+        }
+        console.warn('Firebase query test failed:', billingError.message);
+        return res.json([]);
       }
 
       // First, let's try a simple query to see if the collection exists
@@ -221,38 +245,43 @@ export const setupFirebaseAuth = (app: express.Application) => {
           .where('isActiveListening', '==', true)
           .where('location', '!=', null)
           .get();
-      } catch (queryError) {
-        console.error('Error with composite query, trying simpler query:', queryError);
+      } catch (queryError: any) {
+        console.warn('Composite query failed, trying simpler query:', queryError.message);
         // Fallback to simpler query
-        activeListenersQuery = await db.collection('Users')
-          .where('isActiveListening', '==', true)
-          .get();
+        try {
+          activeListenersQuery = await db.collection('Users')
+            .where('isActiveListening', '==', true)
+            .get();
+        } catch (fallbackError: any) {
+          console.warn('Fallback query also failed:', fallbackError.message);
+          return res.json([]);
+        }
       }
-      
-      const activeListeners = activeListenersQuery.docs
-        .map(doc => {
-          const data = doc.data();
-          // Only include users with valid location data
-          if (data.location && data.location.latitude && data.location.longitude) {
-            return {
-              userID: data.userID,
-              location: data.location,
-              firstName: data.firstName || 'Anonymous',
-              lastName: data.lastName || '',
-            };
-          }
-          return null;
-        })
-        .filter(listener => listener !== null); // Remove null entries
-      
-      console.log('Active listeners found:', activeListeners.length);
-      res.json({ activeListeners });
-    } catch (error) {
-      console.error('Error getting active listeners:', error);
-      res.status(500).json({ 
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+
+      const activeListeners = activeListenersQuery.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          username: data.username || 'Anonymous',
+          location: data.location || null,
+          IsActiveListening: data.isActiveListening || false,
+          Location: data.location || null,
+          lastSeen: data.lastSeen ? data.lastSeen.toDate() : new Date(),
+          profileImage: data.profileImage || null
+        };
       });
+
+      console.log(`Found ${activeListeners.length} active listeners`);
+      res.json(activeListeners);
+    } catch (error: any) {
+      console.error('Error fetching active listeners:', error);
+      if (error.code === 7 && error.message?.includes('billing')) {
+        console.warn('⚠️  Firebase billing not enabled. Returning empty active listeners.');
+        return res.json([]);
+      }
+      // Always return empty array instead of 500 error
+      console.warn('Returning empty array due to error');
+      return res.json([]);
     }
   });
 

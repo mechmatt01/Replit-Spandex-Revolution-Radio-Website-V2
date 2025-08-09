@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { detectAdvertisement, getDisplayContent } from './adDetection.js';
+import { detectAdvertisement, getDisplayContent } from './adDetection';
 
 interface StationMetadata {
   title: string;

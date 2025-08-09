@@ -156,7 +156,7 @@ export default function ActiveLocations() {
       </div>
 
       <div className="space-y-3 max-h-80 overflow-y-auto px-4 py-2">
-        {locations.map((location, index) => (
+        {locations.map((location) => (
           <div 
             key={location.id}
             className="flex items-center justify-between p-3 rounded-lg transition-all duration-200 hover:scale-105 relative group"

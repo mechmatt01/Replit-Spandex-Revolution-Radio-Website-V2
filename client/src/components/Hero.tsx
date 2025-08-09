@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Play, Calendar, Music } from "lucide-react";
 import { Button } from "../components/ui/button";
 import RadioCoPlayer from "../components/RadioCoPlayer";
@@ -127,27 +127,26 @@ export default function Hero() {
         </div>
 
         {/* Countdown Timer */}
-        <div className="mb-8" role="timer" aria-label="Live broadcast countdown">
-          <div className="flex flex-col items-center mb-3">
-            {/* Modern launch indicator */}
-            <div className="relative mb-3" aria-hidden="true">
+        <div className="mb-8 flex flex-col items-center" role="timer" aria-label="Live broadcast countdown">
+          <div className="flex flex-col items-center mb-4">
+            {/* Modern launch indicator - single dot */}
+            <div className="relative mb-3 flex justify-center" aria-hidden="true">
               <div className="w-4 h-4 bg-gradient-to-r from-red-500 to-primary rounded-full animate-pulse shadow-lg"></div>
-              <div className="absolute inset-0 w-4 h-4 bg-gradient-to-r from-red-500 to-primary rounded-full animate-ping opacity-75"></div>
             </div>
             {/* Modern LIVE IN text */}
-            <div className="text-center">
+            <div className="text-center w-full">
               <span className="text-transparent bg-gradient-to-r from-red-500 to-primary bg-clip-text text-xl font-black tracking-wider">
                 LIVE IN
               </span>
             </div>
           </div>
-          <div className="flex justify-center space-x-4 text-center mb-3">
-            <div className="p-4 min-w-[90px] transition-colors duration-300 flex flex-col items-center">
-              <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
+          <div className="flex justify-center items-center space-x-4 text-center mb-4 w-full max-w-md mx-auto">
+            <div className="flex-1 flex flex-col items-center justify-center p-3 min-w-[80px] transition-colors duration-300">
+              <div className="text-3xl font-bold text-red-500 mb-2 text-center w-full">
                 {countdown.days}
               </div>
               <div 
-                className="text-xs font-semibold"
+                className="text-xs font-semibold text-center w-full"
                 style={{ 
                   color: currentTheme === 'light-mode' ? '#212936' : colors.textMuted
                 }}
@@ -155,12 +154,12 @@ export default function Hero() {
                 DAYS
               </div>
             </div>
-            <div className="p-4 min-w-[90px] transition-colors duration-300 flex flex-col items-center">
-              <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
+            <div className="flex-1 flex flex-col items-center justify-center p-3 min-w-[80px] transition-colors duration-300">
+              <div className="text-3xl font-bold text-red-500 mb-2 text-center w-full">
                 {countdown.hours}
               </div>
               <div 
-                className="text-xs font-semibold"
+                className="text-xs font-semibold text-center w-full"
                 style={{ 
                   color: currentTheme === 'light-mode' ? '#212936' : colors.textMuted
                 }}
@@ -168,12 +167,12 @@ export default function Hero() {
                 HOURS
               </div>
             </div>
-            <div className="p-4 min-w-[90px] transition-colors duration-300 flex flex-col items-center">
-              <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
+            <div className="flex-1 flex flex-col items-center justify-center p-3 min-w-[80px] transition-colors duration-300">
+              <div className="text-3xl font-bold text-red-500 mb-2 text-center w-full animate-pulse">
                 {countdown.minutes}
               </div>
               <div 
-                className="text-xs font-semibold"
+                className="text-xs font-semibold text-center w-full"
                 style={{ 
                   color: currentTheme === 'light-mode' ? '#212936' : colors.textMuted
                 }}
@@ -181,12 +180,12 @@ export default function Hero() {
                 MINS
               </div>
             </div>
-            <div className="p-4 min-w-[90px] transition-colors duration-300 flex flex-col items-center">
-              <div className="text-3xl font-bold text-red-500 mb-1 animate-pulse">
+            <div className="flex-1 flex flex-col items-center justify-center p-3 min-w-[80px] transition-colors duration-300">
+              <div className="text-3xl font-bold text-red-500 mb-2 text-center w-full animate-pulse">
                 {countdown.seconds}
               </div>
               <div 
-                className="text-xs font-semibold"
+                className="text-xs font-semibold text-center w-full"
                 style={{ 
                   color: currentTheme === 'light-mode' ? '#212936' : colors.textMuted
                 }}
@@ -195,7 +194,7 @@ export default function Hero() {
               </div>
             </div>
           </div>
-          <div className="text-center mt-3">
+          <div className="text-center w-full">
             <p 
               className="text-sm font-semibold opacity-80"
               style={{ 

@@ -6,8 +6,8 @@ import { Label } from "../components/ui/label";
 import { Separator } from "../components/ui/separator";
 import { useTheme } from "../contexts/ThemeContext";
 import { useToast } from "../hooks/use-toast";
-import { apiRequest } from "../lib/queryClient";
-import { Link } from "wouter";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
+import { Link, useLocation } from "wouter";
 import { ArrowLeft, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
 import { cn } from "../lib/utils";
 
@@ -20,12 +20,21 @@ export default function LoginPage() {
     password: "",
     firstName: "",
     lastName: "",
+    phoneNumber: "",
     confirmPassword: "",
   });
 
   const { getColors, theme } = useTheme();
   const { toast } = useToast();
+  const { register, signIn, signInWithGoogle, user } = useFirebaseAuth();
   const colors = getColors();
+  const location = useLocation();
+
+  // Redirect if already logged in
+  if (user) {
+    window.location.href = "/";
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +49,7 @@ export default function LoginPage() {
             description: "Passwords do not match.",
             variant: "destructive",
           });
+          setIsLoading(false);
           return;
         }
 
@@ -49,39 +59,49 @@ export default function LoginPage() {
             description: "Password must be at least 6 characters.",
             variant: "destructive",
           });
+          setIsLoading(false);
           return;
         }
-      }
 
-      const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-      const payload = isLogin
-        ? { email: formData.email, password: formData.password }
-        : {
-            email: formData.email,
-            password: formData.password,
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-          };
+        // Register user
+        const result = await register(
+          formData.email,
+          formData.password,
+          formData.firstName,
+          formData.lastName,
+          formData.phoneNumber
+        );
 
-      const response = await apiRequest("POST", endpoint, payload);
-      const data = await response.json();
-
-      if (isLogin) {
-        // TODO: Implement login functionality
-        console.log('Login functionality not implemented yet');
-        toast({
-          title: "Welcome Back!",
-          description: "You have successfully signed in.",
-        });
-        window.location.href = "/";
+        if (result.success) {
+          toast({
+            title: "Account Created!",
+            description: "Your account has been created successfully. Welcome to Spandex Salvation Radio!",
+          });
+          window.location.href = "/";
+        } else {
+          toast({
+            title: "Registration Failed",
+            description: result.error || "Please try again.",
+            variant: "destructive",
+          });
+        }
       } else {
-        // TODO: Implement register functionality
-        console.log('Register functionality not implemented yet');
-        toast({
-          title: "Account Created!",
-          description: "Your account has been created successfully. Welcome to Spandex Salvation Radio!",
-        });
-        window.location.href = "/";
+        // Login user
+        const result = await signIn(formData.email, formData.password);
+        
+        if (result.success) {
+          toast({
+            title: "Welcome Back!",
+            description: "You have successfully signed in.",
+          });
+          window.location.href = "/";
+        } else {
+          toast({
+            title: "Login Failed",
+            description: result.error || "Please try again.",
+            variant: "destructive",
+          });
+        }
       }
     } catch (error: any) {
       console.error("Authentication error:", error);
@@ -95,9 +115,25 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleAuth = () => {
-    // Redirect to Google OAuth endpoint
-    window.location.href = "/api/auth/google";
+  const handleGoogleAuth = async () => {
+    try {
+      setIsLoading(true);
+      await signInWithGoogle();
+      toast({
+        title: "Google Authentication Successful!",
+        description: "Welcome to Spandex Salvation Radio!",
+      });
+      window.location.href = "/";
+    } catch (error: any) {
+      console.error("Google authentication error:", error);
+      toast({
+        title: "Google Authentication Failed",
+        description: error.message || "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -136,13 +172,14 @@ export default function LoginPage() {
             variant="outline"
             className="w-full bg-white text-black border-gray-300 hover:bg-gray-50"
             onClick={handleGoogleAuth}
+            disabled={isLoading}
           >
             <img
-              src="/assets/icons8-google_1750360286324.png"
+              src="/GoogleLogoIcon.png"
               alt="Google"
               className="w-4 h-4 mr-2"
             />
-            {isLogin ? "Continue with Google" : "Sign Up with Google"}
+            {isLoading ? "Please wait..." : (isLogin ? "Continue with Google" : "Sign Up with Google")}
           </Button>
 
           <div className="relative">
@@ -199,6 +236,28 @@ export default function LoginPage() {
                       required
                     />
                   </div>
+                </div>
+              </div>
+            )}
+
+            {!isLogin && (
+              <div>
+                <Label htmlFor="phoneNumber">Phone Number (Optional)</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="phoneNumber"
+                    type="tel"
+                    placeholder="+1 (555) 123-4567"
+                    className="pl-10"
+                    value={formData.phoneNumber}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        phoneNumber: e.target.value,
+                      }))
+                    }
+                  />
                 </div>
               </div>
             )}

@@ -8,7 +8,7 @@ import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Checkbox } from "../components/ui/checkbox";
 import { useToast } from "../hooks/use-toast";
-import { useAuth } from "../contexts/AuthContext";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { isUnauthorizedError } from "../lib/authUtils";
 import { apiRequest } from "../lib/queryClient";
@@ -23,12 +23,13 @@ export default function Submissions() {
     artist: "",
     genre: "",
     message: "",
+    status: "pending",
   });
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useFirebaseAuth();
   const { getColors, currentTheme } = useTheme();
   const colors = getColors();
 
@@ -64,6 +65,7 @@ export default function Submissions() {
         artist: "",
         genre: "",
         message: "",
+        status: "pending",
       });
       setAgreedToTerms(false);
       queryClient.invalidateQueries({ queryKey: ["/api/submissions"] });
@@ -408,7 +410,6 @@ export default function Submissions() {
           <LiveChat
             isEnabled={true}
             onToggle={() => setShowPremiumNotification(false)}
-            premiumFeatureType="submission"
           />
         )}
       </div>

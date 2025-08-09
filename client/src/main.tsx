@@ -1,8 +1,8 @@
-import { createRoot } from "react-dom/client";
-import App from "./App";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import "./styles.css";
-import "./no-focus-rings.css";
-import "./ultimate-focus-killer.css";
-import "./focus-destroyer.js";
+import "./unified-focus-eliminator.css";
+import App from "./App";
+import "./index.css";
 
-createRoot(document.getElementById("root")!).render(<App />);
+ReactDOM.createRoot(document.getElementById("root")!).render(<App />);

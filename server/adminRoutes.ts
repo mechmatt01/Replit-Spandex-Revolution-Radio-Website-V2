@@ -1,5 +1,12 @@
 import express, { Request, Response } from 'express';
 import { getFirestore } from 'firebase-admin/firestore';
+import { 
+  generateMockRadioStations, 
+  generateMockActiveListeners, 
+  generateMockUserStatistics,
+  getActiveListenersFromFirebase,
+  getUserStatisticsFromFirebase
+} from './mockData.js';
 
 const db = getFirestore();
 
@@ -240,6 +247,248 @@ export function registerAdminRoutes(app: express.Application) {
       res.status(500).json({ 
         success: false, 
         error: 'Internal server error' 
+      });
+    }
+  });
+
+  // Active listeners endpoint
+  app.get('/api/admin/active-listeners', async (req: Request, res: Response) => {
+    try {
+      const { useMockData } = req.query;
+      
+      if (useMockData === 'true') {
+        // Return mock data for testing
+        const mockListeners = generateMockActiveListeners();
+        res.json(mockListeners);
+      } else {
+        // Return real Firebase data
+        const listeners = await getActiveListenersFromFirebase();
+        res.json(listeners);
+      }
+    } catch (error) {
+      console.error('Error fetching active listeners:', error);
+      res.status(500).json({ error: 'Failed to fetch active listeners' });
+    }
+  });
+
+  // User statistics endpoint
+  app.get('/api/admin/user-statistics', async (req: Request, res: Response) => {
+    try {
+      const { useMockData } = req.query;
+      
+      if (useMockData === 'true') {
+        // Return mock data for testing
+        const mockStats = generateMockUserStatistics();
+        res.json(mockStats);
+      } else {
+        // Return real Firebase data
+        const stats = await getUserStatisticsFromFirebase();
+        res.json(stats);
+      }
+    } catch (error) {
+      console.error('Error fetching user statistics:', error);
+      res.status(500).json({ error: 'Failed to fetch user statistics' });
+    }
+  });
+
+  // Get radio stations (with mock data support)
+  app.get('/api/admin/radio-stations', async (req: Request, res: Response) => {
+    try {
+      const { useMockData } = req.query;
+      
+      if (useMockData === 'true') {
+        // Return mock data
+        const mockStations = generateMockRadioStations(25);
+        res.json(mockStations);
+      } else {
+        // Return real data from Firebase
+        if (!db) {
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Database not available' 
+          });
+        }
+
+        const stationsRef = db.collection('RadioStations');
+        const stationsSnapshot = await stationsRef.get();
+        
+        const stations = [];
+        stationsSnapshot.forEach(doc => {
+          stations.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        });
+
+        res.json(stations);
+      }
+    } catch (error) {
+      console.error('Error getting radio stations:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to get radio stations' 
+      });
+    }
+  });
+
+  // Add new radio station
+  app.post('/api/admin/radio-stations', async (req: Request, res: Response) => {
+    try {
+      const { useMockData } = req.query;
+      const stationData = req.body;
+      
+      if (useMockData === 'true') {
+        // Return mock success response
+        res.json({ 
+          success: true, 
+          message: 'Station added successfully (mock)',
+          id: 'mock-' + Date.now()
+        });
+      } else {
+        // Add to Firebase
+        if (!db) {
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Database not available' 
+          });
+        }
+
+        const stationsRef = db.collection('RadioStations');
+        const newStation = await stationsRef.add({
+          ...stationData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        });
+
+        res.json({ 
+          success: true, 
+          message: 'Station added successfully',
+          id: newStation.id
+        });
+      }
+    } catch (error) {
+      console.error('Error adding radio station:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to add radio station' 
+      });
+    }
+  });
+
+  // Update radio station
+  app.put('/api/admin/radio-stations/:id', async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { useMockData } = req.query;
+      const updateData = req.body;
+      
+      if (useMockData === 'true') {
+        // Return mock success response
+        res.json({ 
+          success: true, 
+          message: 'Station updated successfully (mock)' 
+        });
+      } else {
+        // Update in Firebase
+        if (!db) {
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Database not available' 
+          });
+        }
+
+        await db.collection('RadioStations').doc(id).update({
+          ...updateData,
+          updatedAt: new Date().toISOString()
+        });
+        
+        res.json({ 
+          success: true, 
+          message: 'Station updated successfully' 
+        });
+      }
+    } catch (error) {
+      console.error('Error updating radio station:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to update radio station' 
+      });
+    }
+  });
+
+  // Delete radio station
+  app.delete('/api/admin/radio-stations/:id', async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { useMockData } = req.query;
+      
+      if (useMockData === 'true') {
+        // Return mock success response
+        res.json({ 
+          success: true, 
+          message: 'Station deleted successfully (mock)' 
+        });
+      } else {
+        // Delete from Firebase
+        if (!db) {
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Database not available' 
+          });
+        }
+
+        await db.collection('RadioStations').doc(id).delete();
+        res.json({ 
+          success: true, 
+          message: 'Station deleted successfully' 
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting radio station:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to delete radio station' 
+      });
+    }
+  });
+
+  // Toggle radio station status
+  app.put('/api/admin/radio-stations/:id/toggle-status', async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { isActive } = req.body;
+      const { useMockData } = req.query;
+      
+      if (useMockData === 'true') {
+        // Return mock success response
+        res.json({ 
+          success: true, 
+          message: 'Station status updated successfully (mock)' 
+        });
+      } else {
+        // Update status in Firebase
+        if (!db) {
+          return res.status(500).json({ 
+            success: false, 
+            error: 'Database not available' 
+          });
+        }
+
+        await db.collection('RadioStations').doc(id).update({
+          isActive,
+          updatedAt: new Date().toISOString()
+        });
+        
+        res.json({ 
+          success: true, 
+          message: 'Station status updated successfully' 
+        });
+      }
+    } catch (error) {
+      console.error('Error updating station status:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to update station status' 
       });
     }
   });

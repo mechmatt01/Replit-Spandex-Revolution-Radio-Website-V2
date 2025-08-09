@@ -15,6 +15,10 @@ import type { RadioStation, InsertRadioStation } from '@shared/schema';
 
 interface StationFormData extends Omit<InsertRadioStation, 'apiType'> {
   apiType: 'triton' | 'streamtheworld' | 'somafm' | 'custom' | 'auto';
+  apiUrl?: string;
+  frequency?: string;
+  location?: string;
+  logo?: string;
 }
 
 const AdminPanel: React.FC = () => {
@@ -213,7 +217,7 @@ const AdminPanel: React.FC = () => {
       website: station.website || '',
       logo: station.logo || '',
       isActive: station.isActive,
-      sortOrder: station.sortOrder,
+      sortOrder: station.sortOrder || 0,
     });
     setIsCreating(true);
   };

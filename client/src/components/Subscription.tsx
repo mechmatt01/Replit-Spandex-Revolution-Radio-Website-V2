@@ -110,6 +110,7 @@ export default function Subscription() {
       packageType: selectedPlan as "Icon" | "Legend" | "Rebel",
       amount: 0, // TODO: Get actual amount
       currency: "USD",
+      status: "active",
       startDate: new Date(),
       endDate: new Date(),
     });

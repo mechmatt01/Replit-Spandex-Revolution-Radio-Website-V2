@@ -44,12 +44,12 @@ export function useScrollVelocity(): ScrollVelocityData {
           clearTimeout(scrollTimeout.current);
         }
         
-        // Set scrolling to false after 150ms of no scroll
+        // Set scrolling to false after 100ms of no scroll
         scrollTimeout.current = setTimeout(() => {
           setIsScrolling(false);
           setVelocity(0);
           setDirection('none');
-        }, 150);
+        }, 100);
       }
       
       lastScrollY.current = currentScrollY;
@@ -81,15 +81,15 @@ export function getAdaptiveAnimationDuration(
   maxDuration?: number
 ): number {
   // Define velocity thresholds
-  const slowVelocity = 0.3;   // Slow scrolling
-  const fastVelocity = 1.5;   // Fast scrolling
+  const slowVelocity = 0.2;   // Slow scrolling
+  const fastVelocity = 1.0;   // Fast scrolling
   
   let adaptiveDuration = baselineDuration;
   
   if (velocity > fastVelocity) {
-    // Fast scrolling: reduce duration by up to 50%
-    const speedMultiplier = Math.min(velocity / fastVelocity, 2);
-    adaptiveDuration = baselineDuration * (0.5 + (0.5 / speedMultiplier));
+    // Fast scrolling: reduce duration by up to 70%
+    const speedMultiplier = Math.min(velocity / fastVelocity, 3);
+    adaptiveDuration = baselineDuration * (0.3 + (0.7 / speedMultiplier));
   } else if (velocity > slowVelocity) {
     // Normal scrolling: use baseline duration
     adaptiveDuration = baselineDuration;

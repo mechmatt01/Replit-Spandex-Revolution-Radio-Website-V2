@@ -48,7 +48,8 @@ catch (error) {
     console.error('Firebase initialization error:', error);
     isFirebaseAvailable = false;
 }
-const db = isFirebaseAvailable ? getFirestore(firebaseApp) : null;
+export const db = isFirebaseAvailable ? getFirestore(firebaseApp) : null;
+export { isFirebaseAvailable };
 /**
  * Firebase-based Live Statistics Storage
  * Handles live statistics data for active listeners, countries, and total listeners

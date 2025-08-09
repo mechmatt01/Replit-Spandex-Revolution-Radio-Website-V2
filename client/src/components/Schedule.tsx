@@ -288,13 +288,13 @@ export default function Schedule() {
                   </div>
                   
                   <Card
-                    className="relative group cursor-pointer transition-all duration-300 border-2 p-4 enhanced-glow show-container"
+                    className="relative group cursor-pointer transition-all duration-300 border-2 p-4 enhanced-glow show-container shadow-none"
                     style={{
                       backgroundColor: colors.background,
                       borderColor: colors.primary,
-                      boxShadow: `${colors.border}20 0px 8px 32px`,
                       height: "160px",
                       transform: hoveredShow === `weekly-${show.id}` ? 'scale(1.05)' : 'scale(1)',
+                      boxShadow: 'none'
                     }}
                     onClick={() => setSelectedWeeklyShow(show)}
                     onMouseEnter={() => setHoveredShow(`weekly-${show.id}`)}
@@ -374,13 +374,13 @@ export default function Schedule() {
                     </div>
                     
                     <Card
-                      className="relative group cursor-pointer transition-all duration-300 border-2 p-4 enhanced-glow show-container"
+                      className="relative group cursor-pointer transition-all duration-300 border-2 p-4 enhanced-glow show-container shadow-none"
                       style={{
                         backgroundColor: colors.background,
                         borderColor: colors.primary,
-                        boxShadow: `${colors.border}20 0px 8px 32px`,
                         height: "160px",
                         transform: hoveredShow === `past-${show.id}` ? 'scale(1.05)' : 'scale(1)',
+                        boxShadow: 'none'
                       }}
                       onClick={() => setSelectedPastShow(show)}
                       onMouseEnter={() => setHoveredShow(`past-${show.id}`)}
@@ -427,7 +427,7 @@ export default function Schedule() {
                         >
                           <Calendar className="text-gray-500 h-3 w-3" />
                           <span className="text-gray-500 text-xs font-bold">
-                            {formatDateWithDuration(show.date, show.duration)}
+                            {formatDateWithDuration(show.date, show.duration || 0)}
                           </span>
                         </div>
                       </div>
@@ -522,7 +522,6 @@ export default function Schedule() {
             style={{
               borderColor: colors.primary,
               backgroundColor: colors.background,
-              boxShadow: `0 25px 50px ${colors.primary}40`,
               margin: 'auto',
               maxHeight: '90vh',
               overflow: 'auto',
@@ -614,7 +613,6 @@ export default function Schedule() {
             style={{
               borderColor: colors.primary,
               backgroundColor: colors.background,
-              boxShadow: `0 25px 50px ${colors.primary}40`,
               margin: 'auto',
               maxHeight: '90vh',
               overflow: 'auto',

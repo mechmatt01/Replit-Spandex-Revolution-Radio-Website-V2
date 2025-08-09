@@ -1,4 +1,5 @@
-import { detectAdvertisement, getDisplayContent } from './adDetection.js';
+import { detectAdvertisement, getDisplayContent } from './adDetection';
+import { storage } from './storage';
 /**
  * Universal Advertisement Detection System
  * Works with any radio station streaming URL and API format

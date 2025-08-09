@@ -1,7 +1,7 @@
-import { Radio } from "lucide-react";
 import { useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
-import MusicLogoPath from "../../../attached_assets/MusicLogoIcon@3x.png";
+import { Radio } from "lucide-react";
+import MusicLogoPath from "/MusicLogoIcon.png";
 import AdminPanel from "./AdminPanel";
 
 export default function Footer() {
@@ -224,7 +224,7 @@ export default function Footer() {
                   >
                     <Radio className="h-4 w-4" />
                   </span>
-                  <span className="-ml-7">24/7 Live Stream</span>
+                  <span>24/7 Live Stream</span>
                 </div>
               </li>
               <li>
@@ -236,7 +236,7 @@ export default function Footer() {
                     className="mr-3 flex-shrink-0 text-center w-4"
                     style={{ color: colors.primary }}
                   >♪</span>
-                  <span className="-ml-7">320kbps Quality</span>
+                  <span>320kbps Quality</span>
                 </div>
               </li>
               <li>
@@ -248,7 +248,7 @@ export default function Footer() {
                     className="mr-3 flex-shrink-0 text-center w-4"
                     style={{ color: colors.primary }}
                   >🌍</span>
-                  <span className="-ml-7">Global Coverage</span>
+                  <span>Global Coverage</span>
                 </div>
               </li>
               <li>
@@ -260,7 +260,7 @@ export default function Footer() {
                     className="mr-3 flex-shrink-0 text-center w-4"
                     style={{ color: colors.primary }}
                   >🛡️</span>
-                  <span className="-ml-7">Secure & Reliable</span>
+                  <span>Secure & Reliable</span>
                 </div>
               </li>
             </ul>

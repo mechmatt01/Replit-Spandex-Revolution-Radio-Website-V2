@@ -1,18 +1,21 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "./components/ui/toaster";
 import { TooltipProvider } from "./components/ui/tooltip";
 
+// Import CSS to fix white border issues
+import "./no-white-borders.css";
+
 import { AdminProvider } from "./contexts/AdminContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { RadioProvider } from "./contexts/RadioContext";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { FirebaseAuthProvider } from "./contexts/FirebaseAuthContext";
 import { AccessibilityProvider } from "./components/AccessibilityProvider";
 import DynamicMetaTags from "./components/DynamicMetaTags";
 import VerificationModal from "./components/VerificationModal";
+import { RecaptchaV3Provider } from "./components/RecaptchaV3";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LiveChat from "./components/LiveChat";
 import { initializeChatCleanup } from "./lib/chat";
@@ -26,44 +29,19 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import OrderConfirmation from "./components/OrderConfirmation";
 import NotFound from "./pages/not-found";
-import TestPage from "./TestPage";
-// import { useAuth } from "./hooks/useAuth";
+
+import { useFirebaseAuth } from "./contexts/FirebaseAuthContext";
 
 function VerificationGate({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
-  const [showEmailModal, setShowEmailModal] = useState(false);
-  const [showPhoneModal, setShowPhoneModal] = useState(false);
-  if (!user) return <>{children}</>; // Not logged in, allow access to public routes
-
-  // If not verified, show the appropriate modal and block app
-  if (!user.isEmailVerified) {
-    return (
-      <VerificationModal
-        isOpen={true}
-        onClose={() => setShowEmailModal(false)}
-        type="email"
-        contactInfo={user.emailAddress}
-      />
-    );
-  }
-  if (!user.isPhoneVerified) {
-    return (
-      <VerificationModal
-        isOpen={true}
-        onClose={() => setShowPhoneModal(false)}
-        type="phone"
-        contactInfo={user.phoneNumber}
-      />
-    );
-  }
-  // Both verified, allow app
+  // For production, allow all users to access the app
+  // No email verification required
   return <>{children}</>;
 }
 
 function Router() {
   return (
     <Switch>
-      <Route path="/test" component={TestPage} />
+
       <Route path="/" component={HomePage} />
       <Route path="/music" component={MusicPage} />
       <Route path="/profile" component={ProfilePage} />
@@ -89,27 +67,27 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AccessibilityProvider>
-          <AuthProvider>
-            <FirebaseAuthProvider>
+          <FirebaseAuthProvider>
               <ThemeProvider>
                 <RadioProvider>
                   <AdminProvider>
                     <TooltipProvider>
                       <DynamicMetaTags />
                       <Toaster />
-                      <VerificationGate>
-                        <Router />
-                        <LiveChat 
-                          isEnabled={isChatEnabled}
-                          onToggle={() => setIsChatEnabled(!isChatEnabled)}
-                        />
-                      </VerificationGate>
+                      <RecaptchaV3Provider siteKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || ""}>
+                        <VerificationGate>
+                          <Router />
+                          <LiveChat 
+                            isEnabled={isChatEnabled}
+                            onToggle={() => setIsChatEnabled(!isChatEnabled)}
+                          />
+                        </VerificationGate>
+                      </RecaptchaV3Provider>
                     </TooltipProvider>
                   </AdminProvider>
                 </RadioProvider>
               </ThemeProvider>
-            </FirebaseAuthProvider>
-          </AuthProvider>
+          </FirebaseAuthProvider>
         </AccessibilityProvider>
       </QueryClientProvider>
     </ErrorBoundary>

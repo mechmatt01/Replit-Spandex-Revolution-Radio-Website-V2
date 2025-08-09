@@ -1,11 +1,11 @@
 import { useState, useCallback } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
 import { apiRequest } from "../lib/queryClient";
 
 export function useListeningStatus() {
   const [isActiveListening, setIsActiveListening] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useFirebaseAuth();
 
   const updateListeningStatus = useCallback(
     async (status: boolean) => {

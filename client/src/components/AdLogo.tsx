@@ -1,6 +1,5 @@
-import React from 'react';
+import { useTheme } from "../contexts/ThemeContext";
 import { Music, AlertCircle } from 'lucide-react';
-import { useTheme } from '../contexts/ThemeContext';
 
 interface AdLogoProps {
   isAd?: boolean;

@@ -1,30 +1,14 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signInWithPhoneNumber } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, collection as firestoreCollection } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { GoogleAuthProvider, signInWithRedirect, getRedirectResult, signInWithPhoneNumber, signInWithPopup, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc, getDoc, updateDoc, collection, addDoc, query, where, getDocs, collection as firestoreCollection } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import bcrypt from 'bcryptjs';
 import { RecaptchaVerifier } from "firebase/auth";
+import { auth, db, storage } from '../firebase';
 
 // NOTE: Google OAuth is currently in production mode and requires verification
 // This means only authorized test users can sign in until the app is verified
 // To fix this: Go to Google Cloud Console > APIs & Services > OAuth consent screen
 // Add test users or complete verification process
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
-  authDomain: "spandex-salvation-radio-site.firebaseapp.com",
-  projectId: "spandex-salvation-radio-site",
-  storageBucket: "spandex-salvation-radio-site.firebasestorage.app",
-  appId: "1:632263635377:web:2a9bd6118a6a2cb9d8cd90",
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Firebase services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
 
 // Configure Google Auth Provider
 const provider = new GoogleAuthProvider();
@@ -59,6 +43,7 @@ export interface UserProfile {
   renewalDate: string | null;
   lastLogin: string;
   userID: string;
+  firebaseUID: string; // Add Firebase UID for easier lookup
   isEmailVerified: boolean;
   isPhoneVerified: boolean;
   createdAt: string;
@@ -169,34 +154,47 @@ export async function verifyAdminCredentials(username: string, password: string)
   }
 }
 
-export const registerUser = async (userData: {
+export async function registerUser(userData: {
   firstName: string;
   lastName: string;
   email: string;
   phoneNumber: string;
   password: string;
-}) => {
+}) {
   try {
-    console.log('[Firebase] Starting user registration...');
+    console.log('[Firebase] Attempting registration for:', userData.email);
     
-    const response = await fetch('/api/auth/firebase/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
+    // Create user with Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+    const user = userCredential.user;
+    
+    // Update display name
+    await updateProfile(user, {
+      displayName: `${userData.firstName} ${userData.lastName}`,
     });
     
-    const result = await response.json();
+    // Create user profile in Firestore
+    const profileResult = await createUserProfile(user, {
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      phoneNumber: userData.phoneNumber
+    });
     
-    if (result.success) {
-      console.log('[Firebase] User registration successful');
-      return result;
+    if (profileResult.success) {
+      console.log('[Firebase] Registration successful for:', userData.email);
+      return {
+        success: true,
+        userID: profileResult.profile?.userID,
+        profile: profileResult.profile,
+      };
     } else {
-      console.log('[Firebase] Registration failed:', result.error);
-      return result;
+      console.log('[Firebase] Profile creation failed:', profileResult.error);
+      return {
+        success: false,
+        error: profileResult.error || 'Failed to create user profile',
+      };
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('[Firebase] Registration error:', error);
     return {
       success: false,
@@ -205,32 +203,7 @@ export const registerUser = async (userData: {
   }
 };
 
-export async function loginUser(email: string, password: string) {
-  try {
-    console.log('[Firebase] Attempting login for:', email);
-    
-    const response = await fetch('/api/auth/firebase/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      console.log('[Firebase] Login successful for:', email);
-      return result;
-    } else {
-      console.log('[Firebase] Login failed:', result.error);
-      return result;
-    }
-  } catch (error) {
-    console.error('[Firebase] Login error:', error);
-    return { success: false, error: 'Login failed. Please try again.' };
-  }
-}
+// Remove the loginUser function - Firebase Auth handles this automatically
 
 export async function updateUserLastActive(userID: string) {
   try {
@@ -244,23 +217,29 @@ export async function updateUserLastActive(userID: string) {
 }
 
 // Create or update user profile with all required fields
-export async function createUserProfile(firebaseUser: any): Promise<{ success: boolean; profile?: UserProfile; error?: string }> {
+export async function createUserProfile(firebaseUser: any, additionalData?: { firstName?: string; lastName?: string; phoneNumber?: string }): Promise<{ success: boolean; profile?: UserProfile; error?: string }> {
   try {
     const userID = generateUserID();
     const now = new Date().toISOString();
     
+    // Use additional data if provided, otherwise fall back to Firebase user data
+    const firstName = additionalData?.firstName || firebaseUser.displayName?.split(' ')[0] || '';
+    const lastName = additionalData?.lastName || firebaseUser.displayName?.slice(1).join(' ') || '';
+    const phoneNumber = additionalData?.phoneNumber || firebaseUser.phoneNumber || '';
+    
     const userProfile: UserProfile = {
-      firstName: firebaseUser.displayName?.split(' ')[0] || '',
-      lastName: firebaseUser.displayName?.split(' ').slice(1).join(' ') || '',
-      userProfileImage: firebaseUser.photoURL || '',
+      firstName,
+      lastName,
+      userProfileImage: firebaseUser.photoURL || getRandomDefaultAvatar(),
       emailAddress: firebaseUser.email || '',
-      phoneNumber: firebaseUser.phoneNumber || '',
+      phoneNumber,
       location: null, // Will be set when user grants location permission
       isActiveListening: false,
       activeSubscription: false,
       renewalDate: null,
       lastLogin: now,
       userID: userID,
+      firebaseUID: firebaseUser.uid,
       isEmailVerified: firebaseUser.emailVerified || false,
       isPhoneVerified: false,
       createdAt: now,
@@ -275,7 +254,7 @@ export async function createUserProfile(firebaseUser: any): Promise<{ success: b
     console.error('Error creating user profile:', error);
     return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
-}
+};
 
 // Update user's listening status
 export async function updateListeningStatus(userID: string, isListening: boolean): Promise<boolean> {
@@ -331,6 +310,42 @@ export async function getUserProfile(userID: string): Promise<UserProfile | null
     return null;
   } catch (error) {
     console.error('Error getting user profile:', error);
+    return null;
+  }
+}
+
+// Find user profile by Firebase UID (searches by email since that's what we store)
+export async function findUserProfileByFirebaseUID(firebaseUID: string, email: string): Promise<UserProfile | null> {
+  try {
+    // First try to find by Firebase UID
+    const q1 = query(
+      collection(db, 'Users'),
+      where('firebaseUID', '==', firebaseUID)
+    );
+    
+    let querySnapshot = await getDocs(q1);
+    
+    if (!querySnapshot.empty) {
+      const userDoc = querySnapshot.docs[0];
+      return userDoc.data() as UserProfile;
+    }
+    
+    // Fallback: Query by email address
+    const q2 = query(
+      collection(db, 'Users'),
+      where('emailAddress', '==', email)
+    );
+    
+    querySnapshot = await getDocs(q2);
+    
+    if (!querySnapshot.empty) {
+      const userDoc = querySnapshot.docs[0];
+      return userDoc.data() as UserProfile;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Error finding user profile by Firebase UID:', error);
     return null;
   }
 }
@@ -478,11 +493,9 @@ export async function signInWithGoogle() {
     console.log('OAuth mode: Testing (should work with test users)');
     console.log('OAuth Client ID:', '632263635377-sa02i1luggs8hlmc6ivt0a6i5gv0irrn.apps.googleusercontent.com');
     console.log('Current URL:', window.location.href);
-    console.log('Expected redirect URI:', `${window.location.origin}/__/auth/handler`);
 
     // Check if we're on an authorized domain
     const currentDomain = window.location.hostname;
-    const authDomain = auth.config.authDomain;
     const authorizedDomains = [
       'localhost',
       '127.0.0.1',
@@ -501,8 +514,11 @@ export async function signInWithGoogle() {
     console.log('Note: In testing mode, only authorized test users can sign in');
     console.log('Make sure your Google account is added as a test user in Google Cloud Console');
 
-    await signInWithRedirect(auth, provider);
-    console.log('Redirect initiated successfully');
+    // Use popup authentication for better user experience
+    const result = await signInWithPopup(auth, provider);
+    console.log('Google sign-in successful:', result);
+    
+    return result;
   } catch (error: any) {
     console.error('Error signing in with Google:', error);
     console.error('Error code:', error.code);
@@ -547,23 +563,16 @@ export async function handleRedirectResult() {
       console.log('User display name:', user.displayName);
       console.log('User UID:', user.uid);
 
-      // Call server API to create or update user profile
-      const response = await fetch('/api/auth/firebase/google', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          googleId: user.uid,
-          email: user.email,
-          firstName: user.displayName?.split(' ')[0] || '',
-          lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
-        }),
-      });
-
-      const profileResult = await response.json();
-      console.log('Profile creation result:', profileResult);
-      return { success: true, user, profileResult };
+      // Create or update user profile in Firestore directly
+      try {
+        const profileResult = await createUserProfile(user);
+        console.log('Profile creation result:', profileResult);
+        return { success: true, user, profileResult };
+      } catch (profileError) {
+        console.error('Error creating user profile:', profileError);
+        // Still return success for the auth, but log the profile error
+        return { success: true, user, profileError: profileError instanceof Error ? profileError.message : 'Unknown profile error' };
+      }
     }
     console.log('No redirect result found');
     console.log('This could mean:');
@@ -619,6 +628,29 @@ export async function getActiveListenersFromFirestore() {
   } catch (error) {
     console.error("Error fetching active listeners from Firestore:", error);
     return [];
+  }
+}
+
+// Upload image to Firebase Storage
+export async function uploadProfileImage(file: File, userID: string): Promise<string> {
+  try {
+    // Create a unique filename
+    const fileExtension = file.name.split('.').pop();
+    const fileName = `profile-images/${userID}-${Date.now()}.${fileExtension}`;
+    
+    // Create a reference to the file location
+    const storageRef = ref(storage, fileName);
+    
+    // Upload the file
+    const snapshot = await uploadBytes(storageRef, file);
+    
+    // Get the download URL
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    
+    return downloadURL;
+  } catch (error) {
+    console.error('Error uploading profile image:', error);
+    throw new Error('Failed to upload image');
   }
 }
 

@@ -10,6 +10,11 @@ declare global {
     namespace maps {
       interface Map {
         setOptions(options: google.maps.MapOptions): void;
+        invalidateSize(): void;
+        flyTo(center: google.maps.LatLng | google.maps.LatLngLiteral, zoom: number, options?: {
+          duration?: number;
+          easeLinearity?: number;
+        }): void;
       }
       
       namespace marker {

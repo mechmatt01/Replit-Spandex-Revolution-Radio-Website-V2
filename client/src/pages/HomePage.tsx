@@ -1,20 +1,17 @@
+import React, { useState, useEffect } from "react";
 import Navigation from "../components/Navigation";
 import Hero from "../components/Hero";
 import Features from "../components/Features";
 import About from "../components/About";
 import Schedule from "../components/Schedule";
 import Submissions from "../components/Submissions";
-import FullWidthGlobeMap from "../components/FullWidthGlobeMapFixed";
+import FullWidthGlobeMap from "../components/FullWidthGlobeMap";
 import Contact from "../components/Contact";
 import SubscriptionCarousel from "../components/SubscriptionCarousel";
 import ShopifyEcommerce from "../components/ShopifyEcommerce";
 import FadeInView from "../components/FadeInView";
 import StaggeredAnimation from "../components/StaggeredAnimation";
 import StatsAndLocations from "../components/StatsAndLocations";
-
-
-
-import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
 import StickyPlayer from "../components/StickyPlayer";
 import ChatButton from "../components/ChatButton";
@@ -22,6 +19,7 @@ import { useTheme } from "../contexts/ThemeContext";
 
 export default function HomePage() {
   const [isScrollingEnabled, setIsScrollingEnabled] = useState(true);
+  const [showLiveChat, setShowLiveChat] = useState(false);
   const { getColors, currentTheme } = useTheme();
   const colors = getColors();
   
@@ -132,7 +130,7 @@ export default function HomePage() {
       </FadeInView>
       
         <StickyPlayer />
-        <ChatButton />
+        <ChatButton onChatClick={() => setShowLiveChat(true)} />
       </main>
     </div>
   );

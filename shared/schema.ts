@@ -9,7 +9,7 @@ import {
   jsonb,
   index,
 } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+// import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Firebase User Profile Schema
@@ -339,6 +339,10 @@ export const insertRadioStationSchema = z.object({
   city: z.string().optional(),
   sortOrder: z.number().default(0),
   isActive: z.boolean().default(true),
+  apiUrl: z.string().url().optional(),
+  apiType: z.string().optional(),
+  frequency: z.string().optional(),
+  location: z.string().optional(),
 });
 
 

@@ -252,16 +252,17 @@ export default function LiveStatistics() {
         style={{ border: 'none' }} // Remove border
       >
         <div 
-          className="text-xs font-semibold mb-2"
-          style={{ color: colors.accent }}
-        >
-          Broadcasting Live 24/7 • 847 Days Strong
-        </div>
-        <div 
-          className="text-xs"
+          className="flex items-center justify-center space-x-2 text-xs"
           style={{ color: colors.textMuted }}
         >
-          Real-time data • Updates every 30 seconds
+          <div 
+            className="w-2 h-2 rounded-full animate-pulse flex-shrink-0"
+            style={{ 
+              backgroundColor: '#10B981',
+              alignSelf: 'center'
+            }}
+          ></div>
+          <span className="leading-none">Real-time data • Updates every 30 seconds</span>
         </div>
         <div 
           className="mt-2 text-xs font-semibold"

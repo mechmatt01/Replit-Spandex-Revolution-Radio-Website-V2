@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { useAuth } from "../contexts/AuthContext";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
 import {
   Palette,
   Sun,
@@ -49,12 +49,13 @@ const THEME_ICONS: Record<MetalTheme, React.ReactNode> = {
 
 export default function MetalThemeSwitcher() {
   const { currentTheme, setTheme, getColors } = useTheme();
-  const { user } = useAuth();
+  const { user } = useFirebaseAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [showPremiumDialog, setShowPremiumDialog] = useState(false);
   const colors = getColors();
 
-  const hasActiveSubscription = user?.activeSubscription === true;
+  // TODO: Check subscription status from user profile
+  const hasActiveSubscription = false;
 
   const handleThemeClick = (themeKey: string, themeConfig: any) => {
     if (themeConfig.isPremium && !hasActiveSubscription) {
@@ -382,7 +383,7 @@ export default function MetalThemeSwitcher() {
                         style={{
                           backgroundColor: "rgba(255, 255, 255, 0.1)",
                           backdropFilter: "blur(10px)",
-                          border: "1px solid rgba(255, 255, 255, 0.3)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
                           borderRadius: "6px",
                         }}
                       >
@@ -394,9 +395,9 @@ export default function MetalThemeSwitcher() {
                         style={{
                           background: "rgba(255, 255, 255, 0.15)",
                           backdropFilter: "blur(15px)",
-                          border: "1px solid rgba(255, 255, 255, 0.3)",
+                          border: "1px solid rgba(59, 130, 246, 0.3)",
                           borderRadius: "6px",
-                          boxShadow: "0 4px 20px rgba(255, 255, 255, 0.1)",
+                          boxShadow: "0 4px 20px rgba(59, 130, 246, 0.1)",
                         }}
                       >
                         Get Premium

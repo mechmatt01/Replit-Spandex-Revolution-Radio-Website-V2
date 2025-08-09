@@ -135,7 +135,6 @@ import {
   updateUserProfile as updateUserProfileOriginal,
   updateListeningStatus as updateListeningStatusOriginal,
   updateUserLocation as updateUserLocationOriginal,
-  loginUser as loginUserOriginal,
   registerUser as registerUserOriginal,
   getActiveListenersFromFirestore as getActiveListenersFromFirestoreOriginal
 } from './lib/firebase';
@@ -147,6 +146,5 @@ export const getUserProfile = getUserProfileOriginal;
 export const updateUserProfile = updateUserProfileOriginal;
 export const updateListeningStatus = updateListeningStatusOriginal;
 export const updateUserLocation = updateUserLocationOriginal;
-export const loginUser = loginUserOriginal;
 export const registerUser = registerUserOriginal;
 export const getActiveListenersFromFirestore = getActiveListenersFromFirestoreOriginal; 

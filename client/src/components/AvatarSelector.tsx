@@ -10,150 +10,143 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { Upload, User, Camera, Crown, Star } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { useToast } from "../hooks/use-toast";
-import { apiRequest } from "../lib/queryClient";
-
-// Import premium avatars
-import BassBatAvatar from "../../Avatars/Premium_Avatars/Bass-Bat.jpeg";
-import DrumDragonAvatar from "../../Avatars/Premium_Avatars/Drum-Dragon.jpeg";
-import GuitarGoblinAvatar from "../../Avatars/Premium_Avatars/Guitar-Goblin.jpeg";
-import HeadbangerHamsterAvatar from "../../Avatars/Premium_Avatars/Headbanger-Hamster.jpeg";
-import MetalQueenAvatar from "../../Avatars/Premium_Avatars/Metal-Queen.jpeg";
-import MetalCatAvatar from "../../Avatars/Premium_Avatars/Metal-Cat.jpeg";
-import MoshPitMonsterAvatar from "../../Avatars/Premium_Avatars/Mosh-Pit-Monster.jpeg";
-import PunkPandaAvatar from "../../Avatars/Premium_Avatars/Punk-Panda.jpeg";
-import RebelRaccoonAvatar from "../../Avatars/Premium_Avatars/Rebel-Raccoon.jpeg";
-import RockUnicornAvatar from "../../Avatars/Premium_Avatars/Rock-Unicorn.jpeg";
+import { uploadProfileImage } from "../lib/firebase";
 
 interface AvatarSelectorProps {
   isOpen: boolean;
   onClose: () => void;
   currentAvatar?: string;
   onAvatarUpdate: (avatarUrl: string) => void;
+  userID: string; // Add userID prop
 }
 
-// Pre-made avatar options
+// Function to get local avatar URL
+const getAvatarUrl = (avatarName: string, isPremium: boolean = false) => {
+  const folder = isPremium ? "Premium_Avatars" : "Default_Avatars";
+  return `/Avatars/${folder}/${avatarName}`;
+};
 
 // Free tier avatars
 const FREE_AVATAR_OPTIONS = [
   {
-    id: "metal-drummer-cat",
+    id: "Metal-Drummer-Cat",
     name: "Metal Drummer Cat",
-    url: "https://i.imgur.com/8X9KJjg.png",
-    description: "A fierce feline behind the drums",
-    tier: "free"
+    url: getAvatarUrl("Metal-Drummer-Cat.png"),
+    description: "A fierce cat drummer ready to rock",
+    category: "free",
   },
   {
-    id: "skull-guitarist",
-    name: "Skull Guitarist",
-    url: "https://i.imgur.com/4K2Lp8M.png", 
-    description: "Eternal rock spirit shredding",
-    tier: "free"
+    id: "Metal-Bear-Bassist",
+    name: "Metal Bear Bassist",
+    url: getAvatarUrl("Metal-Bear-Bassist.png"),
+    description: "A powerful bear with bass skills",
+    category: "free",
   },
   {
-    id: "wolf-singer",
-    name: "Wolf Singer",
-    url: "https://i.imgur.com/7N3Qr9T.png",
-    description: "Howling lead vocals",
-    tier: "free"
+    id: "Metal-Skull-Guitarist",
+    name: "Metal Skull Guitarist",
+    url: getAvatarUrl("Metal-Skull-Guitarist.png"),
+    description: "A skull-headed guitar master",
+    category: "free",
   },
   {
-    id: "bear-bassist",
-    name: "Bear Bassist",
-    url: "https://i.imgur.com/5M8Zt6W.png",
-    description: "Heavy bass lines from the wild",
-    tier: "free"
+    id: "Metal-Wolf-Singer",
+    name: "Metal Wolf Singer",
+    url: getAvatarUrl("Metal-Wolf-Singer.png"),
+    description: "A howling wolf vocalist",
+    category: "free",
   },
   {
-    id: "rock-owl-guitarist",
+    id: "Rock-Owl-Guitarist",
     name: "Rock Owl Guitarist",
-    url: "https://i.imgur.com/9P4Kr7X.png",
-    description: "Wise riffs and solos",
-    tier: "free"
-  }
+    url: getAvatarUrl("Rock-Owl-Guitarist.png"),
+    description: "A wise owl shredding the guitar",
+    category: "free",
+  },
 ];
 
-// Premium avatars with jumping elements effect
+// Premium tier avatars
 const PREMIUM_AVATAR_OPTIONS = [
   {
-    id: "bass-bat",
+    id: "Bass-Bat",
     name: "Bass Bat",
-    url: BassBatAvatar,
-    description: "Night hunter with thunderous bass",
-    tier: "premium",
-    jumpingElements: true
+    url: getAvatarUrl("Bass-Bat.jpeg", true),
+    description: "A bat with killer bass skills",
+    category: "premium",
+    jumpingElements: true,
   },
   {
-    id: "drum-dragon",
+    id: "Drum-Dragon",
     name: "Drum Dragon",
-    url: DrumDragonAvatar,
-    description: "Fire-breathing percussionist",
-    tier: "premium",
-    jumpingElements: true
+    url: getAvatarUrl("Drum-Dragon.jpeg", true),
+    description: "A dragon that sets the rhythm on fire",
+    category: "premium",
+    jumpingElements: true,
   },
   {
-    id: "guitar-goblin",
+    id: "Guitar-Goblin",
     name: "Guitar Goblin",
-    url: GuitarGoblinAvatar,
-    description: "Mischievous shredder from the depths",
-    tier: "premium",
-    jumpingElements: true
+    url: getAvatarUrl("Guitar-Goblin.jpeg", true),
+    description: "A mischievous goblin with guitar magic",
+    category: "premium",
+    jumpingElements: true,
   },
   {
-    id: "headbanger-hamster",
+    id: "Headbanger-Hamster",
     name: "Headbanger Hamster",
-    url: HeadbangerHamsterAvatar,
-    description: "Tiny but mighty metalhead",
-    tier: "premium",
-    jumpingElements: true
+    url: getAvatarUrl("Headbanger-Hamster.jpeg", true),
+    description: "A tiny hamster with massive headbanging energy",
+    category: "premium",
+    jumpingElements: true,
   },
   {
-    id: "metal-queen",
-    name: "Metal Queen",
-    url: MetalQueenAvatar,
-    description: "Royalty of the metal realm",
-    tier: "premium",
-    jumpingElements: true
-  },
-  {
-    id: "metal-cat",
+    id: "Metal-Cat",
     name: "Metal Cat",
-    url: MetalCatAvatar,
-    description: "Feline fury unleashed",
-    tier: "premium",
-    jumpingElements: true
+    url: getAvatarUrl("Metal-Cat.jpeg", true),
+    description: "A fierce feline with metal attitude",
+    category: "premium",
+    jumpingElements: true,
   },
   {
-    id: "mosh-pit-monster",
+    id: "Metal-Queen",
+    name: "Metal Queen",
+    url: getAvatarUrl("Metal-Queen.jpeg", true),
+    description: "A regal queen of metal",
+    category: "premium",
+    jumpingElements: true,
+  },
+  {
+    id: "Mosh-Pit-Monster",
     name: "Mosh Pit Monster",
-    url: MoshPitMonsterAvatar,
-    description: "Chaos incarnate in the pit",
-    tier: "premium",
-    jumpingElements: true
+    url: getAvatarUrl("Mosh-Pit-Monster.jpeg", true),
+    description: "A monster born in the mosh pit",
+    category: "premium",
+    jumpingElements: true,
   },
   {
-    id: "punk-panda",
+    id: "Punk-Panda",
     name: "Punk Panda",
-    url: PunkPandaAvatar,
-    description: "Rebellious bamboo eater",
-    tier: "premium",
-    jumpingElements: true
+    url: getAvatarUrl("Punk-Panda.jpeg", true),
+    description: "A rebellious panda with punk spirit",
+    category: "premium",
+    jumpingElements: true,
   },
   {
-    id: "rebel-raccoon",
+    id: "Rebel-Raccoon",
     name: "Rebel Raccoon",
-    url: RebelRaccoonAvatar,
-    description: "Trash panda turned rock star",
-    tier: "premium",
-    jumpingElements: true
+    url: getAvatarUrl("Rebel-Raccoon.jpeg", true),
+    description: "A raccoon that breaks all the rules",
+    category: "premium",
+    jumpingElements: true,
   },
   {
-    id: "rock-unicorn",
+    id: "Rock-Unicorn",
     name: "Rock Unicorn",
-    url: RockUnicornAvatar,
-    description: "Magical metal mayhem",
-    tier: "premium",
-    jumpingElements: true
-  }
+    url: getAvatarUrl("Rock-Unicorn.jpeg", true),
+    description: "A magical unicorn that rocks hard",
+    category: "premium",
+    jumpingElements: true,
+  },
 ];
 
 const AVATAR_OPTIONS = [...FREE_AVATAR_OPTIONS, ...PREMIUM_AVATAR_OPTIONS];
@@ -163,6 +156,7 @@ export default function AvatarSelector({
   onClose,
   currentAvatar,
   onAvatarUpdate,
+  userID, // Add userID parameter
 }: AvatarSelectorProps) {
   const [selectedAvatar, setSelectedAvatar] = useState(currentAvatar || "");
   const [uploading, setUploading] = useState(false);
@@ -200,21 +194,9 @@ export default function AvatarSelector({
     setUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append("avatar", file);
-
-      const response = await fetch("/api/user/upload-avatar", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error("Upload failed");
-      }
-
-      const { avatarUrl } = await response.json();
-      setSelectedAvatar(avatarUrl);
+      // Use Firebase Storage upload function with the actual userID
+      const imageUrl = await uploadProfileImage(file, userID);
+      setSelectedAvatar(imageUrl);
 
       toast({
         title: "Upload Successful",
@@ -238,10 +220,7 @@ export default function AvatarSelector({
     setSaving(true);
 
     try {
-      await apiRequest("POST", "/api/user/update-avatar", {
-        profileImageUrl: selectedAvatar,
-      });
-
+      // Call the parent's onAvatarUpdate function
       onAvatarUpdate(selectedAvatar);
       toast({
         title: "Avatar Updated",
@@ -258,6 +237,11 @@ export default function AvatarSelector({
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleAvatarSelect = (avatar: typeof FREE_AVATAR_OPTIONS[0] | typeof PREMIUM_AVATAR_OPTIONS[0]) => {
+    onAvatarUpdate(avatar.url);
+    onClose();
   };
 
   return (

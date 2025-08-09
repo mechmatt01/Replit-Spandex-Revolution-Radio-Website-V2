@@ -40,19 +40,27 @@ export default function StatsAndLocations() {
         {/* Mobile Tab Switcher */}
         <div className="md:hidden mb-6">
           <div 
-            className="flex rounded-lg p-1"
+            className="flex rounded-lg p-1 relative"
             style={{ 
               backgroundColor: colors.cardBackground,
               border: 'none' // Remove borders
             }}
           >
+            {/* Animated background slider */}
+            <div
+              className="absolute top-1 bottom-1 rounded-md transition-all duration-300 ease-out"
+              style={{
+                backgroundColor: colors.accent,
+                left: activeTab === "stats" ? "4px" : "calc(50% + 2px)",
+                width: "calc(50% - 4px)",
+                zIndex: 1
+              }}
+            />
+            
             <button
               onClick={() => setActiveTab("stats")}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-semibold transition-all duration-200 ${
-                activeTab === "stats" ? "shadow-sm" : ""
-              }`}
+              className="flex-1 py-2 px-4 rounded-md text-sm font-semibold transition-all duration-200 relative z-10"
               style={{
-                backgroundColor: activeTab === "stats" ? colors.accent : "transparent",
                 color: activeTab === "stats" ? colors.background : colors.textMuted,
                 border: 'none' // Remove borders
               }}
@@ -61,39 +69,14 @@ export default function StatsAndLocations() {
             </button>
             <button
               onClick={() => setActiveTab("locations")}
-              className={`flex-1 py-2 px-4 rounded-md text-sm font-semibold transition-all duration-200 ${
-                activeTab === "locations" ? "shadow-sm" : ""
-              }`}
+              className="flex-1 py-2 px-4 rounded-md text-sm font-semibold transition-all duration-200 relative z-10"
               style={{
-                backgroundColor: activeTab === "locations" ? colors.accent : "transparent",
                 color: activeTab === "locations" ? colors.background : colors.textMuted,
                 border: 'none' // Remove borders
               }}
             >
               Active Locations
             </button>
-          </div>
-        </div>
-
-        {/* Broadcasting Status */}
-        <div className="mb-8 text-center">
-          <div 
-            className="inline-flex items-center space-x-2 px-6 py-3 rounded-full"
-            style={{ 
-              backgroundColor: colors.cardBackground,
-              border: 'none' // Remove borders
-            }}
-          >
-            <div 
-              className="w-3 h-3 rounded-full animate-pulse"
-              style={{ backgroundColor: '#10B981' }}
-            ></div>
-            <span 
-              className="text-base font-semibold"
-              style={{ color: colors.text }}
-            >
-              Broadcasting Live 24/7 • 847 Days Strong
-            </span>
           </div>
         </div>
 
@@ -110,7 +93,7 @@ export default function StatsAndLocations() {
         </div>
 
         {/* Additional Info */}
-        <div className="mt-12 text-center">
+        <div className="mt-16 text-center">
           <div 
             className="inline-flex items-center space-x-2 px-4 py-2 rounded-full"
             style={{ 
@@ -119,11 +102,14 @@ export default function StatsAndLocations() {
             }}
           >
             <div 
-              className="w-3 h-3 rounded-full animate-pulse"
-              style={{ backgroundColor: '#10B981' }}
+              className="w-2 h-2 rounded-full animate-pulse flex-shrink-0"
+              style={{ 
+                backgroundColor: '#10B981',
+                alignSelf: 'center'
+              }}
             ></div>
             <span 
-              className="text-sm font-semibold"
+              className="text-sm font-semibold leading-none"
               style={{ color: colors.text }}
             >
               Real-time data • Updates every 30 seconds

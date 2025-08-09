@@ -1,14 +1,20 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 interface AdminUser {
-  id: number;
-  username: string;
+  userID: string;
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
   isAdmin: boolean;
 }
 
 interface AdminContextType {
   user: AdminUser | null;
   isAdmin: boolean;
+  useMockData: boolean;
+  setUseMockData: (useMock: boolean) => void;
+  useLiveData: boolean;
+  setUseLiveData: (useLive: boolean) => void;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
@@ -17,30 +23,37 @@ const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
 export function AdminProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AdminUser | null>(null);
+  const [useMockData, setUseMockData] = useState(false);
+  const [useLiveData, setUseLiveData] = useState(true);
 
-  const login = async (
-    username: string,
-    password: string,
-  ): Promise<boolean> => {
-    try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData);
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error("Login error:", error);
-      return false;
+  // Ensure only one mode is active at a time
+  const handleMockDataChange = (useMock: boolean) => {
+    setUseMockData(useMock);
+    if (useMock) {
+      setUseLiveData(false);
     }
+  };
+
+  const handleLiveDataChange = (useLive: boolean) => {
+    setUseLiveData(useLive);
+    if (useLive) {
+      setUseMockData(false);
+    }
+  };
+
+  const login = async (username: string, password: string): Promise<boolean> => {
+    // Mock login for now - replace with real authentication
+    if (username === "admin" && password === "password") {
+      setUser({
+        userID: "admin-1",
+        firstName: "Admin",
+        lastName: "User",
+        emailAddress: "admin@example.com",
+        isAdmin: true,
+      });
+      return true;
+    }
+    return false;
   };
 
   const logout = () => {
@@ -51,7 +64,11 @@ export function AdminProvider({ children }: { children: ReactNode }) {
     <AdminContext.Provider
       value={{
         user,
-        isAdmin: user?.isAdmin || false,
+        isAdmin: !!user?.isAdmin,
+        useMockData,
+        setUseMockData: handleMockDataChange,
+        useLiveData,
+        setUseLiveData: handleLiveDataChange,
         login,
         logout,
       }}

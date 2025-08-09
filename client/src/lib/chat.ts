@@ -1,11 +1,11 @@
-import { 
-  collection, 
-  addDoc, 
-  query, 
-  where, 
-  orderBy, 
-  limit, 
-  getDocs, 
+import {
+  collection,
+  addDoc,
+  getDocs,
+  orderBy,
+  limit,
+  query,
+  where,
   deleteDoc,
   doc,
   onSnapshot,
@@ -13,7 +13,7 @@ import {
   Timestamp,
   writeBatch
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { db } from '../firebase';
 
 export interface ChatMessage {
   id: string;

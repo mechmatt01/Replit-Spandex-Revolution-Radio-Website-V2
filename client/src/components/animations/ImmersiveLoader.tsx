@@ -17,15 +17,12 @@ const ImmersiveLoader: React.FC<ImmersiveLoaderProps> = ({
   duration = 300
 }) => {
   const [hasLoaded, setHasLoaded] = useState(false);
-  const [showContent, setShowContent] = useState(false);
   const { colors } = useTheme();
 
   useEffect(() => {
     if (!isLoading && !hasLoaded) {
       const timer = setTimeout(() => {
         setHasLoaded(true);
-        // Small additional delay for smooth transition
-        setTimeout(() => setShowContent(true), 50);
       }, delay);
       return () => clearTimeout(timer);
     }

@@ -13,7 +13,7 @@ const GlobalPageLoader: React.FC<GlobalPageLoaderProps> = ({
 }) => {
   const [showLoader, setShowLoader] = useState(isLoading);
   const [contentReady, setContentReady] = useState(!isLoading);
-  const { colors, currentTheme } = useTheme();
+  const { colors } = useTheme();
 
   useEffect(() => {
     if (isLoading) {

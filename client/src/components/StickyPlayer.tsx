@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useRef } from "react";
 import { Volume2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useRadio } from "../contexts/RadioContext";
@@ -5,8 +6,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { useAdaptiveTheme } from "../hooks/useAdaptiveTheme";
 import ScrollingText from "../components/ScrollingText";
 import InteractiveAlbumArt from "../components/InteractiveAlbumArt";
-import { useState, useEffect, useRef } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
 
 export default function StickyPlayer() {
   const {
@@ -23,7 +23,7 @@ export default function StickyPlayer() {
     adInfo,
   } = useRadio();
 
-  const { user, updateListeningStatus } = useAuth();
+  const { user, updateListeningStatus } = useFirebaseAuth();
   const { getGradient, getColors, currentTheme } = useTheme();
   const colors = getColors();
   

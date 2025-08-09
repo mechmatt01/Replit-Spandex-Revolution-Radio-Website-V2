@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
 import { apiRequest } from "../lib/queryClient";
 
 interface LocationData {
@@ -12,7 +12,7 @@ export function useLocation() {
   const [location, setLocation] = useState<LocationData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated } = useFirebaseAuth();
 
   const requestLocation = async () => {
     // Allow location detection even for unauthenticated users

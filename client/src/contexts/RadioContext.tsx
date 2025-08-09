@@ -1,4 +1,4 @@
-import {
+import React, {
   createContext,
   useContext,
   useState,
@@ -162,16 +162,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     if (!station) return [];
 
     const baseUrl = station.streamUrl;
-    const urls = [baseUrl];
-
-    // Add alternative formats if needed
-    if (baseUrl.includes('.aac')) {
-      urls.push(baseUrl.replace('.aac', '.mp3'));
-    } else if (baseUrl.includes('.mp3')) {
-      urls.push(baseUrl.replace('.mp3', '.aac'));
-    }
-
-    return urls;
+    
+    // Use the radio proxy to avoid CORS issues
+    const proxyUrl = `/api/radio-stream?url=${encodeURIComponent(baseUrl)}`;
+    
+    // Return both proxy and direct URLs as fallback
+    return [proxyUrl, baseUrl];
   };
 
   const togglePlayback = async () => {
@@ -195,6 +191,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const startPlayback = async () => {
     const audio = audioRef.current;
     if (!audio) return;
+
+    // Prevent multiple simultaneous playback attempts
+    if (isLoading) {
+      console.log('Playback already in progress, skipping...');
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -248,13 +250,62 @@ export function RadioProvider({ children }: { children: ReactNode }) {
           audio.addEventListener('error', onError);
         });
 
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          await playPromise;
-          streamWorked = true;
-          retryCountRef.current = 0; // Reset retry count on success
-          console.log(`Stream ${i + 1} connected successfully via redirect`);
-          break;
+        // Check if user has interacted with the page before attempting to play
+        if (document.visibilityState === 'visible' && !document.hidden) {
+          try {
+            // Ensure audio is ready before attempting to play
+            if (audio.readyState >= 2) { // HAVE_CURRENT_DATA
+              const playPromise = audio.play();
+              if (playPromise !== undefined) {
+                await playPromise;
+                streamWorked = true;
+                retryCountRef.current = 0; // Reset retry count on success
+                console.log(`Stream ${i + 1} connected successfully`);
+                break;
+              }
+            } else {
+              console.log('Audio not ready, waiting for canplay event...');
+              // Wait for canplay event
+              await new Promise((resolve, reject) => {
+                const timeout = setTimeout(() => {
+                  reject(new Error("Audio ready timeout"));
+                }, 2000);
+                
+                const onCanPlay = () => {
+                  clearTimeout(timeout);
+                  cleanup();
+                  resolve(true);
+                };
+                
+                const cleanup = () => {
+                  audio.removeEventListener('canplay', onCanPlay);
+                };
+                
+                audio.addEventListener('canplay', onCanPlay);
+              });
+              
+              // Now try to play
+              const playPromise = audio.play();
+              if (playPromise !== undefined) {
+                await playPromise;
+                streamWorked = true;
+                retryCountRef.current = 0;
+                console.log(`Stream ${i + 1} connected successfully after waiting`);
+                break;
+              }
+            }
+          } catch (playError: any) {
+            if (playError.name === 'NotAllowedError') {
+              console.log('User interaction required for autoplay');
+              // Don't throw here, just log and continue to next stream
+              continue;
+            }
+            throw playError;
+          }
+        } else {
+          console.log('Page not visible, skipping autoplay');
+          // Don't throw, just continue to next stream
+          continue;
         }
       } catch (urlError: any) {
         console.warn(`Stream ${i + 1} failed:`, urlError?.message || 'Unknown error');
@@ -482,6 +533,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     const audio = audioRef.current;
     if (!audio) return;
 
+    // Prevent multiple initializations
+    if (audio.dataset.initialized === 'true') return;
+    audio.dataset.initialized = 'true';
+
     audio.volume = isMuted ? 0 : volume;
 
     audio.addEventListener("play", handlePlay);
@@ -507,7 +562,12 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
   // Auto-play first station on mount (try immediately, then fallback to user interaction)
   useEffect(() => {
+    let isInitialized = false;
+    
     const tryImmediateAutoPlay = async () => {
+      if (isInitialized) return;
+      isInitialized = true;
+      
       try {
         if (!isPlaying && !error && currentStation) {
           console.log("[RadioContext] Attempting immediate auto-play on mount.");
@@ -548,21 +608,30 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     initializeAutoPlay();
   }, []);
 
-  // Auto-play functionality
+  // Auto-play functionality - simplified to prevent conflicts
   useEffect(() => {
+    let isInitialized = false;
+    
     const initializeAutoPlay = async () => {
+      if (isInitialized) return;
+      isInitialized = true;
+      
       try {
         // Check if user has previously selected a station
         const lastStationId = localStorage.getItem('last-selected-station');
         const shouldAutoPlay = localStorage.getItem('auto-play-enabled') !== 'false';
         
-        if (shouldAutoPlay && currentStation) {
+        if (shouldAutoPlay && currentStation && !isPlaying) {
           console.log('[RadioContext] Auto-playing station:', currentStation.name);
           
           // Small delay to ensure everything is loaded
           setTimeout(async () => {
-            if (!isPlaying) {
-              await togglePlayback();
+            if (!isPlaying && !isInitialized) {
+              try {
+                await togglePlayback();
+              } catch (error) {
+                console.error('[RadioContext] Auto-play failed:', error);
+              }
             }
           }, 1000);
         }
@@ -574,8 +643,11 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     // Initialize auto-play after a short delay
     const timer = setTimeout(initializeAutoPlay, 2000);
     
-    return () => clearTimeout(timer);
-  }, []);
+    return () => {
+      clearTimeout(timer);
+      isInitialized = true;
+    };
+  }, [currentStation]);
 
   // Save last selected station
   useEffect(() => {

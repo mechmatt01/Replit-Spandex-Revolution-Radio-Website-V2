@@ -1,10 +1,9 @@
 
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
 
 /* CSS Variables for Background */
 :root {
@@ -18,44 +17,95 @@
   --background-rgb: 31, 41, 55;
 }
 
-/* Remove ALL white borders and outlines from the entire application */
+/* Remove unwanted white borders and outlines but preserve border-radius */
 * {
+  outline: none !important;
+}
+
+/* Performance optimizations for smooth scrolling */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Optimize transitions for better performance */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Remove borders from specific elements that shouldn't have them, but preserve button styling */
+/* Only remove borders from layout and content elements, not from interactive elements */
+div:not([class*="border"]):not([class*="rounded"]):not(button):not([role="button"]),
+section:not([class*="border"]):not([class*="rounded"]),
+article:not([class*="border"]):not([class*="rounded"]),
+nav:not([class*="border"]):not([class*="rounded"]),
+header:not([class*="border"]):not([class*="rounded"]),
+footer:not([class*="border"]):not([class*="rounded"]),
+main:not([class*="border"]):not([class*="rounded"]),
+aside:not([class*="border"]):not([class*="rounded"]),
+p:not([class*="border"]):not([class*="rounded"]),
+span:not([class*="border"]):not([class*="rounded"]),
+h1:not([class*="border"]):not([class*="rounded"]), 
+h2:not([class*="border"]):not([class*="rounded"]), 
+h3:not([class*="border"]):not([class*="rounded"]), 
+h4:not([class*="border"]):not([class*="rounded"]), 
+h5:not([class*="border"]):not([class*="rounded"]), 
+h6:not([class*="border"]):not([class*="rounded"]) {
+  border: none !important;
+}
+
+/* Remove borders from form elements but preserve border-radius */
+input:not([class*="border"]):not([class*="rounded"]),
+textarea:not([class*="border"]):not([class*="rounded"]),
+select:not([class*="border"]):not([class*="rounded"]) {
   border: none !important;
   outline: none !important;
 }
 
-/* Override any component borders */
-.border,
-.border-t,
-.border-b,
-.border-l,
-.border-r,
-.border-x,
-.border-y,
-.border-solid,
-.border-dashed,
-.border-dotted {
-  border: none !important;
+/* Remove focus rings and borders but preserve border-radius for interactive elements */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select),
+*:focus-visible:not(button):not([role="button"]):not(input):not(textarea):not(select),
+*:focus-within:not(button):not([role="button"]):not(input):not(textarea):not(select) {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-/* Remove borders from common UI elements */
+/* Allow buttons to have borders and border-radius */
 button,
-input,
-textarea,
-select,
-div,
-section,
-article,
-nav,
-header,
-footer,
-main,
+[role="button"],
+.btn,
+.button {
+  outline: none !important;
+  /* Preserve border-radius and borders for buttons */
+}
+
+/* Preserve Tailwind utility classes */
+[class*="rounded"],
+[class*="border"] {
+  /* These classes should work as expected */
+}
+
+/* Remove borders from common UI elements but preserve border-radius */
+div:not([class*="border"]),
+section:not([class*="border"]),
+article:not([class*="border"]),
+nav:not([class*="border"]),
+header:not([class*="border"]),
+footer:not([class*="border"]),
+main:not([class*="border"]),
 aside {
   border: none !important;
   outline: none !important;
 }
 
-/* Override focus states to remove borders */
+/* Override focus states to remove borders but preserve border-radius */
 *:focus,
 *:focus-visible,
 *:focus-within {
@@ -701,6 +751,114 @@ html *:focus-visible {
   perspective: 1000px;
 }
 
+/* Fast animations for better performance */
+.fast-transition {
+  transition-duration: 150ms !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.ultra-fast-transition {
+  transition-duration: 100ms !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Optimize scroll performance */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Reduce animation complexity for better performance */
+.performance-optimized {
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+
+/* Fast fade animations */
+.fade-in-fast {
+  animation: fadeInFast 100ms ease-out forwards;
+}
+
+@keyframes fadeInFast {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Quick slide animations */
+.slide-in-fast {
+  animation: slideInFast 150ms ease-out forwards;
+}
+
+@keyframes slideInFast {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ultra-fast animations for critical elements */
+.ultra-fast-reveal {
+  animation: ultraFastReveal 80ms ease-out forwards;
+}
+
+@keyframes ultraFastReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Optimized stagger animations */
+.stagger-fast {
+  animation: staggerFast 120ms ease-out forwards;
+}
+
+@keyframes staggerFast {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Performance-focused hover effects */
+.performance-hover {
+  transition: all 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.performance-hover:hover {
+  transform: translateY(-2px);
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Enhanced loading states */
 .loading-skeleton {
   background: linear-gradient(
@@ -810,7 +968,7 @@ html *:focus-visible {
 
 .interactive-hover:hover {
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 25px hsl(var(--primary) / 0.2);
 }
 
 /* Theme-aware borders and glow effects */
@@ -828,7 +986,6 @@ html *:focus-visible {
 .feature-box {
   border: 2px solid hsl(var(--primary) / 0.8);
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 8px 32px hsl(var(--primary) / 0.2);
 }
 
 .feature-box:hover {
@@ -837,6 +994,43 @@ html *:focus-visible {
     0 0 20px hsl(var(--primary) / 0.6),
     0 8px 40px hsl(var(--primary) / 0.3);
   transform: scale(1.05);
+}
+
+/* Override default Card shadow for feature and show cards */
+.feature-container,
+.show-container {
+  box-shadow: none !important;
+}
+
+.feature-container:hover,
+.show-container:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Fullscreen map styles */
+.map-container.fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  background: #000 !important;
+}
+
+.map-container.fullscreen .gm-style > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Prevent body scroll when map is fullscreen */
+body.map-fullscreen {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  left: 0 !important;
 }
 
 /* Enhanced glow effects for better visibility */
@@ -886,10 +1080,10 @@ html *:focus-visible {
 /* Enhanced hover glow effect that's always visible */
 .enhanced-glow:hover {
   box-shadow: 
-    0 0 30px var(--theme-border, rgba(192, 192, 192, 0.6)),
-    0 0 60px var(--theme-border, rgba(192, 192, 192, 0.3)),
-    0 8px 50px var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
-  filter: brightness(1.1) !important;
+    0 0 20px var(--theme-border, rgba(192, 192, 192, 0.4)),
+    0 0 40px var(--theme-border, rgba(192, 192, 192, 0.2)),
+    0 4px 25px var(--theme-border, rgba(192, 192, 192, 0.3)) !important;
+  filter: brightness(1.05) !important;
   transform: scale(1.05) !important;
   border-color: var(--theme-border, rgba(192, 192, 192, 0.8)) !important;
 }
@@ -962,14 +1156,6 @@ html *:focus-visible {
 .show-item {
   border: 1px solid hsl(var(--border));
   transition: all 0.3s ease;
-}
-
-.show-item:hover {
-  border-color: hsl(var(--primary));
-  box-shadow: 
-    0 0 15px hsl(var(--primary) / 0.3),
-    0 0 25px hsl(var(--primary) / 0.15);
-  transform: translateY(-1px);
 }
 
 @keyframes adPulse {
@@ -1289,8 +1475,8 @@ html *:focus-visible {
 .card:hover, .feature-card:hover, [class*="feature"]:hover, [class*="show"]:hover {
   border-color: hsl(var(--primary));
   box-shadow: 
-    0 0 15px hsl(var(--primary) / 0.3),
-    0 0 25px hsl(var(--primary) / 0.15);
+    0 0 15px hsl(var(--primary) / 0.2),
+    0 0 25px hsl(var(--primary) / 0.1);
   transform: scale(1.02);
 }
 
@@ -1312,7 +1498,7 @@ html *:focus-visible {
   box-shadow: 
     0 0 20px hsl(var(--primary) / 0.4),
     0 0 40px hsl(var(--primary) / 0.2),
-    0 5px 15px rgba(0, 0, 0, 0.1);
+    0 5px 15px hsl(var(--primary) / 0.1);
   border-color: hsl(var(--primary)) !important;
   transform: scale(1.05);
 }
@@ -1334,7 +1520,7 @@ html *:focus-visible {
   box-shadow: 
     0 0 15px hsl(var(--primary) / 0.6),
     0 0 30px hsl(var(--primary) / 0.3),
-    0 5px 15px rgba(0, 0, 0, 0.1);
+    0 5px 15px hsl(var(--primary) / 0.1);
   border-color: hsl(var(--primary)) !important;
   transform: scale(1.05);
 }
@@ -1368,14 +1554,18 @@ html *:focus-visible {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.feature-container:hover, .show-container:hover, .map-container:hover {
+.feature-container:hover, .show-container:hover {
   border-color: hsl(var(--primary));
   box-shadow: 
-    0 0 30px hsl(var(--primary) / 0.6),
-    0 0 60px hsl(var(--primary) / 0.3),
-    0 0 90px hsl(var(--primary) / 0.15),
-    inset 0 0 20px hsl(var(--primary) / 0.1);
-  transform: translateY(-3px) scale(1.02);
+    0 0 20px hsl(var(--primary) / 0.3),
+    0 0 40px hsl(var(--primary) / 0.15),
+    0 2px 15px hsl(var(--primary) / 0.2);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Map container - no hover effects */
+.map-container:hover {
+  /* No hover effects for map container */
 }
 
 /* FLOATING PLAYER FOCUS RING PREVENTION */
@@ -1448,4 +1638,154 @@ textarea:focus-visible,
 .auth-modal-content:hover,
 .show-popup-content:hover {
   border-color: hsl(var(--primary)) !important;
+}
+
+/* Override border removal for authentication modal - more targeted approach */
+.auth-modal-content input,
+.auth-modal-content button,
+.auth-modal-content .border,
+.auth-modal-content .border-t,
+.auth-modal-content .border-b,
+.auth-modal-content .border-l,
+.auth-modal-content .border-r {
+  border: 1px solid !important;
+}
+
+/* Specific styling for auth modal borders */
+.auth-modal-border {
+  border: 1px solid !important;
+}
+
+/* Restore specific border colors for auth modal elements */
+.auth-modal-content input {
+  border-color: rgb(209 213 219) !important; /* gray-300 */
+}
+
+.auth-modal-content input:focus {
+  border-color: rgb(59 130 246) !important; /* blue-500 */
+  outline: none !important;
+}
+
+.auth-modal-content .border-red-400 {
+  border-color: rgb(248 113 113) !important;
+}
+
+.auth-modal-content .border-green-400 {
+  border-color: rgb(74 222 128) !important;
+}
+
+.auth-modal-content .border-gray-300 {
+  border-color: rgb(209 213 219) !important;
+}
+
+/* Ensure background colors are preserved */
+.auth-modal-content {
+  background-color: rgb(255 255 255) !important; /* white */
+  z-index: 99999 !important;
+  position: relative !important;
+  border: 1px solid rgb(209 213 219) !important; /* gray-300 */
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25) !important;
+}
+
+.dark .auth-modal-content {
+  background-color: rgb(31 41 55) !important; /* gray-800 */
+  border: 1px solid rgb(75 85 99) !important; /* gray-600 */
+}
+
+/* Fix close button functionality */
+.auth-modal-content button[type="button"] {
+  background-color: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  z-index: 99999 !important;
+  position: relative !important;
+}
+
+.auth-modal-content button[type="button"]:hover {
+  background-color: rgb(243 244 246) !important; /* gray-100 */
+}
+
+.dark .auth-modal-content button[type="button"]:hover {
+  background-color: rgb(55 65 81) !important; /* gray-700 */
+}
+
+.auth-modal-content input {
+  background-color: rgb(255 255 255) !important; /* white */
+  border: 1px solid rgb(209 213 219) !important; /* gray-300 */
+  color: rgb(17 24 39) !important; /* gray-900 */
+}
+
+.dark .auth-modal-content input {
+  background-color: rgb(55 65 81) !important; /* gray-700 */
+  border: 1px solid rgb(75 85 99) !important; /* gray-600 */
+  color: rgb(243 244 246) !important; /* gray-100 */
+}
+
+.auth-modal-content input:focus {
+  border-color: rgb(59 130 246) !important; /* blue-500 */
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1) !important;
+}
+
+.auth-modal-content button.bg-white {
+  background-color: rgb(255 255 255) !important;
+  color: rgb(17 24 39) !important;
+  border: 1px solid rgb(209 213 219) !important;
+}
+
+.dark .auth-modal-content button.bg-white {
+  background-color: rgb(55 65 81) !important;
+  color: rgb(243 244 246) !important;
+  border: 1px solid rgb(75 85 99) !important;
+}
+
+.auth-modal-content button.bg-blue-600 {
+  background-color: rgb(37 99 235) !important;
+  color: rgb(255 255 255) !important;
+}
+
+.auth-modal-content button.bg-blue-600:hover {
+  background-color: rgb(29 78 216) !important;
+}
+
+/* Ensure modal appears on top of everything */
+.auth-modal-overlay {
+  z-index: 99998 !important;
+  position: fixed !important;
+  inset: 0 !important;
+}
+
+.auth-modal-container {
+  z-index: 99999 !important;
+  position: relative !important;
+}
+
+/* Auth modal border styling */
+.auth-modal-border {
+  border-color: rgb(209 213 219) !important; /* gray-300 */
+}
+
+.dark .auth-modal-border {
+  border-color: rgb(75 85 99) !important; /* gray-600 */
+}
+
+/* Google button specific styling */
+.auth-modal-content button:has(img[src*="GoogleLogoIcon"]) {
+  background-color: rgb(255 255 255) !important;
+  border: 1px solid rgb(209 213 219) !important;
+  color: rgb(55 65 81) !important;
+}
+
+.dark .auth-modal-content button:has(img[src*="GoogleLogoIcon"]) {
+  background-color: rgb(55 65 81) !important;
+  border: 1px solid rgb(75 85 99) !important;
+  color: rgb(243 244 246) !important;
+}
+
+.auth-modal-content button:has(img[src*="GoogleLogoIcon"]):hover {
+  background-color: rgb(249 250 251) !important;
+}
+
+.dark .auth-modal-content button:has(img[src*="GoogleLogoIcon"]):hover {
+  background-color: rgb(75 85 99) !important;
 }

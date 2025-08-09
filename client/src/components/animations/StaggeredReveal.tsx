@@ -10,7 +10,7 @@ interface StaggeredRevealProps {
 const StaggeredReveal: React.FC<StaggeredRevealProps> = ({
   children,
   delay = 0,
-  staggerDelay = 100,
+  staggerDelay = 50,
   className = ''
 }) => {
   const [visibleItems, setVisibleItems] = useState<boolean[]>([]);
@@ -39,8 +39,8 @@ const StaggeredReveal: React.FC<StaggeredRevealProps> = ({
         }
       },
       {
-        threshold: 0.1,
-        rootMargin: '30px'
+        threshold: 0.05,
+        rootMargin: '20px'
       }
     );
 
@@ -56,10 +56,10 @@ const StaggeredReveal: React.FC<StaggeredRevealProps> = ({
       {children.map((child, index) => (
         <div
           key={index}
-          className={`transform transition-all duration-400 ease-out ${
+          className={`transform transition-all duration-200 ease-out ${
             visibleItems[index]
               ? 'translate-y-0 opacity-100 scale-100'
-              : 'translate-y-6 opacity-0 scale-95'
+              : 'translate-y-4 opacity-0 scale-98'
           }`}
         >
           {child}

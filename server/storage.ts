@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import crypto from "crypto";
 import { generateUserKey } from "./firebase";
 import {
@@ -175,7 +175,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ isActiveListening })
+      .set({ [users.isActiveListening.name]: isActiveListening })
       .where(eq(users.id, id))
       .returning();
     return user;
@@ -204,7 +204,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ location })
+      .set({ [users.location.name]: location })
       .where(eq(users.id, id))
       .returning();
     return user;
@@ -221,13 +221,12 @@ export class DatabaseStorage implements IStorage {
     const [user] = await db
       .select()
       .from(users)
-      .where(eq(users.id, userId))
-      .where(eq(users.phoneVerificationCode, code));
+      .where(and(eq(users.id, userId), eq(users.phoneVerificationCode, code)));
 
     if (user) {
       const [updatedUser] = await db
         .update(users)
-        .set({ phoneVerified: true })
+        .set({ [users.isPhoneVerified.name]: true })
         .where(eq(users.id, userId))
         .returning();
       return updatedUser;
@@ -245,7 +244,7 @@ export class DatabaseStorage implements IStorage {
     if (user) {
       const [updatedUser] = await db
         .update(users)
-        .set({ emailVerified: true })
+        .set({ [users.isEmailVerified.name]: true })
         .where(eq(users.id, user.id))
         .returning();
       return updatedUser;
@@ -260,7 +259,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<User | undefined> {
     const [user] = await db
       .update(users)
-      .set({ password: hashedPassword })
+      .set({ [users.passwordHash.name]: hashedPassword })
       .where(eq(users.id, id))
       .returning();
     return user;
@@ -321,7 +320,7 @@ export class DatabaseStorage implements IStorage {
   ): Promise<Submission | undefined> {
     const [submission] = await db
       .update(submissions)
-      .set({ status })
+      .set({ [submissions.status.name]: status })
       .where(eq(submissions.id, id))
       .returning();
     return submission;
@@ -397,7 +396,7 @@ export class DatabaseStorage implements IStorage {
     const [stats] = await db
       .select()
       .from(streamStats)
-      .orderBy(desc(streamStats.createdAt))
+      .orderBy(desc(streamStats.updatedAt))
       .limit(1);
     return stats;
   }

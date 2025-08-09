@@ -88,14 +88,14 @@ export default function Features() {
             </div>
             
             <Card
-              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
               style={{
                 backgroundColor: colors.background,
                 borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
                 transform: hoveredFeature === 'streaming' ? 'scale(1.05)' : 'scale(1)',
+                boxShadow: 'none'
               }}
               onClick={scrollToRadioPlayer}
               onMouseEnter={() => setHoveredFeature('streaming')}
@@ -149,14 +149,14 @@ export default function Features() {
             </div>
             
             <Card
-              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
               style={{
                 backgroundColor: colors.background,
                 borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
                 transform: hoveredFeature === 'archives' ? 'scale(1.05)' : 'scale(1)',
+                boxShadow: 'none'
               }}
               onClick={() => scrollToSection("schedule")}
               onMouseEnter={() => setHoveredFeature('archives')}
@@ -210,14 +210,14 @@ export default function Features() {
             </div>
             
             <Card
-              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
               style={{
                 backgroundColor: colors.background,
                 borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
                 transform: hoveredFeature === 'map' ? 'scale(1.05)' : 'scale(1)',
+                boxShadow: 'none'
               }}
               onClick={() => scrollToSection("map")}
               onMouseEnter={() => setHoveredFeature('map')}
@@ -271,14 +271,14 @@ export default function Features() {
             </div>
             
             <Card
-              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
               style={{
                 backgroundColor: colors.background,
                 borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
                 transform: hoveredFeature === 'rebellion' ? 'scale(1.05)' : 'scale(1)',
+                boxShadow: 'none'
               }}
               onClick={() => scrollToSection("subscribe")}
               onMouseEnter={() => setHoveredFeature('rebellion')}
@@ -347,14 +347,14 @@ export default function Features() {
             </div>
             
             <Card
-              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
               style={{
                 backgroundColor: colors.background,
                 borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
                 transform: hoveredFeature === 'requests' ? 'scale(1.05)' : 'scale(1)',
+                boxShadow: 'none'
               }}
               onClick={() => scrollToSection("submissions")}
               onMouseEnter={() => setHoveredFeature('requests')}
@@ -423,14 +423,14 @@ export default function Features() {
             </div>
             
             <Card
-              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container"
+              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
               style={{
                 backgroundColor: colors.background,
                 borderColor: colors.primary,
                 borderWidth: '2px',
                 borderStyle: 'solid',
-                boxShadow: `${colors.border}20 0px 8px 32px`,
                 transform: hoveredFeature === 'merch' ? 'scale(1.05)' : 'scale(1)',
+                boxShadow: 'none'
               }}
               onClick={() => scrollToSection("shop")}
               onMouseEnter={() => setHoveredFeature('merch')}

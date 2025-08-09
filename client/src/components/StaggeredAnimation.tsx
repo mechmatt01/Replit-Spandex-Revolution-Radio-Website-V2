@@ -23,27 +23,27 @@ export default function StaggeredAnimation({
 }: StaggeredAnimationProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
-  const [adaptiveDuration, setAdaptiveDuration] = useState(300);
+  const [adaptiveDuration, setAdaptiveDuration] = useState(150);
   const [adaptiveStaggerDelay, setAdaptiveStaggerDelay] = useState(staggerDelay);
   const [elementId] = useState(() => `stagger-${++staggerCounter}`);
-  const isVisible = useIntersectionObserver(ref, { 
+  const { ref: intersectionRef, isVisible } = useIntersectionObserver({ 
     threshold, 
-    rootMargin: '200px 0px -50px 0px' // Start animation 200px before element comes into view (faster trigger)
+    rootMargin: '100px 0px -25px 0px' // Start animation 100px before element comes into view (faster trigger)
   });
   const { velocity } = useScrollVelocity();
 
   useEffect(() => {
     if (isVisible && !hasAnimated && !animatedStaggeredElements.has(elementId)) {
       // Calculate adaptive duration and stagger delay based on scroll velocity
-      const newDuration = getAdaptiveAnimationDuration(300, velocity, 150, 400);
-      const newStaggerDelay = getAdaptiveAnimationDuration(staggerDelay, velocity, 25, 75);
+      const newDuration = getAdaptiveAnimationDuration(150, velocity, 100, 250);
+      const newStaggerDelay = getAdaptiveAnimationDuration(staggerDelay, velocity, 15, 50);
       
       setAdaptiveDuration(newDuration);
       setAdaptiveStaggerDelay(newStaggerDelay);
       
       // Add minimal base delay plus reduced staggered delay based on element order
       const baseDelay = 0; // Immediate start for faster loading
-      const groupDelay = (staggerCounter - 1) * 10; // 10ms between groups (faster)
+      const groupDelay = (staggerCounter - 1) * 5; // 5ms between groups (faster)
       const totalDelay = baseDelay + groupDelay;
       
       setTimeout(() => {
@@ -57,10 +57,10 @@ export default function StaggeredAnimation({
 
   const getTransformStyle = (direction: string, hasAnimated: boolean) => {
     const transforms = {
-      up: hasAnimated ? 'translateY(0)' : 'translateY(30px)',
-      down: hasAnimated ? 'translateY(0)' : 'translateY(-30px)',
-      left: hasAnimated ? 'translateX(0)' : 'translateX(30px)',
-      right: hasAnimated ? 'translateX(0)' : 'translateX(-30px)'
+      up: hasAnimated ? 'translateY(0)' : 'translateY(20px)',
+      down: hasAnimated ? 'translateY(0)' : 'translateY(-20px)',
+      left: hasAnimated ? 'translateX(0)' : 'translateX(20px)',
+      right: hasAnimated ? 'translateX(0)' : 'translateX(-20px)'
     };
     
     return transforms[direction as keyof typeof transforms] || transforms.up;
@@ -69,7 +69,7 @@ export default function StaggeredAnimation({
   const childrenArray = Children.toArray(children);
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={intersectionRef} className={className}>
       {childrenArray.map((child, index) => {
         if (!child || typeof child !== 'object') return child;
         

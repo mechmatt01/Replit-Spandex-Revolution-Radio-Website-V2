@@ -5,6 +5,10 @@ export default function DynamicMetaTags() {
   const { currentTheme, getColors } = useTheme();
   const colors = getColors();
   const isLightMode = currentTheme === "light-mode";
+  
+  // Derive background and text colors from theme
+  const bgColor = isLightMode ? "#ffffff" : "#000000";
+  const textColor = isLightMode ? "#000000" : "#ffffff";
 
   useEffect(() => {
     // Update theme-color meta tag
@@ -85,15 +89,10 @@ export default function DynamicMetaTags() {
       document.head.appendChild(meta);
     }
 
-    // Update Open Graph image URL with theme parameters
+    // Update Open Graph image URL to use static LinkDisplayPreview.png
     const ogImageMeta = document.querySelector('meta[property="og:image"]');
-    const textColor = isLightMode ? "#000000" : "#ffffff";
-    const bgColor = isLightMode ? "#ffffff" : "#000000";
     const baseUrl = window.location.origin;
-
-    // Include theme name in URL for better cache control
-    const themeName = currentTheme.replace("-mode", "").replace("-", "_");
-    const ogImageUrl = `${baseUrl}/api/og-image?theme=${themeName}&primary=${encodeURIComponent(colors.primary)}&secondary=${encodeURIComponent(colors.secondary)}&background=${encodeURIComponent(bgColor)}&text=${encodeURIComponent(textColor)}&v=${Date.now()}`;
+    const ogImageUrl = `${baseUrl}/LinkDisplayPreview.png`;
 
     if (ogImageMeta) {
       ogImageMeta.setAttribute("content", ogImageUrl);
@@ -117,11 +116,9 @@ export default function DynamicMetaTags() {
       document.head.appendChild(meta);
     }
 
-    // Force refresh of social media previews by updating URL
+    // Update Open Graph URL to current page URL
     const ogUrlMeta = document.querySelector('meta[property="og:url"]');
-    const currentUrl =
-      window.location.href.split("?")[0] +
-      `?theme=${themeName}&v=${Date.now()}`;
+    const currentUrl = window.location.href.split("?")[0];
     if (ogUrlMeta) {
       ogUrlMeta.setAttribute("content", currentUrl);
     } else {
@@ -140,9 +137,10 @@ export default function DynamicMetaTags() {
       "--preview-secondary",
       colors.secondary,
     );
+    // Set default background and text colors for preview generation
     document.documentElement.style.setProperty("--preview-background", bgColor);
     document.documentElement.style.setProperty("--preview-text", textColor);
-  }, [currentTheme, colors, isLightMode]);
+  }, [currentTheme, colors, isLightMode, bgColor, textColor]);
 
   return null;
 }

@@ -1,4 +1,63 @@
-import { auth, generateUserKey, sendEmailVerification, sendPhoneVerification } from './firebase';
+import { auth } from './firebase';
+import { db, isFirebaseAvailable } from './firebaseStorage';
+// Generate 10-character alphanumeric key
+function generateUserKey() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 10; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+// Create or get user profile in Firestore
+async function createOrGetUserProfile(firebaseUid, userData) {
+    try {
+        // Check if user already exists
+        const userQuery = await db.collection('Users').where('firebaseUid', '==', firebaseUid).get();
+        if (!userQuery.empty) {
+            // User exists, update last login
+            const userDoc = userQuery.docs[0];
+            const userData = userDoc.data();
+            await db.collection('Users').doc(userDoc.id).update({
+                lastLogin: new Date(),
+                updatedAt: new Date(),
+            });
+            return {
+                ...userData,
+                lastLogin: new Date(),
+                updatedAt: new Date(),
+            };
+        }
+        else {
+            // Create new user with alphanumeric key
+            const userKey = generateUserKey();
+            const newUser = {
+                firstName: userData.firstName || '',
+                lastName: userData.lastName || '',
+                userProfileImage: userData.profileImageUrl || '',
+                emailAddress: userData.email || '',
+                phoneNumber: userData.phoneNumber || '',
+                location: userData.location || null,
+                isActiveListening: false,
+                activeSubscription: false,
+                renewalDate: null,
+                lastLogin: new Date(),
+                userID: userKey,
+                isEmailVerified: userData.isEmailVerified || false,
+                isPhoneVerified: false,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            };
+            // Create user document with the alphanumeric key as document ID
+            await db.collection('Users').doc(`User: ${userKey}`).set(newUser);
+            return newUser;
+        }
+    }
+    catch (error) {
+        console.error('Error creating/getting user profile:', error);
+        throw error;
+    }
+}
 // Middleware to verify Firebase ID token
 export const verifyToken = async (req, res, next) => {
     try {
@@ -8,25 +67,15 @@ export const verifyToken = async (req, res, next) => {
         }
         const idToken = authHeader.split('Bearer ')[1];
         const decodedToken = await auth.verifyIdToken(idToken);
-        // Get or create user in our database
-        let user = await storage.getUser(decodedToken.uid);
-        if (!user) {
-            // Create new user with alphanumeric key
-            const userKey = generateUserKey();
-            user = await storage.createUser({
-                id: decodedToken.uid,
-                userKey,
-                email: decodedToken.email || '',
-                firstName: decodedToken.name?.split(' ')[0] || '',
-                lastName: decodedToken.name?.split(' ').slice(1).join(' ') || '',
-                profileImageUrl: decodedToken.picture || '',
-                isEmailVerified: decodedToken.email_verified || false,
-                isActiveListening: false,
-                activeSubscription: false,
-                isFirstLogin: true,
-            });
-        }
-        req.user = user;
+        // Create or get user profile
+        const userProfile = await createOrGetUserProfile(decodedToken.uid, {
+            email: decodedToken.email || '',
+            firstName: decodedToken.name?.split(' ')[0] || '',
+            lastName: decodedToken.name?.split(' ').slice(1).join(' ') || '',
+            profileImageUrl: decodedToken.picture || '',
+            isEmailVerified: decodedToken.email_verified || false,
+        });
+        req.user = userProfile;
         next();
     }
     catch (error) {
@@ -41,8 +90,36 @@ export const requireAuth = (req, res, next) => {
     }
     next();
 };
+// Create Admin collection if it doesn't exist
+async function ensureAdminCollection() {
+    try {
+        const adminDoc = await db.collection('Admin').doc('Information').get();
+        if (!adminDoc.exists) {
+            await db.collection('Admin').doc('Information').set({
+                Username: 'adminAccess',
+                Password: 'password123',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            });
+            console.log('Admin collection created with default credentials');
+        }
+    }
+    catch (error) {
+        console.error('Error ensuring admin collection:', error);
+    }
+}
 // API Routes for Firebase Authentication
 export const setupFirebaseAuth = (app) => {
+    // Ensure admin collection exists
+    ensureAdminCollection();
+    // Health check endpoint
+    app.get('/api/health', (req, res) => {
+        res.json({
+            status: 'ok',
+            timestamp: new Date().toISOString(),
+            firebase: isFirebaseAvailable ? 'connected' : 'disconnected'
+        });
+    });
     // Get current user profile
     app.get('/api/auth/user', verifyToken, requireAuth, async (req, res) => {
         try {
@@ -56,13 +133,22 @@ export const setupFirebaseAuth = (app) => {
     // Update user profile
     app.put('/api/auth/user', verifyToken, requireAuth, async (req, res) => {
         try {
-            const { firstName, lastName, phoneNumber, location } = req.body;
-            const updatedUser = await storage.updateUser(req.user.id, {
-                firstName,
-                lastName,
-                phoneNumber,
-                location,
-            });
+            const { firstName, lastName, phoneNumber, location, userProfileImage } = req.body;
+            const updateData = {
+                updatedAt: new Date(),
+            };
+            if (firstName)
+                updateData.firstName = firstName;
+            if (lastName)
+                updateData.lastName = lastName;
+            if (phoneNumber)
+                updateData.phoneNumber = phoneNumber;
+            if (location)
+                updateData.location = location;
+            if (userProfileImage)
+                updateData.userProfileImage = userProfileImage;
+            await db.collection('Users').doc(`User: ${req.user.userID}`).update(updateData);
+            const updatedUser = { ...req.user, ...updateData };
             res.json({ user: updatedUser });
         }
         catch (error) {
@@ -70,67 +156,15 @@ export const setupFirebaseAuth = (app) => {
             res.status(500).json({ error: 'Internal server error' });
         }
     });
-    // Send email verification
-    app.post('/api/auth/send-email-verification', verifyToken, requireAuth, async (req, res) => {
-        try {
-            const success = await sendEmailVerification(req.user.email);
-            if (success) {
-                res.json({ message: 'Email verification sent' });
-            }
-            else {
-                res.status(400).json({ error: 'Failed to send email verification' });
-            }
-        }
-        catch (error) {
-            console.error('Error sending email verification:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    });
-    // Send phone verification
-    app.post('/api/auth/send-phone-verification', verifyToken, requireAuth, async (req, res) => {
-        try {
-            const { phoneNumber } = req.body;
-            // Update user's phone number
-            await storage.updateUser(req.user.id, { phoneNumber });
-            // Generate and send verification code
-            const verificationCode = await sendPhoneVerification(phoneNumber);
-            if (verificationCode) {
-                // Store verification code in database
-                await storage.updateUser(req.user.id, { phoneVerificationCode: verificationCode });
-                res.json({ message: 'Phone verification code sent' });
-            }
-            else {
-                res.status(400).json({ error: 'Failed to send phone verification' });
-            }
-        }
-        catch (error) {
-            console.error('Error sending phone verification:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    });
-    // Verify phone number
-    app.post('/api/auth/verify-phone', verifyToken, requireAuth, async (req, res) => {
-        try {
-            const { code } = req.body;
-            const verifiedUser = await storage.verifyPhone(req.user.id, code);
-            if (verifiedUser) {
-                res.json({ message: 'Phone number verified', user: verifiedUser });
-            }
-            else {
-                res.status(400).json({ error: 'Invalid verification code' });
-            }
-        }
-        catch (error) {
-            console.error('Error verifying phone:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    });
     // Update listening status
     app.put('/api/auth/listening-status', verifyToken, requireAuth, async (req, res) => {
         try {
             const { isActiveListening } = req.body;
-            const updatedUser = await storage.updateListeningStatus(req.user.id, isActiveListening);
-            res.json({ user: updatedUser });
+            await db.collection('Users').doc(`User: ${req.user.userID}`).update({
+                isActiveListening: isActiveListening,
+                updatedAt: new Date(),
+            });
+            res.json({ success: true, isActiveListening });
         }
         catch (error) {
             console.error('Error updating listening status:', error);
@@ -140,9 +174,12 @@ export const setupFirebaseAuth = (app) => {
     // Update user location
     app.put('/api/auth/location', verifyToken, requireAuth, async (req, res) => {
         try {
-            const { location } = req.body;
-            const updatedUser = await storage.updateUserLocation(req.user.id, location);
-            res.json({ user: updatedUser });
+            const { latitude, longitude } = req.body;
+            await db.collection('Users').doc(`User: ${req.user.userID}`).update({
+                location: { latitude, longitude },
+                updatedAt: new Date(),
+            });
+            res.json({ success: true });
         }
         catch (error) {
             console.error('Error updating location:', error);
@@ -152,38 +189,98 @@ export const setupFirebaseAuth = (app) => {
     // Get active listeners for map
     app.get('/api/auth/active-listeners', async (req, res) => {
         try {
-            const { getFirestore, collection, query, where, getDocs } = require('firebase-admin/firestore');
-            const db = getFirestore();
-            // Get all users with IsActiveListening: true
-            const usersSnapshot = await getDocs(query(collection(db, 'Users'), where('IsActiveListening', '==', true)));
-            const listeners = [];
-            usersSnapshot.forEach((doc) => {
-                const data = doc.data();
-                if (data.Location && typeof data.Location.lat === 'number' && typeof data.Location.lng === 'number') {
-                    listeners.push({
-                        id: doc.id,
-                        ...data,
-                    });
+            // Add a small delay to ensure Firebase is fully initialized
+            await new Promise(resolve => setTimeout(resolve, 100));
+            if (!db) {
+                console.warn('Database not available, returning empty array');
+                return res.json([]);
+            }
+            // Check if billing is enabled first
+            try {
+                const testQuery = await db.collection('Users').limit(1).get();
+            }
+            catch (billingError) {
+                if (billingError.code === 7 && billingError.message?.includes('billing')) {
+                    console.warn('⚠️  Firebase billing not enabled. Returning empty active listeners.');
+                    return res.json([]);
                 }
+                console.warn('Firebase query test failed:', billingError.message);
+                return res.json([]);
+            }
+            // First, let's try a simple query to see if the collection exists
+            const allUsersQuery = await db.collection('Users').limit(5).get();
+            console.log('Total users in collection:', allUsersQuery.size);
+            // Now try the composite query with error handling
+            let activeListenersQuery;
+            try {
+                activeListenersQuery = await db.collection('Users')
+                    .where('isActiveListening', '==', true)
+                    .where('location', '!=', null)
+                    .get();
+            }
+            catch (queryError) {
+                console.warn('Composite query failed, trying simpler query:', queryError.message);
+                // Fallback to simpler query
+                try {
+                    activeListenersQuery = await db.collection('Users')
+                        .where('isActiveListening', '==', true)
+                        .get();
+                }
+                catch (fallbackError) {
+                    console.warn('Fallback query also failed:', fallbackError.message);
+                    return res.json([]);
+                }
+            }
+            const activeListeners = activeListenersQuery.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    username: data.username || 'Anonymous',
+                    location: data.location || null,
+                    IsActiveListening: data.isActiveListening || false,
+                    Location: data.location || null,
+                    lastSeen: data.lastSeen ? data.lastSeen.toDate() : new Date(),
+                    profileImage: data.profileImage || null
+                };
             });
-            res.json({ listeners });
+            console.log(`Found ${activeListeners.length} active listeners`);
+            res.json(activeListeners);
         }
         catch (error) {
-            console.error('Error getting active listeners:', error);
+            console.error('Error fetching active listeners:', error);
+            if (error.code === 7 && error.message?.includes('billing')) {
+                console.warn('⚠️  Firebase billing not enabled. Returning empty active listeners.');
+                return res.json([]);
+            }
+            // Always return empty array instead of 500 error
+            console.warn('Returning empty array due to error');
+            return res.json([]);
+        }
+    });
+    // Get total listeners count
+    app.get('/api/auth/total-listeners', async (req, res) => {
+        try {
+            const dataDoc = await db.collection('Data').doc('Statistics').get();
+            const totalListeners = dataDoc.exists ? dataDoc.data()?.TotalListeners || 0 : 0;
+            res.json({ totalListeners });
+        }
+        catch (error) {
+            console.error('Error getting total listeners:', error);
             res.status(500).json({ error: 'Internal server error' });
         }
     });
-    // Upload profile image
-    app.post('/api/auth/upload-profile-image', verifyToken, requireAuth, async (req, res) => {
+    // Update total listeners count
+    app.put('/api/auth/total-listeners', verifyToken, requireAuth, async (req, res) => {
         try {
-            // This would handle file upload to Firebase Storage
-            // For now, we'll just update the profile image URL
-            const { imageUrl } = req.body;
-            const updatedUser = await storage.updateUser(req.user.id, { profileImageUrl: imageUrl });
-            res.json({ user: updatedUser });
+            const { totalListeners } = req.body;
+            await db.collection('Data').doc('Statistics').set({
+                TotalListeners: totalListeners,
+                updatedAt: new Date(),
+            }, { merge: true });
+            res.json({ success: true, totalListeners });
         }
         catch (error) {
-            console.error('Error uploading profile image:', error);
+            console.error('Error updating total listeners:', error);
             res.status(500).json({ error: 'Internal server error' });
         }
     });

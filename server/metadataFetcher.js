@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { detectAdvertisement, getDisplayContent } from './adDetection.js';
+import { detectAdvertisement, getDisplayContent } from './adDetection';
 class MetadataFetcher {
     static instance;
     cache = new Map();
@@ -22,10 +22,8 @@ class MetadataFetcher {
                         await this.fetchIHeartMetadata('6046', 'Hot 97') ||
                         await this.fetchAlternativeMetadata('WQHTFM', 'Hot 97');
                     break;
-                case 'power-106':
-                    metadata = await this.fetchStreamTheWorldMetadata('WWPRFMAAC', 'Power 105.1') ||
-                        await this.fetchIHeartMetadata('1481', 'Power 105.1') ||
-                        await this.fetchAlternativeMetadata('WWPRFM', 'Power 105.1');
+                case 'somafm-groovesalad':
+                    metadata = await this.fetchSomaFMMetadata('groovesalad', 'SomaFM Groove Salad');
                     break;
                 case 'hot-105':
                     metadata = await this.fetchStreamTheWorldMetadata('WHQTFMAAC', 'Hot 105') ||

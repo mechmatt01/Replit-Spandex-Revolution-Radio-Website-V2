@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useLocation, useSearch } from "wouter";
+import { findUserProfileByFirebaseUID, updateUserProfile, uploadProfileImage } from "../lib/firebase";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -57,19 +58,10 @@ import {
 } from "lucide-react";
 import { useToast } from "../hooks/use-toast";
 import { format } from "date-fns";
-
-// Premium avatar options
-const premiumAvatars = [
-  { id: 1, name: "Metal Warrior", url: "https://api.dicebear.com/9.x/avataaars/svg?seed=metal1&backgroundColor=000000" },
-  { id: 2, name: "Rock Legend", url: "https://api.dicebear.com/9.x/avataaars/svg?seed=rock2&backgroundColor=1a1a1a" },
-  { id: 3, name: "Guitar Hero", url: "https://api.dicebear.com/9.x/avataaars/svg?seed=guitar3&backgroundColor=2a2a2a" },
-  { id: 4, name: "Drum Master", url: "https://api.dicebear.com/9.x/avataaars/svg?seed=drums4&backgroundColor=3a3a3a" },
-  { id: 5, name: "Bass Thunder", url: "https://api.dicebear.com/9.x/avataaars/svg?seed=bass5&backgroundColor=4a4a4a" },
-  { id: 6, name: "Vocal Fury", url: "https://api.dicebear.com/9.x/avataaars/svg?seed=vocal6&backgroundColor=5a5a5a" },
-];
+import AvatarSelector from "./AvatarSelector";
 
 export default function ProfilePage() {
-  const { user, firebaseUser, firebaseProfile, isAuthenticated, logout, refreshUser } = useAuth();
+  const { user, signOut } = useFirebaseAuth();
   const [, setLocation] = useLocation();
   const { colors, isDarkMode } = useTheme();
   const { toast } = useToast();
@@ -87,11 +79,13 @@ export default function ProfilePage() {
     email: "",
     profileImageUrl: "",
   });
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [showChangeImageDropdown, setShowChangeImageDropdown] = useState(false);
   const [showAvatarSelector, setShowAvatarSelector] = useState(false);
   const [showCancelSubscriptionDialog, setShowCancelSubscriptionDialog] = useState(false);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [submissions, setSubmissions] = useState<any[]>([]);
 
@@ -102,35 +96,56 @@ export default function ProfilePage() {
 
   // Redirect if not authenticated
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!user) {
       setLocation("/");
     }
-  }, [isAuthenticated, setLocation]);
+  }, [user, setLocation]);
 
-  // Load user data from Firebase profile or fallback to regular user
+  // Load user data from Firebase profile
   useEffect(() => {
-    if (firebaseProfile) {
-      // Use Firebase profile data (preferred)
+    if (user) {
       setProfileData({
-        displayName: `${firebaseProfile.FirstName} ${firebaseProfile.LastName}`.trim() || firebaseProfile.EmailAddress?.split('@')[0] || "",
-        phoneNumber: firebaseProfile.PhoneNumber || "",
-        email: firebaseProfile.EmailAddress || "",
-        profileImageUrl: firebaseProfile.UserProfileImage || "",
-      });
-    } else if (user) {
-      // Fallback to regular user data
-      setProfileData({
-        displayName: (user as any).firstName || (user as any).email?.split('@')[0] || "",
-        phoneNumber: (user as any).phoneNumber || "",
-        email: (user as any).email || "",
-        profileImageUrl: (user as any).profileImageUrl || "",
+        displayName: user.displayName || user.email?.split('@')[0] || "",
+        phoneNumber: user.phoneNumber || "",
+        email: user.email || "",
+        profileImageUrl: user.photoURL || "",
       });
     }
-  }, [user, firebaseProfile]);
+  }, [user]);
+
+  // Load complete user profile from Firestore
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (user) {
+        setLoading(true);
+        try {
+          // Try to find user profile by Firebase UID
+          const profile = await findUserProfileByFirebaseUID(user.uid, user.email || '');
+          if (profile) {
+            setUserProfile(profile);
+            // Update profile data with Firestore data
+            setProfileData({
+              displayName: `${profile.firstName} ${profile.lastName}`.trim(),
+              phoneNumber: profile.phoneNumber || "",
+              email: profile.emailAddress || user.email || "",
+              profileImageUrl: profile.userProfileImage || user.photoURL || "",
+            });
+          }
+        } catch (error) {
+          console.error('Failed to load user profile:', error);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadUserProfile();
+  }, [user]);
 
   // Load submissions
   useEffect(() => {
-    if (user && (user as any).activeSubscription) {
+    // TODO: Check subscription status from user profile
+    if (user) {
       loadSubmissions();
     }
   }, [user]);
@@ -150,21 +165,44 @@ export default function ProfilePage() {
   };
 
   const handleSaveProfile = async () => {
-    setLoading(true);
+    setIsSaving(true);
     try {
       // Parse display name into first and last name
       const nameParts = profileData.displayName.trim().split(' ');
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
 
-      // TODO: Implement profile update functionality
-      // For now, just show success message
-      console.log("Profile update functionality not implemented yet");
+      if (!userProfile) {
+        throw new Error('User profile not found');
+      }
 
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been saved successfully.",
+      // Update user profile in Firestore
+      const updateResult = await updateUserProfile(userProfile.userID, {
+        firstName,
+        lastName,
+        phoneNumber: profileData.phoneNumber,
+        userProfileImage: profileData.profileImageUrl,
+        updatedAt: new Date().toISOString(),
       });
+
+      if (updateResult) {
+        // Update local state
+        setUserProfile(prev => prev ? {
+          ...prev,
+          firstName,
+          lastName,
+          phoneNumber: profileData.phoneNumber,
+          userProfileImage: profileData.profileImageUrl,
+          updatedAt: new Date().toISOString(),
+        } : null);
+
+        toast({
+          title: "Profile Updated",
+          description: "Your profile has been saved successfully.",
+        });
+      } else {
+        throw new Error('Failed to update profile');
+      }
     } catch (error: any) {
       toast({
         title: "Update Failed",
@@ -172,7 +210,7 @@ export default function ProfilePage() {
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setIsSaving(false);
     }
   };
 
@@ -182,9 +220,35 @@ export default function ProfilePage() {
 
     setUploadingImage(true);
     try {
-      // TODO: Implement image upload functionality
-      // For now, just show success message
-      console.log("Image upload functionality not implemented yet");
+      if (!userProfile) {
+        throw new Error('User profile not found');
+      }
+
+      // Upload image to Firebase Storage
+      const imageUrl = await uploadProfileImage(file, userProfile.userID);
+      
+      // Update user profile in Firestore
+      const updateResult = await updateUserProfile(userProfile.userID, {
+        userProfileImage: imageUrl,
+        updatedAt: new Date().toISOString(),
+      });
+
+      if (updateResult) {
+        // Update local state
+        setProfileData(prev => ({ ...prev, profileImageUrl: imageUrl }));
+        setUserProfile(prev => prev ? {
+          ...prev,
+          userProfileImage: imageUrl,
+          updatedAt: new Date().toISOString(),
+        } : null);
+
+        toast({
+          title: "Image Uploaded",
+          description: "Your profile image has been updated successfully.",
+        });
+      } else {
+        throw new Error('Failed to update profile');
+      }
     } catch (error: any) {
       toast({
         title: "Upload Failed",
@@ -199,10 +263,32 @@ export default function ProfilePage() {
 
   const handleAvatarSelect = async (avatarUrl: string) => {
     try {
-      // TODO: Implement avatar update functionality
-      // For now, just update local state
-      setProfileData(prev => ({ ...prev, profileImageUrl: avatarUrl }));
-      console.log("Avatar update functionality not implemented yet");
+      if (!userProfile) {
+        throw new Error('User profile not found');
+      }
+
+      // Update user profile in Firestore
+      const updateResult = await updateUserProfile(userProfile.userID, {
+        userProfileImage: avatarUrl,
+        updatedAt: new Date().toISOString(),
+      });
+
+      if (updateResult) {
+        // Update local state
+        setProfileData(prev => ({ ...prev, profileImageUrl: avatarUrl }));
+        setUserProfile(prev => prev ? {
+          ...prev,
+          userProfileImage: avatarUrl,
+          updatedAt: new Date().toISOString(),
+        } : null);
+
+        toast({
+          title: "Avatar Updated",
+          description: "Your avatar has been updated successfully.",
+        });
+      } else {
+        throw new Error('Failed to update avatar');
+      }
     } catch (error: any) {
       toast({
         title: "Update Failed",
@@ -223,7 +309,7 @@ export default function ProfilePage() {
 
       if (!response.ok) throw new Error("Failed to cancel subscription");
 
-      await refreshUser();
+      // Profile updated successfully
       setShowCancelSubscriptionDialog(false);
       toast({
         title: "Subscription Cancelled",
@@ -239,7 +325,7 @@ export default function ProfilePage() {
   };
 
   const handleLogout = async () => {
-    await logout();
+    await signOut();
     setLocation("/");
   };
 
@@ -249,15 +335,12 @@ export default function ProfilePage() {
 
   const sidebarItems = [
     { id: "profile", label: "Profile", icon: User },
-    ...((user as any).activeSubscription
-      ? [
-          {
-            id: "subscription",
-            label: "Subscription Management",
-            icon: CreditCard,
-          },
-        ]
-      : []),
+    // TODO: Add subscription data when available
+    // {
+    //   id: "subscription",
+    //   label: "Subscription Management",
+    //   icon: CreditCard,
+    // },
     {
       id: "submissions",
       label: "Submission Requests",
@@ -343,8 +426,15 @@ export default function ProfilePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Profile Image Section */}
-                  <div className="flex items-start space-x-6">
+                  {loading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: colors.primary }}></div>
+                      <span className="ml-3" style={{ color: colors.text }}>Loading profile...</span>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Profile Image Section */}
+                      <div className="flex items-start space-x-6">
                     <div className="relative">
                       <div
                         className="w-24 h-24 rounded-full shadow-lg ring-4 ring-offset-2"
@@ -369,8 +459,10 @@ export default function ProfilePage() {
                             className="absolute bottom-0 right-0 w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110"
                             style={{
                               backgroundColor: colors.primary,
-                              border: `2px solid ${isDarkMode ? '#000000' : '#ffffff'}`,
+                              border: `2px solid ${isDarkMode ? '#000000' : colors.primary}`,
                             }}
+                            title="Change profile picture"
+                            aria-label="Change profile picture"
                           >
                             <Camera size={16} className="text-white" />
                           </button>
@@ -383,10 +475,19 @@ export default function ProfilePage() {
                             borderColor: `${colors.primary}40`,
                           }}
                         >
-                          <DropdownMenuItem>
+                          <DropdownMenuItem disabled={uploadingImage}>
                             <label htmlFor="image-upload" className="flex items-center gap-2 cursor-pointer w-full">
-                              <Upload size={16} />
-                              <span>Upload Photo</span>
+                              {uploadingImage ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2" style={{ borderColor: colors.primary }}></div>
+                                  <span>Uploading...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Upload size={16} />
+                                  <span>Upload Photo</span>
+                                </>
+                              )}
                             </label>
                             <input
                               id="image-upload"
@@ -394,11 +495,13 @@ export default function ProfilePage() {
                               accept="image/*"
                               className="hidden"
                               onChange={handleImageUpload}
+                              disabled={uploadingImage}
                             />
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => {
-                              if (!(user as any).activeSubscription) {
+                                                             {/* TODO: Check subscription status */}
+                               if (false) {
                                 toast({
                                   title: "Premium Feature",
                                   description: "Premium avatars are available for subscribers only.",
@@ -463,7 +566,7 @@ export default function ProfilePage() {
                           opacity: 0.7,
                         }}
                       />
-                      {(user as any).emailVerified && (
+                      {user?.emailVerified && (
                         <Badge variant="outline" className="flex items-center gap-1">
                           <CheckCircle size={14} />
                           Verified
@@ -490,7 +593,8 @@ export default function ProfilePage() {
                           color: colors.text,
                         }}
                       />
-                      {(user as any).phoneVerified && (
+                      {/* TODO: Add phone verification status when available */}
+                      {false && (
                         <Badge variant="outline" className="flex items-center gap-1">
                           <CheckCircle size={14} />
                           Verified
@@ -502,20 +606,22 @@ export default function ProfilePage() {
                   {/* Save Button */}
                   <Button
                     onClick={handleSaveProfile}
-                    disabled={loading}
+                    disabled={isSaving}
                     className="w-full font-bold shadow-lg"
                     style={{
                       backgroundColor: colors.primary,
                       color: 'white',
                     }}
                   >
-                    {loading ? "Saving..." : "Save Changes"}
+                    {isSaving ? "Saving..." : "Save Changes"}
                   </Button>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             )}
 
-            {selectedSection === "subscription" && (user as any).activeSubscription && (
+            {selectedSection === "subscription" && (
               <Card
                 className="border-2 shadow-xl"
                 style={{
@@ -627,7 +733,8 @@ export default function ProfilePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {!(user as any).activeSubscription ? (
+                  {/* TODO: Check subscription status */}
+                  {false ? (
                     <div className="text-center py-12">
                       <Crown size={48} className="mx-auto mb-4 opacity-50" style={{ color: colors.primary }} />
                       <h3 className="font-bold text-lg mb-2" style={{ color: colors.text }}>
@@ -699,47 +806,13 @@ export default function ProfilePage() {
       </div>
 
       {/* Avatar Selector Dialog */}
-      <Dialog open={showAvatarSelector} onOpenChange={setShowAvatarSelector}>
-        <DialogContent
-          className="max-w-2xl"
-          style={{
-            backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-            borderColor: `${colors.primary}40`,
-          }}
-        >
-          <DialogHeader>
-            <DialogTitle className="text-xl font-black" style={{ color: colors.text }}>
-              Premium Avatar Collection
-            </DialogTitle>
-            <DialogDescription style={{ color: `${colors.text}80` }}>
-              Choose from our exclusive metal-themed avatars
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid grid-cols-3 gap-4 mt-4">
-            {(premiumAvatars || []).map((avatar) => (
-              <button
-                key={avatar.id}
-                onClick={() => handleAvatarSelect(avatar.url)}
-                className="group relative rounded-lg overflow-hidden transition-all duration-200 hover:scale-105 hover:shadow-xl"
-              >
-                <img
-                  src={avatar.url}
-                  alt={avatar.name}
-                  className="w-full h-full object-cover"
-                />
-                <div
-                  className="absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  style={{
-                    background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%)',
-                  }}
-                >
-                  <span className="text-white font-semibold text-sm">{avatar.name}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <AvatarSelector
+        isOpen={showAvatarSelector}
+        onClose={() => setShowAvatarSelector(false)}
+        currentAvatar={profileData.profileImageUrl}
+        onAvatarUpdate={handleAvatarSelect}
+        userID={userProfile?.userID || user?.uid || ""}
+      />
 
       {/* Cancel Subscription Dialog */}
       <AlertDialog open={showCancelSubscriptionDialog} onOpenChange={setShowCancelSubscriptionDialog}>

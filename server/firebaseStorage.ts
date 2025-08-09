@@ -51,6 +51,7 @@ try {
 }
 
 export const db = isFirebaseAvailable ? getFirestore(firebaseApp) : null;
+export { isFirebaseAvailable };
 
 /**
  * Firebase-based Live Statistics Storage

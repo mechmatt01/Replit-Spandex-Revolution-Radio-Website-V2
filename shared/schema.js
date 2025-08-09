@@ -1,5 +1,27 @@
 import { pgTable, text, serial, integer, boolean, timestamp, varchar, jsonb, index, } from "drizzle-orm/pg-core";
+// import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+// Firebase User Profile Schema
+export const UserProfileSchema = z.object({
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    userProfileImage: z.string().url().optional(),
+    emailAddress: z.string().email("Valid email is required"),
+    phoneNumber: z.string().optional(),
+    location: z.object({
+        latitude: z.number(),
+        longitude: z.number(),
+    }).optional(),
+    isActiveListening: z.boolean().default(false),
+    activeSubscription: z.boolean().default(false),
+    renewalDate: z.date().optional(),
+    lastLogin: z.date(),
+    userID: z.string().length(10, "User ID must be exactly 10 characters"),
+    isEmailVerified: z.boolean().default(false),
+    isPhoneVerified: z.boolean().default(false),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+});
 // Session storage table for authentication
 export const sessions = pgTable("sessions", {
     sid: varchar("sid").primaryKey(),
@@ -199,45 +221,23 @@ export const updateLocationSchema = z.object({
 export const updateListeningStatusSchema = z.object({
     isActiveListening: z.boolean(),
 });
-export const insertSubmissionSchema = z.object({
-    userId: z.string().optional(),
-    songTitle: z.string(),
-    artistName: z.string(),
-    albumTitle: z.string().optional(),
-    releaseYear: z.number().optional(),
-    submitterName: z.string().optional(),
-    message: z.string().optional(),
-    status: z.string().optional(),
-});
-export const insertContactSchema = z.object({
-    firstName: z.string(),
-    lastName: z.string(),
-    email: z.string(),
-    subject: z.string(),
-    message: z.string(),
-});
+// Additional schema definitions
 export const insertShowScheduleSchema = z.object({
-    title: z.string(),
+    title: z.string().min(1, "Title is required"),
     description: z.string().optional(),
     host: z.string().optional(),
-    dayOfWeek: z.string(),
-    time: z.string(),
-    duration: z.string().optional(),
-});
-export const insertNowPlayingSchema = z.object({
-    title: z.string(),
-    artist: z.string(),
-    album: z.string().optional(),
-    artwork: z.string().optional(),
-    isAd: z.boolean().optional(),
+    dayOfWeek: z.string().min(1, "Day of week is required"),
+    time: z.string().min(1, "Time is required"),
     duration: z.number().optional(),
-    currentTime: z.number().optional(),
-    isLive: z.boolean().optional(),
+    isActive: z.boolean().default(true),
 });
-export const insertSubscriptionSchema = z.object({
-    email: z.string(),
-    plan: z.string(),
-    status: z.string().optional(),
+export const insertPastShowSchema = z.object({
+    title: z.string().min(1, "Title is required"),
+    description: z.string().optional(),
+    host: z.string().optional(),
+    date: z.date(),
+    duration: z.number().optional(),
+    audioUrl: z.string().url().optional(),
 });
 export const insertCountdownSettingsSchema = z.object({
     countdownText: z.string(),
@@ -250,18 +250,55 @@ export const insertCountdownHistorySchema = z.object({
     changedBy: z.string().optional(),
     changeReason: z.string().optional(),
 });
+// Radio Station Schema
 export const insertRadioStationSchema = z.object({
-    name: z.string().min(1, "Station name is required"),
-    description: z.string().optional(),
-    streamUrl: z.string().url("Valid stream URL required"),
-    apiUrl: z.string().optional(),
-    apiType: z.enum(["triton", "streamtheworld", "somafm", "custom", "auto"]).default("auto"),
     stationId: z.string().min(1, "Station ID is required"),
+    name: z.string().min(1, "Station name is required"),
+    streamUrl: z.string().url("Valid stream URL is required"),
+    website: z.string().url("Valid website URL is required").optional(),
+    description: z.string().optional(),
+    genre: z.string().optional(),
+    country: z.string().optional(),
+    city: z.string().optional(),
+    sortOrder: z.number().default(0),
+    isActive: z.boolean().default(true),
+    apiUrl: z.string().url().optional(),
+    apiType: z.string().optional(),
     frequency: z.string().optional(),
     location: z.string().optional(),
+});
+// Contact Form Schema
+export const insertContactSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    email: z.string().email("Valid email is required"),
+    message: z.string().min(10, "Message must be at least 10 characters"),
+});
+// Subscription Schema
+export const insertSubscriptionSchema = z.object({
+    userID: z.string().min(1, "User ID is required"),
+    packageType: z.enum(["Icon", "Legend", "Rebel"]),
+    amount: z.number().positive("Amount must be positive"),
+    currency: z.string().default("USD"),
+    status: z.enum(["active", "cancelled", "expired"]).default("active"),
+    startDate: z.date(),
+    endDate: z.date(),
+});
+// Now Playing Schema
+export const insertNowPlayingSchema = z.object({
+    stationId: z.string().min(1, "Station ID is required"),
+    artist: z.string().optional(),
+    title: z.string().optional(),
+    album: z.string().optional(),
+    artwork: z.string().url().optional(),
+    timestamp: z.date(),
+});
+// Submission Schema
+export const insertSubmissionSchema = z.object({
+    name: z.string().min(1, "Name is required"),
+    email: z.string().email("Valid email is required"),
+    songTitle: z.string().min(1, "Song title is required"),
+    artist: z.string().min(1, "Artist is required"),
     genre: z.string().optional(),
-    website: z.string().optional(),
-    logo: z.string().optional(),
-    isActive: z.boolean().default(true),
-    sortOrder: z.number().default(0),
+    message: z.string().optional(),
+    status: z.enum(["pending", "approved", "rejected"]).default("pending"),
 });

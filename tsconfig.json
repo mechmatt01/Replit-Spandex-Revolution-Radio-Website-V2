@@ -12,7 +12,7 @@
     "incremental": true,
     "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
     "noEmit": false,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "allowImportingTsExtensions": false,
     "baseUrl": ".",
     "types": ["node", "vite/client", "google.maps"],

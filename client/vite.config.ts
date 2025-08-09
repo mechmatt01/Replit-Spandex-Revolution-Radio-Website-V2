@@ -3,17 +3,19 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react({
+    jsxRuntime: 'automatic'
+  })],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      "@": path.resolve(__dirname, "src"),
       "@shared": path.resolve(__dirname, "../shared"),
-      "@assets": path.resolve(__dirname, "../attached_assets"),
+      "@assets": path.resolve(__dirname, "public"),
     },
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.json']
   },
   css: {
-    postcss: path.resolve(__dirname, '../postcss.config.js'),
+    postcss: path.resolve(__dirname, 'postcss.config.js'),
   },
   build: {
     outDir: 'dist',
@@ -36,5 +38,8 @@ export default defineConfig({
         secure: false,
       }
     }
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom']
   }
 })

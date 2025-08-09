@@ -8,13 +8,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const viteLogger = createLogger();
 const viteConfig = {
-    root: path.resolve(__dirname, "..", "client"),
-    build: {
-        outDir: path.resolve(__dirname, "..", "client", "dist"),
-    },
-    server: {
-        port: 5173,
-    },
+  root: path.resolve(__dirname, "..", "client"),
+  build: {
+    outDir: path.resolve(__dirname, "..", "client", "dist"),
+  },
+  server: {
+    port: 5173,
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "..", "client", "src"),
+      "@shared": path.resolve(__dirname, "..", "shared"),
+      "@assets": path.resolve(__dirname, "..", "attached_assets"),
+  },
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.json']
+  },
 };
 export function log(message, source = "express") {
     const formattedTime = new Date().toLocaleTimeString("en-US", {
@@ -49,7 +57,10 @@ export async function setupVite(app, server) {
                     }
                 },
             },
-            server: serverOptions,
+            server: {
+                ...serverOptions,
+                allowedHosts: true
+            },
             appType: "custom",
         });
         app.use(vite.middlewares);

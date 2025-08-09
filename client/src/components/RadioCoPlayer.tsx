@@ -17,7 +17,7 @@ import ScrollingText from "../components/ScrollingText";
 import InteractiveAlbumArt from "../components/InteractiveAlbumArt";
 import { AdLogo } from "../components/AdLogo";
 import { useState, useRef, useEffect } from "react";
-import { useAuth } from "../contexts/AuthContext";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
 
 // RadioStation interface moved to RadioContext
 interface RadioStation {
@@ -31,7 +31,7 @@ interface RadioStation {
   description: string;
   icon: string;
 }
-// import MusicLogoPath from "../../attached_assets/MusicLogoIcon@3x.png";
+// import MusicLogoPath from "../../attached_assets/MusicLogoIcon.png";
 
 // Radio stations data with authentic streaming URLs for current top charts hip-hop, rap, and pop music
 const radioStations: RadioStation[] = [
@@ -120,7 +120,7 @@ export default function RadioCoPlayer() {
     adInfo,
   } = useRadio();
 
-  const { user, updateListeningStatus } = useAuth();
+  const { user, updateListeningStatus } = useFirebaseAuth();
   const { getColors, getGradient, currentTheme } = useTheme();
   const colors = getColors();
 
@@ -692,30 +692,37 @@ export default function RadioCoPlayer() {
               ></div>
             ) : isPlaying ? (
               <svg
-                className="h-16 w-16"
+                className="h-8 w-8"
                 fill="#ffffff"
                 viewBox="0 0 24 24"
               >
                 <rect
-                  x="4"
+                  x="6"
                   y="4"
-                  width="16"
+                  width="4"
                   height="16"
-                  rx="4"
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
+                  rx="1"
+                  fill="#ffffff"
+                />
+                <rect
+                  x="14"
+                  y="4"
+                  width="4"
+                  height="16"
+                  rx="1"
+                  fill="#ffffff"
                 />
               </svg>
             ) : (
               <svg
-                className="h-15 w-15"
+                className="h-8 w-8"
                 fill="#ffffff"
                 viewBox="0 0 24 24"
                 style={{
                   animation: "pulse 2s ease-in-out infinite",
                 }}
               >
-                <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" />
+                <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" fill="#ffffff" />
               </svg>
             )}
           </Button>

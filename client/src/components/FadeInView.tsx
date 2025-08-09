@@ -1,6 +1,6 @@
+import React, { useRef, ReactNode, useEffect, useState } from "react";
 import { useIntersectionObserver } from "../hooks/use-intersection-observer";
 import { useScrollVelocity, getAdaptiveAnimationDuration } from "../hooks/use-scroll-velocity";
-import { useRef, ReactNode, useEffect, useState } from "react";
 
 interface FadeInViewProps {
   children: ReactNode;
@@ -19,7 +19,7 @@ export default function FadeInView({
   children,
   threshold = 0.05,
   delay = 0,
-  duration = 200,
+  duration = 100,
   className = '',
   direction = 'up'
 }: FadeInViewProps) {
@@ -27,9 +27,9 @@ export default function FadeInView({
   const [hasAnimated, setHasAnimated] = useState(false);
   const [adaptiveDuration, setAdaptiveDuration] = useState(duration);
   const [elementId] = useState(() => `fade-${++animationCounter}`);
-  const isVisible = useIntersectionObserver(ref, { 
+  const { ref: intersectionRef, isVisible } = useIntersectionObserver({ 
     threshold, 
-    rootMargin: '100px 0px -20px 0px' // More conservative trigger to prevent gaps
+    rootMargin: '50px 0px -10px 0px' // Reduced margin for faster triggering
   });
   const { velocity } = useScrollVelocity();
 
@@ -40,9 +40,9 @@ export default function FadeInView({
       setAdaptiveDuration(newDuration);
       
       // Immediate animation for fast scrolling, minimal stagger for slow scrolling
-      const isHighVelocity = Math.abs(velocity) > 500;
-      const baseDelay = isHighVelocity ? 0 : 10; // No delay for fast scrolling
-      const staggerDelay = isHighVelocity ? 0 : Math.min((animationCounter - 1) * 2, 20); // Minimal stagger, max 20ms
+      const isHighVelocity = Math.abs(velocity) > 300;
+      const baseDelay = isHighVelocity ? 0 : 5; // Minimal delay for fast scrolling
+      const staggerDelay = isHighVelocity ? 0 : Math.min((animationCounter - 1) * 1, 10); // Minimal stagger, max 10ms
       const totalDelay = baseDelay + staggerDelay + delay;
       
       setTimeout(() => {
@@ -58,10 +58,10 @@ export default function FadeInView({
     if (direction === 'none') return '';
     
     const transforms = {
-      up: hasAnimated ? 'translateY(0)' : 'translateY(30px)',
-      down: hasAnimated ? 'translateY(0)' : 'translateY(-30px)',
-      left: hasAnimated ? 'translateX(0)' : 'translateX(30px)',
-      right: hasAnimated ? 'translateX(0)' : 'translateX(-30px)'
+      up: hasAnimated ? 'translateY(0)' : 'translateY(20px)',
+      down: hasAnimated ? 'translateY(0)' : 'translateY(-20px)',
+      left: hasAnimated ? 'translateX(0)' : 'translateX(20px)',
+      right: hasAnimated ? 'translateX(0)' : 'translateX(-20px)'
     };
     
     return transforms[direction as keyof typeof transforms] || transforms.up;
@@ -69,7 +69,7 @@ export default function FadeInView({
 
   return (
     <div
-      ref={ref}
+      ref={intersectionRef}
       className={`transition-all ease-out ${className}`}
       style={{
         opacity: hasAnimated ? 1 : 0,

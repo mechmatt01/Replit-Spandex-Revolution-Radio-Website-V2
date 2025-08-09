@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MessageCircle } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { useAuth } from "../contexts/AuthContext";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 
 interface ChatButtonProps {
@@ -11,7 +11,7 @@ interface ChatButtonProps {
 }
 
 export default function ChatButton({ onChatClick, onlineCount = 0 }: ChatButtonProps) {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useFirebaseAuth();
   const { getColors } = useTheme();
   const colors = getColors();
 

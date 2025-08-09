@@ -244,7 +244,23 @@ export function useAdaptiveTheme(artworkUrl?: string) {
 
   // Generate adaptive theme from color analysis
   const generateAdaptiveTheme = useCallback((colorAnalysis: ColorAnalysis): AdaptiveTheme => {
-    const [r, g, b] = hexToRgb(colorAnalysis.dominant.replace('rgb(', '').replace(')', '').split(',').map(n => parseInt(n.trim())).map(n => n.toString(16).padStart(2, '0')).join(''));
+    // Fix the malformed string manipulation - properly extract RGB values
+    const rgbMatch = colorAnalysis.dominant.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+    if (!rgbMatch) {
+      // Fallback to default theme if color parsing fails
+      return {
+        backgroundColor: 'rgba(0, 0, 0, 0.15)',
+        textColor: '#ffffff',
+        accentColor: '#f97316',
+        overlayColor: 'rgba(0, 0, 0, 0.08)',
+        isLight: false,
+        contrastRatio: 21
+      };
+    }
+    
+    const r = parseInt(rgbMatch[1]);
+    const g = parseInt(rgbMatch[2]);
+    const b = parseInt(rgbMatch[3]);
     
     // Enhanced glassmorphism with dynamic opacity based on color properties
     const backgroundOpacity = colorAnalysis.lightness > 0.6 ? 0.25 : 0.20;

@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, ChevronDown, User, Calendar, Music, Send, Phone, MapPin, Heart, UserPlus, LogOut, CreditCard, FileText } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,14 +18,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../components/ui/alert-dialog";
+} from "@/components/ui/alert-dialog";
 import { useLocation } from "wouter";
 import MetalThemeSwitcher from "./MetalThemeSwitcher";
 import AuthModal from "./AuthModal";
-import ChatButton from "./ChatButton";
 import { useTheme } from "../contexts/ThemeContext";
-import { useAuth } from "../contexts/AuthContext";
-import MusicLogoPath from "../../../attached_assets/MusicLogoIcon@3x.png";
+import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
+import MusicLogoPath from "/MusicLogoIcon.png";
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,8 +32,6 @@ export default function Navigation() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [onlineCount, setOnlineCount] = useState(0);
 
   useEffect(() => {
     const handleOpenAuthModal = (event: CustomEvent) => {
@@ -47,14 +44,16 @@ export default function Navigation() {
   }, []);
 
   const { colors, gradient, toggleTheme, isDarkMode, currentTheme } = useTheme();
-  const { user, isAuthenticated } = useAuth();
+  const { user, signOut } = useFirebaseAuth();
 
-  const logout = () => {
-    window.location.href = "/api/logout";
-  };
-
-  const handleChatClick = () => {
-    setIsChatOpen(!isChatOpen);
+  const logout = async () => {
+    try {
+      await signOut();
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout error:", error);
+      window.location.href = "/";
+    }
   };
 
   const menuRef = useRef<HTMLButtonElement>(null);
@@ -432,16 +431,17 @@ export default function Navigation() {
             <div className="hidden xl:flex items-center space-x-1 absolute right-4 top-1/2 transform -translate-y-1/2">
               <MetalThemeSwitcher />
 
-              {!isAuthenticated ? (
+              {!user ? (
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={openLogin}
-                    className="px-2 py-1 text-sm font-semibold rounded-md transition-all duration-200 hover:scale-105"
+                    className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105"
                     style={{
                       color: colors.text,
-                      border: 'none',
+                      border: `2px solid ${colors.primary}`,
                       backgroundColor: 'transparent',
-                      height: '24px',
+                      borderRadius: '8px',
+                      height: '32px',
                       minWidth: '80px'
                     }}
                   >
@@ -449,12 +449,13 @@ export default function Navigation() {
                   </button>
                   <button
                     onClick={openSignUp}
-                    className="px-2 py-1 text-sm font-semibold rounded-md transition-all duration-200 hover:scale-105 whitespace-nowrap"
+                    className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
                     style={{
                       backgroundColor: colors.primary,
                       color: 'white',
-                      border: 'none',
-                      height: '24px',
+                      border: `2px solid ${colors.primary}`,
+                      borderRadius: '8px',
+                      height: '32px',
                       minWidth: '80px'
                     }}
                   >
@@ -462,10 +463,7 @@ export default function Navigation() {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-2">
-                  {/* Chat Button for Premium Users */}
-                  <ChatButton onChatClick={handleChatClick} onlineCount={onlineCount} />
-                  
+                <div className="flex items-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button
@@ -473,32 +471,31 @@ export default function Navigation() {
                         style={{
                           backgroundColor: 'transparent',
                         }}
-                        title="User profile menu"
                       >
                         <div className="relative">
                           {/* Profile Image */}
                           <div
                             className="w-10 h-10 rounded-full bg-gradient-to-br flex items-center justify-center shadow-lg ring-2 ring-offset-2"
                             style={{
-                              background: (user as any)?.UserProfileImage 
-                                ? `url(${(user as any)?.UserProfileImage}) center/cover` 
+                              background: user?.photoURL 
+                                ? `url(${user.photoURL}) center/cover` 
                                 : gradient,
                               '--ring-color': colors.primary,
                               '--ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
                             } as React.CSSProperties}
                           >
-                            {!(user as any)?.UserProfileImage && (
+                            {!user?.photoURL && (
                               <User size={20} className="text-white" />
                             )}
                           </div>
 
                           {/* Verified Badge for Subscribers */}
-                          {(user as any)?.ActiveSubscription && (
+                          {user?.displayName && (
                             <div 
                               className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center shadow-md"
                               style={{
                                 backgroundColor: colors.primary,
-                                border: `2px solid ${isDarkMode ? '#000000' : '#ffffff'}`,
+                                border: `2px solid ${isDarkMode ? '#000000' : colors.primary}`,
                               }}
                             >
                               <svg 
@@ -542,13 +539,13 @@ export default function Navigation() {
                           className="font-black text-sm"
                           style={{ color: !isDarkMode ? '#000000' : colors.text }}
                         >
-                          {(user as any)?.FirstName || (user as any)?.EmailAddress?.split('@')[0] || 'User'}
+                          {user?.displayName || user?.email?.split('@')[0] || 'User'}
                         </p>
                         <p 
                           className="text-xs opacity-70"
                           style={{ color: !isDarkMode ? '#000000' : colors.text }}
                         >
-                          {(user as any)?.EmailAddress}
+                          {user?.email}
                         </p>
                       </div>
 
@@ -565,20 +562,6 @@ export default function Navigation() {
                         <User size={18} style={{ color: colors.primary }} />
                         <span className="font-semibold">Profile</span>
                       </DropdownMenuItem>
-
-                      {/* Subscription Management - Only if active */}
-                      {(user as any)?.ActiveSubscription && (
-                        <DropdownMenuItem
-                          onClick={() => setLocation("/profile?section=subscription")}
-                          className="flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200"
-                          style={{
-                            color: !isDarkMode ? '#000000' : colors.text,
-                          }}
-                        >
-                          <CreditCard size={18} style={{ color: colors.primary }} />
-                          <span className="font-semibold">Subscription<br/>Management</span>
-                        </DropdownMenuItem>
-                      )}
 
                       {/* Submission Requests */}
                       <DropdownMenuItem
@@ -622,6 +605,7 @@ export default function Navigation() {
                   backgroundColor: isOpen ? colors.primary : 'transparent',
                   color: isOpen ? 'white' : colors.primary 
                 }}
+                aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
               >
                 <Menu size={24} />
               </button>
@@ -806,7 +790,7 @@ export default function Navigation() {
                 <div className="border-t my-3" style={{ borderColor: colors.primary + '40' }} />
 
                 {/* Authentication Buttons */}
-                {!isAuthenticated ? (
+                {!user ? (
                   <>
                     <div
                       onClick={() => {
@@ -891,8 +875,8 @@ export default function Navigation() {
                       <span>PROFILE</span>
                     </a>
 
-                    <a
-                      href="/api/logout"
+                    <button
+                      onClick={handleLogout}
                       className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full no-underline"
                       style={{
                         color: colors.primary,
@@ -912,7 +896,7 @@ export default function Navigation() {
                     >
                       <LogOut size={16} style={{ color: colors.primary }} />
                       <span>SIGN OUT</span>
-                    </a>
+                    </button>
                   </>
                 )}
               </div>
