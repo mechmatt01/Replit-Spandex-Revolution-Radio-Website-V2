@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "preview": "vite preview",
     "build": "vite build",
-    "preview": "vite preview"
+    "build:firebase": "vite build && echo 'Build ready for Firebase deployment'"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

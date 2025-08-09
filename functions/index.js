@@ -7,9 +7,9 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
+import { setGlobalOptions } from "firebase-functions";
+import { onRequest } from "firebase-functions/v2/https";
+import fetch from "node-fetch";
 
 // For cost control, you can set the maximum number of containers that can be
 // running at the same time. This helps mitigate the impact of unexpected
@@ -31,15 +31,14 @@ setGlobalOptions({ maxInstances: 10 });
 //   response.send("Hello from Firebase!");
 // });
 
-exports.weather = onRequest(async (req, res) => {
+export const weather = onRequest(async (req, res) => {
   try {
     const { lat, lon } = req.query;
     if (!lat || !lon) {
       return res.status(400).json({ error: "Latitude and longitude are required" });
     }
     const apiKey = process.env.OPENWEATHER_API_KEY || "bc23ce0746d4fc5c04d1d765589dadc5";
-    // Use dynamic import for node-fetch (ESM)
-    const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+    
     // Get current weather data
     const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=imperial`;
     const weatherResponse = await fetch(weatherUrl);
@@ -48,6 +47,7 @@ exports.weather = onRequest(async (req, res) => {
       return res.status(weatherResponse.status).json({ error: errorText });
     }
     const weatherData = await weatherResponse.json();
+    
     // Get location name from reverse geocoding
     const geoUrl = `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`;
     const geoResponse = await fetch(geoUrl);
@@ -63,6 +63,7 @@ exports.weather = onRequest(async (req, res) => {
     } else {
       locationName = `Lat: ${parseFloat(lat).toFixed(2)}, Lon: ${parseFloat(lon).toFixed(2)}`;
     }
+    
     const weatherInfo = {
       location: locationName,
       temperature: Math.round(weatherData.main.temp),
@@ -72,8 +73,10 @@ exports.weather = onRequest(async (req, res) => {
       windSpeed: weatherData.wind?.speed || 0,
       feelsLike: Math.round(weatherData.main.feels_like),
     };
+    
     res.json(weatherInfo);
   } catch (error) {
+    console.error("Weather function error:", error);
     res.status(500).json({ error: `Failed to fetch weather data: ${error.message}` });
   }
 });

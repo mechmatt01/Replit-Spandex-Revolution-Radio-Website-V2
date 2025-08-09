@@ -13,6 +13,7 @@ fi
 
 # Build the client
 echo "📦 Building client application..."
+
 cd client
 npm run build
 
