@@ -1,5 +1,5 @@
-import { collection, addDoc, query, where, orderBy, limit, getDocs, doc, onSnapshot, serverTimestamp, writeBatch } from 'firebase/firestore';
-import { db } from './firebase';
+import { collection, addDoc, getDocs, orderBy, limit, query, where, doc, onSnapshot, serverTimestamp, writeBatch } from 'firebase/firestore';
+import { db } from '../firebase';
 // Add a new message to the chat
 export const addChatMessage = async (userId, username, message, userProfileImage, isHost = false) => {
     try {

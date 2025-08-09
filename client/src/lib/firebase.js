@@ -1,27 +1,13 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, getRedirectResult, signInWithPhoneNumber, signInWithPopup, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, collection as firestoreCollection } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { GoogleAuthProvider, getRedirectResult, signInWithPhoneNumber, signInWithPopup, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { doc, setDoc, getDoc, updateDoc, collection, query, where, getDocs, collection as firestoreCollection } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import bcrypt from 'bcryptjs';
 import { RecaptchaVerifier } from "firebase/auth";
+import { auth, db, storage } from '../firebase';
 // NOTE: Google OAuth is currently in production mode and requires verification
 // This means only authorized test users can sign in until the app is verified
 // To fix this: Go to Google Cloud Console > APIs & Services > OAuth consent screen
 // Add test users or complete verification process
-const firebaseConfig = {
-    apiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
-    authDomain: "spandex-salvation-radio-site.firebaseapp.com",
-    projectId: "spandex-salvation-radio-site",
-    storageBucket: "spandex-salvation-radio-site.firebasestorage.app",
-    messagingSenderId: "632263635377",
-    appId: "1:632263635377:web:2a9bd6118a6a2cb9d8cd90",
-};
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// Initialize Firebase services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
 // Configure Google Auth Provider
 const provider = new GoogleAuthProvider();
 provider.addScope('profile');

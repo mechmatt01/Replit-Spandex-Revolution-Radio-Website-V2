@@ -1,15 +1,8 @@
 import { jsx as _jsx } from "react/jsx-runtime";
 import { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
-import { 
-  registerUser, 
-  findUserProfileByFirebaseUID, 
-  updateUserProfile, 
-  updateListeningStatus, 
-  updateUserLocation, 
-  createUserProfile 
-} from '../lib/firebase';
+import { registerUser, findUserProfileByFirebaseUID, updateUserProfile, updateListeningStatus, updateUserLocation, createUserProfile } from '../lib/firebase';
 const FirebaseAuthContext = createContext(undefined);
 export const useFirebaseAuth = () => {
     const context = useContext(FirebaseAuthContext);
@@ -115,8 +108,7 @@ export const FirebaseAuthProvider = ({ children }) => {
     // Google Sign-in method
     const signInWithGoogle = async () => {
         try {
-            const provider = new GoogleAuthProvider();
-            const result = await signInWithPopup(auth, provider);
+            const result = await signInWithPopup(auth, googleProvider);
             // After successful Google sign-in, create or update user profile
             if (result.user) {
                 try {
