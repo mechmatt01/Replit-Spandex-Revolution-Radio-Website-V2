@@ -121,7 +121,7 @@ async function handleGoogleAuth(googleId: string, email: string, firstName: stri
     }
 
     // Check if user exists by Google ID
-    let userQuery = await db.collection('Users').where('GoogleID', '==', googleId).get();
+    let userQuery = await db.collection('Users').where('googleId', '==', googleId).get();
     let userData = null;
 
     if (!userQuery.empty) {
@@ -135,7 +135,7 @@ async function handleGoogleAuth(googleId: string, email: string, firstName: stri
       if (!userQuery.empty) {
         // User exists with email, link Google account
         userData = userQuery.docs[0].data();
-        await db.collection('Users').doc(`User: ${userData.userID}`).update({
+                await db.collection('Users').doc(`User: ${userData.userID}`).update({
           googleId: googleId,
           isEmailVerified: true,
           updatedAt: new Date().toISOString(),

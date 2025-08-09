@@ -65,7 +65,7 @@ export interface UserProfile {
   updatedAt: string;
 }
 
-// Generate 10-character alphanumeric user ID
+// Generate 10-character alphanumeric user ID (used for non-Firebase auth flows)
 function generateUserID(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
@@ -243,10 +243,10 @@ export async function updateUserLastActive(userID: string) {
   }
 }
 
-// Create or update user profile with all required fields
+// Create or update user profile with all required fields (use Firebase UID as userID)
 export async function createUserProfile(firebaseUser: any): Promise<{ success: boolean; profile?: UserProfile; error?: string }> {
   try {
-    const userID = generateUserID();
+    const userID = firebaseUser.uid;
     const now = new Date().toISOString();
     
     const userProfile: UserProfile = {
@@ -267,8 +267,8 @@ export async function createUserProfile(firebaseUser: any): Promise<{ success: b
       updatedAt: now,
     };
     
-    // Store in Firestore with the userID as document ID
-    await setDoc(doc(db, 'Users', `User: ${userID}`), userProfile);
+    // Store in Firestore with the Firebase UID as document ID
+    await setDoc(doc(db, 'Users', `User: ${userID}`), userProfile, { merge: true });
     
     return { success: true, profile: userProfile };
   } catch (error) {
@@ -319,7 +319,7 @@ export async function updateUserLastLogin(userID: string): Promise<boolean> {
   }
 }
 
-// Get user profile by userID
+// Get user profile by userID (Firebase UID)
 export async function getUserProfile(userID: string): Promise<UserProfile | null> {
   try {
     const docRef = doc(db, 'Users', `User: ${userID}`);

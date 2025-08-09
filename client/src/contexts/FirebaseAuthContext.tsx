@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, registerUser, loginUser, getUserProfile, updateUserProfile, updateListeningStatus, updateUserLocation } from '../lib/firebase';
+import { auth } from '../lib/firebase';
 import { User as FirebaseUser, onAuthStateChanged } from 'firebase/auth';
 
 interface User {
@@ -27,14 +27,6 @@ interface FirebaseAuthContextType {
   updateListeningStatus: (isActiveListening: boolean) => Promise<void>;
   updateLocation: (location: { lat: number; lng: number; country?: string }) => Promise<void>;
   updateProfile: (updates: Partial<User>) => Promise<void>;
-  registerUser: (userData: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-    password: string;
-  }) => Promise<{ success: boolean; userID?: string; profile?: User; error?: string }>;
-  loginUser: (email: string, password: string) => Promise<{ success: boolean; userID?: string; profile?: User; error?: string }>;
 }
 
 const FirebaseAuthContext = createContext<FirebaseAuthContextType | undefined>(undefined);
@@ -57,18 +49,32 @@ export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ chil
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setFirebaseUser(firebaseUser);
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+      setFirebaseUser(fbUser);
       
-      if (firebaseUser) {
+      if (fbUser) {
         try {
-          // Get user profile from our database using the email
-          const userData = await loginUser(firebaseUser.email || '', '');
-          if (userData.success && userData.profile) {
-            setUser(userData.profile);
+          // Call server to create/update user profile from Google account
+          const response = await fetch('/api/auth/firebase/google', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              googleId: fbUser.uid,
+              email: fbUser.email,
+              firstName: fbUser.displayName?.split(' ')[0] || '',
+              lastName: fbUser.displayName?.split(' ').slice(1).join(' ') || '',
+            }),
+          });
+          const result = await response.json();
+          if (response.ok && result?.profile) {
+            setUser(result.profile);
+          } else if (result?.profile) {
+            setUser(result.profile);
+          } else {
+            setUser(null);
           }
         } catch (error) {
-          console.error('Error fetching user profile:', error);
+          console.error('Error syncing Google auth profile:', error);
           setUser(null);
         }
       } else {
@@ -93,70 +99,17 @@ export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ chil
 
   const updateListeningStatus = async (isActiveListening: boolean) => {
     if (!user) return;
-    
-    try {
-      // TODO: Implement listening status update
-      console.log('Listening status update not implemented yet');
-      setUser({ ...user, IsActiveListening: isActiveListening });
-    } catch (error) {
-      console.error('Error updating listening status:', error);
-    }
+    setUser({ ...user, IsActiveListening: isActiveListening });
   };
 
   const updateLocation = async (location: { lat: number; lng: number; country?: string }) => {
     if (!user) return;
-    
-    try {
-      // TODO: Implement location update
-      console.log('Location update not implemented yet');
-      setUser({ ...user, Location: location });
-    } catch (error) {
-      console.error('Error updating location:', error);
-    }
+    setUser({ ...user, Location: location });
   };
 
   const updateProfile = async (updates: Partial<User>) => {
     if (!user) return;
-    
-    try {
-      // TODO: Implement profile update
-      console.log('Profile update not implemented yet');
-      setUser({ ...user, ...updates });
-    } catch (error) {
-      console.error('Error updating profile:', error);
-    }
-  };
-
-  const registerUserFunction = async (userData: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-    password: string;
-  }) => {
-    try {
-      const result = await registerUser(userData);
-      if (result.success && result.profile) {
-        setUser(result.profile);
-      }
-      return result;
-    } catch (error) {
-      console.error('Error registering user:', error);
-      return { success: false, error: 'Registration failed' };
-    }
-  };
-
-  const loginUserFunction = async (email: string, password: string) => {
-    try {
-      const result = await loginUser(email, password);
-      if (result.success && result.profile) {
-        setUser(result.profile);
-      }
-      return result;
-    } catch (error) {
-      console.error('Error logging in user:', error);
-      return { success: false, error: 'Login failed' };
-    }
+    setUser({ ...user, ...updates });
   };
 
   const value: FirebaseAuthContextType = {
@@ -167,8 +120,6 @@ export const FirebaseAuthProvider: React.FC<FirebaseAuthProviderProps> = ({ chil
     updateListeningStatus,
     updateLocation,
     updateProfile,
-    registerUser: registerUserFunction,
-    loginUser: loginUserFunction,
   };
 
   return (

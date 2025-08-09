@@ -12,7 +12,6 @@ import { Phone, Mail, CheckCircle, Shield } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { useToast } from "../hooks/use-toast";
 import { apiRequest } from "../lib/queryClient";
-import { useRecaptcha } from "./RecaptchaV3";
 import { auth } from "../firebase";
 import { RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult } from "firebase/auth";
 
@@ -37,10 +36,6 @@ export default function VerificationModal({
   const { toast } = useToast();
   const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
   const [recaptchaReady, setRecaptchaReady] = useState(false);
-
-  // reCAPTCHA Enterprise integration for SMS fraud detection
-  const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY || "";
-  const { executeRecaptcha } = useRecaptcha();
 
   // Setup reCAPTCHA for phone verification
   useEffect(() => {
