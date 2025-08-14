@@ -71,6 +71,16 @@ trap cleanup EXIT INT TERM
 # Step 1: Kill all existing processes and ports
 echo "🧹 Step 1: Cleaning up existing processes..."
 echo "--------------------------------------------"
+echo "⚠️  This will kill all Node.js processes and clear ports."
+read -p "🤔 Continue with cleanup? (y/n/cancel): " confirm_cleanup
+
+if [ "$confirm_cleanup" = "cancel" ]; then
+    echo "❌ Cleanup cancelled by user. Exiting safely."
+    exit 0
+elif [[ ! $confirm_cleanup =~ ^[Yy]$ ]]; then
+    echo "❌ Cleanup cancelled by user. Exiting safely."
+    exit 0
+fi
 
 kill_node_processes
 
@@ -89,6 +99,16 @@ echo ""
 # Step 2: Rebuild everything
 echo "🔨 Step 2: Rebuilding applications..."
 echo "------------------------------------"
+echo "⚠️  This will install dependencies and rebuild applications."
+read -p "🤔 Continue with rebuild? (y/n/cancel): " confirm_rebuild
+
+if [ "$confirm_rebuild" = "cancel" ]; then
+    echo "❌ Rebuild cancelled by user. Cleanup completed."
+    exit 0
+elif [[ ! $confirm_rebuild =~ ^[Yy]$ ]]; then
+    echo "❌ Rebuild cancelled by user. Cleanup completed."
+    exit 0
+fi
 
 # Install dependencies if needed
 echo "📦 Installing dependencies..."

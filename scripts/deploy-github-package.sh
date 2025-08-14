@@ -17,10 +17,10 @@ if [ ! -f "package.json" ]; then
 fi
 
 # Check if the deployment package exists
-if [ ! -d "scripts/github-deployment-package/github-deployment-package" ]; then
+if [ ! -d "github-deployment-package" ]; then
     echo "❌ GitHub deployment package not found!"
     echo "   Please run the prepare script first:"
-    echo "   ./scripts/github-deployment-package/prepare-github-deployment.sh"
+    echo "   ./scripts/prepare-github-deployment.sh"
     exit 1
 fi
 
@@ -28,7 +28,7 @@ fi
 echo "✅ Found GitHub deployment package"
 
 # Navigate to the deployment package directory
-cd scripts/github-deployment-package/github-deployment-package
+cd github-deployment-package
 
 echo ""
 echo "📍 Current directory: $(pwd)"
@@ -103,18 +103,34 @@ if [ -d ".git" ]; then
         case $git_choice in
             1)
                 echo "🗑️  Removing existing git repository..."
+                read -p "⚠️  This will delete the existing git history. Continue? (y/n/cancel): " confirm_delete
+                if [ "$confirm_delete" = "cancel" ]; then
+                    echo "❌ Repository deletion cancelled. Deployment aborted."
+                    exit 0
+                elif [[ ! $confirm_delete =~ ^[Yy]$ ]]; then
+                    echo "❌ Repository deletion cancelled. Deployment aborted."
+                    exit 0
+                fi
                 rm -rf .git
                 echo "📝 Initializing new git repository..."
                 git init
                 ;;
             2)
                 echo "🔄 Using existing git repository..."
+                read -p "⚠️  This will update the remote origin. Continue? (y/n/cancel): " confirm_update
+                if [ "$confirm_update" = "cancel" ]; then
+                    echo "❌ Remote update cancelled. Deployment aborted."
+                    exit 0
+                elif [[ ! $confirm_update =~ ^[Yy]$ ]]; then
+                    echo "❌ Remote update cancelled. Deployment aborted."
+                    exit 0
+                fi
                 # Remove existing remote if it exists
                 git remote remove origin 2>/dev/null || true
                 ;;
             3)
-                echo "❌ Deployment cancelled."
-                exit 1
+                echo "❌ Deployment cancelled by user."
+                exit 0
                 ;;
             *)
                 echo "❌ Invalid choice. Deployment cancelled."
@@ -234,6 +250,18 @@ echo "====================="
 
 echo "📤 Pushing to GitHub repository..."
 echo "🚀 Force pushing to GitHub (this will overwrite remote content)..."
+read -p "⚠️  This will overwrite the remote repository. Continue? (y/n/cancel): " confirm_push
+
+if [ "$confirm_push" = "cancel" ]; then
+    echo "❌ Push cancelled by user. Local repository is ready but not pushed."
+    echo "You can manually push later with: git push -u origin main --force"
+    exit 0
+elif [[ ! $confirm_push =~ ^[Yy]$ ]]; then
+    echo "❌ Push cancelled by user. Local repository is ready but not pushed."
+    echo "You can manually push later with: git push -u origin main --force"
+    exit 0
+fi
+
 git push -u origin main --force
 
 if [ $? -eq 0 ]; then
@@ -270,7 +298,7 @@ else
 fi
 
 # Return to original directory
-cd ../../..
+cd ..
 
 echo ""
 echo "✅ Deployment script completed!"

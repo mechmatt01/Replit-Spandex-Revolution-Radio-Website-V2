@@ -63,24 +63,61 @@ if [ -n "$other_branches" ]; then
     done <<< "$other_branches"
 fi
 
-# Ask for target branch
+# Ask for deployment option
 echo ""
-read -p "🌿 Enter the branch name or number to commit to (e.g., main) or (1) or press Enter for current branch: " target_branch
+echo "🚀 Choose deployment option:"
+echo "1. Deploy to current branch ($current_branch)"
+echo "2. Deploy to existing branch"
+echo "3. Create new branch and deploy"
+echo "4. Cancel deployment"
+read -p "🤔 Enter your choice (1-4): " deployment_choice
 
-# If no input provided, default to current branch
-if [ -z "$target_branch" ]; then
-    target_branch="$current_branch"
-    echo "✅ Using current branch: $target_branch"
-fi
+case $deployment_choice in
+    1)
+        target_branch="$current_branch"
+        echo "✅ Using current branch: $target_branch"
+        ;;
+    2)
+        echo ""
+        read -p "🌿 Enter the branch name or number to deploy to: " target_branch
+        
+        # Validate branch input
+        if [ -z "$target_branch" ]; then
+            echo "❌ Branch name cannot be empty!"
+            exit 1
+        fi
+        ;;
+    3)
+        echo ""
+        read -p "🌿 Enter name for new branch: " new_branch_name
+        
+        # Validate new branch name
+        if [ -z "$new_branch_name" ]; then
+            echo "❌ Branch name cannot be empty!"
+            exit 1
+        fi
+        
+        # Check if branch already exists
+        if git show-ref --verify --quiet refs/heads/$new_branch_name; then
+            echo "❌ Branch '$new_branch_name' already exists!"
+            exit 1
+        fi
+        
+        target_branch="$new_branch_name"
+        echo "✅ Will create and deploy to new branch: $target_branch"
+        ;;
+    4)
+        echo "❌ Deployment cancelled by user."
+        exit 0
+        ;;
+    *)
+        echo "❌ Invalid choice. Using current branch: $current_branch"
+        target_branch="$current_branch"
+        ;;
+esac
 
-# Validate branch input
-if [ -z "$target_branch" ]; then
-    echo "❌ Branch name cannot be empty!"
-    exit 1
-fi
-
-# Check if input is a number and convert to branch name if needed
-if [[ "$target_branch" =~ ^[0-9]+$ ]]; then
+# Check if input is a number and convert to branch name if needed (only for option 2)
+if [ "$deployment_choice" = "2" ] && [[ "$target_branch" =~ ^[0-9]+$ ]]; then
     # Convert number to branch name
     branch_number=1
     selected_branch=""
@@ -113,21 +150,38 @@ if [[ "$target_branch" =~ ^[0-9]+$ ]]; then
     fi
 fi
 
-# Check if target branch exists, if not ask to create it
-if ! git show-ref --verify --quiet refs/heads/$target_branch; then
+# Handle branch creation and switching
+if [ "$deployment_choice" = "3" ]; then
+    # Create new branch
+    echo "🌿 Creating new branch: $target_branch"
+    git checkout -b $target_branch
+    if [ $? -ne 0 ]; then
+        echo "❌ Failed to create branch: $target_branch"
+        exit 1
+    fi
+    echo "✅ New branch created and switched to: $target_branch"
+elif ! git show-ref --verify --quiet refs/heads/$target_branch; then
     echo "⚠️  Branch '$target_branch' doesn't exist."
     read -p "🤔 Would you like to create it? (y/n): " create_branch
     if [[ $create_branch =~ ^[Yy]$ ]]; then
         echo "🌿 Creating new branch: $target_branch"
         git checkout -b $target_branch
+        if [ $? -ne 0 ]; then
+            echo "❌ Failed to create branch: $target_branch"
+            exit 1
+        fi
     else
         echo "❌ Deployment cancelled. Please create the branch manually or choose an existing one."
         exit 1
     fi
 else
-    # Switch to target branch
+    # Switch to existing branch
     echo "🔄 Switching to branch: $target_branch"
     git checkout $target_branch
+    if [ $? -ne 0 ]; then
+        echo "❌ Failed to switch to branch: $target_branch"
+        exit 1
+    fi
 fi
 
 # Check for uncommitted changes
@@ -140,7 +194,14 @@ if ! git diff-index --quiet HEAD --; then
     
     # Ask for commit message
     echo ""
-    read -p "💬 Enter your commit message or press Enter for default: " commit_message
+    read -p "💬 Enter your commit message or press Enter for default (or type 'cancel' to abort): " commit_message
+    
+    # Check for cancel
+    if [ "$commit_message" = "cancel" ]; then
+        echo "❌ Deployment cancelled by user. Changes are still staged but not committed."
+        git reset HEAD
+        exit 0
+    fi
     
     # If no input provided, use default message
     if [ -z "$commit_message" ]; then
@@ -170,8 +231,11 @@ fi
 
 # Push to remote (optional)
 echo ""
-read -p "🚀 Push changes to remote repository? (y/n): " push_changes
-if [[ $push_changes =~ ^[Yy]$ ]]; then
+read -p "🚀 Push changes to remote repository? (y/n/cancel): " push_changes
+if [ "$push_changes" = "cancel" ]; then
+    echo "❌ Deployment cancelled by user. Changes are committed locally but not pushed."
+    exit 0
+elif [[ $push_changes =~ ^[Yy]$ ]]; then
     echo "📤 Pushing to remote..."
     git push origin $target_branch
     
@@ -185,9 +249,28 @@ fi
 echo ""
 echo "🚀 Starting Firebase Deployment..."
 echo "================================"
+echo "⚠️  This will deploy to Firebase Hosting and Functions."
+read -p "🤔 Continue with Firebase deployment? (y/n/cancel): " continue_deploy
+
+if [ "$continue_deploy" = "cancel" ]; then
+    echo "❌ Deployment cancelled by user. Git changes are preserved."
+    exit 0
+elif [[ ! $continue_deploy =~ ^[Yy]$ ]]; then
+    echo "❌ Deployment cancelled by user. Git changes are preserved."
+    exit 0
+fi
 
 # Build the client
 echo "📦 Building client application..."
+read -p "🤔 Continue with client build? (y/n/cancel): " continue_build
+
+if [ "$continue_build" = "cancel" ]; then
+    echo "❌ Build cancelled by user. Git changes are preserved."
+    exit 0
+elif [[ ! $continue_build =~ ^[Yy]$ ]]; then
+    echo "❌ Build cancelled by user. Git changes are preserved."
+    exit 0
+fi
 
 cd client
 npm run build
@@ -208,6 +291,16 @@ firebase login --interactive
 
 # Deploy Firebase Functions first
 echo "⚡ Deploying Firebase Functions..."
+read -p "🤔 Continue with Firebase Functions deployment? (y/n/cancel): " continue_functions
+
+if [ "$continue_functions" = "cancel" ]; then
+    echo "❌ Functions deployment cancelled by user. Client build completed."
+    exit 0
+elif [[ ! $continue_functions =~ ^[Yy]$ ]]; then
+    echo "❌ Functions deployment cancelled by user. Client build completed."
+    exit 0
+fi
+
 firebase deploy --only functions
 
 if [ $? -ne 0 ]; then
@@ -219,6 +312,16 @@ echo "✅ Functions deployment successful!"
 
 # Deploy to Firebase Hosting
 echo "🚀 Deploying to Firebase Hosting..."
+read -p "🤔 Continue with Firebase Hosting deployment? (y/n/cancel): " continue_hosting
+
+if [ "$continue_hosting" = "cancel" ]; then
+    echo "❌ Hosting deployment cancelled by user. Functions deployed successfully."
+    exit 0
+elif [[ ! $continue_hosting =~ ^[Yy]$ ]]; then
+    echo "❌ Hosting deployment cancelled by user. Functions deployed successfully."
+    exit 0
+fi
+
 firebase deploy --only hosting
 
 if [ $? -eq 0 ]; then

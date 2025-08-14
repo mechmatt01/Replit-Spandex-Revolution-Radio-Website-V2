@@ -60,6 +60,17 @@ trap cleanup EXIT INT TERM
 
 # Step 1: Quick cleanup
 echo "🧹 Quick cleanup..."
+echo "⚠️  This will kill Node.js processes and clear ports."
+read -p "🤔 Continue with cleanup? (y/n/cancel): " confirm_cleanup
+
+if [ "$confirm_cleanup" = "cancel" ]; then
+    echo "❌ Cleanup cancelled by user. Exiting safely."
+    exit 0
+elif [[ ! $confirm_cleanup =~ ^[Yy]$ ]]; then
+    echo "❌ Cleanup cancelled by user. Exiting safely."
+    exit 0
+fi
+
 kill_node_processes
 kill_port 3000
 kill_port 3001
@@ -74,6 +85,16 @@ echo ""
 echo "📦 Quick dependency check..."
 if [ ! -d "node_modules" ] || [ ! -d "client/node_modules" ] || [ ! -d "server/node_modules" ]; then
     echo "📥 Installing dependencies..."
+    read -p "🤔 Continue with dependency installation? (y/n/cancel): " confirm_deps
+    
+    if [ "$confirm_deps" = "cancel" ]; then
+        echo "❌ Dependency installation cancelled by user. Cleanup completed."
+        exit 0
+    elif [[ ! $confirm_deps =~ ^[Yy]$ ]]; then
+        echo "❌ Dependency installation cancelled by user. Cleanup completed."
+        exit 0
+    fi
+    
     npm install
     cd client && npm install && cd ..
     cd server && npm install && cd ..
@@ -85,6 +106,15 @@ echo ""
 
 # Step 3: Quick rebuilds (only if needed)
 echo "🔨 Quick rebuilds..."
+read -p "🤔 Continue with rebuilds? (y/n/cancel): " confirm_rebuild
+
+if [ "$confirm_rebuild" = "cancel" ]; then
+    echo "❌ Rebuilds cancelled by user. Dependencies installed."
+    exit 0
+elif [[ ! $confirm_rebuild =~ ^[Yy]$ ]]; then
+    echo "❌ Rebuilds cancelled by user. Dependencies installed."
+    exit 0
+fi
 
 # Check if client needs rebuild (compare timestamps)
 if [ ! -d "client/dist" ] || [ "client/src" -nt "client/dist" ] || [ "client/package.json" -nt "client/dist" ]; then
