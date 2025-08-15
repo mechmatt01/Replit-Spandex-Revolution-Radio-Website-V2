@@ -654,7 +654,7 @@ show_main_menu() {
     echo "4. 🌿 Manage Git Branches"
     echo "5. 🔧 Fix Common Issues & Check Configuration"
     echo "6. 🚀 FULL AUTOMATED DEPLOYMENT (GitHub + Firebase)"
-    echo "7. 🎛️  CUSTOM DEPLOYMENT MODES"
+    echo "7. 🎛️  CUSTOM DEPLOYMENT MODES (Interactive & Selective)"
     echo "8. 📋 Show Current Status"
     echo "9. ❌ Exit"
     echo ""
@@ -670,191 +670,194 @@ show_custom_deployment_menu() {
     echo ""
     echo "Choose your deployment mode:"
     echo ""
-    echo "1. 🚀 FULLY AUTOMATED (No prompts, runs everything)"
-    echo "2. 🤔 INTERACTIVE (Ask y/n for each step)"
-    echo "3. 🎯 SELECTIVE (Choose specific steps, confirm selected ones)"
-    echo "4. ↩️  Back to main menu"
+    echo "Note: For FULLY AUTOMATED deployment, use Option 6 from main menu"
+    echo ""
+    echo "1. 🤔 INTERACTIVE (Ask y/n for each step)"
+    echo "2. 🎯 SELECTIVE (Choose specific steps, confirm selected ones)"
+    echo "3. ↩️  Back to main menu"
     echo ""
 }
 
-# Function to handle fully automated deployment (no prompts)
-fully_automated_deployment() {
-    print_status $BLUE "🚀 Starting FULLY AUTOMATED DEPLOYMENT (No prompts)..."
-    print_status $YELLOW "This will run all steps without asking for confirmation!"
-    
-    # Step 1: Fix configuration issues
-    print_status $BLUE "🔄 Step 1: Fixing configuration issues..."
-    fix_firebase_config
-    check_git_status
-    
-    # Step 2: Build client
-    print_status $BLUE "📦 Step 2: Building client application..."
-    cd client
-    if ! npm run build; then
-        print_status $RED "❌ Client build failed! Cannot proceed with deployment."
-        cd ..
-        return 1
-    fi
-    cd ..
-    print_status $GREEN "✅ Client build successful!"
-    
-    # Step 3: Create GitHub package
-    print_status $BLUE "📋 Step 3: Creating GitHub deployment package..."
-    create_deployment_package
-    
-    # Step 4: Deploy to GitHub
-    print_status $BLUE "🚀 Step 4: Deploying to GitHub..."
-    cd github-deployment-package
-    
-    # Initialize git if needed
-    if [ ! -d ".git" ]; then
-        git init
-    fi
-    
-    # Add all files
-    git add .
-    
-    # Check if there are changes to commit
-    if ! git diff --cached --quiet; then
-        git commit -m "Deploy: Spandex Salvation Radio streaming platform - $(date '+%Y-%m-%d %H:%M:%S')"
-        print_status $GREEN "✅ Changes committed"
-    fi
-    
-    # Set branch to main
-    git branch -M main
-    
-    # Add remote origin
-    github_username="mechmatt01"
-    repo_name="Replit-Spandex-Revolution-Radio-Website-V2"
-    repo_url="https://github.com/$github_username/$repo_name.git"
-    
-    # Remove existing remote if it exists
-    git remote remove origin 2>/dev/null || true
-    git remote add origin "$repo_url"
-    
-    # Force push to GitHub (no prompts)
-    print_status $BLUE "📤 Pushing to GitHub repository..."
-    print_status $CYAN "🔄 This may take a few minutes..."
-    
-    if git push -u origin main --force 2>&1 | while IFS= read -r line; do
-        # Show progress for Git push
-        case "$line" in
-            *"Enumerating objects"*)
-                print_status $CYAN "📦 Enumerating objects..."
-                ;;
-            *"Counting objects"*)
-                print_status $CYAN "🔢 Counting objects..."
-                ;;
-            *"Compressing objects"*)
-                print_status $CYAN "🗜️  Compressing objects..."
-                ;;
-            *"Writing objects"*)
-                print_status $CYAN "✍️  Writing objects..."
-                ;;
-            *"Resolving deltas"*)
-                print_status $CYAN "🔍 Resolving deltas..."
-                ;;
-            *"To "*)
-                print_status $GREEN "✅ $line"
-                ;;
-            *)
-                # Show other lines without overwhelming output
-                if [[ "$line" =~ [0-9]+% ]]; then
-                    printf "\r📊 Git progress: %s" "$line"
-                fi
-                ;;
-        esac
-    done; then
-        print_status $GREEN "🎉 SUCCESS! Deployed to GitHub!"
-    else
-        print_status $RED "❌ Failed to push to GitHub!"
-        cd ..
-        return 1
-    fi
-    
-    cd ..
-    
-    # Step 5: Deploy to Firebase
-    print_status $BLUE "🔥 Step 5: Deploying to Firebase..."
-    
-    # Deploy Functions
-    print_status $BLUE "⚡ Deploying Firebase Functions..."
-    print_status $CYAN "🔄 This may take a few minutes..."
-    
-    if firebase deploy --only functions 2>&1 | while IFS= read -r line; do
-        # Show progress for Firebase deployment
-        case "$line" in
-            *"Deploying functions"*)
-                print_status $CYAN "🚀 Deploying functions..."
-                ;;
-            *"✔"*)
-                print_status $GREEN "✅ $line"
-                ;;
-            *"✖"*)
-                print_status $RED "❌ $line"
-                ;;
-            *"WARN"*)
-                print_status $YELLOW "⚠️  $line"
-                ;;
-            *"ERROR"*)
-                print_status $RED "❌ $line"
-                ;;
-            *)
-                # Show other lines without overwhelming output
-                if [[ "$line" =~ [0-9]+% ]]; then
-                    printf "\r📊 Functions progress: %s" "$line"
-                fi
-                ;;
-        esac
-    done; then
-        print_status $GREEN "✅ Functions deployment successful!"
-    else
-        print_status $RED "❌ Functions deployment failed!"
-        return 1
-    fi
-    
-    # Deploy Hosting
-    print_status $BLUE "🚀 Deploying to Firebase Hosting..."
-    print_status $CYAN "🔄 This may take a few minutes..."
-    
-    if firebase deploy --only hosting 2>&1 | while IFS= read -r line; do
-        # Show progress for Firebase hosting deployment
-        case "$line" in
-            *"Deploying hosting"*)
-                print_status $CYAN "🌐 Deploying to hosting..."
-                ;;
-            *"✔"*)
-                print_status $GREEN "✅ $line"
-                ;;
-            *"✖"*)
-                print_status $RED "❌ $line"
-                ;;
-            *"WARN"*)
-                print_status $YELLOW "⚠️  $line"
-                ;;
-            *"ERROR"*)
-                print_status $RED "❌ $line"
-                ;;
-            *)
-                # Show other lines without overwhelming output
-                if [[ "$line" =~ [0-9]+% ]]; then
-                    printf "\r📊 Hosting progress: %s" "$line"
-                fi
-                ;;
-        esac
-    done; then
-        print_status $GREEN "🎉 Firebase deployment successful!"
-        print_status $BLUE "🌐 Your site is live at: https://spandex-salvation-radio-site.web.app"
-    else
-        print_status $RED "❌ Hosting deployment failed!"
-        return 1
-    fi
-    
-    print_status $GREEN "🎉 FULLY AUTOMATED DEPLOYMENT COMPLETE!"
-    print_status $BLUE "🌐 Your site is live at: https://spandex-salvation-radio-site.web.app"
-    print_status $BLUE "📚 Code is deployed to GitHub"
-    print_status $BLUE "🎸 Rock on! Your radio station is fully deployed!"
-}
+# Function to handle fully automated deployment (no prompts) - REMOVED (duplicate of Option 6)
+# fully_automated_deployment() {
+#     print_status $BLUE "🚀 Starting FULLY AUTOMATED DEPLOYMENT (No prompts)..."
+#     print_status $YELLOW "This will run all steps without asking for confirmation!"
+#     
+#     # Step 1: Fix configuration issues
+#     print_status $BLUE "🔄 Step 1: Fixing configuration issues..."
+#     fix_firebase_config
+#     check_git_status
+#     
+#     # Step 2: Build client
+#     print_status $BLUE "📦 Step 2: Building client application..."
+#     cd client
+#     if ! npm run build; then
+#         print_status $RED "❌ Client build failed! Cannot proceed with deployment."
+#         cd ..
+#         return 1
+#     fi
+#     cd ..
+#     print_status $GREEN "✅ Client build successful!"
+#     
+#     # Step 3: Create GitHub package
+#     print_status $BLUE "📋 Step 3: Creating GitHub deployment package..."
+#     create_deployment_package
+#     
+#     # Step 4: Deploy to GitHub
+#     print_status $BLUE "🚀 Step 4: Deploying to GitHub..."
+#     cd github-deployment-package
+#     
+#     # Initialize git if needed
+#     if [ ! -d ".git" ]; then
+#         git init
+#     fi
+#     
+#     # Add all files
+#     git add .
+#     
+#     # Check if there are changes to commit
+#     if ! git diff --cached --quiet; then
+#         git commit -m "Deploy: Spandex Salvation Radio streaming platform - $(date '+%Y-%m-%d %H:%M:%S')"
+#         print_status $GREEN "✅ Changes committed"
+#     fi
+#     
+#     # Set branch to main
+#     git branch -M main
+#     
+#     # Add remote origin
+#     github_username="mechmatt01"
+#     repo_name="Replit-Spandex-Revolution-Radio-Website-V2"
+#     repo_url="https://github.com/$github_username/$repo_name.git"
+#     
+#     # Remove existing remote if it exists
+#     git remote remove origin 2>/dev/null || true
+#     git remote add origin "$repo_url"
+#     
+#     # Force push to GitHub (no prompts)
+#     print_status $BLUE "📤 Pushing to GitHub repository..."
+#     print_status $CYAN "🔄 This may take a few minutes..."
+#     
+#     if git push -u origin main --force 2>&1 | while IFS= read -r line; do
+#         # Show progress for Git push
+#         case "$line" in
+#             *"Enumerating objects"*)
+#                 print_status $CYAN "📦 Enumerating objects..."
+#                 ;;
+#             *"Counting objects"*)
+#                 print_status $CYAN "🔢 Counting objects..."
+#                 ;;
+#             *"Compressing objects"*)
+#                 print_status $CYAN "🗜️  Compressing objects..."
+#                 ;;
+#             *"Writing objects"*)
+#                 print_status $CYAN "✍️  Writing objects..."
+#                 ;;
+#             *"Resolving deltas"*)
+#                 print_status $CYAN "🔍 Resolving deltas..."
+#                 ;;
+#             *"To "*)
+#                 print_status $GREEN "✅ $line"
+#                 ;;
+#             *)
+#                 # Show other lines without overwhelming output
+#                 if [[ "$line" =~ [0-9]+% ]]; then
+#                     printf "\r📊 Git progress: %s" "$line"
+#                 fi
+#                 ;;
+#         esac
+#     done; then
+#         print_status $GREEN "🎉 SUCCESS! Deployed to GitHub!"
+#     else
+#         print_status $RED "❌ Failed to push to GitHub!"
+#         cd ..
+#         return 1
+#     fi
+#     
+#     cd ..
+#     
+#     # Step 5: Deploy to Firebase
+#     print_status $BLUE "🔥 Step 5: Deploying to Firebase..."
+#     
+#     # Deploy Functions
+#     print_status $BLUE "⚡ Deploying Firebase Functions..."
+#     print_status $CYAN "🔄 This may take a few minutes..."
+#     
+#     if firebase deploy --only functions 2>&1 | while IFS= read -r line; do
+#         # Show progress for Firebase deployment
+#         case "$line" in
+#             *"Deploying functions"*)
+#                 print_status $CYAN "🚀 Deploying functions..."
+#                 ;;
+#             *"✔"*)
+#                 print_status $GREEN "✅ $line"
+#                 ;;
+#             *"✖"*)
+#                 print_status $RED "❌ $line"
+#                 ;;
+#             *"WARN"*)
+#                 print_status $YELLOW "⚠️  $line"
+#                 ;;
+#             *"ERROR"*)
+#                 print_status $RED "❌ $line"
+#                 ;;
+#             *)
+#                 # Show other lines without overwhelming output
+#                 if [[ "$line" =~ [0-9]+% ]]; then
+#                     printf "\r📊 Functions progress: %s" "$line"
+#                 fi
+#                 ;;
+#         esac
+#     done; then
+#         print_status $GREEN "✅ Functions deployment successful!"
+#     else
+#         print_status $RED "❌ Functions deployment failed!"
+#         return 1
+#     fi
+#     
+#     # Deploy Hosting
+#     print_status $BLUE "🚀 Deploying to Firebase Hosting..."
+#     print_status $CYAN "🔄 This may take a few minutes..."
+#     
+#     if firebase deploy --only hosting 2>&1 | while IFS= read -r line; do
+#         # Show progress for Firebase hosting deployment
+#         case "$line" in
+#             # Show progress for Firebase hosting deployment
+#         case "$line" in
+#             *"Deploying hosting"*)
+#                 print_status $CYAN "🌐 Deploying to hosting..."
+#                 ;;
+#             *"✔"*)
+#                 print_status $GREEN "✅ $line"
+#                 ;;
+#             *"✖"*)
+#                 print_status $RED "❌ $line"
+#                 ;;
+#             *"WARN"*)
+#                 print_status $YELLOW "⚠️  $line"
+#                 ;;
+#             *"ERROR"*)
+#                 print_status $RED "❌ $line"
+#                 ;;
+#             *)
+#                 # Show other lines without overwhelming output
+#                 if [[ "$line" =~ [0-9]+% ]]; then
+#                     printf "\r📊 Hosting progress: %s" "$line"
+#                 fi
+#                 ;;
+#         esac
+#     done; then
+#         print_status $GREEN "🎉 Firebase deployment successful!"
+#         print_status $BLUE "🌐 Your site is live at: https://spandex-salvation-radio-site.web.app"
+#     else
+#         print_status $RED "❌ Hosting deployment failed!"
+#         return 1
+#     fi
+#     
+#     print_status $GREEN "🎉 FULLY AUTOMATED DEPLOYMENT COMPLETE!"
+#     print_status $BLUE "🌐 Your site is live at: https://spandex-salvation-radio-site.web.app"
+#     print_status $BLUE "📚 Code is deployed to GitHub"
+#     print_status $BLUE "🎸 Rock on! Your radio station is fully deployed!"
+# }
 
 # Function to handle interactive deployment (ask y/n for each step)
 interactive_deployment() {
@@ -1165,7 +1168,7 @@ main() {
     
     while true; do
         show_main_menu
-        read -p "🤔 Enter your choice (1-8): " choice
+        read -p "🤔 Enter your choice (1-9): " choice
         
         case $choice in
             1)
@@ -1277,19 +1280,16 @@ main() {
                 ;;
             7)
                 show_custom_deployment_menu
-                read -p "🤔 Enter your choice (1-4): " custom_choice
+                read -p "🤔 Enter your choice (1-3): " custom_choice
                 
                 case $custom_choice in
                     1)
-                        fully_automated_deployment
-                        ;;
-                    2)
                         interactive_deployment
                         ;;
-                    3)
+                    2)
                         selective_deployment
                         ;;
-                    4)
+                    3)
                         # Back to main menu
                         ;;
                     *)
