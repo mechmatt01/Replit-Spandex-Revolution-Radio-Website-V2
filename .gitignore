@@ -11,6 +11,9 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 .envnew
+**/.env
+**/.env.*
+!.env.example
 
 # Build outputs
 dist/
@@ -21,6 +24,8 @@ out/
 .firebase/
 firebase-debug.log
 firebase-debug.*.log
+firebase-service-account.json
+**/firebase-service-account.json
 
 # Keep Firebase config files
 !firebase.json
@@ -48,6 +53,7 @@ Thumbs.db
 # Logs
 logs
 *.log
+**/*.log
 
 # Runtime data
 pids
@@ -57,6 +63,7 @@ pids
 
 # Coverage directory used by tools like istanbul
 coverage/
+**/coverage/
 *.lcov
 
 # nyc test coverage
@@ -120,3 +127,10 @@ temp/
 
 # Test files
 test_apis.js
+
+# Additional security entries
+**/firebase-service-account.json
+**/.env
+**/*.log
+**/.DS_Store
+**/coverage/
