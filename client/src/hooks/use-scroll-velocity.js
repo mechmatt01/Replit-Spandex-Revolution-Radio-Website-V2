@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 export function useScrollVelocity() {
     const [velocity, setVelocity] = useState(0);
     const [direction, setDirection] = useState('none');
@@ -6,8 +6,13 @@ export function useScrollVelocity() {
     const lastScrollY = useRef(0);
     const lastTimestamp = useRef(0);
     const scrollTimeout = useRef();
-    useEffect(() => {
-        const handleScroll = () => {
+    const rafId = useRef();
+    const isThrottled = useRef(false);
+    const handleScroll = useCallback(() => {
+        if (isThrottled.current)
+            return;
+        isThrottled.current = true;
+        rafId.current = requestAnimationFrame(() => {
             const currentScrollY = window.scrollY;
             const currentTimestamp = Date.now();
             // Calculate velocity (pixels per millisecond)
@@ -15,7 +20,10 @@ export function useScrollVelocity() {
             const scrollDelta = currentScrollY - lastScrollY.current;
             if (timeDelta > 0) {
                 const currentVelocity = Math.abs(scrollDelta) / timeDelta;
-                setVelocity(currentVelocity);
+                // Only update state if there's a significant change
+                if (Math.abs(currentVelocity - velocity) > 0.1) {
+                    setVelocity(currentVelocity);
+                }
                 // Determine direction
                 if (scrollDelta > 0) {
                     setDirection('down');
@@ -40,7 +48,10 @@ export function useScrollVelocity() {
             }
             lastScrollY.current = currentScrollY;
             lastTimestamp.current = currentTimestamp;
-        };
+            isThrottled.current = false;
+        });
+    }, [velocity]);
+    useEffect(() => {
         // Initialize
         lastScrollY.current = window.scrollY;
         lastTimestamp.current = Date.now();
@@ -50,8 +61,11 @@ export function useScrollVelocity() {
             if (scrollTimeout.current) {
                 clearTimeout(scrollTimeout.current);
             }
+            if (rafId.current) {
+                cancelAnimationFrame(rafId.current);
+            }
         };
-    }, []);
+    }, [handleScroll]);
     return { velocity, direction, isScrolling };
 }
 // Helper function to calculate animation duration based on scroll velocity

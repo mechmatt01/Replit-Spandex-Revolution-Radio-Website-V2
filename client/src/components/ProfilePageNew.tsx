@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useLocation, useSearch } from "wouter";
-import { findUserProfileByFirebaseUID, updateUserProfile, uploadProfileImage } from "../lib/firebase";
+import { findUserProfileByFirebaseUID, updateUserProfile, uploadProfileImage, UserProfile } from "../lib/firebase";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -79,7 +79,7 @@ export default function ProfilePage() {
     email: "",
     profileImageUrl: "",
   });
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [showChangeImageDropdown, setShowChangeImageDropdown] = useState(false);
   const [showAvatarSelector, setShowAvatarSelector] = useState(false);
@@ -187,7 +187,7 @@ export default function ProfilePage() {
 
       if (updateResult) {
         // Update local state
-        setUserProfile(prev => prev ? {
+        setUserProfile((prev: UserProfile | null) => prev ? {
           ...prev,
           firstName,
           lastName,
@@ -456,7 +456,7 @@ export default function ProfilePage() {
                       <DropdownMenu open={showChangeImageDropdown} onOpenChange={setShowChangeImageDropdown}>
                         <DropdownMenuTrigger asChild>
                           <button
-                            className="absolute bottom-0 right-0 w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110"
+                            className="absolute bottom-0 right-0 w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-0"
                             style={{
                               backgroundColor: colors.primary,
                               border: `2px solid ${isDarkMode ? '#000000' : colors.primary}`,
@@ -702,7 +702,7 @@ export default function ProfilePage() {
                     <Button
                       variant="outline"
                       onClick={() => setShowCancelSubscriptionDialog(true)}
-                      className="w-full font-semibold"
+                      className="w-full font-semibold focus:outline-none focus:ring-0"
                       style={{
                         borderColor: '#EF4444',
                         color: '#EF4444',
@@ -745,7 +745,7 @@ export default function ProfilePage() {
                       </p>
                       <Button
                         onClick={() => setLocation("/subscription")}
-                        className="font-bold shadow-lg"
+                        className="font-bold shadow-lg focus:outline-none focus:ring-0"
                         style={{
                           backgroundColor: colors.primary,
                           color: 'white',
@@ -832,12 +832,12 @@ export default function ProfilePage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel style={{ color: colors.text }}>
+            <AlertDialogCancel style={{ color: colors.text }} className="focus:outline-none focus:ring-0">
               Keep Subscription
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleCancelSubscription}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-red-600 hover:bg-red-700 text-white focus:outline-none focus:ring-0"
             >
               Cancel Subscription
             </AlertDialogAction>
@@ -862,12 +862,12 @@ export default function ProfilePage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel style={{ color: colors.text }}>
+            <AlertDialogCancel style={{ color: colors.text }} className="focus:outline-none focus:ring-0">
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleLogout}
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-red-600 hover:bg-red-700 text-white focus:outline-none focus:ring-0"
             >
               Logout
             </AlertDialogAction>

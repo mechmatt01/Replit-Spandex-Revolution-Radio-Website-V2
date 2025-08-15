@@ -1,85 +1,111 @@
-/* ULTIMATE FOCUS RING KILLER - MAXIMUM PRIORITY CSS */
-/* This file uses the highest CSS specificity to eliminate ALL focus rings */
+/* SELECTIVE FOCUS STYLE MANAGEMENT */
+/* This file manages focus styles while preserving accessibility */
 
-/* Universal selectors with maximum specificity - ONLY for focus states */
-html body *:focus:not(.enhanced-glow),
-html body *:focus-visible:not(.enhanced-glow),
-html body *:focus-within:not(.enhanced-glow),
-html body button:focus:not(.enhanced-glow),
-html body button:focus-visible:not(.enhanced-glow),
-html body input:focus:not(.enhanced-glow),
-html body input:focus-visible:not(.enhanced-glow),
-html body select:focus:not(.enhanced-glow),
-html body select:focus-visible:not(.enhanced-glow),
-html body textarea:focus:not(.enhanced-glow),
-html body textarea:focus-visible:not(.enhanced-glow),
-html body [role="button"]:focus:not(.enhanced-glow),
-html body [role="button"]:focus-visible:not(.enhanced-glow),
-html body [tabindex]:focus:not(.enhanced-glow),
-html body [tabindex]:focus-visible:not(.enhanced-glow),
-html body audio:focus:not(.enhanced-glow),
-html body audio:focus-visible:not(.enhanced-glow),
-html body video:focus:not(.enhanced-glow),
-html body video:focus-visible:not(.enhanced-glow),
-html body div:focus:not(.enhanced-glow),
-html body div:focus-visible:not(.enhanced-glow),
-html body span:focus:not(.enhanced-glow),
-html body span:focus-visible:not(.enhanced-glow),
-html body a:focus:not(.enhanced-glow),
-html body a:focus-visible:not(.enhanced-glow) {
-  outline: 0 !important;
-  outline: none !important;
-  outline-width: 0 !important;
-  outline-color: transparent !important;
-  outline-style: none !important;
-  outline-offset: 0 !important;
-  box-shadow: 0 0 0 0 transparent !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  /* Keep existing borders but remove focus-specific ones */
-  --tw-ring-shadow: 0 0 #0000 !important;
-  --tw-ring-offset-shadow: 0 0 #0000 !important;
-  --tw-ring-color: transparent !important;
-  --tw-ring-opacity: 0 !important;
-  --tw-ring-offset-width: 0px !important;
-  --tw-ring-offset-color: transparent !important;
-  --ring: transparent !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-}
-
-/* Browser-specific overrides with maximum priority */
-html body *::-webkit-focus-ring-color {
-  color: transparent !important;
-  outline-color: transparent !important;
-}
-
-html body *::-moz-focus-inner {
-  border: 0 !important;
-  padding: 0 !important;
+/* REMOVE DEFAULT BROWSER FOCUS STYLES BUT ALLOW CUSTOM ONES */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
   outline: none !important;
 }
 
-html body *:-moz-focusring {
-  outline: none !important;
-  outline-color: transparent !important;
+/* PRESERVE FOCUS STYLES FOR INTERACTIVE ELEMENTS */
+button:focus,
+button:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+a:focus,
+a:focus-visible,
+[tabindex]:focus,
+[tabindex]:focus-visible {
+  /* Allow these elements to have focus styles */
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
 }
 
-/* Remove focus states but keep existing borders */
-html body *:focus:not(:focus-visible):not(.enhanced-glow) {
+/* ALLOW TAILWIND FOCUS CLASSES TO WORK PROPERLY */
+.focus\:ring-0:focus,
+.focus\:ring-1:focus,
+.focus\:ring-2:focus,
+.focus\:ring-4:focus,
+.focus\:ring-8:focus,
+.focus\:ring-offset-0:focus,
+.focus\:ring-offset-1:focus,
+.focus\:ring-offset-2:focus,
+.focus\:ring-offset-4:focus,
+.focus\:ring-offset-8:focus,
+.focus\:outline-none:focus,
+.focus\:outline:focus,
+.focus\:outline-2:focus,
+.focus\:outline-4:focus,
+.focus\:outline-8:focus,
+.focus\:border:focus,
+.focus\:border-2:focus,
+.focus\:border-4:focus,
+.focus\:border-8:focus {
+  /* Allow custom focus styles to work */
   outline: none !important;
-  box-shadow: none !important;
+  /* Don't override custom ring styles */
 }
 
-html body *:focus-visible:not(.enhanced-glow) {
+/* ALLOW FOCUS-VISIBLE CLASSES TO WORK */
+.focus-visible\:ring-0:focus-visible,
+.focus-visible\:ring-1:focus-visible,
+.focus-visible\:ring-2:focus-visible,
+.focus-visible\:ring-4:focus-visible,
+.focus-visible\:ring-8:focus-visible,
+.focus-visible\:outline-none:focus-visible,
+.focus-visible\:outline:focus-visible,
+.focus-visible\:outline-2:focus-visible,
+.focus-visible\:outline-4:focus-visible,
+.focus-visible\:outline-8:focus-visible {
+  /* Allow custom focus-visible styles to work */
   outline: none !important;
-  box-shadow: none !important;
 }
 
-/* Target specific white border issues - FIXED: Remove problematic border-color inheritance */
-html body *:not(.enhanced-glow) {
+/* ALLOW RADIX UI FOCUS STYLES TO WORK */
+[data-radix-focus-guard]:focus,
+[data-radix-focus-trap]:focus,
+[data-radix-dialog-content]:focus,
+[data-radix-dropdown-menu-content]:focus,
+[data-radix-select-content]:focus,
+[data-radix-tooltip-content]:focus,
+[data-radix-popover-content]:focus {
+  /* Allow custom focus styles to work */
   outline: none !important;
-  /* Removed border-color: inherit !important; which was causing white border issues */
+  /* Don't override custom ring styles */
+}
+
+/* REMOVE UNWANTED WHITE BORDERS BUT PRESERVE INTENTIONAL ONES */
+*:not([class*="border"]):not([class*="ring"]):not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  border-color: transparent !important;
+}
+
+/* REMOVE WEBKIT TAP HIGHLIGHTS */
+* {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* PRESERVE BUTTON STYLING */
+button,
+[role="button"],
+.btn,
+.button {
+  /* Allow buttons to have borders and styling */
+}
+
+/* PRESERVE INPUT STYLING */
+input,
+textarea,
+select {
+  /* Allow form elements to have borders and styling */
+}
+
+/* PRESERVE LINK STYLING */
+a {
+  /* Allow links to have borders and styling */
 }

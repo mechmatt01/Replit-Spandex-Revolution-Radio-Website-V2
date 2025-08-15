@@ -98,7 +98,7 @@ export default function MetalThemeSwitcher() {
           <Button
             variant="ghost"
             size="sm"
-            className="flex items-center gap-2 hover:bg-opacity-20 theme-button-border"
+            className="flex items-center gap-2 hover:bg-opacity-20 theme-button-border focus:outline-none focus:ring-0"
             style={{
               color: currentTheme === 'light-mode' ? '#000000' : colors.text,
               backgroundColor: "transparent",
@@ -159,7 +159,7 @@ export default function MetalThemeSwitcher() {
                     key={themeKey}
                     onClick={() => handleThemeClick(themeKey, themeConfig)}
                     variant="ghost"
-                    className={`w-full justify-start p-3 h-auto transition-all duration-200 ${
+                    className={`w-full justify-start p-3 h-auto transition-all duration-200 focus:outline-none focus:ring-0 ${
                       isActive ? "ring-2" : ""
                     } ${isLocked ? "opacity-75" : ""}`}
                     style={{
@@ -379,7 +379,7 @@ export default function MetalThemeSwitcher() {
                       <Button
                         onClick={() => setShowPremiumDialog(false)}
                         variant="ghost"
-                        className="flex-1 text-white border border-primary/30 hover:bg-white/20 font-semibold px-4 py-2 text-sm"
+                        className="flex-1 text-white border border-primary/30 hover:bg-white/20 font-semibold px-4 py-2 text-sm focus:outline-none focus:ring-0"
                         style={{
                           backgroundColor: "rgba(255, 255, 255, 0.1)",
                           backdropFilter: "blur(10px)",
@@ -391,7 +391,7 @@ export default function MetalThemeSwitcher() {
                       </Button>
                       <Button
                         onClick={scrollToSubscription}
-                        className="flex-1 font-bold px-4 py-2 text-sm text-white"
+                        className="flex-1 font-bold px-4 py-2 text-sm text-white focus:outline-none focus:ring-0"
                         style={{
                           background: "rgba(255, 255, 255, 0.15)",
                           backdropFilter: "blur(15px)",
@@ -412,7 +412,7 @@ export default function MetalThemeSwitcher() {
                           setShowPremiumDialog(false);
                           setIsOpen(false);
                         }}
-                        className="w-full font-semibold px-4 py-2 text-xs"
+                        className="w-full font-semibold px-4 py-2 text-xs focus:outline-none focus:ring-0"
                         style={{
                           background: `${colors.accent}20`,
                           backdropFilter: "blur(15px)",

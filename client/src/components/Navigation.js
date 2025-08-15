@@ -172,42 +172,42 @@ export default function Navigation() {
             id: 2,
             label: "SCHEDULE",
             icon: Calendar,
-            action: () => navigateToSection("schedule"),
+            action: () => navigateToSection("schedule", "/schedule"),
             tooltip: "View show schedule and programming"
         },
         {
             id: 3,
             label: "SUPPORT US",
             icon: Heart,
-            action: () => navigateToSection("subscribe"),
+            action: () => navigateToSection("subscribe", "/support"),
             tooltip: "Support the station with premium subscriptions"
         },
         {
             id: 4,
             label: "SUBMISSIONS",
             icon: Send,
-            action: () => navigateToSection("submissions"),
+            action: () => navigateToSection("submissions", "/submissions"),
             tooltip: "Submit song requests and feedback"
         },
         {
             id: 5,
             label: "CONTACT",
             icon: Phone,
-            action: () => navigateToSection("contact"),
+            action: () => navigateToSection("contact", "/contact"),
             tooltip: "Get in touch with the station"
         },
         {
             id: 6,
             label: "LISTEN MAP",
             icon: MapPin,
-            action: () => navigateToSection("map"),
+            action: () => navigateToSection("map", "/map"),
             tooltip: "View live listener map worldwide"
         },
         {
             id: 7,
             label: "FEATURES",
             icon: Heart,
-            action: () => navigateToSection("features"),
+            action: () => navigateToSection("features", "/features"),
             tooltip: "Explore premium features and subscription tiers"
         },
     ];
@@ -250,10 +250,9 @@ export default function Navigation() {
                                                                         e.currentTarget.style.backgroundColor = isDropdownOpen ? colors.primary : 'transparent';
                                                                         e.currentTarget.style.color = isDropdownOpen ? 'white' : colors.text;
                                                                     }
-                                                                }, children: [_jsx(Menu, { size: 16, style: { color: isDropdownOpen ? 'white' : colors.primary, marginLeft: '2px' } }), _jsx("span", { children: "MORE" }), _jsx(ChevronDown, { size: 14, style: {
-                                                                            color: isDropdownOpen ? 'white' : colors.primary,
-                                                                            transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                                                                            transition: 'transform 0.2s ease'
+                                                                }, children: [_jsx(Menu, { size: 16, style: { color: isDropdownOpen ? 'white' : colors.primary, marginLeft: '2px' } }), _jsx("span", { children: "MORE" }), _jsx(ChevronDown, { size: 16, className: "transition-transform duration-300 ease-out", style: {
+                                                                            color: colors.text,
+                                                                            transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)'
                                                                         } })] }) }), _jsx(TooltipContent, { side: "bottom", children: "View more navigation options" })] }), isDropdownOpen && (_jsx("div", { className: "absolute left-1/2 transform -translate-x-1/2 mt-2 py-2 rounded-xl shadow-xl border animate-in fade-in-0 slide-in-from-top-2 duration-200 backdrop-blur-md", style: {
                                                         backgroundColor: !isDarkMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.95)',
                                                         borderColor: colors.primary + '40',
@@ -297,7 +296,7 @@ export default function Navigation() {
                                                                             }, children: !user?.photoURL && (_jsx(User, { size: 20, className: "text-white" })) }), user?.displayName && (_jsx("div", { className: "absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center shadow-md", style: {
                                                                                 backgroundColor: colors.primary,
                                                                                 border: `2px solid ${isDarkMode ? '#000000' : colors.primary}`,
-                                                                            }, children: _jsx("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", className: "text-white", children: _jsx("path", { d: "M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }) }) }))] }), _jsx(ChevronDown, { size: 16, className: "transition-transform duration-200", style: { color: colors.text } })] }) }), _jsxs(DropdownMenuContent, { align: "end", className: "w-64 p-2 mt-2 shadow-2xl", style: {
+                                                                            }, children: _jsx("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "none", className: "text-white", children: _jsx("path", { d: "M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }) }) }))] }), _jsx(ChevronDown, { size: 16, className: "transition-transform duration-200", style: { color: colors.text } })] }) }), _jsxs(DropdownMenuContent, { align: "end", className: "w-64 p-2 mt-2 shadow-2xl animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200 ease-out", style: {
                                                             backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
                                                             backdropFilter: 'blur(10px)',
                                                         }, children: [_jsxs("div", { className: "px-3 py-2 mb-2", children: [_jsx("p", { className: "font-black text-sm", style: { color: !isDarkMode ? '#000000' : colors.text }, children: user?.displayName || user?.email?.split('@')[0] || 'User' }), _jsx("p", { className: "text-xs opacity-70", style: { color: !isDarkMode ? '#000000' : colors.text }, children: user?.email })] }), _jsx(DropdownMenuSeparator, { className: "opacity-20" }), _jsxs(DropdownMenuItem, { onClick: () => setLocation("/profile?section=profile"), className: "flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all duration-200", style: {
@@ -309,7 +308,7 @@ export default function Navigation() {
                                                                 }, children: [_jsx(LogOut, { size: 18, className: "text-red-500" }), _jsx("span", { className: "font-semibold", children: "Logout" })] })] })] }) }))] }), _jsxs("div", { className: "xl:hidden flex items-center space-x-3", children: [_jsx(MetalThemeSwitcher, {}), _jsx("button", { ref: menuRef, onClick: () => setIsOpen(!isOpen), className: "p-2 rounded-lg transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95", style: {
                                                 backgroundColor: isOpen ? colors.primary : 'transparent',
                                                 color: isOpen ? 'white' : colors.primary
-                                            }, "aria-label": isOpen ? "Close navigation menu" : "Open navigation menu", children: _jsx(Menu, { size: 24 }) })] })] }), isOpen && (_jsx("div", { ref: mobileDropdownRef, className: "xl:hidden absolute top-full right-4 bg-black/90 backdrop-blur-md border rounded-xl animate-in slide-in-from-top-2 duration-300 shadow-xl", style: {
+                                            }, "aria-label": isOpen ? "Close navigation menu" : "Open navigation menu", children: _jsx(Menu, { size: 24 }) })] })] }), isOpen && (_jsx("div", { ref: mobileDropdownRef, className: "xl:hidden absolute top-full right-4 bg-black/90 backdrop-blur-md border rounded-xl animate-in fade-in-0 slide-in-from-top-2 duration-300 ease-out shadow-xl", style: {
                                 borderColor: colors.primary + '40',
                                 minWidth: '280px',
                                 maxWidth: '320px',
@@ -325,7 +324,7 @@ export default function Navigation() {
                                         }, onMouseLeave: (e) => {
                                             e.currentTarget.style.backgroundColor = 'transparent';
                                             e.currentTarget.style.color = '#ffffff';
-                                        }, children: [_jsx(Music, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "MUSIC" })] }), _jsxs("a", { href: "/#schedule", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
+                                        }, children: [_jsx(Music, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "MUSIC" })] }), _jsxs("a", { href: "/schedule", className: "flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground", children: [_jsx(Calendar, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "SCHEDULE" })] }), _jsxs("a", { href: "/support", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
                                             color: '#ffffff', // Always white text on dark mobile dropdown background
                                             backgroundColor: 'transparent',
                                             display: 'flex',
@@ -336,7 +335,7 @@ export default function Navigation() {
                                         }, onMouseLeave: (e) => {
                                             e.currentTarget.style.backgroundColor = 'transparent';
                                             e.currentTarget.style.color = '#ffffff';
-                                        }, children: [_jsx(Calendar, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "SCHEDULE" })] }), _jsxs("a", { href: "/#subscribe", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
+                                        }, children: [_jsx(Heart, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "SUPPORT US" })] }), _jsxs("a", { href: "/features", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
                                             color: '#ffffff', // Always white text on dark mobile dropdown background
                                             backgroundColor: 'transparent',
                                             display: 'flex',
@@ -347,7 +346,7 @@ export default function Navigation() {
                                         }, onMouseLeave: (e) => {
                                             e.currentTarget.style.backgroundColor = 'transparent';
                                             e.currentTarget.style.color = '#ffffff';
-                                        }, children: [_jsx(Heart, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "SUPPORT US" })] }), _jsxs("a", { href: "/#submissions", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
+                                        }, children: [_jsx(Heart, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "FEATURES" })] }), _jsxs("a", { href: "/map", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
                                             color: '#ffffff', // Always white text on dark mobile dropdown background
                                             backgroundColor: 'transparent',
                                             display: 'flex',
@@ -358,7 +357,7 @@ export default function Navigation() {
                                         }, onMouseLeave: (e) => {
                                             e.currentTarget.style.backgroundColor = 'transparent';
                                             e.currentTarget.style.color = '#ffffff';
-                                        }, children: [_jsx(Send, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "SUBMISSIONS" })] }), _jsxs("a", { href: "/#contact", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
+                                        }, children: [_jsx(MapPin, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "LISTEN MAP" })] }), _jsxs("a", { href: "/submissions", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
                                             color: '#ffffff', // Always white text on dark mobile dropdown background
                                             backgroundColor: 'transparent',
                                             display: 'flex',
@@ -369,8 +368,8 @@ export default function Navigation() {
                                         }, onMouseLeave: (e) => {
                                             e.currentTarget.style.backgroundColor = 'transparent';
                                             e.currentTarget.style.color = '#ffffff';
-                                        }, children: [_jsx(Phone, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "CONTACT" })] }), _jsxs("a", { href: "/#map", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
-                                            color: colors.text,
+                                        }, children: [_jsx(Send, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "SUBMISSIONS" })] }), _jsxs("a", { href: "/contact", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
+                                            color: '#ffffff', // Always white text on dark mobile dropdown background
                                             backgroundColor: 'transparent',
                                             display: 'flex',
                                             textDecoration: 'none'
@@ -379,19 +378,8 @@ export default function Navigation() {
                                             e.currentTarget.style.color = 'white';
                                         }, onMouseLeave: (e) => {
                                             e.currentTarget.style.backgroundColor = 'transparent';
-                                            e.currentTarget.style.color = colors.text;
-                                        }, children: [_jsx(MapPin, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "LISTEN MAP" })] }), _jsxs("a", { href: "/#features", className: "flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline", style: {
-                                            color: colors.text,
-                                            backgroundColor: 'transparent',
-                                            display: 'flex',
-                                            textDecoration: 'none'
-                                        }, onMouseEnter: (e) => {
-                                            e.currentTarget.style.backgroundColor = colors.primary + '20';
-                                            e.currentTarget.style.color = 'white';
-                                        }, onMouseLeave: (e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent';
-                                            e.currentTarget.style.color = colors.text;
-                                        }, children: [_jsx(Heart, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "FEATURES" })] }), _jsx("div", { className: "border-t my-3", style: { borderColor: colors.primary + '40' } }), !user ? (_jsxs(_Fragment, { children: [_jsxs("div", { onClick: () => {
+                                            e.currentTarget.style.color = '#ffffff';
+                                        }, children: [_jsx(Phone, { size: 20, style: { color: colors.primary } }), _jsx("span", { children: "CONTACT" })] }), _jsx("div", { className: "border-t my-3", style: { borderColor: colors.primary + '40' } }), !user ? (_jsxs(_Fragment, { children: [_jsxs("div", { onClick: () => {
                                                     setTimeout(() => {
                                                         setAuthMode("login");
                                                         setIsAuthModalOpen(true);

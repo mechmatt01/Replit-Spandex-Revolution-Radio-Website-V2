@@ -296,12 +296,14 @@ const FullWidthGlobeMapFixed = () => {
       `;
             this.div_ = div;
             const panes = this.getPanes();
-            panes.overlayImage.appendChild(div);
+            if (panes && panes.overlayMouseTarget) {
+                panes.overlayMouseTarget.appendChild(div);
+            }
         };
         pulsingOverlay.draw = function () {
             const projection = this.getProjection();
             const point = projection.fromLatLngToDivPixel(position);
-            if (point) {
+            if (point && this.div_) {
                 this.div_.style.left = point.x + 'px';
                 this.div_.style.top = point.y + 'px';
             }
@@ -316,7 +318,9 @@ const FullWidthGlobeMapFixed = () => {
             // Store current map state
             const currentCenter = map.getCenter();
             const currentZoom = map.getZoom();
-            setMapState({ center: currentCenter, zoom: currentZoom });
+            if (currentCenter) {
+                setMapState({ center: currentCenter, zoom: currentZoom || 2 });
+            }
             // Expand to fullscreen
             setIsFullscreen(true);
             // Force map resize after state change
@@ -328,9 +332,9 @@ const FullWidthGlobeMapFixed = () => {
         }
         else {
             // Restore map state
-            if (mapState) {
+            if (mapState && mapState.center) {
                 map.setCenter(mapState.center);
-                map.setZoom(mapState.zoom);
+                map.setZoom(mapState.zoom || 2);
             }
             // Collapse from fullscreen
             setIsFullscreen(false);

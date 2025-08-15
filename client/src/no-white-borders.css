@@ -1,434 +1,83 @@
 /* NO WHITE BORDERS ON CLICK/FOCUS */
-/* This file eliminates all white borders that appear on click or focus */
+/* This file eliminates unwanted white borders while preserving accessibility */
 
-* {
+/* Remove default browser focus styles but allow custom ones */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
   outline: none !important;
   -webkit-tap-highlight-color: transparent !important;
   -webkit-focus-ring-color: transparent !important;
   -webkit-touch-callout: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-  user-select: none !important;
 }
 
-*:focus {
-  outline: none !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-}
-
-*:active {
-  outline: none !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-}
-
-*:focus-visible {
-  outline: none !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-}
-
-*:hover {
-  border-color: transparent !important;
-}
-
+/* Preserve focus styles for interactive elements */
 button:focus,
-button:active,
-button:hover,
+button:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
 input:focus,
-input:active,
-input:hover,
+input:focus-visible,
 textarea:focus,
-textarea:active,
-textarea:hover,
+textarea:focus-visible,
 select:focus,
-select:active,
-select:hover {
-  outline: none !important;
-  border-color: transparent !important;
-  -webkit-tap-highlight-color: transparent !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  -webkit-focus-ring-color: transparent !important;
-}
-
-/* Remove any white borders that might appear */
-* {
-  border-color: transparent !important;
-}
-
-/* Ensure no white borders on any interactive elements */
-[role="button"],
-[tabindex],
-button,
-input,
-textarea,
-select,
-a,
-div,
-span,
-section,
-nav,
-header,
-footer,
-main,
-aside {
-  outline: none !important;
-  -webkit-tap-highlight-color: transparent !important;
-  -webkit-focus-ring-color: transparent !important;
-  border-color: transparent !important;
-}
-
-/* Override any remaining white borders */
-*:focus,
-*:active,
-*:focus-visible,
-*:hover {
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  -webkit-focus-ring-color: transparent !important;
-}
-
-/* Remove all focus rings and outlines from Tailwind and other frameworks */
-.focus\:ring-0,
-.focus\:ring-2,
-.focus\:ring-4,
-.focus\:ring-8,
-.focus\:ring-offset-0,
-.focus\:ring-offset-2,
-.focus\:ring-offset-4,
-.focus\:ring-offset-8,
-.focus\:outline-none,
-.focus\:outline,
-.focus\:outline-2,
-.focus\:outline-4,
-.focus\:outline-8 {
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  -webkit-focus-ring-color: transparent !important;
-}
-
-/* Remove any white borders from containers and divs */
-div:focus,
-div:active,
-div:hover,
-section:focus,
-section:active,
-section:hover,
-nav:focus,
-nav:active,
-nav:hover,
-header:focus,
-header:active,
-header:hover,
-footer:focus,
-footer:active,
-footer:hover,
-main:focus,
-main:active,
-main:hover,
-aside:focus,
-aside:active,
-aside:hover {
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-}
-
-/* Ensure no white borders on any pseudo-elements */
-*::before,
-*::after {
-  border-color: transparent !important;
-  outline: none !important;
-}
-
-/* Remove any remaining focus styles */
-*:focus-within {
-  outline: none !important;
-  border-color: transparent !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-}
-
-/* Override any CSS variables that might be setting white borders */
-:root {
-  --focus-ring: transparent !important;
-  --focus-outline: transparent !important;
-  --focus-border: transparent !important;
-}
-
-/* Ensure no white borders on any state */
-*[data-state="open"],
-*[data-state="closed"],
-*[data-state="visible"],
-*[data-state="hidden"] {
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-}
-
-/* SPECIFIC OVERRIDES FOR NAVIGATION AND AUTH MODAL */
-/* Navigation container specific overrides */
-nav,
-.navigation,
-.nav-container,
-.nav-wrapper {
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-}
-
-/* Auth modal specific overrides */
-.auth-modal,
-.auth-modal-content,
-[data-radix-dialog-content] {
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-}
-
-/* Force remove any white borders on click/active states */
-*:active,
-*:focus,
-*:focus-visible,
-*:focus-within {
-  border: none !important;
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  -webkit-focus-ring-color: transparent !important;
-}
-
-/* Override any browser default white borders */
-* {
-  -webkit-tap-highlight-color: transparent !important;
-  -webkit-touch-callout: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-  user-select: none !important;
-}
-
-/* Ensure no white borders on any interactive state */
-*[onclick],
-*[onmousedown],
-*[onmouseup],
-*[onmouseenter],
-*[onmouseleave],
-*[onfocus],
-*[onblur] {
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-}
-
-/* Remove any remaining white borders from all elements */
-*,
-*::before,
-*::after,
-*:hover,
-*:active,
-*:focus,
-*:focus-visible,
-*:focus-within {
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  -webkit-focus-ring-color: transparent !important;
+select:focus-visible,
+a:focus,
+a:focus-visible,
+[tabindex]:focus,
+[tabindex]:focus-visible {
+  /* Allow these elements to have focus styles */
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
   -webkit-tap-highlight-color: transparent !important;
 }
 
-/* SPECIFIC NAVIGATION COMPONENT OVERRIDES */
-/* Target the main navigation container and all its children */
-nav.fixed,
-nav.fixed *,
-nav.fixed *::before,
-nav.fixed *::after {
-  border: none !important;
+/* Remove unwanted white borders for non-interactive elements */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
   border-color: transparent !important;
-  outline: none !important;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
-  -webkit-focus-ring-color: transparent !important;
+}
+
+*:active:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+}
+
+*:hover:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  border-color: transparent !important;
+}
+
+/* Remove any white borders that might appear on non-interactive elements */
+*:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  border-color: transparent !important;
+}
+
+/* Ensure no white borders on any non-interactive elements */
+div:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+span:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+section:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+nav:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+header:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+footer:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+main:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+aside:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  outline: none !important;
   -webkit-tap-highlight-color: transparent !important;
-}
-
-/* Target specific navigation classes */
-.bg-card\/80,
-.backdrop-blur-sm,
-.transition-colors,
-.duration-300 {
-  border: none !important;
+  -webkit-focus-ring-color: transparent !important;
   border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
 }
 
-/* Target all navigation buttons and interactive elements */
-nav button,
-nav [role="button"],
-nav [onclick],
-nav [onmousedown],
-nav [onmouseup] {
-  border: none !important;
+/* Remove all focus rings and outlines from non-interactive elements */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+*:active:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+*:focus-visible:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+*:hover:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
   border-color: transparent !important;
   outline: none !important;
   box-shadow: none !important;
   -webkit-box-shadow: none !important;
   -moz-box-shadow: none !important;
   -webkit-focus-ring-color: transparent !important;
-  -webkit-tap-highlight-color: transparent !important;
-}
-
-/* Target navigation dropdowns and menus */
-nav .relative,
-nav .absolute,
-nav .dropdown,
-nav .menu {
-  border: none !important;
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-}
-
-/* Ensure no white borders on any navigation state */
-nav *:active,
-nav *:focus,
-nav *:focus-visible,
-nav *:focus-within,
-nav *:hover {
-  border: none !important;
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  -webkit-focus-ring-color: transparent !important;
-}
-
-/* Target any remaining white border sources */
-*[class*="bg-"],
-*[class*="border-"],
-*[class*="ring-"] {
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
-  -webkit-focus-ring-color: transparent !important;
-}
-
-/* ADDITIONAL SPECIFIC OVERRIDES FOR WHITE BORDERS */
-/* Target any elements that might have white borders from Tailwind or other sources */
-.border-white,
-.border-white\/10,
-.border-white\/20,
-.border-white\/30 {
-  border-color: transparent !important;
-}
-
-/* Target any elements with white borders from focus states */
-*:focus {
-  border-color: transparent !important;
-}
-
-/* Target any elements with white borders from active states */
-*:active {
-  border-color: transparent !important;
-}
-
-/* Target any elements with white borders from hover states */
-*:hover {
-  border-color: transparent !important;
-}
-
-/* Target any elements with white borders from focus-visible states */
-*:focus-visible {
-  border-color: transparent !important;
-}
-
-/* Target any elements with white borders from focus-within states */
-*:focus-within {
-  border-color: transparent !important;
-}
-
-/* Target any elements with white borders from any pseudo-class */
-*:any-link,
-*:checked,
-*:default,
-*:defined,
-*:disabled,
-*:empty,
-*:enabled,
-*:first,
-*:first-child,
-*:first-of-type,
-*:fullscreen,
-*:future,
-*:host,
-*:host-context,
-*:hover,
-*:indeterminate,
-*:in-range,
-*:invalid,
-*:last-child,
-*:last-of-type,
-*:left,
-*:link,
-*:local-link,
-*:not,
-*:nth-child,
-*:nth-last-child,
-*:nth-last-of-type,
-*:nth-of-type,
-*:only-child,
-*:only-of-type,
-*:optional,
-*:out-of-range,
-*:past,
-*:placeholder-shown,
-*:read-only,
-*:read-write,
-*:required,
-*:right,
-*:root,
-*:scope,
-*:target,
-*:valid,
-*:visited {
-  border-color: transparent !important;
 }

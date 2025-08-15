@@ -380,7 +380,7 @@ export default function StripePaymentProcessor() {
 
               <button
                 onClick={() => handleTierSelect(tier)}
-                className="w-full font-bold rounded-full transition-all duration-300 text-white transform hover:scale-105 hover:shadow-2xl py-3 text-base"
+                className="w-full font-bold rounded-full transition-all duration-300 text-white transform hover:scale-105 hover:shadow-2xl py-3 text-base focus:outline-none focus:ring-0"
                 style={{
                   fontSize: "16px",
                   background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,
@@ -529,7 +529,7 @@ export default function StripePaymentProcessor() {
 
                 <button
                   onClick={() => handleTierSelect(tier)}
-                  className="w-full font-bold rounded-full transition-all duration-300 text-white transform hover:scale-105 hover:shadow-2xl py-3 text-base"
+                  className="w-full font-bold rounded-full transition-all duration-300 text-white transform hover:scale-105 hover:shadow-2xl py-3 text-base focus:outline-none focus:ring-0"
                   style={{
                     fontSize: "16px",
                     background: `linear-gradient(90deg, ${tier.gradientStart}, ${tier.gradientEnd})`,

@@ -263,7 +263,7 @@ export default function OrderConfirmation() {
             <div className="space-y-3">
               <Button 
                 onClick={handleViewOrder}
-                className="w-full font-bold transition-all duration-300"
+                className="w-full font-bold transition-all duration-300 focus:outline-none focus:ring-0"
                 style={{ backgroundColor: colors.primary }}
               >
                 <Package className="h-4 w-4 mr-2" />
@@ -272,7 +272,7 @@ export default function OrderConfirmation() {
               <Button 
                 onClick={handleContinueShopping}
                 variant="outline"
-                className="w-full font-bold transition-all duration-300 border-gray-600 text-gray-300 hover:bg-gray-800"
+                className="w-full font-bold transition-all duration-300 border-gray-600 text-gray-300 hover:bg-gray-800 focus:outline-none focus:ring-0"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Continue Shopping

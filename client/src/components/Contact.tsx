@@ -251,7 +251,7 @@ export default function Contact() {
                       <Button
                         type="submit"
                         disabled={contactMutation.isPending}
-                        className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300"
+                        className="w-full px-6 py-3 rounded-full font-bold transition-all duration-300 focus:outline-none focus:ring-0"
                         style={{
                           backgroundColor: colors.primary,
                           color: colors.primaryText || "white",
@@ -294,7 +294,7 @@ export default function Contact() {
                     </p>
                     <Button
                       onClick={handleTryAgain}
-                      className="mt-4 px-6 py-2 rounded-full font-bold transition-all duration-300"
+                      className="mt-4 px-6 py-2 rounded-full font-bold transition-all duration-300 focus:outline-none focus:ring-0"
                       style={{
                         backgroundColor: colors.primary,
                         color: colors.primaryText || "white",
@@ -322,7 +322,7 @@ export default function Contact() {
                     <div className="space-y-3">
                       <Button
                         onClick={handleCopyMessage}
-                        className="w-full px-6 py-2 rounded-full font-bold transition-all duration-300 bg-gray-600 hover:bg-gray-500 text-white"
+                        className="w-full px-6 py-2 rounded-full font-bold transition-all duration-300 bg-gray-600 hover:bg-gray-500 text-white focus:outline-none focus:ring-0"
                       >
                         <Copy className="mr-2 h-4 w-4" />
                         Copy Message to Clipboard
@@ -330,7 +330,7 @@ export default function Contact() {
 
                       <Button
                         onClick={handleTryAgain}
-                        className="w-full px-6 py-2 rounded-full font-bold transition-all duration-300"
+                        className="w-full px-6 py-2 rounded-full font-bold transition-all duration-300 focus:outline-none focus:ring-0"
                         style={{
                           backgroundColor: colors.primary,
                           color: colors.primaryText || "white",

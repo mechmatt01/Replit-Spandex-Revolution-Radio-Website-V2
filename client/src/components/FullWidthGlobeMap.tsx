@@ -6,7 +6,7 @@ declare global {
   }
 }
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, ZoomIn, ZoomOut, RotateCcw, Maximize2, Minimize2, Loader2 } from "lucide-react";
@@ -75,20 +75,20 @@ const FullWidthGlobeMap = () => {
   const [locationPermission, setLocationPermission] = useState<'granted' | 'denied' | 'prompt' | null>(null);
 
   // Use hardcoded config for Firebase hosting
-  const config: Config = {
+  const config: Config = useMemo(() => ({
     googleMapsApiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
     googleMapsSigningSecret: "",
     openWeatherApiKey: "bc23ce0746d4fc5c04d1d765589dadc5",
     googleMapsMapId: "spandex-salvation-radio-map"
-  };
+  }), []);
 
   // Get weather icon based on OpenWeatherMap icon code
-  const getWeatherIcon = (iconCode: string): string => {
+  const getWeatherIcon = useCallback((iconCode: string): string => {
     return weatherIconMap[iconCode] || 'clear-day.svg';
-  };
+  }, []);
 
   // Fetch weather data
-  const fetchWeather = async (lat: number, lng: number) => {
+  const fetchWeather = useCallback(async (lat: number, lng: number) => {
     try {
       const response = await fetch(`/api/weather?lat=${lat}&lon=${lng}`);
       if (response.ok) {
@@ -98,10 +98,10 @@ const FullWidthGlobeMap = () => {
         console.error('Failed to fetch weather data');
         // Fallback to mock data
         setWeather({
-          location: "Unknown Location",
+          location: "New York, NY",
           temperature: 72,
           description: "Partly Cloudy",
-          icon: "partly-cloudy-day",
+          icon: "02d",
           humidity: 65,
           windSpeed: 8,
           feelsLike: 74
@@ -111,202 +111,133 @@ const FullWidthGlobeMap = () => {
       console.error('Error fetching weather:', error);
       // Fallback to mock data
       setWeather({
-        location: "Unknown Location",
+        location: "New York, NY",
         temperature: 72,
         description: "Partly Cloudy",
-        icon: "partly-cloudy-day",
+        icon: "02d",
         humidity: 65,
         windSpeed: 8,
         feelsLike: 74
       });
     }
-  };
+  }, []);
+
+  // Sample listener data
+  const sampleListeners = useMemo(() => [
+    { lat: 40.7128, lng: -74.0060, city: "New York", country: "USA" },
+    { lat: 51.5074, lng: -0.1278, city: "London", country: "UK" },
+    { lat: 35.6762, lng: 139.6503, city: "Tokyo", country: "Japan" },
+    { lat: 52.5200, lng: 13.4050, city: "Berlin", country: "Germany" },
+    { lat: 37.7749, lng: -122.4194, city: "San Francisco", country: "USA" },
+    { lat: -33.8688, lng: 151.2093, city: "Sydney", country: "Australia" }
+  ], []);
 
   // Create animated marker with pulse effect
-  const createAnimatedMarker = (position: google.maps.LatLngLiteral, title: string, mapInstance: google.maps.Map, isUserLocation: boolean = false): MarkerData => {
-    // Create the main marker
+  const createAnimatedMarker = useCallback((position: google.maps.LatLngLiteral, title: string, mapInstance: google.maps.Map, isUserLocation: boolean = false): MarkerData => {
+    // Create main marker
     const marker = new google.maps.Marker({
       position,
       map: mapInstance,
       title,
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
-        scale: isUserLocation ? 12 : 10,
-        fillColor: isUserLocation ? '#4285F4' : colors.primary,
-        fillOpacity: 0.8,
-        strokeColor: 'white',
+        scale: isUserLocation ? 8 : 6,
+        fillColor: isUserLocation ? colors.primary : '#ff4444',
+        fillOpacity: 0.9,
+        strokeColor: isUserLocation ? colors.primary : '#ffffff',
         strokeWeight: 2,
       },
+      zIndex: isUserLocation ? 1000 : 1,
     });
 
-    // Create pulsing overlay
+    // Create pulse effect marker
     const pulse = new google.maps.Marker({
       position,
       map: mapInstance,
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
-        scale: (isUserLocation ? 12 : 10) * 1.5,
-        fillColor: isUserLocation ? '#4285F4' : colors.primary,
+        scale: isUserLocation ? 12 : 10,
+        fillColor: isUserLocation ? colors.primary : '#ff4444',
         fillOpacity: 0.3,
-        strokeColor: 'transparent',
-        strokeWeight: 0,
+        strokeColor: isUserLocation ? colors.primary : '#ff4444',
+        strokeWeight: 1,
       },
+      zIndex: isUserLocation ? 999 : 0,
     });
-
-    // Animate the pulse
-    let scale = 1;
-    let opacity = 0.3;
-    const animatePulse = () => {
-      scale += 0.1;
-      opacity -= 0.01;
-      
-      if (scale > 2) {
-        scale = 1;
-        opacity = 0.3;
-      }
-      
-      pulse.setIcon({
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: (isUserLocation ? 12 : 10) * scale,
-        fillColor: isUserLocation ? '#4285F4' : colors.primary,
-        fillOpacity: opacity,
-        strokeColor: 'transparent',
-        strokeWeight: 0,
-      });
-      
-      requestAnimationFrame(animatePulse);
-    };
-    
-    animatePulse();
 
     // Create info window
     const infoWindow = new google.maps.InfoWindow({
       content: `
-        <div class="p-3 bg-white rounded-lg shadow-lg border border-gray-200">
-          <h3 class="font-bold text-gray-800 mb-2">${title}</h3>
-          <p class="text-sm text-gray-600">Click to see details</p>
+        <div style="padding: 8px; text-align: center; font-family: Arial, sans-serif;">
+          <div style="font-weight: bold; margin-bottom: 4px; color: #333;">${title}</div>
+          <div style="font-size: 12px; color: #666;">
+            ${isUserLocation ? 'Your Location' : 'Active Listener'}
+          </div>
         </div>
       `,
-      maxWidth: 200,
     });
 
-    // Add click listener
+    // Add click event to marker
     marker.addListener('click', () => {
       infoWindow.open(mapInstance, marker);
     });
 
-    // Store references for cleanup
-    return { marker, pulse, infoWindow };
-  };
+    // Animate pulse effect
+    const animatePulse = () => {
+      let scale = isUserLocation ? 12 : 10;
+      let opacity = 0.3;
+      let growing = true;
 
-  // Initialize map with improved error handling
-  const initializeMap = useCallback(async () => {
-    if (isInitializing || !mapRef.current) {
+      const animate = () => {
+        if (growing) {
+          scale += 0.2;
+          opacity -= 0.01;
+          if (scale >= (isUserLocation ? 20 : 18)) {
+            growing = false;
+          }
+        } else {
+          scale -= 0.2;
+          opacity += 0.01;
+          if (scale <= (isUserLocation ? 12 : 10)) {
+            growing = true;
+          }
+        }
+
+        pulse.setIcon({
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: Math.max(0, scale),
+          fillColor: isUserLocation ? colors.primary : '#ff4444',
+          fillOpacity: Math.max(0, Math.min(1, opacity)),
+          strokeColor: isUserLocation ? colors.primary : '#ff4444',
+          strokeWeight: 1,
+        });
+
+        requestAnimationFrame(animate);
+      };
+
+      animate();
+    };
+
+    animatePulse();
+
+    return { marker, pulse, infoWindow };
+  }, [colors.primary]);
+
+  // Initialize map function wrapped in useCallback to prevent infinite loops
+  const initializeMap = useCallback(() => {
+    if (!mapRef.current || isInitializing || map) {
       return;
     }
 
     setIsInitializing(true);
-    setMapError(false);
+    console.log('Initializing Google Maps...');
 
     try {
-      if (!window.google || !window.google.maps) {
-        throw new Error('Google Maps not loaded');
-      }
-
-      // Sample listener data
-      const sampleListeners = [
-        { lat: 40.7128, lng: -74.0060, city: "New York", country: "USA" },
-        { lat: 51.5074, lng: -0.1278, city: "London", country: "UK" },
-        { lat: 35.6762, lng: 139.6503, city: "Tokyo", country: "Japan" },
-        { lat: 52.5200, lng: 13.4050, city: "Berlin", country: "Germany" },
-        { lat: 37.7749, lng: -122.4194, city: "San Francisco", country: "USA" },
-        { lat: -33.8688, lng: 151.2093, city: "Sydney", country: "Australia" }
-      ];
-
       const mapInstance = new google.maps.Map(mapRef.current, {
         center: { lat: 20, lng: 0 },
         zoom: 2,
         mapId: config.googleMapsMapId,
-        styles: isDarkMode ? [
-          { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-          { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
-          { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-          {
-            featureType: "administrative.locality",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
-          },
-          {
-            featureType: "poi",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
-          },
-          {
-            featureType: "poi.park",
-            elementType: "geometry",
-            stylers: [{ color: "#263c3f" }],
-          },
-          {
-            featureType: "poi.park",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#6b9a76" }],
-          },
-          {
-            featureType: "road",
-            elementType: "geometry",
-            stylers: [{ color: "#38414e" }],
-          },
-          {
-            featureType: "road",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#212a37" }],
-          },
-          {
-            featureType: "road",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#9ca5b3" }],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "geometry",
-            stylers: [{ color: "#746855" }],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "geometry.stroke",
-            stylers: [{ color: "#1f2835" }],
-          },
-          {
-            featureType: "road.highway",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#f3d19c" }],
-          },
-          {
-            featureType: "transit",
-            elementType: "geometry",
-            stylers: [{ color: "#2f3948" }],
-          },
-          {
-            featureType: "transit.station",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#d59563" }],
-          },
-          {
-            featureType: "water",
-            elementType: "geometry",
-            stylers: [{ color: "#17263c" }],
-          },
-          {
-            featureType: "water",
-            elementType: "labels.text.fill",
-            stylers: [{ color: "#515c6d" }],
-          },
-          {
-            featureType: "water",
-            elementType: "labels.text.stroke",
-            stylers: [{ color: "#17263c" }],
-          },
-        ] : [],
+        // Remove styles when mapId is present to avoid the warning
         disableDefaultUI: true,
         zoomControl: false,
         streetViewControl: false,
@@ -364,12 +295,11 @@ const FullWidthGlobeMap = () => {
       setMapError(true);
       setIsInitializing(false);
     }
-  }, [config?.googleMapsApiKey, isDarkMode, colors.primary, isInitializing, userLocation]);
+  }, [config.googleMapsMapId, isDarkMode, userLocation, sampleListeners, isInitializing, map, createAnimatedMarker]);
 
   // Load Google Maps API with improved error handling
   useEffect(() => {
-    if (!config?.googleMapsApiKey) {
-      console.log('No Google Maps API key available');
+    if (!config?.googleMapsApiKey || map || isInitializing) {
       return;
     }
 
@@ -377,10 +307,11 @@ const FullWidthGlobeMap = () => {
     if (window.google && window.google.maps && window.google.maps.Map) {
       console.log('Google Maps already loaded, initializing...');
       // Add a small delay to ensure DOM is ready
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         initializeMap();
       }, 100);
-      return;
+      
+      return () => clearTimeout(timeoutId);
     }
 
     // Check if script is already added
@@ -388,12 +319,13 @@ const FullWidthGlobeMap = () => {
     if (existingScript) {
       console.log('Google Maps script already exists, waiting for load...');
       // Wait a bit and try again
-      setTimeout(() => {
-        if (window.google && window.google.maps && window.google.maps.Map) {
+      const timeoutId = setTimeout(() => {
+        if (window.google && window.google.maps && window.google.maps.Map && !map) {
           initializeMap();
         }
       }, 1000);
-      return;
+      
+      return () => clearTimeout(timeoutId);
     }
 
     console.log('Loading Google Maps script...');
@@ -405,9 +337,14 @@ const FullWidthGlobeMap = () => {
     // Create a global callback function
     (window as any).initMap = () => {
       console.log('Google Maps script loaded successfully');
-      setTimeout(() => {
-        initializeMap();
+      const timeoutId = setTimeout(() => {
+        if (!map) {
+          initializeMap();
+        }
       }, 200);
+      
+      // Store timeout ID for cleanup
+      (window as any).initMapTimeoutId = timeoutId;
     };
     
     script.onerror = (error) => {
@@ -420,8 +357,8 @@ const FullWidthGlobeMap = () => {
     script.onload = () => {
       console.log('Google Maps script loaded successfully');
       // Add a delay to ensure the API is fully loaded
-      setTimeout(() => {
-        if (window.google && window.google.maps && window.google.maps.Map) {
+      const timeoutId = setTimeout(() => {
+        if (window.google && window.google.maps && window.google.maps.Map && !map) {
           initializeMap();
         } else {
           console.error('Google Maps API not available after script load');
@@ -430,41 +367,96 @@ const FullWidthGlobeMap = () => {
           setIsInitializing(false);
         }
       }, 500);
+      
+      // Store timeout ID for cleanup
+      (window as any).scriptLoadTimeoutId = timeoutId;
     };
     document.head.appendChild(script);
-  }, [config, initializeMap]);
+    
+    // Cleanup function
+    return () => {
+      // Clear any pending timeouts
+      if ((window as any).initMapTimeoutId) {
+        clearTimeout((window as any).initMapTimeoutId);
+        delete (window as any).initMapTimeoutId;
+      }
+      if ((window as any).scriptLoadTimeoutId) {
+        clearTimeout((window as any).scriptLoadTimeoutId);
+        delete (window as any).scriptLoadTimeoutId;
+      }
+      
+      // Remove the global callback function
+      if ((window as any).initMap) {
+        delete (window as any).initMap;
+      }
+    };
+  }, [config.googleMapsApiKey, map, isInitializing, initializeMap]);
+
+  // Cleanup effect for component unmount
+  useEffect(() => {
+    return () => {
+      // Clean up map instance
+      if (map) {
+        // Clear all markers
+        markers.forEach(markerData => {
+          markerData.marker.setMap(null);
+          markerData.pulse.setMap(null);
+          markerData.infoWindow.close();
+        });
+        
+        // Clear the map
+        setMap(null);
+        setMarkers([]);
+      }
+      
+      // Clear any pending timeouts
+      if ((window as any).initMapTimeoutId) {
+        clearTimeout((window as any).initMapTimeoutId);
+        delete (window as any).initMapTimeoutId;
+      }
+      if ((window as any).scriptLoadTimeoutId) {
+        clearTimeout((window as any).scriptLoadTimeoutId);
+        delete (window as any).scriptLoadTimeoutId;
+      }
+      
+      // Remove the global callback function
+      if ((window as any).initMap) {
+        delete (window as any).initMap;
+      }
+    };
+  }, [map, markers]);
 
   // Map control handlers
-  const handleZoomIn = () => {
+  const handleZoomIn = useCallback(() => {
     if (map) {
       map.setZoom((map.getZoom() || 2) + 1);
     }
-  };
+  }, [map]);
 
-  const handleZoomOut = () => {
+  const handleZoomOut = useCallback(() => {
     if (map) {
       map.setZoom((map.getZoom() || 2) - 1);
     }
-  };
+  }, [map]);
 
-  const handleMyLocation = () => {
+  const handleMyLocation = useCallback(() => {
     if (map && userLocation) {
       map.setCenter(userLocation);
       map.setZoom(10);
     } else {
       handleLocationPermission();
     }
-  };
+  }, [map, userLocation]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     if (map) {
       map.setCenter({ lat: 20, lng: 0 });
       map.setZoom(2);
     }
-  };
+  }, [map]);
 
   // Handle location permission and get user location
-  const handleLocationPermission = async () => {
+  const handleLocationPermission = useCallback(async () => {
     try {
       console.log('Requesting location permission...');
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
@@ -501,10 +493,10 @@ const FullWidthGlobeMap = () => {
       console.log('Setting default location for testing:', defaultLocation);
       setUserLocation(defaultLocation);
     }
-  };
+  }, [map, createAnimatedMarker]);
 
   // Toggle fullscreen mode
-  const toggleFullscreen = () => {
+  const toggleFullscreen = useCallback(() => {
     if (!isFullscreen) {
       setIsFullscreen(true);
       document.body.style.overflow = 'hidden';
@@ -512,18 +504,7 @@ const FullWidthGlobeMap = () => {
       setIsFullscreen(false);
       document.body.style.overflow = 'auto';
     }
-  };
-
-  // Cleanup markers on unmount
-  useEffect(() => {
-    return () => {
-      markers.forEach((markerData) => {
-        markerData.marker.setMap(null);
-        markerData.pulse.setMap(null);
-        markerData.infoWindow.close();
-      });
-    };
-  }, [markers]);
+  }, [isFullscreen]);
 
   if (mapError) {
     return (
@@ -605,12 +586,27 @@ const FullWidthGlobeMap = () => {
                 ref={mapRef}
                 className={`w-full ${
                   isFullscreen ? 'h-screen' : 'h-96 md:h-[500px] lg:h-[600px]'
-                } rounded-xl shadow-2xl border-2 ${
+                } rounded-2xl shadow-2xl border-2 ${
                   isDarkMode ? 'border-zinc-800/50' : 'border-gray-200'
-                }`}
+                } overflow-hidden`}
+                style={{
+                  boxShadow: `0 25px 50px -12px ${isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.25)'}`,
+                }}
               />
 
-              {/* Map Controls */}
+              {/* Map Controls - Left Side */}
+              <div className="absolute top-4 left-4 flex flex-col gap-2">
+                <Button
+                  onClick={toggleFullscreen}
+                  size="sm"
+                  variant="secondary"
+                  className={`${isDarkMode ? 'bg-zinc-800/80 hover:bg-zinc-700/80' : 'bg-white/80 hover:bg-white/90'} backdrop-blur-sm border ${isDarkMode ? 'border-zinc-700/50' : 'border-gray-300/50'} shadow-lg`}
+                >
+                  <Maximize2 className="w-4 h-4" />
+                </Button>
+              </div>
+
+              {/* Map Controls - Right Side */}
               <div className="absolute top-4 right-4 flex flex-col gap-2">
                 <Button
                   onClick={handleZoomIn}
@@ -644,14 +640,6 @@ const FullWidthGlobeMap = () => {
                 >
                   <RotateCcw className="w-4 h-4" />
                 </Button>
-                <Button
-                  onClick={toggleFullscreen}
-                  size="sm"
-                  variant="secondary"
-                  className={`${isDarkMode ? 'bg-zinc-800/80 hover:bg-zinc-700/80' : 'bg-white/80 hover:bg-white/90'} backdrop-blur-sm border ${isDarkMode ? 'border-zinc-700/50' : 'border-gray-300/50'} shadow-lg`}
-                >
-                  <Maximize2 className="w-4 h-4" />
-                </Button>
               </div>
 
               {/* Location Permission Request */}
@@ -676,43 +664,6 @@ const FullWidthGlobeMap = () => {
                   </Card>
                 </div>
               )}
-            </div>
-
-            {/* Active Locations Section */}
-            <div className="w-full max-w-4xl mx-auto">
-              <Card className={`${isDarkMode ? "bg-zinc-900/50" : "bg-white/90"} backdrop-blur-xl ${isDarkMode ? "border-zinc-800/50" : "border-gray-200"} shadow-2xl`}>
-                <CardHeader className="text-center">
-                  <CardTitle className={`text-2xl font-bold ${isDarkMode ? "text-white" : "text-black"} drop-shadow-md`}>
-                    Active Locations
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {["New York, USA", "London, UK", "Tokyo, Japan", "Berlin, Germany", "San Francisco, USA", "Sydney, Australia"].map((location, index) => (
-                      <div key={index} className={`flex items-center justify-between p-4 ${isDarkMode ? "bg-zinc-800/30" : "bg-gray-100/50"} rounded-lg border ${isDarkMode ? "border-zinc-700/50" : "border-gray-300/50"}`}>
-                        <div className="flex items-center space-x-3">
-                          <div 
-                            className="w-3 h-3 rounded-full animate-pulse"
-                            style={{
-                              backgroundColor: colors.primary,
-                              boxShadow: `0 0 4px ${colors.primary}`
-                            }}
-                          />
-                          <span className={`${isDarkMode ? "text-white" : "text-black"} font-medium`}>{location}</span>
-                        </div>
-                        <div 
-                          className={`text-lg font-bold ${isDarkMode ? "text-white" : "text-black"}`}
-                          style={{
-                            textShadow: `0 0 4px ${colors.primary}`
-                          }}
-                        >
-                          {Math.floor(Math.random() * 50) + 1}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </section>

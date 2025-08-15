@@ -59,7 +59,7 @@ export default function StatsAndLocations() {
             
             <button
               onClick={() => setActiveTab("stats")}
-              className="flex-1 py-2 px-4 rounded-md text-sm font-semibold transition-all duration-200 relative z-10"
+              className="flex-1 py-2 px-4 rounded-md text-sm font-semibold transition-all duration-200 relative z-10 focus:outline-none focus:ring-0"
               style={{
                 color: activeTab === "stats" ? colors.background : colors.textMuted,
                 border: 'none' // Remove borders
@@ -69,7 +69,7 @@ export default function StatsAndLocations() {
             </button>
             <button
               onClick={() => setActiveTab("locations")}
-              className="flex-1 py-2 px-4 rounded-md text-sm font-semibold transition-all duration-200 relative z-10"
+              className="flex-1 py-2 px-4 rounded-md text-sm font-semibold transition-all duration-200 relative z-10 focus:outline-none focus:ring-0"
               style={{
                 color: activeTab === "locations" ? colors.background : colors.textMuted,
                 border: 'none' // Remove borders
@@ -102,10 +102,10 @@ export default function StatsAndLocations() {
             }}
           >
             <div 
-              className="w-2 h-2 rounded-full animate-pulse flex-shrink-0"
+              className="w-2 h-2 rounded-full animate-pulse flex-shrink-0 relative"
               style={{ 
                 backgroundColor: '#10B981',
-                alignSelf: 'center'
+                top: '0px' // Ensure perfect vertical alignment
               }}
             ></div>
             <span 

@@ -1,5 +1,5 @@
 import { jsx as _jsx } from "react/jsx-runtime";
-import { createContext, useContext, useState, useEffect, } from "react";
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, } from "react";
 export const METAL_THEMES = {
     "classic-metal": {
         name: "Classic Metal",
@@ -351,364 +351,171 @@ export const METAL_THEMES = {
         isPremium: true,
     },
 };
-const ThemeContext = createContext(undefined);
+export const ThemeContext = createContext(undefined);
 export function ThemeProvider({ children }) {
     const [currentTheme, setCurrentTheme] = useState(() => {
-        if (typeof window !== "undefined") {
-            const saved = localStorage.getItem("metal-theme");
-            return saved && saved in METAL_THEMES ? saved : "classic-metal";
-        }
-        return "classic-metal";
+        const saved = localStorage.getItem("metal-theme");
+        return saved && METAL_THEMES[saved] ? saved : "classic-metal";
     });
     const [isDarkMode, setIsDarkMode] = useState(() => {
-        if (typeof window !== "undefined") {
-            const savedTheme = localStorage.getItem("metal-theme");
-            const savedMode = localStorage.getItem("theme-mode");
-            // If light-mode theme is selected, force isDarkMode to false
-            if (savedTheme === "light-mode") {
-                return false;
-            }
-            return savedMode !== "light";
-        }
-        return true;
+        const saved = localStorage.getItem("theme-mode");
+        return saved === "light" ? false : true;
     });
-    const toggleDarkMode = () => {
-        setIsDarkMode((prev) => {
-            const newMode = !prev;
-            localStorage.setItem("theme-mode", newMode ? "dark" : "light");
-            return newMode;
-        });
-    };
-    const toggleTheme = () => {
-        toggleDarkMode();
-    };
+    // Helper function to get theme colors
     const getThemeColors = (themeName, isDark) => {
         const theme = METAL_THEMES[themeName];
         return isDark ? theme.colors.dark : theme.colors.light;
     };
-    const colors = getThemeColors(currentTheme, isDarkMode);
+    // Helper function to convert colors to HSL
+    const colorToHsl = (color) => {
+        // Handle rgba colors
+        if (color.startsWith('rgba(')) {
+            const rgba = color.match(/rgba?\(([^)]+)\)/)?.[1].split(',').map(x => parseFloat(x.trim()));
+            if (!rgba || rgba.length < 3)
+                return "0 0% 50%";
+            const [r, g, b] = rgba.map(x => x / 255);
+            return rgbToHsl(r, g, b);
+        }
+        // Handle hex colors
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
+        if (!result)
+            return "0 0% 50%";
+        const r = parseInt(result[1], 16) / 255;
+        const g = parseInt(result[2], 16) / 255;
+        const b = parseInt(result[3], 16) / 255;
+        return rgbToHsl(r, g, b);
+    };
+    const rgbToHsl = (r, g, b) => {
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        let h = 0, s = 0, l = (max + min) / 2;
+        if (max !== min) {
+            const d = max - min;
+            s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+            switch (max) {
+                case r:
+                    h = (g - b) / d + (g < b ? 6 : 0);
+                    break;
+                case g:
+                    h = (b - r) / d + 2;
+                    break;
+                case b:
+                    h = (r - g) / d + 4;
+                    break;
+            }
+            h /= 6;
+        }
+        h = Math.round(h * 360);
+        s = Math.round(s * 100);
+        l = Math.round(l * 100);
+        return `${h} ${s}% ${l}%`;
+    };
+    // Memoize colors to prevent unnecessary recalculations
+    const colors = useMemo(() => {
+        return getThemeColors(currentTheme, isDarkMode);
+    }, [currentTheme, isDarkMode]);
+    // Memoize theme config to prevent unnecessary object creation
+    const themeConfig = useMemo(() => {
+        return METAL_THEMES[currentTheme];
+    }, [currentTheme]);
+    // Optimized theme switching with minimal DOM manipulation
     useEffect(() => {
-        const isLightMode = currentTheme === "light-mode";
         const root = document.documentElement;
-        // Add fade out effect
-        document.body.style.opacity = "0.7";
-        document.body.style.transition = "opacity 0.15s ease-out";
-        setTimeout(() => {
-            // Add smooth transition
-            root.style.transition = "all 0.3s ease";
-            // Handle glassmorphism theme special background
-            if (currentTheme === "glassmorphism-premium") {
-                //document.body.style.background = colors.background;
-                document.body.style.backgroundSize = "400% 400%";
-                document.body.style.animation = "glassmorphGradient 8s ease infinite";
-                root.style.setProperty("--color-background", "transparent");
-                // Add glassmorphism class for special styling
-                root.classList.add("glassmorphism-theme");
-            }
-            else {
-                document.body.style.background = "";
-                document.body.style.backgroundSize = "";
-                document.body.style.animation = "";
-                root.classList.remove("glassmorphism-theme");
-                root.style.setProperty("--color-background", colors.background);
-            }
-            // Set CSS custom properties
-            root.style.setProperty("--color-primary", colors.primary);
-            root.style.setProperty("--color-secondary", colors.secondary);
-            root.style.setProperty("--color-accent", colors.accent);
-            root.style.setProperty("--color-surface", colors.surface);
-            root.style.setProperty("--color-text", colors.text);
-            root.style.setProperty("--color-text-secondary", colors.textSecondary);
-            root.style.setProperty("--color-border", colors.border);
-            root.style.setProperty("--color-card", colors.card);
-            root.style.setProperty("--gradient-primary", METAL_THEMES[currentTheme].gradient);
-            // Convert hex or rgba colors to HSL for Tailwind CSS variables
-            const colorToHsl = (color) => {
-                // Handle rgba colors
-                if (color.startsWith('rgba(')) {
-                    const rgba = color.match(/rgba?\(([^)]+)\)/)?.[1].split(',').map(x => parseFloat(x.trim()));
-                    if (!rgba || rgba.length < 3)
-                        return "0 0% 50%";
-                    const [r, g, b] = rgba.map(x => x / 255);
-                    return rgbToHsl(r, g, b);
-                }
-                // Handle hex colors
-                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color);
-                if (!result)
-                    return "0 0% 50%";
-                const r = parseInt(result[1], 16) / 255;
-                const g = parseInt(result[2], 16) / 255;
-                const b = parseInt(result[3], 16) / 255;
-                return rgbToHsl(r, g, b);
-            };
-            const rgbToHsl = (r, g, b) => {
-                const max = Math.max(r, g, b);
-                const min = Math.min(r, g, b);
-                let h = 0, s = 0, l = (max + min) / 2;
-                if (max !== min) {
-                    const d = max - min;
-                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-                    switch (max) {
-                        case r:
-                            h = (g - b) / d + (g < b ? 6 : 0);
-                            break;
-                        case g:
-                            h = (b - r) / d + 2;
-                            break;
-                        case b:
-                            h = (r - g) / d + 4;
-                            break;
-                    }
-                    h /= 6;
-                }
-                h = Math.round(h * 360);
-                s = Math.round(s * 100);
-                l = Math.round(l * 100);
-                return `${h} ${s}% ${l}%`;
-            };
-            // ULTIMATE FOCUS RING ELIMINATION - HIGHEST PRIORITY CSS
-            const style = document.createElement('style');
-            style.textContent = `
-        /* MAXIMUM PRIORITY FOCUS RING ELIMINATION */
-        *,
-        *::before,
-        *::after,
-        *:focus,
-        *:focus-visible,
-        *:focus-within,
-        *:active,
-        button,
-        button:focus,
-        button:focus-visible,
-        input,
-        input:focus,
-        input:focus-visible,
-        select,
-        select:focus,
-        select:focus-visible,
-        textarea,
-        textarea:focus,
-        textarea:focus-visible,
-        [role="button"],
-        [role="button"]:focus,
-        [role="button"]:focus-visible,
-        [tabindex],
-        [tabindex]:focus,
-        [tabindex]:focus-visible,
-        audio,
-        audio:focus,
-        audio:focus-visible,
-        video,
-        video:focus,
-        video:focus-visible {
-          outline: 0 !important;
-          outline: none !important;
-          outline-width: 0 !important;
-          outline-color: transparent !important;
-          outline-style: none !important;
-          box-shadow: 0 0 0 0 transparent !important;
-          box-shadow: none !important;
-          border-color: inherit !important;
-          --tw-ring-shadow: 0 0 #0000 !important;
-          --tw-ring-offset-shadow: 0 0 #0000 !important;
-          --tw-ring-color: transparent !important;
-          --tw-ring-opacity: 0 !important;
-          --tw-ring-offset-width: 0px !important;
-          --tw-ring-offset-color: transparent !important;
-          --ring: transparent !important;
-        }
-        
-        /* Extra protection for webkit/chrome focus rings */
-        *::-webkit-focus-ring-color {
-          color: transparent !important;
-          outline-color: transparent !important;
-        }
-        
-        /* Firefox focus rings */
-        *::-moz-focus-inner {
-          border: 0 !important;
-          padding: 0 !important;
-        }
-        
-        *:-moz-focusring {
-          outline: none !important;
-        }
-        
-        /* NUCLEAR: Eliminate all possible white/light outline sources */
-        * {
-          outline: none !important;
-          border-color: inherit !important;
-        }
-        
-        *:focus,
-        *:focus-visible,
-        *:active {
-          outline: 0 !important;
-          outline: none !important;
-          outline-width: 0 !important;
-          outline-color: transparent !important;
-          outline-style: none !important;
-          border: none !important;
-          box-shadow: none !important;
-          -webkit-appearance: none !important;
-          -moz-appearance: none !important;
-          appearance: none !important;
-        }
-        
-        /* Preserve borders for enhanced-glow elements */
-        .enhanced-glow,
-        .enhanced-glow:focus,
-        .enhanced-glow:focus-visible,
-        .enhanced-glow:active {
-          border: 2px solid var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
-          box-shadow: var(--theme-border, rgba(192, 192, 192, 0.125)) 0px 8px 32px !important;
-        }
-        
-        /* Target specific white outlines */
-        button:focus,
-        button:focus-visible,
-        input:focus,
-        input:focus-visible,
-        select:focus,
-        select:focus-visible {
-          outline: none !important;
-          border: none !important;
-          box-shadow: none !important;
-        }
-      `;
-            // Remove any existing theme override styles
-            const existingStyle = document.getElementById('theme-ring-override');
-            if (existingStyle)
-                existingStyle.remove();
-            style.id = 'theme-ring-override';
-            document.head.appendChild(style);
-            // JavaScript-based focus ring elimination (nuclear option)
-            const removeFocusRings = () => {
-                const elements = document.querySelectorAll('*:not(.enhanced-glow)');
-                elements.forEach((element) => {
-                    const htmlElement = element;
-                    // Remove existing event listeners to prevent duplicates
-                    const focusHandler = (e) => {
-                        const target = e.target;
-                        // Don't override styles for enhanced-glow elements
-                        if (!target.classList.contains('enhanced-glow')) {
-                            target.style.outline = 'none';
-                            target.style.border = 'none';
-                            target.style.boxShadow = 'none';
-                            target.style.setProperty('outline', 'none', 'important');
-                            target.style.setProperty('border', 'none', 'important');
-                            target.style.setProperty('box-shadow', 'none', 'important');
-                        }
-                    };
-                    htmlElement.addEventListener('focus', focusHandler, { passive: true });
-                    htmlElement.addEventListener('focusin', focusHandler, { passive: true });
-                    // Apply immediately (but not to enhanced-glow elements)
-                    if (!htmlElement.classList.contains('enhanced-glow')) {
-                        htmlElement.style.outline = 'none';
-                        htmlElement.style.setProperty('outline', 'none', 'important');
-                    }
-                });
-            };
-            // Apply immediately and on DOM changes
-            removeFocusRings();
-            const observer = new MutationObserver(removeFocusRings);
-            observer.observe(document.body, { childList: true, subtree: true });
-            // Additional JavaScript-based focus ring elimination
-            setTimeout(() => {
-                const allElements = document.querySelectorAll('*:not(.enhanced-glow)');
-                allElements.forEach(element => {
-                    element.addEventListener('focus', (e) => {
-                        const target = e.target;
-                        // Don't override styles for enhanced-glow elements
-                        if (!target.classList.contains('enhanced-glow')) {
-                            target.style.outline = 'none';
-                            target.style.boxShadow = 'none';
-                            target.style.border = 'none';
-                        }
-                    });
-                });
-            }, 100);
-            // Set safe Tailwind variables that don't conflict with existing ones
-            root.style.setProperty("--tw-primary", colorToHsl(colors.primary));
-            root.style.setProperty("--tw-secondary", colorToHsl(colors.secondary));
-            root.style.setProperty("--tw-accent", colorToHsl(colors.accent));
-            root.style.setProperty("--tw-foreground", colorToHsl(colors.text));
-            root.style.setProperty("--tw-border", colorToHsl(colors.border));
-            root.style.setProperty("--tw-muted", colorToHsl(colors.surface));
-            root.style.setProperty("--tw-muted-foreground", colorToHsl(colors.textMuted));
-            // Only set background/card if they don't use rgba (to preserve existing transparency)
-            if (!colors.background.includes('rgba') && !colors.card.includes('rgba')) {
-                root.style.setProperty("--background", colorToHsl(colors.background));
-                root.style.setProperty("--card", colorToHsl(colors.card));
-                root.style.setProperty("--foreground", colorToHsl(colors.text));
-                root.style.setProperty("--primary", colorToHsl(colors.primary));
-                root.style.setProperty("--secondary", colorToHsl(colors.secondary));
-                root.style.setProperty("--accent", colorToHsl(colors.accent));
-                root.style.setProperty("--border", colorToHsl(colors.border));
-                root.style.setProperty("--input", colorToHsl(colors.border));
-                root.style.setProperty("--card-foreground", colorToHsl(colors.text));
-                root.style.setProperty("--primary-foreground", colorToHsl(colors.primaryText || "#ffffff"));
-                root.style.setProperty("--secondary-foreground", colorToHsl(colors.text));
-                root.style.setProperty("--accent-foreground", colorToHsl(colors.text));
-                root.style.setProperty("--muted", colorToHsl(colors.surface));
-                root.style.setProperty("--popover", colorToHsl(colors.card));
-                root.style.setProperty("--popover-foreground", colorToHsl(colors.text));
-            }
-            // Always set these safe variables
-            root.style.setProperty("--destructive", "0 84% 60%");
-            root.style.setProperty("--destructive-foreground", "0 0% 98%");
-            root.style.setProperty("--theme-border", colors.border);
-            // Apply theme class
-            root.classList.remove("light", "dark");
-            root.classList.add(isLightMode ? "light" : "dark");
-            // Save preferences
-            localStorage.setItem("metal-theme", currentTheme);
-            // Fade back in
-            setTimeout(() => {
-                document.body.style.opacity = "1";
-                document.body.style.transition = "opacity 0.15s ease-in";
-                // Remove transition after animation
-                setTimeout(() => {
-                    root.style.transition = "";
-                    document.body.style.transition = "";
-                }, 150);
-            }, 150);
-        }, 150);
+        // Batch all CSS variable updates
+        const cssVariables = {
+            "--tw-bg": colorToHsl(colors.background),
+            "--tw-surface": colorToHsl(colors.surface),
+            "--tw-text": colorToHsl(colors.text),
+            "--tw-text-secondary": colorToHsl(colors.textSecondary),
+            "--tw-text-muted": colorToHsl(colors.textMuted),
+            "--tw-primary": colorToHsl(colors.primary),
+            "--tw-secondary": colorToHsl(colors.secondary),
+            "--tw-accent": colorToHsl(colors.accent),
+            "--tw-border": colorToHsl(colors.border),
+            "--tw-muted": colorToHsl(colors.surface),
+            "--tw-muted-foreground": colorToHsl(colors.textMuted),
+            "--background": colorToHsl(colors.background),
+            "--card": colorToHsl(colors.card),
+            "--foreground": colorToHsl(colors.text),
+            "--primary": colorToHsl(colors.primary),
+            "--secondary": colorToHsl(colors.secondary),
+            "--accent": colorToHsl(colors.accent),
+            "--input": colorToHsl(colors.border),
+            "--card-foreground": colorToHsl(colors.text),
+            "--primary-foreground": colorToHsl(colors.primaryText || "#ffffff"),
+            "--secondary-foreground": colorToHsl(colors.text),
+            "--accent-foreground": colorToHsl(colors.text),
+            "--muted": colorToHsl(colors.surface),
+            "--popover": colorToHsl(colors.card),
+            "--popover-foreground": colorToHsl(colors.text),
+            "--destructive": "0 84% 60%",
+            "--destructive-foreground": "0 0% 98%",
+            "--theme-border": colors.border,
+        };
+        // Apply all CSS variables at once using Object.entries
+        Object.entries(cssVariables).forEach(([property, value]) => {
+            root.style.setProperty(property, value);
+        });
+        // Update theme class
+        root.classList.remove("light", "dark");
+        root.classList.add(isDarkMode ? "dark" : "light");
+        // Save preferences
+        localStorage.setItem("metal-theme", currentTheme);
     }, [currentTheme, isDarkMode, colors]);
-    const setTheme = (theme) => {
-        // For light-mode theme, also set isDarkMode to false
+    // Memoized callbacks to prevent unnecessary re-renders
+    const toggleDarkMode = useCallback(() => {
+        setIsDarkMode(prev => !prev);
+        localStorage.setItem("theme-mode", isDarkMode ? "light" : "dark");
+    }, [isDarkMode]);
+    const toggleTheme = useCallback(() => {
+        const themes = Object.keys(METAL_THEMES);
+        const currentIndex = themes.indexOf(currentTheme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        setCurrentTheme(themes[nextIndex]);
+    }, [currentTheme]);
+    const setTheme = useCallback((theme) => {
         if (theme === 'light-mode') {
             setIsDarkMode(false);
             localStorage.setItem("theme-mode", "light");
         }
-        else if (theme !== 'light-mode') {
+        else {
             setIsDarkMode(true);
             localStorage.setItem("theme-mode", "dark");
         }
         setCurrentTheme(theme);
-    };
-    const getColors = () => {
+    }, []);
+    const getColors = useCallback(() => {
         return colors;
-    };
-    const getGradient = () => {
-        return METAL_THEMES[currentTheme].gradient;
-    };
-    const value = {
+    }, [colors]);
+    const getGradient = useCallback(() => {
+        return themeConfig.gradient;
+    }, [themeConfig.gradient]);
+    // Memoized context value to prevent unnecessary re-renders
+    const value = useMemo(() => ({
         currentTheme,
         isDarkMode,
         colors: {
             ...colors,
-            primaryText: colors.primaryText ||
-                (colors.primary === "#c0c0c0" ? "#000000" : "#ffffff"),
+            primaryText: colors.primaryText || (colors.primary === "#c0c0c0" ? "#000000" : "#ffffff"),
         },
-        theme: METAL_THEMES[currentTheme],
+        theme: themeConfig,
         setTheme,
         toggleDarkMode,
         toggleTheme,
-        gradient: METAL_THEMES[currentTheme].gradient,
+        gradient: themeConfig.gradient,
         getColors,
         getGradient,
-    };
+    }), [
+        currentTheme,
+        isDarkMode,
+        colors,
+        themeConfig,
+        setTheme,
+        toggleDarkMode,
+        toggleTheme,
+        getColors,
+        getGradient,
+    ]);
     return (_jsx(ThemeContext.Provider, { value: value, children: children }));
 }
 export function useTheme() {

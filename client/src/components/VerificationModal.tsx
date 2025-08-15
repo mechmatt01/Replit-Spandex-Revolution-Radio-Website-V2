@@ -246,7 +246,7 @@ export default function VerificationModal({
               <Button
                 type="submit"
                 disabled={loading || (code?.length || 0) !== 6}
-                className="w-full py-3 font-semibold transition-all duration-200"
+                className="w-full py-3 font-semibold transition-all duration-200 focus:outline-none focus:ring-0"
                 style={{ backgroundColor: colors.primary, color: "white", opacity: loading || (code?.length || 0) !== 6 ? 0.6 : 1 }}
               >
                 {loading ? "Verifying..." : "Verify Code"}
@@ -255,7 +255,7 @@ export default function VerificationModal({
                 type="button"
                 variant="ghost"
                 onClick={handleResend}
-                className="text-sm"
+                className="text-sm focus:outline-none focus:ring-0"
                 style={{ color: colors.primary }}
               >
                 Didn't receive the code? Resend

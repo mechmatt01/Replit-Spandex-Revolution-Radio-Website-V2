@@ -155,20 +155,23 @@ export default function SubscriptionCarousel() {
         {/* Navigation Buttons */}
         <button
           onClick={handlePrevious}
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 rounded-full p-2 transition-colors"
           disabled={isAnimating}
-          title="Previous subscription"
+          className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white hover:bg-black/40 transition-all duration-300 focus:outline-none focus:ring-0"
+          style={{
+            border: `1px solid ${colors.border}`,
+          }}
         >
-          <ChevronLeft className="w-8 h-8 text-white hover:scale-110 transition-transform drop-shadow-md" />
+          <ChevronLeft className="w-6 h-6" />
         </button>
-
         <button
           onClick={handleNext}
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 rounded-full p-2 transition-colors"
           disabled={isAnimating}
-          title="Next subscription"
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 p-2 rounded-full bg-black/20 backdrop-blur-sm text-white hover:bg-black/40 transition-all duration-300 focus:outline-none focus:ring-0"
+          style={{
+            border: `1px solid ${colors.border}`,
+          }}
         >
-          <ChevronRight className="w-8 h-8 text-white hover:scale-110 transition-transform drop-shadow-md" />
+          <ChevronRight className="w-6 h-6" />
         </button>
 
         {/* Main Card Display */}
@@ -380,23 +383,19 @@ export default function SubscriptionCarousel() {
               </div>
 
               {/* CTA Button */}
-              <div className="mt-auto mb-3 sm:mb-4">
-                <Button
-                  className="w-full py-3 sm:py-4 text-sm sm:text-base font-bold rounded-xl transform transition-all duration-300 hover:scale-105"
-                  style={{
-                    background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
-                    boxShadow: `0 10px 30px ${currentTier.gradientStart}50`,
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = `0 15px 40px ${currentTier.gradientStart}70`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = `0 10px 30px ${currentTier.gradientStart}50`;
-                  }}
-                >
-                  Get {currentTier.name.charAt(0) + currentTier.name.slice(1).toLowerCase()} Now
-                </Button>
-              </div>
+                              <div className="mt-auto mb-3 sm:mb-4">
+                  <Button
+                    onClick={() => handleSubscribe(currentTier)}
+                    className="w-full py-3 px-6 rounded-xl font-bold text-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-0"
+                    style={{
+                      background: `linear-gradient(135deg, ${currentTier.gradientStart}, ${currentTier.gradientEnd})`,
+                      color: "white",
+                      boxShadow: `0 8px 32px ${currentTier.gradientStart}40`,
+                    }}
+                  >
+                    Get {currentTier.name.charAt(0) + currentTier.name.slice(1).toLowerCase()} Now
+                  </Button>
+                </div>
             </div>
             </div> {/* Close Moving Gradient Border Wrapper */}
           </div>
@@ -417,7 +416,7 @@ export default function SubscriptionCarousel() {
             key={tier.id}
             onClick={() => handleSelectTier(index)}
             className={cn(
-              "relative transition-all duration-500 ease-in-out p-3 rounded-full",
+              "relative transition-all duration-500 ease-in-out p-3 rounded-full focus:outline-none focus:ring-0",
               index === currentIndex
                 ? "scale-110"
                 : "opacity-40 hover:opacity-60 scale-90"

@@ -1,6 +1,6 @@
 import { useIntersectionObserver } from "../hooks/use-intersection-observer";
 import { useScrollVelocity, getAdaptiveAnimationDuration } from "../hooks/use-scroll-velocity";
-import { useRef, ReactNode, Children, cloneElement, ReactElement, useEffect, useState } from "react";
+import { useRef, ReactNode, Children, cloneElement, ReactElement, useEffect, useState, useCallback, useMemo } from "react";
 
 interface StaggeredAnimationProps {
   children: ReactNode;
@@ -23,39 +23,40 @@ export default function StaggeredAnimation({
 }: StaggeredAnimationProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
-  const [adaptiveDuration, setAdaptiveDuration] = useState(150);
-  const [adaptiveStaggerDelay, setAdaptiveStaggerDelay] = useState(staggerDelay);
   const [elementId] = useState(() => `stagger-${++staggerCounter}`);
   const { ref: intersectionRef, isVisible } = useIntersectionObserver({ 
     threshold, 
-    rootMargin: '100px 0px -25px 0px' // Start animation 100px before element comes into view (faster trigger)
+    rootMargin: '50px 0px -25px 0px'
   });
   const { velocity } = useScrollVelocity();
 
+  // Memoize animation values to prevent recalculation
+  const animationValues = useMemo(() => {
+    if (!hasAnimated) return null;
+    
+    const adaptiveDuration = getAdaptiveAnimationDuration(150, velocity, 100, 250);
+    const adaptiveStaggerDelay = getAdaptiveAnimationDuration(staggerDelay, velocity, 15, 50);
+    
+    return { adaptiveDuration, adaptiveStaggerDelay };
+  }, [hasAnimated, velocity, staggerDelay]);
+
   useEffect(() => {
     if (isVisible && !hasAnimated && !animatedStaggeredElements.has(elementId)) {
-      // Calculate adaptive duration and stagger delay based on scroll velocity
-      const newDuration = getAdaptiveAnimationDuration(150, velocity, 100, 250);
-      const newStaggerDelay = getAdaptiveAnimationDuration(staggerDelay, velocity, 15, 50);
+      // Minimal delay for faster loading
+      const totalDelay = (staggerCounter - 1) * 5;
       
-      setAdaptiveDuration(newDuration);
-      setAdaptiveStaggerDelay(newStaggerDelay);
-      
-      // Add minimal base delay plus reduced staggered delay based on element order
-      const baseDelay = 0; // Immediate start for faster loading
-      const groupDelay = (staggerCounter - 1) * 5; // 5ms between groups (faster)
-      const totalDelay = baseDelay + groupDelay;
-      
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         if (!animatedStaggeredElements.has(elementId)) {
           animatedStaggeredElements.add(elementId);
           setHasAnimated(true);
         }
       }, totalDelay);
-    }
-  }, [isVisible, hasAnimated, elementId, velocity, staggerDelay]);
 
-  const getTransformStyle = (direction: string, hasAnimated: boolean) => {
+      return () => clearTimeout(timer);
+    }
+  }, [isVisible, hasAnimated, elementId]);
+
+  const getTransformStyle = useCallback((direction: string, hasAnimated: boolean) => {
     const transforms = {
       up: hasAnimated ? 'translateY(0)' : 'translateY(20px)',
       down: hasAnimated ? 'translateY(0)' : 'translateY(-20px)',
@@ -64,9 +65,32 @@ export default function StaggeredAnimation({
     };
     
     return transforms[direction as keyof typeof transforms] || transforms.up;
-  };
+  }, []);
 
-  const childrenArray = Children.toArray(children);
+  const childrenArray = useMemo(() => Children.toArray(children), [children]);
+
+  if (!animationValues) {
+    return (
+      <div ref={intersectionRef} className={className}>
+        {childrenArray.map((child, index) => {
+          if (!child || typeof child !== 'object') return child;
+          
+          const element = child as ReactElement;
+          
+          return cloneElement(element, {
+            ...element.props,
+            key: element.key || index,
+            style: {
+              ...element.props.style,
+              opacity: 0,
+              transform: getTransformStyle(direction, false),
+              willChange: 'opacity, transform'
+            }
+          });
+        })}
+      </div>
+    );
+  }
 
   return (
     <div ref={intersectionRef} className={className}>
@@ -82,7 +106,7 @@ export default function StaggeredAnimation({
             ...element.props.style,
             opacity: hasAnimated ? 1 : 0,
             transform: getTransformStyle(direction, hasAnimated),
-            transition: `all ${adaptiveDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${hasAnimated ? `${index * adaptiveStaggerDelay}ms` : '0ms'}`,
+            transition: `all ${animationValues.adaptiveDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) ${hasAnimated ? `${index * animationValues.adaptiveStaggerDelay}ms` : '0ms'}`,
             willChange: 'opacity, transform'
           }
         });

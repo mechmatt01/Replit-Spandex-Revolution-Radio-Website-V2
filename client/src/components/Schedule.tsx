@@ -439,7 +439,7 @@ export default function Schedule() {
                         paddingLeft: "16px"
                       }}>
                         <Button
-                          className="rounded-full transition-all duration-300 hover:scale-110"
+                          className="rounded-full transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-0"
                           style={{
                             backgroundColor: colors.primary,
                             color: "white",
@@ -482,7 +482,7 @@ export default function Schedule() {
         {/* Centered View All Archives Button - Outside grid for full page centering */}
         <div className="mt-12 flex justify-center w-full">
           <Button
-            className="px-6 py-3 rounded-full font-bold transition-all duration-300 border-0"
+            className="px-6 py-3 rounded-full font-bold transition-all duration-300 border-0 focus:outline-none focus:ring-0"
             style={{
               backgroundColor: colors.primary,
               color: colors.primaryText || "white",
@@ -531,7 +531,7 @@ export default function Schedule() {
             {/* Close Button */}
             <button
               onClick={() => setSelectedWeeklyShow(null)}
-              className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110 flex items-center justify-center"
+              className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110 flex items-center justify-center focus:outline-none focus:ring-0"
               style={{
                 color: colors.primary,
                 backgroundColor: `${colors.primary}20`,
@@ -622,7 +622,7 @@ export default function Schedule() {
             {/* Close Button */}
             <button
               onClick={() => setSelectedPastShow(null)}
-              className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110 flex items-center justify-center"
+              className="absolute top-4 right-4 p-2 rounded-full transition-all duration-200 hover:scale-110 flex items-center justify-center focus:outline-none focus:ring-0"
               style={{
                 color: colors.primary,
                 backgroundColor: `${colors.primary}20`,

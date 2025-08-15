@@ -145,7 +145,7 @@ export default function ActiveLocations() {
           🌍 ACTIVE LOCATIONS
         </h3>
         <div 
-          className="px-3 py-1 rounded-full text-sm font-semibold"
+          className="px-3 py-1 rounded-full text-sm font-semibold flex items-center justify-center"
           style={{ 
             backgroundColor: colors.accent,
             color: colors.background

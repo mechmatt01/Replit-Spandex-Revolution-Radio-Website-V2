@@ -8,9 +8,6 @@
       "hosting": {
         "main": [
           "spandex-salvation-radio-site"
-        ],
-        "custom-domain": [
-          "spandex-salvation-radio-com"
         ]
       }
     }

@@ -212,42 +212,42 @@ export default function Navigation() {
       id: 2, 
       label: "SCHEDULE", 
       icon: Calendar, 
-      action: () => navigateToSection("schedule"), 
+      action: () => navigateToSection("schedule", "/schedule"), 
       tooltip: "View show schedule and programming" 
     },
     { 
       id: 3, 
       label: "SUPPORT US", 
       icon: Heart, 
-      action: () => navigateToSection("subscribe"), 
+      action: () => navigateToSection("subscribe", "/support"), 
       tooltip: "Support the station with premium subscriptions" 
     },
     { 
       id: 4, 
       label: "SUBMISSIONS", 
       icon: Send, 
-      action: () => navigateToSection("submissions"), 
+      action: () => navigateToSection("submissions", "/submissions"), 
       tooltip: "Submit song requests and feedback" 
     },
     { 
       id: 5, 
       label: "CONTACT", 
       icon: Phone, 
-      action: () => navigateToSection("contact"), 
+      action: () => navigateToSection("contact", "/contact"), 
       tooltip: "Get in touch with the station" 
     },
     { 
       id: 6, 
       label: "LISTEN MAP", 
       icon: MapPin, 
-      action: () => navigateToSection("map"), 
+      action: () => navigateToSection("map", "/map"), 
       tooltip: "View live listener map worldwide" 
     },
     { 
       id: 7, 
       label: "FEATURES", 
       icon: Heart, 
-      action: () => navigateToSection("features"), 
+      action: () => navigateToSection("features", "/features"), 
       tooltip: "Explore premium features and subscription tiers" 
     },
   ];
@@ -316,15 +316,27 @@ export default function Navigation() {
                     <TooltipTrigger asChild>
                       <button 
                         onClick={item.action}
-                        className="flex items-center space-x-2 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-lg hover:scale-105 active:scale-95"
-                        style={{ color: colors.text }}
+                        className="flex items-center space-x-2 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-lg hover:scale-105 active:scale-95 focus:outline-none focus:ring-0"
+                        style={{ 
+                          color: colors.text,
+                          transform: 'scale(1)',
+                          transition: 'all 0.2s ease'
+                        }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = colors.primary + '20';
                           e.currentTarget.style.color = 'white';
+                          e.currentTarget.style.transform = 'scale(1.05)';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = 'transparent';
                           e.currentTarget.style.color = colors.text;
+                          e.currentTarget.style.transform = 'scale(1)';
+                        }}
+                        onMouseDown={(e) => {
+                          e.currentTarget.style.transform = 'scale(0.95)';
+                        }}
+                        onMouseUp={(e) => {
+                          e.currentTarget.style.transform = 'scale(1.05)';
                         }}
                       >
                         <IconComponent size={16} style={{ color: colors.primary }} />
@@ -344,33 +356,43 @@ export default function Navigation() {
                   <TooltipTrigger asChild>
                     <button
                       onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="flex items-center space-x-1 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-lg hover:scale-105 active:scale-95"
+                      className="flex items-center space-x-1 text-sm font-semibold transition-all duration-200 px-3 py-2 rounded-md hover:shadow-lg hover:scale-105 active:scale-95 focus:outline-none focus:ring-0"
                       style={{ 
                         color: isDropdownOpen ? 'white' : colors.text,
-                        backgroundColor: isDropdownOpen ? colors.primary : 'transparent'
+                        backgroundColor: isDropdownOpen ? colors.primary : 'transparent',
+                        transform: 'scale(1)',
+                        transition: 'all 0.2s ease'
                       }}
                       onMouseEnter={(e) => {
                         if (!isDropdownOpen) {
                           e.currentTarget.style.backgroundColor = colors.primary + '20';
                           e.currentTarget.style.color = 'white';
+                          e.currentTarget.style.transform = 'scale(1.05)';
                         }
                       }}
                       onMouseLeave={(e) => {
                         if (!isDropdownOpen) {
                           e.currentTarget.style.backgroundColor = isDropdownOpen ? colors.primary : 'transparent';
                           e.currentTarget.style.color = isDropdownOpen ? 'white' : colors.text;
+                          e.currentTarget.style.transform = 'scale(1)';
                         }
+                      }}
+                      onMouseDown={(e) => {
+                        e.currentTarget.style.transform = 'scale(0.95)';
+                      }}
+                      onMouseUp={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05)';
                       }}
                     >
                       <Menu size={16} style={{ color: isDropdownOpen ? 'white' : colors.primary, marginLeft: '2px' }} />
                       <span>MORE</span>
                       <ChevronDown 
-                        size={14} 
+                        size={16} 
+                        className="transition-transform duration-300 ease-out"
                         style={{ 
-                          color: isDropdownOpen ? 'white' : colors.primary,
-                          transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                          transition: 'transform 0.2s ease'
-                        }} 
+                          color: colors.text,
+                          transform: isDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                        }}
                       />
                     </button>
                   </TooltipTrigger>
@@ -399,17 +421,27 @@ export default function Navigation() {
                           <TooltipTrigger asChild>
                             <button
                               onClick={item.action}
-                              className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg hover:scale-105 active:scale-95 w-full"
+                              className="flex items-center space-x-3 px-4 py-3 text-sm font-semibold transition-all duration-200 whitespace-nowrap hover:rounded-lg hover:scale-105 active:scale-95 w-full focus:outline-none focus:ring-0"
                               style={{ 
-                                color: dropdownTextColor
-                              }}
+                                color: dropdownTextColor,
+                                transform: 'scale(1)',
+                                transition: 'all 0.2s ease'
+                              } as React.CSSProperties}
                               onMouseEnter={(e) => {
                                 e.currentTarget.style.backgroundColor = colors.primary + '20';
                                 e.currentTarget.style.color = 'white';
+                                e.currentTarget.style.transform = 'scale(1.05)';
                               }}
                               onMouseLeave={(e) => {
                                 e.currentTarget.style.backgroundColor = 'transparent';
                                 e.currentTarget.style.color = dropdownTextColor;
+                                e.currentTarget.style.transform = 'scale(1)';
+                              }}
+                              onMouseDown={(e) => {
+                                e.currentTarget.style.transform = 'scale(0.95)';
+                              }}
+                              onMouseUp={(e) => {
+                                e.currentTarget.style.transform = 'scale(1.05)';
                               }}
                             >
                               <IconComponent size={16} style={{ color: colors.primary }} />
@@ -435,29 +467,45 @@ export default function Navigation() {
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={openLogin}
-                    className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105"
+                    className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none focus:ring-0"
                     style={{
                       color: colors.text,
                       border: `2px solid ${colors.primary}`,
                       backgroundColor: 'transparent',
                       borderRadius: '8px',
                       height: '32px',
-                      minWidth: '80px'
+                      minWidth: '80px',
+                      transform: 'scale(1)',
+                      transition: 'all 0.2s ease'
+                    } as React.CSSProperties}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.05)';
+                      e.currentTarget.style.backgroundColor = colors.primary + '10';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }}
+                    onMouseDown={(e) => {
+                      e.currentTarget.style.transform = 'scale(0.95)';
+                    }}
+                    onMouseUp={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.05)';
                     }}
                   >
                     LOGIN
                   </button>
                   <button
                     onClick={openSignUp}
-                    className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
+                    className="px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none whitespace-nowrap"
                     style={{
                       backgroundColor: colors.primary,
                       color: 'white',
                       border: `2px solid ${colors.primary}`,
                       borderRadius: '8px',
                       height: '32px',
-                      minWidth: '80px'
-                    }}
+                      minWidth: '80px',
+                    } as React.CSSProperties}
                   >
                     SIGN UP
                   </button>
@@ -467,10 +515,10 @@ export default function Navigation() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button
-                        className="relative flex items-center space-x-2 p-1 rounded-full transition-all duration-200 hover:scale-105"
+                        className="relative flex items-center space-x-2 p-1 rounded-full transition-all duration-200 hover:scale-105 active:scale-95 focus:outline-none"
                         style={{
                           backgroundColor: 'transparent',
-                        }}
+                        } as React.CSSProperties}
                       >
                         <div className="relative">
                           {/* Profile Image */}
@@ -527,7 +575,7 @@ export default function Navigation() {
 
                     <DropdownMenuContent 
                       align="end" 
-                      className="w-64 p-2 mt-2 shadow-2xl"
+                      className="w-64 p-2 mt-2 shadow-2xl animate-in fade-in-0 zoom-in-95 slide-in-from-top-2 duration-200 ease-out"
                       style={{
                         backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
                         backdropFilter: 'blur(10px)',
@@ -600,10 +648,28 @@ export default function Navigation() {
               <button
                 ref={menuRef}
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 rounded-lg transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95"
+                className="p-2 rounded-lg transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-0"
                 style={{ 
                   backgroundColor: isOpen ? colors.primary : 'transparent',
-                  color: isOpen ? 'white' : colors.primary 
+                  color: isOpen ? 'white' : colors.primary,
+                  transform: 'scale(1)',
+                  transition: 'all 0.2s ease'
+                } as React.CSSProperties}
+                onMouseEnter={(e) => {
+                  if (!isOpen) {
+                    e.currentTarget.style.transform = 'scale(1.05)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isOpen) {
+                    e.currentTarget.style.transform = 'scale(1)';
+                  }
+                }}
+                onMouseDown={(e) => {
+                  e.currentTarget.style.transform = 'scale(0.95)';
+                }}
+                onMouseUp={(e) => {
+                  e.currentTarget.style.transform = 'scale(1.05)';
                 }}
                 aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
               >
@@ -616,7 +682,7 @@ export default function Navigation() {
           {isOpen && (
             <div 
               ref={mobileDropdownRef}
-              className="xl:hidden absolute top-full right-4 bg-black/90 backdrop-blur-md border rounded-xl animate-in slide-in-from-top-2 duration-300 shadow-xl" 
+              className="xl:hidden absolute top-full right-4 bg-black/90 backdrop-blur-md border rounded-xl animate-in fade-in-0 slide-in-from-top-2 duration-300 ease-out shadow-xl" 
               style={{ 
                 borderColor: colors.primary + '40',
                 minWidth: '280px',
@@ -628,13 +694,13 @@ export default function Navigation() {
                 {/* Music Link */}
                 <a
                   href="/music"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline focus:outline-none"
                   style={{ 
                     color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
                     display: 'flex',
-                    textDecoration: 'none'
-                  }}
+                    textDecoration: 'none',
+                  } as React.CSSProperties}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
                     e.currentTarget.style.color = 'white';
@@ -650,21 +716,18 @@ export default function Navigation() {
 
                 {/* Schedule Link */}
                 <a
-                  href="/#schedule"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
+                  href="/schedule"
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 rounded-lg focus:outline-none"
                   style={{ 
-                    color: '#ffffff', // Always white text on dark mobile dropdown background
+                    color: '#ffffff',
                     backgroundColor: 'transparent',
-                    display: 'flex',
-                    textDecoration: 'none'
-                  }}
+                    textDecoration: 'none',
+                  } as React.CSSProperties}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#ffffff';
                   }}
                 >
                   <Calendar size={20} style={{ color: colors.primary }} />
@@ -673,14 +736,14 @@ export default function Navigation() {
 
                 {/* Support Us Link */}
                 <a
-                  href="/#subscribe"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
+                  href="/support"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline focus:outline-none"
                   style={{ 
                     color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
                     display: 'flex',
-                    textDecoration: 'none'
-                  }}
+                    textDecoration: 'none',
+                  } as React.CSSProperties}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
                     e.currentTarget.style.color = 'white';
@@ -694,16 +757,68 @@ export default function Navigation() {
                   <span>SUPPORT US</span>
                 </a>
 
-                {/* Submissions Link */}
+                {/* Features Link */}
                 <a
-                  href="/#submissions"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
+                  href="/features"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline focus:outline-none focus:ring-2 focus:ring-offset-2"
                   style={{ 
                     color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
                     display: 'flex',
-                    textDecoration: 'none'
+                    textDecoration: 'none',
+                    '--tw-ring-color': colors.primary,
+                    '--tw-ring-offset-color': '#000000',
+                  } as React.CSSProperties}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
                   }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#ffffff';
+                  }}
+                >
+                  <Heart size={20} style={{ color: colors.primary }} />
+                  <span>FEATURES</span>
+                </a>
+
+                {/* Listen Map Link */}
+                <a
+                  href="/map"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style={{ 
+                    color: '#ffffff', // Always white text on dark mobile dropdown background
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    textDecoration: 'none',
+                    '--tw-ring-color': colors.primary,
+                    '--tw-ring-offset-color': '#000000',
+                  } as React.CSSProperties}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = colors.primary + '20';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#ffffff';
+                  }}
+                >
+                  <MapPin size={20} style={{ color: colors.primary }} />
+                  <span>LISTEN MAP</span>
+                </a>
+
+                {/* Submissions Link */}
+                <a
+                  href="/submissions"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style={{ 
+                    color: '#ffffff', // Always white text on dark mobile dropdown background
+                    backgroundColor: 'transparent',
+                    display: 'flex',
+                    textDecoration: 'none',
+                    '--tw-ring-color': colors.primary,
+                    '--tw-ring-offset-color': '#000000',
+                  } as React.CSSProperties}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
                     e.currentTarget.style.color = 'white';
@@ -719,14 +834,16 @@ export default function Navigation() {
 
                 {/* Contact Link */}
                 <a
-                  href="/#contact"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
+                  href="/contact"
+                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline focus:outline-none focus:ring-2 focus:ring-offset-2"
                   style={{ 
                     color: '#ffffff', // Always white text on dark mobile dropdown background
                     backgroundColor: 'transparent',
                     display: 'flex',
-                    textDecoration: 'none'
-                  }}
+                    textDecoration: 'none',
+                    '--tw-ring-color': colors.primary,
+                    '--tw-ring-offset-color': '#000000',
+                  } as React.CSSProperties}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.backgroundColor = colors.primary + '20';
                     e.currentTarget.style.color = 'white';
@@ -738,52 +855,6 @@ export default function Navigation() {
                 >
                   <Phone size={20} style={{ color: colors.primary }} />
                   <span>CONTACT</span>
-                </a>
-
-                {/* Listen Map Link */}
-                <a
-                  href="/#map"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent',
-                    display: 'flex',
-                    textDecoration: 'none'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
-                  }}
-                >
-                  <MapPin size={20} style={{ color: colors.primary }} />
-                  <span>LISTEN MAP</span>
-                </a>
-
-                {/* Features Link */}
-                <a
-                  href="/#features"
-                  className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full hover:bg-opacity-20 hover:scale-105 active:scale-95 no-underline"
-                  style={{ 
-                    color: colors.text,
-                    backgroundColor: 'transparent',
-                    display: 'flex',
-                    textDecoration: 'none'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary + '20';
-                    e.currentTarget.style.color = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = colors.text;
-                  }}
-                >
-                  <Heart size={20} style={{ color: colors.primary }} />
-                  <span>FEATURES</span>
                 </a>
 
                 {/* Divider */}
@@ -877,14 +948,16 @@ export default function Navigation() {
 
                     <button
                       onClick={handleLogout}
-                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full no-underline"
+                      className="flex items-center space-x-3 px-4 py-3 text-base font-semibold rounded-lg transition-all duration-200 w-full no-underline focus:outline-none focus:ring-2 focus:ring-offset-2"
                       style={{
                         color: colors.primary,
                         backgroundColor: 'transparent',
                         border: `1px solid ${colors.primary}`,
                         display: 'flex',
-                        textDecoration: 'none'
-                      }}
+                        textDecoration: 'none',
+                        '--tw-ring-color': colors.primary,
+                        '--tw-ring-offset-color': '#000000',
+                      } as React.CSSProperties}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.backgroundColor = colors.primary + '20';
                         e.currentTarget.style.color = 'white';
@@ -930,23 +1003,27 @@ export default function Navigation() {
           </AlertDialogHeader>
           <AlertDialogFooter className="flex gap-3">
             <AlertDialogCancel
-              className="font-semibold px-6 py-2 rounded-lg transition-all duration-200"
+              className="font-semibold px-6 py-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
               style={{
                 backgroundColor: 'transparent',
                 color: colors.text,
                 border: `1px solid ${colors.primary}40`,
-              }}
+                '--tw-ring-color': colors.primary,
+                '--tw-ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
+              } as React.CSSProperties}
             >
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleLogout}
-              className="font-semibold px-6 py-2 rounded-lg transition-all duration-200"
+              className="font-semibold px-6 py-2 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
               style={{
                 backgroundColor: '#EF4444',
                 color: 'white',
                 border: '1px solid #EF4444',
-              }}
+                '--tw-ring-color': '#EF4444',
+                '--tw-ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
+              } as React.CSSProperties}
             >
               Logout
             </AlertDialogAction>

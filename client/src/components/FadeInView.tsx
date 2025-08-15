@@ -1,83 +1,93 @@
-import React, { useRef, ReactNode, useEffect, useState } from "react";
 import { useIntersectionObserver } from "../hooks/use-intersection-observer";
 import { useScrollVelocity, getAdaptiveAnimationDuration } from "../hooks/use-scroll-velocity";
+import { ReactNode, useRef, useMemo, useCallback, useEffect } from "react";
 
 interface FadeInViewProps {
   children: ReactNode;
+  className?: string;
   threshold?: number;
+  direction?: 'up' | 'down' | 'left' | 'right';
   delay?: number;
   duration?: number;
-  className?: string;
-  direction?: 'up' | 'down' | 'left' | 'right' | 'none';
 }
 
 // Global state to track animated elements and ensure one-time animations
-const animatedElements = new Set<string>();
-let animationCounter = 0;
+const animatedFadeElements = new Set<string>();
+let fadeCounter = 0;
 
 export default function FadeInView({
   children,
-  threshold = 0.05,
-  delay = 0,
-  duration = 100,
   className = '',
-  direction = 'up'
+  threshold = 0.1,
+  direction = 'up',
+  delay = 0,
+  duration
 }: FadeInViewProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const [adaptiveDuration, setAdaptiveDuration] = useState(duration);
-  const [elementId] = useState(() => `fade-${++animationCounter}`);
-  const { ref: intersectionRef, isVisible } = useIntersectionObserver({ 
-    threshold, 
-    rootMargin: '50px 0px -10px 0px' // Reduced margin for faster triggering
-  });
+  const { ref, isVisible } = useIntersectionObserver({ threshold });
   const { velocity } = useScrollVelocity();
+  const elementId = useRef(`fade-${++fadeCounter}`).current;
+  
+  // Memoize animation duration based on scroll velocity
+  const animationDuration = useMemo(() => {
+    if (duration) return duration;
+    return getAdaptiveAnimationDuration(300, velocity); // 300ms baseline duration
+  }, [duration, velocity]);
 
-  useEffect(() => {
-    if (isVisible && !hasAnimated && !animatedElements.has(elementId)) {
-      // Calculate adaptive duration based on scroll velocity - faster for fast scrolling
-      const newDuration = getAdaptiveAnimationDuration(duration, velocity, 100, 300);
-      setAdaptiveDuration(newDuration);
-      
-      // Immediate animation for fast scrolling, minimal stagger for slow scrolling
-      const isHighVelocity = Math.abs(velocity) > 300;
-      const baseDelay = isHighVelocity ? 0 : 5; // Minimal delay for fast scrolling
-      const staggerDelay = isHighVelocity ? 0 : Math.min((animationCounter - 1) * 1, 10); // Minimal stagger, max 10ms
-      const totalDelay = baseDelay + staggerDelay + delay;
-      
-      setTimeout(() => {
-        if (!animatedElements.has(elementId)) {
-          animatedElements.add(elementId);
-          setHasAnimated(true);
-        }
-      }, totalDelay);
-    }
-  }, [isVisible, hasAnimated, elementId, delay, velocity, duration]);
-
-  const getTransformStyle = (direction: string, hasAnimated: boolean) => {
-    if (direction === 'none') return '';
-    
+  // Memoize transform based on direction
+  const transform = useMemo(() => {
     const transforms = {
-      up: hasAnimated ? 'translateY(0)' : 'translateY(20px)',
-      down: hasAnimated ? 'translateY(0)' : 'translateY(-20px)',
-      left: hasAnimated ? 'translateX(0)' : 'translateX(20px)',
-      right: hasAnimated ? 'translateX(0)' : 'translateX(-20px)'
+      up: 'translateY(30px)',
+      down: 'translateY(-30px)',
+      left: 'translateX(30px)',
+      right: 'translateX(-30px)'
     };
-    
-    return transforms[direction as keyof typeof transforms] || transforms.up;
-  };
+    return transforms[direction];
+  }, [direction]);
+
+  // Memoize styles to prevent unnecessary recalculations
+  const styles = useMemo(() => {
+    if (!isVisible || animatedFadeElements.has(elementId)) {
+      return {
+        opacity: 1,
+        transform: 'translateY(0)',
+        transition: 'none'
+      };
+    }
+
+    return {
+      opacity: 0,
+      transform,
+      transition: `opacity ${animationDuration}ms ease-out ${delay}ms, transform ${animationDuration}ms ease-out ${delay}ms`
+    };
+  }, [isVisible, elementId, transform, animationDuration, delay]);
+
+  // Handle animation completion
+  const handleTransitionEnd = useCallback(() => {
+    if (isVisible && !animatedFadeElements.has(elementId)) {
+      animatedFadeElements.add(elementId);
+    }
+  }, [isVisible, elementId]);
+
+  // Apply styles when visibility changes
+  useEffect(() => {
+    if (isVisible && !animatedFadeElements.has(elementId)) {
+      const element = ref.current;
+      if (element) {
+        // Use requestAnimationFrame to ensure smooth animation
+        requestAnimationFrame(() => {
+          element.style.opacity = '1';
+          element.style.transform = 'translateY(0)';
+        });
+      }
+    }
+  }, [isVisible, elementId, ref]);
 
   return (
     <div
-      ref={intersectionRef}
-      className={`transition-all ease-out ${className}`}
-      style={{
-        opacity: hasAnimated ? 1 : 0,
-        transform: getTransformStyle(direction, hasAnimated),
-        transitionDuration: `${adaptiveDuration}ms`,
-        transitionDelay: '0ms', // No CSS delay, handled by setTimeout
-        willChange: 'opacity, transform'
-      }}
+      ref={ref}
+      className={className}
+      style={styles}
+      onTransitionEnd={handleTransitionEnd}
     >
       {children}
     </div>

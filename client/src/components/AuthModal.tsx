@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogHeader, DialogTitle, DialogContent, DialogClose } from "@/components/ui/dialog";
-import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -158,27 +157,6 @@ export default function AuthModal({
           boxShadow: `0 25px 50px -12px ${colors.primary}20`,
         }}
       >
-        {/* Custom Close Button */}
-        <DialogClose
-          className="absolute right-4 top-4 rounded-full opacity-70 transition-all duration-200 hover:opacity-100 focus:outline-none disabled:pointer-events-none flex items-center justify-center cursor-pointer"
-          style={{
-            color: colors.text,
-            backgroundColor: "transparent",
-            border: "none",
-            width: "32px",
-            height: "32px",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = colors.primary;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = colors.text;
-          }}
-        >
-          <X className="h-4 w-4" />
-          <span className="sr-only">Close</span>
-        </DialogClose>
-
         <DialogHeader>
           <DialogTitle
             className="flex items-center gap-2"
@@ -388,7 +366,7 @@ export default function AuthModal({
 
           <Button
             type="submit"
-            className="w-full text-white border-0 rounded-lg transition-all duration-200 hover:scale-105"
+            className="w-full text-white border-0 rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-0"
             style={{
               backgroundColor: colors.primary,
               border: `2px solid ${colors.primary}`,
@@ -429,7 +407,7 @@ export default function AuthModal({
             type="button"
             variant="outline"
             onClick={handleGoogleAuth}
-            className="w-full rounded-lg transition-all duration-200 hover:scale-105"
+            className="w-full rounded-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-0"
             style={{
               backgroundColor: colors.background || 'rgba(255, 255, 255, 0.1)',
               color: colors.text,
@@ -456,7 +434,7 @@ export default function AuthModal({
             <button
               type="button"
               onClick={switchMode}
-              className="text-sm transition-colors duration-200"
+              className="text-sm transition-colors duration-200 focus:outline-none focus:ring-0"
               style={{ color: colors.primary }}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.color = colors.secondary)

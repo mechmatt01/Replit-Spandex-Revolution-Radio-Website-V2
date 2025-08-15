@@ -333,7 +333,7 @@ export default function Submissions() {
                 <Button
                   type="submit"
                   disabled={submitMutation.isPending}
-                  className="w-full md:w-auto bg-metal-orange hover:bg-orange-600 text-white px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 animate-glow"
+                  className="w-full md:w-auto bg-metal-orange hover:bg-orange-600 text-white px-8 py-3 rounded-full font-bold text-lg transition-all duration-300 animate-glow focus:outline-none focus:ring-0"
                 >
                   <Send className="mr-2 h-4 w-4" />
                   {submitMutation.isPending

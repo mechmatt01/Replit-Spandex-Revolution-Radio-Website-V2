@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 export interface ScrollVelocityData {
   velocity: number;
@@ -14,9 +14,15 @@ export function useScrollVelocity(): ScrollVelocityData {
   const lastScrollY = useRef(0);
   const lastTimestamp = useRef(0);
   const scrollTimeout = useRef<NodeJS.Timeout>();
+  const rafId = useRef<number>();
+  const isThrottled = useRef(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
+  const handleScroll = useCallback(() => {
+    if (isThrottled.current) return;
+    
+    isThrottled.current = true;
+    
+    rafId.current = requestAnimationFrame(() => {
       const currentScrollY = window.scrollY;
       const currentTimestamp = Date.now();
       
@@ -26,7 +32,11 @@ export function useScrollVelocity(): ScrollVelocityData {
       
       if (timeDelta > 0) {
         const currentVelocity = Math.abs(scrollDelta) / timeDelta;
-        setVelocity(currentVelocity);
+        
+        // Only update state if there's a significant change
+        if (Math.abs(currentVelocity - velocity) > 0.1) {
+          setVelocity(currentVelocity);
+        }
         
         // Determine direction
         if (scrollDelta > 0) {
@@ -54,8 +64,12 @@ export function useScrollVelocity(): ScrollVelocityData {
       
       lastScrollY.current = currentScrollY;
       lastTimestamp.current = currentTimestamp;
-    };
+      
+      isThrottled.current = false;
+    });
+  }, [velocity]);
 
+  useEffect(() => {
     // Initialize
     lastScrollY.current = window.scrollY;
     lastTimestamp.current = Date.now();
@@ -67,8 +81,11 @@ export function useScrollVelocity(): ScrollVelocityData {
       if (scrollTimeout.current) {
         clearTimeout(scrollTimeout.current);
       }
+      if (rafId.current) {
+        cancelAnimationFrame(rafId.current);
+      }
     };
-  }, []);
+  }, [handleScroll]);
 
   return { velocity, direction, isScrolling };
 }

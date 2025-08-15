@@ -69,7 +69,7 @@ export default function ShoppingCartComponent({
       <Button
         onClick={() => setIsOpen(!isOpen)}
         variant="ghost"
-        className="relative p-2"
+        className="relative p-2 focus:outline-none focus:ring-0"
         id="cart-icon"
       >
         <ShoppingCart className="h-5 w-5" style={{ color: colors.text }} />
@@ -147,7 +147,7 @@ export default function ShoppingCartComponent({
                                 item.quantity - 1,
                               )
                             }
-                            className="h-6 w-6 p-0"
+                            className="h-6 w-6 p-0 focus:outline-none focus:ring-0"
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
@@ -166,7 +166,7 @@ export default function ShoppingCartComponent({
                                 item.quantity + 1,
                               )
                             }
-                            className="h-6 w-6 p-0"
+                            className="h-6 w-6 p-0 focus:outline-none focus:ring-0"
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
@@ -175,7 +175,7 @@ export default function ShoppingCartComponent({
                           variant="ghost"
                           size="sm"
                           onClick={() => onRemoveItem(item.variantId)}
-                          className="h-6 w-6 p-0"
+                          className="h-6 w-6 p-0 focus:outline-none focus:ring-0"
                         >
                           <X className="h-3 w-3" />
                         </Button>
@@ -211,7 +211,7 @@ export default function ShoppingCartComponent({
                     </div>
                     <Button
                       onClick={onCheckout}
-                      className="w-full mt-3 font-bold"
+                      className="w-full mt-3 font-bold focus:outline-none focus:ring-0"
                       style={{
                         backgroundColor: colors.primary,
                         color: colors.primaryText || "white",

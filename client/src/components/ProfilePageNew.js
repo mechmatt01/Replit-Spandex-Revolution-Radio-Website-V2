@@ -132,7 +132,7 @@ export default function ProfilePage() {
             });
             if (updateResult) {
                 // Update local state
-                setUserProfile(prev => prev ? {
+                setUserProfile((prev) => prev ? {
                     ...prev,
                     firstName,
                     lastName,

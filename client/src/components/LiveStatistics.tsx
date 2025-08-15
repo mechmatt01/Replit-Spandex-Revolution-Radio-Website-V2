@@ -187,11 +187,11 @@ export default function LiveStatistics() {
           }}
         >
           <div 
-            className="w-2 h-2 rounded-full animate-pulse"
+            className="w-2 h-2 rounded-full animate-pulse flex-shrink-0"
             style={{ backgroundColor: '#ffffff' }}
           ></div>
           <span 
-            className="text-sm font-semibold"
+            className="text-sm font-semibold flex-shrink-0"
             style={{ color: '#ffffff' }}
           >
             LIVE
@@ -258,8 +258,7 @@ export default function LiveStatistics() {
           <div 
             className="w-2 h-2 rounded-full animate-pulse flex-shrink-0"
             style={{ 
-              backgroundColor: '#10B981',
-              alignSelf: 'center'
+              backgroundColor: '#10B981'
             }}
           ></div>
           <span className="leading-none">Real-time data • Updates every 30 seconds</span>

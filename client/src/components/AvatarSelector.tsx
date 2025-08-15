@@ -162,7 +162,7 @@ export default function AvatarSelector({
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { colors } = useTheme();
+  const { colors, isDarkMode } = useTheme();
   const { toast } = useToast();
 
   const handleFileUpload = async (
@@ -285,8 +285,15 @@ export default function AvatarSelector({
                 {FREE_AVATAR_OPTIONS.map((avatar) => (
                   <div
                     key={avatar.id}
-                    className={`relative cursor-pointer rounded-lg p-2 transition-all duration-200 hover:scale-105`}
-                    style={{}}
+                    className={`relative cursor-pointer rounded-lg p-2 transition-all duration-200 hover:scale-105 ${
+                      selectedAvatar === avatar.url ? "ring-2 ring-offset-2" : ""
+                    }`}
+                    style={{
+                      borderColor: selectedAvatar === avatar.url ? colors.primary : 'transparent',
+                      borderWidth: selectedAvatar === avatar.url ? '2px' : '0px',
+                      '--tw-ring-color': colors.primary,
+                      '--tw-ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
+                    } as React.CSSProperties}
                     onClick={() => setSelectedAvatar(avatar.url)}
                   >
                     <div className="aspect-square rounded-lg overflow-hidden bg-gray-800">
@@ -305,10 +312,13 @@ export default function AvatarSelector({
                     </p>
                     {selectedAvatar === avatar.url && (
                       <div
-                        className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
-                        style={{ backgroundColor: colors.primary }}
+                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-white"
+                        style={{ 
+                          backgroundColor: colors.primary,
+                          zIndex: 30
+                        }}
                       >
-                        <span className="text-xs text-white">✓</span>
+                        <span className="text-xs text-white font-bold">✓</span>
                       </div>
                     )}
                   </div>
@@ -328,9 +338,7 @@ export default function AvatarSelector({
                   <div
                     key={avatar.id}
                     className={`relative cursor-pointer rounded-lg border-2 p-2 transition-all duration-200 hover:scale-105 ${
-                      selectedAvatar === avatar.url
-                        ? "border-primary"
-                        : ""
+                      selectedAvatar === avatar.url ? "ring-2 ring-offset-2" : ""
                     }`}
                     style={{
                       borderColor:
@@ -338,7 +346,9 @@ export default function AvatarSelector({
                           ? colors.primary
                           : colors.accent,
                       background: `linear-gradient(135deg, ${colors.accent}20, ${colors.accent}10)`,
-                    }}
+                      '--tw-ring-color': colors.primary,
+                      '--tw-ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
+                    } as React.CSSProperties}
                     onClick={() => setSelectedAvatar(avatar.url)}
                   >
                     {/* Premium Crown Badge */}
@@ -378,10 +388,13 @@ export default function AvatarSelector({
                     
                     {selectedAvatar === avatar.url && (
                       <div
-                        className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
-                        style={{ backgroundColor: colors.primary }}
+                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-white"
+                        style={{ 
+                          backgroundColor: colors.primary,
+                          zIndex: 30
+                        }}
                       >
-                        <span className="text-xs text-white">✓</span>
+                        <span className="text-xs text-white font-bold">✓</span>
                       </div>
                     )}
                   </div>
@@ -438,7 +451,7 @@ export default function AvatarSelector({
                   variant="outline"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploading}
-                  className="mt-4"
+                  className="mt-4 focus:outline-none focus:ring-0"
                   style={{ borderColor: colors.primary, color: colors.primary }}
                 >
                   <Upload className="h-4 w-4 mr-2" />
@@ -466,6 +479,7 @@ export default function AvatarSelector({
             type="button"
             variant="ghost"
             onClick={onClose}
+            className="focus:outline-none focus:ring-0"
             style={{ color: colors.text }}
           >
             Cancel
@@ -475,7 +489,7 @@ export default function AvatarSelector({
             type="button"
             onClick={handleSave}
             disabled={!selectedAvatar || saving}
-            className="px-6"
+            className="px-6 focus:outline-none focus:ring-0"
             style={{
               backgroundColor: colors.primary,
               color: "white",

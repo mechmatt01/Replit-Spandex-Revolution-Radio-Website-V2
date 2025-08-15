@@ -31,8 +31,8 @@ export default function StatsAndLocations() {
                                 }, children: "Active Locations" })] }) }), _jsxs("div", { className: "hidden md:grid md:grid-cols-2 gap-8", children: [_jsx(LiveStatistics, {}), _jsx(ActiveLocations, {})] }), _jsxs("div", { className: "md:hidden", children: [activeTab === "stats" && _jsx(LiveStatistics, {}), activeTab === "locations" && _jsx(ActiveLocations, {})] }), _jsx("div", { className: "mt-16 text-center", children: _jsxs("div", { className: "inline-flex items-center space-x-2 px-4 py-2 rounded-full", style: {
                             backgroundColor: colors.cardBackground,
                             border: 'none' // Remove borders
-                        }, children: [_jsx("div", { className: "w-2 h-2 rounded-full animate-pulse flex-shrink-0", style: {
+                        }, children: [_jsx("div", { className: "w-2 h-2 rounded-full animate-pulse flex-shrink-0 relative", style: {
                                     backgroundColor: '#10B981',
-                                    alignSelf: 'center'
+                                    top: '0px' // Ensure perfect vertical alignment
                                 } }), _jsx("span", { className: "text-sm font-semibold leading-none", style: { color: colors.text }, children: "Real-time data \u2022 Updates every 30 seconds" })] }) })] }) }));
 }

@@ -614,7 +614,7 @@ export async function getActiveListenersFromFirestore() {
       // Firestore does not support querying for non-null objects, so filter after fetch
     );
     const querySnapshot = await getDocs(q);
-    const listeners = [];
+    const listeners: (Partial<UserProfile> & { id?: string })[] = [];
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       if (data.Location && typeof data.Location.lat === "number" && typeof data.Location.lng === "number") {

@@ -8,10 +8,13 @@ import {
   sendEmailVerification,
   sendPasswordResetEmail,
   updateProfile,
-  User as FirebaseUser
+  User as FirebaseUser,
+  connectAuthEmulator,
+  Auth
 } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { getFirestore, connectFirestoreEmulator, Firestore } from 'firebase/firestore';
+import { getStorage, connectStorageEmulator, FirebaseStorage } from 'firebase/storage';
+import { getPerformance, connectPerformanceEmulator, Performance } from 'firebase/performance';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -23,7 +26,7 @@ const firebaseConfig = {
   appId: "1:632263635377:web:2a9bd6118a6a2cb9d8cd90"
 };
 
-// Initialize Firebase only if not already initialized
+// Initialize Firebase
 let app;
 try {
   app = initializeApp(firebaseConfig);
@@ -32,14 +35,55 @@ try {
     // Firebase already initialized, get the existing app
     app = initializeApp(firebaseConfig, 'spandex-radio-app');
   } else {
+    console.error('Firebase initialization error:', error);
     throw error;
   }
 }
 
-// Initialize Firebase services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+// Initialize Firebase services with proper error handling
+let auth: Auth;
+let db: Firestore;
+let storage: FirebaseStorage;
+let performance: Performance;
+
+try {
+  // Initialize auth first
+  auth = getAuth(app);
+  
+  // Initialize other services
+  db = getFirestore(app);
+  
+  storage = getStorage(app);
+  
+  // Initialize Performance Monitoring
+  performance = getPerformance(app);
+  
+  // Connect to emulators in development if needed
+  if (import.meta.env.DEV && import.meta.env.VITE_USE_FIREBASE_EMULATORS === 'true') {
+    try {
+      connectAuthEmulator(auth, 'http://localhost:9099');
+      connectFirestoreEmulator(db, 'localhost', 8080);
+      connectStorageEmulator(storage, 'localhost', 9199);
+      // Note: Performance Monitoring doesn't have an emulator, so we skip it
+    } catch (emulatorError) {
+      console.warn('Failed to connect to Firebase emulators:', emulatorError);
+    }
+  }
+} catch (error) {
+  console.error('Error initializing Firebase services:', error);
+  throw error;
+}
+
+// Function to ensure Firebase is fully initialized
+export const ensureFirebaseInitialized = () => {
+  if (!auth || !db || !storage || !performance) {
+    throw new Error('Firebase services not properly initialized');
+  }
+  return { auth, db, storage, performance };
+};
+
+// Export the initialized services
+export { auth, db, storage, performance };
 
 // Google Auth Provider
 export const googleProvider = new GoogleAuthProvider();
@@ -106,9 +150,9 @@ export const getIdToken = async (): Promise<string | null> => {
 export const authenticatedApiCall = async (url: string, options: RequestInit = {}) => {
   const token = await getIdToken();
   
-  const headers = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
+    ...(options.headers as Record<string, string>),
   };
   
   if (token) {
@@ -127,24 +171,5 @@ export const authenticatedApiCall = async (url: string, options: RequestInit = {
   return response.json();
 };
 
-// Import and re-export functions from the existing Firebase configuration
-import { 
-  handleRedirectResult as handleRedirectResultOriginal,
-  createUserProfile as createUserProfileOriginal,
-  getUserProfile as getUserProfileOriginal,
-  updateUserProfile as updateUserProfileOriginal,
-  updateListeningStatus as updateListeningStatusOriginal,
-  updateUserLocation as updateUserLocationOriginal,
-  registerUser as registerUserOriginal,
-  getActiveListenersFromFirestore as getActiveListenersFromFirestoreOriginal
-} from './lib/firebase';
-
-// Re-export the functions with the same names
-export const handleRedirectResult = handleRedirectResultOriginal;
-export const createUserProfile = createUserProfileOriginal;
-export const getUserProfile = getUserProfileOriginal;
-export const updateUserProfile = updateUserProfileOriginal;
-export const updateListeningStatus = updateListeningStatusOriginal;
-export const updateUserLocation = updateUserLocationOriginal;
-export const registerUser = registerUserOriginal;
-export const getActiveListenersFromFirestore = getActiveListenersFromFirestoreOriginal; 
+// Note: Functions from lib/firebase are imported directly where needed
+// to avoid circular dependencies that can cause auth service initialization issues 

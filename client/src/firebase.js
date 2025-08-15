@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail, updateProfile } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail, updateProfile, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getStorage, connectStorageEmulator } from 'firebase/storage';
 // Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
@@ -11,7 +11,7 @@ const firebaseConfig = {
     messagingSenderId: "116886458372694977017",
     appId: "1:632263635377:web:2a9bd6118a6a2cb9d8cd90"
 };
-// Initialize Firebase only if not already initialized
+// Initialize Firebase
 let app;
 try {
     app = initializeApp(firebaseConfig);
@@ -22,13 +22,45 @@ catch (error) {
         app = initializeApp(firebaseConfig, 'spandex-radio-app');
     }
     else {
+        console.error('Firebase initialization error:', error);
         throw error;
     }
 }
-// Initialize Firebase services
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+// Initialize Firebase services with proper error handling
+let auth;
+let db;
+let storage;
+try {
+    // Initialize auth first
+    auth = getAuth(app);
+    // Initialize other services
+    db = getFirestore(app);
+    storage = getStorage(app);
+    // Connect to emulators in development if needed
+    if (import.meta.env.DEV && import.meta.env.VITE_USE_FIREBASE_EMULATORS === 'true') {
+        try {
+            connectAuthEmulator(auth, 'http://localhost:9099');
+            connectFirestoreEmulator(db, 'localhost', 8080);
+            connectStorageEmulator(storage, 'localhost', 9199);
+        }
+        catch (emulatorError) {
+            console.warn('Failed to connect to Firebase emulators:', emulatorError);
+        }
+    }
+}
+catch (error) {
+    console.error('Error initializing Firebase services:', error);
+    throw error;
+}
+// Function to ensure Firebase is fully initialized
+export const ensureFirebaseInitialized = () => {
+    if (!auth || !db || !storage) {
+        throw new Error('Firebase services not properly initialized');
+    }
+    return { auth, db, storage };
+};
+// Export the initialized services
+export { auth, db, storage };
 // Google Auth Provider
 export const googleProvider = new GoogleAuthProvider();
 // Authentication functions
@@ -104,14 +136,5 @@ export const authenticatedApiCall = async (url, options = {}) => {
     }
     return response.json();
 };
-// Import and re-export functions from the existing Firebase configuration
-import { handleRedirectResult as handleRedirectResultOriginal, createUserProfile as createUserProfileOriginal, getUserProfile as getUserProfileOriginal, updateUserProfile as updateUserProfileOriginal, updateListeningStatus as updateListeningStatusOriginal, updateUserLocation as updateUserLocationOriginal, registerUser as registerUserOriginal, getActiveListenersFromFirestore as getActiveListenersFromFirestoreOriginal } from './lib/firebase';
-// Re-export the functions with the same names
-export const handleRedirectResult = handleRedirectResultOriginal;
-export const createUserProfile = createUserProfileOriginal;
-export const getUserProfile = getUserProfileOriginal;
-export const updateUserProfile = updateUserProfileOriginal;
-export const updateListeningStatus = updateListeningStatusOriginal;
-export const updateUserLocation = updateUserLocationOriginal;
-export const registerUser = registerUserOriginal;
-export const getActiveListenersFromFirestore = getActiveListenersFromFirestoreOriginal;
+// Note: Functions from lib/firebase are imported directly where needed
+// to avoid circular dependencies that can cause auth service initialization issues 

@@ -16,6 +16,7 @@ import {
   subscribeToOnlineUsers,
   setUserOffline,
 } from "../lib/chat";
+import { measureAsyncOperation, measureSyncOperation } from '../lib/performance';
 
 interface LiveChatProps {
   isEnabled: boolean;
@@ -149,16 +150,21 @@ export default function LiveChat({
     };
 
     try {
-      // In a real app, this would send to your backend
-      setMessages(prev => [...prev, message]);
-      setNewMessage("");
-      
-      // Scroll to bottom
-      setTimeout(() => {
-        if (scrollAreaRef.current) {
-          scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
-        }
-      }, 100);
+      await measureAsyncOperation('live_chat_send_message', async () => {
+        // In a real app, this would send to your backend
+        setMessages(prev => [...prev, message]);
+        setNewMessage("");
+        
+        // Scroll to bottom
+        setTimeout(() => {
+          if (scrollAreaRef.current) {
+            scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+          }
+        }, 100);
+      }, { 
+        message_length: newMessage.trim().length,
+        user_premium: hasPremiumSubscription ? 1 : 0
+      });
     } catch (error) {
       console.error('Failed to send message:', error);
     }
@@ -205,7 +211,7 @@ export default function LiveChat({
             {/* Close Button */}
             <button
               onClick={() => setShowLoginPrompt(false)}
-              className="absolute right-2 top-2 rounded-full opacity-70 transition-all duration-200 hover:opacity-100 focus:outline-none disabled:pointer-events-none flex items-center justify-center cursor-pointer"
+              className="absolute right-2 top-2 rounded-full opacity-70 transition-all duration-200 hover:opacity-100 focus:outline-none focus:ring-0 disabled:pointer-events-none flex items-center justify-center cursor-pointer"
               style={{
                 color: colors.text,
                 backgroundColor: "transparent",
@@ -245,7 +251,7 @@ export default function LiveChat({
                 <div className="flex gap-2">
                   <Button
                     size="sm"
-                    className="flex-1 border-0"
+                    className="flex-1 border-0 focus:outline-none focus:ring-0"
                     style={{
                       backgroundColor: colors.primary,
                       color: colors.primaryText || "white",
@@ -270,7 +276,7 @@ export default function LiveChat({
                       });
                       window.dispatchEvent(event);
                     }}
-                    className="flex-1 border-0"
+                    className="flex-1 border-0 focus:outline-none focus:ring-0"
                     style={{
                       borderColor: colors.primary + "40",
                       color: colors.primary,
@@ -425,7 +431,7 @@ export default function LiveChat({
                       onClick={onToggle}
                       variant="ghost"
                       size="sm"
-                      className="p-1"
+                      className="p-1 focus:outline-none focus:ring-0"
                       style={{ color: colors.textSecondary }}
                     >
                       <MicOff className="h-4 w-4" />
@@ -435,7 +441,7 @@ export default function LiveChat({
                     onClick={() => setIsOpen(false)}
                     variant="ghost"
                     size="sm"
-                    className="p-1"
+                    className="p-1 focus:outline-none focus:ring-0"
                     style={{ color: colors.textSecondary }}
                   >
                     <X className="h-4 w-4" />
@@ -458,7 +464,7 @@ export default function LiveChat({
                     messages.map((msg) => (
                       <div key={msg.id} className="flex gap-2">
                         <Avatar className="w-8 h-8 flex-shrink-0">
-                          <AvatarImage src={msg.userProfile.avatar} />
+                          <AvatarImage src={msg.userProfile?.avatar} />
                           <AvatarFallback 
                             className="text-xs"
                             style={{ backgroundColor: colors.primary, color: colors.primaryText || 'white' }}
@@ -515,7 +521,7 @@ export default function LiveChat({
                   <Button
                     type="submit"
                     size="sm"
-                    className="px-3"
+                    className="px-3 focus:outline-none focus:ring-0"
                     style={{
                       backgroundColor: colors.primary,
                       color: colors.primaryText || "white",

@@ -61,7 +61,7 @@ export default function Footer() {
             </p>
             <button
               onClick={() => window.open('mailto:support@spandexsalvationradio.com', '_blank')}
-              className="text-sm transition-colors duration-300 block mt-2 text-left p-0 m-0 bg-transparent border-0 cursor-pointer"
+              className="text-sm transition-colors duration-300 block mt-2 text-left p-0 m-0 bg-transparent border-0 cursor-pointer focus:outline-none focus:ring-0"
               style={{ color: colors.textMuted }}
               onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
               onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
@@ -82,7 +82,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("hero")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent focus:outline-none focus:ring-0"
                   style={{ color: colors.textMuted }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
                   onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
@@ -93,7 +93,7 @@ export default function Footer() {
               <li>
                 <button
                   onClick={() => scrollToSection("schedule")}
-                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0"
+                  className="transition-colors text-left block p-0 m-0 bg-transparent border-0 focus:outline-none focus:ring-0"
                   style={{ color: colors.textMuted }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.primary}
                   onMouseLeave={(e) => e.currentTarget.style.color = colors.textMuted}
@@ -313,7 +313,7 @@ export default function Footer() {
             </a>
             <button
               onClick={() => setIsAdminPanelOpen(true)}
-              className="font-semibold transition-colors duration-300 bg-transparent border-0 p-0"
+              className="font-semibold transition-colors duration-300 bg-transparent border-0 p-0 focus:outline-none focus:ring-0"
               style={{ 
                 color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
               }}

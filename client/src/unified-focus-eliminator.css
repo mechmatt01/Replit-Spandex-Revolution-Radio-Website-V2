@@ -1,160 +1,78 @@
-/* UNIFIED FOCUS RING AND WHITE BORDER ELIMINATOR */
-/* This file consolidates all focus ring elimination and prevents white borders */
+/* UNIFIED FOCUS STYLE MANAGEMENT */
+/* This file manages focus styles while preserving accessibility */
 
-/* Maximum priority selectors to eliminate ALL focus rings and white borders */
-html body *,
-html body *::before,
-html body *::after,
-html body *:focus,
-html body *:focus-visible,
-html body *:focus-within,
-html body *:active,
-html body *:hover:focus,
-html body *:hover:active,
-html body button,
-html body button:focus,
-html body button:focus-visible,
-html body button:active,
-html body input,
-html body input:focus,
-html body input:focus-visible,
-html body input:active,
-html body select,
-html body select:focus,
-html body select:focus-visible,
-html body select:active,
-html body textarea,
-html body textarea:focus,
-html body textarea:focus-visible,
-html body textarea:active,
-html body [role="button"],
-html body [role="button"]:focus,
-html body [role="button"]:focus-visible,
-html body [role="button"]:active,
-html body [tabindex],
-html body [tabindex]:focus,
-html body [tabindex]:focus-visible,
-html body [tabindex]:active,
-html body audio,
-html body audio:focus,
-html body audio:focus-visible,
-html body audio:active,
-html body video,
-html body video:focus,
-html body video:focus-visible,
-html body video:active,
-html body a,
-html body a:focus,
-html body a:focus-visible,
-html body a:active,
-html body div,
-html body div:focus,
-html body div:focus-visible,
-html body div:active,
-html body span,
-html body span:focus,
-html body span:focus-visible,
-html body span:active {
-  /* Eliminate all focus rings and outlines */
-  outline: 0 !important;
+/* Remove default browser focus styles but allow custom ones */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
   outline: none !important;
-  outline-width: 0 !important;
-  outline-color: transparent !important;
-  outline-style: none !important;
-  outline-offset: 0 !important;
-  
-  /* Eliminate all focus shadows and rings */
+}
+
+/* Preserve focus styles for interactive elements */
+button:focus,
+button:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+[tabindex]:focus,
+[tabindex]:focus-visible,
+a:focus,
+a:focus-visible {
+  /* Allow these elements to have focus styles */
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
+}
+
+/* Remove unwanted white borders and rings for non-interactive elements */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
   box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  -moz-box-shadow: none !important;
   --tw-ring-shadow: 0 0 #0000 !important;
   --tw-ring-offset-shadow: 0 0 #0000 !important;
   --tw-ring-color: transparent !important;
   --tw-ring-opacity: 0 !important;
   --tw-ring-offset-width: 0px !important;
   --tw-ring-offset-color: transparent !important;
-  --ring: transparent !important;
-  
-  /* Prevent white borders on focus/active states */
-  border-color: transparent !important;
-  border-style: solid !important;
-  
-  /* Remove browser default appearances */
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
 }
 
 /* Special handling for enhanced-glow elements - preserve their borders */
-html body .enhanced-glow,
-html body .enhanced-glow:focus,
-html body .enhanced-glow:focus-visible,
-html body .enhanced-glow:active {
+.enhanced-glow,
+.enhanced-glow:focus,
+.enhanced-glow:focus-visible,
+.enhanced-glow:active {
   border: 2px solid var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
   box-shadow: var(--theme-border, rgba(192, 192, 192, 0.125)) 0px 8px 32px !important;
   outline: none !important;
 }
 
-/* Browser-specific overrides with maximum priority */
-html body *::-webkit-focus-ring-color {
+/* Browser-specific overrides */
+*::-webkit-focus-ring-color {
   color: transparent !important;
-  outline-color: transparent !important;
 }
 
-html body *::-moz-focus-inner {
+*::-moz-focus-inner {
   border: 0 !important;
   padding: 0 !important;
-  outline: none !important;
 }
 
-html body *:-moz-focusring {
+*:-moz-focusring {
   outline: none !important;
-  outline-color: transparent !important;
 }
 
 /* Edge specific */
-html body *::-ms-focus-inner {
+*::-ms-focus-inner {
   border: 0 !important;
-  outline: none !important;
-}
-
-/* Ensure no custom focus styles can override */
-html body .focus\:ring-0:focus,
-html body .focus\:ring-1:focus,
-html body .focus\:ring-2:focus,
-html body .focus\:ring-ring:focus,
-html body .focus-visible\:ring-0:focus-visible,
-html body .focus-visible\:ring-1:focus-visible,
-html body .focus-visible\:ring-2:focus-visible,
-html body .focus-visible\:ring-ring:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-  --tw-ring-shadow: none !important;
-  --tw-ring-offset-shadow: none !important;
-  border-color: transparent !important;
-}
-
-/* Prevent any white borders from appearing on click/focus */
-html body *:active,
-html body *:focus,
-html body *:focus-visible {
-  border-color: transparent !important;
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* Nuclear option: Override any remaining white borders */
-html body * {
-  border-color: transparent !important;
 }
 
 /* Preserve intentional borders for specific components */
-html body .card,
-html body .card:focus,
-html body .card:active,
-html body .live-chat-card,
-html body .live-chat-card:focus,
-html body .live-chat-card:active {
+.card,
+.card:focus,
+.card:active,
+.live-chat-card,
+.live-chat-card:focus,
+.live-chat-card:active {
   border: 1px solid var(--theme-border, rgba(192, 192, 192, 0.3)) !important;
   border-color: var(--theme-border, rgba(192, 192, 192, 0.3)) !important;
 }

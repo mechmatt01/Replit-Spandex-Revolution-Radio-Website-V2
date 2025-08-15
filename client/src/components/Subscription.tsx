@@ -1,439 +1,223 @@
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { Check, VolumeX, Users, Star } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { Card, CardContent } from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../components/ui/dialog";
-import { useToast } from "../hooks/use-toast";
-import { apiRequest } from "../lib/queryClient";
+import React, { useMemo, useCallback, useState } from "react";
+import { useScrollVelocity } from "../hooks/use-scroll-velocity";
+import { useIntersectionObserver } from "../hooks/use-intersection-observer";
 import { useTheme } from "../contexts/ThemeContext";
-import type { InsertSubscription } from "@shared/schema";
-
-const subscriptionTiers = [
-  {
-    name: "REBEL",
-    price: "$5.99",
-    color: "metal-orange",
-    popular: false,
-    features: [
-      "Ad-free streaming experience",
-      "High-quality audio (320kbps)",
-      "Monthly exclusive playlist",
-      "Priority song requests",
-    ],
-  },
-  {
-    name: "LEGEND",
-    price: "$12.99",
-    color: "metal-gold",
-    popular: true,
-    features: [
-      "Everything in Rebel tier",
-      "Exclusive live show access",
-      "Artist interview archives",
-      "VIP Discord community",
-      "Monthly exclusive merch discount",
-    ],
-  },
-  {
-    name: "ICON",
-    price: "$24.99",
-    color: "metal-red",
-    popular: false,
-    features: [
-      "Everything in Legend tier",
-      "One-on-one artist video calls",
-      "Exclusive concert tickets",
-      "Limited edition vinyl records",
-      "Personal song dedications",
-    ],
-  },
-];
 
 export default function Subscription() {
-  const [email, setEmail] = useState("");
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { toast } = useToast();
-  const { colors } = useTheme();
+  const { velocity } = useScrollVelocity();
+  const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
+  const { currentTheme, isDarkMode } = useTheme();
+  const [selectedPlan, setSelectedPlan] = useState('basic');
 
-  const subscribeMutation = useMutation({
-    mutationFn: async (data: InsertSubscription) => {
-      const response = await fetch("/api/subscriptions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to subscribe");
-      }
-      return response.json();
+  // Memoize expensive calculations
+  const scrollIntensity = useMemo(() => {
+    return Math.min(Math.abs(velocity) / 1000, 1);
+  }, [velocity]);
+
+  const parallaxOffset = useMemo(() => {
+    return scrollIntensity * 15;
+  }, [scrollIntensity]);
+
+  // Memoize theme-based styles
+  const themeStyles = useMemo(() => {
+    const baseStyles = {
+      background: isDarkMode ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.95)',
+      color: isDarkMode ? '#ffffff' : '#000000',
+      borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)',
+      cardBackground: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
+    };
+
+    // Add theme-specific accent colors
+    const accentColors = {
+      'classic-metal': isDarkMode ? '#ff6b35' : '#d32f2f',
+      'black-metal': isDarkMode ? '#c0c0c0' : '#666666',
+      'death-metal': isDarkMode ? '#8b0000' : '#d32f2f',
+      'power-metal': isDarkMode ? '#ffd700' : '#f57c00',
+      'doom-metal': isDarkMode ? '#8b0000' : '#d32f2f',
+      'thrash-metal': isDarkMode ? '#ff4500' : '#e65100',
+      'gothic-metal': isDarkMode ? '#800080' : '#7b1fa2',
+      'light-mode': isDarkMode ? '#2196f3' : '#1976d2',
+      'dark-mode': isDarkMode ? '#424242' : '#757575',
+      'glassmorphism-premium': isDarkMode ? '#00bcd4' : '#0097a7',
+      'neon-punk': isDarkMode ? '#00ff88' : '#00c853',
+      'cyber-goth': isDarkMode ? '#ff00ff' : '#9c27b0',
+      'industrial': isDarkMode ? '#ffd700' : '#f57c00',
+      'doom': isDarkMode ? '#8b0000' : '#d32f2f'
+    };
+
+    return {
+      ...baseStyles,
+      accentColor: accentColors[currentTheme] || accentColors['classic-metal']
+    };
+  }, [currentTheme, isDarkMode]);
+
+  // Memoize subscription plans to prevent unnecessary re-renders
+  const subscriptionPlans = useMemo(() => [
+    {
+      id: 'basic',
+      name: 'Basic Metalhead',
+      price: '$4.99',
+      period: 'month',
+      features: [
+        'Ad-free listening experience',
+        'High-quality audio streams',
+        'Access to basic playlists',
+        'Community chat access'
+      ],
+      popular: false
     },
-    onSuccess: () => {
-      toast({
-        title: "Subscription Successful!",
-        description: "Welcome to the Spandex Salvation family! 🤘",
-      });
-      setEmail("");
-      setIsDialogOpen(false);
+    {
+      id: 'premium',
+      name: 'Premium Rebel',
+      price: '$9.99',
+      period: 'month',
+      features: [
+        'Everything in Basic',
+        'Exclusive metal content',
+        'Priority customer support',
+        'Early access to new features',
+        'Custom playlist creation'
+      ],
+      popular: true
     },
-    onError: () => {
-      toast({
-        title: "Subscription Failed",
-        description: "Please try again or contact support.",
-        variant: "destructive",
-      });
-    },
-  });
+    {
+      id: 'legend',
+      name: 'Legend Package',
+      price: '$19.99',
+      period: 'month',
+      features: [
+        'Everything in Premium',
+        'VIP community access',
+        'Exclusive merchandise discounts',
+        'Direct artist interaction',
+        'Behind-the-scenes content'
+      ],
+      popular: false
+    }
+  ], []);
 
-  const handleSubscribe = (plan: string) => {
-    setSelectedPlan(plan);
-    setIsDialogOpen(true);
-  };
-
-  const handleConfirmSubscription = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedPlan || !email) return;
-
-    subscribeMutation.mutate({
-      userID: "temp-user-id", // TODO: Get actual user ID
-      packageType: selectedPlan as "Icon" | "Legend" | "Rebel",
-      amount: 0, // TODO: Get actual amount
-      currency: "USD",
-      status: "active",
-      startDate: new Date(),
-      endDate: new Date(),
-    });
-  };
-
-  return (
-    <section id="subscribe" className="py-20 bg-dark-surface">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="font-orbitron font-bold text-3xl md:text-4xl mb-4 text-black dark:text-white">
-            JOIN THE HAIRSPRAY REBELLION
-          </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Support the station and unlock exclusive content.
-          </p>
-        </div>
-
-        {/* Mobile Layout */}
-        <div className="md:hidden flex flex-col gap-8 max-w-sm mx-auto">
-          {subscriptionTiers.map((tier, index) => (
-            <div key={`mobile-${tier.name}`}>
-              <h3
-                className={`font-black text-white mb-4 text-center ${
-                  tier.color === "metal-gold"
-                    ? "text-metal-gold"
-                    : tier.color === "metal-red"
-                      ? "text-metal-red"
-                      : "text-white"
-                }`}
-                style={{ fontSize: "1.25rem" }}
-              >
-                {tier.name}
-              </h3>
-
-              <div
-                className="rounded-lg flex flex-col transition-all duration-300 relative"
-                style={{ 
-                  minHeight: "540px",
-                  border: tier.popular ? "3px solid #B56BFF" : "2px solid #374151",
-                  background: "rgba(31, 41, 55, 0.95)",
-                  boxShadow: tier.popular 
-                    ? "0 0 20px #B56BFF, inset 0 0 20px rgba(181, 107, 255, 0.2)"
-                    : "none",
-                  animation: tier.popular ? "legend-glow 4s linear infinite" : "none"
-                }}
-              >
-                {tier.popular && (
-                  <div
-                    className="absolute left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
-                    style={{
-                      top: "-12px", // Centered over top border
-                      background: "linear-gradient(135deg, #ff6b35, #f7931e)",
-                      color: "black",
-                      whiteSpace: "nowrap",
-                      fontSize: "11px",
-                      lineHeight: "1",
-                      zIndex: 10
-                    }}
-                  >
-                    MOST&nbsp;POPULAR
-                  </div>
-                )}
-
-                <div className="p-8 flex flex-col h-full justify-between">
-                  <div className="text-center mb-6">
-                    <div
-                      className={`text-3xl font-bold mb-1 ${
-                        tier.color === "metal-gold"
-                          ? "text-metal-gold"
-                          : tier.color === "metal-red"
-                            ? "text-metal-red"
-                            : "text-metal-orange"
-                      }`}
-                    >
-                      {tier.price}
-                    </div>
-                    <div className="text-gray-400 text-sm">per month</div>
-                  </div>
-
-                  <ul className={`space-y-3 ${tier.popular ? "mb-6" : "mb-8"} flex-grow`}>
-                    {tier.features.map((feature, featureIndex) => (
-                      <li
-                        key={featureIndex}
-                        className="flex items-center justify-center text-gray-300"
-                      >
-                        <Check className="w-5 h-5 text-metal-orange mr-3 flex-shrink-0" />
-                        <span className="text-sm text-center">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    onClick={() => handleSubscribe(tier.name)}
-                    className="w-full py-3 text-lg font-semibold"
-                    style={{
-                      background: `linear-gradient(135deg, ${
-                        tier.color === "metal-gold"
-                          ? "#f7931e, #ffcc00"
-                          : tier.color === "metal-red"
-                            ? "#dc2626, #ef4444"
-                            : "#ff6b35, #f7931e"
-                      })`,
-                      color: "white",
-                      border: "none",
-                    }}
-                  >
-                    CHOOSE {tier.name}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Desktop Layout with Overlapping */}
+  // Memoize the render function for subscription plans
+  const renderSubscriptionPlan = useCallback((plan: typeof subscriptionPlans[0]) => (
+    <div
+      key={plan.id}
+      className={`relative p-6 rounded-xl border-2 transition-all duration-300 hover:scale-105 cursor-pointer ${
+        selectedPlan === plan.id ? 'ring-4 ring-opacity-50' : ''
+      }`}
+      style={{
+        background: plan.id === selectedPlan ? themeStyles.cardBackground : themeStyles.background,
+        borderColor: plan.id === selectedPlan ? themeStyles.accentColor : themeStyles.borderColor,
+        transform: `translateY(${parallaxOffset}px)`
+      }}
+      onClick={() => setSelectedPlan(plan.id)}
+    >
+      {plan.popular && (
         <div 
-          className="hidden md:block relative mx-auto"
+          className="absolute -top-3 left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-sm font-bold"
           style={{ 
-            width: "100%", 
-            maxWidth: "1000px", 
-            height: "600px" 
+            background: themeStyles.accentColor,
+            color: isDarkMode ? '#000000' : '#ffffff'
           }}
         >
-          {subscriptionTiers.map((tier, index) => (
-            <div
-              key={`desktop-${tier.name}`}
-              className="absolute transition-all duration-300"
-              style={{
-                width: "320px",
-                left: index === 0 
-                  ? "calc(50% - 325px)" // Rebel: moved further left, only 5px overlap
-                  : index === 1 
-                  ? "calc(50% - 160px)" // Legend: center
-                  : "calc(50% + 5px)", // Icon: moved further right, only 5px overlap
-                top: index === 1 ? "20px" : "40px", // Legend higher than others
-                zIndex: index === 1 ? 50 : 10
-              }}
+          Most Popular
+        </div>
+      )}
+      
+      <h3 className="text-2xl font-bold mb-2" style={{ color: themeStyles.color }}>
+        {plan.name}
+      </h3>
+      
+      <div className="mb-4">
+        <span className="text-4xl font-bold" style={{ color: themeStyles.accentColor }}>
+          {plan.price}
+        </span>
+        <span className="text-lg" style={{ color: themeStyles.color }}>
+          /{plan.period}
+        </span>
+      </div>
+      
+      <ul className="space-y-2 mb-6">
+        {plan.features.map((feature, index) => (
+          <li key={index} className="flex items-center">
+            <span 
+              className="mr-2 text-lg"
+              style={{ color: themeStyles.accentColor }}
             >
-              <h3
-                className={`font-black text-white mb-4 text-center ${
-                  tier.color === "metal-gold"
-                    ? "text-metal-gold"
-                    : tier.color === "metal-red"
-                      ? "text-metal-red"
-                      : "text-white"
-                }`}
-                style={{ fontSize: "1.25rem" }}
-              >
-                {tier.name}
-              </h3>
+              ✓
+            </span>
+            <span style={{ color: themeStyles.color }}>
+              {feature}
+            </span>
+          </li>
+        ))}
+      </ul>
+      
+      <button
+        className={`w-full py-3 px-6 rounded-lg font-semibold transition-all duration-300 focus:outline-none focus:ring-0 ${
+          plan.id === selectedPlan 
+            ? 'scale-105 shadow-lg' 
+            : 'hover:scale-102'
+        }`}
+        style={{
+          background: plan.id === selectedPlan ? themeStyles.accentColor : themeStyles.borderColor,
+          color: plan.id === selectedPlan 
+            ? (isDarkMode ? '#000000' : '#ffffff')
+            : themeStyles.color
+        }}
+      >
+        {plan.id === selectedPlan ? 'Selected' : 'Choose Plan'}
+      </button>
+    </div>
+  ), [selectedPlan, themeStyles, parallaxOffset, isDarkMode]);
 
-              <div
-                className="rounded-lg flex flex-col transition-all duration-300 relative overflow-hidden"
-                style={{ 
-                  minHeight: "540px",
-                  border: tier.popular ? "3px solid #B56BFF" : "2px solid #374151",
-                  background: "rgba(31, 41, 55, 0.95)",
-                  boxShadow: tier.popular 
-                    ? "0 0 20px #B56BFF, inset 0 0 20px rgba(181, 107, 255, 0.2)"
-                    : "none",
-                  animation: tier.popular ? "legend-glow 4s linear infinite" : "none"
-                }}
-              >
-                {tier.popular && (
-                  <>
-                    <div
-                      className="absolute left-1/2 transform -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold"
-                      style={{
-                        top: "-12px", // Centered over top border
-                        background: "linear-gradient(135deg, #ff6b35, #f7931e)",
-                        color: "black",
-                        whiteSpace: "nowrap",
-                        fontSize: "11px",
-                        lineHeight: "1",
-                        zIndex: 10
-                      }}
-                    >
-                      MOST&nbsp;POPULAR
-                    </div>
-                    
-                    {/* Animated gradient border overlay */}
-                    <div
-                      className="absolute"
-                      style={{
-                        top: "-3px",
-                        left: "-3px",
-                        right: "-3px",
-                        bottom: "-3px",
-                        background: "linear-gradient(45deg, #B56BFF, #FF50C3, #FFD700, #FF6B35, #B56BFF)",
-                        backgroundSize: "400% 400%",
-                        animation: "gradient-rotate 4s linear infinite",
-                        zIndex: -1,
-                        borderRadius: "inherit"
-                      }}
-                    />
-                  </>
-                )}
-
-                <div className="p-8 flex flex-col h-full justify-between">
-                  <div className="text-center mb-6">
-                    <div
-                      className={`text-3xl font-bold mb-1 ${
-                        tier.color === "metal-gold"
-                          ? "text-metal-gold"
-                          : tier.color === "metal-red"
-                            ? "text-metal-red"
-                            : "text-metal-orange"
-                      }`}
-                    >
-                      {tier.price}
-                    </div>
-                    <div className="text-gray-400 text-sm">per month</div>
-                  </div>
-
-                  <ul className={`space-y-3 ${tier.popular ? "mb-6" : "mb-8"} flex-grow`}>
-                    {tier.features.map((feature, featureIndex) => (
-                      <li
-                        key={featureIndex}
-                        className="flex items-start text-gray-300"
-                      >
-                        <Check className="w-5 h-5 text-metal-orange mr-3 mt-0.5 flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    onClick={() => handleSubscribe(tier.name)}
-                    className="w-full py-3 text-lg font-semibold"
-                    style={{
-                      background: `linear-gradient(135deg, ${
-                        tier.color === "metal-gold"
-                          ? "#f7931e, #ffcc00"
-                          : tier.color === "metal-red"
-                            ? "#dc2626, #ef4444"
-                            : "#ff6b35, #f7931e"
-                      })`,
-                      color: "white",
-                      border: "none",
-                    }}
-                  >
-                    CHOOSE {tier.name}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
+  return (
+    <section
+      ref={ref}
+      className="py-16 px-4 min-h-screen flex items-center justify-center"
+      style={{
+        background: `linear-gradient(135deg, ${themeStyles.background}, ${themeStyles.background}dd)`,
+        transform: `translateY(${parallaxOffset}px)`
+      }}
+    >
+      <div className="max-w-6xl mx-auto text-center">
+        <h2 
+          className="text-5xl md:text-7xl font-bold mb-8"
+          style={{ color: themeStyles.accentColor }}
+        >
+          Choose Your Metal Path
+        </h2>
+        
+        <p className="text-xl mb-12 max-w-3xl mx-auto" style={{ color: themeStyles.color }}>
+          Join the Spandex Salvation Radio family and unlock the ultimate metal experience. 
+          Choose the plan that fits your metal lifestyle.
+        </p>
+        
+        <div className="grid md:grid-cols-3 gap-8 mb-12">
+          {subscriptionPlans.map(renderSubscriptionPlan)}
         </div>
         
-        <div className="mb-16"></div>
-
-        {/* Subscription Benefits */}
-        <div className="text-center">
-          <h3 className="font-bold text-2xl mb-8 text-white">Why Subscribe?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-metal-orange/20 rounded-full flex items-center justify-center mb-4">
-                <VolumeX className="text-metal-orange h-8 w-8" />
-              </div>
-              <h4 className="font-semibold text-lg mb-2">
-                Premium Audio Quality
-              </h4>
-              <p className="text-gray-400 text-center">
-                Experience crystal-clear metal with our high-bitrate streaming.
-              </p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-metal-gold/20 rounded-full flex items-center justify-center mb-4">
-                <Users className="text-metal-gold h-8 w-8" />
-              </div>
-              <h4 className="font-semibold text-lg mb-2">
-                Exclusive Community
-              </h4>
-              <p className="text-gray-400 text-center">
-                Connect with fellow metalheads in our VIP community spaces.
-              </p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="w-16 h-16 bg-metal-red/20 rounded-full flex items-center justify-center mb-4">
-                <Star className="text-metal-red h-8 w-8" />
-              </div>
-              <h4 className="font-semibold text-lg mb-2">Exclusive Content</h4>
-              <p className="text-gray-400 text-center">
-                Access rare tracks, interviews, and behind-the-scenes content.
-              </p>
-            </div>
-          </div>
+        <div className="p-8 rounded-xl border backdrop-blur-md transition-all duration-500 hover:scale-105"
+             style={{
+               background: themeStyles.cardBackground,
+               borderColor: themeStyles.borderColor,
+               transform: `translateY(${parallaxOffset * 1.5}px)`
+             }}>
+          <p className="text-xl font-semibold mb-4" style={{ color: themeStyles.accentColor }}>
+            Ready to Rock?
+          </p>
+          <p className="text-lg mb-6" style={{ color: themeStyles.color }}>
+            Start your metal journey today and never miss a beat of the heaviest music on the planet.
+          </p>
+          <button
+            className="px-8 py-4 rounded-lg font-bold text-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-0"
+            style={{
+              background: themeStyles.accentColor,
+              color: isDarkMode ? '#000000' : '#ffffff'
+            }}
+          >
+            Get Started Now
+          </button>
         </div>
       </div>
-
-      {/* Subscription Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-dark-surface border-dark-border">
-          <DialogHeader>
-            <DialogTitle className="text-white">
-              Subscribe to {selectedPlan} Plan
-            </DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleConfirmSubscription} className="space-y-4">
-            <div>
-              <Label htmlFor="email" className="text-white">
-                Email Address
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="bg-dark-bg border-dark-border text-white"
-                required
-              />
-            </div>
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={subscribeMutation.isPending}
-            >
-              {subscribeMutation.isPending ? "Processing..." : "Subscribe Now"}
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
     </section>
   );
 }

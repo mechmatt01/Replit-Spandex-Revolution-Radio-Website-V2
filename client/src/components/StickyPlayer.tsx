@@ -3,7 +3,7 @@ import { Volume2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useRadio } from "../contexts/RadioContext";
 import { useTheme } from "../contexts/ThemeContext";
-import { useAdaptiveTheme } from "../hooks/useAdaptiveTheme";
+
 import ScrollingText from "../components/ScrollingText";
 import InteractiveAlbumArt from "../components/InteractiveAlbumArt";
 import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
@@ -21,18 +21,15 @@ export default function StickyPlayer() {
     toggleMute,
     isAdPlaying,
     adInfo,
+    error,
   } = useRadio();
 
   const { user, updateListeningStatus } = useFirebaseAuth();
   const { getGradient, getColors, currentTheme } = useTheme();
   const colors = getColors();
   
-  // Adaptive theme for current track artwork
-  const { adaptiveTheme, isAnalyzing } = useAdaptiveTheme(
-    currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-      ? currentTrack.artwork 
-      : undefined
-  );
+    // Get theme context for styling
+
   const [isVisible, setIsVisible] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -85,17 +82,11 @@ export default function StickyPlayer() {
       style={{ 
         width: "320px", 
         maxWidth: "calc(100vw - 32px)",
-        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.20)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.12)')})`
-          : 'rgba(0, 0, 0, 0.12)',
+        background: 'rgba(0, 0, 0, 0.12)',
         backdropFilter: 'blur(32px) saturate(220%)',
         WebkitBackdropFilter: 'blur(32px) saturate(220%)',
-        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
-          ? `0 14px 48px ${adaptiveTheme.accentColor}25, 0 0 24px ${adaptiveTheme.accentColor}12`
-          : `0 14px 48px ${colors.primary}25, 0 0 24px ${colors.primary}12`,
-        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-          ? adaptiveTheme.textColor 
-          : colors.text,
+        boxShadow: `0 14px 48px ${colors.primary}25, 0 0 24px ${colors.primary}12`,
+        color: colors.text,
         border: 'none',
         outline: 'none'
       }}
@@ -118,6 +109,32 @@ export default function StickyPlayer() {
 
           {/* Track Info with 60% width of player box */}
           <div className="min-w-0 ml-3 focus-safe-area" style={{ width: "60%" }}>
+            {/* Error Display */}
+            {error && (
+              <div className="mb-1 flex justify-start items-center space-x-2">
+                <div
+                  className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-bold text-white animate-pulse"
+                  style={{
+                    background: `linear-gradient(45deg, #ef4444, #dc2626)`,
+                    boxShadow: `0 1px 4px #ef444460`,
+                  }}
+                >
+                  <span className="mr-1 text-xs">⚠️</span>
+                  ERROR
+                  <span className="ml-1 opacity-80 text-xs">
+                    • {error.length > 20 ? error.substring(0, 20) + '...' : error}
+                  </span>
+                </div>
+                <button
+                  onClick={handlePlayPause}
+                  className="px-2 py-0.5 text-xs font-medium rounded bg-red-600 hover:bg-red-700 text-white transition-colors focus:outline-none focus:ring-0"
+                  title="Retry playback"
+                >
+                  RETRY
+                </button>
+              </div>
+            )}
+            
             {/* Ad Detection Badge */}
             {isAdPlaying && (
               <div className="mb-1 flex justify-start">
@@ -174,10 +191,10 @@ export default function StickyPlayer() {
             <div className="flex items-center justify-between mt-1">
               <div className="flex items-center space-x-1">
                 {/* LIVE/AD indicator */}
-                <div className={`w-2 h-2 rounded-full animate-pulse ${
+                <div className={`w-2 h-2 rounded-full animate-pulse relative flex-shrink-0 ${
                   isAdPlaying ? 'bg-red-600' : 'bg-red-500'
-                }`}></div>
-                <span className={`text-xs font-medium ${
+                }`} style={{ top: '0px' }}></div>
+                <span className={`text-xs font-medium flex-shrink-0 ${
                   isAdPlaying ? 'text-red-600' : 'text-red-500'
                 }`}>
                   {isAdPlaying ? 'AD' : 'LIVE'}
@@ -188,7 +205,7 @@ export default function StickyPlayer() {
               <div className="hidden sm:flex items-center justify-center flex-1 mx-2 focus-safe-area">
                 <div className="flex items-center space-x-2 focus-safe-area">
                   <Volume2 
-                    className="h-3 w-3 cursor-pointer transition-colors" 
+                    className="h-3 w-3 cursor-pointer transition-colors flex-shrink-0 focus:outline-none focus:ring-0" 
                     style={{
                       color: isMuted 
                         ? '#ef4444'  // Red for muted
@@ -211,9 +228,16 @@ export default function StickyPlayer() {
                           : '#9ca3af';
                     }}
                     onClick={toggleMute}
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        toggleMute();
+                      }
+                    }}
                   />
                   <div 
-                    className="w-16 h-1 rounded-full relative"
+                    className="w-16 h-1 rounded-full relative flex-shrink-0"
                     style={{
                       backgroundColor: currentTheme === 'light-mode' 
                         ? '#d1d5db'  // Light gray for light mode
@@ -233,13 +257,17 @@ export default function StickyPlayer() {
                       max="100"
                       value={(isMuted ? 0 : volume) * 100}
                       onChange={handleVolumeChange}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer focus:outline-none focus:ring-0"
                       aria-label="Volume control"
                       title="Adjust volume"
+                      style={{
+                        outline: 'none',
+                        border: 'none'
+                      }}
                     />
                   </div>
                   <span 
-                    className="text-xs font-medium min-w-[20px] text-center"
+                    className="text-xs font-medium min-w-[20px] text-center flex-shrink-0"
                     style={{
                       color: currentTheme === 'light-mode' 
                         ? '#6b7280'  // Gray for light mode
@@ -260,9 +288,7 @@ export default function StickyPlayer() {
                 <div 
                   className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin"
                   style={{ 
-                    borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-                      ? adaptiveTheme.accentColor
-                      : colors.primary, 
+                    borderColor: colors.primary, 
                     borderTopColor: 'transparent' 
                   }}
                 ></div>
@@ -270,7 +296,7 @@ export default function StickyPlayer() {
             )}
             <Button
               onClick={handlePlayPause}
-              className="text-white w-10 h-10 rounded-full   flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl border-0"
+              className="text-white w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl border-0 focus:outline-none focus:ring-0"
               style={{
                 background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
                 boxShadow: `0 4px 20px ${colors.primary}60`,
@@ -278,35 +304,66 @@ export default function StickyPlayer() {
                 border: "none",
                 outline: "none",
                 '--tw-ring-color': colors.primary,
+                transform: 'scale(1)',
+                transition: 'all 0.3s ease'
               } as React.CSSProperties & { '--tw-ring-color': string }}
-              aria-label={isPlaying ? "Pause radio stream" : "Play radio stream"}
+              aria-label={isLoading ? "Connecting..." : isPlaying ? "Pause radio stream" : "Play radio stream"}
               disabled={isLoading}
+              onMouseEnter={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.transform = 'scale(1.1)';
+                  e.currentTarget.style.boxShadow = `0 6px 24px ${colors.primary}80`;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = `0 4px 20px ${colors.primary}60`;
+                }
+              }}
+              onMouseDown={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.transform = 'scale(0.95)';
+                }
+              }}
+              onMouseUp={(e) => {
+                if (!isLoading) {
+                  e.currentTarget.style.transform = 'scale(1.1)';
+                }
+              }}
             >
               {!isLoading && (
                 <>
                   {isPlaying ? (
                     <svg
-                      className="h-15 w-15"
+                      className="h-6 w-6"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
                       <rect
-                        x="4"
+                        x="6"
                         y="4"
-                        width="16"
+                        width="4"
                         height="16"
-                        rx="4"
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
+                        rx="1"
+                        fill="currentColor"
+                      />
+                      <rect
+                        x="14"
+                        y="4"
+                        width="4"
+                        height="16"
+                        rx="1"
+                        fill="currentColor"
                       />
                     </svg>
                   ) : (
                     <svg
-                      className="h-15 w-15"
+                      className="h-6 w-6"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                     >
-                      <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" />
+                      <polygon points="8 5 20 12 8 19 8 5" />
                     </svg>
                   )}
                 </>

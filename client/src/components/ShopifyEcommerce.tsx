@@ -428,21 +428,21 @@ function ProductCard({
               size="sm"
               variant="secondary"
               onClick={onViewDetails}
-              className="bg-white/90 text-black hover:bg-white"
+              className="bg-white/90 text-black hover:bg-white focus:outline-none focus:ring-0"
             >
               <Eye className="h-4 w-4" />
             </Button>
             <Button
               size="sm"
               variant="secondary"
-              className="bg-white/90 text-black hover:bg-white"
+              className="bg-white/90 text-black hover:bg-white focus:outline-none focus:ring-0"
             >
               <Heart className="h-4 w-4" />
             </Button>
             <Button
               size="sm"
               variant="secondary"
-              className="bg-white/90 text-black hover:bg-white"
+              className="bg-white/90 text-black hover:bg-white focus:outline-none focus:ring-0"
             >
               <Share className="h-4 w-4" />
             </Button>
@@ -557,7 +557,7 @@ function ProductCard({
           <Button
             onClick={() => console.log('Buy now:', product, selectedVariant)}
             disabled={!product.inStock || !selectedVariant.available}
-            className="w-full font-bold transition-all duration-300"
+            className="w-full font-bold transition-all duration-300 focus:outline-none focus:ring-0"
             style={{
               backgroundColor: colors.primary,
               color: colors.primaryText || "white",
@@ -720,7 +720,7 @@ function ProductModal({ product, onClose, onAddToCart }: ProductModalProps) {
                   onClose();
                 }}
                 disabled={!product.inStock || !selectedVariant.available}
-                className="w-full bg-metal-orange hover:bg-orange-600 text-white font-bold"
+                className="w-full bg-metal-orange hover:bg-orange-600 text-white font-bold focus:outline-none focus:ring-0"
               >
                 <ShoppingCart className="mr-2 h-4 w-4" />
                 Buy Now - ${(selectedVariant.price * quantity).toFixed(2)}

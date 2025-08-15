@@ -3,7 +3,6 @@ import { VolumeX, Radio as RadioIcon, ChevronDown } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useRadio } from "../contexts/RadioContext";
 import { useTheme } from "../contexts/ThemeContext";
-import { useAdaptiveTheme } from "../hooks/useAdaptiveTheme";
 import ScrollingText from "../components/ScrollingText";
 import InteractiveAlbumArt from "../components/InteractiveAlbumArt";
 import { useState, useRef, useEffect } from "react";
@@ -83,10 +82,6 @@ export default function RadioCoPlayer() {
     const { user, updateListeningStatus } = useFirebaseAuth();
     const { getColors, getGradient, currentTheme } = useTheme();
     const colors = getColors();
-    // Adaptive theme for current track artwork
-    const { adaptiveTheme, isAnalyzing } = useAdaptiveTheme(currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
-        ? currentTrack.artwork
-        : undefined);
     const [isStationDropdownOpen, setIsStationDropdownOpen] = useState(false);
     const [selectedStation, setSelectedStation] = useState(radioStations[0]);
     const [isVolumeSliderVisible, setIsVolumeSliderVisible] = useState(false);
@@ -171,17 +166,13 @@ export default function RadioCoPlayer() {
         setTimeout(() => setIsTransitioning(false), 500);
     };
     return (_jsxs("section", { className: "backdrop-blur-md rounded-2xl shadow-xl transition-all duration-1000 ease-in-out mx-auto overflow-visible", role: "region", "aria-label": "Radio player controls", style: {
-            background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
-                ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.25)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.15)')})`
+            background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
+                ? `linear-gradient(135deg, ${colors.primary}40, ${colors.secondary}20)`
                 : 'rgba(255, 255, 255, 0.12)',
             backdropFilter: 'blur(40px) saturate(250%)',
             WebkitBackdropFilter: 'blur(40px) saturate(250%)',
-            boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                ? `0 16px 64px ${adaptiveTheme.accentColor}30, inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 32px ${adaptiveTheme.accentColor}15`
-                : `0 16px 64px ${colors.primary}30, inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 32px ${colors.primary}15`,
-            color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
-                ? adaptiveTheme.textColor
-                : colors.text,
+            boxShadow: `0 16px 64px ${colors.primary}30, inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 32px ${colors.primary}15`,
+            color: colors.text,
             border: 'none',
             // Fixed stable width - no more responsive changes that cause size fluctuations
             width: 'clamp(400px, 30vw, 600px)',
@@ -204,20 +195,14 @@ export default function RadioCoPlayer() {
                                         opacity: 0.6,
                                         color: colors.primary,
                                     } })] }), isStationDropdownOpen && (_jsx("div", { className: "absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto shadow-xl z-20 scrollbar-thin", style: {
-                                background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
-                                    ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.98)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.95)')})`
-                                    : 'rgba(0, 0, 0, 0.98)',
+                                background: 'rgba(0, 0, 0, 0.98)',
                                 backdropFilter: 'blur(32px) saturate(220%)',
                                 WebkitBackdropFilter: 'blur(32px) saturate(220%)',
-                                borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                                    ? adaptiveTheme.accentColor + "60"
-                                    : colors.primary + "60",
+                                borderColor: colors.primary + "60",
                                 borderRadius: "12px",
                                 minWidth: "300px",
                                 border: '2px solid',
-                                boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                                    ? `0 12px 48px ${adaptiveTheme.accentColor}30, 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 24px rgba(0, 0, 0, 0.3)`
-                                    : `0 12px 48px ${colors.primary}30, 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 24px rgba(0, 0, 0, 0.3)`,
+                                boxShadow: `0 12px 48px ${colors.primary}30, 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 24px rgba(0, 0, 0, 0.3)`,
                             }, children: _jsxs("div", { className: "p-2", children: [selectedStation && (_jsx("button", { onClick: () => handleStationChange(selectedStation), className: "w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none", style: {
                                             background: `linear-gradient(135deg, ${colors.primary}40, ${colors.secondary}25)`,
                                             border: `1px solid ${colors.primary}80`,
@@ -275,7 +260,7 @@ export default function RadioCoPlayer() {
                                     : "albumReveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                         }, children: _jsx(InteractiveAlbumArt, { artwork: isAdPlaying && adInfo.artwork ? adInfo.artwork : currentTrack.artwork, title: currentTrack.title, artist: currentTrack.artist, size: "lg", isAd: isAdPlaying }) }), _jsx("div", { className: "absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2", children: _jsxs("div", { className: `flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${isAdPlaying
                                 ? 'bg-red-600 text-white'
-                                : 'bg-red-500 text-white'}`, children: [_jsx("div", { className: "w-1 h-1 bg-white rounded-full animate-pulse opacity-90" }), _jsx("span", { className: "opacity-90", children: isAdPlaying ? 'AD' : 'LIVE' })] }) })] }), _jsx("div", { className: "text-center mb-6", children: _jsxs("div", { className: "text-center transition-all duration-1000", style: {
+                                : 'bg-red-500 text-white'}`, children: [_jsx("div", { className: "w-1 h-1 bg-white rounded-full animate-pulse opacity-90 relative", style: { top: '0px' } }), _jsx("span", { className: "opacity-90", children: isAdPlaying ? 'AD' : 'LIVE' })] }) })] }), _jsx("div", { className: "text-center mb-6", children: _jsxs("div", { className: "text-center transition-all duration-1000", style: {
                         opacity: isTransitioning ? 0.3 : 1,
                         transform: isTransitioning ? "scale(0.95)" : "scale(1)",
                         filter: isTransitioning ? "blur(2px)" : "blur(0px)",
@@ -285,7 +270,7 @@ export default function RadioCoPlayer() {
                     }, children: [isAdPlaying && (_jsx("div", { className: "mb-3 flex justify-center", children: _jsxs("div", { className: "inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white animate-pulse", style: {
                                     background: `linear-gradient(45deg, #ff4444, #cc0000)`,
                                     boxShadow: `0 2px 8px #ff444460`,
-                                }, children: [_jsx("span", { className: "mr-1", children: "\uD83D\uDCE2" }), "ADVERTISEMENT", adInfo.company && (_jsxs("span", { className: "ml-1 opacity-80", children: ["\u2022 ", adInfo.company] }))] }) })), currentTrack.lastUpdated && (_jsx("div", { className: "mb-2 flex justify-center", children: _jsxs("div", { className: "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-green-400 bg-green-400/10", children: [_jsx("div", { className: "w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse" }), "LIVE"] }) })), _jsx("div", { className: "flex justify-center mb-2 w-full overflow-hidden", children: _jsx("div", { className: `w-full max-w-[90%] ${isTransitioning ? "song-change-shimmer" : ""}`, children: _jsx(ScrollingText, { text: currentTrack.title, className: `font-black whitespace-nowrap text-center`, style: {
+                                }, children: [_jsx("span", { className: "mr-1", children: "\uD83D\uDCE2" }), "ADVERTISEMENT", adInfo.company && (_jsxs("span", { className: "ml-1 opacity-80", children: ["\u2022 ", adInfo.company] }))] }) })), currentTrack.lastUpdated && (_jsx("div", { className: "mb-2 flex justify-center", children: _jsxs("div", { className: "inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-green-400 bg-green-400/10", children: [_jsx("div", { className: "w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse relative", style: { top: '0px' } }), "LIVE"] }) })), _jsx("div", { className: "flex justify-center mb-2 w-full overflow-hidden", children: _jsx("div", { className: `w-full max-w-[90%] ${isTransitioning ? "song-change-shimmer" : ""}`, children: _jsx(ScrollingText, { text: currentTrack.title, className: `font-black whitespace-nowrap text-center`, style: {
                                         fontSize: "28px",
                                         lineHeight: "1",
                                         color: isAdPlaying ? '#f87171' : colors.text,
@@ -317,7 +302,7 @@ export default function RadioCoPlayer() {
                                     borderRightColor: colors.primary,
                                     borderBottomColor: colors.primary,
                                     borderTopColor: 'transparent'
-                                } })) : isPlaying ? (_jsxs("svg", { className: "h-8 w-8", fill: "#ffffff", viewBox: "0 0 24 24", children: [_jsx("rect", { x: "6", y: "4", width: "4", height: "16", rx: "1", fill: "#ffffff" }), _jsx("rect", { x: "14", y: "4", width: "4", height: "16", rx: "1", fill: "#ffffff" })] })) : (_jsx("svg", { className: "h-8 w-8", fill: "#ffffff", viewBox: "0 0 24 24", style: {
+                                } })) : isPlaying ? (_jsxs("svg", { className: "h-10 w-10", fill: "#ffffff", viewBox: "0 0 24 24", children: [_jsx("rect", { x: "6", y: "4", width: "4", height: "16", rx: "1", fill: "#ffffff" }), _jsx("rect", { x: "14", y: "4", width: "4", height: "16", rx: "1", fill: "#ffffff" })] })) : (_jsx("svg", { className: "h-10 w-10", fill: "#ffffff", viewBox: "0 0 24 24", style: {
                                     animation: "pulse 2s ease-in-out infinite",
                                 }, children: _jsx("path", { d: "M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z", fill: "#ffffff" }) })) }) }), isPlaying && (_jsx("div", { className: "relative transition-all duration-500 ease-in-out transform opacity-100 translate-y-0 scale-100", ref: volumeButtonRef, onMouseEnter: handleVolumeAreaMouseEnter, onMouseLeave: handleVolumeAreaMouseLeave, children: _jsxs("div", { className: "relative flex items-center justify-center pb-16", children: [_jsx(Button, { onClick: toggleMute, variant: "ghost", size: "sm", className: "rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105", style: {
                                         color: isMuted
@@ -345,12 +330,12 @@ export default function RadioCoPlayer() {
                                                 : currentTheme === 'light-mode'
                                                     ? "rgba(0, 0, 0, 0.05)"
                                                     : "rgba(255, 255, 255, 0.05)";
-                                    }, "aria-label": isMuted ? "Unmute" : "Mute", children: isMuted || volume === 0 ? (_jsx("div", { className: "transition-all duration-300 ease-in-out", children: _jsx(VolumeX, { className: "w-10 h-10" }) })) : (_jsx("div", { className: "relative flex items-center justify-center transition-all duration-300 ease-in-out", children: _jsxs("svg", { width: "48", height: "48", viewBox: "0 0 24 24", fill: "none", className: "relative", children: [_jsx("path", { d: "M11 5L6 9H2v6h4l5 4V5z", fill: "currentColor", strokeLinejoin: "round", strokeLinecap: "round" }), _jsx("path", { d: "M15.54 8.46a5 5 0 0 1 0 7.07", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round", className: "animate-pulse", style: {
+                                    }, "aria-label": isMuted ? "Unmute" : "Mute", children: isMuted || volume === 0 ? (_jsx("div", { className: "transition-all duration-300 ease-in-out", children: _jsx(VolumeX, { className: "w-10 h-10" }) })) : (_jsx("div", { className: "relative flex items-center justify-center transition-all duration-300 ease-in-out", children: _jsxs("svg", { width: "40", height: "40", viewBox: "0 0 24 24", fill: "none", className: "relative", children: [_jsx("path", { d: "M11 5L6 9H2v6h4l5 4V5z", fill: "currentColor", strokeLinejoin: "round", strokeLinecap: "round" }), _jsx("path", { d: "M15.54 8.46a5 5 0 0 1 0 7.07", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round", className: "animate-pulse", style: {
                                                         animation: "pulse 1.5s ease-in-out infinite",
                                                         animationDelay: "0s",
                                                     } }), _jsx("path", { d: "M19.07 4.93a10 10 0 0 1 0 14.14", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round", className: "animate-pulse", style: {
                                                         animation: "pulse 1.5s ease-in-out infinite",
-                                                        animationDelay: "0.3s",
+                                                        animationDelay: "0.6s",
                                                     } })] }) })) }), _jsx("div", { ref: volumeSliderRef, className: `absolute top-full left-1/2 -translate-x-1/2 mt-2 z-50 ${isVolumeSliderVisible
                                         ? "pointer-events-auto"
                                         : "pointer-events-none"}`, style: {

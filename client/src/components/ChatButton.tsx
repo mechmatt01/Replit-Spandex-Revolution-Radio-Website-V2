@@ -28,7 +28,7 @@ export default function ChatButton({ onChatClick, onlineCount = 0 }: ChatButtonP
       onClick={onChatClick}
       size="sm"
       variant="ghost"
-      className="relative flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-200 hover:scale-105"
+      className="relative flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-0"
       style={{
         color: colors.text,
         backgroundColor: 'transparent',

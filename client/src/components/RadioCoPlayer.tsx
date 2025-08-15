@@ -11,13 +11,14 @@ import { Button } from "../components/ui/button";
 import { Slider } from "../components/ui/slider";
 import { useRadio } from "../contexts/RadioContext";
 import { useTheme } from "../contexts/ThemeContext";
-import { useAdaptiveTheme } from "../hooks/useAdaptiveTheme";
+
 import ThemedMusicLogo from "../components/ThemedMusicLogo";
 import ScrollingText from "../components/ScrollingText";
 import InteractiveAlbumArt from "../components/InteractiveAlbumArt";
 import { AdLogo } from "../components/AdLogo";
 import { useState, useRef, useEffect } from "react";
 import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
+import { measureAsyncOperation, measureSyncOperation } from '../lib/performance';
 
 // RadioStation interface moved to RadioContext
 interface RadioStation {
@@ -124,12 +125,7 @@ export default function RadioCoPlayer() {
   const { getColors, getGradient, currentTheme } = useTheme();
   const colors = getColors();
 
-  // Adaptive theme for current track artwork
-  const { adaptiveTheme, isAnalyzing } = useAdaptiveTheme(
-    currentTrack?.artwork && currentTrack.artwork !== 'advertisement' 
-      ? currentTrack.artwork 
-      : undefined
-  );
+
 
   const [isStationDropdownOpen, setIsStationDropdownOpen] = useState(false);
   const [selectedStation, setSelectedStation] = useState<RadioStation>(
@@ -207,31 +203,56 @@ export default function RadioCoPlayer() {
     }
   };
 
-  const handleStationChange = async (station: RadioStation) => {
-    if (station.id === selectedStation.id) return;
-
-    console.log(
-      `Attempting to change station to: ${station.name} (${station.streamUrl})`,
-    );
-
-    setIsTransitioning(true);
-    setSelectedStation(station);
-    setIsStationDropdownOpen(false);
-
+  const handlePlay = async () => {
+    if (!audioRef.current) return;
+    
     try {
-      await changeStation(station);
-      // Immediately auto-play the new station after switching
-      await togglePlayback();
-      
-      // Update listening status if user is authenticated
-      if (user) {
-        await updateListeningStatus(true);
-      }
-    } catch (err) {
-      console.error("Failed to switch station:", err);
+      await measureAsyncOperation('radio_player_play', async () => {
+        await audioRef.current!.play();
+        setIsPlaying(true);
+        setHasError(false);
+      }, { action: 'play' });
+    } catch (error) {
+      console.error('Error playing audio:', error);
+      setHasError(true);
+      setIsPlaying(false);
     }
+  };
 
-    setTimeout(() => setIsTransitioning(false), 500);
+  const handlePause = () => {
+    if (!audioRef.current) return;
+    
+    measureSyncOperation('radio_player_pause', () => {
+      audioRef.current!.pause();
+      setIsPlaying(false);
+    }, { action: 'pause' });
+  };
+
+  const handleStationChange = async (newStation: RadioStation) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+    
+    try {
+      await measureAsyncOperation('radio_station_change', async () => {
+        setCurrentStation(newStation);
+        setHasError(false);
+        
+        // Small delay to ensure state updates
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        if (isPlaying) {
+          await handlePlay();
+        }
+      }, { 
+        station_id: 1,
+        station_name: newStation.name.length
+      });
+    } catch (error) {
+      console.error('Error changing station:', error);
+      setHasError(true);
+    }
   };
 
   return (
@@ -240,17 +261,13 @@ export default function RadioCoPlayer() {
       role="region"
       aria-label="Radio player controls"
       style={{
-        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
-          ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.25)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.15)')})`
+        background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
+          ? `linear-gradient(135deg, ${colors.primary}40, ${colors.secondary}20)`
           : 'rgba(255, 255, 255, 0.12)',
         backdropFilter: 'blur(40px) saturate(250%)',
         WebkitBackdropFilter: 'blur(40px) saturate(250%)',
-        boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-          ? `0 16px 64px ${adaptiveTheme.accentColor}30, inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 32px ${adaptiveTheme.accentColor}15`
-          : `0 16px 64px ${colors.primary}30, inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 32px ${colors.primary}15`,
-        color: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.textColor
-          ? adaptiveTheme.textColor 
-          : colors.text,
+        boxShadow: `0 16px 64px ${colors.primary}30, inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 32px ${colors.primary}15`,
+        color: colors.text,
         border: 'none',
         // Fixed stable width - no more responsive changes that cause size fluctuations
         width: 'clamp(400px, 30vw, 600px)',
@@ -265,14 +282,6 @@ export default function RadioCoPlayer() {
         contain: 'layout'
       }}
     >
-      {/* Hidden Audio Element */}
-      <audio
-        ref={useRadio().audioRef}
-        preload="none"
-        crossOrigin="anonymous"
-        aria-label="Live radio stream"
-      />
-
       {/* Station Selector */}
       <div className="mb-6">
         <div className="relative" ref={stationDropdownRef}>
@@ -309,20 +318,14 @@ export default function RadioCoPlayer() {
             <div
               className="absolute mt-1 left-1/2 transform -translate-x-1/2 max-h-60 overflow-y-auto shadow-xl z-20 scrollbar-thin"
               style={{
-                background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.backgroundColor
-                  ? `linear-gradient(135deg, ${adaptiveTheme.backgroundColor.replace(/[\d.]+\)$/g, '0.98)')}, ${adaptiveTheme.overlayColor.replace(/[\d.]+\)$/g, '0.95)')})`
-                  : 'rgba(0, 0, 0, 0.98)',
+                background: 'rgba(0, 0, 0, 0.98)',
                 backdropFilter: 'blur(32px) saturate(220%)',
                 WebkitBackdropFilter: 'blur(32px) saturate(220%)',
-                borderColor: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                  ? adaptiveTheme.accentColor + "60"
-                  : colors.primary + "60",
+                borderColor: colors.primary + "60",
                 borderRadius: "12px",
                 minWidth: "300px",
                 border: '2px solid',
-                boxShadow: currentTrack?.artwork && currentTrack.artwork !== 'advertisement' && adaptiveTheme && adaptiveTheme.accentColor
-                  ? `0 12px 48px ${adaptiveTheme.accentColor}30, 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 24px rgba(0, 0, 0, 0.3)`
-                  : `0 12px 48px ${colors.primary}30, 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 24px rgba(0, 0, 0, 0.3)`,
+                boxShadow: `0 12px 48px ${colors.primary}30, 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 24px rgba(0, 0, 0, 0.3)`,
               }}
             >
               <div className="p-2">
@@ -331,7 +334,7 @@ export default function RadioCoPlayer() {
                   <button
                     key={selectedStation.id + "-selected"}
                     onClick={() => handleStationChange(selectedStation)}
-                    className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none"
+                    className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none focus:ring-0"
                     style={{
                       background: `linear-gradient(135deg, ${colors.primary}40, ${colors.secondary}25)`,
                       border: `1px solid ${colors.primary}80`,
@@ -437,7 +440,7 @@ export default function RadioCoPlayer() {
                     <button
                       key={station.id}
                       onClick={() => handleStationChange(station)}
-                      className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none"
+                      className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none focus:ring-0"
                       style={{
                         backgroundColor: "transparent",
                       }}
@@ -530,7 +533,7 @@ export default function RadioCoPlayer() {
               ? 'bg-red-600 text-white' 
               : 'bg-red-500 text-white'
           }`}>
-            <div className="w-1 h-1 bg-white rounded-full animate-pulse opacity-90"></div>
+            <div className="w-1 h-1 bg-white rounded-full animate-pulse opacity-90 relative" style={{ top: '0px' }}></div>
             <span className="opacity-90">
               {isAdPlaying ? 'AD' : 'LIVE'}
             </span>
@@ -576,7 +579,7 @@ export default function RadioCoPlayer() {
           {currentTrack.lastUpdated && (
             <div className="mb-2 flex justify-center">
               <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-green-400 bg-green-400/10">
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></div>
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse relative" style={{ top: '0px' }}></div>
                 LIVE
               </div>
             </div>
@@ -671,7 +674,7 @@ export default function RadioCoPlayer() {
           <Button
             onClick={handlePlayPause}
             disabled={isLoading}
-            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 group shadow-lg hover:shadow-xl border-0"
+            className="w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 group shadow-lg hover:shadow-xl border-0 focus:outline-none focus:ring-0"
             style={{
               background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
               boxShadow: `0 4px 20px ${colors.primary}60`,
@@ -692,7 +695,7 @@ export default function RadioCoPlayer() {
               ></div>
             ) : isPlaying ? (
               <svg
-                className="h-8 w-8"
+                className="h-10 w-10"
                 fill="#ffffff"
                 viewBox="0 0 24 24"
               >
@@ -715,7 +718,7 @@ export default function RadioCoPlayer() {
               </svg>
             ) : (
               <svg
-                className="h-8 w-8"
+                className="h-10 w-10"
                 fill="#ffffff"
                 viewBox="0 0 24 24"
                 style={{
@@ -743,7 +746,7 @@ export default function RadioCoPlayer() {
                 onClick={toggleMute}
                 variant="ghost"
                 size="sm"
-                className="rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105"
+                className="rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-0"
                 style={{
                   color: isMuted 
                     ? '#ef4444'  // Red for muted
@@ -783,8 +786,8 @@ export default function RadioCoPlayer() {
                 ) : (
                   <div className="relative flex items-center justify-center transition-all duration-300 ease-in-out">
                     <svg
-                      width="48"
-                      height="48"
+                      width="40"
+                      height="40"
                       viewBox="0 0 24 24"
                       fill="none"
                       className="relative"
@@ -814,7 +817,7 @@ export default function RadioCoPlayer() {
                         className="animate-pulse"
                         style={{
                           animation: "pulse 1.5s ease-in-out infinite",
-                          animationDelay: "0.3s",
+                          animationDelay: "0.6s",
                         }}
                       />
                     </svg>
@@ -870,9 +873,13 @@ export default function RadioCoPlayer() {
                           toggleMute(); // Unmute when adjusting volume
                         }
                       }}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer focus:outline-none focus:ring-0"
                       aria-label="Volume control"
                       title="Adjust volume"
+                      style={{
+                        outline: 'none',
+                        border: 'none'
+                      }}
                     />
                   </div>
                   <span 

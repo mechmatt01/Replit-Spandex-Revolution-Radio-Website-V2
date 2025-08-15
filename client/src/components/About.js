@@ -1,28 +1,59 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Button } from "../components/ui/button";
+import { useMemo, useCallback } from "react";
+import { useScrollVelocity } from "../hooks/use-scroll-velocity";
+import { useIntersectionObserver } from "../hooks/use-intersection-observer";
 import { useTheme } from "../contexts/ThemeContext";
-import FadeInView from "./FadeInView";
-import StaggeredAnimation from "./StaggeredAnimation";
 export default function About() {
-    const { getColors, currentTheme } = useTheme();
-    const colors = getColors();
-    const scrollToSubscribe = () => {
-        const element = document.getElementById("subscribe");
-        if (element) {
-            element.scrollIntoView({ behavior: "smooth" });
+    const { velocity } = useScrollVelocity();
+    const { ref, isVisible } = useIntersectionObserver({ threshold: 0.1 });
+    const { currentTheme, isDarkMode, colors } = useTheme();
+    // Memoize expensive calculations
+    const scrollIntensity = useMemo(() => {
+        return Math.min(Math.abs(velocity) / 1000, 1);
+    }, [velocity]);
+    const parallaxOffset = useMemo(() => {
+        return scrollIntensity * 20;
+    }, [scrollIntensity]);
+    // Memoize theme-based styles
+    const themeStyles = useMemo(() => {
+        const baseStyles = {
+            background: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+            color: isDarkMode ? '#ffffff' : '#000000',
+            borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.2)'
+        };
+        return {
+            ...baseStyles,
+            accentColor: colors.accent
+        };
+    }, [isDarkMode, colors.accent]);
+    // Memoize content sections to prevent unnecessary re-renders
+    const contentSections = useMemo(() => [
+        {
+            title: "About Spandex Salvation Radio",
+            content: "Your ultimate destination for the heaviest metal, hardest rock, and most intense music from around the world. We're not just a radio station - we're a movement, a community, and a way of life for metalheads everywhere."
+        },
+        {
+            title: "What We Do",
+            content: "We broadcast 24/7, bringing you the best in metal, rock, punk, and alternative music. From classic heavy metal to modern deathcore, from underground black metal to mainstream rock anthems - we've got it all."
+        },
+        {
+            title: "Our Mission",
+            content: "To unite metalheads worldwide through the power of music, to discover and promote emerging artists, and to keep the spirit of metal alive and thriving for generations to come."
         }
-    };
-    return (_jsx("section", { id: "about", className: "py-20 transition-colors duration-300", style: { backgroundColor: colors.background }, "aria-label": "About Spandex Salvation Radio", children: _jsx("div", { className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8", children: _jsxs("div", { className: "flex flex-col lg:flex-row gap-12 items-center", children: [_jsxs("div", { className: "lg:w-3/5", children: [_jsx("h2", { className: "font-orbitron font-black text-3xl md:text-4xl mb-6", style: {
-                                    color: currentTheme === 'light-mode' ? '#000000' : colors.text
-                                }, children: "ABOUT THE REBELLION" }), _jsx("p", { className: "text-lg font-semibold mb-6", style: { color: colors.textSecondary }, children: "Spandex Salvation Radio was born from a passion for the golden era of metal music. When hair was big, guitars were loud, and the stage was set ablaze with pure rock energy." }), _jsx("p", { className: "font-semibold mb-6", style: { color: colors.textMuted }, children: "We're dedicated to preserving and celebrating the legendary sounds of bands like Skid Row, Twisted Sister, M\u00F6tley Cr\u00FCe, and countless other metal pioneers who defined a generation." }), _jsxs(StaggeredAnimation, { className: "flex items-center space-x-6 mb-8", staggerDelay: 200, direction: "up", children: [_jsxs("div", { className: "text-center", children: [_jsx("div", { className: "text-2xl font-black text-center", style: { color: colors.primary }, children: "24/7" }), _jsx("div", { className: "text-sm font-semibold text-center", style: { color: colors.textMuted }, children: "Live Streaming" })] }), _jsxs("div", { className: "text-center", children: [_jsx("div", { className: "text-2xl font-black text-center", style: { color: colors.primary }, children: "1000+" }), _jsx("div", { className: "text-sm font-semibold text-center", style: { color: colors.textMuted }, children: "Metal Tracks" })] }), _jsxs("div", { className: "text-center", children: [_jsx("div", { className: "text-2xl font-black text-center", style: { color: colors.primary }, children: "50+" }), _jsx("div", { className: "text-sm font-semibold text-center", style: { color: colors.textMuted }, children: "Countries" })] })] }), _jsx(FadeInView, { direction: "up", delay: 600, children: _jsx(Button, { onClick: scrollToSubscribe, className: "px-6 py-3 rounded-full font-semibold transition-all duration-300", style: {
-                                        backgroundColor: colors.primary,
-                                        color: colors.primaryText || "white",
-                                    }, onMouseEnter: (e) => {
-                                        e.currentTarget.style.backgroundColor =
-                                            colors.primaryDark || colors.primary;
-                                        e.currentTarget.style.transform = "scale(1.05)";
-                                    }, onMouseLeave: (e) => {
-                                        e.currentTarget.style.backgroundColor = colors.primary;
-                                        e.currentTarget.style.transform = "scale(1)";
-                                    }, children: "Join the Revolution" }) })] }), _jsxs("div", { className: "relative hidden lg:block lg:w-2/5", children: [_jsx("img", { src: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600", alt: "Metal concert with band performing on stage under dramatic lighting", className: "rounded-xl shadow-2xl w-full h-auto" }), _jsx("div", { className: "absolute inset-0 bg-gradient-to-t from-dark-bg/50 to-transparent rounded-xl" })] })] }) }) }));
+    ], []);
+    // Memoize the render function for content sections
+    const renderContentSection = useCallback((section, index) => (_jsxs("div", { className: "mb-8 p-6 rounded-lg border backdrop-blur-sm transition-all duration-300 hover:scale-105", style: {
+            background: themeStyles.background,
+            color: themeStyles.color,
+            borderColor: themeStyles.borderColor,
+            transform: `translateY(${parallaxOffset * (index + 1)}px)`
+        }, children: [_jsx("h3", { className: "text-2xl font-bold mb-4", style: { color: themeStyles.accentColor }, children: section.title }), _jsx("p", { className: "text-lg leading-relaxed", children: section.content })] }, section.title)), [themeStyles, parallaxOffset]);
+    return (_jsx("section", { ref: ref, className: "py-16 px-4 min-h-screen flex items-center justify-center", style: {
+            background: `linear-gradient(135deg, ${themeStyles.background}, ${themeStyles.background}dd)`,
+            transform: `translateY(${parallaxOffset}px)`
+        }, children: _jsxs("div", { className: "max-w-4xl mx-auto text-center", children: [_jsx("h2", { className: "text-5xl md:text-7xl font-bold mb-8", style: { color: themeStyles.accentColor }, children: "About Us" }), _jsx("div", { className: "space-y-6", children: contentSections.map((section, index) => renderContentSection(section, index)) }), _jsxs("div", { className: "mt-12 p-8 rounded-xl border backdrop-blur-md transition-all duration-500 hover:scale-105", style: {
+                        background: themeStyles.background,
+                        borderColor: themeStyles.borderColor,
+                        transform: `translateY(${parallaxOffset * 2}px)`
+                    }, children: [_jsx("p", { className: "text-xl font-semibold mb-4", style: { color: themeStyles.accentColor }, children: "Join the Metal Revolution" }), _jsx("p", { className: "text-lg", children: "Whether you're a lifelong metalhead or just discovering the genre, Spandex Salvation Radio is your gateway to the most intense, powerful, and authentic metal music experience." })] })] }) }));
 }
