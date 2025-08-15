@@ -20,6 +20,122 @@ print_status() {
     echo -e "${color}${message}${NC}"
 }
 
+# Function to safely copy files with progress
+safe_copy() {
+    local source="$1"
+    local destination="$2"
+    
+    if [ -e "$source" ]; then
+        # Get source name for display
+        local source_name=$(basename "$source")
+        
+        # Show progress for copying
+        print_status $BLUE "📁 Copying: $source_name"
+        
+        # Use rsync with progress if available, otherwise use cp with verbose
+        if command -v rsync &> /dev/null; then
+            rsync -av --progress "$source" "$destination" 2>/dev/null
+        else
+            cp -rv "$source" "$destination"
+        fi
+        
+        if [ $? -eq 0 ]; then
+            print_status $GREEN "✅ Copied: $source_name"
+        else
+            print_status $RED "❌ Failed to copy: $source_name"
+            return 1
+        fi
+    else
+        print_status $YELLOW "⚠️  File not found: $source"
+        return 1
+    fi
+}
+
+# Function to copy directory with detailed progress
+safe_copy_directory() {
+    local source="$1"
+    local destination="$2"
+    
+    if [ ! -d "$source" ]; then
+        print_status $RED "❌ Source directory not found: $source"
+        return 1
+    fi
+    
+    local source_name=$(basename "$source")
+    print_status $BLUE "📁 Copying directory: $source_name"
+    
+    # Count total files for progress
+    local total_files=$(find "$source" -type f | wc -l)
+    local current_file=0
+    
+    if [ $total_files -eq 0 ]; then
+        print_status $YELLOW "⚠️  No files found in: $source_name"
+        return 0
+    fi
+    
+    print_status $CYAN "📊 Total files to copy: $total_files"
+    
+    # Create destination directory
+    mkdir -p "$destination"
+    
+    # Copy with progress tracking
+    while IFS= read -r -d '' file; do
+        current_file=$((current_file + 1))
+        local relative_path="${file#$source/}"
+        local dest_file="$destination/$relative_path"
+        local dest_dir=$(dirname "$dest_file")
+        
+        # Create destination directory if needed
+        mkdir -p "$dest_dir"
+        
+        # Copy file
+        if cp "$file" "$dest_file" 2>/dev/null; then
+            # Show progress bar
+            local progress=$((current_file * 100 / total_files))
+            local bar_length=30
+            local filled=$((progress * bar_length / 100))
+            local empty=$((bar_length - filled))
+            
+            printf "\r["
+            printf "%${filled}s" | tr ' ' '█'
+            printf "%${empty}s" | tr ' ' '░'
+            printf "] %3d%% - %s" "$progress" "$relative_path"
+            
+            # Clear line when complete
+            if [ $current_file -eq $total_files ]; then
+                printf "\n"
+            fi
+        else
+            print_status $RED "❌ Failed to copy: $relative_path"
+        fi
+    done < <(find "$source" -type f -print0)
+    
+    print_status $GREEN "✅ Directory copied: $source_name ($total_files files)"
+}
+
+# Function to show progress bar for any operation
+show_progress_bar() {
+    local current="$1"
+    local total="$2"
+    local operation="$3"
+    local current_item="$4"
+    
+    local progress=$((current * 100 / total))
+    local bar_length=40
+    local filled=$((progress * bar_length / 100))
+    local empty=$((bar_length - filled))
+    
+    printf "\r["
+    printf "%${filled}s" | tr ' ' '█'
+    printf "%${empty}s" | tr ' ' '░'
+    printf "] %3d%% - %s: %s" "$progress" "$operation" "$current_item"
+    
+    # Clear line when complete
+    if [ $current -eq $total ]; then
+        printf "\n"
+    fi
+}
+
 # Function to check if we're in the right directory
 check_directory() {
     if [ ! -f "package.json" ] || [ ! -d "client" ] || [ ! -d "server" ]; then
@@ -118,26 +234,71 @@ create_deployment_package() {
     # Copy all necessary files with progress
     print_status $BLUE "🔄 Copying project files..."
     
-    # Directories
-    cp -r client github-deployment-package/ && print_status $GREEN "✅ client/"
-    cp -r server github-deployment-package/ && print_status $GREEN "✅ server/"
-    cp -r shared github-deployment-package/ && print_status $GREEN "✅ shared/"
-    cp -r functions github-deployment-package/ && print_status $GREEN "✅ functions/"
-    cp -r .github github-deployment-package/ && print_status $GREEN "✅ .github/"
+    # Directories with progress
+    print_status $CYAN "📁 Copying directories..."
+    local dirs=("client" "server" "shared" "functions" ".github")
+    local total_dirs=${#dirs[@]}
+    local current_dir=0
     
-    # Configuration files
-    cp package.json github-deployment-package/ && print_status $GREEN "✅ package.json"
-    cp package-lock.json github-deployment-package/ && print_status $GREEN "✅ package-lock.json"
-    cp tsconfig.json github-deployment-package/ && print_status $GREEN "✅ tsconfig.json"
-    cp firebase.json github-deployment-package/ && print_status $GREEN "✅ firebase.json"
-    cp .firebaserc github-deployment-package/ && print_status $GREEN "✅ .firebaserc"
-    cp components.json github-deployment-package/ && print_status $GREEN "✅ components.json"
-    cp drizzle.config.ts github-deployment-package/ && print_status $GREEN "✅ drizzle.config.ts"
-    cp eslint.config.js github-deployment-package/ && print_status $GREEN "✅ eslint.config.js"
+    for dir in "${dirs[@]}"; do
+        current_dir=$((current_dir + 1))
+        if [ -d "$dir" ]; then
+            show_progress_bar $current_dir $total_dirs "Directories" "$dir"
+            if cp -r "$dir" "github-deployment-package/"; then
+                print_status $GREEN "✅ $dir/"
+            else
+                print_status $RED "❌ Failed to copy $dir/"
+            fi
+        else
+            show_progress_bar $current_dir $total_dirs "Directories" "$dir (not found)"
+            print_status $YELLOW "⚠️  $dir/ not found"
+        fi
+    done
+    printf "\n" # Clear the progress bar line
     
-    # Documentation
-    cp README.md github-deployment-package/ && print_status $GREEN "✅ README.md"
-    cp LICENSE github-deployment-package/ && print_status $GREEN "✅ LICENSE"
+    # Configuration files with progress
+    print_status $CYAN "📄 Copying configuration files..."
+    local config_files=("package.json" "package-lock.json" "tsconfig.json" "firebase.json" ".firebaserc" "components.json" "drizzle.config.ts" "eslint.config.js")
+    local total_configs=${#config_files[@]}
+    local current_config=0
+    
+    for config_file in "${config_files[@]}"; do
+        current_config=$((current_config + 1))
+        if [ -f "$config_file" ]; then
+            show_progress_bar $current_config $total_configs "Config files" "$config_file"
+            if cp "$config_file" "github-deployment-package/"; then
+                print_status $GREEN "✅ $config_file"
+            else
+                print_status $RED "❌ Failed to copy $config_file"
+            fi
+        else
+            show_progress_bar $current_config $total_configs "Config files" "$config_file (not found)"
+            print_status $YELLOW "⚠️  $config_file not found"
+        fi
+    done
+    printf "\n" # Clear the progress bar line
+    
+    # Documentation files with progress
+    print_status $CYAN "📚 Copying documentation files..."
+    local doc_files=("README.md" "LICENSE")
+    local total_docs=${#doc_files[@]}
+    local current_doc=0
+    
+    for doc_file in "${doc_files[@]}"; do
+        current_doc=$((current_doc + 1))
+        if [ -f "$doc_file" ]; then
+            show_progress_bar $current_doc $total_docs "Documentation" "$doc_file"
+            if cp "$doc_file" "github-deployment-package/"; then
+                print_status $GREEN "✅ $doc_file"
+            else
+                print_status $RED "❌ Failed to copy $doc_file"
+            fi
+        else
+            show_progress_bar $current_doc $total_docs "Documentation" "$doc_file (not found)"
+            print_status $YELLOW "⚠️  $doc_file not found"
+        fi
+    done
+    printf "\n" # Clear the progress bar line
     
     # Create .gitignore for deployment package
     cat > github-deployment-package/.gitignore << 'EOF'
@@ -493,9 +654,439 @@ show_main_menu() {
     echo "4. 🌿 Manage Git Branches"
     echo "5. 🔧 Fix Common Issues & Check Configuration"
     echo "6. 🚀 FULL AUTOMATED DEPLOYMENT (GitHub + Firebase)"
-    echo "7. 📋 Show Current Status"
-    echo "8. ❌ Exit"
+    echo "7. 🎛️  CUSTOM DEPLOYMENT MODES"
+    echo "8. 📋 Show Current Status"
+    echo "9. ❌ Exit"
     echo ""
+}
+
+# Function to show custom deployment modes menu
+show_custom_deployment_menu() {
+    clear
+    echo -e "${PURPLE}"
+    echo "🎛️  CUSTOM DEPLOYMENT MODES 🎛️"
+    echo "=============================="
+    echo -e "${NC}"
+    echo ""
+    echo "Choose your deployment mode:"
+    echo ""
+    echo "1. 🚀 FULLY AUTOMATED (No prompts, runs everything)"
+    echo "2. 🤔 INTERACTIVE (Ask y/n for each step)"
+    echo "3. 🎯 SELECTIVE (Choose specific steps, confirm selected ones)"
+    echo "4. ↩️  Back to main menu"
+    echo ""
+}
+
+# Function to handle fully automated deployment (no prompts)
+fully_automated_deployment() {
+    print_status $BLUE "🚀 Starting FULLY AUTOMATED DEPLOYMENT (No prompts)..."
+    print_status $YELLOW "This will run all steps without asking for confirmation!"
+    
+    # Step 1: Fix configuration issues
+    print_status $BLUE "🔄 Step 1: Fixing configuration issues..."
+    fix_firebase_config
+    check_git_status
+    
+    # Step 2: Build client
+    print_status $BLUE "📦 Step 2: Building client application..."
+    cd client
+    if ! npm run build; then
+        print_status $RED "❌ Client build failed! Cannot proceed with deployment."
+        cd ..
+        return 1
+    fi
+    cd ..
+    print_status $GREEN "✅ Client build successful!"
+    
+    # Step 3: Create GitHub package
+    print_status $BLUE "📋 Step 3: Creating GitHub deployment package..."
+    create_deployment_package
+    
+    # Step 4: Deploy to GitHub
+    print_status $BLUE "🚀 Step 4: Deploying to GitHub..."
+    cd github-deployment-package
+    
+    # Initialize git if needed
+    if [ ! -d ".git" ]; then
+        git init
+    fi
+    
+    # Add all files
+    git add .
+    
+    # Check if there are changes to commit
+    if ! git diff --cached --quiet; then
+        git commit -m "Deploy: Spandex Salvation Radio streaming platform - $(date '+%Y-%m-%d %H:%M:%S')"
+        print_status $GREEN "✅ Changes committed"
+    fi
+    
+    # Set branch to main
+    git branch -M main
+    
+    # Add remote origin
+    github_username="mechmatt01"
+    repo_name="Replit-Spandex-Revolution-Radio-Website-V2"
+    repo_url="https://github.com/$github_username/$repo_name.git"
+    
+    # Remove existing remote if it exists
+    git remote remove origin 2>/dev/null || true
+    git remote add origin "$repo_url"
+    
+    # Force push to GitHub (no prompts)
+    print_status $BLUE "📤 Pushing to GitHub repository..."
+    print_status $CYAN "🔄 This may take a few minutes..."
+    
+    if git push -u origin main --force 2>&1 | while IFS= read -r line; do
+        # Show progress for Git push
+        case "$line" in
+            *"Enumerating objects"*)
+                print_status $CYAN "📦 Enumerating objects..."
+                ;;
+            *"Counting objects"*)
+                print_status $CYAN "🔢 Counting objects..."
+                ;;
+            *"Compressing objects"*)
+                print_status $CYAN "🗜️  Compressing objects..."
+                ;;
+            *"Writing objects"*)
+                print_status $CYAN "✍️  Writing objects..."
+                ;;
+            *"Resolving deltas"*)
+                print_status $CYAN "🔍 Resolving deltas..."
+                ;;
+            *"To "*)
+                print_status $GREEN "✅ $line"
+                ;;
+            *)
+                # Show other lines without overwhelming output
+                if [[ "$line" =~ [0-9]+% ]]; then
+                    printf "\r📊 Git progress: %s" "$line"
+                fi
+                ;;
+        esac
+    done; then
+        print_status $GREEN "🎉 SUCCESS! Deployed to GitHub!"
+    else
+        print_status $RED "❌ Failed to push to GitHub!"
+        cd ..
+        return 1
+    fi
+    
+    cd ..
+    
+    # Step 5: Deploy to Firebase
+    print_status $BLUE "🔥 Step 5: Deploying to Firebase..."
+    
+    # Deploy Functions
+    print_status $BLUE "⚡ Deploying Firebase Functions..."
+    print_status $CYAN "🔄 This may take a few minutes..."
+    
+    if firebase deploy --only functions 2>&1 | while IFS= read -r line; do
+        # Show progress for Firebase deployment
+        case "$line" in
+            *"Deploying functions"*)
+                print_status $CYAN "🚀 Deploying functions..."
+                ;;
+            *"✔"*)
+                print_status $GREEN "✅ $line"
+                ;;
+            *"✖"*)
+                print_status $RED "❌ $line"
+                ;;
+            *"WARN"*)
+                print_status $YELLOW "⚠️  $line"
+                ;;
+            *"ERROR"*)
+                print_status $RED "❌ $line"
+                ;;
+            *)
+                # Show other lines without overwhelming output
+                if [[ "$line" =~ [0-9]+% ]]; then
+                    printf "\r📊 Functions progress: %s" "$line"
+                fi
+                ;;
+        esac
+    done; then
+        print_status $GREEN "✅ Functions deployment successful!"
+    else
+        print_status $RED "❌ Functions deployment failed!"
+        return 1
+    fi
+    
+    # Deploy Hosting
+    print_status $BLUE "🚀 Deploying to Firebase Hosting..."
+    print_status $CYAN "🔄 This may take a few minutes..."
+    
+    if firebase deploy --only hosting 2>&1 | while IFS= read -r line; do
+        # Show progress for Firebase hosting deployment
+        case "$line" in
+            *"Deploying hosting"*)
+                print_status $CYAN "🌐 Deploying to hosting..."
+                ;;
+            *"✔"*)
+                print_status $GREEN "✅ $line"
+                ;;
+            *"✖"*)
+                print_status $RED "❌ $line"
+                ;;
+            *"WARN"*)
+                print_status $YELLOW "⚠️  $line"
+                ;;
+            *"ERROR"*)
+                print_status $RED "❌ $line"
+                ;;
+            *)
+                # Show other lines without overwhelming output
+                if [[ "$line" =~ [0-9]+% ]]; then
+                    printf "\r📊 Hosting progress: %s" "$line"
+                fi
+                ;;
+        esac
+    done; then
+        print_status $GREEN "🎉 Firebase deployment successful!"
+        print_status $BLUE "🌐 Your site is live at: https://spandex-salvation-radio-site.web.app"
+    else
+        print_status $RED "❌ Hosting deployment failed!"
+        return 1
+    fi
+    
+    print_status $GREEN "🎉 FULLY AUTOMATED DEPLOYMENT COMPLETE!"
+    print_status $BLUE "🌐 Your site is live at: https://spandex-salvation-radio-site.web.app"
+    print_status $BLUE "📚 Code is deployed to GitHub"
+    print_status $BLUE "🎸 Rock on! Your radio station is fully deployed!"
+}
+
+# Function to handle interactive deployment (ask y/n for each step)
+interactive_deployment() {
+    print_status $BLUE "🤔 Starting INTERACTIVE DEPLOYMENT..."
+    print_status $YELLOW "This will ask for confirmation at each step."
+    
+    # Step 1: Fix configuration issues
+    print_status $BLUE "🔄 Step 1: Fixing configuration issues..."
+    read -p "🤔 Continue with configuration fixes? (y/n): " confirm_config
+    if [[ $confirm_config =~ ^[Yy]$ ]]; then
+        fix_firebase_config
+        check_git_status
+        print_status $GREEN "✅ Configuration fixes complete!"
+    else
+        print_status $YELLOW "⚠️  Skipping configuration fixes"
+    fi
+    
+    # Step 2: Build client
+    print_status $BLUE "📦 Step 2: Building client application..."
+    read -p "🤔 Continue with client build? (y/n): " confirm_build
+    if [[ $confirm_build =~ ^[Yy]$ ]]; then
+        cd client
+        print_status $CYAN "🔨 This may take a few minutes..."
+        
+        # Show build progress
+        print_status $BLUE "📊 Starting build process..."
+        if npm run build 2>&1 | while IFS= read -r line; do
+            # Show progress for common build steps
+            case "$line" in
+                *"Building for production"*)
+                    print_status $CYAN "🏗️  Building for production..."
+                    ;;
+                *"✓"*)
+                    print_status $GREEN "✅ $line"
+                    ;;
+                *"✗"*)
+                    print_status $RED "❌ $line"
+                    ;;
+                *"WARN"*)
+                    print_status $YELLOW "⚠️  $line"
+                    ;;
+                *"ERROR"*)
+                    print_status $RED "❌ $line"
+                    ;;
+                *)
+                    # Show other lines without overwhelming output
+                    if [[ "$line" =~ [0-9]+% ]]; then
+                        printf "\r📊 Build progress: %s" "$line"
+                    fi
+                    ;;
+            esac
+        done; then
+            print_status $GREEN "✅ Client build successful!"
+        else
+            print_status $RED "❌ Client build failed! Cannot proceed with deployment."
+            cd ..
+            return 1
+        fi
+        
+        cd ..
+    else
+        print_status $YELLOW "⚠️  Skipping client build"
+    fi
+    
+    # Step 3: Create GitHub package
+    print_status $BLUE "📋 Step 3: Creating GitHub deployment package..."
+    read -p "🤔 Continue with package creation? (y/n): " confirm_package
+    if [[ $confirm_package =~ ^[Yy]$ ]]; then
+        create_deployment_package
+        print_status $GREEN "✅ Package creation complete!"
+    else
+        print_status $YELLOW "⚠️  Skipping package creation"
+    fi
+    
+    # Step 4: Deploy to GitHub
+    print_status $BLUE "🚀 Step 4: Deploying to GitHub..."
+    read -p "🤔 Continue with GitHub deployment? (y/n): " confirm_github
+    if [[ $confirm_github =~ ^[Yy]$ ]]; then
+        if deploy_to_github; then
+            print_status $GREEN "✅ GitHub deployment complete!"
+        else
+            print_status $RED "❌ GitHub deployment failed!"
+            return 1
+        fi
+    else
+        print_status $YELLOW "⚠️  Skipping GitHub deployment"
+    fi
+    
+    # Step 5: Deploy to Firebase
+    print_status $BLUE "🔥 Step 5: Deploying to Firebase..."
+    read -p "🤔 Continue with Firebase deployment? (y/n): " confirm_firebase
+    if [[ $confirm_firebase =~ ^[Yy]$ ]]; then
+        deploy_to_firebase
+        print_status $GREEN "✅ Firebase deployment complete!"
+    else
+        print_status $YELLOW "⚠️  Skipping Firebase deployment"
+    fi
+    
+    print_status $GREEN "🎉 INTERACTIVE DEPLOYMENT COMPLETE!"
+}
+
+# Function to handle selective deployment (choose steps, confirm selected ones)
+selective_deployment() {
+    print_status $BLUE "🎯 Starting SELECTIVE DEPLOYMENT..."
+    print_status $YELLOW "Choose which steps to run, then confirm each selected step."
+    echo ""
+    
+    # Show available steps
+    echo "Available steps:"
+    echo "  c - Configuration fixes (Firebase + Git)"
+    echo "  b - Build client application"
+    echo "  p - Create GitHub deployment package"
+    echo "  g - Deploy to GitHub repository"
+    echo "  f - Deploy to Firebase (Hosting + Functions)"
+    echo ""
+    
+    # Get user selection
+    read -p "🤔 Enter step letters (e.g., 'c,b,g' or 'all'): " step_selection
+    
+    if [ "$step_selection" = "all" ]; then
+        step_selection="c,b,p,g,f"
+    fi
+    
+    # Convert comma-separated to array
+    IFS=',' read -ra STEPS <<< "$step_selection"
+    
+    print_status $BLUE "🎯 Selected steps: ${STEPS[*]}"
+    echo ""
+    
+    # Process each selected step
+    for step in "${STEPS[@]}"; do
+        case $step in
+            c)
+                print_status $BLUE "🔄 Running: Configuration fixes..."
+                read -p "🤔 Confirm configuration fixes? (y/n): " confirm
+                if [[ $confirm =~ ^[Yy]$ ]]; then
+                    fix_firebase_config
+                    check_git_status
+                    print_status $GREEN "✅ Configuration fixes complete!"
+                else
+                    print_status $YELLOW "⚠️  Skipping configuration fixes"
+                fi
+                ;;
+            b)
+                print_status $BLUE "📦 Running: Client build..."
+                read -p "🤔 Confirm client build? (y/n): " confirm
+                if [[ $confirm =~ ^[Yy]$ ]]; then
+                    cd client
+                    print_status $CYAN "🔨 This may take a few minutes..."
+                    
+                    # Show build progress
+                    print_status $BLUE "📊 Starting build process..."
+                    if npm run build 2>&1 | while IFS= read -r line; do
+                        # Show progress for common build steps
+                        case "$line" in
+                            *"Building for production"*)
+                                print_status $CYAN "🏗️  Building for production..."
+                                ;;
+                            *"✓"*)
+                                print_status $GREEN "✅ $line"
+                                ;;
+                            *"✗"*)
+                                print_status $RED "❌ $line"
+                                ;;
+                            *"WARN"*)
+                                print_status $YELLOW "⚠️  $line"
+                                ;;
+                            *"ERROR"*)
+                                print_status $RED "❌ $line"
+                                ;;
+                            *)
+                                # Show other lines without overwhelming output
+                                if [[ "$line" =~ [0-9]+% ]]; then
+                                    printf "\r📊 Build progress: %s" "$line"
+                                fi
+                                ;;
+                        esac
+                    done; then
+                        print_status $GREEN "✅ Client build successful!"
+                    else
+                        print_status $RED "❌ Client build failed!"
+                        cd ..
+                        return 1
+                    fi
+                    
+                    cd ..
+                else
+                    print_status $YELLOW "⚠️  Skipping client build"
+                fi
+                ;;
+            p)
+                print_status $BLUE "📋 Running: GitHub package creation..."
+                read -p "🤔 Confirm package creation? (y/n): " confirm
+                if [[ $confirm =~ ^[Yy]$ ]]; then
+                    create_deployment_package
+                    print_status $GREEN "✅ Package creation complete!"
+                else
+                    print_status $YELLOW "⚠️  Skipping package creation"
+                fi
+                ;;
+            g)
+                print_status $BLUE "🚀 Running: GitHub deployment..."
+                read -p "🤔 Confirm GitHub deployment? (y/n): " confirm
+                if [[ $confirm =~ ^[Yy]$ ]]; then
+                    if deploy_to_github; then
+                        print_status $GREEN "✅ GitHub deployment complete!"
+                    else
+                        print_status $RED "❌ GitHub deployment failed!"
+                        return 1
+                    fi
+                else
+                    print_status $YELLOW "⚠️  Skipping GitHub deployment"
+                fi
+                ;;
+            f)
+                print_status $BLUE "🔥 Running: Firebase deployment..."
+                read -p "🤔 Confirm Firebase deployment? (y/n): " confirm
+                if [[ $confirm =~ ^[Yy]$ ]]; then
+                    deploy_to_firebase
+                    print_status $GREEN "✅ Firebase deployment complete!"
+                else
+                    print_status $YELLOW "⚠️  Skipping Firebase deployment"
+                fi
+                ;;
+            *)
+                print_status $YELLOW "⚠️  Unknown step: $step (skipping)"
+                ;;
+        esac
+        echo ""
+    done
+    
+    print_status $GREEN "🎉 SELECTIVE DEPLOYMENT COMPLETE!"
 }
 
 # Function to show current status
@@ -628,14 +1219,45 @@ main() {
                     check_git_status
                     
                     print_status $BLUE "📦 Step 2: Building client application..."
+                    print_status $CYAN "🔨 This may take a few minutes..."
                     cd client
-                    if ! npm run build; then
+                    
+                    # Show build progress
+                    print_status $BLUE "📊 Starting build process..."
+                    if npm run build 2>&1 | while IFS= read -r line; do
+                        # Show progress for common build steps
+                        case "$line" in
+                            *"Building for production"*)
+                                print_status $CYAN "🏗️  Building for production..."
+                                ;;
+                            *"✓"*)
+                                print_status $GREEN "✅ $line"
+                                ;;
+                            *"✗"*)
+                                print_status $RED "❌ $line"
+                                ;;
+                            *"WARN"*)
+                                print_status $YELLOW "⚠️  $line"
+                                ;;
+                            *"ERROR"*)
+                                print_status $RED "❌ $line"
+                                ;;
+                            *)
+                                # Show other lines without overwhelming output
+                                if [[ "$line" =~ [0-9]+% ]]; then
+                                    printf "\r📊 Build progress: %s" "$line"
+                                fi
+                                ;;
+                        esac
+                    done; then
+                        print_status $GREEN "✅ Client build successful!"
+                    else
                         print_status $RED "❌ Client build failed! Cannot proceed with deployment."
                         cd ..
                         continue
                     fi
+                    
                     cd ..
-                    print_status $GREEN "✅ Client build successful!"
                     
                     print_status $BLUE "📋 Step 3: Creating GitHub deployment package..."
                     create_deployment_package
@@ -654,9 +1276,33 @@ main() {
                 read -p "Press Enter to continue..."
                 ;;
             7)
-                show_status
+                show_custom_deployment_menu
+                read -p "🤔 Enter your choice (1-4): " custom_choice
+                
+                case $custom_choice in
+                    1)
+                        fully_automated_deployment
+                        ;;
+                    2)
+                        interactive_deployment
+                        ;;
+                    3)
+                        selective_deployment
+                        ;;
+                    4)
+                        # Back to main menu
+                        ;;
+                    *)
+                        print_status $RED "❌ Invalid choice. Returning to main menu."
+                        ;;
+                esac
+                echo ""
+                read -p "Press Enter to continue..."
                 ;;
             8)
+                show_status
+                ;;
+            9)
                 print_status $GREEN "👋 Goodbye! Rock on! 🎸"
                 exit 0
                 ;;
