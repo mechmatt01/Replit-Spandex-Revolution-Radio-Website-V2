@@ -316,26 +316,30 @@ deploy_to_firebase() {
         firebase login
     fi
     
-    # Build client
-    print_status $BLUE "📦 Building client application..."
-    read -p "🤔 Continue with client build? (y/n/cancel): " confirm_build
-    
-    if [ "$confirm_build" = "cancel" ]; then
-        print_status $RED "❌ Build cancelled by user."
-        return 1
-    elif [[ ! $confirm_build =~ ^[Yy]$ ]]; then
-        print_status $RED "❌ Build cancelled by user."
-        return 1
-    fi
-    
-    cd client
-    if ! npm run build; then
-        print_status $RED "❌ Client build failed!"
+    # Check if client is already built
+    if [ ! -d "client/dist" ] || [ -z "$(ls -A client/dist 2>/dev/null)" ]; then
+        print_status $YELLOW "⚠️  Client not built. Building now..."
+        read -p "🤔 Continue with client build? (y/n/cancel): " confirm_build
+        
+        if [ "$confirm_build" = "cancel" ]; then
+            print_status $RED "❌ Build cancelled by user."
+            return 1
+        elif [[ ! $confirm_build =~ ^[Yy]$ ]]; then
+            print_status $RED "❌ Build cancelled by user."
+            return 1
+        fi
+        
+        cd client
+        if ! npm run build; then
+            print_status $RED "❌ Client build failed!"
+            cd ..
+            return 1
+        fi
         cd ..
-        return 1
+        print_status $GREEN "✅ Client build successful!"
+    else
+        print_status $GREEN "✅ Client already built, skipping build step"
     fi
-    cd ..
-    print_status $GREEN "✅ Client build successful!"
     
     # Deploy Functions
     print_status $BLUE "⚡ Deploying Firebase Functions..."
@@ -619,10 +623,26 @@ main() {
                 read -p "🤔 Continue with full deployment? (y/n): " confirm_full
                 
                 if [[ $confirm_full =~ ^[Yy]$ ]]; then
+                    print_status $BLUE "🔄 Step 1: Fixing configuration issues..."
                     fix_firebase_config
                     check_git_status
+                    
+                    print_status $BLUE "📦 Step 2: Building client application..."
+                    cd client
+                    if ! npm run build; then
+                        print_status $RED "❌ Client build failed! Cannot proceed with deployment."
+                        cd ..
+                        continue
+                    fi
+                    cd ..
+                    print_status $GREEN "✅ Client build successful!"
+                    
+                    print_status $BLUE "📋 Step 3: Creating GitHub deployment package..."
                     create_deployment_package
+                    
+                    print_status $BLUE "🚀 Step 4: Deploying to GitHub..."
                     if deploy_to_github; then
+                        print_status $BLUE "🔥 Step 5: Deploying to Firebase..."
                         deploy_to_firebase
                         print_status $GREEN "🎉 FULL DEPLOYMENT COMPLETE!"
                         print_status $BLUE "🌐 Your site is live at: https://spandex-salvation-radio-site.web.app"
