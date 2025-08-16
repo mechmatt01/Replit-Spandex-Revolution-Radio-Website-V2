@@ -17,11 +17,15 @@ COPY . .
 # Build the client
 RUN cd client && npm run build
 
-# Install only production dependencies for runtime
-RUN npm ci --only=production
+# Keep the built client files and server dependencies
+# Don't run npm ci --only=production as it removes client dependencies
 
 # Expose port
 EXPOSE 8080
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
 
 # Start the application
 CMD ["node", "server/simple-server.js"]
