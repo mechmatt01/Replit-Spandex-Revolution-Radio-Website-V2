@@ -22,8 +22,9 @@ COPY . .
 # Install dependencies
 RUN npm install
 
-# Build the application
-RUN npm run build:cloud-run
+# Build the application with platform-specific fixes
+RUN npm run build:server
+RUN cd client && npm run build
 
 # Production image
 FROM base AS runner
