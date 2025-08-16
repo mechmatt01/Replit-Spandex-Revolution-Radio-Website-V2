@@ -66,3 +66,6 @@ test
 tests
 *.test.js
 *.test.ts
+
+# Explicitly allow client/dist
+!client/dist
