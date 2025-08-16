@@ -74,6 +74,25 @@ const FullWidthGlobeMap = () => {
   const [weather, setWeather] = useState<Weather | null>(null);
   const [locationPermission, setLocationPermission] = useState<'granted' | 'denied' | 'prompt' | null>(null);
 
+  // Cleanup effect to restore body styles when component unmounts
+  useEffect(() => {
+    return () => {
+      // Restore body styles if component unmounts while in fullscreen
+      if (isFullscreen) {
+        document.body.style.overflow = 'auto';
+        document.body.style.position = 'static';
+        document.body.style.width = '';
+        document.body.style.height = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        
+        // Clean up dataset
+        delete document.body.dataset.originalOverflow;
+        delete document.body.dataset.originalPosition;
+      }
+    };
+  }, [isFullscreen]);
+
   // Use hardcoded config for Firebase hosting
   const config: Config = useMemo(() => ({
     googleMapsApiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
@@ -499,10 +518,34 @@ const FullWidthGlobeMap = () => {
   const toggleFullscreen = useCallback(() => {
     if (!isFullscreen) {
       setIsFullscreen(true);
+      // Store original body styles
+      const originalOverflow = document.body.style.overflow;
+      const originalPosition = document.body.style.position;
+      document.body.dataset.originalOverflow = originalOverflow;
+      document.body.dataset.originalPosition = originalPosition;
+      
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      document.body.style.top = '0';
+      document.body.style.left = '0';
     } else {
       setIsFullscreen(false);
-      document.body.style.overflow = 'auto';
+      // Restore original body styles
+      const originalOverflow = document.body.dataset.originalOverflow || 'auto';
+      const originalPosition = document.body.dataset.originalPosition || 'static';
+      
+      document.body.style.overflow = originalOverflow;
+      document.body.style.position = originalPosition;
+      document.body.style.width = '';
+      document.body.style.height = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      
+      // Clean up dataset
+      delete document.body.dataset.originalOverflow;
+      delete document.body.dataset.originalPosition;
     }
   }, [isFullscreen]);
 

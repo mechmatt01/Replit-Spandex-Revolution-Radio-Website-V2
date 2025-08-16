@@ -15,7 +15,8 @@ import LiveChat from "../components/LiveChat";
 import ChatButton from "../components/ChatButton";
 import { useTheme } from "../contexts/ThemeContext";
 import { measurePageLoad } from '../lib/performance';
-import FadeInView from "../components/FadeInView";
+// Temporarily disabled FadeInView to fix scroll issues
+// import FadeInView from "../components/FadeInView";
 import SubscriptionCarousel from "../components/SubscriptionCarousel";
 
 export default function HomePage() {
@@ -64,19 +65,13 @@ export default function HomePage() {
       <main id="main-content">
         <Hero />
       
-      <FadeInView direction="up" delay={0}>
+        {/* Temporarily disabled FadeInView to fix scroll issues */}
         <Features />
-      </FadeInView>
       
-      <FadeInView direction="up" delay={0}>
         <About />
-      </FadeInView>
       
-      <FadeInView direction="up" delay={0}>
         <Schedule />
-      </FadeInView>
       
-      <FadeInView direction="up" delay={0}>
         <section 
           id="subscribe" 
           className="py-20 transition-colors duration-300"
@@ -104,33 +99,20 @@ export default function HomePage() {
             <SubscriptionCarousel />
           </div>
         </section>
-      </FadeInView>
       
-      <FadeInView direction="up" delay={0}>
         <Submissions />
-      </FadeInView>
       
-      <FadeInView direction="up" delay={0}>
         <section id="map" className="py-8">
           <FullWidthGlobeMap />
         </section>
-      </FadeInView>
       
-      <FadeInView direction="up" delay={0}>
         <StatsAndLocations />
-      </FadeInView>
       
-      <FadeInView direction="up" delay={0}>
         <Contact />
-      </FadeInView>
       
-      <FadeInView direction="up" delay={0}>
         <ShopifyEcommerce />
-      </FadeInView>
       
-      <FadeInView direction="up" delay={0}>
         <Footer />
-      </FadeInView>
       
         <StickyPlayer />
         <ChatButton onChatClick={() => setShowLiveChat(true)} />

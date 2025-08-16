@@ -33,6 +33,46 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* Ensure proper scrolling */
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  position: static !important;
+  height: auto !important;
+  width: auto !important;
+}
+
+/* Fix for map fullscreen mode - ensure body returns to normal state */
+body:not(.map-fullscreen) {
+  overflow: auto !important;
+  position: static !important;
+  height: auto !important;
+  width: auto !important;
+}
+
+/* Ensure main content is always visible and scrollable */
+#main-content {
+  position: relative !important;
+  overflow: visible !important;
+  height: auto !important;
+  min-height: 100vh;
+}
+
+/* Ensure all sections are visible and properly positioned */
+section {
+  position: relative !important;
+  overflow: visible !important;
+  height: auto !important;
+  min-height: auto !important;
+}
+
+/* Fix for any elements that might be causing scroll issues */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure proper stacking context */
+main, section, article, div {
+  z-index: auto;
 }
 
 /* Optimize transitions for better performance */
