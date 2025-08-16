@@ -4,12 +4,13 @@ import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 // Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ",
-    authDomain: "spandex-salvation-radio-site.firebaseapp.com",
-    projectId: "spandex-salvation-radio-site",
-    storageBucket: "spandex-salvation-radio-site.firebasestorage.app",
-    messagingSenderId: "116886458372694977017",
-    appId: "1:632263635377:web:2a9bd6118a6a2cb9d8cd90"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 // Initialize Firebase
 let app;
