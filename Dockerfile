@@ -22,10 +22,7 @@ COPY . .
 # Install dependencies
 RUN npm install
 
-# Build the client first
-RUN cd client && npm run build
-
-# Build the server
+# Build only the server (skip client build to avoid Rollup platform issues)
 RUN npm run build:server
 
 # Production image
@@ -44,9 +41,6 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy built server files
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-
-# Copy built client files
-COPY --from=builder --chown=nodejs:nodejs /app/client/dist ./client/dist
 
 # Copy server source files (needed for some imports)
 COPY --from=builder --chown=nodejs:nodejs /app/server ./server
