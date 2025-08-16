@@ -13,11 +13,11 @@ RUN npm install
 # Copy the pre-built client/dist directory
 COPY client/dist ./client/dist
 
-# Copy the server files
-COPY server/simple-server.js ./
+# Copy the server files (explicitly copy simple-server.js to root)
+COPY server/simple-server.js ./simple-server.js
 
 # Expose port
 EXPOSE 8080
 
-# Start the application using the main field from package.json
-CMD ["npm", "start"]
+# Start the application explicitly with the correct file
+CMD ["node", "simple-server.js"]

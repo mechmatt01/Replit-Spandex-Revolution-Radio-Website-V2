@@ -1,71 +1,49 @@
 # Dependencies
-node_modules
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Build outputs (but allow client/dist)
-build
-out
-.next
-.nuxt
+# Build outputs
+build/
+out/
+.next/
+.nuxt/
 
 # Environment files
 .env
 .env.local
-.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# Git
-.git
-.gitignore
-
-# IDE
-.vscode
-.idea
+# IDE files
+.vscode/
+.idea/
 *.swp
 *.swo
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 
 # Logs
-logs
+logs/
 *.log
 
-# Runtime
-pids
+# Runtime data
+pids/
 *.pid
 *.seed
+*.pid.lock
 
-# Coverage
-coverage
-*.lcov
-
-# Temporary files
-tmp
-temp
+# Coverage directory used by tools like istanbul
+coverage/
 
 # Firebase
-.firebase
+.firebase/
 firebase-debug.log
 firebase-debug.*.log
 
-# GitHub deployment package
-github-deployment-package
-
-# Scripts (not needed in container)
-scripts
-
-# Documentation
-*.md
-docs
-
-# Test files
-test
-tests
-*.test.js
-*.test.ts
-
-# Explicitly allow client/dist
-!client/dist
+# Functions directory (exclude to prevent conflicts)
+functions/
