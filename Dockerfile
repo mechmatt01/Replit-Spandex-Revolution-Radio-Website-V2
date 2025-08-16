@@ -42,6 +42,9 @@ RUN npm ci --only=production && npm cache clean --force
 # Copy built server files
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 
+# Copy the cloud-run-server.js file directly (it's not compiled by TypeScript)
+COPY --from=builder --chown=nodejs:nodejs /app/server/cloud-run-server.js ./dist/
+
 # Copy server source files (needed for some imports)
 COPY --from=builder --chown=nodejs:nodejs /app/server ./server
 
