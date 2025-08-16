@@ -25,12 +25,12 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// Serve static files from client/dist
-app.use(express.static(path.join(__dirname, '../client/dist')));
+// Serve static files from client/dist (relative to /app directory in container)
+app.use(express.static(path.join(__dirname, 'client/dist')));
 
 // Catch-all route to serve the React app
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+  res.sendFile(path.join(__dirname, 'client/dist/index.html'));
 });
 
 // Start the server
