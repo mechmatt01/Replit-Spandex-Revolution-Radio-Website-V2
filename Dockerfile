@@ -9,9 +9,8 @@ WORKDIR /app
 COPY package*.json ./
 COPY client/package*.json ./client/
 
-# Clean up and install production dependencies
-RUN rm -rf package-lock.json node_modules && \
-    npm install --only=production && npm cache clean --force
+# Install all dependencies (including dev dependencies for building)
+RUN npm install && npm cache clean --force
 
 # Build the application
 FROM base AS builder
@@ -20,9 +19,8 @@ WORKDIR /app
 # Copy source code
 COPY . .
 
-# Clean up and install all dependencies
-RUN rm -rf package-lock.json node_modules && \
-    npm install
+# Install dependencies
+RUN npm install
 
 # Build the application
 RUN npm run build:cloud-run
@@ -35,14 +33,16 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
+# Copy package files first
+COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
+
+# Install only production dependencies
+RUN npm ci --only=production && npm cache clean --force
+
 # Copy built application
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 COPY --from=builder --chown=nodejs:nodejs /app/client/dist ./client/dist
 COPY --from=builder --chown=nodejs:nodejs /app/server/cloud-run-server.js ./server/
-
-# Copy package files for runtime dependencies
-COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
-COPY --from=builder --chown=nodejs:nodejs /app/node_modules ./node_modules
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -57,7 +57,7 @@ EXPOSE 8080
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8080/health || exit 1
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
 
 # Start the application
-CMD ["node", "--experimental-modules", "server/cloud-run-server.js"]
+CMD ["node", "server/cloud-run-server.js"]
