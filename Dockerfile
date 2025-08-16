@@ -33,7 +33,7 @@ WORKDIR /app
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
 
-# Copy package files first
+# Copy package files first (including package.json for module type)
 COPY --from=builder --chown=nodejs:nodejs /app/package*.json ./
 
 # Install only production dependencies
