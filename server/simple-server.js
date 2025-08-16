@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,36 +32,12 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// Try multiple possible paths for client/dist
-const possiblePaths = [
-  path.join(__dirname, 'client/dist'),
-  path.join(__dirname, '../client/dist'),
-  path.join(process.cwd(), 'client/dist'),
-  '/app/client/dist'
-];
-
-let clientDistPath = null;
-for (const testPath of possiblePaths) {
-  try {
-    if (fs.existsSync(testPath)) {
-      clientDistPath = testPath;
-      console.log('✅ Found client/dist at:', clientDistPath);
-      break;
-    }
-  } catch (error) {
-    console.log('⚠️  Could not check path:', testPath);
-  }
-}
-
-if (!clientDistPath) {
-  console.error('❌ Could not find client/dist directory!');
-  console.error('📍 Searched paths:', possiblePaths);
-  process.exit(1);
-}
+// Use fixed path for client/dist in container
+const clientDistPath = path.join(__dirname, 'client', 'dist');
+console.log('📁 Using client/dist path:', clientDistPath);
 
 // Serve static files from client/dist
 app.use(express.static(clientDistPath));
-console.log('📁 Serving static files from:', clientDistPath);
 
 // Catch-all route to serve the React app
 app.get('*', (req, res) => {
