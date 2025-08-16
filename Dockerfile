@@ -6,18 +6,22 @@ WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
+COPY client/package*.json ./client/
 
-# Install only production dependencies
+# Install all dependencies (including dev dependencies for building)
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Build the client
+RUN cd client && npm run build
+
+# Install only production dependencies for runtime
 RUN npm ci --only=production
-
-# Copy the simple server
-COPY server/simple-server.js ./
-
-# Copy the pre-built client files (these should exist locally)
-COPY client/dist ./client/dist
 
 # Expose port
 EXPOSE 8080
 
 # Start the application
-CMD ["node", "simple-server.js"]
+CMD ["node", "server/simple-server.js"]
