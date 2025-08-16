@@ -19,5 +19,5 @@ COPY server/simple-server.js ./
 # Expose port
 EXPOSE 8080
 
-# Start the application
-CMD ["node", "simple-server.js"]
+# Start the application using the main field from package.json
+CMD ["npm", "start"]
