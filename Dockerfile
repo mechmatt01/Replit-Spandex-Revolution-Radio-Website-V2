@@ -48,9 +48,6 @@ COPY --from=builder --chown=nodejs:nodejs /app/server ./server
 # Copy shared files
 COPY --from=builder --chown=nodejs:nodejs /app/shared ./shared
 
-# Copy environment files
-COPY --from=builder --chown=nodejs:nodejs /app/.env* ./
-
 # Switch to non-root user
 USER nodejs
 
