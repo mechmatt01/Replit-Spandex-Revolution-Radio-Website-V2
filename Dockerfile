@@ -41,7 +41,7 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy built application
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
-COPY --from=builder --chown=nodejs:nodejs /app/client/dist ./client/dist
+COPY --chown=nodejs:nodejs client/dist ./client/dist
 COPY --from=builder --chown=nodejs:nodejs /app/server/cloud-run-server.js ./server/
 
 # Set environment variables
