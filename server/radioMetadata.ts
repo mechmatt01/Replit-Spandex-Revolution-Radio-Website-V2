@@ -143,7 +143,7 @@ export async function fetchiTunesArtwork(
     );
 
     if (response.ok) {
-      const data = await response.json();
+      const data = await response.json() as any;
       if (data.results && data.results.length > 0) {
         // Get the highest quality artwork (replace 100x100 with 800x800)
         const artworkUrl = data.results[0].artworkUrl100;
@@ -169,7 +169,7 @@ export async function getTrackFromLastFM(
     );
 
     if (response.ok) {
-      const data = await response.json();
+      const data = await response.json() as any;
       const track = data.track;
 
       if (track) {

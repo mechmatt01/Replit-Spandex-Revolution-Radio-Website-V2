@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "./styles.css";
 import "./unified-focus-eliminator.css";
 // Import Firebase configuration to ensure it's initialized before React renders
 import "./firebase";

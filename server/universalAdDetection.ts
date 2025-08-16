@@ -186,7 +186,7 @@ export class UniversalAdDetector {
 
       if (!response.ok) return null;
 
-      const data = await response.json();
+      const data = await response.json() as any;
       const track = data.tracks?.[0];
 
       if (!track) return null;
@@ -254,7 +254,7 @@ export class UniversalAdDetector {
 
       if (!response.ok) return null;
 
-      const data = await response.json();
+      const data = await response.json() as any;
       const track = data.songs?.[0];
 
       if (!track) return null;
@@ -288,7 +288,7 @@ export class UniversalAdDetector {
 
       if (!response.ok) return null;
 
-      const data = await response.json();
+      const data = await response.json() as any;
 
       // Try to map common field names
       const title = data.title || data.song || data.track || data.nowPlaying?.title || 'Unknown';

@@ -18,7 +18,7 @@ export async function fetchRadioCoMetadata() {
     );
 
     if (response.ok) {
-      return await response.json();
+      return await response.json() as any;
     }
   } catch (error) {
     console.log("Radio.co API not available, using fallback");

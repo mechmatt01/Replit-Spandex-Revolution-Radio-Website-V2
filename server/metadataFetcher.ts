@@ -133,7 +133,7 @@ class MetadataFetcher {
           });
 
           if (response.ok) {
-            const data = await response.json();
+            const data = await response.json() as any;
             console.log(`iHeart API response:`, JSON.stringify(data, null, 2));
             
             // Parse different possible response structures from iHeart
@@ -349,7 +349,7 @@ class MetadataFetcher {
           console.log(`SomaFM response status: ${response.status}`);
 
           if (response.ok) {
-            const data = await response.json();
+            const data = await response.json() as any;
             console.log(`SomaFM response data:`, JSON.stringify(data, null, 2));
             
             const track = data.songs?.[0];
@@ -415,7 +415,7 @@ class MetadataFetcher {
           });
 
           if (response.ok) {
-            const data = await response.json();
+            const data = await response.json() as any;
             console.log(`Alternative endpoint response:`, JSON.stringify(data, null, 2));
             
             // Try different response structures from alternative APIs
@@ -471,7 +471,7 @@ class MetadataFetcher {
           });
 
           if (response.ok) {
-            const data = await response.json();
+            const data = await response.json() as any;
             if (data.results && data.results.length > 0) {
               // Get a random track from the results to simulate "live" streaming
               const randomIndex = Math.floor(Math.random() * Math.min(data.results.length, 5));
@@ -530,7 +530,7 @@ class MetadataFetcher {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        const data = await response.json() as any;
         if (data.results && data.results.length > 0) {
           const artwork = data.results[0].artworkUrl100?.replace('100x100bb', '600x600bb');
           console.log(`Found iTunes artwork: ${artwork}`);

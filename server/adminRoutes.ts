@@ -6,7 +6,7 @@ import {
   generateMockUserStatistics,
   getActiveListenersFromFirebase,
   getUserStatisticsFromFirebase
-} from './mockData';
+} from './mockData.js';
 
 const db = getFirestore();
 
