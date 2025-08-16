@@ -5,12 +5,10 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build outputs (but allow client/dist)
-dist
 build
 out
 .next
 .nuxt
-!client/dist
 
 # Environment files
 .env
