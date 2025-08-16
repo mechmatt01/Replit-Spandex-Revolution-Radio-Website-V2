@@ -42,8 +42,8 @@ RUN npm ci --only=production && npm cache clean --force
 # Copy built server files
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 
-# Copy the cloud-run-server.js file directly (it's not compiled by TypeScript)
-COPY --from=builder --chown=nodejs:nodejs /app/server/cloud-run-server.js ./dist/
+# Copy the CommonJS cloud-run-server file
+COPY --from=builder --chown=nodejs:nodejs /app/server/cloud-run-server-cjs.js ./dist/
 
 # Copy server source files (needed for some imports)
 COPY --from=builder --chown=nodejs:nodejs /app/server ./server
@@ -62,4 +62,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:8080/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
 
 # Start the application
-CMD ["node", "dist/cloud-run-server.js"]
+CMD ["node", "dist/cloud-run-server-cjs.js"]
