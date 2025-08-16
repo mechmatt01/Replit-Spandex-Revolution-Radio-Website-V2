@@ -1,49 +1,41 @@
-import express from "express";
-import * as dotenv from "dotenv";
-
-// Load environment variables
-dotenv.config();
+const express = require('express');
+const path = require('path');
 
 const app = express();
-const port = process.env.PORT || 8080;
-const host = process.env.HOST || "0.0.0.0";
+const PORT = process.env.PORT || 8080;
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-// Health check endpoint for Cloud Run
+// Health check endpoint
 app.get('/health', (req, res) => {
-    res.status(200).json({ 
-        status: 'healthy', 
-        timestamp: new Date().toISOString(),
-        port: process.env.PORT || '8080',
-        environment: process.env.NODE_ENV || 'development'
-    });
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    port: PORT
+  });
 });
 
-// Basic API endpoint
+// API status endpoint
 app.get('/api/status', (req, res) => {
-    res.json({
-        message: 'Spandex Salvation Radio API is running',
-        timestamp: new Date().toISOString(),
-        environment: process.env.NODE_ENV || 'development'
-    });
+  res.json({ 
+    message: 'Spandex Salvation Radio API is running',
+    timestamp: new Date().toISOString()
+  });
 });
 
-// Serve static files from client/dist if they exist
-app.use(express.static('client/dist'));
+// Serve static files from client/dist
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
-// Fallback to index.html for SPA routing
+// Catch-all route to serve the React app
 app.get('*', (req, res) => {
-    res.sendFile('client/dist/index.html', { root: process.cwd() });
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
-// Start server
-app.listen(port, host, () => {
-    console.log(`🚀 Simple server running on ${host}:${port}`);
-    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`🔧 PORT from env: ${process.env.PORT || '8080 (default)'}`);
-    console.log(`✅ Health check available at /health`);
+// Start the server
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
 
-export default app;
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  process.exit(0);
+});
