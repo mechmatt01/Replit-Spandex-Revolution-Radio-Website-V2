@@ -22,9 +22,8 @@ COPY . .
 # Install dependencies
 RUN npm install
 
-# Build the application with platform-specific fixes
+# Build only the server (skip client build as it's already built)
 RUN npm run build:server
-RUN cd client && npm run build
 
 # Production image
 FROM base AS runner
