@@ -1,237 +1,174 @@
-// Performance optimization utilities
-export const preloadCriticalResources = () => {
-    // Preload critical fonts
-    const fontLink = document.createElement("link");
-    fontLink.rel = "preload";
-    fontLink.href =
-        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap";
-    fontLink.as = "style";
-    fontLink.crossOrigin = "";
-    document.head.appendChild(fontLink);
-    // Preload critical API endpoints
-    const apiEndpoints = [
-        "/api/now-playing",
-        "/api/radio-status",
-        "/api/stream-stats",
-    ];
-    apiEndpoints.forEach((endpoint) => {
-        fetch(endpoint, { method: "HEAD" }).catch(() => { });
-    });
+import { performance } from '../firebase';
+import { trace } from 'firebase/performance';
+// Create a custom trace for measuring specific operations
+export const createCustomTrace = (traceName) => {
+    return trace(performance, traceName);
 };
-export const optimizeImages = () => {
-    // Lazy load images below the fold
-    const images = document.querySelectorAll('img[data-src]');
-    const imageObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy');
-                imageObserver.unobserve(img);
-            }
-        });
-    });
-    images.forEach((img) => imageObserver.observe(img));
-};
-export const optimizeAnimations = () => {
-    // Reduce motion for users who prefer it
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        document.documentElement.style.setProperty('--animation-duration', '0.01ms');
-        document.documentElement.style.setProperty('--transition-duration', '0.01ms');
-    }
-    // Optimize CSS animations
-    const style = document.createElement('style');
-    style.textContent = `
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-    
-    .animate-pulse {
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: .5; }
-    }
-  `;
-    document.head.appendChild(style);
-};
-export const optimizeScrolling = () => {
-    // Use passive event listeners for better scroll performance
-    let ticking = false;
-    const updateScroll = () => {
-        // Handle scroll-based animations efficiently
-        ticking = false;
-    };
-    const requestTick = () => {
-        if (!ticking) {
-            requestAnimationFrame(updateScroll);
-            ticking = true;
-        }
-    };
-    window.addEventListener('scroll', requestTick, { passive: true });
-    window.addEventListener('resize', requestTick, { passive: true });
-};
-export const optimizeNetworkRequests = () => {
-    // Implement request deduplication
-    const pendingRequests = new Map();
-    const deduplicateRequest = async (url, options = {}) => {
-        if (pendingRequests.has(url)) {
-            return pendingRequests.get(url);
-        }
-        const promise = fetch(url, options);
-        pendingRequests.set(url, promise);
-        try {
-            const response = await promise;
-            pendingRequests.delete(url);
-            return response;
-        }
-        catch (error) {
-            pendingRequests.delete(url);
-            throw error;
-        }
-    };
-    return { deduplicateRequest };
-};
-export const optimizeMemoryUsage = () => {
-    // Clean up event listeners and references
-    const cleanupFunctions = [];
-    const addCleanup = (cleanup) => {
-        cleanupFunctions.push(cleanup);
-    };
-    const cleanup = () => {
-        cleanupFunctions.forEach(fn => fn());
-        cleanupFunctions.length = 0;
-    };
-    // Clean up on page unload
-    window.addEventListener('beforeunload', cleanup);
-    return { addCleanup, cleanup };
-};
-export const optimizeCriticalCSS = () => {
-    // Inline critical CSS for above-the-fold content
-    const criticalCSS = `
-    .critical-content {
-      opacity: 1 !important;
-      visibility: visible !important;
-      transform: none !important;
-    }
-    
-    .non-critical {
-      opacity: 0;
-      visibility: hidden;
-    }
-  `;
-    const style = document.createElement('style');
-    style.textContent = criticalCSS;
-    style.setAttribute('data-critical', 'true');
-    document.head.appendChild(style);
-    // Load non-critical CSS asynchronously
-    const nonCriticalCSS = document.createElement('link');
-    nonCriticalCSS.rel = 'stylesheet';
-    nonCriticalCSS.href = '/non-critical.css';
-    nonCriticalCSS.media = 'print';
-    nonCriticalCSS.onload = () => {
-        nonCriticalCSS.media = 'all';
-    };
-    document.head.appendChild(nonCriticalCSS);
-};
-export const optimizeImagesAdvanced = () => {
-    // Convert images to WebP format for better performance
-    const images = document.querySelectorAll('img');
-    images.forEach((img) => {
-        const imgElement = img;
-        const src = imgElement.getAttribute('src');
-        if (src) {
-            const webpSrc = src.replace(/\.(jpg|png)$/, '.webp');
-            imgElement.setAttribute('data-webp', webpSrc);
-            // Load WebP version
-            const webpImg = new Image();
-            webpImg.onload = () => {
-                imgElement.src = webpSrc;
-            };
-            webpImg.src = webpSrc;
-        }
-    });
-    // Responsive images with srcset
-    const responsiveImages = document.querySelectorAll('img[data-srcset]');
-    responsiveImages.forEach((img) => {
-        const imgElement = img;
-        const srcset = imgElement.getAttribute('data-srcset');
-        if (srcset) {
-            imgElement.srcset = srcset;
-            imgElement.sizes = imgElement.getAttribute('data-sizes') || '100vw';
-        }
-    });
-};
-export const optimizeFonts = () => {
-    // Font display swap for better performance
-    const fontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"]');
-    fontLinks.forEach((link) => {
-        const linkElement = link;
-        if (!linkElement.href.includes('&display=swap')) {
-            linkElement.href += '&display=swap';
-        }
-    });
-    // Preload critical font files
-    const criticalFonts = [
-        '/fonts/Orbitron-Bold.woff2',
-        '/fonts/Orbitron-Regular.woff2'
-    ];
-    criticalFonts.forEach((font) => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.href = font;
-        link.as = 'font';
-        link.type = 'font/woff2';
-        link.crossOrigin = 'anonymous';
-        document.head.appendChild(link);
-    });
-};
-export const optimizeThirdPartyScripts = () => {
-    // Defer non-critical third-party scripts
-    const thirdPartyScripts = document.querySelectorAll('script[data-defer]');
-    thirdPartyScripts.forEach((script) => {
-        script.setAttribute('defer', '');
-        script.removeAttribute('data-defer');
-    });
-    // Load analytics scripts after page load
-    const analyticsScripts = document.querySelectorAll('script[data-analytics]');
-    analyticsScripts.forEach((script) => {
-        window.addEventListener('load', () => {
-            const newScript = document.createElement('script');
-            newScript.src = script.getAttribute('src') || '';
-            newScript.async = true;
-            document.head.appendChild(newScript);
-        });
-    });
-};
-export const initializePerformanceOptimizations = () => {
-    // Initialize all performance optimizations
-    preloadCriticalResources();
-    optimizeImages();
-    optimizeAnimations();
-    optimizeScrolling();
-    optimizeCriticalCSS();
-    optimizeImagesAdvanced();
-    optimizeFonts();
-    optimizeThirdPartyScripts();
-    // Monitor performance metrics
-    if ('PerformanceObserver' in window) {
-        const observer = new PerformanceObserver((list) => {
-            list.getEntries().forEach((entry) => {
-                if (entry.entryType === 'largest-contentful-paint') {
-                    console.log('LCP:', entry.startTime);
+// Measure the duration of an async operation
+export const measureAsyncOperation = async (traceName, operation, additionalMetrics) => {
+    const customTrace = createCustomTrace(traceName);
+    try {
+        customTrace.start();
+        // Add custom attributes if provided
+        if (additionalMetrics) {
+            Object.entries(additionalMetrics).forEach(([key, value]) => {
+                try {
+                    // Use the setAttribute method if available
+                    if (customTrace.setAttribute) {
+                        customTrace.setAttribute(key, value.toString());
+                    }
                 }
-                if (entry.entryType === 'first-input-delay') {
-                    console.log('FID:', entry.startTime);
+                catch (error) {
+                    // Silently fail if setAttribute is not available
+                    console.debug('setAttribute not available for trace:', key);
                 }
             });
-        });
-        observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input-delay'] });
+        }
+        const result = await operation();
+        // Add success metric if available
+        try {
+            if (customTrace.addMetric) {
+                customTrace.addMetric('success', 1);
+            }
+        }
+        catch (error) {
+            console.debug('addMetric not available for trace');
+        }
+        return result;
+    }
+    catch (error) {
+        // Add error metric if available
+        try {
+            if (customTrace.addMetric) {
+                customTrace.addMetric('error', 1);
+            }
+            if (customTrace.setAttribute) {
+                customTrace.setAttribute('error_message', error instanceof Error ? error.message : 'Unknown error');
+            }
+        }
+        catch (metricError) {
+            console.debug('Metrics not available for trace');
+        }
+        throw error;
+    }
+    finally {
+        customTrace.stop();
     }
 };
+// Measure the duration of a synchronous operation
+export const measureSyncOperation = (traceName, operation, additionalMetrics) => {
+    const customTrace = createCustomTrace(traceName);
+    try {
+        customTrace.start();
+        // Add custom attributes if provided
+        if (additionalMetrics) {
+            Object.entries(additionalMetrics).forEach(([key, value]) => {
+                try {
+                    if (customTrace.setAttribute) {
+                        customTrace.setAttribute(key, value.toString());
+                    }
+                }
+                catch (error) {
+                    console.debug('setAttribute not available for trace:', key);
+                }
+            });
+        }
+        const result = operation();
+        // Add success metric if available
+        try {
+            if (customTrace.addMetric) {
+                customTrace.addMetric('success', 1);
+            }
+        }
+        catch (error) {
+            console.debug('addMetric not available for trace');
+        }
+        return result;
+    }
+    catch (error) {
+        // Add error metric if available
+        try {
+            if (customTrace.addMetric) {
+                customTrace.addMetric('error', 1);
+            }
+            if (customTrace.setAttribute) {
+                customTrace.setAttribute('error_message', error instanceof Error ? error.message : 'Unknown error');
+            }
+        }
+        catch (metricError) {
+            console.debug('Metrics not available for trace');
+        }
+        throw error;
+    }
+    finally {
+        customTrace.stop();
+    }
+};
+// Measure page load performance
+export const measurePageLoad = (pageName) => {
+    const customTrace = createCustomTrace(`page_load_${pageName}`);
+    customTrace.start();
+    // Stop the trace when the page is fully loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            customTrace.stop();
+        });
+    }
+    else {
+        customTrace.stop();
+    }
+};
+// Measure API request performance
+export const measureApiRequest = async (endpoint, requestFn) => {
+    return measureAsyncOperation(`api_request_${endpoint}`, requestFn, {
+        endpoint: 1
+    });
+};
+// Measure image loading performance
+export const measureImageLoad = (imageUrl) => {
+    return new Promise((resolve, reject) => {
+        const customTrace = createCustomTrace(`image_load_${imageUrl.split('/').pop()?.split('?')[0] || 'unknown'}`);
+        customTrace.start();
+        const img = new Image();
+        img.onload = () => {
+            try {
+                if (customTrace.addMetric) {
+                    customTrace.addMetric('image_size_bytes', img.naturalWidth * img.naturalHeight * 4); // Approximate size
+                }
+            }
+            catch (error) {
+                console.debug('addMetric not available for trace');
+            }
+            customTrace.stop();
+            resolve();
+        };
+        img.onerror = () => {
+            try {
+                if (customTrace.addMetric) {
+                    customTrace.addMetric('error', 1);
+                }
+            }
+            catch (error) {
+                console.debug('addMetric not available for trace');
+            }
+            customTrace.stop();
+            reject(new Error(`Failed to load image: ${imageUrl}`));
+        };
+        img.src = imageUrl;
+    });
+};
+// Measure component render performance
+export const measureComponentRender = (componentName, renderFn) => {
+    return measureSyncOperation(`component_render_${componentName}`, renderFn, {
+        component: 1
+    });
+};
+// Initialize performance monitoring with default settings
+export const initializePerformanceMonitoring = () => {
+    // Performance monitoring is automatically enabled when Firebase is initialized
+    // Measure initial page load
+    measurePageLoad('app_initialization');
+    console.log('Firebase Performance Monitoring initialized');
+};
+// Export the main performance instance for direct use
+export { performance };

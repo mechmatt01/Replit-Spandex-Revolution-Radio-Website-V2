@@ -1,4 +1,4 @@
-import { jsx as _jsx } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { createContext, useContext, useState, useRef, useEffect, useCallback, } from "react";
 import { useFirebaseAuth } from "./FirebaseAuthContext";
 import { useToast } from "../hooks/use-toast";
@@ -89,26 +89,7 @@ export function RadioProvider({ children }) {
         // Return both proxy and direct URLs as fallback
         return [proxyUrl, baseUrl];
     };
-    const togglePlayback = async () => {
-        const audio = audioRef.current;
-        if (!audio)
-            return;
-        try {
-            if (isPlaying) {
-                audio.pause();
-                setError(null);
-                retryCountRef.current = 0;
-            }
-            else {
-                await startPlayback();
-            }
-        }
-        catch (error) {
-            console.error("Playback toggle error:", error);
-            handlePlaybackError(error);
-        }
-    };
-    const startPlayback = async () => {
+    const startPlayback = useCallback(async () => {
         const audio = audioRef.current;
         if (!audio)
             return;
@@ -179,18 +160,25 @@ export function RadioProvider({ children }) {
                             await new Promise((resolve, reject) => {
                                 const timeout = setTimeout(() => {
                                     reject(new Error("Audio ready timeout"));
-                                }, 2000);
+                                }, 5000);
                                 const onCanPlay = () => {
                                     clearTimeout(timeout);
                                     cleanup();
                                     resolve(true);
                                 };
+                                const onError = () => {
+                                    clearTimeout(timeout);
+                                    cleanup();
+                                    reject(new Error("Audio ready error"));
+                                };
                                 const cleanup = () => {
                                     audio.removeEventListener('canplay', onCanPlay);
+                                    audio.removeEventListener('error', onError);
                                 };
                                 audio.addEventListener('canplay', onCanPlay);
+                                audio.addEventListener('error', onError);
                             });
-                            // Now try to play
+                            // Try to play again after waiting
                             const playPromise = audio.play();
                             if (playPromise !== undefined) {
                                 await playPromise;
@@ -202,130 +190,125 @@ export function RadioProvider({ children }) {
                         }
                     }
                     catch (playError) {
+                        console.warn(`Play attempt ${i + 1} failed:`, playError);
                         if (playError.name === 'NotAllowedError') {
-                            console.log('User interaction required for autoplay');
-                            // Don't throw here, just log and continue to next stream
-                            continue;
+                            throw new Error("Autoplay not allowed. Please click the play button.");
                         }
-                        throw playError;
+                        continue; // Try next stream URL
                     }
                 }
                 else {
-                    console.log('Page not visible, skipping autoplay');
-                    // Don't throw, just continue to next stream
+                    console.log('Page not visible, skipping play attempt');
                     continue;
                 }
             }
-            catch (urlError) {
-                console.warn(`Stream ${i + 1} failed:`, urlError?.message || 'Unknown error');
+            catch (error) {
+                console.warn(`Stream ${i + 1} failed:`, error);
                 if (i === (streamUrls?.length || 0) - 1) {
-                    throw new Error("All stream sources failed");
+                    // Last stream failed, throw error
+                    throw error;
                 }
+                continue; // Try next stream URL
             }
         }
         if (!streamWorked) {
-            throw new Error("All stream formats failed");
+            throw new Error("All stream URLs failed");
         }
-    };
-    const handlePlaybackError = (error) => {
-        let errorMessage = "Failed to start playback";
-        if (error.name === "NotAllowedError") {
-            errorMessage = "Please click play to start the stream";
+    }, [isLoading, currentStation]);
+    const handlePlaybackError = useCallback((error) => {
+        console.error("Playback error:", error);
+        setIsLoading(false);
+        setIsPlaying(false);
+        let errorMessage = "Playback failed";
+        if (error?.name === 'NotAllowedError') {
+            errorMessage = "Autoplay not allowed. Please click the play button.";
         }
-        else if (error.name === "NotSupportedError") {
-            errorMessage = "Stream format not supported - trying alternative formats";
+        else if (error?.message?.includes('timeout')) {
+            errorMessage = "Connection timeout. Please try again.";
         }
-        else if (error.name === "AbortError") {
-            errorMessage = "Stream loading was interrupted";
+        else if (error?.message?.includes('CORS')) {
+            errorMessage = "Stream access denied. Please try again.";
         }
-        else {
-            errorMessage = "Unable to connect to radio stream";
+        else if (error?.message) {
+            errorMessage = error.message;
         }
-        // Auto-retry logic for connection issues
-        if (retryCountRef.current < maxRetries &&
-            !error.name?.includes("NotAllowed") &&
-            !isPlaying) {
-            retryCountRef.current++;
-            console.log(`Auto-retry attempt ${retryCountRef.current}/${maxRetries}`);
-            // Retry after short delay
+        setError(errorMessage);
+        if (isDebugMode) {
+            toast({
+                title: "Playback Error",
+                description: errorMessage,
+                variant: "error",
+            });
+        }
+        // Increment retry count
+        retryCountRef.current += 1;
+        // Auto-retry if under max retries
+        if (retryCountRef.current < maxRetries) {
+            console.log(`Auto-retrying playback (${retryCountRef.current}/${maxRetries})...`);
             setTimeout(() => {
-                if (!isPlaying && !error.name?.includes("NotAllowed")) {
-                    startPlayback().catch(handlePlaybackError);
+                if (!isPlaying && !isLoading) {
+                    startPlayback().catch(console.error);
                 }
-            }, 1000 * retryCountRef.current);
+            }, 2000 * retryCountRef.current); // Exponential backoff
         }
-        else {
-            setError(errorMessage);
-            setIsLoading(false);
-            if (isDebugMode) {
-                toast({
-                    title: "Playback Error",
-                    description: errorMessage,
-                    variant: "error",
-                });
-            }
-        }
-    };
-    const setVolume = (newVolume) => {
+    }, [isDebugMode, toast, isPlaying, isLoading, startPlayback]);
+    const setVolume = useCallback((newVolume) => {
         const clampedVolume = Math.max(0, Math.min(1, newVolume));
         setVolumeState(clampedVolume);
+        // Update audio element volume
+        const audio = audioRef.current;
+        if (audio) {
+            audio.volume = isMuted ? 0 : clampedVolume;
+        }
+        // Save to localStorage
         if (typeof window !== 'undefined') {
             localStorage.setItem('radio-volume', clampedVolume.toString());
         }
-    };
-    const toggleMute = () => {
+    }, [isMuted]);
+    const toggleMute = useCallback(() => {
         const newMuted = !isMuted;
         setIsMuted(newMuted);
+        // Update audio element volume
+        const audio = audioRef.current;
+        if (audio) {
+            audio.volume = newMuted ? 0 : volume;
+        }
+        // Save to localStorage
         if (typeof window !== 'undefined') {
             localStorage.setItem('radio-muted', newMuted.toString());
         }
-    };
-    const changeStation = async (station) => {
-        const wasPlaying = isPlaying;
+    }, [isMuted, volume]);
+    const changeStation = useCallback(async (station) => {
+        console.log(`[RadioContext] Changing station to: ${station.name}`);
+        // Stop current playback
         const audio = audioRef.current;
         if (audio) {
             audio.pause();
+            audio.src = '';
         }
+        // Reset state
+        setIsPlaying(false);
+        setIsLoading(false);
+        setError(null);
+        retryCountRef.current = 0;
+        // Update station
         setCurrentStation(station);
         setStationName(station.name);
-        setIsTransitioning(true);
-        // Update track info for new station
-        setCurrentTrack({
-            title: station.name,
-            artist: station.description,
-            album: `${station.frequency} • ${station.location}`,
-            artwork: "",
-            isAd: false,
-            stationName: station.name,
-            frequency: station.frequency,
-            location: station.location,
-            genre: station.genre,
-            lastUpdated: new Date(),
-        });
-        // Wait a moment for the transition
-        await new Promise((resolve) => {
-            const onReady = () => {
-                setIsTransitioning(false);
-                resolve(true);
-            };
-            const cleanup = () => {
-                audio?.removeEventListener('canplay', onReady);
-            };
-            audio?.addEventListener('canplay', onReady);
-            setTimeout(cleanup, 5000); // Fallback cleanup
-        });
-        // Resume playback if it was playing before
-        if (wasPlaying) {
-            try {
-                await startPlayback();
-            }
-            catch (error) {
-                console.error('Error resuming playback after station change:', error);
-            }
+        // Save to localStorage
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('last-selected-station', station.id);
         }
-    };
+        // Start playback for new station
+        try {
+            await startPlayback();
+        }
+        catch (error) {
+            console.error('[RadioContext] Failed to start playback for new station:', error);
+            // Don't throw here, let the user manually start playback
+        }
+    }, [startPlayback]);
     // Audio event handlers
-    const handlePlay = async () => {
+    const handlePlay = useCallback(async () => {
         console.log("Audio play event triggered");
         setIsPlaying(true);
         setIsLoading(false);
@@ -351,8 +334,8 @@ export function RadioProvider({ children }) {
                 });
             }
         }
-    };
-    const handlePause = async () => {
+    }, [updateListeningStatus, isDebugMode, toast, currentStation?.name]);
+    const handlePause = useCallback(async () => {
         console.log("Audio pause event triggered");
         setIsPlaying(false);
         setIsLoading(false);
@@ -377,21 +360,21 @@ export function RadioProvider({ children }) {
                 });
             }
         }
-    };
-    const handleLoadStart = () => {
+    }, [updateListeningStatus, isDebugMode, toast]);
+    const handleLoadStart = useCallback(() => {
         console.log("Audio loadstart event triggered");
         setIsLoading(true);
         setError(null);
-    };
-    const handleCanPlay = () => {
+    }, []);
+    const handleCanPlay = useCallback(() => {
         console.log("Audio canplay event triggered");
         // Don't set loading to false here, wait for play event
-    };
-    const handleCanPlayThrough = () => {
+    }, []);
+    const handleCanPlayThrough = useCallback(() => {
         console.log("Audio canplaythrough event triggered");
         // Don't set loading to false here, wait for play event
-    };
-    const handleError = (e) => {
+    }, []);
+    const handleError = useCallback((e) => {
         console.error("Audio error:", e);
         setIsLoading(false);
         setIsPlaying(false);
@@ -406,15 +389,15 @@ export function RadioProvider({ children }) {
                 });
             }
         }
-    };
-    const handleStalled = () => {
+    }, [isDebugMode, toast]);
+    const handleStalled = useCallback(() => {
         console.log("Audio stalled event triggered");
         // Keep loading state if stalled
-    };
-    const handleWaiting = () => {
+    }, []);
+    const handleWaiting = useCallback(() => {
         console.log("Audio waiting event triggered");
         setIsLoading(true);
-    };
+    }, []);
     // Set up audio event listeners
     useEffect(() => {
         const audio = audioRef.current;
@@ -443,7 +426,7 @@ export function RadioProvider({ children }) {
             audio.removeEventListener("stalled", handleStalled);
             audio.removeEventListener("waiting", handleWaiting);
         };
-    }, [volume, isMuted]);
+    }, [volume, isMuted, handlePlay, handlePause, handleLoadStart, handleCanPlay, handleCanPlayThrough, handleError, handleStalled, handleWaiting]);
     // Auto-play first station on mount (try immediately, then fallback to user interaction)
     useEffect(() => {
         let isInitialized = false;
@@ -504,7 +487,7 @@ export function RadioProvider({ children }) {
                     setTimeout(async () => {
                         if (!isPlaying && !isInitialized) {
                             try {
-                                await togglePlayback();
+                                await startPlayback();
                             }
                             catch (error) {
                                 console.error('[RadioContext] Auto-play failed:', error);
@@ -660,6 +643,26 @@ export function RadioProvider({ children }) {
             }
         };
     }, [metadataPollingInterval]);
+    const togglePlayback = useCallback(async () => {
+        const audio = audioRef.current;
+        if (!audio)
+            return;
+        try {
+            if (isPlaying) {
+                audio.pause();
+                setError(null);
+                retryCountRef.current = 0;
+            }
+            else {
+                await startPlayback();
+            }
+        }
+        catch (error) {
+            console.error("Playback toggle error:", error);
+            handlePlaybackError(error);
+        }
+    }, [isPlaying, startPlayback, handlePlaybackError]);
+    // setCurrentTrack is already stable from useState, no need for useCallback
     const value = {
         isPlaying,
         volume,
@@ -679,7 +682,7 @@ export function RadioProvider({ children }) {
         setCurrentTrack,
         audioRef,
     };
-    return _jsx(RadioContext.Provider, { value: value, children: children });
+    return (_jsxs(RadioContext.Provider, { value: value, children: [_jsx("audio", { ref: audioRef, preload: "none", crossOrigin: "anonymous", "aria-label": "Live radio stream", style: { display: 'none' } }), children] }));
 }
 export function useRadio() {
     const context = useContext(RadioContext);

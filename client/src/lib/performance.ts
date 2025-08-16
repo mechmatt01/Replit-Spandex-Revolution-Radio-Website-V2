@@ -1,11 +1,8 @@
 import { performance } from '../firebase';
-import { 
-  trace, 
-  Trace
-} from 'firebase/performance';
+import { trace } from 'firebase/performance';
 
 // Create a custom trace for measuring specific operations
-export const createCustomTrace = (traceName: string): Trace => {
+export const createCustomTrace = (traceName: string): any => {
   return trace(performance, traceName);
 };
 

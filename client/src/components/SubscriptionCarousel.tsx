@@ -92,6 +92,13 @@ export default function SubscriptionCarousel() {
   const { getColors, currentTheme } = useTheme();
   const colors = getColors();
 
+  const handleSubscribe = (tier: SubscriptionTier) => {
+    console.log('Subscribing to tier:', tier.name);
+    // TODO: Implement subscription logic
+    // This would typically redirect to Stripe checkout or handle subscription
+    alert(`Redirecting to ${tier.name} subscription...`);
+  };
+
   const handlePrevious = useCallback(() => {
     if (!isAnimating) {
       console.log('Previous animation starting');

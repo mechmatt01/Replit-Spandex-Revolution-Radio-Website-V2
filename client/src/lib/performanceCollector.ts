@@ -1,5 +1,5 @@
 import { performance } from '../firebase';
-import { trace, Trace } from 'firebase/performance';
+import { trace } from 'firebase/performance';
 
 // Performance data storage
 interface PerformanceEvent {
@@ -120,9 +120,9 @@ class PerformanceCollector {
           const lastEntry = entries[entries.length - 1];
           if (lastEntry) {
             this.recordEvent('page_load', 'LCP', lastEntry.startTime, 'ms', {
-              element: lastEntry.element?.tagName || 'unknown',
-              size: lastEntry.size || 0,
-              url: lastEntry.url || window.location.href
+                          element: (lastEntry as any).element?.tagName || 'unknown',
+            size: (lastEntry as any).size || 0,
+            url: (lastEntry as any).url || window.location.href
             });
           }
         });
@@ -132,7 +132,7 @@ class PerformanceCollector {
         const fidObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries();
           entries.forEach(entry => {
-            this.recordEvent('page_load', 'FID', entry.processingStart - entry.startTime, 'ms', {
+            this.recordEvent('page_load', 'FID', (entry as any).processingStart - entry.startTime, 'ms', {
               name: entry.name,
               type: entry.entryType
             });
@@ -145,7 +145,7 @@ class PerformanceCollector {
           const entries = list.getEntries();
           let clsValue = 0;
           entries.forEach(entry => {
-            if (!entry.hadRecentInput) {
+            if (!(entry as any).hadRecentInput) {
               clsValue += (entry as any).value;
             }
           });
@@ -303,28 +303,28 @@ class PerformanceCollector {
       customTrace.start();
       
       // Add custom attributes if available
-      if (customTrace.setAttribute) {
+      if ((customTrace as any).setAttribute) {
         Object.entries(event.metadata).forEach(([key, value]) => {
           try {
-            customTrace.setAttribute(key, String(value));
+            (customTrace as any).setAttribute(key, String(value));
           } catch (error) {
             console.debug('Failed to set trace attribute:', key);
           }
         });
         
         // Add event metadata
-        customTrace.setAttribute('event_id', event.id);
-        customTrace.setAttribute('session_id', event.sessionId);
+        (customTrace as any).setAttribute('event_id', event.id);
+        (customTrace as any).setAttribute('session_id', event.sessionId);
         if (event.userId) {
-          customTrace.setAttribute('user_id', event.userId);
+          (customTrace as any).setAttribute('user_id', event.userId);
         }
-        customTrace.setAttribute('url', event.url);
+        (customTrace as any).setAttribute('url', event.url);
       }
       
       // Add custom metrics if available
-      if (customTrace.addMetric) {
-        customTrace.addMetric('value', event.value);
-        customTrace.addMetric('unit', this.parseUnit(event.unit));
+      if ((customTrace as any).addMetric) {
+        (customTrace as any).addMetric('value', event.value);
+        (customTrace as any).addMetric('unit', this.parseUnit(event.unit));
       }
       
       // Stop the trace immediately for instant events

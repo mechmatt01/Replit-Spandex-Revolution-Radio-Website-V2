@@ -7,21 +7,23 @@ import About from "../components/About";
 import Schedule from "../components/Schedule";
 import Submissions from "../components/Submissions";
 import FullWidthGlobeMap from "../components/FullWidthGlobeMap";
-import Contact from "../components/Contact";
-import SubscriptionCarousel from "../components/SubscriptionCarousel";
-import ShopifyEcommerce from "../components/ShopifyEcommerce";
-import FadeInView from "../components/FadeInView";
 import StatsAndLocations from "../components/StatsAndLocations";
+import Contact from "../components/Contact";
+import ShopifyEcommerce from "../components/ShopifyEcommerce";
 import Footer from "../components/Footer";
 import StickyPlayer from "../components/StickyPlayer";
 import ChatButton from "../components/ChatButton";
 import { useTheme } from "../contexts/ThemeContext";
+import { measurePageLoad } from '../lib/performance';
+import FadeInView from "../components/FadeInView";
+import SubscriptionCarousel from "../components/SubscriptionCarousel";
 export default function HomePage() {
-    const [isScrollingEnabled, setIsScrollingEnabled] = useState(true);
     const [showLiveChat, setShowLiveChat] = useState(false);
-    const { getColors, currentTheme } = useTheme();
+    const { currentTheme, getColors } = useTheme();
     const colors = getColors();
+    // Measure page load performance
     useEffect(() => {
+        measurePageLoad('home_page');
         // Handle hash navigation on page load
         const handleHashNavigation = () => {
             const hash = window.location.hash.substring(1); // Remove the #

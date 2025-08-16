@@ -14,7 +14,7 @@ import {
 } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator, Firestore } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator, FirebaseStorage } from 'firebase/storage';
-import { getPerformance, connectPerformanceEmulator, Performance } from 'firebase/performance';
+import { getPerformance } from 'firebase/performance';
 
 // Firebase configuration
 const firebaseConfig = {
@@ -45,7 +45,7 @@ try {
 let auth: Auth;
 let db: Firestore;
 let storage: FirebaseStorage;
-let performance: Performance;
+let performance: any;
 
 try {
   // Initialize auth first

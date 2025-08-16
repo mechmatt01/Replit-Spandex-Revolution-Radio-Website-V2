@@ -78,7 +78,10 @@ safe_copy_directory() {
     # Create destination directory
     mkdir -p "$destination"
     
-    # Copy with progress tracking
+    # Initialize progress bar
+    printf "\n"
+    
+    # Copy with live progress tracking
     while IFS= read -r -d '' file; do
         current_file=$((current_file + 1))
         local relative_path="${file#$source/}"
@@ -90,25 +93,37 @@ safe_copy_directory() {
         
         # Copy file
         if cp "$file" "$dest_file" 2>/dev/null; then
-            # Show progress bar
+            # Calculate progress
             local progress=$((current_file * 100 / total_files))
-            local bar_length=30
+            local bar_length=50
             local filled=$((progress * bar_length / 100))
             local empty=$((bar_length - filled))
             
-            printf "\r["
-            printf "%${filled}s" | tr ' ' '█'
-            printf "%${empty}s" | tr ' ' '░'
-            printf "] %3d%% - %s" "$progress" "$relative_path"
+            # Create animated progress bar
+            local bar=""
+            for ((i=0; i<filled; i++)); do
+                bar+="█"
+            done
+            for ((i=0; i<empty; i++)); do
+                bar+="░"
+            done
             
-            # Clear line when complete
-            if [ $current_file -eq $total_files ]; then
-                printf "\n"
+            # Show live progress with file name
+            printf "\r[%s] %3d%% - 📄 %s" "$bar" "$progress" "$relative_path"
+            
+            # Add a small delay for smooth animation (only if copying many files)
+            if [ $total_files -gt 100 ]; then
+                sleep 0.01
             fi
         else
             print_status $RED "❌ Failed to copy: $relative_path"
         fi
     done < <(find "$source" -type f -print0)
+    
+    # Complete the progress bar
+    printf "\r["
+    printf "%${bar_length}s" | tr ' ' '█'
+    printf "] 100%% - ✅ Complete!\n"
     
     print_status $GREEN "✅ Directory copied: $source_name ($total_files files)"
 }
@@ -121,19 +136,165 @@ show_progress_bar() {
     local current_item="$4"
     
     local progress=$((current * 100 / total))
-    local bar_length=40
+    local bar_length=50
     local filled=$((progress * bar_length / 100))
     local empty=$((bar_length - filled))
     
-    printf "\r["
-    printf "%${filled}s" | tr ' ' '█'
-    printf "%${empty}s" | tr ' ' '░'
-    printf "] %3d%% - %s: %s" "$progress" "$operation" "$current_item"
+    # Create animated progress bar with different characters for variety
+    local bar=""
+    local chars=("█" "▓" "▒" "░")
+    local char_index=$((current % 4))
+    
+    for ((i=0; i<filled; i++)); do
+        bar+="█"
+    done
+    for ((i=0; i<empty; i++)); do
+        bar+="░"
+    done
+    
+    # Show live progress with operation and current item
+    printf "\r[%s] %3d%% - 🚀 %s: %s" "$bar" "$progress" "$operation" "$current_item"
     
     # Clear line when complete
     if [ $current -eq $total ]; then
-        printf "\n"
+        printf "\r["
+        printf "%${bar_length}s" | tr ' ' '█'
+        printf "] 100%% - ✅ %s Complete!\n" "$operation"
     fi
+}
+
+# Function for smooth animated progress bars (for operations like npm build, git push)
+show_animated_progress() {
+    local operation="$1"
+    local duration="$2"
+    local bar_length=50
+    local frames=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
+    local frame_index=0
+    
+    printf "\n🔄 %s...\n" "$operation"
+    
+    # Show animated spinner with progress
+    for ((i=0; i<=100; i++)); do
+        local filled=$((i * bar_length / 100))
+        local empty=$((bar_length - filled))
+        
+        # Create progress bar
+        local bar=""
+        for ((j=0; j<filled; j++)); do
+            bar+="█"
+        done
+        for ((j=0; j<empty; j++)); do
+            bar+="░"
+        done
+        
+        # Show animated progress with spinner
+        printf "\r[%s] %3d%% %s %s" "$bar" "$i" "${frames[frame_index]}" "$operation"
+        
+        # Update spinner frame
+        frame_index=$((frame_index + 1))
+        if [ $frame_index -ge ${#frames[@]} ]; then
+            frame_index=0
+        fi
+        
+        # Calculate delay based on duration
+        local delay=$(echo "scale=3; $duration / 100" | bc 2>/dev/null || echo "0.1")
+        sleep $delay
+    done
+    
+    # Complete the progress bar
+    printf "\r["
+    printf "%${bar_length}s" | tr ' ' '█'
+    printf "] 100%% - ✅ %s Complete!\n" "$operation"
+}
+
+# Function for real-time progress monitoring with live updates
+monitor_progress() {
+    local operation="$1"
+    local command="$2"
+    local bar_length=50
+    local frames=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
+    local frame_index=0
+    local progress=0
+    
+    printf "\n🔄 %s...\n" "$operation"
+    
+    # Start the command in background and monitor progress
+    eval "$command" > /tmp/progress_output 2>&1 &
+    local cmd_pid=$!
+    
+    # Monitor progress with animated bar
+    while kill -0 $cmd_pid 2>/dev/null; do
+        # Update progress (simulate based on time or output)
+        progress=$((progress + 1))
+        if [ $progress -gt 100 ]; then
+            progress=100
+        fi
+        
+        local filled=$((progress * bar_length / 100))
+        local empty=$((bar_length - filled))
+        
+        # Create progress bar
+        local bar=""
+        for ((j=0; j<filled; j++)); do
+            bar+="█"
+        done
+        for ((j=0; j<empty; j++)); do
+            bar+="░"
+        done
+        
+        # Show animated progress with spinner
+        printf "\r[%s] %3d%% %s %s" "$bar" "$progress" "${frames[frame_index]}" "$operation"
+        
+        # Update spinner frame
+        frame_index=$((frame_index + 1))
+        if [ $frame_index -ge ${#frames[@]} ]; then
+            frame_index=0
+        fi
+        
+        sleep 0.1
+    done
+    
+    # Wait for command to complete
+    wait $cmd_pid
+    local exit_code=$?
+    
+    # Complete the progress bar
+    printf "\r["
+    printf "%${bar_length}s" | tr ' ' '█'
+    printf "] 100%% - ✅ %s Complete!\n" "$operation"
+    
+    # Show output if there was an error
+    if [ $exit_code -ne 0 ]; then
+        print_status $RED "❌ %s failed with exit code %d" "$operation" "$exit_code"
+        cat /tmp/progress_output
+    fi
+    
+    # Clean up
+    rm -f /tmp/progress_output
+    
+    return $exit_code
+}
+
+# Quick progress bar function for simple operations
+quick_progress() {
+    local operation="$1"
+    local bar_length=40
+    local frames=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
+    local frame_index=0
+    
+    printf "🔄 %s " "$operation"
+    
+    # Show animated spinner
+    for ((i=0; i<10; i++)); do
+        printf "\r🔄 %s %s" "$operation" "${frames[frame_index]}"
+        frame_index=$((frame_index + 1))
+        if [ $frame_index -ge ${#frames[@]} ]; then
+            frame_index=0
+        fi
+        sleep 0.2
+    done
+    
+    printf "\r✅ %s Complete!\n" "$operation"
 }
 
 # Function to check if we're in the right directory

@@ -141,7 +141,9 @@ export default function RadioCoPlayer() {
     }
   }, []);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
+  const audioRef = useRef<HTMLAudioElement>(null);
   const volumeButtonRef = useRef<HTMLDivElement>(null);
   const volumeSliderRef = useRef<HTMLDivElement>(null);
   const stationDropdownRef = useRef<HTMLDivElement>(null);
@@ -209,13 +211,11 @@ export default function RadioCoPlayer() {
     try {
       await measureAsyncOperation('radio_player_play', async () => {
         await audioRef.current!.play();
-        setIsPlaying(true);
         setHasError(false);
-      }, { action: 'play' });
+      }, { action: 1 });
     } catch (error) {
       console.error('Error playing audio:', error);
       setHasError(true);
-      setIsPlaying(false);
     }
   };
 
@@ -224,19 +224,16 @@ export default function RadioCoPlayer() {
     
     measureSyncOperation('radio_player_pause', () => {
       audioRef.current!.pause();
-      setIsPlaying(false);
-    }, { action: 'pause' });
+    }, { action: 1 });
   };
 
   const handleStationChange = async (newStation: RadioStation) => {
     if (audioRef.current) {
       audioRef.current.pause();
-      setIsPlaying(false);
     }
     
     try {
       await measureAsyncOperation('radio_station_change', async () => {
-        setCurrentStation(newStation);
         setHasError(false);
         
         // Small delay to ensure state updates

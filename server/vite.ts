@@ -4,10 +4,9 @@ import type { Server } from "http";
 import express from "express";
 import path from "path";
 import fs from "fs";
-import { fileURLToPath } from "url";
 import { nanoid } from "nanoid";
 
-const __filename = fileURLToPath(import.meta.url);
+const __filename = require.main?.filename || "";
 const __dirname = path.dirname(__filename);
 
 const viteLogger = createLogger();
