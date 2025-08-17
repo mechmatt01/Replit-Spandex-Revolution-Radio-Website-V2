@@ -523,27 +523,31 @@ export default function Navigation() {
                         <div className="relative">
                           {/* Profile Image */}
                           <div
-                            className="w-10 h-10 rounded-full bg-gradient-to-br flex items-center justify-center shadow-lg ring-2 ring-offset-2"
+                            className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg ring-2 ring-offset-2 overflow-hidden"
                             style={{
                               background: user?.photoURL 
-                                ? `url(${user.photoURL}) center/cover` 
+                                ? `url(${user.photoURL}) center/cover no-repeat` 
                                 : gradient,
                               '--ring-color': colors.primary,
                               '--ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
                             } as React.CSSProperties}
                           >
+                            {/* Show user icon only when no photo URL */}
                             {!user?.photoURL && (
                               <User size={20} className="text-white" />
                             )}
+                            
+                            {/* Profile image should now display properly without debug overlay */}
                           </div>
 
                           {/* Verified Badge for Subscribers */}
                           {user?.displayName && (
                             <div 
-                              className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center shadow-md"
+                              className="absolute -bottom-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center shadow-md verified-badge"
                               style={{
                                 backgroundColor: colors.primary,
                                 border: `2px solid ${isDarkMode ? '#000000' : colors.primary}`,
+                                zIndex: 20,
                               }}
                             >
                               <svg 
@@ -554,7 +558,7 @@ export default function Navigation() {
                                 className="text-white"
                               >
                                 <path 
-                                  d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
+                                  d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
                                   stroke="currentColor" 
                                   strokeWidth="2.5" 
                                   strokeLinecap="round" 

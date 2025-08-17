@@ -72,11 +72,11 @@ const HeroComponent = React.memo(function HeroComponent() {
         {`
           @keyframes customPulse {
             0%, 100% {
-              opacity: 1;
+              opacity: 0.6;
               transform: scale(1);
             }
             50% {
-              opacity: 0.5;
+              opacity: 0.3;
               transform: scale(1.1);
             }
           }

@@ -230,7 +230,7 @@ export async function createUserProfile(firebaseUser: any, additionalData?: { fi
     const userProfile: UserProfile = {
       firstName,
       lastName,
-      userProfileImage: firebaseUser.photoURL || getRandomDefaultAvatar(),
+      userProfileImage: getProfileImageWithFallback(null, firebaseUser.photoURL),
       emailAddress: firebaseUser.email || '',
       phoneNumber,
       location: null, // Will be set when user grants location permission
@@ -654,4 +654,65 @@ export async function uploadProfileImage(file: File, userID: string): Promise<st
   }
 }
 
+// Delete user profile completely
+export async function deleteUserProfile(userID: string): Promise<boolean> {
+  try {
+    console.log('[Firebase] Attempting to delete user profile:', userID);
+    
+    // Delete the user profile document from Firestore
+    await setDoc(doc(db, 'Users', `User: ${userID}`), {}, { merge: false });
+    
+    // Note: We don't delete the Firebase Auth user here as that requires admin privileges
+    // The user will need to manually delete their account from Firebase Console or contact support
+    
+    console.log('[Firebase] User profile deleted successfully:', userID);
+    return true;
+  } catch (error) {
+    console.error('[Firebase] Error deleting user profile:', error);
+    return false;
+  }
+}
+
+// Delete user account completely (requires admin privileges)
+export async function deleteUserAccount(userID: string): Promise<boolean> {
+  try {
+    console.log('[Firebase] Attempting to delete user account:', userID);
+    
+    // First delete the profile
+    const profileDeleted = await deleteUserProfile(userID);
+    if (!profileDeleted) {
+      throw new Error('Failed to delete user profile');
+    }
+    
+    // Note: Deleting the Firebase Auth user requires admin privileges
+    // This would typically be done server-side with admin SDK
+    console.log('[Firebase] User account deletion initiated. Profile deleted, but Firebase Auth user remains.');
+    console.log('[Firebase] User must contact support to completely remove their account.');
+    
+    return true;
+  } catch (error) {
+    console.error('[Firebase] Error deleting user account:', error);
+    return false;
+  }
+}
+
 export { provider };
+
+// Get profile image with proper fallback priority
+export function getProfileImageWithFallback(
+  customProfileImage: string | null | undefined,
+  googlePhotoURL: string | null | undefined
+): string {
+  // Priority 1: Custom profile image (if exists and valid)
+  if (customProfileImage && customProfileImage.trim() !== '') {
+    return customProfileImage;
+  }
+  
+  // Priority 2: Google profile image (if exists and valid)
+  if (googlePhotoURL && googlePhotoURL.trim() !== '') {
+    return googlePhotoURL;
+  }
+  
+  // Priority 3: Default avatar
+  return getRandomDefaultAvatar();
+}

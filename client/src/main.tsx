@@ -7,6 +7,35 @@ import "./firebase";
 import App from "./App";
 import "./index.css";
 
+// Global currentTheme variable to prevent React error handler crashes
+declare global {
+  interface Window {
+    currentTheme?: string;
+  }
+}
+
+// Set a default value to prevent crashes
+window.currentTheme = "classic-metal";
+
+// Global error handler to catch currentTheme issues
+window.addEventListener('error', (event) => {
+  if (event.error && event.error.message && event.error.message.includes('currentTheme is not defined')) {
+    console.error('🔴 CRITICAL ERROR: currentTheme is not defined');
+    console.error('Error details:', event.error);
+    console.error('Error stack:', event.error.stack);
+    console.error('Current URL:', window.location.href);
+    console.error('Document ready state:', document.readyState);
+    
+    // Check if ThemeContext is available
+    try {
+      const themeElements = document.querySelectorAll('[data-theme]');
+      console.error('Theme elements found:', themeElements.length);
+    } catch (e) {
+      console.error('Error checking theme elements:', e);
+    }
+  }
+});
+
 // Register service worker for performance optimization
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

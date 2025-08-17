@@ -194,7 +194,7 @@ class PerformanceCollector {
     if ('performance' in window && 'getEntriesByType' in performance) {
       try {
         const resourceEntries = performance.getEntriesByType('resource');
-        resourceEntries.forEach(entry => {
+        resourceEntries.forEach((entry: PerformanceEntry) => {
           const resourceEntry = entry as PerformanceResourceTiming;
           
           // Only track API requests and important resources
@@ -401,8 +401,8 @@ class PerformanceCollector {
       const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
       
       Object.values(this.metrics).forEach(categoryMap => {
-        categoryMap.forEach((events, key) => {
-          const filteredEvents = events.filter(event => event.timestamp > oneHourAgo);
+        categoryMap.forEach((events: PerformanceEvent[], key: string) => {
+          const filteredEvents = events.filter((event: PerformanceEvent) => event.timestamp > oneHourAgo);
           if (filteredEvents.length === 0) {
             categoryMap.delete(key);
           } else {

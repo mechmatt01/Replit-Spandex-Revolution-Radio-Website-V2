@@ -1,6 +1,6 @@
 import {
   Play,
-  Pause,
+  Square,
   Volume2,
   VolumeX,
   Radio as RadioIcon,
@@ -44,7 +44,7 @@ const radioStations: RadioStation[] = [
     frequency: "97.1 FM",
     location: "New York, NY", 
     genre: "Hip Hop & R&B",
-    streamUrl: "https://stream.revma.ihrhls.com/zc6046",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
     description: "New York's #1 Hip Hop & R&B",
     icon: "🔥",
   },
@@ -55,7 +55,7 @@ const radioStations: RadioStation[] = [
     frequency: "105.1 FM",
     location: "New York, NY",
     genre: "Hip Hop & R&B",
-    streamUrl: "https://stream.revma.ihrhls.com/zc1481",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WWPRFMAAC.aac",
     description: "New York's Power 105.1",
     icon: "⚡",
   },
@@ -77,7 +77,7 @@ const radioStations: RadioStation[] = [
     frequency: "105.1 FM",
     location: "Miami, FL",
     genre: "Urban R&B",
-    streamUrl: "https://stream.revma.ihrhls.com/zc5907",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WMIBFMAAC.aac",
     description: "Miami's Today's R&B and Old School",
     icon: "🌴",
   },
@@ -88,7 +88,7 @@ const radioStations: RadioStation[] = [
     frequency: "93.3 FM",
     location: "New Orleans, LA",
     genre: "Hip Hop & R&B",
-    streamUrl: "https://stream.revma.ihrhls.com/zc1037",
+    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQUE-FMAAC.aac",
     description: "New Orleans Hip Hop & R&B",
     icon: "🎺",
   },
@@ -309,7 +309,7 @@ export default function RadioCoPlayer() {
 
   return (
     <section
-                  className="backdrop-blur-md rounded-2xl shadow-xl transition-all duration-1000 ease-in-out mx-auto overflow-visible"
+                  className="backdrop-blur-md rounded-lg shadow-xl transition-all duration-1000 ease-in-out mx-auto overflow-visible"
       role="region"
       aria-label="Radio player controls"
       style={{
@@ -329,7 +329,7 @@ export default function RadioCoPlayer() {
         paddingTop: '20px',
         paddingLeft: '20px', 
         paddingRight: '20px',
-        paddingBottom: isVolumeSliderVisible ? '100px' : '68px', // Reduced height - Extra space when slider is active, minimum space for volume button
+        paddingBottom: isVolumeSliderVisible ? '60px' : '68px', // Reduced height - Extra space when slider is active, minimum space for volume button
         // Ensure it expands to accommodate the longest text element
         contain: 'layout'
       }}
@@ -578,14 +578,14 @@ export default function RadioCoPlayer() {
           />
         </div>
 
-        {/* Compact LIVE Indicator - 50% overlapping top of album artwork */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        {/* Compact LIVE Indicator - properly positioned near the top of album artwork */}
+        <div className="absolute top-2 left-1/2 transform -translate-x-1/2">
           <div className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${
             isAdPlaying 
               ? 'bg-red-600 text-white' 
               : 'bg-red-500 text-white'
           }`}>
-            <div className="w-1 h-1 bg-white rounded-full animate-pulse opacity-90 relative" style={{ top: '0px' }}></div>
+            <div className="w-1 h-1 bg-white rounded-full animate-pulse opacity-90 relative ml-1"></div>
             <span className="opacity-90">
               {isAdPlaying ? 'AD' : 'LIVE'}
             </span>
@@ -631,7 +631,7 @@ export default function RadioCoPlayer() {
           {currentTrack.lastUpdated && (
             <div className="mb-2 flex justify-center">
               <div className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-green-400 bg-green-400/10">
-                <div className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse relative" style={{ top: '0px' }}></div>
+                <div className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse relative"></div>
                 LIVE
               </div>
             </div>
@@ -734,6 +734,7 @@ export default function RadioCoPlayer() {
               border: "none",
               outline: "none",
             }}
+            aria-label={isLoading ? "Connecting..." : isPlaying ? "Stop radio stream" : "Play radio stream"}
           >
             {isLoading ? (
               <div 
@@ -746,39 +747,22 @@ export default function RadioCoPlayer() {
                 }}
               ></div>
             ) : isPlaying ? (
-              <svg
+              <Square
                 className="h-10 w-10"
                 fill="#ffffff"
-                viewBox="0 0 24 24"
-              >
-                <rect
-                  x="6"
-                  y="4"
-                  width="4"
-                  height="16"
-                  rx="1"
-                  fill="#ffffff"
-                />
-                <rect
-                  x="14"
-                  y="4"
-                  width="4"
-                  height="16"
-                  rx="1"
-                  fill="#ffffff"
-                />
-              </svg>
+                stroke="#ffffff"
+                strokeWidth="2"
+              />
             ) : (
-              <svg
+              <Play
                 className="h-10 w-10"
                 fill="#ffffff"
-                viewBox="0 0 24 24"
+                stroke="#ffffff"
+                strokeWidth="2"
                 style={{
                   animation: "pulse 2s ease-in-out infinite",
                 }}
-              >
-                <path d="M8 5c0-.6.4-1 1-1 .2 0 .5.1.7.3l9 7c.8.6.8 1.8 0 2.4l-9 7c-.2.2-.5.3-.7.3-.6 0-1-.4-1-1V5z" fill="#ffffff" />
-              </svg>
+              />
             )}
           </Button>
         </div>
@@ -792,7 +776,7 @@ export default function RadioCoPlayer() {
             onMouseLeave={handleVolumeAreaMouseLeave}
           >
             {/* Extended hover area that includes button and slider */}
-            <div className="relative flex items-center justify-center pb-16">
+            <div className="relative flex items-center justify-center pb-4">
               {/* Volume Button - stays centered */}
               <Button
                 onClick={toggleMute}
@@ -844,14 +828,16 @@ export default function RadioCoPlayer() {
                       fill="none"
                       className="relative"
                     >
+                      {/* Speaker icon - centered */}
                       <path
                         d="M11 5L6 9H2v6h4l5 4V5z"
                         fill="currentColor"
                         strokeLinejoin="round"
                         strokeLinecap="round"
                       />
+                      {/* First wave - properly positioned */}
                       <path
-                        d="M15.54 8.46a5 5 0 0 1 0 7.07"
+                        d="M16 8.5a5 5 0 0 1 0 7"
                         stroke="currentColor"
                         strokeWidth="1.5"
                         strokeLinecap="round"
@@ -861,8 +847,9 @@ export default function RadioCoPlayer() {
                           animationDelay: "0s",
                         }}
                       />
+                      {/* Second wave - properly positioned */}
                       <path
-                        d="M19.07 4.93a10 10 0 0 1 0 14.14"
+                        d="M20 6.5a10 10 0 0 1 0 11"
                         stroke="currentColor"
                         strokeWidth="1.5"
                         strokeLinecap="round"

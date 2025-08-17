@@ -174,14 +174,16 @@ export async function createUserProfile(firebaseUser, additionalData) {
     try {
         const userID = generateUserID();
         const now = new Date().toISOString();
+        
         // Use additional data if provided, otherwise fall back to Firebase user data
         const firstName = additionalData?.firstName || firebaseUser.displayName?.split(' ')[0] || '';
         const lastName = additionalData?.lastName || firebaseUser.displayName?.slice(1).join(' ') || '';
         const phoneNumber = additionalData?.phoneNumber || firebaseUser.phoneNumber || '';
+        
         const userProfile = {
             firstName,
             lastName,
-            userProfileImage: firebaseUser.photoURL || getRandomDefaultAvatar(),
+            userProfileImage: getProfileImageWithFallback(null, firebaseUser.photoURL),
             emailAddress: firebaseUser.email || '',
             phoneNumber,
             location: null, // Will be set when user grants location permission
@@ -196,8 +198,10 @@ export async function createUserProfile(firebaseUser, additionalData) {
             createdAt: now,
             updatedAt: now,
         };
+        
         // Store in Firestore with the userID as document ID
         await setDoc(doc(db, 'Users', `User: ${userID}`), userProfile);
+        
         return { success: true, profile: userProfile };
     }
     catch (error) {
@@ -577,4 +581,21 @@ export async function uploadProfileImage(file, userID) {
         throw new Error('Failed to upload image');
     }
 }
+
+// Get profile image with proper fallback priority
+export function getProfileImageWithFallback(customProfileImage, googlePhotoURL) {
+  // Priority 1: Custom profile image (if exists and valid)
+  if (customProfileImage && customProfileImage.trim() !== '') {
+    return customProfileImage;
+  }
+  
+  // Priority 2: Google profile image (if exists and valid)
+  if (googlePhotoURL && googlePhotoURL.trim() !== '') {
+    return googlePhotoURL;
+  }
+  
+  // Priority 3: Default avatar
+  return getRandomDefaultAvatar();
+}
+
 export { provider };

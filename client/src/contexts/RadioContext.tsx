@@ -131,10 +131,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     icon: "🔥",
   });
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
-    title: "Live Radio Stream",
-    artist: "Spandex Salvation Radio",
-    album: "Metal & Rock Music",
-    artwork: "",
+    title: "Hot 97 - Live Stream",
+    artist: "New York's #1 Hip Hop & R&B",
+    album: "97.1 FM • New York, NY",
+    artwork: getDefaultArtwork("Hot 97 - Live Stream", "New York's #1 Hip Hop & R&B"),
     isAd: false,
     stationName: "Hot 97",
     frequency: "97.1 FM",
@@ -182,6 +182,22 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
     setIsLoading(true);
     setError(null);
+
+    // Update track information for the current station
+    if (currentStation) {
+      setCurrentTrack(prev => ({
+        ...prev,
+        title: `${currentStation.name} - Live Stream`,
+        artist: currentStation.description,
+        album: `${currentStation.frequency} • ${currentStation.location}`,
+        artwork: getDefaultArtwork(`${currentStation.name} - Live Stream`, currentStation.description),
+        stationName: currentStation.name,
+        frequency: currentStation.frequency,
+        location: currentStation.location,
+        genre: currentStation.genre,
+        lastUpdated: new Date(),
+      }));
+    }
 
     // Try multiple stream formats
     let streamWorked = false;
@@ -242,6 +258,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
                 await playPromise;
                 streamWorked = true;
                 retryCountRef.current = 0; // Reset retry count on success
+                setIsPlaying(true); // Set playing state to true
+                setIsLoading(false); // Stop loading when audio starts playing
                 console.log(`Stream ${i + 1} connected successfully`);
                 break;
               }
@@ -280,6 +298,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
                 await playPromise;
                 streamWorked = true;
                 retryCountRef.current = 0;
+                setIsPlaying(true); // Set playing state to true
+                setIsLoading(false); // Stop loading when audio starts playing
                 console.log(`Stream ${i + 1} connected successfully after waiting`);
                 break;
               }
@@ -406,7 +426,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     // Update track information for the new station
     setCurrentTrack(prev => ({
       ...prev,
-      title: `Live Stream - ${station.name}`,
+      title: `${station.name} - Live Stream`,
       artist: station.description,
       album: `${station.frequency} • ${station.location}`,
       stationName: station.name,
@@ -426,6 +446,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       await startPlayback();
     } catch (error) {
       console.error('[RadioContext] Failed to start playback for new station:', error);
+      setIsLoading(false); // Stop loading on error
       // Don't throw here, let the user manually start playback
     }
   }, [startPlayback]);
@@ -769,29 +790,32 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     }
   }, [isPlaying]);
 
-  // Start metadata polling when playing
+  // Start metadata polling when playing or when station changes
   useEffect(() => {
-    if (isPlaying && currentStation) {
-      // Initial fetch
+    if (currentStation) {
+      // Initial fetch for station information
       fetchLiveMetadata(currentStation);
       
-      // Set up polling interval (every 10 seconds)
-      const interval = setInterval(() => {
-        fetchLiveMetadata(currentStation);
-      }, 10000);
-      
-      setMetadataPollingInterval(interval);
-      
-      return () => {
-        if (interval) {
-          clearInterval(interval);
+      // Only set up polling if playing
+      if (isPlaying) {
+        // Set up polling interval (every 10 seconds)
+        const interval = setInterval(() => {
+          fetchLiveMetadata(currentStation);
+        }, 10000);
+        
+        setMetadataPollingInterval(interval);
+        
+        return () => {
+          if (interval) {
+            clearInterval(interval);
+          }
+        };
+      } else {
+        // Clear interval when not playing
+        if (metadataPollingInterval) {
+          clearInterval(metadataPollingInterval);
+          setMetadataPollingInterval(null);
         }
-      };
-    } else {
-      // Clear interval when not playing
-      if (metadataPollingInterval) {
-        clearInterval(metadataPollingInterval);
-        setMetadataPollingInterval(null);
       }
     }
   }, [isPlaying, currentStation, fetchLiveMetadata]);
@@ -812,6 +836,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     try {
       if (isPlaying) {
         audio.pause();
+        setIsPlaying(false); // Add this line to properly set the state
         setError(null);
         retryCountRef.current = 0;
       } else {

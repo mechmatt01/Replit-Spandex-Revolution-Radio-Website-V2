@@ -571,10 +571,14 @@ const FullWidthGlobeMap = () => {
           <div className="container mx-auto px-4">
             {/* Header */}
             <div className="text-center mb-8">
-              <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${isDarkMode ? "text-white" : "text-black"} drop-shadow-lg`}>
+              <h2 className="font-orbitron font-black text-4xl md:text-5xl mb-4 drop-shadow-lg"
+                  style={{ 
+                    color: isDarkMode ? '#000000' : colors.text 
+                  }}>
                 Live Interactive Map
               </h2>
-              <p className={`text-lg ${isDarkMode ? "text-zinc-300" : "text-gray-600"} max-w-2xl mx-auto`}>
+              <p className="text-lg font-semibold max-w-2xl mx-auto"
+                 style={{ color: colors.textMuted }}>
                 Explore our global community of metalheads and see where the music is playing live
               </p>
             </div>

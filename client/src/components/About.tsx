@@ -82,8 +82,10 @@ export default function About() {
     >
       <div className="max-w-4xl mx-auto text-center">
         <h2 
-          className="text-5xl md:text-7xl font-bold mb-8"
-          style={{ color: themeStyles.accentColor }}
+          className="font-orbitron font-black text-4xl md:text-5xl mb-8"
+          style={{ 
+            color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+          }}
         >
           About Us
         </h2>

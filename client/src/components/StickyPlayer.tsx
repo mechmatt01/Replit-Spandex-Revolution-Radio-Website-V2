@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Volume2 } from "lucide-react";
+import { Volume2, Play, Square } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useRadio } from "../contexts/RadioContext";
 import { useTheme } from "../contexts/ThemeContext";
@@ -74,7 +74,7 @@ export default function StickyPlayer() {
 
   return (
     <div
-      className={`fixed bottom-2 left-4 backdrop-blur-md z-50 transition-all duration-1000 ease-in-out rounded-2xl shadow-2xl border-0 floating-player-no-focus ${
+      className={`fixed bottom-2 left-4 backdrop-blur-md z-50 transition-all duration-1000 ease-in-out rounded-lg shadow-2xl border-0 floating-player-no-focus ${
         isVisible
           ? "transform translate-y-0 opacity-100"
           : "transform translate-y-full opacity-0"
@@ -105,6 +105,7 @@ export default function StickyPlayer() {
             size="sm"
             className="w-12 h-12 shadow-none"
             isAd={isAdPlaying}
+            noShadow={true}
           />
 
           {/* Track Info with 60% width of player box */}
@@ -193,7 +194,7 @@ export default function StickyPlayer() {
                 {/* LIVE/AD indicator */}
                 <div className={`w-2 h-2 rounded-full animate-pulse relative flex-shrink-0 ${
                   isAdPlaying ? 'bg-red-600' : 'bg-red-500'
-                }`} style={{ top: '0px' }}></div>
+                }`}></div>
                 <span className={`text-xs font-medium flex-shrink-0 ${
                   isAdPlaying ? 'text-red-600' : 'text-red-500'
                 }`}>
@@ -307,7 +308,7 @@ export default function StickyPlayer() {
                 transform: 'scale(1)',
                 transition: 'all 0.3s ease'
               } as React.CSSProperties & { '--tw-ring-color': string }}
-              aria-label={isLoading ? "Connecting..." : isPlaying ? "Pause radio stream" : "Play radio stream"}
+              aria-label={isLoading ? "Connecting..." : isPlaying ? "Stop radio stream" : "Play radio stream"}
               disabled={isLoading}
               onMouseEnter={(e) => {
                 if (!isLoading) {
@@ -335,36 +336,19 @@ export default function StickyPlayer() {
               {!isLoading && (
                 <>
                   {isPlaying ? (
-                    <svg
-                      className="h-6 w-6"
+                    <Square
+                      className="h-8 w-8"
                       fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <rect
-                        x="6"
-                        y="4"
-                        width="4"
-                        height="16"
-                        rx="1"
-                        fill="currentColor"
-                      />
-                      <rect
-                        x="14"
-                        y="4"
-                        width="4"
-                        height="16"
-                        rx="1"
-                        fill="currentColor"
-                      />
-                    </svg>
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
                   ) : (
-                    <svg
-                      className="h-6 w-6"
+                    <Play
+                      className="h-8 w-8"
                       fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <polygon points="8 5 20 12 8 19 8 5" />
-                    </svg>
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
                   )}
                 </>
               )}

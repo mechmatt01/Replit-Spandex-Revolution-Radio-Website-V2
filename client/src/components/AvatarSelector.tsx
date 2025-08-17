@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,7 +6,6 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 import { Button } from "../components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Upload, User, Camera, Crown, Star } from "lucide-react";
 import { useTheme } from "../contexts/ThemeContext";
 import { useToast } from "../hooks/use-toast";
@@ -24,6 +23,24 @@ interface AvatarSelectorProps {
 const getAvatarUrl = (avatarName: string, isPremium: boolean = false) => {
   const folder = isPremium ? "Premium_Avatars" : "Default_Avatars";
   return `/Avatars/${folder}/${avatarName}`;
+};
+
+// Avatar caching functions
+const getCachedAvatar = (userID: string): string | null => {
+  try {
+    const cached = localStorage.getItem(`avatar_${userID}`);
+    return cached ? JSON.parse(cached) : null;
+  } catch {
+    return null;
+  }
+};
+
+const setCachedAvatar = (userID: string, avatarUrl: string): void => {
+  try {
+    localStorage.setItem(`avatar_${userID}`, JSON.stringify(avatarUrl));
+  } catch {
+    // Silently fail if localStorage is not available
+  }
 };
 
 // Free tier avatars
@@ -164,6 +181,15 @@ export default function AvatarSelector({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { colors, isDarkMode } = useTheme();
   const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState('avatars');
+
+  // Load cached avatar on component mount
+  useEffect(() => {
+    const cached = getCachedAvatar(userID);
+    if (cached) {
+      setSelectedAvatar(cached);
+    }
+  }, [userID]);
 
   const handleFileUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -197,6 +223,7 @@ export default function AvatarSelector({
       // Use Firebase Storage upload function with the actual userID
       const imageUrl = await uploadProfileImage(file, userID);
       setSelectedAvatar(imageUrl);
+      setCachedAvatar(userID, imageUrl); // Cache the new avatar
 
       toast({
         title: "Upload Successful",
@@ -222,6 +249,7 @@ export default function AvatarSelector({
     try {
       // Call the parent's onAvatarUpdate function
       onAvatarUpdate(selectedAvatar);
+      setCachedAvatar(userID, selectedAvatar); // Cache the new avatar
       toast({
         title: "Avatar Updated",
         description: "Your profile avatar has been updated successfully.",
@@ -240,7 +268,18 @@ export default function AvatarSelector({
   };
 
   const handleAvatarSelect = (avatar: typeof FREE_AVATAR_OPTIONS[0] | typeof PREMIUM_AVATAR_OPTIONS[0]) => {
+    // Update the avatar immediately
     onAvatarUpdate(avatar.url);
+    setCachedAvatar(userID, avatar.url);
+    
+    // Show success notification
+    toast({
+      title: "Avatar Updated",
+      description: `Selected ${avatar.name}`,
+      variant: "success",
+    });
+    
+    // Close the selector
     onClose();
   };
 
@@ -261,20 +300,68 @@ export default function AvatarSelector({
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="avatars" className="w-full">
-          <TabsList
-            className="grid w-full grid-cols-2 mb-6"
-            style={{ backgroundColor: colors.background }}
-          >
-            <TabsTrigger value="avatars" style={{ color: colors.text }}>
-              Pre-made Avatars
-            </TabsTrigger>
-            <TabsTrigger value="upload" style={{ color: colors.text }}>
-              Upload Custom
-            </TabsTrigger>
-          </TabsList>
+        {/* Modern Switch/Slider Design */}
+        <div className="mb-6">
+          <div className="relative bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
+            <div className="flex relative">
+              {/* Sliding Background */}
+              <div 
+                className={`absolute top-1 bottom-1 rounded-lg transition-all duration-300 ease-out ${
+                  activeTab === 'avatars' 
+                    ? 'left-1 right-1/2 bg-gradient-to-r from-blue-500 to-purple-600' 
+                    : 'left-1/2 right-1 bg-gradient-to-r from-green-500 to-emerald-600'
+                }`}
+                style={{
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                }}
+              />
+              
+              {/* Avatars Tab */}
+              <button
+                onClick={() => setActiveTab('avatars')}
+                className={`relative flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 z-10 ${
+                  activeTab === 'avatars' 
+                    ? 'text-white' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    activeTab === 'avatars' ? 'bg-white' : 'bg-gray-400'
+                  }`} />
+                  <span>Premium Avatars</span>
+                  {activeTab === 'avatars' && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-pulse" />
+                  )}
+                </div>
+              </button>
+              
+              {/* Upload Tab */}
+              <button
+                onClick={() => setActiveTab('upload')}
+                className={`relative flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-300 z-10 ${
+                  activeTab === 'upload' 
+                    ? 'text-white' 
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <div className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                    activeTab === 'upload' ? 'bg-white' : 'bg-gray-400'
+                  }`} />
+                  <span>Custom Upload</span>
+                  {activeTab === 'upload' && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+                  )}
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
 
-          <TabsContent value="avatars">
+        {/* Content based on active tab */}
+        {activeTab === 'avatars' && (
+          <>
             {/* Free Avatars Section */}
             <div className="mb-8">
               <h3 className="flex items-center gap-2 text-lg font-bold mb-4" style={{ color: colors.text }}>
@@ -285,42 +372,50 @@ export default function AvatarSelector({
                 {FREE_AVATAR_OPTIONS.map((avatar) => (
                   <div
                     key={avatar.id}
-                    className={`relative cursor-pointer rounded-lg p-2 transition-all duration-200 hover:scale-105 ${
-                      selectedAvatar === avatar.url ? "ring-2 ring-offset-2" : ""
+                    className={`relative cursor-pointer rounded-lg border-2 p-2 transition-all duration-300 ${
+                      selectedAvatar === avatar.url 
+                        ? "opacity-50 scale-95 ring-2 ring-offset-2" 
+                        : "hover:scale-105"
                     }`}
                     style={{
-                      borderColor: selectedAvatar === avatar.url ? colors.primary : 'transparent',
-                      borderWidth: selectedAvatar === avatar.url ? '2px' : '0px',
+                      borderColor:
+                        selectedAvatar === avatar.url
+                          ? colors.primary
+                          : colors.textMuted,
+                      background: selectedAvatar === avatar.url 
+                        ? `linear-gradient(135deg, ${colors.primary}30, ${colors.primary}20)`
+                        : `linear-gradient(135deg, ${colors.textMuted}20, ${colors.textMuted}10)`,
                       '--tw-ring-color': colors.primary,
                       '--tw-ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
+                      filter: selectedAvatar === avatar.url ? 'grayscale(30%)' : 'none',
                     } as React.CSSProperties}
-                    onClick={() => setSelectedAvatar(avatar.url)}
+                    onClick={() => handleAvatarSelect(avatar)}
                   >
-                    <div className="aspect-square rounded-lg overflow-hidden bg-gray-800">
+                    {/* Avatar Image */}
+                    <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 relative">
                       <img
                         src={avatar.url}
                         alt={avatar.name}
                         className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(avatar.name)}&background=f97316&color=fff&size=128`;
-                        }}
                       />
                     </div>
+                    
+                    {/* Selected State Overlay */}
+                    {selectedAvatar === avatar.url && (
+                      <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-white"
+                          style={{ 
+                            backgroundColor: colors.primary,
+                          }}
+                        >
+                          <span className="text-sm text-white font-bold">✓</span>
+                        </div>
+                      </div>
+                    )}
+                    
                     <p className="text-xs text-center mt-2 truncate" style={{ color: colors.text }}>
                       {avatar.name}
                     </p>
-                    {selectedAvatar === avatar.url && (
-                      <div
-                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-white"
-                        style={{ 
-                          backgroundColor: colors.primary,
-                          zIndex: 30
-                        }}
-                      >
-                        <span className="text-xs text-white font-bold">✓</span>
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
@@ -337,19 +432,24 @@ export default function AvatarSelector({
                 {PREMIUM_AVATAR_OPTIONS.map((avatar) => (
                   <div
                     key={avatar.id}
-                    className={`relative cursor-pointer rounded-lg border-2 p-2 transition-all duration-200 hover:scale-105 ${
-                      selectedAvatar === avatar.url ? "ring-2 ring-offset-2" : ""
+                    className={`relative cursor-pointer rounded-lg border-2 p-2 transition-all duration-300 ${
+                      selectedAvatar === avatar.url 
+                        ? "opacity-50 scale-95 ring-2 ring-offset-2" 
+                        : "hover:scale-105"
                     }`}
                     style={{
                       borderColor:
                         selectedAvatar === avatar.url
                           ? colors.primary
                           : colors.accent,
-                      background: `linear-gradient(135deg, ${colors.accent}20, ${colors.accent}10)`,
+                      background: selectedAvatar === avatar.url 
+                        ? `linear-gradient(135deg, ${colors.primary}30, ${colors.primary}20)`
+                        : `linear-gradient(135deg, ${colors.accent}20, ${colors.accent}10)`,
                       '--tw-ring-color': colors.primary,
                       '--tw-ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
+                      filter: selectedAvatar === avatar.url ? 'grayscale(30%)' : 'none',
                     } as React.CSSProperties}
-                    onClick={() => setSelectedAvatar(avatar.url)}
+                    onClick={() => handleAvatarSelect(avatar)}
                   >
                     {/* Premium Crown Badge */}
                     <div className="absolute -top-2 -right-2 z-20">
@@ -357,119 +457,193 @@ export default function AvatarSelector({
                         <Crown className="h-3 w-3 text-black" />
                       </div>
                     </div>
-
-                    {/* Avatar Container with Jumping Elements Effect */}
-                    <div className={`aspect-square rounded-lg ${avatar.jumpingElements ? 'premium-avatar-container' : 'overflow-hidden'} bg-gradient-to-br from-gray-800 to-gray-900 relative`}>
+                    
+                    {/* Avatar Image */}
+                    <div className="aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 relative">
                       <img
                         src={avatar.url}
                         alt={avatar.name}
-                        className="w-full h-full object-cover rounded-lg"
-                        style={{
-                          clipPath: avatar.jumpingElements 
-                            ? "polygon(5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%, 0% 5%)"
-                            : undefined
-                        }}
+                        className="w-full h-full object-cover"
                       />
-                      
-                      {/* Jumping Elements for Premium Avatars */}
-                      {avatar.jumpingElements && (
-                        <>
-                          <div className="jumping-element top-0 left-0 text-lg" style={{ color: colors.accent }}>🤘</div>
-                          <div className="jumping-element top-0 right-0 text-orange-500 text-lg">⚡</div>
-                          <div className="jumping-element bottom-0 left-0 text-red-500 text-lg">🔥</div>
-                          <div className="jumping-element bottom-0 right-0 text-purple-500 text-lg">💀</div>
-                        </>
-                      )}
                     </div>
                     
-                    <p className="text-xs text-center mt-2 truncate font-semibold" style={{ color: colors.accent }}>
-                      {avatar.name}
-                    </p>
+                    {/* Jumping Elements - only show if not selected */}
+                    {avatar.jumpingElements && selectedAvatar !== avatar.url && (
+                      <>
+                        <div 
+                          className="absolute text-lg animate-bounce" 
+                          style={{ 
+                            color: colors.accent,
+                            top: '-8px',
+                            left: '-8px',
+                            zIndex: 10,
+                            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                            transform: 'scale(1.2)'
+                          }}
+                        >
+                          🤘
+                        </div>
+                        <div 
+                          className="absolute text-lg animate-pulse" 
+                          style={{ 
+                            color: '#f97316',
+                            top: '-8px',
+                            right: '-8px',
+                            zIndex: 10,
+                            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                            transform: 'scale(1.2)'
+                          }}
+                        >
+                          ⚡
+                        </div>
+                        <div 
+                          className="absolute text-lg animate-bounce" 
+                          style={{ 
+                            color: '#ef4444',
+                            bottom: '-8px',
+                            left: '-8px',
+                            zIndex: 10,
+                            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                            transform: 'scale(1.2)',
+                            animationDelay: '0.5s'
+                          }}
+                        >
+                          🔥
+                        </div>
+                        <div 
+                          className="absolute text-lg animate-pulse" 
+                          style={{ 
+                            color: '#a855f7',
+                            bottom: '-8px',
+                            right: '-8px',
+                            zIndex: 10,
+                            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+                            transform: 'scale(1.2)',
+                            animationDelay: '1s'
+                          }}
+                        >
+                          💀
+                        </div>
+                      </>
+                    )}
                     
+                    {/* Selected State Overlay */}
                     {selectedAvatar === avatar.url && (
-                      <div
-                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center shadow-lg border-2 border-white"
-                        style={{ 
-                          backgroundColor: colors.primary,
-                          zIndex: 30
-                        }}
-                      >
-                        <span className="text-xs text-white font-bold">✓</span>
+                      <div className="absolute inset-0 bg-black/20 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-white"
+                          style={{ 
+                            backgroundColor: colors.primary,
+                          }}
+                        >
+                          <span className="text-sm text-white font-bold">✓</span>
+                        </div>
                       </div>
                     )}
+                    
+                    <p className="text-xs text-center mt-2 truncate" style={{ color: colors.text }}>
+                      {avatar.name}
+                    </p>
                   </div>
                 ))}
               </div>
             </div>
-          </TabsContent>
+          </>
+        )}
 
-          <TabsContent value="upload">
-            <div className="space-y-6">
-              <div className="text-center">
-                <div
-                  className="mx-auto w-32 h-32 rounded-full flex items-center justify-center cursor-pointer transition-colors"
-                  onClick={() => fileInputRef.current?.click()}
-                  style={{}}
+        {activeTab === 'upload' && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-lg" style={{ color: colors.text }}>
+                Upload Custom Image
+              </h3>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm" style={{ color: colors.textMuted }}>
+                  {selectedAvatar ? 'Custom' : 'Default'}
+                </span>
+                <div 
+                  className={`w-12 h-6 rounded-full transition-all duration-300 ease-in-out relative cursor-pointer ${
+                    selectedAvatar ? 'bg-green-500' : 'bg-gray-400'
+                  }`}
+                  onClick={() => {
+                    if (selectedAvatar) {
+                      setSelectedAvatar('');
+                      setCachedAvatar(userID, '');
+                    }
+                  }}
                 >
-                  {selectedAvatar && selectedAvatar.startsWith("data:") ? (
-                    <img
-                      src={selectedAvatar}
-                      alt="Uploaded avatar"
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  ) : selectedAvatar &&
-                    !selectedAvatar.startsWith("/avatars/") ? (
-                    <img
-                      src={selectedAvatar}
-                      alt="Current avatar"
-                      className="w-full h-full rounded-full object-cover"
-                    />
+                  <div 
+                    className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ease-in-out ${
+                      selectedAvatar ? 'right-1' : 'left-1'
+                    }`}
+                  />
+                </div>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+                id="avatar-upload"
+                ref={fileInputRef}
+              />
+              <label
+                htmlFor="avatar-upload"
+                className={`block w-full p-4 border-2 border-dashed rounded-lg cursor-pointer transition-all duration-300 hover:scale-105 ${
+                  selectedAvatar 
+                    ? 'border-green-500 bg-green-50 dark:bg-green-900/20' 
+                    : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
+                }`}
+                style={{
+                  backgroundColor: selectedAvatar 
+                    ? isDarkMode ? 'rgba(34, 197, 94, 0.1)' : 'rgba(34, 197, 94, 0.05)'
+                    : 'transparent'
+                }}
+              >
+                <div className="text-center">
+                  {selectedAvatar ? (
+                    <div className="space-y-2">
+                      <div className="w-16 h-16 mx-auto rounded-full overflow-hidden border-2 border-green-500">
+                        <img 
+                          src={selectedAvatar} 
+                          alt="Selected avatar" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                        Custom image selected
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Click to change or remove
+                      </p>
+                    </div>
                   ) : (
-                    <div className="text-center">
-                      <Camera
-                        className="mx-auto h-8 w-8 mb-2"
-                        style={{ color: colors.text }}
-                      />
-                      <p className="text-sm" style={{ color: colors.text }}>
-                        {uploading ? "Uploading..." : "Click to upload"}
+                    <div className="space-y-2">
+                      <Upload className="w-8 h-8 mx-auto" style={{ color: colors.primary }} />
+                      <p className="text-sm font-medium" style={{ color: colors.text }}>
+                        Click to upload custom image
+                      </p>
+                      <p className="text-xs" style={{ color: colors.textMuted }}>
+                        PNG, JPG up to 5MB
                       </p>
                     </div>
                   )}
                 </div>
-
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                  disabled={uploading}
-                />
-
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploading}
-                  className="mt-4 focus:outline-none focus:ring-0"
-                  style={{ borderColor: colors.primary, color: colors.primary }}
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  {uploading ? "Uploading..." : "Choose File"}
-                </Button>
-              </div>
-
-              <div
-                className="text-center text-sm opacity-75"
-                style={{ color: colors.text }}
-              >
-                <p>Supported formats: JPG, PNG, GIF</p>
-                <p>Maximum size: 5MB</p>
-                <p>Recommended: 200x200 pixels or larger</p>
-              </div>
+              </label>
             </div>
-          </TabsContent>
-        </Tabs>
+            
+            <div
+              className="text-center text-sm opacity-75"
+              style={{ color: colors.text }}
+            >
+              <p>Supported formats: JPG, PNG, GIF</p>
+              <p>Maximum size: 5MB</p>
+              <p>Recommended: 200x200 pixels or larger</p>
+            </div>
+          </div>
+        )}
 
         <div
           className="flex justify-between pt-4 border-t"

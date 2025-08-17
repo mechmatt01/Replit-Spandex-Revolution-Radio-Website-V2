@@ -25,15 +25,31 @@ export default function ThemedMusicLogo({ size = "md", className = "" }: ThemedM
 
   return (
     <div 
-      className={`${sizeClasses[size]} rounded-xl flex items-center justify-center shadow-lg ${className}`}
+      className={`${sizeClasses[size]} rounded-full flex items-center justify-center shadow-2xl relative ${className}`}
       style={{ 
         background: gradient,
-        border: `2px solid ${colors.primary}`
+        border: `2px solid ${colors.primary}`,
+        borderRadius: '50%',
+        boxShadow: `0 20px 40px -12px ${colors.primary}60, 0 8px 16px -4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)`
       }}
     >
-      <Music 
-        className={`${iconSizes[size]} text-white`}
-      />
+      {/* Inner rounded box that pops out in the middle */}
+      <div 
+        className="absolute inset-3 rounded-full flex items-center justify-center"
+        style={{ 
+          background: `linear-gradient(135deg, ${colors.background}95, ${colors.background}80)`,
+          border: `2px solid ${colors.primary}80`,
+          borderRadius: '50%',
+          boxShadow: `0 12px 24px -8px ${colors.primary}40, 0 4px 8px -2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)`
+        }}
+      >
+        <Music 
+          className={`${iconSizes[size]} text-white`}
+          style={{
+            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+          }}
+        />
+      </div>
     </div>
   );
 }

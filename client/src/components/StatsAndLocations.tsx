@@ -104,8 +104,7 @@ export default function StatsAndLocations() {
             <div 
               className="w-2 h-2 rounded-full animate-pulse flex-shrink-0 relative"
               style={{ 
-                backgroundColor: '#10B981',
-                top: '0px' // Ensure perfect vertical alignment
+                backgroundColor: '#10B981'
               }}
             ></div>
             <span 

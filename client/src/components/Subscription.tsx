@@ -1,7 +1,12 @@
-import React, { useMemo, useCallback, useState } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Crown, Star, CheckCircle, CreditCard, Calendar, Zap, Users, Headphones, Radio, Music, Gift, Shield } from "lucide-react";
+import { useTheme } from "../contexts/ThemeContext";
+import type { MetalTheme } from "../contexts/ThemeContext";
 import { useScrollVelocity } from "../hooks/use-scroll-velocity";
 import { useIntersectionObserver } from "../hooks/use-intersection-observer";
-import { useTheme } from "../contexts/ThemeContext";
 
 export default function Subscription() {
   const { velocity } = useScrollVelocity();
@@ -18,36 +23,35 @@ export default function Subscription() {
     return scrollIntensity * 15;
   }, [scrollIntensity]);
 
-  // Memoize theme-based styles
+  // Memoize theme styles to prevent unnecessary recalculations
   const themeStyles = useMemo(() => {
     const baseStyles = {
-      background: isDarkMode ? 'rgba(0, 0, 0, 0.85)' : 'rgba(255, 255, 255, 0.95)',
+      background: isDarkMode ? 'rgba(30, 30, 30, 0.8)' : 'rgba(255, 255, 255, 0.9)',
+      cardBackground: isDarkMode ? 'rgba(45, 45, 45, 0.9)' : 'rgba(245, 245, 245, 0.95)',
       color: isDarkMode ? '#ffffff' : '#000000',
-      borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.3)',
-      cardBackground: isDarkMode ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)'
+      borderColor: isDarkMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)',
+      accentColor: isDarkMode ? '#ff6b35' : '#e65100'
     };
 
-    // Add theme-specific accent colors
-    const accentColors = {
-      'classic-metal': isDarkMode ? '#ff6b35' : '#d32f2f',
-      'black-metal': isDarkMode ? '#c0c0c0' : '#666666',
+    const accentColors: { [key in MetalTheme]: string } = {
+      'classic-metal': isDarkMode ? '#f97316' : '#ea580c',
+      'black-metal': isDarkMode ? '#000000' : '#1a1a1a',
       'death-metal': isDarkMode ? '#8b0000' : '#d32f2f',
       'power-metal': isDarkMode ? '#ffd700' : '#f57c00',
       'doom-metal': isDarkMode ? '#8b0000' : '#d32f2f',
-      'thrash-metal': isDarkMode ? '#ff4500' : '#e65100',
-      'gothic-metal': isDarkMode ? '#800080' : '#7b1fa2',
-      'light-mode': isDarkMode ? '#2196f3' : '#1976d2',
-      'dark-mode': isDarkMode ? '#424242' : '#757575',
-      'glassmorphism-premium': isDarkMode ? '#00bcd4' : '#0097a7',
-      'neon-punk': isDarkMode ? '#00ff88' : '#00c853',
-      'cyber-goth': isDarkMode ? '#ff00ff' : '#9c27b0',
-      'industrial': isDarkMode ? '#ffd700' : '#f57c00',
-      'doom': isDarkMode ? '#8b0000' : '#d32f2f'
+      'thrash-metal': isDarkMode ? '#ff6b35' : '#e65100',
+      'gothic-metal': isDarkMode ? '#800080' : '#9c27b0',
+      'light-mode': isDarkMode ? '#f97316' : '#ea580c',
+      'dark-mode': isDarkMode ? '#f97316' : '#ea580c',
+      'glassmorphism-premium': isDarkMode ? '#a855f7' : '#9333ea'
     };
+
+    // Ensure currentTheme is available before using it
+    const safeCurrentTheme = currentTheme && accentColors[currentTheme] ? currentTheme : 'classic-metal';
 
     return {
       ...baseStyles,
-      accentColor: accentColors[currentTheme] || accentColors['classic-metal']
+      accentColor: accentColors[safeCurrentTheme] || accentColors['classic-metal']
     };
   }, [currentTheme, isDarkMode]);
 

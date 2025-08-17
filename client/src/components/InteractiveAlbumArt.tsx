@@ -7,20 +7,20 @@ interface InteractiveAlbumArtProps {
   artwork?: string;
   title: string;
   artist: string;
-  isPlaying?: boolean;
   size?: "sm" | "md" | "lg";
   className?: string;
   isAd?: boolean;
+  noShadow?: boolean; // Add this prop
 }
 
 export default function InteractiveAlbumArt({
   artwork,
   title,
   artist,
-  isPlaying = false,
   size = "md",
   className = "",
   isAd = false,
+  noShadow = false,
 }: InteractiveAlbumArtProps) {
   const { getGradient, getColors, currentTheme } = useTheme();
   const colors = getColors();
@@ -95,15 +95,16 @@ export default function InteractiveAlbumArt({
 
   return (
     <div
-      className={`relative ${sizeClasses[size]} rounded-xl overflow-hidden shadow-lg cursor-pointer transition-all duration-300 ${className}`}
+      className={`relative ${sizeClasses[size]} overflow-hidden ${noShadow ? '' : 'shadow-lg'} cursor-pointer transition-all duration-300 ${className}`}
+      style={{
+        borderRadius: size === 'sm' ? '12px' : '20px',
+        transform: isHovered ? "scale(1.05)" : "scale(1)",
+        boxShadow: isHovered && !noShadow
+          ? `0 20px 40px -12px ${getGradient()}40`
+          : noShadow ? "none" : "0 4px 8px rgba(0,0,0,0.2)",
+      }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      style={{
-        transform: isHovered ? "scale(1.05)" : "scale(1)",
-        boxShadow: isHovered
-          ? `0 20px 40px -12px ${getGradient()}40`
-          : "0 4px 8px rgba(0,0,0,0.2)",
-      }}
     >
       {/* Themed Placeholder Background */}
       <div
@@ -146,6 +147,7 @@ export default function InteractiveAlbumArt({
             src={fallbackArtwork || artwork}
             alt={`${title} by ${artist}`}
             className="w-full h-full object-cover"
+            style={{ borderRadius: '20px' }}
             onLoad={handleImageLoad}
             onError={handleImageError}
             referrerPolicy="no-referrer"

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useFirebaseAuth } from "../contexts/FirebaseAuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import { useLocation, useSearch } from "wouter";
-import { findUserProfileByFirebaseUID, updateUserProfile, uploadProfileImage, UserProfile } from "../lib/firebase";
+import { findUserProfileByFirebaseUID, updateUserProfile, uploadProfileImage, UserProfile, getProfileImageWithFallback } from "../lib/firebase";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -55,6 +55,7 @@ import {
   AlertCircle,
   Camera,
   MoreVertical,
+  X,
 } from "lucide-react";
 import { useToast } from "../hooks/use-toast";
 import { format } from "date-fns";
@@ -88,6 +89,7 @@ export default function ProfilePage() {
   const [isSaving, setIsSaving] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [submissions, setSubmissions] = useState<any[]>([]);
+  const [showProfile, setShowProfile] = useState(true);
 
   // Update selected section from URL parameter
   useEffect(() => {
@@ -108,7 +110,7 @@ export default function ProfilePage() {
         displayName: user.displayName || user.email?.split('@')[0] || "",
         phoneNumber: user.phoneNumber || "",
         email: user.email || "",
-        profileImageUrl: user.photoURL || "",
+        profileImageUrl: getProfileImageWithFallback(null, user.photoURL),
       });
     }
   }, [user]);
@@ -123,12 +125,12 @@ export default function ProfilePage() {
           const profile = await findUserProfileByFirebaseUID(user.uid, user.email || '');
           if (profile) {
             setUserProfile(profile);
-            // Update profile data with Firestore data
+            // Update profile data with Firestore data and proper fallback
             setProfileData({
               displayName: `${profile.firstName} ${profile.lastName}`.trim(),
               phoneNumber: profile.phoneNumber || "",
               email: profile.emailAddress || user.email || "",
-              profileImageUrl: profile.userProfileImage || user.photoURL || "",
+              profileImageUrl: getProfileImageWithFallback(profile.userProfileImage, user.photoURL),
             });
           }
         } catch (error) {
@@ -282,10 +284,8 @@ export default function ProfilePage() {
           updatedAt: new Date().toISOString(),
         } : null);
 
-        toast({
-          title: "Avatar Updated",
-          description: "Your avatar has been updated successfully.",
-        });
+        // Toast notification is already shown in AvatarSelector component
+        // No need for duplicate notification here
       } else {
         throw new Error('Failed to update avatar');
       }
@@ -408,398 +408,431 @@ export default function ProfilePage() {
 
           {/* Main Content */}
           <div className="lg:col-span-3">
-            {selectedSection === "profile" && (
-              <Card
-                className="border-2 shadow-xl"
-                style={{
-                  backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.95)',
-                  borderColor: `${colors.primary}40`,
-                  backdropFilter: 'blur(10px)',
-                }}
-              >
-                <CardHeader>
-                  <CardTitle className="text-2xl font-black" style={{ color: colors.text }}>
-                    Profile Settings
-                  </CardTitle>
-                  <CardDescription style={{ color: `${colors.text}80` }}>
-                    Manage your account information and preferences
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {loading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: colors.primary }}></div>
-                      <span className="ml-3" style={{ color: colors.text }}>Loading profile...</span>
-                    </div>
-                  ) : (
-                    <>
-                      {/* Profile Image Section */}
-                      <div className="flex items-start space-x-6">
-                    <div className="relative">
-                      <div
-                        className="w-24 h-24 rounded-full shadow-lg ring-4 ring-offset-2"
-                        style={{
-                          background: profileData.profileImageUrl 
-                            ? `url(${profileData.profileImageUrl}) center/cover` 
-                            : gradient,
-                          '--ring-color': colors.primary,
-                          '--ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
-                        } as React.CSSProperties}
-                      >
-                        {!profileData.profileImageUrl && (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <User size={40} className="text-white" />
-                          </div>
-                        )}
-                      </div>
-
-                      <DropdownMenu open={showChangeImageDropdown} onOpenChange={setShowChangeImageDropdown}>
-                        <DropdownMenuTrigger asChild>
-                          <button
-                            className="absolute bottom-0 right-0 w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-0"
-                            style={{
-                              backgroundColor: colors.primary,
-                              border: `2px solid ${isDarkMode ? '#000000' : colors.primary}`,
-                            }}
-                            title="Change profile picture"
-                            aria-label="Change profile picture"
-                          >
-                            <Camera size={16} className="text-white" />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent 
-                          align="start" 
-                          className="w-48"
-                          style={{
-                            backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-                            borderColor: `${colors.primary}40`,
-                          }}
-                        >
-                          <DropdownMenuItem disabled={uploadingImage}>
-                            <label htmlFor="image-upload" className="flex items-center gap-2 cursor-pointer w-full">
-                              {uploadingImage ? (
-                                <>
-                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2" style={{ borderColor: colors.primary }}></div>
-                                  <span>Uploading...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Upload size={16} />
-                                  <span>Upload Photo</span>
-                                </>
-                              )}
-                            </label>
-                            <input
-                              id="image-upload"
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={handleImageUpload}
-                              disabled={uploadingImage}
-                            />
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            onClick={() => {
-                                                             {/* TODO: Check subscription status */}
-                               if (false) {
-                                toast({
-                                  title: "Premium Feature",
-                                  description: "Premium avatars are available for subscribers only.",
-                                });
-                                return;
-                              }
-                              setShowAvatarSelector(true);
-                              setShowChangeImageDropdown(false);
-                            }}
-                          >
-                            <Crown size={16} />
-                            <span>Premium Avatars</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-
-                    <div className="flex-1 space-y-2">
-                      <h3 className="font-bold text-lg" style={{ color: colors.text }}>
-                        Profile Picture
-                      </h3>
-                      <p className="text-sm" style={{ color: `${colors.text}80` }}>
-                        Upload a photo or choose from our premium avatar collection
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Display Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="displayName" style={{ color: colors.text }}>
-                      Display Name
-                    </Label>
-                    <Input
-                      id="displayName"
-                      value={profileData.displayName}
-                      onChange={(e) => setProfileData(prev => ({ ...prev, displayName: e.target.value }))}
-                      placeholder="Enter your display name"
-                      className="font-semibold"
-                      style={{
-                        backgroundColor: 'transparent',
-                        borderColor: `${colors.primary}40`,
-                        color: colors.text,
-                      }}
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="space-y-2">
-                    <Label htmlFor="email" style={{ color: colors.text }}>
-                      Email Address
-                    </Label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        id="email"
-                        value={profileData.email}
-                        disabled
-                        className="font-semibold"
-                        style={{
-                          backgroundColor: 'transparent',
-                          borderColor: `${colors.primary}40`,
-                          color: colors.text,
-                          opacity: 0.7,
-                        }}
-                      />
-                      {user?.emailVerified && (
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <CheckCircle size={14} />
-                          Verified
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Phone Number */}
-                  <div className="space-y-2">
-                    <Label htmlFor="phoneNumber" style={{ color: colors.text }}>
-                      Phone Number
-                    </Label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        id="phoneNumber"
-                        value={profileData.phoneNumber}
-                        onChange={(e) => setProfileData(prev => ({ ...prev, phoneNumber: e.target.value }))}
-                        placeholder="+1 (555) 123-4567"
-                        className="font-semibold"
-                        style={{
-                          backgroundColor: 'transparent',
-                          borderColor: `${colors.primary}40`,
-                          color: colors.text,
-                        }}
-                      />
-                      {/* TODO: Add phone verification status when available */}
-                      {false && (
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <CheckCircle size={14} />
-                          Verified
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Save Button */}
-                  <Button
-                    onClick={handleSaveProfile}
-                    disabled={isSaving}
-                    className="w-full font-bold shadow-lg"
+            {showProfile && (
+              <>
+                {selectedSection === "profile" && (
+                  <Card
+                    className="border-2 shadow-xl"
                     style={{
-                      backgroundColor: colors.primary,
-                      color: 'white',
+                      backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.95)',
+                      borderColor: `${colors.primary}40`,
+                      backdropFilter: 'blur(10px)',
                     }}
                   >
-                    {isSaving ? "Saving..." : "Save Changes"}
-                  </Button>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {selectedSection === "subscription" && (
-              <Card
-                className="border-2 shadow-xl"
-                style={{
-                  backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.95)',
-                  borderColor: `${colors.primary}40`,
-                  backdropFilter: 'blur(10px)',
-                }}
-              >
-                <CardHeader>
-                  <CardTitle className="text-2xl font-black" style={{ color: colors.text }}>
-                    Subscription Management
-                  </CardTitle>
-                  <CardDescription style={{ color: `${colors.text}80` }}>
-                    Manage your subscription and billing information
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Current Plan */}
-                  <div className="p-6 rounded-lg border-2" style={{ borderColor: `${colors.primary}40` }}>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="flex items-center gap-2 mb-2">
-                          <Crown size={24} style={{ color: colors.accent }} />
-                          <h3 className="font-black text-xl" style={{ color: colors.text }}>
-                            Legend Package
-                          </h3>
-                        </div>
-                        <p className="text-sm mb-4" style={{ color: `${colors.text}80` }}>
-                          Premium access to all features
-                        </p>
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle size={16} style={{ color: colors.primary }} />
-                            <span className="text-sm" style={{ color: colors.text }}>Unlimited song submissions</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <CheckCircle size={16} style={{ color: colors.primary }} />
-                            <span className="text-sm" style={{ color: colors.text }}>Premium avatars & badges</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <CheckCircle size={16} style={{ color: colors.primary }} />
-                            <span className="text-sm" style={{ color: colors.text }}>Early access to new features</span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-black text-2xl" style={{ color: colors.primary }}>$9.99</p>
-                        <p className="text-sm" style={{ color: `${colors.text}80` }}>per month</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Billing Information */}
-                  <div className="space-y-4">
-                    <h4 className="font-bold" style={{ color: colors.text }}>Billing Information</h4>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: `${colors.primary}10` }}>
-                        <div className="flex items-center gap-3">
-                          <CreditCard size={20} style={{ color: colors.primary }} />
-                          <span className="font-semibold" style={{ color: colors.text }}>•••• •••• •••• 4242</span>
-                        </div>
-                        <Badge variant="outline">Visa</Badge>
-                      </div>
-                      <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: `${colors.primary}10` }}>
-                        <div className="flex items-center gap-3">
-                          <Calendar size={20} style={{ color: colors.primary }} />
-                          <span className="font-semibold" style={{ color: colors.text }}>Next billing date</span>
-                        </div>
-                        <span style={{ color: colors.text }}>
-                          {format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'MMM dd, yyyy')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Cancel Subscription */}
-                  <div className="pt-4 border-t" style={{ borderColor: `${colors.primary}20` }}>
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowCancelSubscriptionDialog(true)}
-                      className="w-full font-semibold focus:outline-none focus:ring-0"
-                      style={{
-                        borderColor: '#EF4444',
-                        color: '#EF4444',
-                      }}
-                    >
-                      Cancel Subscription
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {selectedSection === "submissions" && (
-              <Card
-                className="border-2 shadow-xl"
-                style={{
-                  backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.95)',
-                  borderColor: `${colors.primary}40`,
-                  backdropFilter: 'blur(10px)',
-                }}
-              >
-                <CardHeader>
-                  <CardTitle className="text-2xl font-black" style={{ color: colors.text }}>
-                    Submission Requests
-                  </CardTitle>
-                  <CardDescription style={{ color: `${colors.text}80` }}>
-                    Track your song submission history
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {/* TODO: Check subscription status */}
-                  {false ? (
-                    <div className="text-center py-12">
-                      <Crown size={48} className="mx-auto mb-4 opacity-50" style={{ color: colors.primary }} />
-                      <h3 className="font-bold text-lg mb-2" style={{ color: colors.text }}>
-                        Premium Feature
-                      </h3>
-                      <p className="mb-6" style={{ color: `${colors.text}80` }}>
-                        Song submissions are available for premium subscribers only
-                      </p>
+                    {/* Profile Section Header */}
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-2xl font-bold" style={{ color: colors.text }}>
+                        Profile Settings
+                      </h2>
                       <Button
-                        onClick={() => setLocation("/subscription")}
-                        className="font-bold shadow-lg focus:outline-none focus:ring-0"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.history.back()}
+                        className="flex items-center gap-2"
+                        style={{
+                          borderColor: colors.primary,
+                          color: colors.primary,
+                        }}
+                      >
+                        <X size={16} />
+                        Close
+                      </Button>
+                    </div>
+                    <CardHeader>
+                      <CardTitle className="text-2xl font-black" style={{ color: colors.text }}>
+                        Profile Settings
+                      </CardTitle>
+                      <CardDescription style={{ color: `${colors.text}80` }}>
+                        Manage your account information and preferences
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      {loading ? (
+                        <div className="flex items-center justify-center py-8">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderColor: colors.primary }}></div>
+                          <span className="ml-3" style={{ color: colors.text }}>Loading profile...</span>
+                        </div>
+                      ) : (
+                        <>
+                          {/* Profile Image Section */}
+                          <div className="flex items-start space-x-6">
+                            <div className="relative">
+                              <div
+                                className="w-24 h-24 rounded-full shadow-lg ring-4 ring-offset-2 overflow-hidden relative"
+                                style={{
+                                  '--ring-color': colors.primary,
+                                  '--ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
+                                } as React.CSSProperties}
+                              >
+                                {profileData.profileImageUrl ? (
+                                  <img
+                                    src={profileData.profileImageUrl}
+                                    alt="Profile"
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                    }}
+                                  />
+                                ) : (
+                                  <div 
+                                    className="w-full h-full flex items-center justify-center"
+                                    style={{ background: gradient }}
+                                  >
+                                    <User size={40} className="text-white" />
+                                  </div>
+                                )}
+                              </div>
+
+                          <DropdownMenu open={showChangeImageDropdown} onOpenChange={setShowChangeImageDropdown}>
+                            <DropdownMenuTrigger asChild>
+                              <button
+                                className="absolute bottom-0 right-0 w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-0"
+                                style={{
+                                  backgroundColor: colors.primary,
+                                  border: `2px solid ${isDarkMode ? '#000000' : colors.primary}`,
+                                }}
+                                title="Change profile picture"
+                                aria-label="Change profile picture"
+                              >
+                                <Camera size={16} className="text-white" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent 
+                              align="start" 
+                              className="w-48"
+                              style={{
+                                backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                                borderColor: `${colors.primary}40`,
+                              }}
+                            >
+                              <DropdownMenuItem disabled={uploadingImage}>
+                                <label htmlFor="image-upload" className="flex items-center gap-2 cursor-pointer w-full">
+                                  {uploadingImage ? (
+                                    <>
+                                      <div className="animate-spin rounded-full h-4 w-4 border-b-2" style={{ borderColor: colors.primary }}></div>
+                                      <span>Uploading...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Upload size={16} />
+                                      <span>Upload Photo</span>
+                                    </>
+                                  )}
+                                </label>
+                                <input
+                                  id="image-upload"
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={handleImageUpload}
+                                  disabled={uploadingImage}
+                                />
+                              </DropdownMenuItem>
+                              <DropdownMenuItem 
+                                onClick={() => {
+                                                                 {/* TODO: Check subscription status */}
+                                   if (false) {
+                                    toast({
+                                      title: "Premium Feature",
+                                      description: "Premium avatars are available for subscribers only.",
+                                    });
+                                    return;
+                                  }
+                                  setShowAvatarSelector(true);
+                                  setShowChangeImageDropdown(false);
+                                }}
+                              >
+                                <Crown size={16} />
+                                <span>Premium Avatars</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+
+                        <div className="flex-1 space-y-2">
+                          <h3 className="font-bold text-lg" style={{ color: colors.text }}>
+                            Profile Picture
+                          </h3>
+                          <p className="text-sm" style={{ color: `${colors.text}80` }}>
+                            Upload a photo or choose from our premium avatar collection
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Display Name */}
+                      <div className="space-y-2">
+                        <Label htmlFor="displayName" style={{ color: colors.text }}>
+                          Display Name
+                        </Label>
+                        <Input
+                          id="displayName"
+                          value={profileData.displayName}
+                          onChange={(e) => setProfileData(prev => ({ ...prev, displayName: e.target.value }))}
+                          placeholder="Enter your display name"
+                          className="font-semibold"
+                          style={{
+                            backgroundColor: 'transparent',
+                            borderColor: `${colors.primary}40`,
+                            color: colors.text,
+                          }}
+                        />
+                      </div>
+
+                      {/* Email */}
+                      <div className="space-y-2">
+                        <Label htmlFor="email" style={{ color: colors.text }}>
+                          Email Address
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            id="email"
+                            value={profileData.email}
+                            disabled
+                            className="font-semibold"
+                            style={{
+                              backgroundColor: 'transparent',
+                              borderColor: `${colors.primary}40`,
+                              color: colors.text,
+                              opacity: 0.7,
+                            }}
+                          />
+                          {user?.emailVerified && (
+                            <Badge variant="outline" className="flex items-center gap-1">
+                              <CheckCircle size={14} />
+                              Verified
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Phone Number */}
+                      <div className="space-y-2">
+                        <Label htmlFor="phoneNumber" style={{ color: colors.text }}>
+                          Phone Number
+                        </Label>
+                        <div className="flex items-center gap-2">
+                          <Input
+                            id="phoneNumber"
+                            value={profileData.phoneNumber}
+                            onChange={(e) => setProfileData(prev => ({ ...prev, phoneNumber: e.target.value }))}
+                            placeholder="+1 (555) 123-4567"
+                            className="font-semibold"
+                            style={{
+                              backgroundColor: 'transparent',
+                              borderColor: `${colors.primary}40`,
+                              color: colors.text,
+                            }}
+                          />
+                          {/* TODO: Add phone verification status when available */}
+                          {false && (
+                            <Badge variant="outline" className="flex items-center gap-1">
+                              <CheckCircle size={14} />
+                              Verified
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Save Button */}
+                      <Button
+                        onClick={handleSaveProfile}
+                        disabled={isSaving}
+                        className="w-full font-bold shadow-lg"
                         style={{
                           backgroundColor: colors.primary,
                           color: 'white',
                         }}
                       >
-                        Upgrade to Premium
+                        {isSaving ? "Saving..." : "Save Changes"}
                       </Button>
-                    </div>
-                  ) : (submissions?.length || 0) === 0 ? (
-                    <div className="text-center py-12">
-                      <FileText size={48} className="mx-auto mb-4 opacity-50" style={{ color: colors.primary }} />
-                      <h3 className="font-bold text-lg mb-2" style={{ color: colors.text }}>
-                        No Submissions Yet
-                      </h3>
-                      <p style={{ color: `${colors.text}80` }}>
-                        You haven't submitted any songs yet
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {(submissions || []).map((submission) => (
-                        <div
-                          key={submission.id}
-                          className="p-4 rounded-lg border transition-all duration-200 hover:shadow-md"
-                          style={{
-                            borderColor: `${colors.primary}20`,
-                            backgroundColor: `${colors.primary}05`,
-                          }}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <h4 className="font-bold" style={{ color: colors.text }}>
-                                {submission.artistName} - {submission.songTitle}
-                              </h4>
-                              <p className="text-sm mt-1" style={{ color: `${colors.text}80` }}>
-                                Submitted on {format(new Date(submission.createdAt), 'MMM dd, yyyy')}
-                              </p>
+                        </>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+
+                {selectedSection === "subscription" && (
+                  <Card
+                    className="border-2 shadow-xl"
+                    style={{
+                      backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.95)',
+                      borderColor: `${colors.primary}40`,
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  >
+                    <CardHeader>
+                      <CardTitle className="text-2xl font-black" style={{ color: colors.text }}>
+                        Subscription Management
+                      </CardTitle>
+                      <CardDescription style={{ color: `${colors.text}80` }}>
+                        Manage your subscription and billing information
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      {/* Current Plan */}
+                      <div className="p-6 rounded-lg border-2" style={{ borderColor: `${colors.primary}40` }}>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-2 mb-2">
+                              <Crown size={24} style={{ color: colors.accent }} />
+                              <h3 className="font-black text-xl" style={{ color: colors.text }}>
+                                Legend Package
+                              </h3>
                             </div>
-                            <Badge
-                              variant={
-                                submission.status === 'approved' ? 'default' :
-                                submission.status === 'rejected' ? 'destructive' :
-                                'secondary'
-                              }
-                            >
-                              {submission.status}
-                            </Badge>
+                            <p className="text-sm mb-4" style={{ color: `${colors.text}80` }}>
+                              Premium access to all features
+                            </p>
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-2">
+                                <CheckCircle size={16} style={{ color: colors.primary }} />
+                                <span className="text-sm" style={{ color: colors.text }}>Unlimited song submissions</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <CheckCircle size={16} style={{ color: colors.primary }} />
+                                <span className="text-sm" style={{ color: colors.text }}>Premium avatars & badges</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <CheckCircle size={16} style={{ color: colors.primary }} />
+                                <span className="text-sm" style={{ color: colors.text }}>Early access to new features</span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-black text-2xl" style={{ color: colors.primary }}>$9.99</p>
+                            <p className="text-sm" style={{ color: `${colors.text}80` }}>per month</p>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                      </div>
+
+                      {/* Billing Information */}
+                      <div className="space-y-4">
+                        <h4 className="font-bold" style={{ color: colors.text }}>Billing Information</h4>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: `${colors.primary}10` }}>
+                            <div className="flex items-center gap-3">
+                              <CreditCard size={20} style={{ color: colors.primary }} />
+                              <span className="font-semibold" style={{ color: colors.text }}>•••• •••• •••• 4242</span>
+                            </div>
+                            <Badge variant="outline">Visa</Badge>
+                          </div>
+                          <div className="flex items-center justify-between p-3 rounded-lg" style={{ backgroundColor: `${colors.primary}10` }}>
+                            <div className="flex items-center gap-3">
+                              <Calendar size={20} style={{ color: colors.primary }} />
+                              <span className="font-semibold" style={{ color: colors.text }}>Next billing date</span>
+                            </div>
+                            <span style={{ color: colors.text }}>
+                              {format(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 'MMM dd, yyyy')}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Cancel Subscription */}
+                      <div className="pt-4 border-t" style={{ borderColor: `${colors.primary}20` }}>
+                        <Button
+                          variant="outline"
+                          onClick={() => setShowCancelSubscriptionDialog(true)}
+                          className="w-full font-semibold focus:outline-none focus:ring-0"
+                          style={{
+                            borderColor: '#EF4444',
+                            color: '#EF4444',
+                          }}
+                        >
+                          Cancel Subscription
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                {selectedSection === "submissions" && (
+                  <Card
+                    className="border-2 shadow-xl"
+                    style={{
+                      backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.95)',
+                      borderColor: `${colors.primary}40`,
+                      backdropFilter: 'blur(10px)',
+                    }}
+                  >
+                    <CardHeader>
+                      <CardTitle className="text-2xl font-black" style={{ color: colors.text }}>
+                        Submission Requests
+                      </CardTitle>
+                      <CardDescription style={{ color: `${colors.text}80` }}>
+                        Track your song submission history
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {/* TODO: Check subscription status */}
+                      {false ? (
+                        <div className="text-center py-12">
+                          <Crown size={48} className="mx-auto mb-4 opacity-50" style={{ color: colors.primary }} />
+                          <h3 className="font-bold text-lg mb-2" style={{ color: colors.text }}>
+                            Premium Feature
+                          </h3>
+                          <p className="mb-6" style={{ color: `${colors.text}80` }}>
+                            Song submissions are available for premium subscribers only
+                          </p>
+                          <Button
+                            onClick={() => setLocation("/subscription")}
+                            className="font-bold shadow-lg focus:outline-none focus:ring-0"
+                            style={{
+                              backgroundColor: colors.primary,
+                              color: 'white',
+                            }}
+                          >
+                            Upgrade to Premium
+                          </Button>
+                        </div>
+                      ) : (submissions?.length || 0) === 0 ? (
+                        <div className="text-center py-12">
+                          <FileText size={48} className="mx-auto mb-4 opacity-50" style={{ color: colors.primary }} />
+                          <h3 className="font-bold text-lg mb-2" style={{ color: colors.text }}>
+                            No Submissions Yet
+                          </h3>
+                          <p style={{ color: `${colors.text}80` }}>
+                            You haven't submitted any songs yet
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {(submissions || []).map((submission) => (
+                            <div
+                              key={submission.id}
+                              className="p-4 rounded-lg border transition-all duration-200 hover:shadow-md"
+                              style={{
+                                borderColor: `${colors.primary}20`,
+                                backgroundColor: `${colors.primary}05`,
+                              }}
+                            >
+                              <div className="flex items-start justify-between">
+                                <div>
+                                  <h4 className="font-bold" style={{ color: colors.text }}>
+                                    {submission.artistName} - {submission.songTitle}
+                                  </h4>
+                                  <p className="text-sm mt-1" style={{ color: `${colors.text}80` }}>
+                                    Submitted on {format(new Date(submission.createdAt), 'MMM dd, yyyy')}
+                                  </p>
+                                </div>
+                                <Badge
+                                  variant={
+                                    submission.status === 'approved' ? 'default' :
+                                    submission.status === 'rejected' ? 'destructive' :
+                                    'secondary'
+                                  }
+                                >
+                                  {submission.status}
+                                </Badge>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
+              </>
             )}
           </div>
         </div>

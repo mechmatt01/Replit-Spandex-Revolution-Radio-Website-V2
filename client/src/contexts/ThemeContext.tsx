@@ -417,19 +417,65 @@ export const ThemeContext = createContext<ThemeContextType | undefined>(undefine
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<MetalTheme>(() => {
-    const saved = localStorage.getItem("metal-theme") as MetalTheme;
-    return saved && METAL_THEMES[saved] ? saved : "classic-metal";
+    try {
+      const saved = localStorage.getItem("metal-theme") as MetalTheme;
+      const validTheme = saved && METAL_THEMES[saved] ? saved : "classic-metal";
+      console.log('[ThemeContext] Initializing with theme:', validTheme);
+      return validTheme;
+    } catch (error) {
+      console.error('[ThemeContext] Error reading theme from localStorage:', error);
+      return "classic-metal";
+    }
   });
 
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    const saved = localStorage.getItem("theme-mode");
-    return saved === "light" ? false : true;
+    try {
+      const saved = localStorage.getItem("theme-mode");
+      const isDark = saved === "light" ? false : true;
+      console.log('[ThemeContext] Initializing with dark mode:', isDark);
+      return isDark;
+    } catch (error) {
+      console.error('[ThemeContext] Error reading dark mode from localStorage:', error);
+      return true;
+    }
   });
+
+  // Ensure currentTheme is always defined
+  if (!currentTheme || !METAL_THEMES[currentTheme]) {
+    console.error('[ThemeContext] Invalid currentTheme detected:', currentTheme);
+    setCurrentTheme("classic-metal");
+  }
+
+  // Debug logging
+  useEffect(() => {
+    console.log('[ThemeContext] Theme changed to:', currentTheme);
+  }, [currentTheme]);
+
+  // Ensure currentTheme is always valid
+  useEffect(() => {
+    if (!currentTheme || !METAL_THEMES[currentTheme]) {
+      console.error('[ThemeContext] Invalid currentTheme detected, resetting to classic-metal:', currentTheme);
+      setCurrentTheme("classic-metal");
+    }
+  }, [currentTheme]);
+
+  useEffect(() => {
+    console.log('[ThemeContext] isDarkMode changed to:', isDarkMode);
+  }, [isDarkMode]);
 
   // Helper function to get theme colors
   const getThemeColors = (themeName: MetalTheme, isDark: boolean): ThemeColors => {
-    const theme = METAL_THEMES[themeName];
-    return isDark ? theme.colors.dark : theme.colors.light;
+    try {
+      const theme = METAL_THEMES[themeName];
+      if (!theme) {
+        console.error('[ThemeContext] Theme not found:', themeName);
+        return METAL_THEMES["classic-metal"].colors[isDark ? "dark" : "light"];
+      }
+      return isDark ? theme.colors.dark : theme.colors.light;
+    } catch (error) {
+      console.error('[ThemeContext] Error getting theme colors:', error);
+      return METAL_THEMES["classic-metal"].colors[isDark ? "dark" : "light"];
+    }
   };
 
   // Helper function to convert colors to HSL
@@ -568,21 +614,30 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [themeConfig.gradient]);
 
   // Memoized context value to prevent unnecessary re-renders
-  const value = useMemo(() => ({
-    currentTheme,
-    isDarkMode,
-    colors: {
-      ...colors,
-      primaryText: colors.primaryText || (colors.primary === "#c0c0c0" ? "#000000" : "#ffffff"),
-    },
-    theme: themeConfig,
-    setTheme,
-    toggleDarkMode,
-    toggleTheme,
-    gradient: themeConfig.gradient,
-    getColors,
-    getGradient,
-  }), [
+  const value = useMemo(() => {
+    // Ensure we have valid values
+    const safeCurrentTheme = currentTheme && METAL_THEMES[currentTheme] ? currentTheme : "classic-metal";
+    const safeColors = getThemeColors(safeCurrentTheme, isDarkMode);
+    const safeThemeConfig = METAL_THEMES[safeCurrentTheme];
+    
+    console.log('[ThemeContext] Providing context with theme:', safeCurrentTheme, 'dark mode:', isDarkMode);
+    
+    return {
+      currentTheme: safeCurrentTheme,
+      isDarkMode,
+      colors: {
+        ...safeColors,
+        primaryText: safeColors.primaryText || (safeColors.primary === "#c0c0c0" ? "#000000" : "#ffffff"),
+      },
+      theme: safeThemeConfig,
+      setTheme,
+      toggleDarkMode,
+      toggleTheme,
+      gradient: safeThemeConfig.gradient,
+      getColors,
+      getGradient,
+    };
+  }, [
     currentTheme,
     isDarkMode,
     colors,
@@ -601,8 +656,38 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
 export function useTheme() {
   const context = useContext(ThemeContext);
+  
+  // Add debugging to track theme context usage
+  console.log('[useTheme] Hook called, context:', context ? 'available' : 'undefined');
+  
   if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
+    console.error('[useTheme] useTheme must be used within a ThemeProvider');
+    console.error('[useTheme] Component stack:', new Error().stack);
+    
+    // Provide fallback values to prevent crashes
+    const fallbackContext = {
+      currentTheme: "classic-metal" as MetalTheme,
+      isDarkMode: true,
+      colors: METAL_THEMES["classic-metal"].colors.dark,
+      theme: METAL_THEMES["classic-metal"],
+      setTheme: () => console.warn('[useTheme] setTheme called outside ThemeProvider'),
+      toggleDarkMode: () => console.warn('[useTheme] toggleDarkMode called outside ThemeProvider'),
+      toggleTheme: () => console.warn('[useTheme] toggleTheme called outside ThemeProvider'),
+      gradient: METAL_THEMES["classic-metal"].gradient,
+      getColors: () => METAL_THEMES["classic-metal"].colors.dark,
+      getGradient: () => METAL_THEMES["classic-metal"].gradient,
+    };
+    
+    console.log('[useTheme] Providing fallback context:', fallbackContext);
+    return fallbackContext;
   }
+  
+  // Log successful theme context access
+  console.log('[useTheme] Successfully accessed theme context:', {
+    currentTheme: context.currentTheme,
+    isDarkMode: context.isDarkMode,
+    hasColors: !!context.colors
+  });
+  
   return context;
 }

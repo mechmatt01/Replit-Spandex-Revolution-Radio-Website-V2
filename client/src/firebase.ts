@@ -27,6 +27,12 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+// Validate Firebase configuration
+if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+  console.error('Firebase configuration is incomplete. Please check your environment variables.');
+  throw new Error('Firebase configuration is incomplete');
+}
+
 // Initialize Firebase
 let app;
 try {
@@ -94,9 +100,21 @@ export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     return result;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Google sign-in error:', error);
-    throw error;
+    
+    // Handle specific Firebase auth errors
+    if (error.code === 'auth/auth-domain-config-required') {
+      throw new Error('Firebase authentication domain not configured. Please contact support.');
+    } else if (error.code === 'auth/popup-closed-by-user') {
+      throw new Error('Sign-in popup was closed. Please try again.');
+    } else if (error.code === 'auth/popup-blocked') {
+      throw new Error('Sign-in popup was blocked. Please allow popups for this site.');
+    } else if (error.code === 'auth/unauthorized-domain') {
+      throw new Error('This domain is not authorized for Firebase authentication.');
+    } else {
+      throw new Error(error.message || 'Failed to sign in with Google. Please try again.');
+    }
   }
 };
 
