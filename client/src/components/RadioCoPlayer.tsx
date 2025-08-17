@@ -11,6 +11,7 @@ import { Button } from "../components/ui/button";
 import { Slider } from "../components/ui/slider";
 import { useRadio } from "../contexts/RadioContext";
 import { useTheme } from "../contexts/ThemeContext";
+import { useToast } from "../hooks/use-toast";
 
 import ThemedMusicLogo from "../components/ThemedMusicLogo";
 import ScrollingText from "../components/ScrollingText";
@@ -124,7 +125,16 @@ export default function RadioCoPlayer() {
   const { user, updateListeningStatus } = useFirebaseAuth();
   const { getColors, getGradient, currentTheme } = useTheme();
   const colors = getColors();
+  const { toast } = useToast();
 
+  // Debug mode state
+  const [isDebugMode, setIsDebugMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('debug-mode');
+      return saved ? JSON.parse(saved) : false;
+    }
+    return false;
+  });
 
 
   const [isStationDropdownOpen, setIsStationDropdownOpen] = useState(false);
@@ -140,6 +150,45 @@ export default function RadioCoPlayer() {
       setSelectedStation(firstStation);
     }
   }, []);
+
+  // Sync selectedStation with currentStation from context
+  useEffect(() => {
+    if (currentStation) {
+      setSelectedStation(currentStation);
+    }
+  }, [currentStation]);
+
+  // Handle station selection
+  const handleStationSelect = async (station: RadioStation) => {
+    try {
+      setIsTransitioning(true);
+      setSelectedStation(station);
+      setIsStationDropdownOpen(false);
+      
+      // Actually change the radio station
+      await changeStation(station);
+      
+      // Show success feedback
+      if (isDebugMode) {
+        toast({
+          title: "Station Changed",
+          description: `Now playing ${station.name}`,
+          variant: "default",
+        });
+      }
+    } catch (error) {
+      console.error('Failed to change station:', error);
+      // Revert selection on error
+      setSelectedStation(currentStation || radioStations[0]);
+      toast({
+        title: "Station Change Failed",
+        description: "Failed to switch to the selected station",
+        variant: "error",
+      });
+    } finally {
+      setIsTransitioning(false);
+    }
+  };
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [hasError, setHasError] = useState(false);
 
@@ -228,27 +277,33 @@ export default function RadioCoPlayer() {
   };
 
   const handleStationChange = async (newStation: RadioStation) => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
-    
     try {
-      await measureAsyncOperation('radio_station_change', async () => {
-        setHasError(false);
-        
-        // Small delay to ensure state updates
-        await new Promise(resolve => setTimeout(resolve, 100));
-        
-        if (isPlaying) {
-          await handlePlay();
-        }
-      }, { 
-        station_id: 1,
-        station_name: newStation.name.length
-      });
+      setIsTransitioning(true);
+      setSelectedStation(newStation);
+      setIsStationDropdownOpen(false);
+      
+      // Actually change the radio station
+      await changeStation(newStation);
+      
+      // Show success feedback
+      if (isDebugMode) {
+        toast({
+          title: "Station Changed",
+          description: `Now playing ${newStation.name}`,
+          variant: "default",
+        });
+      }
     } catch (error) {
-      console.error('Error changing station:', error);
-      setHasError(true);
+      console.error('Failed to change station:', error);
+      // Revert selection on error
+      setSelectedStation(currentStation || radioStations[0]);
+      toast({
+        title: "Station Change Failed",
+        description: "Failed to switch to the selected station",
+        variant: "error",
+      });
+    } finally {
+      setIsTransitioning(false);
     }
   };
 
@@ -330,7 +385,7 @@ export default function RadioCoPlayer() {
                 {selectedStation && (
                   <button
                     key={selectedStation.id + "-selected"}
-                    onClick={() => handleStationChange(selectedStation)}
+                    onClick={() => handleStationSelect(selectedStation)}
                     className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none focus:ring-0"
                     style={{
                       background: `linear-gradient(135deg, ${colors.primary}40, ${colors.secondary}25)`,
@@ -436,7 +491,7 @@ export default function RadioCoPlayer() {
                   .map((station) => (
                     <button
                       key={station.id}
-                      onClick={() => handleStationChange(station)}
+                      onClick={() => handleStationSelect(station)}
                       className="w-full p-3 text-left rounded-md transition-all duration-300 hover:bg-muted/20 focus:outline-none focus:ring-0"
                       style={{
                         backgroundColor: "transparent",

@@ -69,11 +69,7 @@ export default function Features() {
           </p>
         </div>
 
-        <StaggeredAnimation 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          staggerDelay={50}
-          direction="up"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1: 24/7 Live Streaming */}
           <div className="relative">
             {/* Glow Effect */}
@@ -484,7 +480,7 @@ export default function Features() {
             </CardContent>
           </Card>
           </div>
-        </StaggeredAnimation>
+        </div>
       </div>
     </section>
   );

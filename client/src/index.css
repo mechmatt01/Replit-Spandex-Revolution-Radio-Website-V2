@@ -1673,3 +1673,139 @@ textarea:focus-visible,
   -moz-box-shadow: none !important;
   filter: none !important;
 }
+
+/* CSS Custom Properties for theme colors */
+:root {
+  --theme-border: rgba(255, 107, 53, 0.8);
+  --theme-border-hover: rgba(255, 107, 53, 1);
+  --theme-background: rgba(0, 0, 0, 0.1);
+  --theme-card-background: rgba(255, 255, 255, 0.05);
+  --theme-glow: rgba(255, 107, 53, 0.3);
+}
+
+/* Fix for feature and show containers - ensure borders are visible */
+.feature-container,
+.show-container {
+  border: 2px solid rgba(255, 107, 53, 0.6) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.feature-container:hover,
+.show-container:hover {
+  border-color: rgba(255, 107, 53, 1) !important;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 107, 53, 0.08)) !important;
+  box-shadow: 0 0 30px rgba(255, 107, 53, 0.4), 0 0 60px rgba(255, 107, 53, 0.2) !important;
+  transform: scale(1.02) !important;
+}
+
+/* Ensure feature cards have proper background and borders */
+.feature-container .card,
+.show-container .card {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 2px solid rgba(255, 107, 53, 0.6) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Specific styling for show containers with proper glow */
+.show-container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) !important;
+  border: 2px solid rgba(255, 107, 53, 0.6) !important;
+  position: relative !important;
+}
+
+.show-container:hover {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 107, 53, 0.08)) !important;
+  border-color: rgba(255, 107, 53, 1) !important;
+  box-shadow: 0 0 30px rgba(255, 107, 53, 0.4), 0 0 60px rgba(255, 107, 53, 0.2) !important;
+}
+
+/* Fix glow effect to fade properly outside boxes */
+.show-container .absolute.inset-2 {
+  overflow: visible !important;
+  pointer-events: none !important;
+}
+
+.show-container .absolute.inset-2 .blur-xl {
+  filter: blur(30px) !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+  transform: scale(1.5) !important;
+  margin: -20px !important;
+}
+
+.show-container:hover .absolute.inset-2 .blur-xl {
+  opacity: 0.6 !important;
+}
+
+/* Ensure the glow container doesn't clip the effect */
+.show-container {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* Fix for feature containers glow as well */
+.feature-container .absolute.inset-2 {
+  overflow: visible !important;
+  pointer-events: none !important;
+}
+
+.feature-container .absolute.inset-2 .blur-xl {
+  filter: blur(30px) !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+  transform: scale(1.5) !important;
+  margin: -20px !important;
+}
+
+.feature-container:hover .absolute.inset-2 .blur-xl {
+  opacity: 0.6 !important;
+}
+
+/* Ensure radio player controls are properly visible */
+.radio-player button,
+.radio-player .play-button,
+.radio-player .pause-button {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: scale(1) !important;
+  transition: all 0.3s ease !important;
+}
+
+.radio-player button:hover,
+.radio-player .play-button:hover,
+.radio-player .pause-button:hover {
+  transform: scale(1.1) !important;
+}
+
+/* Fix for play/pause button sizing and centering */
+.radio-player .w-16.h-16,
+.radio-player .w-10.h-10 {
+  min-width: 64px !important;
+  min-height: 64px !important;
+  width: 64px !important;
+  height: 64px !important;
+}
+
+.radio-player .w-10.h-10 {
+  min-width: 40px !important;
+  min-height: 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+}
+
+/* Ensure button icons are properly sized */
+.radio-player svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
+}
+
+.radio-player .w-16.h-16 svg {
+  max-width: 32px !important;
+  max-height: 32px !important;
+}

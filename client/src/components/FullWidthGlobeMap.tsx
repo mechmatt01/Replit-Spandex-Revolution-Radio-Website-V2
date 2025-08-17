@@ -161,9 +161,9 @@ const FullWidthGlobeMap = () => {
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
         scale: isUserLocation ? 8 : 6,
-        fillColor: isUserLocation ? colors.primary : '#ff4444',
+        fillColor: isUserLocation ? '#4285F4' : '#ff4444', // Blue for user location, red for others
         fillOpacity: 0.9,
-        strokeColor: isUserLocation ? colors.primary : '#ffffff',
+        strokeColor: isUserLocation ? '#4285F4' : '#ffffff', // Blue for user location, white for others
         strokeWeight: 2,
       },
       zIndex: isUserLocation ? 1000 : 1,
@@ -176,21 +176,21 @@ const FullWidthGlobeMap = () => {
       icon: {
         path: google.maps.SymbolPath.CIRCLE,
         scale: isUserLocation ? 12 : 10,
-        fillColor: isUserLocation ? colors.primary : '#ff4444',
+        fillColor: isUserLocation ? '#4285F4' : '#ff4444', // Blue for user location, red for others
         fillOpacity: 0.3,
-        strokeColor: isUserLocation ? colors.primary : '#ff4444',
+        strokeColor: isUserLocation ? '#4285F4' : '#ff4444', // Blue for user location, red for others
         strokeWeight: 1,
       },
       zIndex: isUserLocation ? 999 : 0,
     });
 
-    // Create info window
+    // Create info window with theme colors
     const infoWindow = new google.maps.InfoWindow({
       content: `
-        <div style="padding: 8px; text-align: center; font-family: Arial, sans-serif;">
-          <div style="font-weight: bold; margin-bottom: 4px; color: #333;">${title}</div>
-          <div style="font-size: 12px; color: #666;">
-            ${isUserLocation ? 'Your Location' : 'Active Listener'}
+        <div style="padding: 12px; text-align: center; font-family: Arial, sans-serif; background: ${colors.background}; color: ${colors.text}; border-radius: 8px; min-width: 200px;">
+          <div style="font-weight: bold; margin-bottom: 6px; color: ${colors.text}; font-size: 14px;">${title}</div>
+          <div style="font-size: 12px; color: ${colors.textMuted || colors.text};">
+            ${isUserLocation ? '📍 Your Location' : '🎧 Active Listener'}
           </div>
         </div>
       `,
@@ -225,9 +225,9 @@ const FullWidthGlobeMap = () => {
         pulse.setIcon({
           path: google.maps.SymbolPath.CIRCLE,
           scale: Math.max(0, scale),
-          fillColor: isUserLocation ? colors.primary : '#ff4444',
+          fillColor: isUserLocation ? '#4285F4' : '#ff4444', // Blue for user location, red for others
           fillOpacity: Math.max(0, Math.min(1, opacity)),
-          strokeColor: isUserLocation ? colors.primary : '#ff4444',
+          strokeColor: isUserLocation ? '#4285F4' : '#ff4444', // Blue for user location, red for others
           strokeWeight: 1,
         });
 
@@ -240,7 +240,7 @@ const FullWidthGlobeMap = () => {
     animatePulse();
 
     return { marker, pulse, infoWindow };
-  }, [colors.primary]);
+  }, [colors.background, colors.text, colors.textMuted]);
 
   // Initialize map function wrapped in useCallback to prevent infinite loops
   const initializeMap = useCallback(() => {

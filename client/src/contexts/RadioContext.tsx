@@ -131,9 +131,9 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     icon: "🔥",
   });
   const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
-    title: "Hot 97",
-    artist: "New York's Hip Hop & Urban Contemporary",
-    album: "97.1 FM • New York, NY",
+    title: "Live Radio Stream",
+    artist: "Spandex Salvation Radio",
+    album: "Metal & Rock Music",
     artwork: "",
     isAd: false,
     stationName: "Hot 97",
@@ -402,6 +402,19 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     // Update station
     setCurrentStation(station);
     setStationName(station.name);
+    
+    // Update track information for the new station
+    setCurrentTrack(prev => ({
+      ...prev,
+      title: `Live Stream - ${station.name}`,
+      artist: station.description,
+      album: `${station.frequency} • ${station.location}`,
+      stationName: station.name,
+      frequency: station.frequency,
+      location: station.location,
+      genre: station.genre,
+      lastUpdated: new Date(),
+    }));
     
     // Save to localStorage
     if (typeof window !== 'undefined') {

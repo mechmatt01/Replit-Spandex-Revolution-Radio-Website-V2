@@ -37,8 +37,69 @@ app.get('/api/status', (req, res) => {
   });
 });
 
+// Radio stream proxy endpoint
+app.get('/api/radio-stream', async (req, res) => {
+  try {
+    const { url } = req.query;
+    if (!url) {
+      return res.status(400).json({ error: 'URL parameter is required' });
+    }
+    
+    // For local development, just return a success response
+    // In production, this would proxy the actual radio stream
+    res.json({ 
+      success: true, 
+      message: 'Radio stream endpoint working',
+      url: url 
+    });
+  } catch (error) {
+    console.error('Radio stream error:', error);
+    res.status(500).json({ error: 'Failed to load radio stream' });
+  }
+});
+
+// Weather API endpoint
+app.get('/api/weather', async (req, res) => {
+  try {
+    const { lat, lon } = req.query;
+    if (!lat || !lon) {
+      return res.status(400).json({ error: 'Latitude and longitude are required' });
+    }
+    
+    // For local development, return mock weather data
+    // In production, this would call the actual weather API
+    const mockWeather = {
+      location: "New York, NY",
+      temperature: 72,
+      description: "Partly Cloudy",
+      icon: "02d",
+      humidity: 65,
+      windSpeed: 8,
+      feelsLike: 74
+    };
+    
+    res.json(mockWeather);
+  } catch (error) {
+    console.error('Weather API error:', error);
+    res.status(500).json({ error: 'Failed to fetch weather data' });
+  }
+});
+
+// Stream stats endpoint
+app.get('/api/stream-stats', (req, res) => {
+  // Mock stream stats for local development
+  const mockStats = {
+    currentListeners: 1250,
+    totalStreams: 15420,
+    peakListeners: 3200,
+    uptime: "99.9%"
+  };
+  
+  res.json(mockStats);
+});
+
 // Use fixed path for client/dist in container
-const clientDistPath = path.join(__dirname, 'client', 'dist');
+const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
 console.log('📁 Using client/dist path:', clientDistPath);
 
 // Serve static files from client/dist
