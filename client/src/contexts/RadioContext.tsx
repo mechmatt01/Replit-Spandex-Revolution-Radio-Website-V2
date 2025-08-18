@@ -835,13 +835,21 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
     try {
       if (isPlaying) {
-        // Stop playback
+        // Stop playback completely
+        console.log('Stopping playback...');
         audio.pause();
         audio.src = '';
+        audio.load(); // Force reload to clear any buffered data
         setIsPlaying(false);
         setIsLoading(false);
         setError(null);
         retryCountRef.current = 0;
+        
+        // Clear any existing timeouts or intervals
+        if (metadataPollingInterval) {
+          clearInterval(metadataPollingInterval);
+          setMetadataPollingInterval(null);
+        }
         
         // Update listening status to false when user stops
         try {
@@ -858,6 +866,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         }
       } else {
         // Start playback
+        console.log('Starting playback...');
         setIsLoading(true);
         setError(null);
         await startPlayback();
@@ -867,7 +876,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
       handlePlaybackError(error);
     }
-  }, [isPlaying, startPlayback, handlePlaybackError, updateListeningStatus, isDebugMode, toast]);
+  }, [isPlaying, startPlayback, handlePlaybackError, updateListeningStatus, isDebugMode, toast, metadataPollingInterval]);
 
   // setCurrentTrack is already stable from useState, no need for useCallback
 
