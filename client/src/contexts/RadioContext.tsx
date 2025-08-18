@@ -835,18 +835,39 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
     try {
       if (isPlaying) {
+        // Stop playback
         audio.pause();
-        setIsPlaying(false); // Add this line to properly set the state
+        audio.src = '';
+        setIsPlaying(false);
+        setIsLoading(false);
         setError(null);
         retryCountRef.current = 0;
+        
+        // Update listening status to false when user stops
+        try {
+          await updateListeningStatus(false);
+          if (isDebugMode) {
+            toast({
+              title: "Playback Stopped",
+              description: "Playback has been stopped",
+              variant: "default",
+            });
+          }
+        } catch (error) {
+          console.error('Error updating listening status:', error);
+        }
       } else {
+        // Start playback
+        setIsLoading(true);
+        setError(null);
         await startPlayback();
       }
     } catch (error: any) {
       console.error("Playback toggle error:", error);
+      setIsLoading(false);
       handlePlaybackError(error);
     }
-  }, [isPlaying, startPlayback, handlePlaybackError]);
+  }, [isPlaying, startPlayback, handlePlaybackError, updateListeningStatus, isDebugMode, toast]);
 
   // setCurrentTrack is already stable from useState, no need for useCallback
 

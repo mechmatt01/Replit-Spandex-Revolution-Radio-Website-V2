@@ -620,7 +620,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const safeColors = getThemeColors(safeCurrentTheme, isDarkMode);
     const safeThemeConfig = METAL_THEMES[safeCurrentTheme];
     
-    console.log('[ThemeContext] Providing context with theme:', safeCurrentTheme, 'dark mode:', isDarkMode);
+    // Removed debug logging
     
     return {
       currentTheme: safeCurrentTheme,
@@ -657,12 +657,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 export function useTheme() {
   const context = useContext(ThemeContext);
   
-  // Add debugging to track theme context usage
-  console.log('[useTheme] Hook called, context:', context ? 'available' : 'undefined');
-  
   if (context === undefined) {
     console.error('[useTheme] useTheme must be used within a ThemeProvider');
-    console.error('[useTheme] Component stack:', new Error().stack);
     
     // Provide fallback values to prevent crashes
     const fallbackContext = {
@@ -678,16 +674,8 @@ export function useTheme() {
       getGradient: () => METAL_THEMES["classic-metal"].gradient,
     };
     
-    console.log('[useTheme] Providing fallback context:', fallbackContext);
     return fallbackContext;
   }
-  
-  // Log successful theme context access
-  console.log('[useTheme] Successfully accessed theme context:', {
-    currentTheme: context.currentTheme,
-    isDarkMode: context.isDarkMode,
-    hasColors: !!context.colors
-  });
   
   return context;
 }

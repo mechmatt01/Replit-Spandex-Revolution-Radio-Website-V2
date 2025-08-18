@@ -74,7 +74,7 @@ export default function StickyPlayer() {
 
   return (
     <div
-      className={`fixed bottom-2 left-4 backdrop-blur-md z-50 transition-all duration-1000 ease-in-out rounded-lg shadow-2xl border-0 floating-player-no-focus ${
+      className={`fixed bottom-2 left-4 backdrop-blur-md z-50 transition-all duration-1000 ease-in-out rounded-lg shadow-2xl border-0 floating-player-no-focus sticky-player ${
         isVisible
           ? "transform translate-y-0 opacity-100"
           : "transform translate-y-full opacity-0"
@@ -337,14 +337,14 @@ export default function StickyPlayer() {
                 <>
                   {isPlaying ? (
                     <Square
-                      className="h-8 w-8"
+                      className="h-6 w-6"
                       fill="currentColor"
                       stroke="currentColor"
                       strokeWidth="2"
                     />
                   ) : (
                     <Play
-                      className="h-8 w-8"
+                      className="h-6 w-6"
                       fill="currentColor"
                       stroke="currentColor"
                       strokeWidth="2"

@@ -308,30 +308,22 @@ export default function RadioCoPlayer() {
   };
 
   return (
-    <section
-                  className="backdrop-blur-md rounded-lg shadow-xl transition-all duration-1000 ease-in-out mx-auto overflow-visible"
-      role="region"
+    <section 
+      className="backdrop-blur-md rounded-2xl shadow-xl transition-all duration-1000 ease-in-out mx-auto overflow-visible radio-player-container" 
+      role="region" 
       aria-label="Radio player controls"
       style={{
         background: currentTrack?.artwork && currentTrack.artwork !== 'advertisement'
           ? `linear-gradient(135deg, ${colors.primary}40, ${colors.secondary}20)`
           : 'rgba(255, 255, 255, 0.12)',
         backdropFilter: 'blur(40px) saturate(250%)',
-        WebkitBackdropFilter: 'blur(40px) saturate(250%)',
-        boxShadow: `0 16px 64px ${colors.primary}30, inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.15), 0 0 32px ${colors.primary}15`,
-        color: colors.text,
-        border: 'none',
-        // Fixed stable width - no more responsive changes that cause size fluctuations
-        width: 'clamp(400px, 30vw, 600px)',
-        minWidth: '400px',
+        border: `1px solid ${colors.primary}20`,
+        boxShadow: `0 20px 40px -12px ${colors.primary}20, 0 8px 32px -8px rgba(0,0,0,0.3)`,
         maxWidth: '600px',
-        // Dynamic padding - expand when volume slider is visible with smooth transition
-        paddingTop: '20px',
-        paddingLeft: '20px', 
-        paddingRight: '20px',
-        paddingBottom: isVolumeSliderVisible ? '60px' : '68px', // Reduced height - Extra space when slider is active, minimum space for volume button
-        // Ensure it expands to accommodate the longest text element
-        contain: 'layout'
+        padding: isVolumeSliderVisible ? '2rem 2rem 4rem 2rem' : '2rem',
+        margin: '0 auto',
+        position: 'relative',
+        overflow: 'visible'
       }}
     >
       {/* Station Selector */}
@@ -585,7 +577,7 @@ export default function RadioCoPlayer() {
               ? 'bg-red-600 text-white' 
               : 'bg-red-500 text-white'
           }`}>
-            <div className="w-1 h-1 bg-white rounded-full animate-pulse opacity-90 relative ml-1"></div>
+            <div className="w-1 h-1 bg-white rounded-full animate-pulse opacity-90"></div>
             <span className="opacity-90">
               {isAdPlaying ? 'AD' : 'LIVE'}
             </span>
@@ -776,7 +768,9 @@ export default function RadioCoPlayer() {
             onMouseLeave={handleVolumeAreaMouseLeave}
           >
             {/* Extended hover area that includes button and slider */}
-            <div className="relative flex items-center justify-center pb-4">
+            <div className={`relative flex items-center justify-center transition-all duration-300 ${
+              isVolumeSliderVisible ? 'pb-8' : 'pb-2'
+            }`}>
               {/* Volume Button - stays centered */}
               <Button
                 onClick={toggleMute}
@@ -837,9 +831,9 @@ export default function RadioCoPlayer() {
                       />
                       {/* First wave - properly positioned */}
                       <path
-                        d="M16 8.5a5 5 0 0 1 0 7"
+                        d="M15.5 8.5a3 3 0 0 1 0 7"
                         stroke="currentColor"
-                        strokeWidth="1.5"
+                        strokeWidth="2"
                         strokeLinecap="round"
                         className="animate-pulse"
                         style={{
@@ -849,9 +843,9 @@ export default function RadioCoPlayer() {
                       />
                       {/* Second wave - properly positioned */}
                       <path
-                        d="M20 6.5a10 10 0 0 1 0 11"
+                        d="M19 6.5a7 7 0 0 1 0 11"
                         stroke="currentColor"
-                        strokeWidth="1.5"
+                        strokeWidth="2"
                         strokeLinecap="round"
                         className="animate-pulse"
                         style={{

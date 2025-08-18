@@ -25,28 +25,33 @@ export default function ThemedMusicLogo({ size = "md", className = "" }: ThemedM
 
   return (
     <div 
-      className={`${sizeClasses[size]} rounded-full flex items-center justify-center shadow-2xl relative ${className}`}
+      className={`${sizeClasses[size]} rounded-xl flex items-center justify-center relative ${className}`}
       style={{ 
         background: gradient,
         border: `2px solid ${colors.primary}`,
-        borderRadius: '50%',
-        boxShadow: `0 20px 40px -12px ${colors.primary}60, 0 8px 16px -4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)`
+        borderRadius: '12px',
+        boxShadow: `0 20px 40px -12px ${colors.primary}60, 0 8px 16px -4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)`,
+        transform: 'perspective(1000px) rotateX(5deg) rotateY(-5deg)',
+        transformStyle: 'preserve-3d'
       }}
     >
-      {/* Inner rounded box that pops out in the middle */}
+      {/* Inner rounded box that pops out in the middle with enhanced shadow */}
       <div 
-        className="absolute inset-3 rounded-full flex items-center justify-center"
+        className="absolute inset-2 rounded-lg flex items-center justify-center"
         style={{ 
           background: `linear-gradient(135deg, ${colors.background}95, ${colors.background}80)`,
           border: `2px solid ${colors.primary}80`,
-          borderRadius: '50%',
-          boxShadow: `0 12px 24px -8px ${colors.primary}40, 0 4px 8px -2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)`
+          borderRadius: '8px',
+          boxShadow: `0 12px 24px -8px ${colors.primary}40, 0 4px 8px -2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)`,
+          transform: 'translateZ(10px)',
+          transformStyle: 'preserve-3d'
         }}
       >
         <Music 
           className={`${iconSizes[size]} text-white`}
           style={{
-            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
+            transform: 'translateZ(5px)'
           }}
         />
       </div>

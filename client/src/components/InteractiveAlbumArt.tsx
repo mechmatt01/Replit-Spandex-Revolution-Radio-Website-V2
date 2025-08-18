@@ -75,52 +75,53 @@ export default function InteractiveAlbumArt({
 
   const handleImageError = async () => {
     setImageLoaded(false);
-    console.warn(`Failed to load artwork for "${title}" by ${artist}. Searching for fallback...`);
     
-    if (!isSearchingFallback) {
+    // Only search for fallback if we haven't already
+    if (!fallbackArtwork && !isSearchingFallback) {
       setIsSearchingFallback(true);
       try {
-        const fallback = await artworkFallbackService.getArtworkWithFallback(artwork, title, artist);
-        if (fallback && fallback !== artwork) {
+        const fallback = await artworkFallbackService.searchArtwork(title, artist);
+        if (fallback) {
           setFallbackArtwork(fallback);
-          console.log(`Found fallback artwork for "${title}" by ${artist}`);
         }
       } catch (error) {
-        console.warn('Fallback artwork search failed:', error);
+        console.warn('Failed to fetch fallback artwork:', error);
       } finally {
         setIsSearchingFallback(false);
       }
     }
   };
 
+  // Determine if we should show the default themed artwork
+  const shouldShowDefaultArtwork = !artwork || 
+    artwork === "" || 
+    !imageLoaded || 
+    artwork === "advertisement" ||
+    artwork === "default";
+
   return (
     <div
-      className={`relative ${sizeClasses[size]} overflow-hidden ${noShadow ? '' : 'shadow-lg'} cursor-pointer transition-all duration-300 ${className}`}
+      className={`relative ${sizeClasses[size]} rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ${className}`}
       style={{
-        borderRadius: size === 'sm' ? '12px' : '20px',
         transform: isHovered ? "scale(1.05)" : "scale(1)",
-        boxShadow: isHovered && !noShadow
+        boxShadow: noShadow ? "none" : isHovered
           ? `0 20px 40px -12px ${getGradient()}40`
-          : noShadow ? "none" : "0 4px 8px rgba(0,0,0,0.2)",
+          : "0 4px 8px rgba(0,0,0,0.2)",
+        borderRadius: '12px',
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Themed Placeholder Background */}
+      {/* Themed Placeholder Background - Always show when no valid artwork */}
       <div
         className="absolute inset-0 flex items-center justify-center transition-all duration-500"
         style={{
           background: isAd 
             ? "linear-gradient(45deg, #ff4444, #cc0000)" 
             : getGradient(),
-          opacity:
-            !artwork ||
-            artwork === "" ||
-            !imageLoaded ||
-            artwork === "advertisement"
-              ? 1
-              : 0,
+          opacity: shouldShowDefaultArtwork ? 1 : 0,
           transform: isHovered ? "scale(1.1)" : "scale(1)",
+          borderRadius: '12px',
         }}
       >
         {isAd ? (
@@ -134,64 +135,28 @@ export default function InteractiveAlbumArt({
         )}
       </div>
 
-      {/* Album Artwork with Verification */}
-      {((artwork && artwork.trim() && artwork !== "advertisement") || fallbackArtwork) && (
+      {/* Album Artwork with Verification - Only show when we have valid artwork */}
+      {(artwork && artwork.trim() && artwork !== "advertisement" && artwork !== "default") || fallbackArtwork ? (
         <div
           className="absolute inset-0 transition-all duration-500"
           style={{
             opacity: imageLoaded ? 1 : 0,
-            transform: isHovered ? "scale(1.05)" : "scale(1)",
+            borderRadius: '12px',
           }}
         >
           <img
             src={fallbackArtwork || artwork}
             alt={`${title} by ${artist}`}
             className="w-full h-full object-cover"
-            style={{ borderRadius: '20px' }}
+            style={{
+              borderRadius: '12px',
+            }}
             onLoad={handleImageLoad}
             onError={handleImageError}
-            referrerPolicy="no-referrer"
-            crossOrigin="anonymous"
+            loading="lazy"
           />
-
-          {/* Gradient overlay on hover */}
-          <div
-            className="absolute inset-0 transition-opacity duration-300"
-            style={{
-              background: `linear-gradient(45deg, ${getGradient()}20, transparent)`,
-              opacity: isHovered ? 1 : 0,
-            }}
-          />
-
-          {/* Reflection effect */}
-          {isHovered && (
-            <div
-              className="absolute inset-0 transition-opacity duration-300"
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%)",
-                opacity: 0.6,
-              }}
-            />
-          )}
         </div>
-      )}
-
-      {/* Interactive border glow - REMOVED */}
-      {/* <div
-        className="absolute inset-0 rounded-xl transition-all duration-300 pointer-events-none"
-        style={{
-          border: isHovered
-            ? `2px solid ${colors.primary}80`
-            : "2px solid transparent",
-          boxShadow: isHovered ? `inset 0 0 10px ${colors.primary}20` : "none",
-        }}
-      /> */}
-
-      {/* Loading shimmer effect */}
-      {artwork && !imageLoaded && (
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse" />
-      )}
+      ) : null}
     </div>
   );
 }

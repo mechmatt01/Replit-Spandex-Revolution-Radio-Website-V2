@@ -1878,8 +1878,10 @@ button.w-10.h-10.rounded-full {
 .sticky-player button,
 [data-radix-collection-item] button,
 button[role="button"],
-button.w-16.h-16.rounded-full,
-button.w-10.h-10.rounded-full {
+.radio-player-container button.w-16.h-16.rounded-full,
+.radio-player-container button.w-10.h-10.rounded-full,
+.sticky-player button.w-16.h-16.rounded-full,
+.sticky-player button.w-10.h-10.rounded-full {
   opacity: 1 !important;
   visibility: visible !important;
   display: flex !important;
@@ -1888,10 +1890,13 @@ button.w-10.h-10.rounded-full {
   pointer-events: auto !important;
 }
 
-/* Force visibility for any hidden buttons */
-button[style*="display: none"],
-button[style*="opacity: 0"],
-button[style*="visibility: hidden"] {
+/* Force visibility for any hidden buttons in radio players */
+.radio-player-container button[style*="display: none"],
+.radio-player-container button[style*="opacity: 0"],
+.radio-player-container button[style*="visibility: hidden"],
+.sticky-player button[style*="display: none"],
+.sticky-player button[style*="opacity: 0"],
+.sticky-player button[style*="visibility: hidden"] {
   display: flex !important;
   opacity: 1 !important;
   visibility: visible !important;
