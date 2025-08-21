@@ -565,7 +565,7 @@ export default function RadioCoPlayer() {
           </Button>
 
           {isStationMenuOpen && (
-            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 max-h-96 overflow-y-auto">
+            <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-[9999] max-h-96 overflow-y-auto">
               <div className="p-4">
                 <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
                   Choose a Station

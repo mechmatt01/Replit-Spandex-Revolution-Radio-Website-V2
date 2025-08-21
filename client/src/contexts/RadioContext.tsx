@@ -199,8 +199,14 @@ export function RadioProvider({ children }: { children: ReactNode }) {
 
         audio.pause();
         audio.currentTime = 0;
+        
+        // Small delay to ensure old stream is completely cleared
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        console.log(`[RadioContext] Setting audio source to: ${url}`);
         audio.src = url;
         audio.load();
+        console.log(`[RadioContext] Audio source after load: ${audio.src}`);
 
         // Wait for the audio to be ready with optimized timeout
         await new Promise((resolve, reject) => {
@@ -433,12 +439,25 @@ export function RadioProvider({ children }: { children: ReactNode }) {
   const changeStation = useCallback(async (station: RadioStation, autoPlay: boolean = false) => {
     console.log(`[RadioContext] Changing station to: ${station.name}, autoPlay: ${autoPlay}`);
     
-    // Stop current playback
+    // Stop current playback and completely clear audio
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
+      audio.currentTime = 0;
       audio.src = '';
       audio.load(); // Force reload to clear any buffered data
+      
+      // Remove all event listeners to prevent conflicts
+      audio.removeEventListener('canplaythrough', () => {});
+      audio.removeEventListener('loadeddata', () => {});
+      audio.removeEventListener('error', () => {});
+      audio.removeEventListener('play', () => {});
+      audio.removeEventListener('pause', () => {});
+      
+      // Force garbage collection of the old audio stream
+      if (audio.src) {
+        audio.src = '';
+      }
     }
     
     // Stop keep-alive
