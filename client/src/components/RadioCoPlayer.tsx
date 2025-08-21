@@ -427,12 +427,13 @@ export default function RadioCoPlayer() {
     if (currentStation) {
       setSelectedStation(currentStation);
     } else if (radioStations.length > 0) {
-      // Auto-select the first station if none is selected, but don't auto-play
+      // Auto-select the first station if none is selected
       const firstStation = radioStations[0];
       setSelectedStation(firstStation);
-      // Don't auto-change to the first station - let user choose
+      // Set the station in context but don't auto-play
+      changeStation(firstStation, false).catch(console.error);
     }
-  }, [currentStation]);
+  }, [currentStation, changeStation]);
 
   const handleStationSelect = async (station: RadioStation) => {
     try {
@@ -440,17 +441,10 @@ export default function RadioCoPlayer() {
       setIsStationMenuOpen(false);
       // Change station without auto-playing - user must manually start
       await changeStation(station, false);
-      toast({
-        title: `Switched to ${station.name}`,
-        description: `${station.frequency} • ${station.location}`,
-      });
+      // Removed toast notification - only show the small red error text under player
     } catch (error) {
       console.error("Error changing station:", error);
-      toast({
-        title: "Error changing station",
-        description: "Failed to connect to the selected station",
-        variant: "destructive",
-      });
+      // Removed toast notification - only show the small red error text under player
     }
   };
 
@@ -459,11 +453,7 @@ export default function RadioCoPlayer() {
       await togglePlayback();
     } catch (error) {
       console.error("Error toggling playback:", error);
-      toast({
-        title: "Playback error",
-        description: "Failed to control playback",
-        variant: "destructive",
-      });
+      // Removed toast notification - only show the small red error text under player
     }
   };
 
