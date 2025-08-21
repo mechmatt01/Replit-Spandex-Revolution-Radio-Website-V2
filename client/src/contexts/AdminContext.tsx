@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { useFirebaseAuth } from "./FirebaseAuthContext";
+import { findUserProfileByFirebaseUID } from "../lib/firebase";
 
 interface AdminUser {
   userID: string;
@@ -42,18 +44,34 @@ export function AdminProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (username: string, password: string): Promise<boolean> => {
-    // Mock login for now - replace with real authentication
-    if (username === "admin" && password === "password") {
-      setUser({
-        userID: "admin-1",
-        firstName: "Admin",
-        lastName: "User",
-        emailAddress: "admin@example.com",
-        isAdmin: true,
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
       });
-      return true;
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setUser({
+          userID: "admin-1",
+          firstName: "Admin",
+          lastName: "User",
+          emailAddress: "admin@example.com",
+          isAdmin: true,
+        });
+        return true;
+      } else {
+        console.error('Admin login failed:', data.error);
+        return false;
+      }
+    } catch (error) {
+      console.error('Admin login error:', error);
+      return false;
     }
-    return false;
   };
 
   const logout = () => {

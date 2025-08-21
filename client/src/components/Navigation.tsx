@@ -523,31 +523,48 @@ export default function Navigation() {
                         <div className="relative">
                           {/* Profile Image */}
                           <div
-                            className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg ring-2 ring-offset-2 overflow-hidden"
+                            className="w-10 h-10 rounded-full flex items-center justify-center shadow-lg ring-2 ring-offset-2 overflow-hidden profile-image-element"
                             style={{
-                              background: user?.photoURL 
-                                ? `url(${user.photoURL}) center/cover no-repeat` 
-                                : gradient,
                               '--ring-color': colors.primary,
                               '--ring-offset-color': isDarkMode ? '#000000' : '#ffffff',
                             } as React.CSSProperties}
                           >
-                            {/* Show user icon only when no photo URL */}
-                            {!user?.photoURL && (
-                              <User size={20} className="text-white" />
-                            )}
+                            {/* Show actual profile image when available */}
+                            {user?.photoURL ? (
+                              <img
+                                src={user.photoURL}
+                                alt="Profile"
+                                className="w-full h-full rounded-full object-cover"
+                                onError={(e) => {
+                                  // Fallback to gradient if image fails to load
+                                  e.currentTarget.style.display = 'none';
+                                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                }}
+                              />
+                            ) : null}
                             
-                            {/* Profile image should now display properly without debug overlay */}
+                            {/* Show user icon as fallback when no photo URL or image fails */}
+                            {!user?.photoURL && (
+                              <div 
+                                className="w-full h-full rounded-full flex items-center justify-center"
+                                style={{ background: gradient }}
+                              >
+                                <User size={20} className="text-white" />
+                              </div>
+                            )}
                           </div>
 
                           {/* Verified Badge for Subscribers */}
                           {user?.displayName && (
                             <div 
-                              className="absolute -bottom-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center shadow-md verified-badge"
+                              className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center shadow-md verified-badge"
                               style={{
                                 backgroundColor: colors.primary,
                                 border: `2px solid ${isDarkMode ? '#000000' : colors.primary}`,
-                                zIndex: 20,
+                                zIndex: 50,
+                                position: 'absolute',
+                                bottom: '-4px',
+                                right: '-4px',
                               }}
                             >
                               <svg 

@@ -45,7 +45,7 @@ interface AdminPanelProps {
 
 export default function AdminPanel({ onClose }: AdminPanelProps) {
   const { user } = useFirebaseAuth()
-  const { isAdmin, useMockData, setUseMockData, useLiveData, setUseLiveData } = useAdmin()
+  const { isAdmin, useMockData, setUseMockData, useLiveData, setUseLiveData, login } = useAdmin()
   const queryClient = useQueryClient()
   const [isAddingStation, setIsAddingStation] = useState(false)
   const [editingStation, setEditingStation] = useState<RadioStation | null>(null)
@@ -218,12 +218,77 @@ export default function AdminPanel({ onClose }: AdminPanelProps) {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white p-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">Access Denied</h1>
-            <p className="text-xl">You don't have permission to access the admin panel.</p>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Login</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none focus:ring-0"
+            >
+              <X className="h-6 w-6" />
+            </button>
           </div>
+          
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            const username = formData.get('username') as string;
+            const password = formData.get('password') as string;
+            
+            const success = await login(username, password);
+            if (!success) {
+              alert('Invalid credentials. Try admin/password');
+            }
+          }} className="space-y-4">
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                required
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="Enter username"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                required
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                placeholder="Enter password"
+              />
+            </div>
+            
+            <div className="flex gap-3 pt-4">
+              <button
+                type="submit"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200"
+              >
+                Login
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium py-2 px-4 rounded-md transition-colors duration-200"
+              >
+                Cancel
+              </button>
+            </div>
+            
+            <div className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4">
+              <p>Admin credentials: adminAccess / password123</p>
+            </div>
+          </form>
         </div>
       </div>
     )

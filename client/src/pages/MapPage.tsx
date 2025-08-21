@@ -30,7 +30,7 @@ export default function MapPage() {
               <h1 
                 className="font-orbitron font-black text-3xl md:text-4xl mb-4"
                 style={{ 
-                  color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+                  color: colors.text
                 }}
               >
                 LIVE INTERACTIVE MAP

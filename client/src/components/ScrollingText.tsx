@@ -75,8 +75,34 @@ export default function ScrollingText({
     <div
       ref={containerRef}
       className="relative overflow-hidden whitespace-nowrap"
-      style={{ maxWidth, backgroundColor }}
+      style={{ 
+        maxWidth, 
+        backgroundColor,
+        // Add 5-10% inward padding on both sides
+        paddingLeft: '5%',
+        paddingRight: '5%'
+      }}
     >
+      {/* Left fade effect - positioned 5% from left edge */}
+      <div 
+        className="absolute top-0 bottom-0 z-10 pointer-events-none"
+        style={{
+          left: '5%',
+          width: '8px',
+          background: `linear-gradient(to right, ${backgroundColor}, transparent)`,
+        }}
+      />
+      
+      {/* Right fade effect - positioned 5% from right edge */}
+      <div 
+        className="absolute top-0 bottom-0 z-10 pointer-events-none"
+        style={{
+          right: '5%',
+          width: '8px',
+          background: `linear-gradient(to left, ${backgroundColor}, transparent)`,
+        }}
+      />
+      
       <div
         ref={textRef}
         className={`${className} whitespace-nowrap`}
@@ -86,22 +112,22 @@ export default function ScrollingText({
           whiteSpace: "nowrap",
           animation:
             isScrolling && shouldScroll
-              ? "scrollLeftToRight 12s linear infinite"
+              ? "scrollLoop 25s linear infinite"
               : "none",
-          transform:
-            isScrolling && shouldScroll ? "translateX(0)" : "translateX(0)",
+          // Start from the right edge of the visible area (accounting for 5% padding)
+          transform: isScrolling && shouldScroll ? "translateX(100%)" : "translateX(0)",
         }}
       >
         {text}
         {shouldScroll && isScrolling && (
-          <span style={{ paddingLeft: "50px" }}>{text}</span>
+          <span style={{ paddingLeft: "30px" }}>{text}</span>
         )}
       </div>
 
       <style>{`
-        @keyframes scrollLeftToRight {
+        @keyframes scrollLoop {
           0% {
-            transform: translateX(0%);
+            transform: translateX(100%);
           }
           100% {
             transform: translateX(-100%);

@@ -1,4 +1,4 @@
-import { firestore } from './firebase';
+import { firestore } from './firebase.js';
 // Generate comprehensive mock data
 export function generateMockActiveListeners(count = 75) {
     const mockListeners = [];

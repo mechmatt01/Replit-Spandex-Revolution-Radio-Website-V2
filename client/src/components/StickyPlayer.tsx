@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Volume2, Play, Square } from "lucide-react";
+import { Volume2, Play, Square, Loader2 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { useRadio } from "../contexts/RadioContext";
 import { useTheme } from "../contexts/ThemeContext";
@@ -28,8 +28,6 @@ export default function StickyPlayer() {
   const { getGradient, getColors, currentTheme } = useTheme();
   const colors = getColors();
   
-    // Get theme context for styling
-
   const [isVisible, setIsVisible] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -72,6 +70,17 @@ export default function StickyPlayer() {
     }
   };
 
+  const shouldScrollText = (text: string, maxWidth: number) => {
+    const textElement = document.createElement('span');
+    textElement.style.font = 'inherit';
+    textElement.style.whiteSpace = 'nowrap';
+    textElement.style.maxWidth = `${maxWidth}px`;
+    textElement.textContent = text;
+
+    const boundingRect = textElement.getBoundingClientRect();
+    return boundingRect.width > maxWidth;
+  };
+
   return (
     <div
       className={`fixed bottom-2 left-4 backdrop-blur-md z-50 transition-all duration-1000 ease-in-out rounded-lg shadow-2xl border-0 floating-player-no-focus sticky-player ${
@@ -103,7 +112,7 @@ export default function StickyPlayer() {
             title={currentTrack.title}
             artist={currentTrack.artist}
             size="sm"
-            className="w-12 h-12 shadow-none"
+            className="w-12 h-12 shadow-none rounded-lg" // Reduced roundedness from circle to rounded box
             isAd={isAdPlaying}
             noShadow={true}
           />
@@ -158,43 +167,60 @@ export default function StickyPlayer() {
             )}
 
             <div className="w-full overflow-hidden">
-              <ScrollingText
-                text={
-                  currentTrack.title !== stationName
-                    ? currentTrack.title
-                    : stationName
-                }
-                className="font-semibold text-xs whitespace-nowrap"
-                style={{ 
-                  color: isAdPlaying ? '#f87171' : colors.text
-                }}
-                maxWidth="85%"
-                isFloating={true}
-                backgroundColor="transparent"
-                alignment="left"
-              />
+              {shouldScrollText(currentTrack.title !== stationName ? currentTrack.title : stationName, 200) ? (
+                <ScrollingText
+                  text={
+                    currentTrack.title !== stationName
+                      ? currentTrack.title
+                      : stationName
+                  }
+                  className="font-semibold text-xs whitespace-nowrap text-center"
+                  style={{ 
+                    color: isAdPlaying ? '#f87171' : colors.text
+                  }}
+                  maxWidth="100%"
+                  isFloating={true}
+                  backgroundColor="transparent"
+                  alignment="center"
+                />
+              ) : (
+                <div 
+                  className="font-semibold text-xs whitespace-nowrap text-left truncate"
+                  style={{ 
+                    color: isAdPlaying ? '#f87171' : colors.text
+                  }}
+                  title={currentTrack.title !== stationName ? currentTrack.title : stationName}
+                >
+                  {currentTrack.title !== stationName ? currentTrack.title : stationName}
+                </div>
+              )}
             </div>
             
             {/* Artist Information */}
             {currentTrack.artist && 
              currentTrack.artist !== currentTrack.title &&
              currentTrack.artist !== stationName && (
-              <div 
-                className="text-xs truncate mt-0.5"
-                style={{
-                  color: colors.textMuted
-                }}
-              >
-                {currentTrack.artist}
+              <div className="w-full overflow-hidden">
+                <div 
+                  className="text-xs truncate mt-0.5 text-left"
+                  style={{
+                    color: colors.textMuted
+                  }}
+                  title={currentTrack.artist}
+                >
+                  {currentTrack.artist}
+                </div>
               </div>
             )}
             
             <div className="flex items-center justify-between mt-1">
               <div className="flex items-center space-x-1">
                 {/* LIVE/AD indicator */}
-                <div className={`w-2 h-2 rounded-full animate-pulse relative flex-shrink-0 ${
-                  isAdPlaying ? 'bg-red-600' : 'bg-red-500'
-                }`}></div>
+                <div 
+                  className={`w-2 h-2 rounded-full animate-pulse flex-shrink-0 ${
+                    isAdPlaying ? 'bg-red-600' : 'bg-red-500'
+                  }`}
+                ></div>
                 <span className={`text-xs font-medium flex-shrink-0 ${
                   isAdPlaying ? 'text-red-600' : 'text-red-500'
                 }`}>
@@ -284,29 +310,21 @@ export default function StickyPlayer() {
 
           {/* Play Button */}
           <div className="relative">
-            {isLoading && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div 
-                  className="w-7 h-7 border-2 border-t-transparent rounded-full animate-spin"
-                  style={{ 
-                    borderColor: colors.primary, 
-                    borderTopColor: 'transparent' 
-                  }}
-                ></div>
-              </div>
-            )}
             <Button
               onClick={handlePlayPause}
-              className="text-white w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl border-0 focus:outline-none focus:ring-0"
+              className="text-white w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg hover:shadow-xl border-0 focus:outline-none focus:ring-0"
               style={{
                 background: `linear-gradient(45deg, ${colors.primary}, ${colors.secondary})`,
                 boxShadow: `0 4px 20px ${colors.primary}60`,
-                opacity: isLoading ? 0.5 : 1,
+                opacity: isLoading ? 0.5 : 1, // 50% opacity when loading to match main player
                 border: "none",
                 outline: "none",
                 '--tw-ring-color': colors.primary,
                 transform: 'scale(1)',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               } as React.CSSProperties & { '--tw-ring-color': string }}
               aria-label={isLoading ? "Connecting..." : isPlaying ? "Stop radio stream" : "Play radio stream"}
               disabled={isLoading}
@@ -333,14 +351,20 @@ export default function StickyPlayer() {
                 }
               }}
             >
-              {!isLoading && (
-                <>
+              {isLoading ? (
+                <Loader2
+                  className="h-6 w-6 animate-spin"
+                  style={{ color: '#ffffff' }}
+                />
+              ) : (
+                <div className="flex items-center justify-center w-full h-full">
                   {isPlaying ? (
                     <Square
                       className="h-6 w-6"
                       fill="currentColor"
                       stroke="currentColor"
                       strokeWidth="2"
+                      style={{ margin: 0, padding: 0 }}
                     />
                   ) : (
                     <Play
@@ -348,9 +372,10 @@ export default function StickyPlayer() {
                       fill="currentColor"
                       stroke="currentColor"
                       strokeWidth="2"
+                      style={{ margin: 0, padding: 0, marginLeft: '2px' }}
                     />
                   )}
-                </>
+                </div>
               )}
             </Button>
           </div>

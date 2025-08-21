@@ -100,104 +100,83 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     }
     return false;
   });
+
+  // Core state
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(() => {
-    // Load volume from localStorage or default to 0.7
     if (typeof window !== 'undefined') {
-      const savedVolume = localStorage.getItem('radio-volume');
-      return savedVolume ? parseFloat(savedVolume) : 0.7;
+      const saved = localStorage.getItem('radio-volume');
+      return saved ? parseFloat(saved) : 0.7;
     }
     return 0.7;
   });
   const [isMuted, setIsMuted] = useState(() => {
-    // Load muted state from localStorage or default to false
     if (typeof window !== 'undefined') {
-      const savedMuted = localStorage.getItem('radio-muted');
-      return savedMuted === 'true';
+      const saved = localStorage.getItem('radio-muted');
+      return saved ? JSON.parse(saved) : false;
     }
     return false;
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [currentStation, setCurrentStation] = useState<RadioStation | null>({
-    id: "hot-97",
-    stationId: "hot-97",
-    name: "Hot 97",
-    frequency: "97.1 FM",
-    location: "New York, NY",
-    genre: "Hip Hop & R&B",
-    streamUrl: "https://playerservices.streamtheworld.com/api/livestream-redirect/WQHTFMAAC.aac",
-    description: "New York's #1 Hip Hop & R&B",
-    icon: "🔥",
-  });
-  const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
-    title: "Hot 97 - Live Stream",
-    artist: "New York's #1 Hip Hop & R&B",
-    album: "97.1 FM • New York, NY",
-    artwork: getDefaultArtwork("Hot 97 - Live Stream", "New York's #1 Hip Hop & R&B"),
-    isAd: false,
-    stationName: "Hot 97",
-    frequency: "97.1 FM",
-    location: "New York, NY",
-    genre: "Hip Hop & Urban Contemporary",
-    lastUpdated: new Date(),
-  });
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [isAdPlaying, setIsAdPlaying] = useState(false);
   const [adInfo, setAdInfo] = useState<{
     company?: string;
     reason?: string;
     artwork?: string;
   }>({});
-  const [metadataPollingInterval, setMetadataPollingInterval] = useState<NodeJS.Timeout | null>(null);
-  const [stationName, setStationName] = useState("Hot 97");
-  const [prevTrack, setPrevTrack] = useState<TrackInfo | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
+  // Station and track state
+  const [currentStation, setCurrentStation] = useState<RadioStation | null>(null);
+  const [stationName, setStationName] = useState("Spandex Salvation Radio");
+  const [currentTrack, setCurrentTrack] = useState<TrackInfo>({
+    title: "Spandex Salvation Radio",
+    artist: "Live Stream",
+    album: "Heavy Metal & Hard Rock",
+    artwork: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=400",
+  });
+
+  // Refs and intervals
   const audioRef = useRef<HTMLAudioElement>(null);
   const retryCountRef = useRef(0);
   const maxRetries = 3;
+  const [metadataPollingInterval, setMetadataPollingInterval] = useState<NodeJS.Timeout | null>(null);
+  const audioKeepAliveInterval = useRef<NodeJS.Timeout | null>(null);
+  const [userStopped, setUserStopped] = useState(false); // Track if user manually stopped playback
 
-  // Get stream URLs for a station
-  const getStreamUrls = (station: RadioStation | null): string[] => {
+  // Helper function to get multiple stream URLs for a station
+  const getStreamUrls = useCallback((station: RadioStation | null): string[] => {
     if (!station) return [];
-
-    const baseUrl = station.streamUrl;
     
-    // Use the radio proxy to avoid CORS issues
-    const proxyUrl = `/api/radio-stream?url=${encodeURIComponent(baseUrl)}`;
+    // For SomaFM stations, try multiple formats
+    if (station.id.startsWith('somafm-')) {
+      return [
+        station.streamUrl,
+        station.streamUrl.replace('-128-mp3', '-64-mp3'),
+        station.streamUrl.replace('-128-mp3', '-32-mp3'),
+      ];
+    }
     
-    // Return both proxy and direct URLs as fallback
-    return [proxyUrl, baseUrl];
-  };
+    // For other stations, return the main URL
+    return [station.streamUrl];
+  }, []);
 
+  // Start playback function with improved error handling and stability
   const startPlayback = useCallback(async () => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    if (!currentStation) {
+      throw new Error("No station selected");
+    }
 
-    // Prevent multiple simultaneous playback attempts
     if (isLoading) {
-      console.log('Playback already in progress, skipping...');
+      console.log("Already loading, skipping startPlayback call");
       return;
     }
 
+    console.log(`[RadioContext] Starting playback for station: ${currentStation.name}`);
     setIsLoading(true);
     setError(null);
-
-    // Update track information for the current station
-    if (currentStation) {
-      setCurrentTrack(prev => ({
-        ...prev,
-        title: `${currentStation.name} - Live Stream`,
-        artist: currentStation.description,
-        album: `${currentStation.frequency} • ${currentStation.location}`,
-        artwork: getDefaultArtwork(`${currentStation.name} - Live Stream`, currentStation.description),
-        stationName: currentStation.name,
-        frequency: currentStation.frequency,
-        location: currentStation.location,
-        genre: currentStation.genre,
-        lastUpdated: new Date(),
-      }));
-    }
+    setUserStopped(false); // Reset user stopped flag when starting playback
 
     // Try multiple stream formats
     let streamWorked = false;
@@ -213,6 +192,11 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         console.log(`Trying radio stream ${i + 1}: ${url}`);
 
         // Reset audio element
+        const audio = audioRef.current;
+        if (!audio) {
+          throw new Error("Audio element not available");
+        }
+
         audio.pause();
         audio.currentTime = 0;
         audio.src = url;
@@ -222,7 +206,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         await new Promise((resolve, reject) => {
           const timeout = setTimeout(() => {
             reject(new Error("Stream loading timeout"));
-          }, 3000); // Faster timeout for quicker retry
+          }, 5000); // Increased timeout for better stability
 
           const onCanPlay = () => {
             clearTimeout(timeout);
@@ -261,6 +245,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
                 setIsPlaying(true); // Set playing state to true
                 setIsLoading(false); // Stop loading when audio starts playing
                 console.log(`Stream ${i + 1} connected successfully`);
+                
+                // Start keep-alive mechanism to prevent audio from stopping
+                startAudioKeepAlive();
+                
                 break;
               }
             } else {
@@ -269,7 +257,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
               await new Promise((resolve, reject) => {
                 const timeout = setTimeout(() => {
                   reject(new Error("Audio ready timeout"));
-                }, 5000);
+                }, 8000); // Increased timeout
 
                 const onCanPlay = () => {
                   clearTimeout(timeout);
@@ -298,9 +286,13 @@ export function RadioProvider({ children }: { children: ReactNode }) {
                 await playPromise;
                 streamWorked = true;
                 retryCountRef.current = 0;
-                setIsPlaying(true); // Set playing state to true
-                setIsLoading(false); // Stop loading when audio starts playing
+                setIsPlaying(true);
+                setIsLoading(false);
                 console.log(`Stream ${i + 1} connected successfully after waiting`);
+                
+                // Start keep-alive mechanism
+                startAudioKeepAlive();
+                
                 break;
               }
             }
@@ -328,12 +320,46 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     if (!streamWorked) {
       throw new Error("All stream URLs failed");
     }
-  }, [isLoading, currentStation]);
+  }, [isLoading, currentStation, getStreamUrls]);
+
+  // Audio keep-alive mechanism to prevent stopping after 30 seconds
+  const startAudioKeepAlive = useCallback(() => {
+    // Clear any existing interval
+    if (audioKeepAliveInterval.current) {
+      clearInterval(audioKeepAliveInterval.current);
+    }
+
+    // Set up keep-alive interval
+    audioKeepAliveInterval.current = setInterval(() => {
+      const audio = audioRef.current;
+      // Only run keep-alive if we're actually supposed to be playing AND user hasn't stopped
+      if (audio && isPlaying && !audio.paused && !userStopped) {
+        // Check if audio is still playing, if not, restart it
+        if (audio.readyState === 0 || audio.ended) {
+          console.log('[RadioContext] Audio stopped unexpectedly, restarting...');
+          audio.load();
+          audio.play().catch(console.error);
+        }
+        
+        // Ensure volume is maintained
+        audio.volume = isMuted ? 0 : volume;
+      }
+    }, 15000); // Check every 15 seconds
+  }, [isPlaying, isMuted, volume]);
+
+  // Stop audio keep-alive
+  const stopAudioKeepAlive = useCallback(() => {
+    if (audioKeepAliveInterval.current) {
+      clearInterval(audioKeepAliveInterval.current);
+      audioKeepAliveInterval.current = null;
+    }
+  }, []);
 
   const handlePlaybackError = useCallback((error: any) => {
     console.error("Playback error:", error);
     setIsLoading(false);
     setIsPlaying(false);
+    stopAudioKeepAlive();
     
     let errorMessage = "Playback failed";
     
@@ -360,16 +386,17 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     // Increment retry count
     retryCountRef.current += 1;
     
-    // Auto-retry if under max retries
-    if (retryCountRef.current < maxRetries) {
+    // Auto-retry if under max retries AND user hasn't manually stopped
+    if (retryCountRef.current < maxRetries && !isPlaying && !userStopped) {
       console.log(`Auto-retrying playback (${retryCountRef.current}/${maxRetries})...`);
       setTimeout(() => {
-        if (!isPlaying && !isLoading) {
+        // Only retry if user hasn't manually stopped and we're not currently playing
+        if (!isPlaying && !isLoading && !userStopped) {
           startPlayback().catch(console.error);
         }
       }, 2000 * retryCountRef.current); // Exponential backoff
     }
-  }, [isDebugMode, toast, isPlaying, isLoading, startPlayback]);
+  }, [isDebugMode, toast, isPlaying, isLoading, startPlayback, stopAudioKeepAlive]);
 
   const setVolume = useCallback((newVolume: number) => {
     const clampedVolume = Math.max(0, Math.min(1, newVolume));
@@ -413,6 +440,9 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       audio.src = '';
     }
     
+    // Stop keep-alive
+    stopAudioKeepAlive();
+    
     // Reset state
     setIsPlaying(false);
     setIsLoading(false);
@@ -449,7 +479,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       setIsLoading(false); // Stop loading on error
       // Don't throw here, let the user manually start playback
     }
-  }, [startPlayback]);
+  }, [startPlayback, stopAudioKeepAlive]);
 
   // Audio event handlers
   const handlePlay = useCallback(async () => {
@@ -457,6 +487,9 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     setIsPlaying(true);
     setIsLoading(false);
     setError(null);
+    
+    // Start keep-alive when playing starts
+    startAudioKeepAlive();
     
     // Update listening status to true when user starts playing
     try {
@@ -478,12 +511,15 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         });
       }
     }
-  }, [updateListeningStatus, isDebugMode, toast, currentStation?.name]);
+  }, [updateListeningStatus, isDebugMode, toast, currentStation?.name, startAudioKeepAlive]);
 
   const handlePause = useCallback(async () => {
     console.log("Audio pause event triggered");
     setIsPlaying(false);
     setIsLoading(false);
+    
+    // Stop keep-alive when paused
+    stopAudioKeepAlive();
     
     // Update listening status to false when user pauses
     try {
@@ -505,7 +541,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         });
       }
     }
-  }, [updateListeningStatus, isDebugMode, toast]);
+  }, [updateListeningStatus, isDebugMode, toast, stopAudioKeepAlive]);
 
   const handleLoadStart = useCallback(() => {
     console.log("Audio loadstart event triggered");
@@ -527,6 +563,8 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     console.error("Audio error:", e);
     setIsLoading(false);
     setIsPlaying(false);
+    stopAudioKeepAlive();
+    
     const audio = audioRef.current;
     if (audio && audio.src && !audio.paused) {
       setError("Unable to connect to radio stream");
@@ -538,7 +576,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         });
       }
     }
-  }, [isDebugMode, toast]);
+  }, [isDebugMode, toast, stopAudioKeepAlive]);
 
   const handleStalled = useCallback(() => {
     console.log("Audio stalled event triggered");
@@ -643,33 +681,40 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         const lastStationId = localStorage.getItem('last-selected-station');
         const shouldAutoPlay = localStorage.getItem('auto-play-enabled') !== 'false';
         
-        if (shouldAutoPlay && currentStation && !isPlaying) {
+        // Always try to auto-play if we have a current station AND user hasn't stopped
+        if (shouldAutoPlay && currentStation && !isPlaying && !userStopped) {
           console.log('[RadioContext] Auto-playing station:', currentStation.name);
+          
+          // Set loading state first
+          setIsLoading(true);
           
           // Small delay to ensure everything is loaded
           setTimeout(async () => {
-            if (!isPlaying && !isInitialized) {
+            if (!isPlaying && currentStation && !userStopped) {
               try {
                 await startPlayback();
+                console.log('[RadioContext] Auto-play successful');
               } catch (error) {
                 console.error('[RadioContext] Auto-play failed:', error);
+                setIsLoading(false);
               }
             }
-          }, 1000);
+          }, 1500); // Increased delay for better loading sequence
         }
       } catch (error) {
         console.error('[RadioContext] Auto-play initialization error:', error);
+        setIsLoading(false);
       }
     };
 
     // Initialize auto-play after a short delay
-    const timer = setTimeout(initializeAutoPlay, 2000);
+    const timer = setTimeout(initializeAutoPlay, 1000); // Reduced from 2000ms
     
     return () => {
       clearTimeout(timer);
       isInitialized = true;
     };
-  }, [currentStation]);
+  }, [currentStation, isPlaying, startPlayback]);
 
   // Save last selected station
   useEffect(() => {
@@ -826,8 +871,9 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       if (metadataPollingInterval) {
         clearInterval(metadataPollingInterval);
       }
+      stopAudioKeepAlive();
     };
-  }, [metadataPollingInterval]);
+  }, [metadataPollingInterval, stopAudioKeepAlive]);
 
   const togglePlayback = useCallback(async () => {
     const audio = audioRef.current;
@@ -844,6 +890,10 @@ export function RadioProvider({ children }: { children: ReactNode }) {
         setIsLoading(false);
         setError(null);
         retryCountRef.current = 0;
+        setUserStopped(true); // Mark that user manually stopped playback
+        
+        // Stop keep-alive
+        stopAudioKeepAlive();
         
         // Clear any existing timeouts or intervals
         if (metadataPollingInterval) {
@@ -876,7 +926,7 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
       handlePlaybackError(error);
     }
-  }, [isPlaying, startPlayback, handlePlaybackError, updateListeningStatus, isDebugMode, toast, metadataPollingInterval]);
+  }, [isPlaying, startPlayback, handlePlaybackError, updateListeningStatus, isDebugMode, toast, metadataPollingInterval, stopAudioKeepAlive]);
 
   // setCurrentTrack is already stable from useState, no need for useCallback
 

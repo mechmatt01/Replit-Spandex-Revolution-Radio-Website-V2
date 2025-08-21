@@ -159,35 +159,39 @@ export default function Submissions() {
                 className="mb-6"
                 style={{ color: colors.textMuted }}
               >
-                Song submissions are available exclusively to paid subscribers.
-                Sign in and upgrade to submit your favorite tracks.
+                {!isAuthenticated 
+                  ? "Song submissions are available exclusively to paid subscribers. Sign in and upgrade to submit your favorite tracks."
+                  : "Song submissions are available exclusively to paid subscribers. Upgrade your subscription to submit your favorite tracks."
+                }
               </p>
               <div className="flex gap-4 justify-center">
-                <Button
-                  onClick={() => {
-                    // Trigger auth modal instead of redirect
-                    const event = new CustomEvent("openAuthModal", {
-                      detail: { mode: "login" },
-                    });
-                    window.dispatchEvent(event);
-                  }}
-                  className="px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
-                  style={{
-                    backgroundColor: colors.primary,
-                    color: colors.primaryText || "white",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor =
-                      colors.primaryDark || colors.primary;
-                    e.currentTarget.style.transform = "scale(1.05)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary;
-                    e.currentTarget.style.transform = "scale(1)";
-                  }}
-                >
-                  Login
-                </Button>
+                {!isAuthenticated && (
+                  <Button
+                    onClick={() => {
+                      // Trigger auth modal instead of redirect
+                      const event = new CustomEvent("openAuthModal", {
+                        detail: { mode: "login" },
+                      });
+                      window.dispatchEvent(event);
+                    }}
+                    className="px-6 py-3 rounded-full font-semibold transition-all duration-300 border-0"
+                    style={{
+                      backgroundColor: colors.primary,
+                      color: colors.primaryText || "white",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor =
+                        colors.primaryDark || colors.primary;
+                      e.currentTarget.style.transform = "scale(1.05)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = colors.primary;
+                      e.currentTarget.style.transform = "scale(1)";
+                    }}
+                  >
+                    Login
+                  </Button>
+                )}
                 <Button
                   onClick={() =>
                     document

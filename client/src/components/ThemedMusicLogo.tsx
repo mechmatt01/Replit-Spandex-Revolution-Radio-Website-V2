@@ -25,36 +25,26 @@ export default function ThemedMusicLogo({ size = "md", className = "" }: ThemedM
 
   return (
     <div 
-      className={`${sizeClasses[size]} rounded-xl flex items-center justify-center relative ${className}`}
+      className={`${sizeClasses[size]} rounded-md flex items-center justify-center relative ${className}`}
       style={{ 
         background: gradient,
-        border: `2px solid ${colors.primary}`,
-        borderRadius: '12px',
-        boxShadow: `0 20px 40px -12px ${colors.primary}60, 0 8px 16px -4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)`,
-        transform: 'perspective(1000px) rotateX(5deg) rotateY(-5deg)',
-        transformStyle: 'preserve-3d'
+        border: `3px solid ${colors.primary}`,
+        borderRadius: '6px',
+        boxShadow: `0 25px 50px -15px ${colors.primary}70, 0 12px 24px -6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3)`,
+        transform: 'perspective(1200px) rotateX(8deg) rotateY(-8deg)',
+        transformStyle: 'preserve-3d',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
       }}
     >
-      {/* Inner rounded box that pops out in the middle with enhanced shadow */}
-      <div 
-        className="absolute inset-2 rounded-lg flex items-center justify-center"
-        style={{ 
-          background: `linear-gradient(135deg, ${colors.background}95, ${colors.background}80)`,
-          border: `2px solid ${colors.primary}80`,
-          borderRadius: '8px',
-          boxShadow: `0 12px 24px -8px ${colors.primary}40, 0 4px 8px -2px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)`,
+      {/* Music icon directly in the main container - no nested inner box */}
+      <Music 
+        className={`${iconSizes[size]} text-white`}
+        style={{
+          filter: 'drop-shadow(0 3px 6px rgba(0,0,0,0.4))',
           transform: 'translateZ(10px)',
-          transformStyle: 'preserve-3d'
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
-      >
-        <Music 
-          className={`${iconSizes[size]} text-white`}
-          style={{
-            filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
-            transform: 'translateZ(5px)'
-          }}
-        />
-      </div>
+      />
     </div>
   );
 }

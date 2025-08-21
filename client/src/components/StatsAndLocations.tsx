@@ -102,7 +102,7 @@ export default function StatsAndLocations() {
             }}
           >
             <div 
-              className="w-2 h-2 rounded-full animate-pulse flex-shrink-0 relative"
+              className="w-2 h-2 rounded-full animate-pulse flex-shrink-0"
               style={{ 
                 backgroundColor: '#10B981'
               }}

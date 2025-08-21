@@ -573,7 +573,7 @@ const FullWidthGlobeMap = () => {
             <div className="text-center mb-8">
               <h2 className="font-orbitron font-black text-4xl md:text-5xl mb-4 drop-shadow-lg"
                   style={{ 
-                    color: isDarkMode ? '#000000' : colors.text 
+                    color: colors.text
                   }}>
                 Live Interactive Map
               </h2>

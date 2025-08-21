@@ -1,5 +1,10 @@
-// Ad detection system for filtering content and displaying appropriate logos
-// Blocks political content and detects commercials
+// Enhanced Ad detection system using Gemini AI for intelligent content analysis
+// Blocks political content and detects commercials with AI-powered analysis
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+// Initialize Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENAI_API_KEY || 'AIzaSyCH8m8CBVBbiyS_Cu4kjlIpg3vzTRMspbQ');
+
 // Known commercial keywords and brand mappings
 const COMMERCIAL_BRANDS = {
     'gain': { name: 'Gain', logo: 'https://logos-world.net/wp-content/uploads/2022/01/Gain-Logo.png' },
@@ -19,6 +24,7 @@ const COMMERCIAL_BRANDS = {
     'att': { name: 'AT&T', logo: 'https://logos-world.net/wp-content/uploads/2020/09/ATT-Logo.png' },
     't-mobile': { name: 'T-Mobile', logo: 'https://logos-world.net/wp-content/uploads/2020/09/T-Mobile-Logo.png' }
 };
+
 // Blocked content that should be filtered out
 const BLOCKED_CONTENT = [
     'trump 2024',
@@ -27,6 +33,7 @@ const BLOCKED_CONTENT = [
     'political advertisement',
     'campaign ad'
 ];
+
 // Commercial indicators
 const COMMERCIAL_KEYWORDS = [
     'commercial',
@@ -38,13 +45,94 @@ const COMMERCIAL_KEYWORDS = [
     'promo',
     'promotion'
 ];
+
+// AI-powered ad detection using Gemini
+async function detectAdvertisementWithAI(title, artist, album, additionalContext = '') {
+    try {
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        
+        const prompt = `Analyze this radio content and determine if it's an advertisement, commercial, or regular music content.
+
+Content to analyze:
+- Title: "${title}"
+- Artist: "${artist}"
+- Album: "${album}"
+- Additional Context: "${additionalContext}"
+
+Please analyze this content and respond with a JSON object in this exact format:
+{
+    "isAd": true/false,
+    "confidence": 0.0-1.0,
+    "adType": "commercial" | "promotion" | "sponsorship" | "music" | "radio_host" | "unknown",
+    "reason": "Brief explanation of why this is classified as an ad or not",
+    "brandName": "Brand name if commercial detected, null otherwise",
+    "adCategory": "Category of advertisement if applicable",
+    "isBlocked": true/false
+}
+
+Consider these factors:
+1. Commercial language, promotional phrases, or brand mentions
+2. Radio host announcements vs. music content
+3. Sponsored content or promotional material
+4. Regular song titles and artist names
+5. Political or inappropriate content
+
+Respond only with the JSON object, no additional text.`;
+
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        
+        // Extract JSON from response
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+            const aiAnalysis = JSON.parse(jsonMatch[0]);
+            console.log('AI Ad Detection Result:', aiAnalysis);
+            return aiAnalysis;
+        }
+        
+        throw new Error('Invalid AI response format');
+    } catch (error) {
+        console.error('AI ad detection failed:', error);
+        // Fallback to rule-based detection
+        return null;
+    }
+}
+
 /**
- * Detects if content is an advertisement and determines appropriate display
+ * Enhanced advertisement detection combining AI analysis with rule-based detection
  */
-export function detectAdvertisement(title, artist) {
+export async function detectAdvertisement(title, artist, album = '', additionalContext = '') {
+    console.log(`Analyzing content for ads: "${title}" by "${artist}" from "${album}"`);
+    
+    // First, try AI-powered detection
+    try {
+        const aiResult = await detectAdvertisementWithAI(title, artist, album, additionalContext);
+        if (aiResult && aiResult.confidence > 0.7) {
+            console.log(`AI detected ad with ${aiResult.confidence * 100}% confidence:`, aiResult.reason);
+            return {
+                isAd: aiResult.isAd,
+                isBlocked: aiResult.isBlocked || false,
+                adType: aiResult.adType || 'unknown',
+                brandName: aiResult.brandName || null,
+                adCategory: aiResult.adCategory || null,
+                confidence: aiResult.confidence,
+                reason: aiResult.reason,
+                originalTitle: title,
+                originalArtist: artist,
+                originalAlbum: album
+            };
+        }
+    } catch (error) {
+        console.warn('AI detection failed, falling back to rule-based detection:', error);
+    }
+    
+    // Fallback to rule-based detection
     const titleLower = title.toLowerCase();
     const artistLower = artist.toLowerCase();
-    const combinedContent = `${titleLower} ${artistLower}`;
+    const albumLower = album.toLowerCase();
+    const combinedContent = `${titleLower} ${artistLower} ${albumLower}`;
+    
     // Check for blocked content first
     for (const blocked of BLOCKED_CONTENT) {
         if (combinedContent.includes(blocked.toLowerCase())) {
@@ -53,11 +141,15 @@ export function detectAdvertisement(title, artist) {
                 isAd: true,
                 isBlocked: true,
                 adType: 'blocked',
+                confidence: 0.9,
+                reason: `Contains blocked content: ${blocked}`,
                 originalTitle: title,
-                originalArtist: artist
+                originalArtist: artist,
+                originalAlbum: album
             };
         }
     }
+    
     // Check for commercial indicators
     const isCommercial = COMMERCIAL_KEYWORDS.some(keyword => combinedContent.includes(keyword.toLowerCase()));
     if (isCommercial) {
@@ -68,11 +160,14 @@ export function detectAdvertisement(title, artist) {
                 return {
                     isAd: true,
                     isBlocked: false,
+                    adType: 'commercial',
                     brandName: brandInfo.name,
                     brandLogo: brandInfo.logo,
-                    adType: 'commercial',
+                    confidence: 0.85,
+                    reason: `Contains commercial keyword and brand: ${brandInfo.name}`,
                     originalTitle: title,
-                    originalArtist: artist
+                    originalArtist: artist,
+                    originalAlbum: album
                 };
             }
         }
@@ -82,17 +177,46 @@ export function detectAdvertisement(title, artist) {
             isAd: true,
             isBlocked: false,
             adType: 'commercial',
+            confidence: 0.8,
+            reason: 'Contains commercial keywords',
             originalTitle: title,
-            originalArtist: artist
+            originalArtist: artist,
+            originalAlbum: album
         };
     }
+    
+    // Check for radio host patterns
+    const radioHostPatterns = [
+        'dj', 'disc jockey', 'radio host', 'announcer', 'broadcaster',
+        'station break', 'news', 'weather', 'traffic', 'sports'
+    ];
+    
+    const isRadioHost = radioHostPatterns.some(pattern => combinedContent.includes(pattern.toLowerCase()));
+    if (isRadioHost) {
+        console.log(`Radio host content detected: ${title} by ${artist}`);
+        return {
+            isAd: false,
+            isBlocked: false,
+            adType: 'radio_host',
+            confidence: 0.75,
+            reason: 'Radio host or station content',
+            originalTitle: title,
+            originalArtist: artist,
+            originalAlbum: album
+        };
+    }
+    
     // Regular music content
+    console.log(`Regular music content: ${title} by ${artist}`);
     return {
         isAd: false,
         isBlocked: false,
         adType: 'music',
+        confidence: 0.9,
+        reason: 'Regular music content',
         originalTitle: title,
-        originalArtist: artist
+        originalArtist: artist,
+        originalAlbum: album
     };
 }
 /**

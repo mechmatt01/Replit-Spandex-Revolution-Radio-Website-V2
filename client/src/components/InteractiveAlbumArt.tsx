@@ -101,13 +101,15 @@ export default function InteractiveAlbumArt({
 
   return (
     <div
-      className={`relative ${sizeClasses[size]} rounded-xl overflow-hidden cursor-pointer transition-all duration-300 ${className}`}
+      className={`relative ${sizeClasses[size]} rounded-md overflow-hidden cursor-pointer transition-all duration-300 ${className}`}
       style={{
-        transform: isHovered ? "scale(1.05)" : "scale(1)",
+        transform: isHovered ? "scale(1.05) perspective(1000px) rotateX(5deg) rotateY(-5deg)" : "scale(1) perspective(1000px) rotateX(2deg) rotateY(-2deg)",
         boxShadow: noShadow ? "none" : isHovered
-          ? `0 20px 40px -12px ${getGradient()}40`
-          : "0 4px 8px rgba(0,0,0,0.2)",
-        borderRadius: '12px',
+          ? `0 25px 50px -15px ${getGradient()}50, 0 12px 24px -6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2)`
+          : `0 15px 30px -10px ${getGradient()}30, 0 8px 16px -4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)`,
+        borderRadius: '6px',
+        transformStyle: 'preserve-3d',
+        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -120,8 +122,10 @@ export default function InteractiveAlbumArt({
             ? "linear-gradient(45deg, #ff4444, #cc0000)" 
             : getGradient(),
           opacity: shouldShowDefaultArtwork ? 1 : 0,
-          transform: isHovered ? "scale(1.1)" : "scale(1)",
-          borderRadius: '12px',
+          transform: isHovered ? "scale(1.1) translateZ(5px)" : "scale(1) translateZ(0px)",
+          borderRadius: '6px',
+          transformStyle: 'preserve-3d',
+          transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       >
         {isAd ? (
@@ -141,7 +145,10 @@ export default function InteractiveAlbumArt({
           className="absolute inset-0 transition-all duration-500"
           style={{
             opacity: imageLoaded ? 1 : 0,
-            borderRadius: '12px',
+            borderRadius: '6px',
+            transform: isHovered ? "translateZ(5px)" : "translateZ(0px)",
+            transformStyle: 'preserve-3d',
+            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
           }}
         >
           <img
@@ -149,7 +156,7 @@ export default function InteractiveAlbumArt({
             alt={`${title} by ${artist}`}
             className="w-full h-full object-cover"
             style={{
-              borderRadius: '12px',
+              borderRadius: '6px',
             }}
             onLoad={handleImageLoad}
             onError={handleImageError}

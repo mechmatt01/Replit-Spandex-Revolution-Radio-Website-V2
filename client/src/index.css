@@ -1114,6 +1114,19 @@ body.map-fullscreen {
   }
 }
 
+/* Custom volume wave animation that doesn't interfere with positioning */
+@keyframes volumeWave {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
 @keyframes modernPulse {
   0% {
     transform: translate(-50%, -50%) scale(1);
@@ -1854,9 +1867,9 @@ textarea:focus-visible,
   max-height: 32px !important;
 }
 
-/* Additional specific targeting for radio player buttons */
-button.w-16.h-16.rounded-full,
-button.w-10.h-10.rounded-full {
+/* Additional specific targeting for radio player buttons - exclude navigation profile */
+button.w-16.h-16.rounded-full:not([data-profile-image]),
+button.w-10.h-10.rounded-full:not([data-profile-image]) {
   opacity: 1 !important;
   visibility: visible !important;
   display: flex !important;
@@ -1944,6 +1957,57 @@ button.w-10.h-10.rounded-full {
   box-shadow: 0 4px 20px hsl(var(--primary) / 0.6) !important;
 }
 
+/* Profile Image Specific Styling - Override all radio player styles */
+.profile-image-element {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  background-repeat: initial !important;
+  background-attachment: initial !important;
+  background-origin: initial !important;
+  background-clip: initial !important;
+  border: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  z-index: 10 !important;
+  pointer-events: auto !important;
+  transform: scale(1) !important;
+  transition: none !important;
+}
+
+.profile-image-element:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.profile-image-element:focus {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.profile-image-element:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
 /* Ensure Button component from UI library is visible */
 [data-radix-collection-item] button,
 [role="button"] {
@@ -1989,13 +2053,25 @@ button[role="button"],
   z-index: 1000 !important;
 }
 
-/* Ensure main radio player is properly centered */
+/* Ensure main radio player is properly centered and expands when playing */
 .radio-player-container {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
   text-align: center !important;
+  min-height: auto !important;
+  height: auto !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+/* Responsive width for main player */
+@media (max-width: 768px) {
+  .radio-player-container {
+    width: 75% !important;
+    max-width: 75% !important;
+    min-width: 300px !important;
+  }
 }
 
 /* Debug: ensure track information is always visible */
@@ -2035,8 +2111,8 @@ button[role="button"],
 .badge[data-verified="true"] {
   position: absolute !important;
   z-index: 20 !important;
-  top: -8px !important;
-  right: -8px !important;
+  bottom: -4px !important;
+  right: -4px !important;
   pointer-events: none !important;
 }
 
@@ -2058,12 +2134,19 @@ button[role="button"],
 /* Ensure profile images are properly displayed */
 .profile-image-container,
 .avatar-container,
-.user-avatar,
-.w-10.h-10.rounded-full {
+.user-avatar {
   overflow: hidden !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
+}
+
+/* Specific override for profile image elements to prevent orange background */
+.profile-image-element {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  /* Don't override border or box-shadow to preserve ring styling */
 }
 
 /* Force album art and music logos to have rounded corners */
@@ -2088,6 +2171,6 @@ button[role="button"],
 .radio-player-container img,
 .sticky-player img,
 [class*="player"] img {
-  border-radius: 20px !important;
+  border-radius: 5px !important;
   overflow: hidden !important;
 }
