@@ -361,20 +361,56 @@ app.get('/api/now-playing', async (req, res) => {
     if (channel === 'real-radio') {
       console.log(`Real radio station detected: ${stationId}`);
       
+      // Station-specific metadata mapping
+      const stationMetadata = {
+        'hot-97': {
+          name: "Hot 97",
+          frequency: "97.1 FM",
+          location: "New York, NY",
+          genre: "Hip Hop & R&B"
+        },
+        'power-106': {
+          name: "Power 105.1",
+          frequency: "105.1 FM", 
+          location: "New York, NY",
+          genre: "Hip Hop & R&B"
+        },
+        'beat-955': {
+          name: "95.5 The Beat",
+          frequency: "95.5 FM",
+          location: "Dallas, TX", 
+          genre: "Hip Hop & R&B"
+        },
+        'hot-105': {
+          name: "Hot 105",
+          frequency: "105.1 FM",
+          location: "Miami, FL",
+          genre: "Urban R&B"
+        },
+        'q-93': {
+          name: "Q93",
+          frequency: "93.3 FM",
+          location: "New Orleans, LA",
+          genre: "Hip Hop & R&B"
+        }
+      };
+      
+      const metadata = stationMetadata[stationId] || stationMetadata['hot-97'];
+      
       // Generate appropriate metadata for real radio stations
       const nowPlayingData = {
         id: Date.now(),
         title: "Live Radio",
-        artist: "Hot 97",
-        album: "97.1 FM New York",
+        artist: metadata.name,
+        album: `${metadata.frequency} ${metadata.location}`,
         isLive: true,
         timestamp: new Date().toISOString(),
         artwork: "real-radio",
         stationId,
-        stationName: "Hot 97",
-        frequency: "97.1 FM",
-        location: "New York, NY",
-        genre: "Hip Hop & R&B",
+        stationName: metadata.name,
+        frequency: metadata.frequency,
+        location: metadata.location,
+        genre: metadata.genre,
         isAd: false,
         adType: 'radio',
         adCompany: null,

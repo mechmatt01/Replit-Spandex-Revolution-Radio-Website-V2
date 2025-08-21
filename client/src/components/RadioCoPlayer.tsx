@@ -422,25 +422,24 @@ export default function RadioCoPlayer() {
   const [volumeSliderRef, setVolumeSliderRef] = useState<HTMLDivElement | null>(null);
   const stationMenuRef = useRef<HTMLDivElement>(null);
 
-  // Initialize with current station from context and auto-select first station
+  // Initialize with current station from context
   useEffect(() => {
     if (currentStation) {
       setSelectedStation(currentStation);
     } else if (radioStations.length > 0) {
-      // Auto-select the first station if none is selected
+      // Auto-select the first station if none is selected, but don't auto-play
       const firstStation = radioStations[0];
       setSelectedStation(firstStation);
-      
-      // Auto-change to the first station
-      changeStation(firstStation).catch(console.error);
+      // Don't auto-change to the first station - let user choose
     }
-  }, [currentStation, changeStation]);
+  }, [currentStation]);
 
   const handleStationSelect = async (station: RadioStation) => {
     try {
       setSelectedStation(station);
       setIsStationMenuOpen(false);
-      await changeStation(station);
+      // Change station without auto-playing - user must manually start
+      await changeStation(station, false);
       toast({
         title: `Switched to ${station.name}`,
         description: `${station.frequency} • ${station.location}`,

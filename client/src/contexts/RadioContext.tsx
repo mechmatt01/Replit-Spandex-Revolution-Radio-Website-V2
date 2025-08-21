@@ -57,7 +57,7 @@ interface RadioContextType {
   togglePlayback: () => Promise<void>;
   setVolume: (volume: number) => void;
   toggleMute: () => void;
-  changeStation: (station: RadioStation) => Promise<void>;
+  changeStation: (station: RadioStation, autoPlay?: boolean) => Promise<void>;
   setCurrentTrack: (track: TrackInfo) => void;
   audioRef: React.RefObject<HTMLAudioElement>;
 }
@@ -430,14 +430,15 @@ export function RadioProvider({ children }: { children: ReactNode }) {
     }
   }, [isMuted, volume]);
 
-  const changeStation = useCallback(async (station: RadioStation) => {
-    console.log(`[RadioContext] Changing station to: ${station.name}`);
+  const changeStation = useCallback(async (station: RadioStation, autoPlay: boolean = false) => {
+    console.log(`[RadioContext] Changing station to: ${station.name}, autoPlay: ${autoPlay}`);
     
     // Stop current playback
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
       audio.src = '';
+      audio.load(); // Force reload to clear any buffered data
     }
     
     // Stop keep-alive
@@ -471,13 +472,15 @@ export function RadioProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('last-selected-station', station.id);
     }
     
-    // Start playback for new station
-    try {
-      await startPlayback();
-    } catch (error) {
-      console.error('[RadioContext] Failed to start playback for new station:', error);
-      setIsLoading(false); // Stop loading on error
-      // Don't throw here, let the user manually start playback
+    // Only start playback if autoPlay is true
+    if (autoPlay) {
+      try {
+        await startPlayback();
+      } catch (error) {
+        console.error('[RadioContext] Failed to start playback for new station:', error);
+        setIsLoading(false); // Stop loading on error
+        // Don't throw here, let the user manually start playback
+      }
     }
   }, [startPlayback, stopAudioKeepAlive]);
 
