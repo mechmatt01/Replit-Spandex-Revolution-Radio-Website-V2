@@ -1,0 +1,54 @@
+name: Deploy to Firebase
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: client/package-lock.json
+        
+    - name: Install client dependencies
+      working-directory: ./client
+      run: npm ci
+      
+    - name: Build client
+      working-directory: ./client
+      run: npm run build
+      
+    - name: Install functions dependencies
+      working-directory: ./functions
+      run: npm ci
+      
+    - name: Deploy to Firebase
+      uses: FirebaseExtended/action-hosting-deploy@v0
+      with:
+        repoToken: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
+        firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+        projectId: spandex-salvation-radio-site
+        channelId: live
+        entryPoint: ./
+        
+    - name: Deploy Firebase Functions
+      run: |
+        npm install -g firebase-tools
+        firebase deploy --only functions --project spandex-salvation-radio-site --token ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        
+    - name: Success notification
+      run: |
+        echo "🎉 Deployment successful!"
+        echo "🌐 Your app is live at: https://spandex-salvation-radio-site.web.app"
+        echo "📊 Performance monitoring is active"
+        echo "🎸 Rock on! Your radio station is live!"

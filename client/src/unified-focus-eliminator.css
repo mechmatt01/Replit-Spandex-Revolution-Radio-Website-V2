@@ -1,0 +1,78 @@
+/* UNIFIED FOCUS STYLE MANAGEMENT */
+/* This file manages focus styles while preserving accessibility */
+
+/* Remove default browser focus styles but allow custom ones */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  outline: none !important;
+}
+
+/* Preserve focus styles for interactive elements */
+button:focus,
+button:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+[tabindex]:focus,
+[tabindex]:focus-visible,
+a:focus,
+a:focus-visible {
+  /* Allow these elements to have focus styles */
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
+}
+
+/* Remove unwanted white borders and rings for non-interactive elements */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  box-shadow: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
+}
+
+/* Special handling for enhanced-glow elements - preserve their borders */
+.enhanced-glow,
+.enhanced-glow:focus,
+.enhanced-glow:focus-visible,
+.enhanced-glow:active {
+  border: 2px solid var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
+  box-shadow: var(--theme-border, rgba(192, 192, 192, 0.125)) 0px 8px 32px !important;
+  outline: none !important;
+}
+
+/* Browser-specific overrides */
+*::-webkit-focus-ring-color {
+  color: transparent !important;
+}
+
+*::-moz-focus-inner {
+  border: 0 !important;
+  padding: 0 !important;
+}
+
+*:-moz-focusring {
+  outline: none !important;
+}
+
+/* Edge specific */
+*::-ms-focus-inner {
+  border: 0 !important;
+}
+
+/* Preserve intentional borders for specific components */
+.card,
+.card:focus,
+.card:active,
+.live-chat-card,
+.live-chat-card:focus,
+.live-chat-card:active {
+  border: 1px solid var(--theme-border, rgba(192, 192, 192, 0.3)) !important;
+  border-color: var(--theme-border, rgba(192, 192, 192, 0.3)) !important;
+}

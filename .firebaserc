@@ -1,0 +1,16 @@
+{
+  "projects": {
+    "default": "spandex-salvation-radio-site",
+    "radio-site": "spandex-salvation-radio-site"
+  },
+  "targets": {
+    "spandex-salvation-radio-site": {
+      "hosting": {
+        "spandex-salvation-radio-site": [
+          "spandex-salvation-radio-site"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

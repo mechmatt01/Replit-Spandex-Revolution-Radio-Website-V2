@@ -1,0 +1,2318 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
+@import "./ultimate-focus-killer.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables for Background */
+:root {
+  --background: #1f2937;
+  --background-rgb: 31, 41, 55;
+  /* Default ring color variable removed per user request */
+}
+
+.dark {
+  --background: #1f2937;
+  --background-rgb: 31, 41, 55;
+}
+
+/* Remove unwanted white borders and outlines but preserve border-radius */
+* {
+  outline: none !important;
+}
+
+/* Performance optimizations for smooth scrolling */
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Ensure proper scrolling */
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  position: static !important;
+  height: auto !important;
+  width: auto !important;
+}
+
+/* Fix for map fullscreen mode - ensure body returns to normal state */
+body:not(.map-fullscreen) {
+  overflow: auto !important;
+  position: static !important;
+  height: auto !important;
+  width: auto !important;
+}
+
+/* Ensure main content is always visible and scrollable */
+#main-content {
+  position: relative !important;
+  overflow: visible !important;
+  height: auto !important;
+  min-height: 100vh;
+}
+
+/* Ensure all sections are visible and properly positioned */
+section {
+  position: relative !important;
+  overflow: visible !important;
+  height: auto !important;
+  min-height: auto !important;
+}
+
+/* Fix for any elements that might be causing scroll issues */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure proper stacking context */
+main, section, article, div {
+  z-index: auto;
+}
+
+/* Optimize transitions for better performance */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Remove borders from specific elements that shouldn't have them, but preserve button styling */
+/* Only remove borders from layout and content elements, not from interactive elements */
+div:not([class*="border"]):not([class*="rounded"]):not(button):not([role="button"]),
+section:not([class*="border"]):not([class*="rounded"]),
+article:not([class*="border"]):not([class*="rounded"]),
+nav:not([class*="border"]):not([class*="rounded"]),
+header:not([class*="border"]):not([class*="rounded"]),
+footer:not([class*="border"]):not([class*="rounded"]),
+main:not([class*="border"]):not([class*="rounded"]),
+aside:not([class*="border"]):not([class*="rounded"]),
+p:not([class*="border"]):not([class*="rounded"]),
+span:not([class*="border"]):not([class*="rounded"]),
+h1:not([class*="border"]):not([class*="rounded"]), 
+h2:not([class*="border"]):not([class*="rounded"]), 
+h3:not([class*="border"]):not([class*="rounded"]), 
+h4:not([class*="border"]):not([class*="rounded"]), 
+h5:not([class*="border"]):not([class*="rounded"]), 
+h6:not([class*="border"]):not([class*="rounded"]) {
+  border: none !important;
+}
+
+/* Remove borders from form elements but preserve border-radius */
+input:not([class*="border"]):not([class*="rounded"]),
+textarea:not([class*="border"]):not([class*="rounded"]),
+select:not([class*="border"]):not([class*="rounded"]) {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Remove focus rings and borders but preserve border-radius for interactive elements */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select),
+*:focus-visible:not(button):not([role="button"]):not(input):not(textarea):not(select),
+*:focus-within:not(button):not([role="button"]):not(input):not(textarea):not(select) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Allow buttons to have borders and border-radius */
+button,
+[role="button"],
+.btn,
+.button {
+  outline: none !important;
+  /* Preserve border-radius and borders for buttons */
+}
+
+/* Preserve Tailwind utility classes */
+[class*="rounded"],
+[class*="border"] {
+  /* These classes should work as expected */
+}
+
+/* Remove borders from common UI elements but preserve border-radius */
+div:not([class*="border"]),
+section:not([class*="border"]),
+article:not([class*="border"]),
+nav:not([class*="border"]),
+header:not([class*="border"]),
+footer:not([class*="border"]),
+main:not([class*="border"]),
+aside:not([class*="border"]),
+p:not([class*="border"]),
+span:not([class*="border"]),
+h1:not([class*="border"]), 
+h2:not([class*="border"]), 
+h3:not([class*="border"]), 
+h4:not([class*="border"]), 
+h5:not([class*="border"]), 
+h6:not([class*="border"]) {
+  border: none !important;
+}
+
+/* SELECTIVE FOCUS STYLE MANAGEMENT - ALLOW CUSTOM FOCUS RINGS */
+/* Remove default focus styles but allow custom ones */
+html *:focus:not(.focus\\:ring-2):not(.focus\\:ring-1):not(.focus\\:ring-0):not(.focus\\:ring),
+html *:focus-visible:not(.focus-visible\\:ring-2):not(.focus-visible\\:ring-1):not(.focus-visible\\:ring-0):not(.focus-visible\\:ring),
+html *:active:not(.focus\\:ring-2):not(.focus\\:ring-1):not(.focus\\:ring-0):not(.focus\\:ring) {
+  outline: 0 !important;
+  outline: none !important;
+  outline-width: 0 !important;
+  outline-color: transparent !important;
+  outline-style: none !important;
+  outline-offset: 0 !important;
+  box-shadow: 0 0 0 0 transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  --tw-shadow: none !important;
+  --tw-shadow-colored: none !important;
+  --tw-ring-color: transparent !important;
+  --ring: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
+}
+
+/* ALLOW CUSTOM FOCUS RING CLASSES TO WORK */
+html .focus\\:ring-2:focus,
+html .focus\\:ring-1:focus,
+html .focus\\:ring-0:focus,
+html .focus\\:ring:focus,
+html .focus-visible\\:ring-2:focus-visible,
+html .focus-visible\\:ring-1:focus-visible,
+html .focus-visible\\:ring-0:focus-visible,
+html .focus-visible\\:ring:focus-visible {
+  /* Allow these specific focus ring classes to work */
+  outline: none !important;
+}
+
+/* Browser-specific white ring elimination */
+html *::-webkit-focus-ring-color {
+  color: transparent !important;
+  outline-color: transparent !important;
+}
+
+html *::-moz-focus-inner {
+  border: 0 !important;
+  padding: 0 !important;
+  outline: none !important;
+}
+
+html *:-moz-focusring {
+  outline: none !important;
+  outline-color: transparent !important;
+}
+
+/* Additional white ring protection */
+html *:focus:not(:focus-visible) {
+  outline: none !important;
+  border: none !important;
+}
+
+html *:focus-visible {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* SELECTIVE FOCUS RING MANAGEMENT - ALLOW CUSTOM ONES */
+*:not(.enhanced-glow):not(.focus\\:ring-2):not(.focus\\:ring-1):not(.focus\\:ring-0):not(.focus\\:ring) {
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-shadow: none !important;
+  --tw-ring-offset-shadow: none !important;
+  --tw-ring-color: transparent !important;
+  --tw-ring-opacity: 0 !important;
+  --tw-ring-offset-width: 0px !important;
+  --tw-ring-offset-color: transparent !important;
+}
+
+/* Easter Egg: Site Logo Spin Animation */
+@keyframes logoSpinFastToSlow {
+  0% {
+    transform: rotate(0deg);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  20% {
+    transform: rotate(1440deg); /* 4 full rotations rapidly */
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  50% {
+    transform: rotate(2520deg); /* 7 full rotations total */
+    animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  80% {
+    transform: rotate(3240deg); /* 9 full rotations */
+    animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  100% {
+    transform: rotate(3600deg); /* 10 full rotations, ends at original position */
+    animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+}
+
+.logo-spin-easter-egg {
+  animation: logoSpinFastToSlow 5s ease-out;
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* Smooth floating animation for package icons */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Custom animations for smooth site-wide transitions */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Animation classes for map and UI components */
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in-from-top {
+  animation: slideInFromTop 0.3s ease-out;
+}
+
+.slide-in-from-left {
+  animation: slideInFromLeft 0.3s ease-out;
+}
+
+.slide-in-from-right {
+  animation: slideInFromRight 0.3s ease-out;
+}
+
+@keyframes slideInFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Duration classes for animations */
+.duration-300 {
+  animation-duration: 300ms;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* NEW IMMERSIVE LOADING TRANSITION ANIMATIONS */
+
+/* Faster, more optimized keyframes for immersive loading */
+@keyframes fastFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes quickSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes smoothScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(255, 165, 0, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(255, 165, 0, 0.6);
+    transform: scale(1.02);
+  }
+}
+
+/* Moving Gradient Border Animation for Premium Packages */
+@keyframes movingGradientBorder {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Optimized utility classes for fast loading */
+.animate-fast-fade-in {
+  animation: fastFadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-quick-slide-in {
+  animation: quickSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-smooth-scale {
+  animation: smoothScale 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+/* Performance optimizations for smooth loading */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Fast animations for better performance */
+.fast-transition {
+  transition-duration: 150ms !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.ultra-fast-transition {
+  transition-duration: 100ms !important;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Optimize scroll performance */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Reduce animation complexity for better performance */
+.performance-optimized {
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+
+/* Fast fade animations */
+.fade-in-fast {
+  animation: fadeInFast 100ms ease-out forwards;
+}
+
+@keyframes fadeInFast {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Quick slide animations */
+.slide-in-fast {
+  animation: slideInFast 150ms ease-out forwards;
+}
+
+@keyframes slideInFast {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Ultra-fast animations for critical elements */
+.ultra-fast-reveal {
+  animation: ultraFastReveal 80ms ease-out forwards;
+}
+
+@keyframes ultraFastReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Optimized stagger animations */
+.stagger-fast {
+  animation: staggerFast 120ms ease-out forwards;
+}
+
+@keyframes staggerFast {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Performance-focused hover effects */
+.performance-hover {
+  transition: all 120ms cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+.performance-hover:hover {
+  transform: translateY(-2px);
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Enhanced loading states */
+.loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s ease-in-out infinite;
+}
+
+.loading-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: shimmer-wave 1.5s ease infinite;
+}
+
+@keyframes shimmer-wave {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Immersive page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.3s ease-in, transform 0.3s ease-in;
+}
+
+/* Fast component reveal animations */
+.component-reveal {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fastFadeIn 0.4s ease-out forwards;
+}
+
+.component-reveal-delayed {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fastFadeIn 0.4s ease-out forwards;
+  animation-delay: 0.1s;
+}
+
+/* Progressive loading states for better UX */
+.progressive-load {
+  opacity: 0;
+  animation: progressiveReveal 0.6s ease-out forwards;
+}
+
+@keyframes progressiveReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.98) translateY(10px);
+  }
+  60% {
+    opacity: 0.8;
+    transform: scale(0.99) translateY(5px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Enhanced hover states for better interactivity */
+.interactive-hover {
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: translateZ(0);
+}
+
+.interactive-hover:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 25px hsl(var(--primary) / 0.2);
+}
+
+/* Theme-aware borders and glow effects */
+.theme-border {
+  border: 2px solid hsl(var(--primary));
+  transition: all 0.3s ease;
+}
+
+.theme-border-hover:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+}
+
+/* Enhanced feature box theme styling with prominent borders and glow */
+.feature-box {
+  border: 2px solid hsl(var(--primary) / 0.8);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.feature-box:hover {
+  border-color: hsl(var(--primary));
+  box-shadow: 
+    0 0 20px hsl(var(--primary) / 0.6),
+    0 8px 40px hsl(var(--primary) / 0.3);
+  transform: scale(1.05);
+}
+
+/* Override default Card shadow for feature and show cards */
+.feature-container,
+.show-container {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  filter: none !important;
+}
+
+.feature-container:hover,
+.show-container:hover {
+  box-shadow: 0 25px 50px -12px var(--theme-border, rgba(255, 107, 53, 0.25)) !important;
+  -webkit-box-shadow: 0 25px 50px -12px var(--theme-border, rgba(255, 107, 53, 0.25)) !important;
+  -moz-box-shadow: 0 25px 50px -12px var(--theme-border, rgba(255, 107, 53, 0.25)) !important;
+}
+
+/* Enhanced glow effects for better visibility - NO SHADOWS BY DEFAULT */
+.enhanced-glow {
+  position: relative;
+  overflow: visible;
+  border: 2px solid var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  filter: none !important;
+}
+
+.enhanced-glow::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  background: linear-gradient(45deg, 
+    transparent, 
+    rgba(255, 107, 53, 0.6), 
+    rgba(255, 165, 0, 0.6), 
+    rgba(255, 107, 53, 0.6), 
+    transparent);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  filter: blur(8px);
+}
+
+.enhanced-glow:hover::before {
+  opacity: 1;
+  animation: glow-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow-pulse {
+  0% {
+    filter: blur(8px);
+    opacity: 0.6;
+  }
+  100% {
+    filter: blur(12px);
+    opacity: 1;
+  }
+}
+
+/* Enhanced hover glow effect that's ONLY visible on hover */
+.enhanced-glow:hover {
+  box-shadow: 
+    0 0 20px var(--theme-border, rgba(255, 107, 53, 0.4)),
+    0 0 40px var(--theme-border, rgba(255, 107, 53, 0.2)),
+    0 4px 25px var(--theme-border, rgba(255, 107, 53, 0.3)) !important;
+  -webkit-box-shadow: 
+    0 0 20px var(--theme-border, rgba(255, 107, 53, 0.4)),
+    0 0 40px var(--theme-border, rgba(255, 107, 53, 0.2)),
+    0 4px 25px var(--theme-border, rgba(255, 107, 53, 0.3)) !important;
+  -moz-box-shadow: 
+    0 0 20px var(--theme-border, rgba(255, 107, 53, 0.4)),
+    0 0 40px var(--theme-border, rgba(255, 107, 53, 0.2)),
+    0 4px 25px var(--theme-border, rgba(255, 107, 53, 0.3)) !important;
+  filter: brightness(1.05) !important;
+  transform: scale(1.05) !important;
+  border-color: var(--theme-border, rgba(255, 107, 53, 0.8)) !important;
+}
+
+/* Force visible borders for feature cards - override any conflicting styles */
+.enhanced-glow {
+  border-width: 2px !important;
+  border-style: solid !important;
+  position: relative !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+}
+
+/* Fullscreen map styles */
+.map-container.fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+  background: #000 !important;
+}
+
+.map-container.fullscreen .gm-style > div {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Prevent body scroll when map is fullscreen */
+body.map-fullscreen {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  left: 0 !important;
+}
+
+/* Additional CSS to ensure no shadows appear before hovering */
+.feature-container *,
+.show-container * {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+}
+
+.feature-container:hover *,
+.show-container:hover * {
+  box-shadow: inherit !important;
+  -webkit-box-shadow: inherit !important;
+  -moz-box-shadow: inherit !important;
+}
+
+/* Override any Tailwind or other CSS framework shadows */
+[class*="shadow"]:not(.feature-container):not(.show-container) {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+}
+
+/* Ensure enhanced-glow elements never have shadows by default */
+.enhanced-glow:not(:hover) {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Performance optimizations for scrolling and animations */
+.feature-container,
+.show-container,
+.enhanced-glow {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .feature-container,
+  .show-container,
+  .enhanced-glow {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+  
+  .feature-container:hover,
+  .show-container:hover,
+  .enhanced-glow:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+  }
+}
+
+/* Optimize for mobile devices */
+@media (max-width: 768px) {
+  .feature-container,
+  .show-container {
+    transform: none !important;
+    transition: opacity 0.2s ease !important;
+  }
+  
+  .feature-container:hover,
+  .show-container:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+  }
+}
+
+/* Ensure borders are always visible with proper opacity */
+.enhanced-glow[style*="borderColor"] {
+  border-color: var(--theme-border, rgba(192, 192, 192, 0.5)) !important;
+}
+
+/* Remove any Tailwind border overrides that might conflict */
+.enhanced-glow.border-2 {
+  border-width: 2px !important;
+}
+
+/* Ensure card component styles don't override our borders */
+.enhanced-glow.rounded-lg {
+  border-radius: 0.5rem !important;
+}
+
+.feature-box:hover {
+  border-color: var(--theme-border, rgba(255, 107, 53, 0.8));
+  box-shadow: 
+    0 0 20px var(--theme-border, rgba(255, 107, 53, 0.4)),
+    0 0 40px var(--theme-border, rgba(255, 107, 53, 0.2)),
+    inset 0 0 20px var(--theme-border, rgba(255, 107, 53, 0.1));
+  transform: translateY(-2px);
+}
+
+/* Button theme styling with borders */
+.themed-button {
+  border: 2px solid hsl(var(--primary));
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  transition: all 0.3s ease;
+}
+
+.themed-button:hover {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.9);
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.6),
+    0 0 30px hsl(var(--primary) / 0.3);
+  transform: translateY(-1px);
+}
+
+/* Secondary button with border only */
+.themed-button-outline {
+  border: 2px solid hsl(var(--primary));
+  background: transparent;
+  color: hsl(var(--primary));
+  transition: all 0.3s ease;
+}
+
+.themed-button-outline:hover {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+  box-shadow: 
+    0 0 15px hsl(var(--primary) / 0.5),
+    0 0 30px hsl(var(--primary) / 0.2);
+}
+
+/* Shows/schedule items theme styling */
+.show-item {
+  border: 1px solid hsl(var(--border));
+  transition: all 0.3s ease;
+}
+
+@keyframes adPulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 10px rgba(255, 68, 68, 0.4);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 68, 68, 0.7);
+  }
+}
+
+/* Track information fade animations */
+.track-info-fade-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.track-info-fade-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+.track-info-fade-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.track-info-fade-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+/* Ad detection fade animations */
+.ad-badge-fade-enter {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.ad-badge-fade-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 400ms ease-in-out, transform 400ms ease-in-out;
+}
+
+.ad-badge-fade-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ad-badge-fade-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 400ms ease-in-out, transform 400ms ease-in-out;
+}
+
+/* Live metadata indicator animations */
+.live-indicator-pulse {
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Pulsing marker animation for map */
+.pulsing-marker-overlay {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+  }
+}
+
+/* Custom volume wave animation that doesn't interfere with positioning */
+@keyframes volumeWave {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes modernPulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 20px 4px rgba(66, 133, 244, 0.4);
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.6;
+    box-shadow: 0 0 25px 6px rgba(66, 133, 244, 0.5);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.3);
+    opacity: 0.3;
+    box-shadow: 0 0 30px 8px rgba(66, 133, 244, 0.3);
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.6;
+    box-shadow: 0 0 25px 6px rgba(66, 133, 244, 0.5);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.8;
+    box-shadow: 0 0 20px 4px rgba(66, 133, 244, 0.4);
+  }
+}
+
+/* Improved: Remove all default Google Maps InfoWindow backgrounds and shadows */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-chr,
+.gm-style-iw-ch,
+.gm-style-iw-d {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.gm-style-iw-t::after,
+.gm-style-iw-t::before {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Aggressively remove all backgrounds and box-shadows from Google Maps InfoWindow */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-chr,
+.gm-style-iw-ch,
+.gm-style-iw-d,
+.gm-style-iw-t,
+.gm-style-iw-t::after,
+.gm-style-iw-t::before,
+.gm-style-iw button,
+.gm-style-iw span,
+.gm-style-iw * {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Remove background from any div with inline background set to white */
+.gm-style-iw [style*="background: #fff"],
+.gm-style-iw [style*="background-color: #fff"],
+.gm-style-iw [style*="background: white"],
+.gm-style-iw [style*="background-color: white"] {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Remove background from all direct children of the InfoWindow */
+.gm-style-iw > div,
+.gm-style-iw-c > div,
+.gm-style-iw-chr > div,
+.gm-style-iw-ch > div,
+.gm-style-iw-d > div {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Google Maps InfoWindow Overrides - Complete white background removal */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-d,
+.gm-style-iw-t,
+.gm-style-iw-t::after,
+.gm-style-iw-t::before {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Remove all default Google Maps InfoWindow styling */
+.gm-style-iw > div,
+.gm-style-iw-c > div,
+.gm-style-iw-d > div {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Remove InfoWindow arrow */
+.gm-style-iw-t::after,
+.gm-style-iw-t::before {
+  display: none !important;
+}
+
+/* Remove any remaining white backgrounds */
+.gm-style-iw [style*="background: #fff"],
+.gm-style-iw [style*="background: white"],
+.gm-style-iw [style*="background-color: #fff"],
+.gm-style-iw [style*="background-color: white"] {
+  background: transparent !important;
+}
+
+/* Ensure our custom InfoWindow content is fully visible */
+#custom-infowindow {
+  background: var(--custom-bg) !important;
+  border: var(--custom-border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--custom-shadow) !important;
+  padding: 24px !important;
+  margin: 0 !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* Remove any Google Maps default InfoWindow container */
+.gm-style-iw-c {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  min-width: none !important;
+}
+
+/* Remove InfoWindow close button default styling */
+.gm-style-iw-d button,
+.gm-style-iw-d .gm-style-iw-c button {
+  display: none !important;
+}
+
+/* Ensure no white space around InfoWindow */
+.gm-style-iw-d {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+/* Additional comprehensive overrides for all possible white backgrounds */
+.gm-style-iw *,
+.gm-style-iw-c *,
+.gm-style-iw-d * {
+  background: transparent !important;
+}
+
+/* Remove any remaining Google Maps default styling */
+.gm-style-iw,
+.gm-style-iw-c,
+.gm-style-iw-d {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  max-width: none !important;
+  min-width: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Force our custom InfoWindow to be the only visible element */
+#custom-infowindow {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: var(--custom-bg) !important;
+  border: var(--custom-border) !important;
+  border-radius: 20px !important;
+  box-shadow: var(--custom-shadow) !important;
+  padding: 24px !important;
+  margin: 0 !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  min-width: 280px !important;
+  max-width: 320px !important;
+}
+
+/* Focus styles for accessibility */
+
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Global theme-aware interactive elements */
+.card, .feature-card, [class*="feature"], [class*="show"] {
+  border: 2px solid hsl(var(--border));
+  transition: all 0.3s ease;
+}
+
+.card:hover, .feature-card:hover, [class*="feature"]:hover, [class*="show"]:hover {
+  border-color: var(--theme-border, rgba(255, 107, 53, 0.8));
+  box-shadow: 
+    0 0 15px var(--theme-border, rgba(255, 107, 53, 0.2)),
+    0 0 25px var(--theme-border, rgba(255, 107, 53, 0.1));
+  transform: scale(1.02);
+}
+
+/* Selective button borders - only for specific themed buttons */
+.theme-button, .theme-button-border {
+  border: 2px solid hsl(var(--primary));
+  transition: all 0.3s ease;
+}
+
+.theme-button:hover, .theme-button-border:hover {
+  box-shadow: 
+    0 0 15px var(--theme-border, rgba(255, 107, 53, 0.4)),
+    0 0 25px var(--theme-border, rgba(255, 107, 53, 0.2));
+  transform: scale(1.05);
+}
+
+/* THEMED UTILITY CLASSES */
+.theme-glow-hover:hover {
+  box-shadow: 
+    0 0 20px var(--theme-border, rgba(255, 107, 53, 0.4)),
+    0 0 40px var(--theme-border, rgba(255, 107, 53, 0.2)),
+    0 5px 15px var(--theme-border, rgba(255, 107, 53, 0.1));
+  border-color: var(--theme-border, rgba(255, 107, 53, 0.8)) !important;
+  transform: scale(1.05);
+}
+
+.theme-border-always {
+  border: 2px solid hsl(var(--primary)) !important;
+}
+
+.theme-border-subtle {
+  border: 1px solid hsl(var(--border));
+}
+
+.theme-border-subtle:hover {
+  border-color: hsl(var(--primary));
+}
+
+/* Button glow effects */
+.hover\:glow-primary:hover {
+  box-shadow: 
+    0 0 15px var(--theme-border, rgba(255, 107, 53, 0.6)),
+    0 0 30px var(--theme-border, rgba(255, 107, 53, 0.3)),
+    0 5px 15px var(--theme-border, rgba(255, 107, 53, 0.1));
+  border-color: var(--theme-border, rgba(255, 107, 53, 0.8)) !important;
+  transform: scale(1.05);
+}
+
+/* Selective button styling - only apply to specific themed buttons */
+.theme-button, .theme-button-border {
+  border-width: 2px !important;
+  border-style: solid !important;
+  transition: all 0.3s ease !important;
+}
+
+.theme-button:not(.border-transparent), .theme-button-border:not(.border-transparent) {
+  border-color: hsl(var(--primary)) !important;
+}
+
+.theme-button.border-transparent, .theme-button-border.border-transparent {
+  border-color: hsl(var(--primary) / 0.3) !important;
+}
+
+.theme-button:hover, .theme-button-border:hover {
+  border-color: var(--theme-border, rgba(255, 107, 53, 0.8)) !important;
+  box-shadow: 
+    0 0 15px var(--theme-border, rgba(255, 107, 53, 0.4)),
+    0 0 25px var(--theme-border, rgba(255, 107, 53, 0.2)) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Feature and show specific styling with enhanced glow effects */
+.feature-container, .show-container, .map-container {
+  border: 2px solid hsl(var(--border));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-container:hover, .show-container:hover {
+  border-color: var(--theme-border, rgba(255, 107, 53, 0.8));
+  box-shadow: 
+    0 0 20px var(--theme-border, rgba(255, 107, 53, 0.3)),
+    0 0 40px var(--theme-border, rgba(255, 107, 53, 0.15)),
+    0 2px 15px var(--theme-border, rgba(255, 107, 53, 0.2));
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Map container - no hover effects */
+.map-container:hover {
+  /* No hover effects for map container */
+}
+
+/* FLOATING PLAYER FOCUS RING PREVENTION */
+/* Prevent focus rings on all elements inside floating player except the play button */
+.floating-player-no-focus *:not(button):focus,
+.floating-player-no-focus *:not(button):focus-visible,
+.floating-player-no-focus .focus-safe-area *:focus,
+.floating-player-no-focus .focus-safe-area *:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+}
+
+/* Allow focus only on the main play/pause button */
+.floating-player-no-focus button:focus-visible {
+  outline: 2px solid hsl(var(--ring)) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.5) !important;
+}
+
+/* Remove focus from volume slider and other interactive elements */
+.floating-player-no-focus input[type="range"]:focus,
+.floating-player-no-focus input[type="range"]:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  --tw-ring-color: transparent !important;
+}
+
+/* Enhanced focus styles for better accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring));
+}
+
+/* Map and stats boxes - borders without glow */
+.map-container, .stats-container {
+  border: 2px solid hsl(var(--primary));
+  transition: all 0.3s ease;
+}
+
+.map-container:hover, .stats-container:hover {
+  border-color: hsl(var(--primary));
+  /* No glow effect for map and stats */
+}
+
+/* Remove borders from dropdown menus and other UI elements */
+[data-radix-popper-content-wrapper],
+[data-radix-dropdown-menu-content],
+[data-radix-select-content],
+[data-radix-popover-content],
+[data-radix-dialog-content],
+[data-radix-tooltip-content] {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Theme-dependent borders for auth modal and show popups */
+.auth-modal-content,
+.show-popup-content {
+  border: 2px solid hsl(var(--primary)) !important;
+  transition: all 0.3s ease;
+}
+
+.auth-modal-content:hover,
+.show-popup-content:hover {
+  border-color: hsl(var(--primary)) !important;
+}
+
+/* Override border removal for authentication modal - more targeted approach */
+.auth-modal-content input,
+.auth-modal-content button,
+.auth-modal-content .border,
+.auth-modal-content .border-t,
+.auth-modal-content .border-b,
+.auth-modal-content .border-l,
+.auth-modal-content .border-r {
+  border: 1px solid !important;
+}
+
+/* Specific styling for auth modal borders */
+.auth-modal-border {
+  border: 1px solid !important;
+}
+
+/* Restore specific border colors for auth modal elements */
+.auth-modal-content input {
+  border-color: rgb(209 213 219) !important; /* gray-300 */
+}
+
+.auth-modal-content input:focus {
+  border-color: rgb(59 130 246) !important; /* blue-500 */
+  outline: none !important;
+}
+
+.auth-modal-content .border-red-400 {
+  border-color: rgb(248 113 113) !important;
+}
+
+.auth-modal-content .border-green-400 {
+  border-color: rgb(74 222 128) !important;
+}
+
+.auth-modal-content .border-gray-300 {
+  border-color: rgb(209 213 219) !important;
+}
+
+/* Ensure background colors are preserved */
+.auth-modal-content {
+  background-color: rgb(255 255 255) !important; /* white */
+  z-index: 99999 !important;
+  position: relative !important;
+  border: 1px solid rgb(209 213 219) !important; /* gray-300 */
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25) !important;
+}
+
+.dark .auth-modal-content {
+  background-color: rgb(31 41 55) !important; /* gray-800 */
+  border: 1px solid rgb(75 85 99) !important; /* gray-600 */
+}
+
+/* Fix close button functionality */
+.auth-modal-content button[type="button"] {
+  background-color: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  z-index: 99999 !important;
+  position: relative !important;
+}
+
+.auth-modal-content button[type="button"]:hover {
+  background-color: rgb(243 244 246) !important; /* gray-100 */
+}
+
+.dark .auth-modal-content button[type="button"]:hover {
+  background-color: rgb(55 65 81) !important; /* gray-700 */
+}
+
+.auth-modal-content input {
+  background-color: rgb(255 255 255) !important; /* white */
+  border: 1px solid rgb(209 213 219) !important; /* gray-300 */
+  color: rgb(17 24 39) !important; /* gray-900 */
+}
+
+.dark .auth-modal-content input {
+  background-color: rgb(55 65 81) !important; /* gray-700 */
+  border: 1px solid rgb(75 85 99) !important; /* gray-600 */
+  color: rgb(243 244 246) !important; /* gray-100 */
+}
+
+.auth-modal-content input:focus {
+  border-color: rgb(59 130 246) !important; /* blue-500 */
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.1) !important;
+}
+
+.auth-modal-content button.bg-white {
+  background-color: rgb(255 255 255) !important;
+  color: rgb(17 24 39) !important;
+  border: 1px solid rgb(209 213 219) !important;
+}
+
+.dark .auth-modal-content button.bg-white {
+  background-color: rgb(55 65 81) !important;
+  color: rgb(243 244 246) !important;
+  border: 1px solid rgb(75 85 99) !important;
+}
+
+.auth-modal-content button.bg-blue-600 {
+  background-color: rgb(37 99 235) !important;
+  color: rgb(255 255 255) !important;
+}
+
+.auth-modal-content button.bg-blue-600:hover {
+  background-color: rgb(29 78 216) !important;
+}
+
+/* Ensure modal appears on top of everything */
+.auth-modal-overlay {
+  z-index: 99998 !important;
+  position: fixed !important;
+  inset: 0 !important;
+}
+
+.auth-modal-container {
+  z-index: 99999 !important;
+  position: relative !important;
+}
+
+/* Auth modal border styling */
+.auth-modal-border {
+  border-color: rgb(209 213 219) !important; /* gray-300 */
+}
+
+.dark .auth-modal-border {
+  border-color: rgb(75 85 99) !important; /* gray-600 */
+}
+
+/* Google button specific styling */
+.auth-modal-content button:has(img[src*="GoogleLogoIcon"]) {
+  background-color: rgb(255 255 255) !important;
+  border: 1px solid rgb(209 213 219) !important;
+  color: rgb(55 65 81) !important;
+}
+
+.dark .auth-modal-content button:has(img[src*="GoogleLogoIcon"]) {
+  background-color: rgb(55 65 81) !important;
+  border: 1px solid rgb(75 85 99) !important;
+  color: rgb(243 244 246) !important;
+}
+
+.auth-modal-content button:has(img[src*="GoogleLogoIcon"]):hover {
+  background-color: rgb(249 250 251) !important;
+}
+
+.dark .auth-modal-content button:has(img[src*="GoogleLogoIcon"]):hover {
+  background-color: rgb(75 85 99) !important;
+}
+
+/* Final override to ensure NO shadows appear before hovering */
+*:not(:hover) {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Only allow shadows on hover for specific elements */
+.feature-container:hover,
+.show-container:hover,
+.enhanced-glow:hover {
+  box-shadow: 0 25px 50px -12px var(--theme-border, rgba(255, 107, 53, 0.25)) !important;
+  -webkit-box-shadow: 0 25px 50px -12px var(--theme-border, rgba(255, 107, 53, 0.25)) !important;
+  -moz-box-shadow: 0 25px 50px -12px var(--theme-border, rgba(255, 107, 53, 0.25)) !important;
+}
+
+/* Ensure all other elements never have shadows */
+.feature-container:not(:hover),
+.show-container:not(:hover),
+.enhanced-glow:not(:hover),
+.card:not(:hover),
+[class*="shadow"]:not(:hover) {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  filter: none !important;
+}
+
+/* CSS Custom Properties for theme colors */
+:root {
+  --theme-border: rgba(255, 107, 53, 0.8);
+  --theme-border-hover: rgba(255, 107, 53, 1);
+  --theme-background: rgba(0, 0, 0, 0.1);
+  --theme-card-background: rgba(255, 255, 255, 0.05);
+  --theme-glow: rgba(255, 107, 53, 0.3);
+}
+
+/* Fix for feature and show containers - ensure borders are visible */
+.feature-container,
+.show-container {
+  border: 2px solid rgba(255, 107, 53, 0.6) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.feature-container:hover,
+.show-container:hover {
+  border-color: rgba(255, 107, 53, 1) !important;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 107, 53, 0.08)) !important;
+  box-shadow: 0 0 30px rgba(255, 107, 53, 0.4), 0 0 60px rgba(255, 107, 53, 0.2) !important;
+  transform: scale(1.02) !important;
+}
+
+/* Ensure feature cards have proper background and borders */
+.feature-container .card,
+.show-container .card {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  border: 2px solid rgba(255, 107, 53, 0.6) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+/* Specific styling for show containers with proper glow */
+.show-container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) !important;
+  border: 2px solid rgba(255, 107, 53, 0.6) !important;
+  position: relative !important;
+}
+
+.show-container:hover {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 107, 53, 0.08)) !important;
+  border-color: rgba(255, 107, 53, 1) !important;
+  box-shadow: 0 0 30px rgba(255, 107, 53, 0.4), 0 0 60px rgba(255, 107, 53, 0.2) !important;
+}
+
+/* Fix glow effect to fade properly outside boxes - move glow container behind the main box */
+.show-container .absolute.inset-2 {
+  overflow: visible !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  top: -40px !important;
+  left: -40px !important;
+  right: -40px !important;
+  bottom: -40px !important;
+  z-index: -1 !important;
+}
+
+.show-container .absolute.inset-2 .blur-xl {
+  filter: blur(60px) !important;
+  opacity: 0 !important;
+  transition: opacity 0.4s ease !important;
+  transform: scale(2.5) !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.show-container:hover .absolute.inset-2 .blur-xl {
+  opacity: 0.6 !important;
+}
+
+/* Ensure the glow container doesn't clip the effect */
+.show-container {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* Fix for feature containers glow as well */
+.feature-container .absolute.inset-2 {
+  overflow: visible !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  top: -40px !important;
+  left: -40px !important;
+  right: -40px !important;
+  bottom: -40px !important;
+  z-index: -1 !important;
+}
+
+.feature-container .absolute.inset-2 .blur-xl {
+  filter: blur(60px) !important;
+  opacity: 0 !important;
+  transition: opacity 0.4s ease !important;
+  transform: scale(2.5) !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.feature-container:hover .absolute.inset-2 .blur-xl {
+  opacity: 0.6 !important;
+}
+
+/* Fix the box background colors - ensure they have proper backgrounds in normal state */
+.feature-container,
+.show-container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: visible !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.feature-container:hover,
+.show-container:hover {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 107, 53, 0.08)) !important;
+  border: none !important;
+  box-shadow: 0 0 40px rgba(255, 107, 53, 0.5), 0 0 80px rgba(255, 107, 53, 0.3) !important;
+  transform: scale(1.02) !important;
+}
+
+/* Ensure radio player controls are properly visible and positioned */
+/* Target the actual classes used in RadioCoPlayer and StickyPlayer */
+.w-16.h-16.rounded-full,
+.w-10.h-10.rounded-full {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: scale(1) !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  /* Use CSS variables for consistency */
+  background: hsl(var(--primary)) !important;
+  border: 2px solid hsl(var(--primary)) !important;
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.6) !important;
+}
+
+.w-16.h-16.rounded-full:hover,
+.w-10.h-10.rounded-full:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 6px 24px hsl(var(--primary) / 0.8) !important;
+}
+
+/* Fix for play/pause button sizing and centering */
+.w-16.h-16.rounded-full {
+  min-width: 64px !important;
+  min-height: 64px !important;
+  width: 64px !important;
+  height: 64px !important;
+  margin: 0 auto !important;
+}
+
+.w-10.h-10.rounded-full {
+  min-width: 40px !important;
+  min-height: 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+}
+
+/* Ensure button icons are properly sized */
+.w-16.h-16.rounded-full svg,
+.w-10.h-10.rounded-full svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
+}
+
+.w-16.h-16.rounded-full svg {
+  max-width: 32px !important;
+  max-height: 32px !important;
+}
+
+/* Additional specific targeting for radio player buttons - exclude navigation profile */
+button.w-16.h-16.rounded-full:not([data-profile-image]),
+button.w-10.h-10.rounded-full:not([data-profile-image]) {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  background: hsl(var(--primary)) !important;
+  border: 2px solid hsl(var(--primary)) !important;
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.6) !important;
+}
+
+/* Radio Player Button Styling - Make selectors more specific */
+.radio-player-container .w-16.h-16.rounded-full,
+.radio-player-container .w-10.h-10.rounded-full,
+.sticky-player .w-16.h-16.rounded-full,
+.sticky-player .w-10.h-10.rounded-full,
+[data-radix-collection-item] .w-16.h-16.rounded-full,
+[data-radix-collection-item] .w-10.h-10.rounded-full {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transform: scale(1) !important;
+  position: relative !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  /* Use CSS variables for consistency */
+  background: hsl(var(--primary)) !important;
+  border: 2px solid hsl(var(--primary)) !important;
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.6) !important;
+}
+
+/* Only apply hover effects to radio player buttons */
+.radio-player-container .w-16.h-16.rounded-full:hover,
+.radio-player-container .w-10.h-10.rounded-full:hover,
+.sticky-player .w-16.h-16.rounded-full:hover,
+.sticky-player .w-10.h-10.rounded-full:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 6px 24px hsl(var(--primary) / 0.8) !important;
+}
+
+/* Fix for play/pause button sizing and centering - only for radio players */
+.radio-player-container .w-16.h-16.rounded-full,
+.sticky-player .w-16.h-16.rounded-full {
+  min-width: 64px !important;
+  min-height: 64px !important;
+  width: 64px !important;
+  height: 64px !important;
+  margin: 0 auto !important;
+}
+
+.radio-player-container .w-10.h-10.rounded-full,
+.sticky-player .w-10.h-10.rounded-full {
+  min-width: 40px !important;
+  min-height: 40px !important;
+  width: 40px !important;
+  height: 40px !important;
+}
+
+/* Ensure button icons are properly sized - only for radio players */
+.radio-player-container .w-16.h-16.rounded-full svg,
+.sticky-player .w-16.h-16.rounded-full svg,
+.radio-player-container .w-10.h-10.rounded-full svg,
+.sticky-player .w-10.h-10.rounded-full svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
+}
+
+.radio-player-container .w-16.h-16.rounded-full svg,
+.sticky-player .w-16.h-16.rounded-full svg {
+  max-width: 32px !important;
+  max-height: 32px !important;
+}
+
+/* Additional specific targeting for radio player buttons */
+.radio-player-container button.w-16.h-16.rounded-full,
+.radio-player-container button.w-10.h-10.rounded-full,
+.sticky-player button.w-16.h-16.rounded-full,
+.sticky-player button.w-10.h-10.rounded-full {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  background: hsl(var(--primary)) !important;
+  border: 2px solid hsl(var(--primary)) !important;
+  box-shadow: 0 4px 20px hsl(var(--primary) / 0.6) !important;
+}
+
+/* Profile Image Specific Styling - Override all radio player styles */
+.profile-image-element {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  background-repeat: initial !important;
+  background-attachment: initial !important;
+  background-origin: initial !important;
+  background-clip: initial !important;
+  border: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  z-index: 10 !important;
+  pointer-events: auto !important;
+  transform: scale(1) !important;
+  transition: none !important;
+}
+
+.profile-image-element:hover {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.profile-image-element:focus {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.profile-image-element:active {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* Ensure Button component from UI library is visible */
+[data-radix-collection-item] button,
+[role="button"] {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+}
+
+/* Additional specific targeting for all button elements in radio players */
+.radio-player-container button,
+.sticky-player button,
+[data-radix-collection-item] button,
+button[role="button"],
+.radio-player-container button.w-16.h-16.rounded-full,
+.radio-player-container button.w-10.h-10.rounded-full,
+.sticky-player button.w-16.h-16.rounded-full,
+.sticky-player button.w-10.h-10.rounded-full {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: flex !important;
+  position: relative !important;
+  z-index: 100 !important;
+  pointer-events: auto !important;
+}
+
+/* Force visibility for any hidden buttons in radio players */
+.radio-player-container button[style*="display: none"],
+.radio-player-container button[style*="opacity: 0"],
+.radio-player-container button[style*="visibility: hidden"],
+.sticky-player button[style*="display: none"],
+.sticky-player button[style*="opacity: 0"],
+.sticky-player button[style*="visibility: hidden"] {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Fix for floating player positioning */
+.sticky-player {
+  position: fixed !important;
+  bottom: 20px !important;
+  right: 20px !important;
+  z-index: 1000 !important;
+}
+
+/* Ensure main radio player is properly centered and expands when playing */
+.radio-player-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-height: auto !important;
+  height: auto !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+/* Responsive width for main player */
+@media (max-width: 768px) {
+  .radio-player-container {
+    width: 75% !important;
+    max-width: 75% !important;
+    min-width: 300px !important;
+  }
+}
+
+/* Debug: ensure track information is always visible */
+.track-info,
+.current-track,
+.station-info {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Debug: ensure volume controls are visible when playing */
+.volume-control,
+.volume-slider {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+/* Ensure verified badges are properly positioned on top of profile images */
+.badge {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Profile image containers should have proper positioning */
+
+/* Live Chat - Force visibility and proper positioning */
+.live-chat-card {
+  position: fixed !important;
+  z-index: 9999 !important;
+  max-height: calc(100vh - 2rem) !important; /* Responsive to viewport */
+  min-height: 300px !important; /* Minimum height for usability */
+  height: auto !important; /* Let it size based on content */
+}
+
+.live-chat-card .flex-shrink-0 {
+  flex-shrink: 0 !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.live-chat-card input[type="text"],
+.live-chat-card input[placeholder*="message"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.live-chat-card button[type="submit"] {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Ensure chat input form is always visible */
+.live-chat-card form {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
+  width: 100% !important;
+}
+
+/* Force chat message input area to be visible */
+.live-chat-card .flex-shrink-0:last-child {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  padding: 1rem !important;
+}
+
+/* Ensure chat works in all screen sizes */
+@media (max-width: 768px) {
+  .live-chat-card {
+    width: calc(100vw - 2rem) !important;
+    max-width: 320px !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    height: auto !important; /* Responsive height on mobile */
+    max-height: calc(100vh - 2rem) !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .live-chat-card {
+    width: 320px !important;
+    right: 1rem !important;
+    bottom: 1rem !important;
+    height: auto !important; /* Responsive height on desktop */
+    max-height: calc(100vh - 2rem) !important;
+  }
+}
+
+/* Force chat input to be visible in all modes */
+.live-chat-card .flex-1.flex.flex-col.min-h-0 {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  flex: 1 !important;
+  overflow: hidden !important;
+}
+
+/* Ensure the input container is always at the bottom */
+.live-chat-card .flex-1.flex.flex-col.min-h-0 > .flex-shrink-0:last-child {
+  margin-top: auto !important;
+  flex-shrink: 0 !important;
+}
+
+/* Live Chat Message Animations */
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes messageSwoosh {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translateX(10px) scale(1.02);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.98);
+  }
+}
+
+@keyframes sendButtonPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Apply animations to chat messages */
+.live-chat-card .chat-message {
+  animation: messageSlideIn 0.3s ease-out;
+}
+
+.live-chat-card .chat-message.swooshing {
+  animation: messageSwoosh 1s ease-out forwards;
+}
+
+.live-chat-card button[type="submit"]:active {
+  animation: sendButtonPulse 0.2s ease-out;
+}
+.profile-image-container,
+.avatar-container,
+.user-avatar {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* Verified badges should be on top */
+.verified-badge,
+[data-verified="true"] .badge,
+.badge[data-verified="true"] {
+  position: absolute !important;
+  z-index: 20 !important;
+  bottom: -4px !important;
+  right: -4px !important;
+  pointer-events: none !important;
+}
+
+/* Specific fix for Navigation component verified badge */
+.verified-badge {
+  position: absolute !important;
+  z-index: 50 !important;
+  bottom: -8px !important;
+  right: -8px !important;
+  pointer-events: none !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Ensure profile image container allows overflow for badge */
+.relative {
+  overflow: visible !important;
+}
+
+/* Ensure profile images are properly displayed */
+.profile-image-container,
+.avatar-container,
+.user-avatar {
+  overflow: hidden !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Specific override for profile image elements to prevent orange background */
+.profile-image-element {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  /* Don't override border or box-shadow to preserve ring styling */
+}
+
+/* Force album art and music logos to have rounded corners */
+.album-art,
+.music-logo,
+[class*="album"],
+[class*="cover"],
+[class*="artwork"] {
+  border-radius: 20px !important;
+  overflow: hidden !important;
+}
+
+/* Ensure ThemedMusicLogo has proper rounded appearance */
+.themed-music-logo,
+[class*="themed"],
+[class*="music-logo"] {
+  border-radius: 50% !important;
+  overflow: hidden !important;
+}
+
+/* Force all images in radio players to have rounded corners */
+.radio-player-container img,
+.sticky-player img,
+[class*="player"] img {
+  border-radius: 5px !important;
+  overflow: hidden !important;
+}
