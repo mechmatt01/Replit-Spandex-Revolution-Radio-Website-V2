@@ -13,13 +13,13 @@
     ],
     "rewrites": [
       // Temporarily commenting out Cloud Run integration to test hosting deployment
-      // {
-      //   "source": "/api/**",
-      //   "run": {
-      //     "serviceId": "spandex-salvation-radio-site",
-      //     "region": "us-central1"
-      //   }
-      // },
+      {
+         "source": "/api/**",
+         "run": {
+           "serviceId": "spandex-salvation-radio-site",
+           "region": "us-central1"
+         }
+       },
       {
         "source": "**",
         "destination": "/index.html"
