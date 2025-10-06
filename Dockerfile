@@ -1,24 +1,27 @@
-# --- Dockerfile for Cloud Run (Node.js 20) ---
+# Use official Node.js 20 image
 FROM node:20
 
-# Use Cloud Run's default working directory
-WORKDIR /workspace
+# Create app directory
+WORKDIR /usr/src/app
 
-# Copy only package files first for caching
+# Copy package files first (for caching)
 COPY package*.json ./
 
-# Install only production dependencies
-RUN npm ci --omit=dev
+# Install dependencies
+RUN npm ci
 
 # Copy the rest of the project
 COPY . .
 
-# Build your frontend (client)
-RUN npm run build
+# Build the frontend
+RUN cd client && npm ci && npm run build
 
-# Cloud Run exposes this port
-ENV PORT=8080
+# Expose the port that your Express app listens on
 EXPOSE 8080
 
-# ✅ Run your real start script (not index.js)
-CMD ["npm", "start"]
+# Set environment variables (you can also set these in Cloud Run console)
+ENV NODE_ENV=production
+ENV PORT=8080
+
+# Start your server
+CMD ["node", "server/simple-server.js"]
