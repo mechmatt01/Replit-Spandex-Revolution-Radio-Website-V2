@@ -14,165 +14,162 @@ env:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        cache-dependency-path: client/package-lock.json
-        
-    - name: Install client dependencies
-      working-directory: ./client
-      run: npm ci
-      
-    - name: Install server dependencies
-      working-directory: ./server
-      run: npm ci
-      
-    - name: Install functions dependencies
-      working-directory: ./functions
-      run: npm ci
-      
-    - name: Run client tests
-      working-directory: ./client
-      run: |
-        npm run build
-        npm run test --if-present
-        
-    - name: Run server tests
-      working-directory: ./server
-      run: npm run test --if-present
-      
-    - name: Run functions tests
-      working-directory: ./functions
-      run: npm run test --if-present
-      
-    - name: Build client for production
-      working-directory: ./client
-      run: npm run build
-      
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: client-build
-        path: client/dist/
-        retention-days: 1
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: client/package-lock.json
+
+      - name: Install client dependencies
+        working-directory: ./client
+        run: npm ci
+
+      - name: Install server dependencies
+        working-directory: ./server
+        run: npm ci
+
+      - name: Install functions dependencies
+        working-directory: ./functions
+        run: npm ci
+
+      - name: Run client tests
+        working-directory: ./client
+        run: |
+          npm run build
+          npm run test --if-present
+
+      - name: Run server tests
+        working-directory: ./server
+        run: npm run test --if-present
+
+      - name: Run functions tests
+        working-directory: ./functions
+        run: npm run test --if-present
+
+      - name: Build client for production
+        working-directory: ./client
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-build
+          path: client/dist/
+          retention-days: 1
 
   deploy-to-firebase:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: client-build
-        path: client/dist/
-        
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        cache: 'npm'
-        cache-dependency-path: functions/package-lock.json
-        
-    - name: Install functions dependencies
-      working-directory: ./functions
-      run: npm ci
-      
-    - name: Deploy to Firebase
-      uses: FirebaseExtended/action-hosting-deploy@v0
-      with:
-        repoToken: '${{ secrets.PERSONAL_ACCESS_TOKEN }}'
-        firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-        projectId: ${{ env.FIREBASE_PROJECT_ID }}
-        channelId: live
-        entryPoint: ./
-        
-    - name: Deploy Firebase Functions
-      run: |
-        npm install -g firebase-tools
-        firebase deploy --only functions --project ${{ env.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        
-    - name: Deploy to Firebase Hosting
-      run: |
-        firebase deploy --only hosting --project ${{ env.FIREBASE_PROJECT_ID }} --token ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        
-    - name: Comment on PR
-      if: github.event_name == 'pull_request'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '🚀 **Deployment Status**: This PR has been automatically deployed to Firebase Hosting!\n\n🌐 **Live Preview**: https://spandex-salvation-radio-site.web.app\n\n✅ **Build**: Successful\n✅ **Tests**: Passed\n✅ **Deployment**: Complete'
-          })
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: client-build
+          path: client/dist/
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install functions dependencies
+        working-directory: ./functions
+        run: npm ci
+
+      # ✅ Authenticate Firebase using service account JSON
+      - name: Setup Firebase Authentication
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > "${HOME}/firebase-key.json"
+          npm install -g firebase-tools
+          firebase auth:login:ci || true
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: "${HOME}/firebase-key.json"
+
+      # ✅ Deploy Functions and Hosting together (no manual login)
+      - name: Deploy to Firebase
+        run: |
+          firebase use ${{ env.FIREBASE_PROJECT_ID }} --add
+          firebase deploy --only functions,hosting --project ${{ env.FIREBASE_PROJECT_ID }} --non-interactive
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: "${HOME}/firebase-key.json"
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 **Deployment Status**: This PR has been automatically deployed to Firebase Hosting!\n\n🌐 **Live Preview**: https://spandex-salvation-radio-site.web.app\n\n✅ **Build**: Successful\n✅ **Tests**: Passed\n✅ **Deployment**: Complete'
+            })
 
   performance-monitoring:
     needs: deploy-to-firebase
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ env.NODE_VERSION }}
-        
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run performance tests
-      run: |
-        npm run test:performance --if-present
-        npm run lighthouse --if-present
-        
-    - name: Comment performance results
-      uses: actions/github-script@v7
-      with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '📊 **Performance Monitoring**: Performance tests completed successfully!\n\n🎯 **Firebase Performance Monitoring**: Active and collecting data\n\n🌐 **Monitor your app**: https://console.firebase.google.com/project/spandex-salvation-radio-site/performance'
-          })
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run performance tests
+        run: |
+          npm run test:performance --if-present
+          npm run lighthouse --if-present
+
+      - name: Comment performance results
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '📊 **Performance Monitoring**: Performance tests completed successfully!\n\n🎯 **Firebase Performance Monitoring**: Active and collecting data\n\n🌐 **Monitor your app**: https://console.firebase.google.com/project/spandex-salvation-radio-site/performance'
+            })
 
   notify-deployment:
     needs: [deploy-to-firebase, performance-monitoring]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
+
     steps:
-    - name: Deployment Success Notification
-      run: |
-        echo "🎉 Deployment completed successfully!"
-        echo "🌐 Your app is live at: https://spandex-salvation-radio-site.web.app"
-        echo "📊 Performance monitoring is active"
-        echo "🚀 Firebase Functions deployed"
-        echo "🎸 Rock on! Your radio station is live!"
-        
-    - name: Comment deployment success
-      uses: actions/github-script@v7
-      with:
-        script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: '🎉 **DEPLOYMENT SUCCESSFUL!**\n\n🚀 **Spandex Salvation Radio is now live!**\n\n🌐 **Live Site**: https://spandex-salvation-radio-site.web.app\n📊 **Performance Monitoring**: Active in Firebase Console\n⚡ **Firebase Functions**: Deployed and running\n🎵 **Radio Streaming**: 4 stations ready\n💬 **Live Chat**: Functional\n🛒 **E-commerce**: Stripe + Shopify integrated\n\n🎸 **Rock on! Your radio station is ready to rock!** 🎸'
-          })
+      - name: Deployment Success Notification
+        run: |
+          echo "🎉 Deployment completed successfully!"
+          echo "🌐 Your app is live at: https://spandex-salvation-radio-site.web.app"
+          echo "📊 Performance monitoring is active"
+          echo "🚀 Firebase Functions deployed"
+          echo "🎸 Rock on! Your radio station is live!"
+
+      - name: Comment deployment success
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🎉 **DEPLOYMENT SUCCESSFUL!**\n\n🚀 **Spandex Salvation Radio is now live!**\n\n🌐 **Live Site**: https://spandex-salvation-radio-site.web.app\n📊 **Performance Monitoring**: Active in Firebase Console\n⚡ **Firebase Functions**: Deployed and running\n🎵 **Radio Streaming**: 4 stations ready\n💬 **Live Chat**: Functional\n🛒 **E-commerce**: Stripe + Shopify integrated\n\n🎸 **Rock on! Your radio station is ready to rock!** 🎸'
+            })
