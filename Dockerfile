@@ -1,26 +1,23 @@
-# Dockerfile (place at project root)
+# Use Node.js 20
 FROM node:20
 
-# Use a predictable working directory
-WORKDIR /usr/src/app
+# Set working directory
+WORKDIR /app
 
-# Copy package files first to leverage cache
+# Copy package files
 COPY package*.json ./
 
-# Install production dependencies only (faster + smaller)
-RUN npm ci --omit=dev
+# Install dependencies
+RUN npm install
 
-# Copy project files
+# Copy everything
 COPY . .
 
-# Build frontend (client)
-RUN cd client && npm ci --omit=dev && npm run build
+# Build the frontend
+RUN cd client && npm run build
 
-# Expose the port your Express app listens on
-ENV PORT=8080
+# Expose port
 EXPOSE 8080
 
-# Ensure Node uses your real server file
-# Either run the npm start script or call node directly.
-# This removes any ambiguity about index.js.
-CMD ["node", "server/simple-server.js"]
+# Start the server
+CMD ["npm", "run", "start"]
