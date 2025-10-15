@@ -1,0 +1,111 @@
+/* SELECTIVE FOCUS STYLE MANAGEMENT */
+/* This file manages focus styles while preserving accessibility */
+
+/* REMOVE DEFAULT BROWSER FOCUS STYLES BUT ALLOW CUSTOM ONES */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  outline: none !important;
+}
+
+/* PRESERVE FOCUS STYLES FOR INTERACTIVE ELEMENTS */
+button:focus,
+button:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+a:focus,
+a:focus-visible,
+[tabindex]:focus,
+[tabindex]:focus-visible {
+  /* Allow these elements to have focus styles */
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
+}
+
+/* ALLOW TAILWIND FOCUS CLASSES TO WORK PROPERLY */
+.focus\:ring-0:focus,
+.focus\:ring-1:focus,
+.focus\:ring-2:focus,
+.focus\:ring-4:focus,
+.focus\:ring-8:focus,
+.focus\:ring-offset-0:focus,
+.focus\:ring-offset-1:focus,
+.focus\:ring-offset-2:focus,
+.focus\:ring-offset-4:focus,
+.focus\:ring-offset-8:focus,
+.focus\:outline-none:focus,
+.focus\:outline:focus,
+.focus\:outline-2:focus,
+.focus\:outline-4:focus,
+.focus\:outline-8:focus,
+.focus\:border:focus,
+.focus\:border-2:focus,
+.focus\:border-4:focus,
+.focus\:border-8:focus {
+  /* Allow custom focus styles to work */
+  outline: none !important;
+  /* Don't override custom ring styles */
+}
+
+/* ALLOW FOCUS-VISIBLE CLASSES TO WORK */
+.focus-visible\:ring-0:focus-visible,
+.focus-visible\:ring-1:focus-visible,
+.focus-visible\:ring-2:focus-visible,
+.focus-visible\:ring-4:focus-visible,
+.focus-visible\:ring-8:focus-visible,
+.focus-visible\:outline-none:focus-visible,
+.focus-visible\:outline:focus-visible,
+.focus-visible\:outline-2:focus-visible,
+.focus-visible\:outline-4:focus-visible,
+.focus-visible\:outline-8:focus-visible {
+  /* Allow custom focus-visible styles to work */
+  outline: none !important;
+}
+
+/* ALLOW RADIX UI FOCUS STYLES TO WORK */
+[data-radix-focus-guard]:focus,
+[data-radix-focus-trap]:focus,
+[data-radix-dialog-content]:focus,
+[data-radix-dropdown-menu-content]:focus,
+[data-radix-select-content]:focus,
+[data-radix-tooltip-content]:focus,
+[data-radix-popover-content]:focus {
+  /* Allow custom focus styles to work */
+  outline: none !important;
+  /* Don't override custom ring styles */
+}
+
+/* REMOVE UNWANTED WHITE BORDERS BUT PRESERVE INTENTIONAL ONES */
+*:not([class*="border"]):not([class*="ring"]):not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  border-color: transparent !important;
+}
+
+/* REMOVE WEBKIT TAP HIGHLIGHTS */
+* {
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* PRESERVE BUTTON STYLING */
+button,
+[role="button"],
+.btn,
+.button {
+  /* Allow buttons to have borders and styling */
+}
+
+/* PRESERVE INPUT STYLING */
+input,
+textarea,
+select {
+  /* Allow form elements to have borders and styling */
+}
+
+/* PRESERVE LINK STYLING */
+a {
+  /* Allow links to have borders and styling */
+}

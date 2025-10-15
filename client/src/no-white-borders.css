@@ -1,0 +1,83 @@
+/* NO WHITE BORDERS ON CLICK/FOCUS */
+/* This file eliminates unwanted white borders while preserving accessibility */
+
+/* Remove default browser focus styles but allow custom ones */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-focus-ring-color: transparent !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* Preserve focus styles for interactive elements */
+button:focus,
+button:focus-visible,
+[role="button"]:focus,
+[role="button"]:focus-visible,
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+a:focus,
+a:focus-visible,
+[tabindex]:focus,
+[tabindex]:focus-visible {
+  /* Allow these elements to have focus styles */
+  outline: 2px solid transparent !important;
+  outline-offset: 2px !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Remove unwanted white borders for non-interactive elements */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+}
+
+*:active:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+}
+
+*:hover:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  border-color: transparent !important;
+}
+
+/* Remove any white borders that might appear on non-interactive elements */
+*:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  border-color: transparent !important;
+}
+
+/* Ensure no white borders on any non-interactive elements */
+div:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+span:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+section:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+nav:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+header:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+footer:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+main:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+aside:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  -webkit-focus-ring-color: transparent !important;
+  border-color: transparent !important;
+}
+
+/* Remove all focus rings and outlines from non-interactive elements */
+*:focus:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+*:active:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+*:focus-visible:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]),
+*:hover:not(button):not([role="button"]):not(input):not(textarea):not(select):not(a):not([tabindex]) {
+  border-color: transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  -webkit-focus-ring-color: transparent !important;
+}
