@@ -14,8 +14,7 @@ import StickyPlayer from "../components/StickyPlayer";
 import LiveChat from "../components/LiveChat";
 import ChatButton from "../components/ChatButton";
 import { useTheme } from "../contexts/ThemeContext";
-import { measurePageLoad } from '../lib/performance';
-// Temporarily disabled FadeInView to fix scroll issues
+import { measurePageLoad } from "../lib/performance";
 // import FadeInView from "../components/FadeInView";
 import SubscriptionCarousel from "../components/SubscriptionCarousel";
 import UserProfile from "../components/UserProfile";
@@ -25,11 +24,11 @@ export default function HomePage() {
   const [showSubscriptionPlans, setShowSubscriptionPlans] = useState(false);
   const { currentTheme, getColors } = useTheme();
   const colors = getColors();
-  
+
   // Measure page load performance
   useEffect(() => {
-    measurePageLoad('home_page');
-    
+    measurePageLoad("home_page");
+
     // Handle hash navigation on page load
     const handleHashNavigation = () => {
       const hash = window.location.hash.substring(1); // Remove the #
@@ -44,88 +43,114 @@ export default function HomePage() {
     };
 
     handleHashNavigation();
-    
+
     // Listen for hash changes
-    window.addEventListener('hashchange', handleHashNavigation);
-    
+    window.addEventListener("hashchange", handleHashNavigation);
+
     return () => {
-      window.removeEventListener('hashchange', handleHashNavigation);
+      window.removeEventListener("hashchange", handleHashNavigation);
     };
   }, []);
-  
+
   return (
-    <div 
-      className="min-h-screen transition-colors duration-300" 
-      style={{ 
-        backgroundColor: colors.background,
-        color: colors.text 
+    <div
+      className="min-h-screen transition-colors duration-300"
+      style={{
+        // 👉 your leather background
+        backgroundImage: "url('/images/black-leather.jpg')",
+        backgroundSize: "cover",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+        // keep theme text color
+        color: colors.text,
       }}
     >
       <div id="main-navigation">
         <Navigation />
       </div>
+
       <main id="main-content">
         <Hero />
-      
+
         {/* Temporarily disabled FadeInView to fix scroll issues */}
         <Features />
-      
+
         <About />
-      
+
         <Schedule />
-      
-        <section 
-          id="subscribe" 
+
+        <section
+          id="subscribe"
           className="py-20 transition-colors duration-300"
-          style={{ backgroundColor: colors.background }}
+          // make this a little transparent so leather shows through
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
+            backdropFilter: "blur(4px)",
+          }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 
+              <h2
                 className="font-orbitron font-black text-3xl md:text-4xl mb-4"
-                style={{ 
-                  color: currentTheme === 'light-mode' ? '#000000' : colors.text 
+                style={{
+                  color:
+                    currentTheme === "light-mode" ? "#000000" : colors.text,
                 }}
               >
                 Supporters Enjoy More
               </h2>
-              <p 
+              <p
                 className="text-lg font-semibold"
-                style={{ 
-                  color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
+                style={{
+                  color:
+                    currentTheme === "light-mode"
+                      ? "rgba(0, 0, 0, 0.7)"
+                      : colors.textMuted,
                 }}
               >
                 Support our growth and enjoy exclusive content.
               </p>
             </div>
-            <SubscriptionCarousel onSubscribe={() => setShowSubscriptionPlans(true)} />
+            <SubscriptionCarousel
+              onSubscribe={() => setShowSubscriptionPlans(true)}
+            />
           </div>
         </section>
-      
+
         <Submissions />
-      
+
         <section id="map" className="py-8">
           <FullWidthGlobeMap />
         </section>
-      
+
         <StatsAndLocations />
-      
+
         <Contact />
-      
+
         <ShopifyEcommerce />
-      
+
         <Footer />
-      
+
         <StickyPlayer />
+
         <ChatButton onChatClick={() => setShowLiveChat(true)} />
       </main>
-      
+
       {/* Subscription Plans Modal */}
       {showSubscriptionPlans && (
-        <UserProfile 
+        <UserProfile
           isOpen={true}
           onClose={() => setShowSubscriptionPlans(false)}
           initialShowSubscriptionPlans={true}
+        />
+      )}
+
+      {/* if you really want the floating chat: */}
+      {showLiveChat && (
+        <LiveChat
+          isEnabled={showLiveChat}
+          onToggle={() => setShowLiveChat(false)}
         />
       )}
     </div>

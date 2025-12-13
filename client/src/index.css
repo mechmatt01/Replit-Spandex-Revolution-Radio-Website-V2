@@ -1,10 +1,55 @@
-
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap");
+/* 1) OPTIONAL: keep your custom css */
 @import "./ultimate-focus-killer.css";
 
+/* 2) LOCAL FONTS (just once) */
+@font-face {
+  font-family: 'Daniel';
+  src: url("./assets/fonts/daniel.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Kalam';
+  src: url("./assets/fonts/kalam.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Patrick Hand';
+  src: url("./assets/fonts/patrick-hand.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Silent Brush';
+  src: url("./assets/fonts/silent-brush.otf") format("opentype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Permanent Marker';
+  src: url("./assets/fonts/permanent-marker.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rock Salt';
+  src: url("./assets/fonts/rock-salt.ttf") format("truetype");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hey November';
+  src: url("./assets/fonts/hey-november.ttf") format("truetype");
+  font-display: swap;
+}
+
+/* 3) TAILWIND (exactly once) */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
 
 /* CSS Variables for Background */
 :root {
@@ -2100,7 +2145,7 @@ button[role="button"],
 /* Profile image containers should have proper positioning */
 
 /* Live Chat - Force visibility and proper positioning */
-.live-chat-card {
+  .live-chat-card {
   position: fixed !important;
   z-index: 9999 !important;
   max-height: calc(100vh - 2rem) !important; /* Responsive to viewport */
@@ -2546,4 +2591,112 @@ button[role="button"],
 [class*="player"] img {
   border-radius: 5px !important;
   overflow: hidden !important;
+}
+
+/* Kill the template hero background so leather shows through */
+.hero,
+.hero-section,
+.main-hero,
+.app-shell,
+.layout-shell,
+.page-wrapper {
+  background-image: none !important;
+  background: transparent !important;
+}
+
+/* kill the hero overlay so leather shows through */
+.hero-overlay,
+.hero > .absolute.inset-0,
+.absolute.inset-0.hero-overlay {
+  background: transparent !important;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+/* leather everywhere */
+body,
+#root {
+  background-image: url('/images/black-leather.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+  background-color: #000;
+}
+
+/* kill full-screen radial overlays the template is adding */
+div[style*="radial-gradient"] {
+  background: transparent !important;
+}
+
+/* kill that hero/radial junk the template added */
+div.absolute.inset-0[style*="radial-gradient"],
+.hero .absolute.inset-0,
+.hero-overlay,
+.hero > .absolute.inset-0 {
+  background: transparent !important;
+}
+
+/* kill that hero/radial junk the template added */
+div.absolute.inset-0[style*="radial-gradient"],
+.hero .absolute.inset-0,
+.hero-overlay,
+.hero > .absolute.inset-0 {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* ALSO kill full-screen bg-image layers (the singer) */
+div.absolute.inset-0[style*="background-image"],
+div.absolute.inset-0.bg-cover,
+div.absolute.inset-0.bg-center,
+div.absolute.inset-0.bg-no-repeat {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* kill hero/radial overlay junk so leather shows through */
+div.absolute.inset-0[style*="radial-gradient"],
+.hero .absolute.inset-0,
+.hero-overlay,
+.hero > .absolute.inset-0 {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* kill full-screen hero image layers (the singer) */
+div.absolute.inset-0[style*="background-image"],
+div.absolute.inset-0.bg-cover,
+div.absolute.inset-0.bg-center,
+div.absolute.inset-0.bg-no-repeat {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+main,
+section,
+.app-shell,
+.page-wrapper {
+  background: transparent !important;
+}
+
+body {
+  @apply font-sans;
+}
+
+*:focus {
+  outline: none !important;
+}
+
+*:focus-visible {
+  outline: none !important;
+}
+
+#power-toggle:focus,
+#power-toggle:focus-visible,
+#power-toggle:-moz-focusring {
+  outline: none !important;
+  box-shadow: none !important;
 }

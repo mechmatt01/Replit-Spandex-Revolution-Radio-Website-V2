@@ -19,22 +19,25 @@ export default function StatsAndLocations() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 
-            className="font-orbitron font-black text-3xl md:text-4xl mb-4"
-            style={{ 
-              color: currentTheme === 'light-mode' ? '#000000' : colors.text 
-            }}
-          >
-            Real-Time Dashboard
-          </h2>
-          <p 
-            className="text-lg font-semibold max-w-2xl mx-auto"
-            style={{ 
-              color: currentTheme === 'light-mode' ? 'rgba(0, 0, 0, 0.7)' : colors.textMuted 
-            }}
-          >
-            Monitor live listener activity and global engagement across all platforms
-          </p>
+         <h2
+  className="font-marker text-6xl mb-4 transition-none hover:brightness-100 hover:blur-none"
+  style={{
+    color: "#ff2a2a",
+    textShadow: "0 0 8px rgba(255,42,42,0.6)",
+  }}
+>
+  Station Billboard
+</h2>
+
+<p
+  className="font-kalam font-semibold text-[1.75rem]"
+  style={{ color: "#ffffff" }}
+>
+  Live metrics unlock at launch.
+</p>
+
+
+
         </div>
 
         {/* Mobile Tab Switcher */}

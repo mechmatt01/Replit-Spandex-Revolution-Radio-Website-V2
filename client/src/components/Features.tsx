@@ -9,7 +9,6 @@ import StaggeredAnimation from "./StaggeredAnimation";
 import SkeletonLoader from "./SkeletonLoader";
 import { useState } from "react";
 
-
 export default function Features() {
   const { data: stats } = useQuery<StreamStats>({
     queryKey: ["/api/stream-stats"],
@@ -17,7 +16,7 @@ export default function Features() {
   const { getColors, isDarkMode, currentTheme } = useTheme();
   const colors = getColors();
   const [hoveredFeature, setHoveredFeature] = useState<string | null>(null);
-  
+
   // Use primary color for borders to ensure theme consistency
   const borderColor = colors.primary;
 
@@ -36,7 +35,10 @@ export default function Features() {
         '[role="region"][aria-label="Radio player controls"]',
       );
       if (radioPlayer) {
-        radioPlayer.scrollIntoView({ behavior: "smooth", block: "center" });
+        (radioPlayer as HTMLElement).scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
       } else {
         heroSection.scrollIntoView({ behavior: "smooth", block: "start" });
       }
@@ -51,84 +53,87 @@ export default function Features() {
       aria-label="Platform features"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Spandex Law heading */}
         <div className="text-center mb-16">
           <h2
-            className="font-orbitron font-black text-4xl md:text-5xl mb-6"
-            style={{ 
-              color: currentTheme === 'light-mode' ? '#000000' : colors.text 
-            }}
+            className="font-salt text-4xl md:text-5xl tracking-wide mb-6 uppercase drop-shadow-[0_0_14px_rgba(255,0,0,0.45)]"
+            style={{ color: "#ff2a2a" }} // force red
           >
-            ROCK THE AIRWAVES
+            SPANDEX LAW #213
           </h2>
+
           <p
-            className="text-xl font-semibold max-w-2xl mx-auto"
-            style={{ color: colors.textMuted }}
+            className="font-patrick text-2xl md:text-3xl leading-relaxed max-w-3xl mx-auto text-white drop-shadow-[0_0_6px_rgba(0,0,0,0.6)]"
           >
-            Experience the ultimate old-school metal radio experience with live
-            streaming, interactive features, and exclusive content.
+            Never trust a drummer who shows up early.
           </p>
+
+          <div className="mt-8 w-48 h-[2px] mx-auto bg-gradient-to-r from-transparent via-[#ff2a2a] to-transparent opacity-70" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Feature 1: 24/7 Live Streaming */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {/* Feature 1: 24/7 Live Streaming */}
           <div className="relative">
             {/* Glow Effect */}
             <div className="absolute inset-2 rounded-2xl overflow-hidden">
               <div
                 className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
                 style={{
-                  background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary || colors.primary})`,
-                  opacity: hoveredFeature === 'streaming' ? 0.3 : 0,
+                  background: `linear-gradient(135deg, ${colors.primary}, ${
+                    colors.secondary || colors.primary
+                  })`,
+                  opacity: hoveredFeature === "streaming" ? 0.3 : 0,
                 }}
               />
             </div>
-            
+
             <Card
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
               style={{
                 backgroundColor: colors.background,
                 borderColor: colors.primary,
-                borderWidth: '2px',
-                borderStyle: 'solid',
-                transform: hoveredFeature === 'streaming' ? 'scale(1.05)' : 'scale(1)',
-                boxShadow: 'none'
+                borderWidth: "2px",
+                borderStyle: "solid",
+                transform:
+                  hoveredFeature === "streaming" ? "scale(1.05)" : "scale(1)",
+                boxShadow: "none",
               }}
               onClick={scrollToRadioPlayer}
-              onMouseEnter={() => setHoveredFeature('streaming')}
+              onMouseEnter={() => setHoveredFeature("streaming")}
               onMouseLeave={() => setHoveredFeature(null)}
             >
-            <CardContent className="p-0 flex flex-col h-full">
-              <div
-                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-                style={{ backgroundColor: colors.primary }}
-              >
-                <Radio className="text-white h-8 w-8" />
-              </div>
-              <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
-                style={{ color: colors.text }}
-              >
-                24/7 Live Streaming
-              </h3>
-              <p
-                className="font-semibold text-lg leading-relaxed mb-6 flex-grow text-left"
-                style={{ color: colors.textMuted, minHeight: "4.5rem" }}
-              >
-                Non-stop old-school metal streaming with high-quality audio and
-                minimal buffering.
-              </p>
-              <div
-                className="flex items-center text-sm font-bold mt-auto text-left"
-                style={{ color: colors.primary }}
-              >
+              <CardContent className="p-0 flex flex-col h-full">
                 <div
-                  className="w-3 h-3 rounded-full mr-3 animate-pulse"
+                  className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
                   style={{ backgroundColor: colors.primary }}
-                ></div>
-                <span>Currently Live</span>
-              </div>
-            </CardContent>
-          </Card>
+                >
+                  <Radio className="text-white h-8 w-8" />
+                </div>
+                <h3
+                  className="font-black text-2xl mb-4 h-16 flex items-center text-left"
+                  style={{ color: colors.text }}
+                >
+                  24/7 Live Streaming
+                </h3>
+                <p
+                  className="font-semibold text-lg leading-relaxed mb-6 flex-grow text-left"
+                  style={{ color: colors.textMuted, minHeight: "4.5rem" }}
+                >
+                  Non-stop old-school metal streaming with high-quality audio
+                  and minimal buffering.
+                </p>
+                <div
+                  className="flex items-center text-sm font-bold mt-auto text-left"
+                  style={{ color: colors.primary }}
+                >
+                  <div
+                    className="w-3 h-3 rounded-full mr-3 animate-pulse"
+                    style={{ backgroundColor: colors.primary }}
+                  />
+                  <span>Currently Live</span>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Feature 2: Show Archives */}
@@ -138,58 +143,61 @@ export default function Features() {
               <div
                 className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
                 style={{
-                  background: `linear-gradient(135deg, ${colors.primary}, ${colors.accent || colors.primary})`,
-                  opacity: hoveredFeature === 'archives' ? 0.3 : 0,
+                  background: `linear-gradient(135deg, ${colors.primary}, ${
+                    colors.accent || colors.primary
+                  })`,
+                  opacity: hoveredFeature === "archives" ? 0.3 : 0,
                 }}
               />
             </div>
-            
+
             <Card
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
               style={{
                 backgroundColor: colors.background,
                 borderColor: colors.primary,
-                borderWidth: '2px',
-                borderStyle: 'solid',
-                transform: hoveredFeature === 'archives' ? 'scale(1.05)' : 'scale(1)',
-                boxShadow: 'none'
+                borderWidth: "2px",
+                borderStyle: "solid",
+                transform:
+                  hoveredFeature === "archives" ? "scale(1.05)" : "scale(1)",
+                boxShadow: "none",
               }}
               onClick={() => scrollToSection("schedule")}
-              onMouseEnter={() => setHoveredFeature('archives')}
+              onMouseEnter={() => setHoveredFeature("archives")}
               onMouseLeave={() => setHoveredFeature(null)}
             >
-            <CardContent className="p-0 flex flex-col h-full">
-              <div
-                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-                style={{ backgroundColor: colors.primary }}
-              >
-                <Archive className="text-white h-8 w-8" />
-              </div>
-              <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
-                style={{ color: colors.text }}
-              >
-                Show Archives
-              </h3>
-              <p
-                className="font-semibold text-lg leading-relaxed mb-6 flex-grow text-left"
-                style={{ color: colors.textMuted, minHeight: "4.5rem" }}
-              >
-                Access past shows, special episodes, and exclusive metal content
-                on-demand.
-              </p>
-              <div
-                className="flex items-center text-sm font-bold mt-auto text-left"
-                style={{ color: colors.primary }}
-              >
+              <CardContent className="p-0 flex flex-col h-full">
                 <div
-                  className="w-3 h-3 rounded-full mr-3 animate-pulse"
+                  className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
                   style={{ backgroundColor: colors.primary }}
-                ></div>
-                <span>200+ hours of content</span>
-              </div>
-            </CardContent>
-          </Card>
+                >
+                  <Archive className="text-white h-8 w-8" />
+                </div>
+                <h3
+                  className="font-black text-2xl mb-4 h-16 flex items-center text-left"
+                  style={{ color: colors.text }}
+                >
+                  Show Archives
+                </h3>
+                <p
+                  className="font-semibold text-lg leading-relaxed mb-6 flex-grow text-left"
+                  style={{ color: colors.textMuted, minHeight: "4.5rem" }}
+                >
+                  Access past shows, special episodes, and exclusive metal
+                  content on-demand.
+                </p>
+                <div
+                  className="flex items-center text-sm font-bold mt-auto text-left"
+                  style={{ color: colors.primary }}
+                >
+                  <div
+                    className="w-3 h-3 rounded-full mr-3 animate-pulse"
+                    style={{ backgroundColor: colors.primary }}
+                  />
+                  <span>200+ hours of content</span>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Feature 3: Global Listener Map */}
@@ -199,286 +207,61 @@ export default function Features() {
               <div
                 className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
                 style={{
-                  background: `linear-gradient(135deg, ${colors.secondary || colors.primary}, ${colors.primary})`,
-                  opacity: hoveredFeature === 'map' ? 0.3 : 0,
+                  background: `linear-gradient(135deg, ${
+                    colors.secondary || colors.primary
+                  }, ${colors.primary})`,
+                  opacity: hoveredFeature === "map" ? 0.3 : 0,
                 }}
               />
             </div>
-            
+
             <Card
               className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
               style={{
                 backgroundColor: colors.background,
                 borderColor: colors.primary,
-                borderWidth: '2px',
-                borderStyle: 'solid',
-                transform: hoveredFeature === 'map' ? 'scale(1.05)' : 'scale(1)',
-                boxShadow: 'none'
+                borderWidth: "2px",
+                borderStyle: "solid",
+                transform:
+                  hoveredFeature === "map" ? "scale(1.05)" : "scale(1)",
+                boxShadow: "none",
               }}
               onClick={() => scrollToSection("map")}
-              onMouseEnter={() => setHoveredFeature('map')}
+              onMouseEnter={() => setHoveredFeature("map")}
               onMouseLeave={() => setHoveredFeature(null)}
             >
-            <CardContent className="p-0 flex flex-col h-full">
-              <div
-                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-                style={{ backgroundColor: colors.primary }}
-              >
-                <Globe className="text-white h-8 w-8" />
-              </div>
-              <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
-                style={{ color: colors.text }}
-              >
-                Global Listener Map
-              </h3>
-              <p
-                className="font-semibold text-lg leading-relaxed mb-6 flex-grow text-left"
-                style={{ color: colors.textMuted, minHeight: "4.5rem" }}
-              >
-                See where metalheads around the world are tuning in from in
-                real-time.
-              </p>
-              <div
-                className="flex items-center text-sm font-bold mt-auto text-left"
-                style={{ color: colors.primary }}
-              >
+              <CardContent className="p-0 flex flex-col h-full">
                 <div
-                  className="w-3 h-3 rounded-full mr-3 animate-pulse"
+                  className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
                   style={{ backgroundColor: colors.primary }}
-                ></div>
-                <span>{stats?.currentListeners || 42} listeners online</span>
-              </div>
-            </CardContent>
-          </Card>
-          </div>
-
-          {/* Feature 4: Hairspray Rebellion */}
-          <div className="relative">
-            {/* Glow Effect */}
-            <div className="absolute inset-2 rounded-2xl overflow-hidden">
-              <div
-                className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
-                style={{
-                  background: `linear-gradient(135deg, ${colors.accent || colors.primary}, ${colors.primary})`,
-                  opacity: hoveredFeature === 'rebellion' ? 0.3 : 0,
-                }}
-              />
-            </div>
-            
-            <Card
-              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
-              style={{
-                backgroundColor: colors.background,
-                borderColor: colors.primary,
-                borderWidth: '2px',
-                borderStyle: 'solid',
-                transform: hoveredFeature === 'rebellion' ? 'scale(1.05)' : 'scale(1)',
-                boxShadow: 'none'
-              }}
-              onClick={() => scrollToSection("subscribe")}
-              onMouseEnter={() => setHoveredFeature('rebellion')}
-              onMouseLeave={() => setHoveredFeature(null)}
-            >
-            <CardContent className="p-0 flex flex-col h-full">
-              <div
-                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-                style={{ backgroundColor: colors.primary }}
-              >
-                <Crown className="text-white h-8 w-8" />
-              </div>
-              <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
-                style={{ color: colors.text }}
-              >
-                Hairspray Rebellion
-              </h3>
-              <p
-                className="font-semibold mb-6 text-lg leading-relaxed flex-grow text-left"
-                style={{ color: colors.textMuted }}
-              >
-                Join our premium membership for exclusive content, early access,
-                and special perks.
-              </p>
-              <div className="flex justify-start">
-                <Button
-                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center focus:outline-none focus:ring-0"
-                  style={{
-                    color: colors.primary,
-                    backgroundColor: "transparent",
-                    border: "none",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary;
-                    e.currentTarget.style.color = colors.primaryText || "white";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                    e.currentTarget.style.color = colors.primary;
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    scrollToSection("subscribe");
-                  }}
                 >
-                  <span className="text-left">Learn More</span>
-                  <Crown className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-          </div>
-
-          {/* Feature 5: Song Requests */}
-          <div className="relative">
-            {/* Glow Effect */}
-            <div className="absolute inset-2 rounded-2xl overflow-hidden">
-              <div
-                className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
-                style={{
-                  background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary || colors.primary})`,
-                  opacity: hoveredFeature === 'requests' ? 0.3 : 0,
-                }}
-              />
-            </div>
-            
-            <Card
-              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
-              style={{
-                backgroundColor: colors.background,
-                borderColor: colors.primary,
-                borderWidth: '2px',
-                borderStyle: 'solid',
-                transform: hoveredFeature === 'requests' ? 'scale(1.05)' : 'scale(1)',
-                boxShadow: 'none'
-              }}
-              onClick={() => scrollToSection("submissions")}
-              onMouseEnter={() => setHoveredFeature('requests')}
-              onMouseLeave={() => setHoveredFeature(null)}
-            >
-            <CardContent className="p-0 flex flex-col h-full">
-              <div
-                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-                style={{ backgroundColor: colors.primary }}
-              >
-                <Music className="text-white h-8 w-8" />
-              </div>
-              <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
-                style={{ color: colors.text }}
-              >
-                Song Requests
-              </h3>
-              <p
-                className="font-semibold mb-6 text-lg leading-relaxed flex-grow text-left"
-                style={{ color: colors.textMuted }}
-              >
-                Submit your favorite metal tracks and artist suggestions to be
-                featured on air.
-              </p>
-              <div className="flex justify-start">
-                <Button
-                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center focus:outline-none focus:ring-0"
-                  style={{
-                    color: colors.primary,
-                    backgroundColor: "transparent",
-                    border: "none",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary;
-                    e.currentTarget.style.color = colors.primaryText || "white";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                    e.currentTarget.style.color = colors.primary;
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    scrollToSection("submissions");
-                  }}
+                  <Globe className="text-white h-8 w-8" />
+                </div>
+                <h3
+                  className="font-black text-2xl mb-4 h-16 flex items-center text-left"
+                  style={{ color: colors.text }}
                 >
-                  <span className="text-left">Submit Request</span>
-                  <Music className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-          </div>
-
-          {/* Feature 6: Merch Store */}
-          <div className="relative">
-            {/* Glow Effect */}
-            <div className="absolute inset-2 rounded-2xl overflow-hidden">
-              <div
-                className="absolute inset-0 blur-xl opacity-0 transition-opacity duration-300"
-                style={{
-                  background: `linear-gradient(135deg, ${colors.secondary || colors.primary}, ${colors.accent || colors.primary})`,
-                  opacity: hoveredFeature === 'merch' ? 0.3 : 0,
-                }}
-              />
-            </div>
-            
-            <Card
-              className="relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl border-2 p-8 flex flex-col h-full enhanced-glow feature-container shadow-none"
-              style={{
-                backgroundColor: colors.background,
-                borderColor: colors.primary,
-                borderWidth: '2px',
-                borderStyle: 'solid',
-                transform: hoveredFeature === 'merch' ? 'scale(1.05)' : 'scale(1)',
-                boxShadow: 'none'
-              }}
-              onClick={() => scrollToSection("shop")}
-              onMouseEnter={() => setHoveredFeature('merch')}
-              onMouseLeave={() => setHoveredFeature(null)}
-            >
-            <CardContent className="p-0 flex flex-col h-full">
-              <div
-                className="w-16 h-16 rounded-xl flex items-center justify-center mb-6 shadow-lg"
-                style={{ backgroundColor: colors.primary }}
-              >
-                <Shirt className="text-white h-8 w-8" />
-              </div>
-              <h3
-                className="font-black text-2xl mb-4 h-16 flex items-center text-left"
-                style={{ color: colors.text }}
-              >
-                Official Merch
-              </h3>
-              <p
-                className="font-semibold mb-6 text-lg leading-relaxed flex-grow text-left"
-                style={{ color: colors.textMuted }}
-              >
-                Show your metal pride with official Spandex Salvation Radio
-                merchandise and apparel.
-              </p>
-              <div className="flex justify-start">
-                <Button
-                  className="font-bold text-lg px-6 py-3 rounded-xl transition-all duration-300 hover:scale-105 border-0 flex items-center focus:outline-none focus:ring-0"
-                  style={{
-                    color: colors.primary,
-                    backgroundColor: "transparent",
-                    border: "none",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = colors.primary;
-                    e.currentTarget.style.color = colors.primaryText || "white";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                    e.currentTarget.style.color = colors.primary;
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    scrollToSection("merch");
-                  }}
+                  Global Listener Map
+                </h3>
+                <p
+                  className="font-semibold text-lg leading-relaxed mb-6 flex-grow text-left"
+                  style={{ color: colors.textMuted, minHeight: "4.5rem" }}
                 >
-                  <span className="text-left">Shop Now</span>
-                  <Shirt className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                  See where metalheads around the world are tuning in from in
+                  real-time.
+                </p>
+                <div
+                  className="flex items-center text-sm font-bold mt-auto text-left"
+                  style={{ color: colors.primary }}
+                >
+                  <div
+                    className="w-3 h-3 rounded-full mr-3 animate-pulse"
+                    style={{ backgroundColor: colors.primary }}
+                  />
+                  <span>{stats?.currentListeners || 42} listeners online</span>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

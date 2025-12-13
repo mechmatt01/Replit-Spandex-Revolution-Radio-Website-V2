@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="2mm"
+   height="5.7069998mm"
+   viewBox="0 0 2 5.7069998"
+   version="1.1"
+   id="svg2921"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="toggle_down.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview2923"
+     pagecolor="#ffffff"
+     bordercolor="#cccccc"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="17.678304"
+     inkscape:cx="9.276908"
+     inkscape:cy="8.4849768"
+     inkscape:window-width="1920"
+     inkscape:window-height="1057"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2918">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath9078-3">
+      <path
+         d="m 55.009,441.928 c -1.518,0 -2.749,-1.734 -2.749,-2.639 v 0 l 1.273,-16.701 c 0,0 2.349,-1.422 4.455,0 v 0 l 1.272,16.701 c 0,0.905 -1.232,2.639 -2.749,2.639 v 0 z"
+         id="path9076-2" />
+    </clipPath>
+    <radialGradient
+       fx="0"
+       fy="0"
+       cx="0"
+       cy="0"
+       r="1"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-1.3905877,-7.2970488,-7.2970488,1.3905877,-88.119295,393.82133)"
+       spreadMethod="pad"
+       id="radialGradient9098-6">
+      <stop
+         style="stop-opacity:1;stop-color:#e0e0e0"
+         offset="0"
+         id="stop9084-8" />
+      <stop
+         style="stop-opacity:1;stop-color:#e0e0e0"
+         offset="0.29"
+         id="stop9086-3" />
+      <stop
+         style="stop-opacity:1;stop-color:#918f90"
+         offset="0.4869"
+         id="stop9088-7" />
+      <stop
+         style="stop-opacity:1;stop-color:#918f90"
+         offset="0.6727"
+         id="stop9090-6" />
+      <stop
+         style="stop-opacity:1;stop-color:#706d6e"
+         offset="0.8338"
+         id="stop9092-5" />
+      <stop
+         style="stop-opacity:1;stop-color:#706d6e"
+         offset="0.9565"
+         id="stop9094-9" />
+      <stop
+         style="stop-opacity:1;stop-color:#706d6e"
+         offset="1"
+         id="stop9096-6" />
+    </radialGradient>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g2040"
+       transform="matrix(0.28576865,0,0,0.28576865,-14.93446,-120.58198)"
+       style="fill:#000000">
+      <g
+         id="g2038"
+         clip-path="url(#clipPath9078-3)"
+         style="fill:#000000">
+        <g
+           id="g2036"
+           style="fill:#000000">
+          <g
+             id="g2034"
+             style="fill:#000000">
+            <path
+               d="m 55.009,441.928 c -1.518,0 -2.749,-1.734 -2.749,-2.639 v 0 l 1.273,-16.701 c 0,0 2.349,-1.422 4.455,0 v 0 l 1.272,16.701 c 0,0.905 -1.232,2.639 -2.749,2.639 v 0 z"
+               style="fill:#000000;stroke:none"
+               id="path2032" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

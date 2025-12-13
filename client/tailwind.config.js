@@ -7,6 +7,22 @@ module.exports = {
     "../shared/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    // 👇 this part is NEW / moved
+    fontFamily: {
+      // global default
+      sans: ["Kalam", "system-ui", "sans-serif"],
+
+      kalam: ["Kalam", "system-ui", "sans-serif"],
+      patrick: ["'Patrick Hand'", "system-ui", "sans-serif"],
+      orbitron: ["Orbitron", "system-ui", "sans-serif"],
+      daniel: ["Daniel", "system-ui", "sans-serif"],
+      brush: ["'Silent Brush'", "system-ui", "sans-serif"],
+      marker: ["'Permanent Marker'", "system-ui", "sans-serif"],
+      november: ["'Hey November'", "system-ui", "sans-serif"],
+	  salt: ["'Rock Salt'", "system-ui", "sans-serif"],
+    },
+
+    // 👇 all your old stuff stays in extend
     extend: {
       borderRadius: {
         lg: "var(--radius)",
@@ -54,7 +70,6 @@ module.exports = {
           4: "hsl(var(--chart-4))",
           5: "hsl(var(--chart-5))",
         },
-        // Override any orange colors with theme colors
         orange: {
           50: "hsl(var(--muted))",
           100: "hsl(var(--muted))",

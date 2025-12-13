@@ -571,17 +571,21 @@ const FullWidthGlobeMap = () => {
           <div className="container mx-auto px-4">
             {/* Header */}
             <div className="text-center mb-8">
-              <h2 className="font-orbitron font-black text-4xl md:text-5xl mb-4 drop-shadow-lg"
-                  style={{ 
-                    color: colors.text
-                  }}>
-                Live Interactive Map
-              </h2>
-              <p className="text-lg font-semibold max-w-2xl mx-auto"
-                 style={{ color: colors.textMuted }}>
-                Explore our global community of metalheads and see where the music is playing live
-              </p>
-            </div>
+  <h2
+    className="font-marker font-black text-4xl md:text-5xl mb-4 drop-shadow-[0_0_20px_rgba(255,0,0,0.35)]"
+    style={{ color: "#ff2a2a" }}
+  >
+    Road Crew
+  </h2>
+  <p
+    className="font-patrick text-xl md:text-2xl font-semibold max-w-2xl mx-auto"
+    style={{ color: "#ffffff" }}
+  >
+    Map goes live at launch — join the crew, light up your city.
+  </p>
+</div>
+
+
 
             {/* Weather Display */}
             {weather && (
