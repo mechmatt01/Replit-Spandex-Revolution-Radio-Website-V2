@@ -1,0 +1,60 @@
+Update Notes
+Overview Section
+- [ ] 3 Boxes (Keep 3 current boxes setup)
+- [ ] Repurpose boxes 
+- [ ] First box (sign up/join the site)
+- [ ] Middle box (which is currently show archives would change to product showcase multiple different products when refreshing the site)
+- [ ] Third (last box), merchandise 
+
+Past/Upcoming Shows Section
+- [ ] Update boxes design to make it more uniform with the current new site design 
+
+Main Player
+- [ ] Remove main player 
+
+Mini Player
+- [ ] Move now playing/next up information down to mini player and make design uniform 
+- [ ] Remove now playing button from mini player 
+
+Navigation Bar
+- [ ] Expand amp panel
+- [ ] Add burger menu bar dropdown to navigation bar (right side)
+- [ ] Add profile section button to navigation bar (right side)
+
+Design
+- [ ] Update entire site design to be more uniform
+
+Live Chat
+- [ ] Make the pop up smaller and not pop up when entering the site until the user clicks on the Live Chat bubble button
+- [ ] Live chat only should be accessible when a show is live and occurring at that time 
+
+Live Map
+- [ ] Swap map with the header below it so that the header is above the live map
+
+Themes
+Basic Themes
+- [ ] Night Theme (Dark mode)
+- [ ] Day Theme (Light mode)
+Premium Themes
+- [ ] Glam Theme
+    - [ ] Neons Pink/Purple/Chrome/Blue (Icon Subscription Blue Color)
+- [ ] Rebel Theme 
+    - [ ] Same type of colors as current theme box design)
+- [ ] ShredWeisen
+    - [ ] Color palette we will talk about later 
+
+Band Song Submission
+- [ ] If user upon signup and approval is in a band (upon registration, true/false Boolean in database) then song submission form should be shown on site when logged in for that user
+
+Social Media Handles
+- [ ] Footer (social media handle links will be sent for each one to integrate into site)
+- [ ] Make button icon links for each link sent to me 
+
+Site Brand Icon
+- [ ] Will be sent updated icon 
+    - [ ] Update Favicon
+    - [ ] Update main site icon everywhere where it currently appears
+    - [ ] Animate icon like it was before but of course an animation that matches the new icon whatever that may be and we settle on
+
+Logo Designer
+- [ ] Talk to contacts about logo design and send contact references to Goldfish
