@@ -140,8 +140,6 @@ export default function HomePage() {
         <Footer />
 
         <StickyPlayer />
-
-        <ChatButton onChatClick={() => setShowLiveChat(true)} />
       </main>
 
       {/* Subscription Plans Modal */}
