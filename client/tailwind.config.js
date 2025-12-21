@@ -1,0 +1,103 @@
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  darkMode: ["class"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "../shared/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    // 👇 this part is NEW / moved
+    fontFamily: {
+      // global default
+      sans: ["Kalam", "system-ui", "sans-serif"],
+
+      kalam: ["Kalam", "system-ui", "sans-serif"],
+      patrick: ["'Patrick Hand'", "system-ui", "sans-serif"],
+      orbitron: ["Orbitron", "system-ui", "sans-serif"],
+      daniel: ["Daniel", "system-ui", "sans-serif"],
+      brush: ["'Silent Brush'", "system-ui", "sans-serif"],
+      marker: ["'Permanent Marker'", "system-ui", "sans-serif"],
+      november: ["'Hey November'", "system-ui", "sans-serif"],
+	  salt: ["'Rock Salt'", "system-ui", "sans-serif"],
+    },
+
+    // 👇 all your old stuff stays in extend
+    extend: {
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
+      colors: {
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        chart: {
+          1: "hsl(var(--chart-1))",
+          2: "hsl(var(--chart-2))",
+          3: "hsl(var(--chart-3))",
+          4: "hsl(var(--chart-4))",
+          5: "hsl(var(--chart-5))",
+        },
+        orange: {
+          50: "hsl(var(--muted))",
+          100: "hsl(var(--muted))",
+          200: "hsl(var(--muted))",
+          300: "hsl(var(--accent))",
+          400: "hsl(var(--ring))",
+          500: "hsl(var(--ring))",
+          600: "hsl(var(--ring))",
+          700: "hsl(var(--ring))",
+          800: "hsl(var(--ring))",
+          900: "hsl(var(--ring))",
+        },
+      },
+      keyframes: {
+        "accordion-down": {
+          from: { height: "0" },
+          to: { height: "var(--radix-accordion-content-height)" },
+        },
+        "accordion-up": {
+          from: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "0" },
+        },
+      },
+      animation: {
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+};
