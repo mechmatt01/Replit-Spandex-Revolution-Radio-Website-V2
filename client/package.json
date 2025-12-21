@@ -69,6 +69,8 @@
   },
   "devDependencies": {
     "@types/google.maps": "^3.58.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.47",

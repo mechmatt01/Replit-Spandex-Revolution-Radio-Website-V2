@@ -161,9 +161,9 @@ class PerformanceCollector {
   }
 
   private collectNavigationTiming(): void {
-    if ('performance' in window && 'getEntriesByType' in performance) {
+    if ('performance' in window && typeof window.performance === 'object' && 'getEntriesByType' in window.performance) {
       try {
-        const navigationEntries = performance.getEntriesByType('navigation');
+        const navigationEntries = window.performance.getEntriesByType('navigation');
         if (navigationEntries.length > 0) {
           const navEntry = navigationEntries[0] as PerformanceNavigationTiming;
           
@@ -191,9 +191,9 @@ class PerformanceCollector {
   }
 
   private collectResourceTiming(): void {
-    if ('performance' in window && 'getEntriesByType' in performance) {
+    if ('performance' in window && typeof window.performance === 'object' && 'getEntriesByType' in window.performance) {
       try {
-        const resourceEntries = performance.getEntriesByType('resource');
+        const resourceEntries = window.performance.getEntriesByType('resource');
         resourceEntries.forEach((entry: PerformanceEntry) => {
           const resourceEntry = entry as PerformanceResourceTiming;
           
@@ -220,9 +220,9 @@ class PerformanceCollector {
   }
 
   private collectMemoryUsage(): void {
-    if ('memory' in performance) {
+    if (typeof window.performance === 'object' && 'memory' in window.performance) {
       try {
-        const memory = (performance as any).memory;
+        const memory = (window.performance as any).memory;
         this.recordEvent('custom_trace', 'Memory Usage', memory.usedJSHeapSize, 'bytes', {
           totalJSHeapSize: memory.totalJSHeapSize,
           jsHeapSizeLimit: memory.jsHeapSizeLimit,
