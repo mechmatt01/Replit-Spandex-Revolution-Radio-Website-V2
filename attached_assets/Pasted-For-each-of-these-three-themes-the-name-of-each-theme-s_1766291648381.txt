@@ -1,0 +1,33 @@
+For each of these three themes the name of each theme should be the name that is displayed here in the list right above. The colors for each theme are also listed and should be used and for each theme the colors should be the same colors as each of the subscription boxes/tiers that are currently displayed on the site with the boarders that are gradients. So please use the gradient boarder for each theme as the color palette for each one as listed.
+
+
+Task:
+- Band song submission form logic
+
+For this task I want to integrate a logic into the site for the current submission form that is shown on the site so that only if the user is Signed Up/Logged In AND approved via a new Boolean field that will be included in each users profile information within the Firebase Firestore database is in a band (upon registration, true/false Boolean in database) and the Boolean is set to true (if not found in the user profile information automatically assume it is False) then the song submission form should show on the site
+
+
+Task:
+- Social media links in footer
+
+For this task I want to add in the footer section of the site and have it displayed in the footer section of the site for every single website page visited a list of social media links like the Twitter (now called X) logo as a button and when tapped it takes you to a link I will provide for each one to the social media page given for each one. For now please just add the following link buttons/icons for each one and set each to the homepage of each social media page (for example for Twitter/X it should currently take you to www.x.com)
+
+These buttons/links/icons should be displayed in the footer section to the far left positioned vertically starting where the text starts on the far left side and then horizontally in a row and for the mobile view positioned respectively so that it looks still normal and good but however it needs to be to fit within the current display for each device size.
+
+List of Social Media Links:
+- Twitter/X
+    - www.x.com
+- Instagram
+    - www.instagram.com
+- Facebook
+    - www.facebook.com
+- Reddit
+    - www.reddit.com
+- TikTok
+    - www.TikTok.com
+
+
+Task:
+- Live Map header repositioning
+
+For this task please just simply swap the live Google integrated map that is currently integrated on the site and displayed with the header text right below it so that the header is displayed above the map and so that the map is displayed under the header/sub-header text  

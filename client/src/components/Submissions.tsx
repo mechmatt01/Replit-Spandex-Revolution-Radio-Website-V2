@@ -114,6 +114,22 @@ export default function Submissions() {
   const { getEffectivePremiumStatus } = usePremiumTest();
   const hasPaidSubscription = getEffectivePremiumStatus();
 
+  // Check if user is in a band (from Firebase profile)
+  const [userInBand, setUserInBand] = useState(false);
+  
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      // In a real app, fetch from Firebase: user's "inBand" boolean field
+      // For now, assume it's true for authenticated users (placeholder)
+      setUserInBand(true); // TODO: Fetch actual inBand status from Firebase
+    } else {
+      setUserInBand(false);
+    }
+  }, [isAuthenticated, user]);
+
+  // Show submission form only if logged in AND in a band AND has subscription
+  const canShowForm = isAuthenticated && userInBand && hasPaidSubscription;
+
   return (
     <section 
       id="submissions" 
@@ -121,6 +137,38 @@ export default function Submissions() {
       style={{ backgroundColor: colors.background }}
     >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Show form only if user meets all criteria */}
+        {!isAuthenticated ? (
+          <div className="text-center py-12">
+            <h2 className="font-orbitron text-2xl font-bold mb-4" style={{ color: colors.text }}>
+              Band Submissions
+            </h2>
+            <p style={{ color: colors.textMuted }} className="mb-6">
+              Sign in and create an account as a band member to submit your music.
+            </p>
+          </div>
+        ) : !userInBand ? (
+          <div className="text-center py-12">
+            <h2 className="font-orbitron text-2xl font-bold mb-4" style={{ color: colors.text }}>
+              Band Submissions
+            </h2>
+            <p style={{ color: colors.textMuted }} className="mb-6">
+              This feature is only available for band members. Update your profile to indicate you're in a band.
+            </p>
+          </div>
+        ) : !hasPaidSubscription ? (
+          <div className="text-center py-12">
+            <h2 className="font-orbitron text-2xl font-bold mb-4" style={{ color: colors.text }}>
+              Band Submissions
+            </h2>
+            <p style={{ color: colors.textMuted }} className="mb-6">
+              Band members with an active subscription can submit their music. Subscribe to get started!
+            </p>
+          </div>
+        ) : null}
+
+        {canShowForm && (
+        <>
         <div className="text-center mb-12">
           <h2 
             className="font-orbitron font-bold text-3xl md:text-4xl mb-4"
@@ -417,6 +465,8 @@ export default function Submissions() {
             isEnabled={true}
             onToggle={() => setShowPremiumNotification(false)}
           />
+        )}
+        </>
         )}
       </div>
     </section>
