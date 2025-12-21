@@ -1,9 +1,17 @@
 import { SOCIALS } from "@/config/socials";
 import { useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
-import { Radio } from "lucide-react";
+import { Radio, Twitter, Instagram, Facebook, MessageCircle } from "lucide-react";
 import MusicLogoPath from "/MusicLogoIcon.png";
 import AdminPanel from "./AdminPanel";
+
+const SOCIAL_LINKS = [
+  { name: 'Twitter', icon: Twitter, url: 'https://www.x.com' },
+  { name: 'Instagram', icon: Instagram, url: 'https://www.instagram.com' },
+  { name: 'Facebook', icon: Facebook, url: 'https://www.facebook.com' },
+  { name: 'Reddit', icon: MessageCircle, url: 'https://www.reddit.com' },
+  { name: 'TikTok', icon: MessageCircle, url: 'https://www.tiktok.com' },
+];
 
 export default function Footer() {
   const { colors, gradient, currentTheme } = useTheme();
@@ -22,6 +30,38 @@ export default function Footer() {
       style={{ backgroundColor: colors.background }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Social Media Links */}
+        <div className="mb-8 flex flex-wrap gap-4 items-center">
+          {SOCIAL_LINKS.map((social) => {
+            const Icon = social.icon;
+            return (
+              <a
+                key={social.name}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-all duration-200 p-2 rounded-full hover:scale-110"
+                style={{ 
+                  borderColor: colors.primary,
+                  border: `2px solid ${colors.primary}40`,
+                  color: colors.text
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = colors.primary;
+                  e.currentTarget.style.borderColor = colors.primary;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = colors.text;
+                  e.currentTarget.style.borderColor = `${colors.primary}40`;
+                }}
+                title={social.name}
+              >
+                <Icon size={24} />
+              </a>
+            );
+          })}
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>

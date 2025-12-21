@@ -191,8 +191,8 @@ const [isPowered, setIsPowered] = useState(false);
 const [volume, setVolume] = useState(0.9);
 
 const togglePower = () => {
-	   console.log("TOGGLE CLICKED. isPowered was:", isPowered);
-	     // 1) Flip UI immediately so the handle/LED update no matter what
+           console.log("TOGGLE CLICKED. isPowered was:", isPowered);
+             // 1) Flip UI immediately so the handle/LED update no matter what
   setIsPowered(p => !p);
  // 2) Then try to start/stop audio, but never block the UI
   const audio = audioRef.current;
@@ -495,7 +495,7 @@ className="relative"  style={{ width: 450, height: 55 }}
     src={panelBg}
     alt="Amp Panel"
     className="absolute inset-0 w-full h-full pointer-events-none"
-	draggable={false}
+        draggable={false}
   />
 
   {/* Power LED */}
@@ -628,9 +628,9 @@ className="relative"  style={{ width: 450, height: 55 }}
 <VUMeterImage imgSrc={VUMeterFace} size={75} level={levelR} glow />
 </div>
 
-			 {/* Logo & Brand - Left side */}
-			 {/*           
-		   <div className="flex items-center space-x-4">
+                         {/* Logo & Brand - Left side */}
+                         {/*           
+                   <div className="flex items-center space-x-4">
               <div 
                 className="flex items-center justify-center w-8 h-8 rounded-full cursor-pointer logo-container"
                 style={{ 
@@ -653,8 +653,8 @@ className="relative"  style={{ width: 450, height: 55 }}
                     e.currentTarget.classList.remove('logo-spin-easter-egg');
                   }}
                 />
-			  </div>			  
-			  <div className="flex flex-col" id="brand-text" ref={brandTextRef}>
+                          </div>                          
+                          <div className="flex flex-col" id="brand-text" ref={brandTextRef}>
                 <div 
                   className="text-sm font-black leading-tight transition-colors duration-300" 
                   style={{ 
@@ -667,8 +667,8 @@ className="relative"  style={{ width: 450, height: 55 }}
                   RADIO
                 </div>
               </div>
-		    </div>
-			 */}
+                    </div>
+                         */}
 
             {/* Desktop Navigation - Centered — hidden */}
 {false && (
@@ -698,10 +698,45 @@ className="relative"  style={{ width: 450, height: 55 }}
     )}
   </div>
 )}
-		
+                
             {/* Mobile Controls */}
             <div className="xl:hidden flex items-center space-x-3">
-			{/* <MetalThemeSwitcher /> */}
+                        {/* <MetalThemeSwitcher /> */}
+              {/* Profile Button */}
+              <button
+                onClick={() => setShowUserProfile(true)}
+                className="p-2 rounded-full transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95 focus:outline-none focus:ring-0"
+                style={{ 
+                 backgroundColor: 'transparent',
+                 color: colors.primary,
+                 border: `2px solid ${colors.primary}40`,
+                 borderRadius: '50%',
+                 width: '40px',
+                 height: '40px',
+                } as React.CSSProperties}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = colors.primary;
+                  e.currentTarget.style.backgroundColor = `${colors.primary}20`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = `${colors.primary}40`;
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+                aria-label="Profile"
+                title="Profile"
+              >
+                {user?.photoURL ? (
+                  <img 
+                    src={user.photoURL} 
+                    alt="Profile" 
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  <User size={20} style={{ color: colors.primary }} />
+                )}
+              </button>
+
+              {/* Menu Button */}
               <button
                 ref={menuRef}
                 onClick={() => setIsOpen(!isOpen)}
@@ -1059,9 +1094,9 @@ className="relative"  style={{ width: 450, height: 55 }}
             </div>
           )}
         </div>
-		
-		
-		{/* Hidden player feeding the VU meters */}
+                
+                
+                {/* Hidden player feeding the VU meters */}
 <audio
   ref={audioRef}
   id="ssr-player"

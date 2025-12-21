@@ -1,0 +1,89 @@
+For the still outstanding items, can you please try and do still in fast mode....
+
+Task:
+- 3-box overview redesign (sign up, product showcase, merchandise)
+
+For the overview section with the three boxes towards the top of the site in the one section. While keeping the design the same as it is currently please make the three boxes in this order as specified.... 
+
+Box #1:
+- Sign Up/Join the site, create an account to join the Hairspray Rebellion and use your knowledge of the site and what it is for (a live radio station you can tune into via the site and an upcoming app ((do not mention the app here)) for Spandex Salvation Radio, Hairspray Rebellion) and the benefits of creating an account (promoting why you should create a free account) and when tapping on this take the user to the overlay that pops up when a user is looking to sign up/login to the site but display the Sign Up pop up overview here instead of the login as they can access that via the sign up popup too if need be
+
+Box #2:
+- Product showcase for the merchandise that is on the site and should show a single product from the current merchandise on the site and when reloading the site each time have it show a different product here with a description of it and the information you think is most important to display here without overloading it and when tapping on this box it should take you to the merchandise section of the site and that specific product being shown at that time if possible too
+
+Box #3:
+- Subscriptions for the site, this should showcase the three tiers that are on the site for the subscription packages and without overloading this box simply display the three tiers with basic information shown and when tapped on this box take the user to the subscriptions section of the site
+
+Task:
+• Shows section design update
+
+For this task please just simply redesign the upcoming/past shows section of the site to match the current websites newly updated design matching the fonts as well
+
+
+
+
+
+Task:
+- Add profile button to navigation
+
+For this task simply just add a button at the top of the site in the navigation bar that displays the users profile picture retrieved from Firebase if the user is currently signed into their account. If they are not then just display a basic profile icon (a white icon with a circular border not filled in, with a simple person like icon in the middle of it with just shoulders and a circular head like shape, if that makes sense) and when tapped on then it should display the Login popup window box overlay to allow the user to login to their account or they can tap on the sign up button on this login popup overlay window to go directly to the sign up popup window instead
+
+
+Task:
+- 3 premium themes (Glam, Rebel, ShredWeisen)
+
+For the themes which used to already be in the site and should still contain the code in the files for this and its implementation and workings please make the themes as follows…
+
+Basic Themes
+- Night Theme (Dark mode, default selected theme)
+- Day Theme (Light mode)
+For these two basic themes this code should already be present in the sites files currently just not presently being displayed/used in the current site. You should be able to find/use these two themes already. The dark mode theme should be the default theme for the site and is the current theme that is being displayed. 
+The day theme should be a light mode theme which changes the entire site to a whiter color with white backgrounds and black text font colors instead. 
+
+When switching themes the entire site should animate to ensure the switching is smooth and the design/colors for each theme should be consistent.
+
+Premium Themes
+- Glam Theme
+    - This should match the Icon subscription tier box boarder gradient colors that are currently being used for the Icon subscription box boarder 
+    - Colors: Light blue-ish/dark blue-ish neon colors
+- Rebel Theme 
+    - This should match the rebel subscription tier box boarder gradient colors that are currently being used for the rebel subscription box boarder 
+    - Colors: Purple-ish/pink-ish neon colors
+- ShredWeisen
+    - This should match the legend subscription tier box boarder gradient colors that are currently being used for the legend subscription box boarder
+    - Colors: Orange-ish, pink-ish and purple-ish neon colors
+For these three premium themes they should be displayed in the dropdown theme selection list at the top in the navigation bar along with the two basic themes that should always be at the top of the dropdown list but for these three premium themes when one is selected it should only display that themes colors and switch to it when the current user is logged in and has an active subscription to one of the three tiers on the site. 
+
+For each of these three themes the name of each theme should be the name that is displayed here in the list right above. The colors for each theme are also listed and should be used and for each theme the colors should be the same colors as each of the subscription boxes/tiers that are currently displayed on the site with the boarders that are gradients. So please use the gradient boarder for each theme as the color palette for each one as listed.
+
+
+Task:
+- Band song submission form logic
+
+For this task I want to integrate a logic into the site for the current submission form that is shown on the site so that only if the user is Signed Up/Logged In AND approved via a new Boolean field that will be included in each users profile information within the Firebase Firestore database is in a band (upon registration, true/false Boolean in database) and the Boolean is set to true (if not found in the user profile information automatically assume it is False) then the song submission form should show on the site
+
+
+Task:
+- Social media links in footer
+
+For this task I want to add in the footer section of the site and have it displayed in the footer section of the site for every single website page visited a list of social media links like the Twitter (now called X) logo as a button and when tapped it takes you to a link I will provide for each one to the social media page given for each one. For now please just add the following link buttons/icons for each one and set each to the homepage of each social media page (for example for Twitter/X it should currently take you to www.x.com)
+
+These buttons/links/icons should be displayed in the footer section to the far left positioned vertically starting where the text starts on the far left side and then horizontally in a row and for the mobile view positioned respectively so that it looks still normal and good but however it needs to be to fit within the current display for each device size.
+
+List of Social Media Links:
+- Twitter/X
+    - www.x.com
+- Instagram
+    - www.instagram.com
+- Facebook
+    - www.facebook.com
+- Reddit
+    - www.reddit.com
+- TikTok
+    - www.TikTok.com
+
+
+Task:
+- Live Map header repositioning
+
+For this task please just simply swap the live Google integrated map that is currently integrated on the site and displayed with the header text right below it so that the header is displayed above the map and so that the map is displayed under the header/sub-header text  

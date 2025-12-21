@@ -124,8 +124,8 @@ export default function HomePage() {
         <Submissions />
 
         <section id="map" className="py-8">
-         <div id="live-map-header" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-  <h2 className="font-orbitron font-bold text-3xl md:text-4xl mb-4">Live Map</h2>
+         <div id="live-map-header" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mb-4">
+  <h2 className="font-orbitron font-bold text-3xl md:text-4xl">Live Map</h2>
 </div>
 <FullWidthGlobeMap />
 
