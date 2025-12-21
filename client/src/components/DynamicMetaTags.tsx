@@ -22,61 +22,16 @@ export default function DynamicMetaTags() {
       document.head.appendChild(meta);
     }
 
-    // Generate dynamic favicon based on current theme - disc logo design
-    const favicon = document.querySelector(
-      'link[rel="icon"]',
-    ) as HTMLLinkElement;
-    const faviconSvg = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-        <defs>
-          <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:${colors.primary}" />
-            <stop offset="100%" style="stop-color:${colors.secondary}" />
-          </linearGradient>
-          <linearGradient id="discGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.95" />
-            <stop offset="50%" style="stop-color:#e8e8e8;stop-opacity:0.85" />
-            <stop offset="100%" style="stop-color:#d0d0d0;stop-opacity:0.75" />
-          </linearGradient>
-        </defs>
-        
-        <!-- Background circle with theme gradient -->
-        <circle cx="16" cy="16" r="16" fill="url(#bgGrad)"/>
-        
-        <!-- Music disc -->
-        <circle cx="16" cy="16" r="11" fill="url(#discGrad)"/>
-        
-        <!-- Center hole -->
-        <circle cx="16" cy="16" r="4" fill="${isLightMode ? "#1a1a1a" : "#0a0a0a"}"/>
-        
-        <!-- Inner ring details -->
-        <circle cx="16" cy="16" r="8" stroke="${isLightMode ? "#666666" : "#999999"}" stroke-width="0.5" fill="none" opacity="0.6"/>
-        <circle cx="16" cy="16" r="6" stroke="${isLightMode ? "#888888" : "#bbbbbb"}" stroke-width="0.3" fill="none" opacity="0.4"/>
-        
-        <!-- Shine effect -->
-        <path d="M 9 9 A 9 9 0 0 1 23 9" stroke="white" stroke-width="1.2" fill="none" opacity="0.5"/>
-        <path d="M 11 11 A 7 7 0 0 1 21 11" stroke="white" stroke-width="0.8" fill="none" opacity="0.3"/>
-      </svg>
-    `;
+    // Use static MusicLogoIcon.png for favicon
+    const baseUrl = window.location.origin;
+    const faviconUrl = `${baseUrl}/MusicLogoIcon.png`;
 
-    // Create URL-encoded SVG for favicon
-    const encodedFaviconSvg = encodeURIComponent(faviconSvg);
-    const faviconDataUrl = `data:image/svg+xml,${encodedFaviconSvg}`;
-
-    // Update all favicon links
+    // Update all favicon links to use the static logo
     const faviconLinks = document.querySelectorAll('link[rel*="icon"]');
     faviconLinks.forEach((link) => {
-      (link as HTMLLinkElement).href = faviconDataUrl;
+      (link as HTMLLinkElement).href = faviconUrl;
+      (link as HTMLLinkElement).type = "image/png";
     });
-
-    // Ensure we have a main favicon link
-    if (!document.querySelector('link[rel="icon"]')) {
-      const link = document.createElement("link");
-      link.rel = "icon";
-      link.type = "image/svg+xml";
-      link.href = faviconDataUrl;
-      document.head.appendChild(link);
-    }
 
     // Update color scheme meta tag
     const colorSchemeMeta = document.querySelector('meta[name="color-scheme"]');
