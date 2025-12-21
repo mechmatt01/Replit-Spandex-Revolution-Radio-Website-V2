@@ -138,8 +138,6 @@ export default function HomePage() {
         <ShopifyEcommerce />
 
         <Footer />
-
-        <StickyPlayer />
       </main>
 
       {/* Subscription Plans Modal */}
@@ -151,8 +149,8 @@ export default function HomePage() {
         />
       )}
 
-      {/* if you really want the floating chat: */}
-      {showLiveChat && (
+      {/* Live Chat - only show when user clicks and show is live */}
+      {showLiveChat && isLiveNow && (
         <LiveChat
           isEnabled={showLiveChat}
           onToggle={() => setShowLiveChat(false)}
