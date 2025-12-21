@@ -89,10 +89,10 @@ export default function DynamicMetaTags() {
       document.head.appendChild(meta);
     }
 
-    // Update Open Graph image URL to use static LinkDisplayPreview.png
+    // Update Open Graph image URL to use static MusicLogoIcon.png
     const ogImageMeta = document.querySelector('meta[property="og:image"]');
     const baseUrl = window.location.origin;
-    const ogImageUrl = `${baseUrl}/LinkDisplayPreview.png`;
+    const ogImageUrl = `${baseUrl}/MusicLogoIcon.png`;
 
     if (ogImageMeta) {
       ogImageMeta.setAttribute("content", ogImageUrl);
