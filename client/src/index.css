@@ -78,12 +78,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  /* Ensure proper scrolling */
-  overflow-x: auto !important;
+  /* Ensure proper scrolling - prevent horizontal overflow on mobile */
+  overflow-x: hidden !important;
   overflow-y: auto !important;
   position: static !important;
   height: auto !important;
-  width: auto !important;
+  width: 100% !important;
 }
 
 /* Fix for map fullscreen mode - ensure body returns to normal state */
