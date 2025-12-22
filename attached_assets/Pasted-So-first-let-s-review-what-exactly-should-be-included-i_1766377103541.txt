@@ -1,0 +1,290 @@
+So, first, let’s review what exactly should be included in a user profile when signing up I want the database to create a random 10 alphanumeric key for the user and the database should be setup like…
+
+“Users” > “User: {ALPHANUMERIC HERE HERE}” > User Profile Data
+
+For the User Profile Data... 
+- firstName (Text String)
+- lastName (Text String)
+- userProfileImage (URL)
+- emailAddress (Text String)
+- phoneNumber (Numbers)
+- location (Coordinates)
+- isActiveListening (Boolean) 
+- activeSubscription (Boolean)
+- renewalDate (Timestamp)
+- lastLogin (Timestamp)
+- userID (String)
+
+There may be more later but this is for now… if you can not get access to some of this information upon sign up which it should include in the sign up process asking for the users First Name, Last Name, Email Address and Phone Number then if not avaialable for some reason please leave blank but create the key still with no value.
+
+- As for this data I want the “PhoneNumber” to be verified with a code sent to user using Google’s Firebase authentication as well as their email address verified with a code sent to their email and verified as well.
+- For the “IsActiveListening”, this should be defaulted as “False” and updated to “True” every time the user is logged in, and is activley tuned into the live radio broadcast. Basically when they click “Play Live” in the main player or Play in the floating player. And when clicking pause in the main player or pause in the floating player change/update this value of the key to “False”. When this key changes the key to “IsActiveListening” to “True” the live map should display the user with a flashing little dot on the map at the location the users around the world are currently listening and get their location using the “Location” keys for each user that has “IsActiveListening” set to “True” currently and live update the map with new dots fading when a users is set to “False” and fading in when set to “True”
+- The “Location” key should come from their current location and permission asked by Chrome, or whatever browser or the iPhone location in Safari etc. and should update every time they login/enter the site again if the location has detected a change from what it was/is currently and also set when they create the account for the first time/login each time
+- The “ActiveSubscription” key should be set to “False” by default for each user and changes to “True” when the user has an active subscription
+- The “RenewalDate” timestamp should update monthly to their next renewal date for the subscription if one is active… if not this does not have to be in their profile as a key even or if so set it as null until they subscribe and update it after each billing cycle to the next one
+- As for the “ProfileImage” if it is their own image uploaded get the URL from the uploaded image which should be stored in the datastore in Firebase in a folder called “User: {ALPHANUMERIC HERE HERE}” the same as the database collection name for each user and in this their profile image should be set with the URL in the “ProfileImage” key, if this is an avater then set it to the avaters URLs selected which all should be stored in a seperate folder in the data store called “Avatars” and each with their own URL. If logged into through Google you can also try and get the current Google Profile URL and use that and set that here too instead unless changed by the user of course
+- The “UserID” should be set to the value of the 10 length alphanumeric key that the user is identified by
+
+As for the live map, when it changes the key to “IsActiveListening” to “True” it should display the user with a flashing little dot on the map at the location the users around the world are currently listening and get their location using the “Location” keys for each user that has “IsActiveListening” set to “True” currently and live update the map with new dots fading when a users is set to “False” and fading in when set to “True”
+
+
+The active listeners data should come from the users locations and isactivelistening in the firebase database. and then display the count of active listeners for each country along with each listener as a dot on the map.  For the countries that is just the count of unique countries that currently have active listeners.  The active liseners is the count of total listeners currently listening to the live stream radio on the site based on how many users have “IsActiveListening” set to “True” in the firebase database.
+
+The total listeners is the count of total all time listeners so this should be a number stored in the firebase database within a collection called “Data” (if a collection does not exist create one or I will create one if needed) and then from data entry as “TotalListeners” stored as a number type within the “Data” collection.
+
+——————— 
+
+Add in the footer the email under the "Your home for old-school metal music. Broadcasting the rebellion since 2025." text to email when clicked on… support@spandexsalvationradio.com and ensure it is aligned to the left with the text right above it so that is all lines up the start of each text element on the left in a column     ————
+
+Also the main player width is smaller and then goes back to being bigger and so please ensure this if fixed full and then run the latest site changes to the github repo and also to the firebase site hosting to ensure that the current site at www.spandex-salvation-radio.com has the latest changes and ensure everything is set to production mode and works perfectly in production mode before deploying 
+
+—————
+
+
+Awesome so now for review... 
+
+“Users” > “User: {ALPHANUMERIC HERE HERE}” > User Profile Data
+
+For the User Profile Data... 
+- firstName (Text String)
+- lastName (Text String)
+- userProfileImage (URL)
+- emailAddress (Text String)
+- phoneNumber (Numbers)
+- location (Coordinates)
+- isActiveListening (Boolean) 
+- activeSubscription (Boolean)
+- renewalDate (Timestamp)
+- lastLogin (Timestamp)
+- userID (String)
+
+There may be more later but this is for now… if you can not get access to some of this information upon sign up which it should include in the sign up process asking for the users First Name, Last Name, Email Address and Phone Number then if not avaialable for some reason please leave blank but create the key still with no value.
+
+- As for this data I want the “PhoneNumber” to be verified with a code sent to user using Google’s Firebase authentication as well as their email address verified with a code sent to their email and verified as well.
+- For the “IsActiveListening”, this should be defaulted as “False” and updated to “True” every time the user is logged in, and is activley tuned into the live radio broadcast. Basically when they click “Play Live” in the main player or Play in the floating player. And when clicking pause in the main player or pause in the floating player change/update this value of the key to “False”. When this key changes the key to “IsActiveListening” to “True” the live map should display the user with a flashing little dot on the map at the location the users around the world are currently listening and get their location using the “Location” keys for each user that has “IsActiveListening” set to “True” currently and live update the map with new dots fading when a users is set to “False” and fading in when set to “True”
+- The “Location” key should come from their current location and permission asked by Chrome, or whatever browser or the iPhone location in Safari etc. and should update every time they login/enter the site again if the location has detected a change from what it was/is currently and also set when they create the account for the first time/login each time
+- The “ActiveSubscription” key should be set to “False” by default for each user and changes to “True” when the user has an active subscription
+- The “RenewalDate” timestamp should update monthly to their next renewal date for the subscription if one is active… if not this does not have to be in their profile as a key even or if so set it as null until they subscribe and update it after each billing cycle to the next one
+- As for the “ProfileImage” if it is their own image uploaded get the URL from the uploaded image which should be stored in the datastore in Firebase in a folder called “User: {ALPHANUMERIC HERE HERE}” the same as the database collection name for each user and in this their profile image should be set with the URL in the “ProfileImage” key, if this is an avater then set it to the avaters URLs selected which all should be stored in a seperate folder in the data store called “Avatars” and each with their own URL. If logged into through Google you can also try and get the current Google Profile URL and use that and set that here too instead unless changed by the user of course
+- The “UserID” should be set to the value of the 10 length alphanumeric key that the user is identified by
+
+As for the live map, when it changes the key to “IsActiveListening” to “True” it should display the user with a flashing little dot on the map at the location the users around the world are currently listening and get their location using the “Location” keys for each user that has “IsActiveListening” set to “True” currently and live update the map with new dots fading when a users is set to “False” and fading in when set to “True”
+
+
+The active listeners data should come from the users locations and isactivelistening in the firebase database. and then display the count of active listeners for each country along with each listener as a dot on the map.  For the countries that is just the count of unique countries that currently have active listeners.  The active liseners is the count of total listeners currently listening to the live stream radio on the site based on how many users have “IsActiveListening” set to “True” in the firebase database.
+
+The total listeners is the count of total all time listeners so this should be a number stored in the firebase database within a collection called “Data” (if a collection does not exist create one or I will create one if needed) and then from data entry as “TotalListeners” stored as a number type within the “Data” collection.
+
+And so anyways I want there to be a toggle in the admin popup view within the settings tab inside of it... this toggle should have "Test" mode on the left and on the right should be "Live" mode and when on test mode the data should be mock data and all mock data for the live interactive map, the active locations, live statistics, and the shows (past and upcoming) and when then on Live mode it should have the live data coming into these sources from firebase and any other sources where it comes from... 
+
+Also add a new tab called "Radio" inside of the admin panel which contains the current radio stations list and each one should look just like they do in the radio stations drop down list just bigger as the view is bigger here in terms of width and then each one has the streaming URL and fall back url under it and can be updated and removed a station and add a new station if needed and then saving it pushes these changes live to the firebase database where they should be being retrieved from on the live site and then the data they get can be retreieved however that is currently working... 
+
+Also the live weather temperature seems to be working as well as the users live current location but the weather icons don't seem to be working please check the source paths to each of these along with anything else related to these to ensure they are working and that when displayed they are animated (should alreadly be each one animated as an svg file within the "attatched_assets" > "animated_weather_icons"
+
+Then after testing all of this and ensuring the test data and live data needed for test mode and live mode is created if not already and stored in firebase database where needed and testing is completed and working properly then push the changes to firebase hosting site and the github repo main branch
+
+———
+
+ToDo
+
+- Fix white border around the site
+
+Prompt: 
+Please fix..  - The floating player disappears (animatedly goes down and hides) when scrolling up... it should only do this when you reach the bottom of the site in the footer area...  -------------------------------------- 
+
+- The enable location button is way too big and should not be the entire height/width of the weather/current location section above the live interactive map... its height should match the height of other buttons on the site like the view all archieves button and the Join the Revolution button... it should also match the text color and button background color as the other ones that match the currently selected theme  -------------------------------------- 
+	
+- The border color around the live interactive map, shows, and six feature cards borders should be more vibrant and ensure they match the theme's main color. For example, for Classic Metal, it should be orange, not the white color they are for any theme.
+
+-------------------------------------- 
+
+- There should be no borders around the sign-up button, login button, Premium Feature - Paid Subscription Required box, weather/current location/enable weather button/elements, send us a message form elements, and merchandise items. All these elements' borders should be removed. What also might help you solve this issue is that when clicking on a button with a border, it disappears, and also comparing the ones with a border, the theme selection button dropdown does not have a highlight on it, nor does some of the navigation bar elements, like the row of nav bar elements, just to compare it to them. 
+
+-------------------------------------- 
+
+- In the real-time dashboard, the yellow colors (in classic metal theme) should match the theme color instead of the yellow colors, the LIVE text should be green as well as the background, the text size should be increased for the percentages, and text under the numbers and the emoji for the Songs Played Today box should be changed as its too dark on the dark background to be seen well
+
+-------------------------------------- 
+
+Please ensure that these items are fixed fully and test/verify that the items are fully fixed and completed, and do not stop until they are completed entirely.
+
+      Great so everything looks good other than...
+ 
+- The login/sign up buttons dont do anything... nothing shows when clicking on them only the screen darkens with a darker overlay...
+
+- The live interactive map gives an error when loading the first time on the site saying... 🗺️
+Interactive Map
+
+Configure API key domain restrictions
+
+To fix this:
+
+1. Go to Google Cloud Console
+2. Navigate to APIs & Services > Credentials
+3. Find your API key and click on it
+4. Add these domains to restrictions:
+• https://spandex-salvation-radio.com/
+• https://www.spandex-salvation-radio.com/
+• https://spandex-salvation-radio-site.web.app/
+:3001/api/auth/active-listeners:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)Understand this error
+:3001/api/auth/active-listeners:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)Understand this error
+FullWidthGlobeMapFixed.tsx:200  GET http://localhost:3001/api/auth/active-listeners 500 (Internal Server Error)
+fetchActiveListeners @ FullWidthGlobeMapFixed.tsx:200Understand this error
+FullWidthGlobeMapFixed.tsx:200 Fetch failed loading: GET "http://localhost:3001/api/auth/active-listeners".
+fetchActiveListeners @ FullWidthGlobeMapFixed.tsx:200
+
+But I know it works though as when I refresh the site the location is retrieved and it then loads... Please fix this. Also...
+
+- The elements still both of them with text that reads “Real-time data • Updates every 30 seconds" the green dot for this should be to the left of the text and vertically/horiztonally left text aligned in the center with the text and in both places the green dot is a little higher and not centered with the text like it should be.
+
+- The live interactive map... the expanded map view is now after the most recent changes does not open at all and actually just takes you to the top of the site and not letting you scroll then... please look into this fully as it used to recently work just was not showing full screen due to it having werid positioning          ————————————————————
+   Step 1:
+Great now clean up the project, cleaning up the code from each file if needed, any unused assets (ONLY IF 100% SURE THE ASSET IS NOT USED/NEEDED ANYWHERE), any duplicate files (ONLY IF SURE that no new code is needed in the one being removed and if so compare them and transfer over what is needed first) and ensure all paths are updated to the correct standing file as well, any broken links clean up (FIX THEM IF POSSIBLE) and IMPORTANT only remove/change code, files, paths, and etc if the unused code/asset YOU ARE 100% SURE THE CODE IS NOT USED ANYWHERE ELSE/IS NOT REFERENCED ANYWHERE ELSE) AND IT WILL NOT BREAK/CHANGE ANY UI AND NO LOGIC of the current site/project/files. You can do this simultaneously if possible to speed it up. 
+
+Step 2:
+Ensure all errors that could break something important (not minor) are fixed fully and no new errors are created that change any of the logic/UI of the site IN ANYWAY!
+
+Step 3:
+After the cleanup is done entirely, test the site and ALL of its functions and fallbacks, and login/sign up methods, database firestore with Firebase, Firebase storage, updating profiles, profile visiblity when logged in, Authentication via Firebase (ensure all references to Authentication via Replit are removed and not being used), profile creation/updating/displaying and fetching from Firebase database, all APIs and the look and theme of the site.
+
+Step 4:
+Then after all of this is 100% verified and completed then push the changes to the github repo (main branch).
+
+Step 5:
+Then after all of this is 100% verified and completed then push the changes to firebase hosting site containing the site domain of... www.spandex-salvation-radio.com
+
+———————————
+
+Please continue and review the entire full previous chat file and the last task completed/worked on in the chat previously and ensure it is completed and then continue on with the next tasks, which in this case is to ensure that...
+
+- The site can build and run properly from the client and the server directory's respectively and no errors are produced while doing so and if there are error(s) please then fix them and try again until it is a success
+
+You can use port number 4000 for this if need be to test on the browser, if possible. If port 4000 is not available please use port 3000, then 5000 and then 5500. And specificy when it is all up and running what exact port I should go to in my browser and has been set and monitor the console log for any errors and if errors come up then start to debug and fix them, please.
+
+———
+
+Please continue and review the entire full previous chat file and the last task completed/worked on in the chat previously and ensure it is completed and then continue on with the next tasks, which in this case is to ensure that these errors below are dealt with as well if need be and are not due to the recent in the middle of changes from the previous chat that we are currently working on/starting with to finish fixing in this chat.. if they are those can be ignored and if an error looks like it might be because of something recently changed it can be left until a full rebuild and run is complete to ensure we don't cause another error that did not have to ever be present...
+
+———————-———————-————————
+
+Update Notes
+Overview Section
+Task:
+- 3-box overview redesign (sign up, product showcase, merchandise)
+
+For the overview section with the three boxes towards the top of the site in the one section. While keeping the design the same as it is currently please make the three boxes in this order as specified.... 
+
+Box #1:
+- Sign Up/Join the site, create an account to join the Hairspray Rebellion and use your knowledge of the site and what it is for (a live radio station you can tune into via the site and an upcoming app ((do not mention the app here)) for Spandex Salvation Radio, Hairspray Rebellion) and the benefits of creating an account (promoting why you should create a free account) and when tapping on this take the user to the overlay that pops up when a user is looking to sign up/login to the site but display the Sign Up pop up overview here instead of the login as they can access that via the sign up popup too if need be
+
+Box #2:
+- Product showcase for the merchandise that is on the site and should show a single product from the current merchandise on the site and when reloading the site each time have it show a different product here with a description of it and the information you think is most important to display here without overloading it and when tapping on this box it should take you to the merchandise section of the site and that specific product being shown at that time if possible too
+
+Box #3:
+- Subscriptions for the site, this should showcase the three tiers that are on the site for the subscription packages and without overloading this box simply display the three tiers with basic information shown and when tapped on this box take the user to the subscriptions section of the site
+
+Past/Upcoming Shows Section
+Task:
+• Shows section design update
+
+- Update boxes design to make it more uniform with the current new site design
+    - Ensure that this entire section of the website’s design is updated to look more uniform with the newly updated website design ensuring it matches the newly updated font of the website and is consistent 
+
+Main Player
+- Remove main music player 
+    - The main big music player in the center of the website towards the top of the site should be fully removed and all of its elements as well that are attached to it should be fully removed as well
+
+Mini Player
+- Move now playing/next up information down to mini player and make design uniform 
+    - The now playing/next up current track information that is displayed in the main big music player should be moved and integrated into the mini music player that is displayed at the bottom of the site view
+
+- Remove now playing button from mini player 
+    - Remove the play/pause button that is currently displayed in the mini player at the bottom of the site in the mini player on the right side of it fully and use the excess space as needed or remove it if not needed for other information like the next up/currently playing track information
+
+Navigation Bar
+- Expand amp panel
+    - Expand the size of the middle navigation bar amp panel to make it bigger keeping everything on the left and right of it as is only moving them further to the left and right respectively and decreasing the padding between items and the amp as well if need be only  
+- Add burger menu bar dropdown to navigation bar (right side)
+    - Add a menu bar three lines dropdown button that animates when tapped with a dropdown list that displays the sites main navigation bar links on it with each one taking you to the respective section of the site/main home page and animates to scroll to each section of the tapped on link 
+    - At the bottom of this dropdown list there should be a Login and a Sign Up button with the login button being filled in whatever the main theme color of the currently selected theme is and the Sign Up button should be the secondary color of the currently selected theme as well with the boarder color of the button being this secondary color and the fill color being none. The text color for both of the buttons should be the main text color of the currently selected theme of the site. The login button should take the user when tapped to the popup login overlay window view of the site and the sign up button when tapped should take the user to the sign up popup window overlay view of the site. Both login and sign up buttons should have rounded corners as well to make them both rounded rectangles.
+- Add profile section button to navigation bar (right side)
+    - Task:
+    - Add profile button to navigation
+        - For this task simply just add a button at the top of the site in the navigation bar that displays the users profile picture retrieved from Firebase if the user is currently signed into their account. If they are not then just display a basic profile icon (a white icon with a circular border not filled in, with a simple person like icon in the middle of it with just shoulders and a circular head like shape, if that makes sense) and when tapped on then it should display the Login popup window box overlay to allow the user to login to their account or they can tap on the sign up button on this login popup overlay window to go directly to the sign up popup window instead
+        - This button/view should always be circular and either display the currently logged in users profile image which is retrieved from the Firebase Firestore Database from the users profile and be masked into the fully circular shape or be a circular shape not filled in but with a circular boarder around it and inside of it with the same color as the boarder be a simple and modern icon of a person with a circular head shape and rounded shoulders to display a user like icon inside the circular boarder and when tapped takes you to the user profile/settings page of the site if the user is currently logged in and showing their profile image or takes you to the login popup overlay window view if not currently logged in.  
+
+Website Overall Redesign
+Task: Update entire site design to be more uniform
+- Unify the entire site to ensure the websites fonts, font sizes, font colors, icon designs, website colors, general colors, images, assets, and everything else, including things like button sizes, shapes and looks are all uniform across the entire site, including every page and link possible
+
+Live Chat
+Task: Live Chat Popup Window
+- The live chat popup window that appears on the bottom right of the main homepage of the site should popup much smaller and the content of it as well to be only half the width 50% (1/2) of the current device size/bounds and only 25% (1/4) of the current device height size/bounds. Ensure the content within the popup window is all resized respectively to the correct context as it should be and displayed properly to ensure the text readability, along with the button readability and placement is still the same as it is currently in terms of it staying in its current place like for example the login/sign up buttons should stay in one single row always on all device sizes and landscape/portrait mode still of all of the items/content within the popup box along with the boarders still having the correct/proper padding inside of them to the content that is being displayed. 
+
+Live Map
+Task:
+- Live Map header repositioning
+
+For this task please just simply swap the live Google integrated map that is currently integrated on the site and displayed with the header text right below it so that the header is displayed above the map and so that the map is displayed under the header/sub-header text  
+
+
+Themes
+Task:
+- 3 premium themes (Glam, Rebel, ShredWeisen)
+
+For the themes which used to already be in the site and should still contain the code in the files for this and its implementation and workings please make the themes as follows…
+
+Basic Themes
+- Night Theme (Dark mode, default selected theme)
+- Day Theme (Light mode)
+For these two basic themes this code should already be present in the sites files currently just not presently being displayed/used in the current site. You should be able to find/use these two themes already. The dark mode theme should be the default theme for the site and is the current theme that is being displayed. 
+The day theme should be a light mode theme which changes the entire site to a whiter color with white backgrounds and black text font colors instead. 
+
+When switching themes the entire site should animate to ensure the switching is smooth and the design/colors for each theme should be consistent.
+
+Premium Themes
+- Glam Theme
+    - This should match the Icon subscription tier box boarder gradient colors that are currently being used for the Icon subscription box boarder 
+    - Colors: Light blue-ish/dark blue-ish neon colors
+- Rebel Theme 
+    - This should match the rebel subscription tier box boarder gradient colors that are currently being used for the rebel subscription box boarder 
+    - Colors: Purple-ish/pink-ish neon colors
+- ShredWeisen
+    - This should match the legend subscription tier box boarder gradient colors that are currently being used for the legend subscription box boarder
+    - Colors: Orange-ish, pink-ish and purple-ish neon colors
+For these three premium themes they should be displayed in the dropdown theme selection list at the top in the navigation bar along with the two basic themes that should always be at the top of the dropdown list but for these three premium themes when one is selected it should only display that themes colors and switch to it when the current user is logged in and has an active subscription to one of the three tiers on the site. 
+
+For each of these three themes the name of each theme should be the name that is displayed here in the list right above. The colors for each theme are also listed and should be used and for each theme the colors should be the same colors as each of the subscription boxes/tiers that are currently displayed on the site with the boarders that are gradients. So please use the gradient boarder for each theme as the color palette for each one as listed.
+
+Band Song Submission
+Task:
+- Band song submission form logic
+
+For this task I want to integrate a logic into the site for the current submission form that is shown on the site so that only if the user is Signed Up/Logged In AND approved via a new Boolean field that will be included in each users profile information within the Firebase Firestore database is in a band (upon registration, true/false Boolean in database) and the Boolean is set to true (if not found in the user profile information automatically assume it is False) then the song submission form should show on the site
+
+Social Media Handles
+Task:
+- Social media links in footer
+
+For this task I want to add in the footer section of the site and have it displayed in the footer section of the site for every single website page visited a list of social media links like the Twitter (now called X) logo as a button and when tapped it takes you to a link I will provide for each one to the social media page given for each one. For now please just add the following link buttons/icons for each one and set each to the homepage of each social media page (for example for Twitter/X it should currently take you to www.x.com)
+
+These buttons/links/icons should be displayed in the footer section to the far left positioned vertically starting where the text starts on the far left side and then horizontally in a row and for the mobile view positioned respectively so that it looks still normal and good but however it needs to be to fit within the current display for each device size.
+
+List of Social Media Links:
+- Twitter/X
+    - www.x.com
+- Instagram
+    - www.instagram.com
+- Facebook
+    - www.facebook.com
+- Reddit
+    - www.reddit.com
+- TikTok
+    - www.TikTok.com
+
+
+Site Brand Icon Redesign
+- [ ] Will be sent updated icon 
+    - [ ] Update Favicon to newly updated icon
+    - [ ] Update main site icon everywhere where it currently appears
+    - [ ] Animate icon like it was before but of course an animation that matches the new icon whatever that may be and we settle on
