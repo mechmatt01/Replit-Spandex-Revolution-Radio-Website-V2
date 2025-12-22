@@ -1,0 +1,4 @@
+{
+  "now": { "title": "Test Song", "artist": "Test Artist" },
+  "next": { "title": "Next Test", "artist": "Other Artist" }
+}
