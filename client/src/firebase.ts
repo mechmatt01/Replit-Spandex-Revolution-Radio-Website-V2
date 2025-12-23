@@ -25,13 +25,15 @@ import {
 
 // ❗ performance can be missing in some environments
 let getPerformanceSafe: ((app: any) => any) | null = null;
-try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { getPerformance } = await import("firebase/performance");
-  getPerformanceSafe = getPerformance;
-} catch (e) {
-  // ignore, we'll just skip performance
-}
+(async () => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { getPerformance } = await import("firebase/performance");
+    getPerformanceSafe = getPerformance;
+  } catch (e) {
+    // ignore, we'll just skip performance
+  }
+})();
 
 // 1) Firebase config (may be empty in local)
 const firebaseConfig = {
