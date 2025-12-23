@@ -1,0 +1,11 @@
+/* Temporary fix: ensure the React root and its direct children are visible
+   This overrides any aggressive global rules that may hide the UI. */
+#root,
+#root > * {
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 1 !important;
+  position: relative !important;
+  transform: none !important;
+  pointer-events: auto !important;
+}

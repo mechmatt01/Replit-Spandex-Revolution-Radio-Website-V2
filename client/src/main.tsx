@@ -6,6 +6,7 @@ import "./unified-focus-eliminator.css";
 import "./firebase";
 import App from "./App";
 import "./index.css";
+import "./fix-unhide.css";
 
 // Global currentTheme variable to prevent React error handler crashes
 declare global {

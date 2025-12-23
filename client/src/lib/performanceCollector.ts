@@ -1,4 +1,4 @@
-import { performance } from '../firebase';
+import { performance as firebasePerformance } from '../firebase';
 import { trace } from 'firebase/performance';
 
 // Performance data storage
@@ -44,11 +44,11 @@ class PerformanceCollector {
     this.sessionId = this.generateSessionId();
     this.userId = this.getUserId();
     
-    // Start collecting performance data
-    this.startCollection();
-    
-    // Set up automatic data cleanup
-    this.setupDataCleanup();
+    // Only start collection in a browser environment
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      this.startCollection();
+      this.setupDataCleanup();
+    }
   }
 
   private generateSessionId(): string {
@@ -58,7 +58,8 @@ class PerformanceCollector {
   private getUserId(): string | undefined {
     // Get user ID from localStorage or other auth state
     try {
-      const userData = localStorage.getItem('firebase:authUser:AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ:[DEFAULT]');
+      if (typeof window === 'undefined' || !window.localStorage) return undefined;
+      const userData = window.localStorage.getItem('firebase:authUser:AIzaSyCBoEZeDucpm7p9OEDgaUGLzhn5HpItseQ:[DEFAULT]');
       if (userData) {
         const user = JSON.parse(userData);
         return user.uid;
@@ -112,7 +113,7 @@ class PerformanceCollector {
   }
 
   private collectCoreWebVitals(): void {
-    if ('PerformanceObserver' in window) {
+    if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
       try {
         // Largest Contentful Paint (LCP)
         const lcpObserver = new PerformanceObserver((list) => {
@@ -161,9 +162,9 @@ class PerformanceCollector {
   }
 
   private collectNavigationTiming(): void {
-    if ('performance' in window && 'getEntriesByType' in performance) {
+    if (typeof window !== 'undefined' && window.performance && 'getEntriesByType' in window.performance) {
       try {
-        const navigationEntries = performance.getEntriesByType('navigation');
+        const navigationEntries = window.performance.getEntriesByType('navigation');
         if (navigationEntries.length > 0) {
           const navEntry = navigationEntries[0] as PerformanceNavigationTiming;
           
@@ -191,9 +192,9 @@ class PerformanceCollector {
   }
 
   private collectResourceTiming(): void {
-    if ('performance' in window && 'getEntriesByType' in performance) {
+    if (typeof window !== 'undefined' && window.performance && 'getEntriesByType' in window.performance) {
       try {
-        const resourceEntries = performance.getEntriesByType('resource');
+        const resourceEntries = window.performance.getEntriesByType('resource');
         resourceEntries.forEach((entry: PerformanceEntry) => {
           const resourceEntry = entry as PerformanceResourceTiming;
           
@@ -220,9 +221,9 @@ class PerformanceCollector {
   }
 
   private collectMemoryUsage(): void {
-    if ('memory' in performance) {
+    if (typeof window !== 'undefined' && window.performance && 'memory' in window.performance) {
       try {
-        const memory = (performance as any).memory;
+        const memory = (window.performance as any).memory;
         this.recordEvent('custom_trace', 'Memory Usage', memory.usedJSHeapSize, 'bytes', {
           totalJSHeapSize: memory.totalJSHeapSize,
           jsHeapSizeLimit: memory.jsHeapSizeLimit,
@@ -251,8 +252,8 @@ class PerformanceCollector {
       metadata,
       userId: this.userId,
       sessionId: this.sessionId,
-      userAgent: navigator.userAgent,
-      url: window.location.href
+      userAgent: (typeof navigator !== 'undefined' ? navigator.userAgent : 'node'),
+      url: (typeof window !== 'undefined' && window.location ? window.location.href : '')
     };
 
     // Store event in appropriate category
@@ -298,8 +299,11 @@ class PerformanceCollector {
 
   private sendToFirebase(event: PerformanceEvent): void {
     try {
+      // Only attempt to send to Firebase in a browser and when Firebase performance is available
+      if (typeof window === 'undefined' || !firebasePerformance) return;
+
       // Create a custom trace for Firebase Performance Monitoring
-      const customTrace = trace(performance, `${event.type}_${event.name}`);
+      const customTrace = trace(firebasePerformance, `${event.type}_${event.name}`);
       customTrace.start();
       
       // Add custom attributes if available

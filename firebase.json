@@ -6,14 +6,11 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "public",
+    "public": "client/dist",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-<<<<<<< HEAD
-    ]
-=======
     ],
     "rewrites": [
       {
@@ -90,7 +87,6 @@
     ],
     "cleanUrls": true,
     "trailingSlash": false
->>>>>>> b6efcea (latest changes)
   },
   "functions": [
     {
