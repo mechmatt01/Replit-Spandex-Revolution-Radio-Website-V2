@@ -1,0 +1,28 @@
+type Station @table {
+  name: String!
+  slogan: String!
+  liveStreamURL: String!
+  description: String
+  contactEmail: String
+  socialMediaLinks: [String]
+}
+
+type Program @table {
+  title: String!
+  startTime: Timestamp!
+  endTime: Timestamp!
+  dayOfWeek: String!
+  description: String
+  hostName: String
+}
+
+type Schedule @table {
+  dayOfWeek: String!
+}
+
+type Song @table {
+  title: String!
+  artist: String!
+  album: String
+  duration: Int
+}

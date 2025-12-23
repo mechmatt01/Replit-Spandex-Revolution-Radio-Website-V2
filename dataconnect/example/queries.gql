@@ -1,0 +1,31 @@
+mutation CreateStation @auth(level: USER) {
+  station_insert(data: {
+    name: "My Station",
+    slogan: "The best station ever!",
+    liveStreamURL: "http://example.com/stream"
+  })
+}
+
+query ListStations @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  stations {
+    id
+    name
+    slogan
+  }
+}
+
+mutation UpdateSong($id: UUID!, $album: String) @auth(level: USER) {
+  song_update(id: $id, data: {album: $album})
+}
+
+query ListMyPrograms @auth(level: USER, insecureReason: "This operation is safe to expose to all logged in users.") {
+  programs {
+    id
+    title
+    description
+    dayOfWeek
+    startTime
+    endTime
+    hostName
+  }
+}

@@ -1,0 +1,52 @@
+mutation CreateSeedData @transaction @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public as it is only used for seeding data.") {
+  station_insertMany(data: [
+    {
+      name: "Spandex Salvation Radio",
+      slogan: "Saving the world one song at a time",
+      liveStreamURL: "https://example.com/live",
+      contactEmail: "contact@example.com",
+      description: "Your source for the best music in the world!",
+      socialMediaLinks: ["https://facebook.com/example", "https://twitter.com/example"]
+    }
+  ])
+  program_insertMany(data: [
+    {
+      title: "Morning Mayhem",
+      dayOfWeek: "Weekdays",
+      startTime: "2024-03-15T06:00:00Z",
+      endTime: "2024-03-15T10:00:00Z",
+      hostName: "DJ Riot",
+      description: "Start your day with a bang!"
+    },
+    {
+      title: "Afternoon Delight",
+      dayOfWeek: "Weekdays",
+      startTime: "2024-03-15T14:00:00Z",
+      endTime: "2024-03-15T18:00:00Z",
+      hostName: "Lady Love",
+      description: "Smooth tunes for a relaxing afternoon."
+    }
+  ])
+  song_insertMany(data: [
+    {
+      title: "Cosmic Dream",
+      artist: "Astro Beats",
+      album: "Space Odyssey",
+      duration: 240
+    },
+    {
+      title: "Electric Groove",
+      artist: "Voltage Vanguard",
+      album: "Power Surge",
+      duration: 210
+    }
+  ])
+  schedule_insertMany(data: [
+    {
+      dayOfWeek: "Monday"
+    },
+    {
+      dayOfWeek: "Tuesday"
+    }
+  ])
+}
