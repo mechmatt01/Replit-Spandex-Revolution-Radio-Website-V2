@@ -1,7 +1,7 @@
-modules = ["nodejs-20"]
+modules = ["nodejs-20", "gcloud"]
 [nix]
 channel = "stable-25_05"
-packages = ["unzip"]
+packages = ["unzip", "python313Packages.firebase-admin", "firebase-tools"]
 
 [agent]
 expertMode = true
@@ -37,3 +37,16 @@ externalPort = 80
 [[ports]]
 localPort = 5001
 externalPort = 3001
+
+[[ports]]
+localPort = 9005
+externalPort = 3000
+
+[[ports]]
+localPort = 9006
+externalPort = 3002
+
+[deployment]
+deploymentTarget = "static"
+build = ["sh", "-c", "npm install && npm run build"]
+publicDir = "dist"
