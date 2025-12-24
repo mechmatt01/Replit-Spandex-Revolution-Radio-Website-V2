@@ -6,6 +6,8 @@ A cutting-edge digital platform for streaming old-school metal music 24/7, featu
 
 **Live Site**: [https://spandex-salvation-radio-site.web.app](https://spandex-salvation-radio-site.web.app)
 
+[https://www.spandex-salvation.com](https://www.spandex-salvation.com)
+
 ## ✨ Features
 
 - **🎵 Live Radio Streaming**: Multiple stations including Hot 97, Power 106, SomaFM Metal, and 95.5 The Beat
