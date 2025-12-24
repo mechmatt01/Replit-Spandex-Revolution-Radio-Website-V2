@@ -3,6 +3,15 @@ import { trace } from 'firebase/performance';
 
 // Create a custom trace for measuring specific operations
 export const createCustomTrace = (traceName: string): any => {
+  // Guard against missing performance module
+  if (!performance || typeof performance === 'undefined') {
+    return {
+      start: () => {},
+      stop: () => {},
+      setAttribute: () => {},
+      addMetric: () => {}
+    };
+  }
   return trace(performance, traceName);
 };
 

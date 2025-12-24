@@ -4,8 +4,15 @@
 #root > * {
   opacity: 1 !important;
   visibility: visible !important;
-  z-index: 1 !important;
+  /* Ensure the app root is above fullscreen overlays from templates */
+  z-index: 100000 !important;
   position: relative !important;
   transform: none !important;
   pointer-events: auto !important;
+}
+
+/* If there are stray full-screen fixed overlays accidentally inserted outside #root,
+   prefer the app root visually but allow overlays to still appear when explicitly needed. */
+body > *:not(#root) {
+  z-index: 10 !important;
 }

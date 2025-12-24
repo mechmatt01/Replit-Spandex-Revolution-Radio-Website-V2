@@ -162,10 +162,10 @@ class PerformanceCollector {
   }
 
   private collectNavigationTiming(): void {
-    if (typeof window !== 'undefined' && window.performance && 'getEntriesByType' in window.performance) {
+    if (typeof window !== 'undefined' && window.performance && typeof (window.performance as any).getEntriesByType === 'function') {
       try {
         const navigationEntries = window.performance.getEntriesByType('navigation');
-        if (navigationEntries.length > 0) {
+        if (navigationEntries && navigationEntries.length > 0) {
           const navEntry = navigationEntries[0] as PerformanceNavigationTiming;
           
           // Page load time
@@ -192,10 +192,11 @@ class PerformanceCollector {
   }
 
   private collectResourceTiming(): void {
-    if (typeof window !== 'undefined' && window.performance && 'getEntriesByType' in window.performance) {
+    if (typeof window !== 'undefined' && window.performance && typeof (window.performance as any).getEntriesByType === 'function') {
       try {
         const resourceEntries = window.performance.getEntriesByType('resource');
-        resourceEntries.forEach((entry: PerformanceEntry) => {
+        if (resourceEntries && resourceEntries.length > 0) {
+          resourceEntries.forEach((entry: PerformanceEntry) => {
           const resourceEntry = entry as PerformanceResourceTiming;
           
           // Only track API requests and important resources
@@ -221,7 +222,7 @@ class PerformanceCollector {
   }
 
   private collectMemoryUsage(): void {
-    if (typeof window !== 'undefined' && window.performance && 'memory' in window.performance) {
+    if (typeof window !== 'undefined' && window.performance && typeof (window.performance as any).memory === 'object') {
       try {
         const memory = (window.performance as any).memory;
         this.recordEvent('custom_trace', 'Memory Usage', memory.usedJSHeapSize, 'bytes', {

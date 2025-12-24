@@ -78,16 +78,28 @@ function App() {
 
   // Initialize Firebase Performance Monitoring and chat cleanup on app start
   useEffect(() => {
-    initializePerformanceMonitoring();
-    initializeChatCleanup();
-    
-    // Initialize performance data collection for the entire site
-    // This will start collecting performance metrics from all users
+    try {
+      initializePerformanceMonitoring();
+    } catch (e) {
+      console.error('initializePerformanceMonitoring failed:', e);
+    }
+
+    try {
+      initializeChatCleanup();
+    } catch (e) {
+      console.error('initializeChatCleanup failed:', e);
+    }
+
+    // Initialize performance data collection for the entire site (best-effort)
     console.log('Performance data collection initialized for site-wide monitoring');
-    
+
     // Cleanup performance collector on app unmount
     return () => {
-      performanceCollector.destroy();
+      try {
+        performanceCollector.destroy();
+      } catch (e) {
+        console.debug('performanceCollector.destroy failed:', e);
+      }
     };
   }, []);
 

@@ -2,10 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import "./styles.css";
 import "./unified-focus-eliminator.css";
+import "./unified-focus-eliminator.css";
 // Import Firebase configuration to ensure it's initialized before React renders
 import "./firebase";
 import App from "./App";
 import "./index.css";
+// Load unhide last so it can override other global styles that hide content
 import "./fix-unhide.css";
 
 // Global currentTheme variable to prevent React error handler crashes
@@ -53,8 +55,23 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
   console.log('Service Worker registration skipped in development mode');
 }
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+try {
+  const rootEl = document.getElementById("root");
+  if (!rootEl) throw new Error('Root element not found');
+  ReactDOM.createRoot(rootEl).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+  );
+} catch (err) {
+  // If render fails, make sure at least the root and a simple message are visible
+  console.error('React render failed:', err);
+  try {
+    const fallback = document.getElementById('root') || document.body;
+    if (fallback) {
+      fallback.innerHTML = '<div style="padding:24px;color:#fff;background:transparent;">Application failed to render — check console for errors.</div>';
+    }
+  } catch (e) {
+    // ignore
+  }
+}

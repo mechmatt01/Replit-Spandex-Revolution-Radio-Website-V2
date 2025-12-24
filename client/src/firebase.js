@@ -2,7 +2,18 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail, updateProfile, connectAuthEmulator } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
-import { getPerformance } from 'firebase/performance';
+// Note: firebase performance may be unavailable in some environments (SSR, workers).
+// Use a dynamic import to avoid breaking initialization when window is not present.
+let getPerformanceSafe = null;
+(async () => {
+    try {
+        const mod = await import('firebase/performance');
+        getPerformanceSafe = mod.getPerformance;
+    } catch (e) {
+        // ignore - performance will be skipped
+        getPerformanceSafe = null;
+    }
+})();
 // Firebase configuration
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -39,8 +50,17 @@ try {
     // Initialize other services
     db = getFirestore(app);
     storage = getStorage(app);
-    // Initialize Performance Monitoring
-    performance = getPerformance(app);
+    // Initialize Performance Monitoring only if available and running in a browser
+    if (typeof window !== 'undefined' && getPerformanceSafe) {
+        try {
+            performance = getPerformanceSafe(app);
+        } catch (perfErr) {
+            console.warn('Firebase Performance init failed, skipping:', perfErr);
+            performance = null;
+        }
+    } else {
+        performance = null;
+    }
     // Connect to emulators in development if needed
     if (import.meta.env.DEV && import.meta.env.VITE_USE_FIREBASE_EMULATORS === 'true') {
         try {
