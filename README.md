@@ -4,9 +4,7 @@ A cutting-edge digital platform for streaming old-school metal music 24/7, featu
 
 ## 🚀 Live Demo
 
-**Live Site**: [https://spandex-salvation-radio-site.web.app](https://spandex-salvation-radio-site.web.app)
-
-[https://www.spandex-salvation.com](https://www.spandex-salvation.com)
+**Live Site**: [https://spandexsalvation.com](https://spandexsalvation.com)
 
 ## ✨ Features
 
