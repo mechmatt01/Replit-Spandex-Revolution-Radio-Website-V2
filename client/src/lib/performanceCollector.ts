@@ -197,24 +197,25 @@ class PerformanceCollector {
         const resourceEntries = window.performance.getEntriesByType('resource');
         if (resourceEntries && resourceEntries.length > 0) {
           resourceEntries.forEach((entry: PerformanceEntry) => {
-          const resourceEntry = entry as PerformanceResourceTiming;
-          
-          // Only track API requests and important resources
-          if (resourceEntry.name.includes('/api/') || 
-              resourceEntry.name.includes('.js') || 
-              resourceEntry.name.includes('.css') ||
-              resourceEntry.name.includes('.png') ||
-              resourceEntry.name.includes('.jpg') ||
-              resourceEntry.name.includes('.svg')) {
+            const resourceEntry = entry as PerformanceResourceTiming;
             
-            this.recordEvent('api_request', resourceEntry.name, resourceEntry.responseEnd - resourceEntry.requestStart, 'ms', {
-              initiatorType: resourceEntry.initiatorType,
-              transferSize: resourceEntry.transferSize,
-              decodedBodySize: resourceEntry.decodedBodySize,
-              url: resourceEntry.name
-            });
-          }
-        });
+            // Only track API requests and important resources
+            if (resourceEntry.name.includes('/api/') || 
+                resourceEntry.name.includes('.js') || 
+                resourceEntry.name.includes('.css') ||
+                resourceEntry.name.includes('.png') ||
+                resourceEntry.name.includes('.jpg') ||
+                resourceEntry.name.includes('.svg')) {
+              
+              this.recordEvent('api_request', resourceEntry.name, resourceEntry.responseEnd - resourceEntry.requestStart, 'ms', {
+                initiatorType: resourceEntry.initiatorType,
+                transferSize: resourceEntry.transferSize,
+                decodedBodySize: resourceEntry.decodedBodySize,
+                url: resourceEntry.name
+              });
+            }
+          });
+        }
       } catch (error) {
         console.debug('Resource timing collection failed:', error);
       }
