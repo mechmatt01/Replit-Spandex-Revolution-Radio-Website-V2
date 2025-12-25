@@ -71,8 +71,15 @@ section {
 }
 
 /* Ensure proper stacking context */
-main, section, article, div {
+main, section, article, div:not([data-radix-portal]):not([role="dialog"]):not([aria-modal="true"]) {
   z-index: auto;
+}
+
+/* Ensure dialogs and modals always appear on top */
+[data-radix-portal],
+[role="dialog"],
+[aria-modal="true"] {
+  z-index: 9999 !important;
 }
 
 /* Optimize transitions for better performance */

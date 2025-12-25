@@ -78,10 +78,28 @@ export default function AuthModal({
       await signInWithGoogle();
       // The redirect will happen automatically
       onClose();
+      
+      toast({
+        title: "Success!",
+        description: "You've been signed in with Google.",
+      });
     } catch (error: any) {
+      console.error("Google sign-in error:", error);
+      
+      let errorMessage = error.message || "Failed to sign in with Google.";
+      
+      // Provide more helpful error messages based on error code
+      if (error.code === 'auth/unauthorized-domain') {
+        errorMessage = "This domain is not authorized for Google sign-in. Please contact the administrator to add this domain to Firebase Authentication.";
+      } else if (error.code === 'auth/popup-blocked') {
+        errorMessage = "Pop-up was blocked by your browser. Please allow pop-ups for this site and try again.";
+      } else if (error.code === 'auth/popup-closed-by-user') {
+        errorMessage = "Sign-in was cancelled. Please try again.";
+      }
+      
       toast({
         title: "Sign In Failed",
-        description: error.message || "Failed to sign in with Google.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
