@@ -71,8 +71,24 @@ section {
 }
 
 /* Ensure proper stacking context */
-main, section, article, div {
+main, section, article {
   z-index: auto;
+}
+
+/* Prevent z-index: auto from affecting portal elements and modals */
+div:not([data-radix-portal]):not([role="dialog"]):not([aria-modal="true"]) {
+  /* Allow natural z-index inheritance for regular divs */
+}
+
+/* Ensure dialogs and modals always appear on top */
+[data-radix-portal] {
+  position: fixed;
+  z-index: 9999;
+}
+
+[role="dialog"],
+[aria-modal="true"] {
+  z-index: 9999;
 }
 
 /* Optimize transitions for better performance */

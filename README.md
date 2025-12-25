@@ -110,7 +110,16 @@ Create a `.env` file with the following variables:
 # Database
 DATABASE_URL="postgresql://..."
 
-# Firebase
+# Firebase (Frontend - client/.env)
+VITE_FIREBASE_API_KEY="your-firebase-api-key"
+VITE_FIREBASE_AUTH_DOMAIN="your-project.firebaseapp.com"
+VITE_FIREBASE_PROJECT_ID="your-project-id"
+VITE_FIREBASE_STORAGE_BUCKET="your-project.appspot.com"
+VITE_FIREBASE_MESSAGING_SENDER_ID="your-sender-id"
+VITE_FIREBASE_APP_ID="your-app-id"
+VITE_FIREBASE_MEASUREMENT_ID="your-measurement-id"
+
+# Firebase (Backend)
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
@@ -124,6 +133,36 @@ LASTFM_API_KEY="your-lastfm-key"
 STRIPE_SECRET_KEY="your-stripe-secret-key"
 STRIPE_PUBLISHABLE_KEY="your-stripe-publishable-key"
 ```
+
+### Firebase Configuration
+
+To set up Google Sign-In in Firebase:
+
+1. **Enable Google Sign-In Provider**:
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Select your project
+   - Navigate to **Authentication** → **Sign-in method**
+   - Enable **Google** provider
+   - Set the project's public-facing name and support email
+
+2. **Add Authorized Domains**:
+   - In the same **Sign-in method** tab, scroll to **Authorized domains**
+   - Add your production domain (e.g., `spandexsalvation.com`)
+   - Add your Repl.co domain if using Replit (e.g., `your-repl.username.repl.co`)
+   - Add `localhost` for local development
+   - **Important**: Do NOT include `https://` or trailing slashes
+
+3. **Configure OAuth Consent Screen**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Select your Firebase project
+   - Navigate to **APIs & Services** → **OAuth consent screen**
+   - Add authorized domains and redirect URIs
+
+4. **Test Configuration**:
+   - Clear browser cache
+   - Restart your development server
+   - Try signing in with Google
+   - Check browser console for any errors
 
 ## 📦 Deployment
 
