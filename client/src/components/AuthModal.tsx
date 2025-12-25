@@ -76,13 +76,17 @@ export default function AuthModal({
     try {
       setLoading(true);
       await signInWithGoogle();
-      // The redirect will happen automatically
+      
+      // Close modal first
       onClose();
       
-      toast({
-        title: "Success!",
-        description: "You've been signed in with Google.",
-      });
+      // Show success toast after a brief delay to ensure auth state is processed
+      setTimeout(() => {
+        toast({
+          title: "Success!",
+          description: "You've been signed in with Google.",
+        });
+      }, 100);
     } catch (error: any) {
       console.error("Google sign-in error:", error);
       
